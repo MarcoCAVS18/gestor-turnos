@@ -1,27 +1,29 @@
-// src/services/turnosService.js
+// src/services/turnoService.js
 import { 
     collection, 
-    addDoc, 
     doc, 
-    getDoc, 
-    getDocs, 
+    addDoc, 
     updateDoc, 
     deleteDoc, 
+    getDocs, 
     query, 
+    where, 
     orderBy, 
-    where 
+    serverTimestamp 
   } from 'firebase/firestore';
   import { db } from './firebase';
   
-  // Referencia a la colección de turnos
-  const turnosRef = collection(db, 'turnos');
-  
-  // Obtener todos los turnos
-  export const obtenerTurnos = async () => {
+  // Obtener todos los turnos de un usuario
+  export const obtenerTurnos = async (userId) => {
     try {
-      const q = query(turnosRef, orderBy('fecha', 'desc'));
-      const querySnapshot = await getDocs(q);
+      const turnosRef = collection(db, 'turnos');
+      const q = query(
+        turnosRef,
+        where('userId', '==', userId),
+        orderBy('fecha', 'desc')
+      );
       
+      const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -33,17 +35,18 @@ import {
   };
   
   // Obtener turnos por rango de fechas
-  export const obtenerTurnosPorRango = async (fechaInicio, fechaFin) => {
+  export const obtenerTurnosPorRango = async (userId, fechaInicio, fechaFin) => {
     try {
+      const turnosRef = collection(db, 'turnos');
       const q = query(
-        turnosRef, 
+        turnosRef,
+        where('userId', '==', userId),
         where('fecha', '>=', fechaInicio),
         where('fecha', '<=', fechaFin),
         orderBy('fecha', 'desc')
       );
       
       const querySnapshot = await getDocs(q);
-      
       return querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -55,16 +58,17 @@ import {
   };
   
   // Obtener turnos por trabajo
-  export const obtenerTurnosPorTrabajo = async (trabajoId) => {
+  export const obtenerTurnosPorTrabajo = async (userId, trabajoId) => {
     try {
+      const turnosRef = collection(db, 'turnos');
       const q = query(
-        turnosRef, 
+        turnosRef,
+        where('userId', '==', userId),
         where('trabajoId', '==', trabajoId),
         orderBy('fecha', 'desc')
       );
       
       const querySnapshot = await getDocs(q);
-      
       return querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -75,36 +79,16 @@ import {
     }
   };
   
-  // Obtener un turno por su ID
-  export const obtenerTurnoPorId = async (id) => {
-    try {
-      const docRef = doc(db, 'turnos', id);
-      const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists()) {
-        return {
-          id: docSnap.id,
-          ...docSnap.data()
-        };
-      } else {
-        throw new Error('El turno no existe');
-      }
-    } catch (error) {
-      console.error('Error al obtener turno:', error);
-      throw error;
-    }
-  };
-  
   // Guardar un nuevo turno
   export const guardarTurno = async (turno) => {
     try {
       // Agregar timestamp
       const turnoConTimestamp = {
         ...turno,
-        fechaCreacion: new Date()
+        fechaCreacion: serverTimestamp()
       };
       
-      const docRef = await addDoc(turnosRef, turnoConTimestamp);
+      const docRef = await addDoc(collection(db, 'turnos'), turnoConTimestamp);
       
       return {
         id: docRef.id,
@@ -120,7 +104,10 @@ import {
   export const actualizarTurno = async (id, datos) => {
     try {
       const docRef = doc(db, 'turnos', id);
-      await updateDoc(docRef, datos);
+      await updateDoc(docRef, {
+        ...datos,
+        fechaActualizacion: serverTimestamp()
+      });
       
       return {
         id,

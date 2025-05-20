@@ -1,5 +1,4 @@
 // src/components/Calendario.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
 
@@ -11,6 +10,7 @@ const Calendario = ({ onDiaSeleccionado }) => {
     const [anioActual, setAnioActual] = useState(fechaActual.getFullYear());
     const [diasResaltados, setDiasResaltados] = useState([]);
     const [turnosVisibles, setTurnosVisibles] = useState([]);
+    const [diaSeleccionadoActual, setDiaSeleccionadoActual] = useState(null);
 
     // Usar useEffect para actualizar la fecha actual periódicamente
     useEffect(() => {
@@ -132,6 +132,15 @@ const Calendario = ({ onDiaSeleccionado }) => {
         setFechaActual(hoy);
         setMesActual(hoy.getMonth());
         setAnioActual(hoy.getFullYear());
+        
+        // También destacamos visualmente el día actual
+        const fechaStr = hoy.toISOString().split('T')[0];
+        setDiaSeleccionadoActual(fechaStr);
+        
+        // Y si hay un handler de selección, lo invocamos
+        if (onDiaSeleccionado) {
+            onDiaSeleccionado(hoy);
+        }
     };
 
     // Obtener nombre del mes
@@ -141,6 +150,9 @@ const Calendario = ({ onDiaSeleccionado }) => {
 
     // Ir a día seleccionado
     const irADia = (fecha) => {
+        const fechaStr = fecha.toISOString().split('T')[0];
+        setDiaSeleccionadoActual(fechaStr);
+        
         if (onDiaSeleccionado) {
             onDiaSeleccionado(fecha);
         }
@@ -165,13 +177,16 @@ const Calendario = ({ onDiaSeleccionado }) => {
 
     const resumenMes = obtenerResumenMes();
     const dias = obtenerDiasDelMes();
+    
+    // Fecha actual en formato ISO para comparaciones
+    const fechaActualISO = fechaActual.toISOString().split('T')[0];
 
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="p-4 bg-indigo-700 text-white flex justify-between items-center">
+            <div className="p-4 bg-pink-600 text-white flex justify-between items-center">
                 <button
                     onClick={() => cambiarMes(-1)}
-                    className="text-white hover:bg-indigo-600 p-2 rounded-full"
+                    className="text-white hover:bg-pink-700 p-2 rounded-full"
                 >
                     &lt;
                 </button>
@@ -181,21 +196,21 @@ const Calendario = ({ onDiaSeleccionado }) => {
                     </h3>
                     <button
                         onClick={irAHoy}
-                        className="text-xs bg-indigo-800 px-2 py-1 rounded-full mt-1 hover:bg-indigo-900"
+                        className="text-xs bg-pink-800 px-3 py-1 rounded-full mt-1 hover:bg-pink-900 transition-colors"
                     >
                         Hoy
                     </button>
                 </div>
                 <button
                     onClick={() => cambiarMes(1)}
-                    className="text-white hover:bg-indigo-600 p-2 rounded-full"
+                    className="text-white hover:bg-pink-700 p-2 rounded-full"
                 >
                     &gt;
                 </button>
             </div>
 
             {resumenMes.totalTurnos > 0 && (
-                <div className="bg-indigo-50 p-2 text-xs text-center text-indigo-700">
+                <div className="bg-pink-50 p-2 text-xs text-center text-pink-700 font-medium">
                     {resumenMes.totalTurnos} {resumenMes.totalTurnos === 1 ? 'turno' : 'turnos'} este mes
                 </div>
             )}
@@ -209,20 +224,46 @@ const Calendario = ({ onDiaSeleccionado }) => {
             </div>
 
             <div className="grid grid-cols-7">
-                {dias.map((dia, index) => (
-                    <button
-                        key={index}
-                        onClick={() => irADia(dia.fecha)}
-                        className={`p-2 text-center relative hover:bg-gray-50 h-14 flex flex-col justify-center items-center ${!dia.mesActual ? 'text-gray-400' :
-                                dia.esHoy ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-gray-800'
-                            }`}
-                    >
-                        <span>{dia.dia}</span>
-                        {dia.tieneTurnos && (
-                            <div className="absolute bottom-1 w-4 h-1 rounded bg-indigo-500"></div>
-                        )}
-                    </button>
-                ))}
+                {dias.map((dia, index) => {
+                    const fechaDiaISO = dia.fecha.toISOString().split('T')[0];
+                    const esHoy = fechaDiaISO === fechaActualISO;
+                    const esSeleccionado = fechaDiaISO === diaSeleccionadoActual;
+                    
+                    return (
+                        <button
+                            key={index}
+                            onClick={() => irADia(dia.fecha)}
+                            className={`
+                                p-2 text-center relative 
+                                hover:bg-gray-50 
+                                flex flex-col justify-center items-center
+                                ${!dia.mesActual ? 'text-gray-400' : 'text-gray-800'}
+                                ${esSeleccionado ? 'bg-pink-100' : ''}
+                            `}
+                        >
+                            {/* Círculo para día actual */}
+                            <div className={`
+                                ${esHoy ? 'absolute inset-0 m-auto rounded-full border-2 border-pink-500 w-10 h-10 animate-pulse' : ''}
+                            `}></div>
+                            
+                            {/* Contenedor para número del día */}
+                            <div className={`
+                                rounded-full w-8 h-8 flex items-center justify-center
+                                ${esHoy ? 'bg-pink-500 text-white font-bold shadow-lg' : ''}
+                                ${esSeleccionado && !esHoy ? 'bg-pink-200' : ''}
+                                transition-all duration-200
+                                transform ${esHoy ? 'scale-110' : ''}
+                            `}>
+                                <span className={esHoy ? 'text-white' : ''}>{dia.dia}</span>
+                            </div>
+                            
+                            {/* Indicador de turnos */}
+                            {dia.tieneTurnos && (
+                                <div className="absolute bottom-1 w-4 h-1 rounded bg-pink-500"></div>
+                            )}
+                        </button>
+                    );
+                })}
             </div>
         </div>
     );
