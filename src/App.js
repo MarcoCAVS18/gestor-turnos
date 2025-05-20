@@ -1,7 +1,11 @@
-// src/App.jsx
-import React, ***REMOVED*** useState ***REMOVED*** from 'react';
-import ***REMOVED*** AppProvider ***REMOVED*** from './contexts/AppContext';
+// src/App.js
+import React from 'react';
+import ***REMOVED*** BrowserRouter as Router, Routes, Route, Navigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from './contexts/AuthContext';
+import ***REMOVED*** AppProvider ***REMOVED*** from './contexts/AppContext';
+
+// Componentes
+import AuthModal from './components/AuthModal';
 import Header from './components/Header';
 import Navegacion from './components/Navegacion';
 import Dashboard from './pages/Dashboard';
@@ -9,40 +13,73 @@ import Trabajos from './pages/Trabajos';
 import Turnos from './pages/Turnos';
 import Estadisticas from './pages/Estadisticas';
 import CalendarioView from './pages/CalendarioView';
+import Ajustes from './pages/Ajustes';
+import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 import ModalTrabajo from './components/ModalTrabajo';
 import ModalTurno from './components/ModalTurno';
-import AuthModal from './components/AuthModal'; // 🚨 Asegurate de tener este componente
-import ***REMOVED*** motion, AnimatePresence ***REMOVED*** from 'framer-motion';
 
-const config = ***REMOVED***
-  velocities: true,
-  layout: 'always',
-***REMOVED***;
 
-const vistas = ['dashboard', 'trabajos', 'calendario', 'turnos', 'estadisticas'];
-
-const App = () => ***REMOVED***
+// Componente para rutas protegidas
+const PrivateRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser, loading ***REMOVED*** = useAuth();
-
-  const [vistaActual, setVistaActual] = useState('dashboard');
-  const [modalTrabajoAbierto, setModalTrabajoAbierto] = useState(false);
-  const [modalTurnoAbierto, setModalTurnoAbierto] = useState(false);
-  const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(null);
-  const [turnoSeleccionado, setTurnoSeleccionado] = useState(null);
-  const [direccion, setDireccion] = useState(1);
-
+  
   if (loading) ***REMOVED***
     return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="h-12 w-12 rounded-full border-4 border-t-4 border-gray-200 border-t-pink-600 animate-spin"></div>
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+      </div>
+    );
+  ***REMOVED***
+  
+  return currentUser ? children : <Navigate to="/login" />;
+***REMOVED***;
+
+function App() ***REMOVED***
+  const ***REMOVED*** currentUser, loading ***REMOVED*** = useAuth();
+  
+  // Si está cargando, mostrar spinner
+  if (loading) ***REMOVED***
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
       </div>
     );
   ***REMOVED***
 
-  if (!currentUser) ***REMOVED***
-    return <AuthModal />; // 🔐 Mostrar modal de login
-  ***REMOVED***
+  return (
+    <Router>
+      <Routes>
+        ***REMOVED***/* Rutas de autenticación */***REMOVED***
+        <Route path="/login" element=***REMOVED***currentUser ? <Navigate to="/" /> : <AuthModal />***REMOVED*** />
+        <Route path="/register" element=***REMOVED***currentUser ? <Navigate to="/" /> : <Register />***REMOVED*** />
+        <Route path="/forgot-password" element=***REMOVED***currentUser ? <Navigate to="/" /> : <ForgotPassword />***REMOVED*** />
+        <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />
 
+        ***REMOVED***/* Rutas protegidas */***REMOVED***
+        <Route 
+          path="/" 
+          element=***REMOVED***
+            <PrivateRoute>
+              <AppLayout />
+            </PrivateRoute>
+          ***REMOVED*** 
+        />
+      </Routes>
+    </Router>
+  );
+***REMOVED***
+
+// Componente para el layout de la aplicación cuando el usuario está autenticado
+function AppLayout() ***REMOVED***
+  const [vistaActual, setVistaActual] = React.useState('dashboard');
+  const [modalTrabajoAbierto, setModalTrabajoAbierto] = React.useState(false);
+  const [modalTurnoAbierto, setModalTurnoAbierto] = React.useState(false);
+  const [trabajoSeleccionado, setTrabajoSeleccionado] = React.useState(null);
+  const [turnoSeleccionado, setTurnoSeleccionado] = React.useState(null);
+
+  // Funciones para manejar modales
   const abrirModalNuevoTrabajo = () => ***REMOVED***
     setTrabajoSeleccionado(null);
     setModalTrabajoAbierto(true);
@@ -50,6 +87,16 @@ const App = () => ***REMOVED***
 
   const abrirModalNuevoTurno = () => ***REMOVED***
     setTurnoSeleccionado(null);
+    setModalTurnoAbierto(true);
+  ***REMOVED***;
+
+  const abrirModalEditarTrabajo = (trabajo) => ***REMOVED***
+    setTrabajoSeleccionado(trabajo);
+    setModalTrabajoAbierto(true);
+  ***REMOVED***;
+
+  const abrirModalEditarTurno = (turno) => ***REMOVED***
+    setTurnoSeleccionado(turno);
     setModalTurnoAbierto(true);
   ***REMOVED***;
 
@@ -63,112 +110,50 @@ const App = () => ***REMOVED***
     setTurnoSeleccionado(null);
   ***REMOVED***;
 
-  const cambiarVista = (nuevaVista) => ***REMOVED***
-    const indiceActual = vistas.indexOf(vistaActual);
-    const indiceNuevo = vistas.indexOf(nuevaVista);
-
-    if (config.velocities) ***REMOVED***
-      setDireccion(indiceNuevo > indiceActual ? 1 : -1);
-    ***REMOVED*** else ***REMOVED***
-      setDireccion(1);
-    ***REMOVED***
-
-    setVistaActual(nuevaVista);
-  ***REMOVED***;
-
-  const pageVariants = ***REMOVED***
-    enter: (direction) => (***REMOVED***
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-    ***REMOVED***),
-    center: ***REMOVED***
-      x: 0,
-      opacity: 1,
-    ***REMOVED***,
-    exit: (direction) => (***REMOVED***
-      x: direction > 0 ? -1000 : 1000,
-      opacity: 0,
-    ***REMOVED***),
-  ***REMOVED***;
-
-  const pageTransition = ***REMOVED***
-    type: "tween",
-    ease: "anticipate",
-    duration: 0.4,
-    stiffness: config.velocities ? 120 : 80,
-    damping: config.velocities ? 20 : 30,
-  ***REMOVED***;
-
-  const renderizarVista = () => ***REMOVED***
-    let Component;
-
+  // Renderizar la vista actual
+  const renderVista = () => ***REMOVED***
     switch (vistaActual) ***REMOVED***
       case 'trabajos':
-        Component = Trabajos;
-        break;
+        return <Trabajos abrirModalEditarTrabajo=***REMOVED***abrirModalEditarTrabajo***REMOVED*** />;
       case 'turnos':
-        Component = Turnos;
-        break;
+        return <Turnos abrirModalEditarTurno=***REMOVED***abrirModalEditarTurno***REMOVED*** />;
       case 'estadisticas':
-        Component = Estadisticas;
-        break;
+        return <Estadisticas />;
       case 'calendario':
-        Component = CalendarioView;
-        break;
+        return <CalendarioView />;
+      case 'ajustes':
+        return <Ajustes />;
       default:
-        Component = Dashboard;
+        return <Dashboard />;
     ***REMOVED***
-
-    return (
-      <AnimatePresence mode="wait" custom=***REMOVED***direccion***REMOVED***>
-        <motion.div
-          key=***REMOVED***vistaActual***REMOVED***
-          custom=***REMOVED***direccion***REMOVED***
-          variants=***REMOVED***pageVariants***REMOVED***
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition=***REMOVED***pageTransition***REMOVED***
-          className="w-full h-full"
-          layout=***REMOVED***config.layout***REMOVED***
-          drag=***REMOVED***config.velocities ? "x" : false***REMOVED***
-          dragConstraints=***REMOVED******REMOVED*** left: 0, right: 0 ***REMOVED******REMOVED***
-          dragElastic=***REMOVED***0.2***REMOVED***
-          onDragEnd=***REMOVED***(e, info) => ***REMOVED***
-            if (Math.abs(info.offset.x) > 100) ***REMOVED***
-              const indiceActual = vistas.indexOf(vistaActual);
-              const direccion = info.offset.x > 0 ? -1 : 1;
-              const nuevoIndice = Math.max(0, Math.min(vistas.length - 1, indiceActual + direccion));
-              cambiarVista(vistas[nuevoIndice]);
-            ***REMOVED***
-          ***REMOVED******REMOVED***
-        >
-          <Component />
-        </motion.div>
-      </AnimatePresence>
-    );
   ***REMOVED***;
 
   return (
     <AppProvider>
-      <div className="font-poppins bg-gray-100 min-h-screen pb-20">
+      <div className="min-h-screen bg-gray-100 font-poppins">
         <Header 
-          vistaActual=***REMOVED***vistaActual***REMOVED*** 
+          vistaActual=***REMOVED***vistaActual***REMOVED***
+          setVistaActual=***REMOVED***setVistaActual***REMOVED*** 
           abrirModalNuevoTrabajo=***REMOVED***abrirModalNuevoTrabajo***REMOVED*** 
           abrirModalNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED*** 
         />
-        <main className="max-w-md mx-auto">
-          ***REMOVED***renderizarVista()***REMOVED***
+        
+        <main className="max-w-md mx-auto px-4 pb-20">
+          ***REMOVED***renderVista()***REMOVED***
         </main>
+        
         <Navegacion 
           vistaActual=***REMOVED***vistaActual***REMOVED*** 
-          setVistaActual=***REMOVED***cambiarVista***REMOVED*** 
+          setVistaActual=***REMOVED***setVistaActual***REMOVED*** 
         />
+        
+        ***REMOVED***/* Modales */***REMOVED***
         <ModalTrabajo 
           visible=***REMOVED***modalTrabajoAbierto***REMOVED*** 
           onClose=***REMOVED***cerrarModalTrabajo***REMOVED*** 
           trabajoSeleccionado=***REMOVED***trabajoSeleccionado***REMOVED*** 
         />
+        
         <ModalTurno 
           visible=***REMOVED***modalTurnoAbierto***REMOVED*** 
           onClose=***REMOVED***cerrarModalTurno***REMOVED*** 
@@ -177,6 +162,6 @@ const App = () => ***REMOVED***
       </div>
     </AppProvider>
   );
-***REMOVED***;
+***REMOVED***
 
 export default App;
