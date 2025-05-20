@@ -1,5 +1,7 @@
 import ***REMOVED*** initializeApp ***REMOVED*** from 'firebase/app';
 import ***REMOVED*** getFirestore ***REMOVED*** from 'firebase/firestore';
+import ***REMOVED*** getAuth ***REMOVED*** from 'firebase/auth';
+
 
 // Configuración de tu Firebase
 const firebaseConfig = ***REMOVED***
@@ -15,4 +17,7 @@ const firebaseConfig = ***REMOVED***
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+export const auth = getAuth(app);
 export ***REMOVED*** db ***REMOVED***;
+export default app;
+

@@ -1,7 +1,7 @@
 // src/pages/Estadisticas.jsx
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
-import ***REMOVED*** BarChart2, TrendingUp, DollarSign, Clock ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** BarChart2, TrendingUp, DollarSign, Clock, Calendar ***REMOVED*** from 'lucide-react';
 
 const Estadisticas = () => ***REMOVED***
   const ***REMOVED*** turnos, trabajos, calcularPago ***REMOVED*** = useApp();
@@ -12,6 +12,42 @@ const Estadisticas = () => ***REMOVED***
     turnosPorDia: ***REMOVED******REMOVED***,
     promedioHora: 0
   ***REMOVED***);
+  const [resumenSemana, setResumenSemana] = useState(***REMOVED***
+    total: 0,
+    turnos: [],
+    porDia: ***REMOVED******REMOVED***,
+    semanaActual: true
+  ***REMOVED***);
+  
+  // Obtener fechas de inicio y fin de la semana actual (lunes a domingo)
+  const obtenerFechasSemana = () => ***REMOVED***
+    const hoy = new Date();
+    const diaSemana = hoy.getDay(); // 0: domingo, 1-6: lunes a sábado
+    
+    // Ajuste para que la semana comience el lunes
+    const diffInicio = diaSemana === 0 ? 6 : diaSemana - 1;
+    
+    // Fecha de inicio (lunes de la semana actual)
+    const fechaInicio = new Date(hoy);
+    fechaInicio.setDate(hoy.getDate() - diffInicio);
+    fechaInicio.setHours(0, 0, 0, 0);
+    
+    // Fecha de fin (domingo de la semana actual)
+    const fechaFin = new Date(fechaInicio);
+    fechaFin.setDate(fechaInicio.getDate() + 6);
+    fechaFin.setHours(23, 59, 59, 999);
+    
+    return ***REMOVED*** fechaInicio, fechaFin ***REMOVED***;
+  ***REMOVED***;
+  
+  // Formatear fecha para mostrar
+  const formatearFecha = (fecha) => ***REMOVED***
+    return fecha.toLocaleDateString('es-ES', ***REMOVED*** 
+      weekday: 'long', 
+      day: 'numeric', 
+      month: 'long' 
+    ***REMOVED***);
+  ***REMOVED***;
   
   useEffect(() => ***REMOVED***
     if (turnos.length === 0 || trabajos.length === 0) return;
@@ -58,6 +94,7 @@ const Estadisticas = () => ***REMOVED***
       gananciaPorTrabajo[trabajo.id].horas += horas;
       horasPorTrabajo[trabajo.id] += horas;
       
+      // Contar turnos por día
       const diaSemana = new Date(turno.fecha).getDay(); // 0 = domingo, 6 = sábado
       const nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
       turnosPorDia[nombresDias[diaSemana]]++;
@@ -89,9 +126,60 @@ const Estadisticas = () => ***REMOVED***
       datosDistribucionHoras,
       horasPorTrabajo
     ***REMOVED***);
+    
+    // Calcular estadísticas de la semana actual
+    const ***REMOVED*** fechaInicio, fechaFin ***REMOVED*** = obtenerFechasSemana();
+    const fechaInicioISO = fechaInicio.toISOString().split('T')[0];
+    const fechaFinISO = fechaFin.toISOString().split('T')[0];
+    
+    // Filtrar turnos de la semana actual
+    const turnosSemana = turnos.filter(turno => ***REMOVED***
+      return turno.fecha >= fechaInicioISO && turno.fecha <= fechaFinISO;
+    ***REMOVED***);
+    
+    // Inicializar objeto para acumular ganancias por día
+    const gananciaPorDia = ***REMOVED***
+      "Lunes": 0,
+      "Martes": 0,
+      "Miércoles": 0,
+      "Jueves": 0,
+      "Viernes": 0,
+      "Sábado": 0,
+      "Domingo": 0
+    ***REMOVED***;
+    
+    // Calcular ganancias por día
+    let totalSemana = 0;
+    
+    turnosSemana.forEach(turno => ***REMOVED***
+      const trabajo = trabajos.find(t => t.id === turno.trabajoId);
+      if (!trabajo) return;
+      
+      const ***REMOVED*** totalConDescuento ***REMOVED*** = calcularPago(turno);
+      totalSemana += totalConDescuento;
+      
+      // Sumar al día correspondiente
+      const fecha = new Date(turno.fecha);
+      const diaSemana = fecha.getDay(); // 0: domingo, 1-6: lunes a sábado
+      const nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      const nombreDia = nombresDias[diaSemana];
+      
+      gananciaPorDia[nombreDia] += totalConDescuento;
+    ***REMOVED***);
+    
+    setResumenSemana(***REMOVED***
+      total: totalSemana,
+      turnos: turnosSemana,
+      porDia: gananciaPorDia,
+      fechaInicio: formatearFecha(fechaInicio),
+      fechaFin: formatearFecha(fechaFin)
+    ***REMOVED***);
+    
   ***REMOVED***, [turnos, trabajos, calcularPago]);
   
+  // Función para renderizar el gráfico de distribución de horas
   const renderHorasPorTrabajoChart = () => ***REMOVED***
+    // Si no hay datos suficientes, mostrar mensaje
     if (!resumen.horasPorTrabajo || Object.keys(resumen.horasPorTrabajo).length === 0) ***REMOVED***
       return (
         <div className="p-4 text-center text-gray-500">
@@ -131,10 +219,57 @@ const Estadisticas = () => ***REMOVED***
     <div className="px-4 py-6">
       <h2 className="text-xl font-semibold mb-4">Estadísticas</h2>
       
+      ***REMOVED***/* Nueva sección: Resumen de la semana actual */***REMOVED***
+      <div className="bg-white p-4 rounded-xl shadow-md mb-6">
+        <div className="flex items-center mb-3">
+          <Calendar size=***REMOVED***18***REMOVED*** className="text-pink-600 mr-2" />
+          <h3 className="text-lg font-semibold">Semana Actual</h3>
+        </div>
+        
+        <div className="text-sm text-gray-500 mb-3">
+          ***REMOVED***resumenSemana.fechaInicio***REMOVED*** - ***REMOVED***resumenSemana.fechaFin***REMOVED***
+        </div>
+        
+        <div className="text-3xl font-bold text-center mt-2 mb-4 text-pink-600">
+          $***REMOVED***resumenSemana.total.toFixed(2)***REMOVED***
+        </div>
+        
+        ***REMOVED***/* Gráfico de barras para ganancias por día de la semana */***REMOVED***
+        <div className="mt-4">
+          ***REMOVED***Object.entries(resumenSemana.porDia).map(([dia, ganancia]) => (
+            <div key=***REMOVED***dia***REMOVED*** className="mb-2">
+              <div className="flex justify-between items-center mb-1">
+                <span className=***REMOVED***`text-sm $***REMOVED***dia === 'Sábado' || dia === 'Domingo' ? 'font-semibold' : ''***REMOVED***`***REMOVED***>
+                  ***REMOVED***dia***REMOVED***
+                </span>
+                <span className=***REMOVED***`text-sm font-medium $***REMOVED***ganancia > 0 ? 'text-pink-600' : 'text-gray-400'***REMOVED***`***REMOVED***>
+                  $***REMOVED***ganancia.toFixed(2)***REMOVED***
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                ***REMOVED***ganancia > 0 && (
+                  <div 
+                    className=***REMOVED***`h-2 rounded-full $***REMOVED***dia === 'Sábado' || dia === 'Domingo' ? 'bg-pink-500' : 'bg-pink-400'***REMOVED***`***REMOVED*** 
+                    style=***REMOVED******REMOVED*** width: `$***REMOVED***(ganancia / resumenSemana.total) * 100***REMOVED***%` ***REMOVED******REMOVED***
+                  ></div>
+                )***REMOVED***
+              </div>
+            </div>
+          ))***REMOVED***
+        </div>
+        
+        ***REMOVED***resumenSemana.turnos.length === 0 && (
+          <div className="text-center py-4 text-gray-500">
+            No hay turnos registrados esta semana
+          </div>
+        )***REMOVED***
+      </div>
+      
+      ***REMOVED***/* Resumen General */***REMOVED***
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-white p-4 rounded-xl shadow-md">
           <div className="flex items-center mb-1">
-            <DollarSign size=***REMOVED***16***REMOVED*** className="text-indigo-600 mr-1" />
+            <DollarSign size=***REMOVED***16***REMOVED*** className="text-pink-600 mr-1" />
             <h3 className="text-gray-500">Total Ganado</h3>
           </div>
           <p className="text-2xl font-semibold">$***REMOVED***resumen.totalGanado.toFixed(2)***REMOVED***</p>
@@ -142,7 +277,7 @@ const Estadisticas = () => ***REMOVED***
         
         <div className="bg-white p-4 rounded-xl shadow-md">
           <div className="flex items-center mb-1">
-            <Clock size=***REMOVED***16***REMOVED*** className="text-indigo-600 mr-1" />
+            <Clock size=***REMOVED***16***REMOVED*** className="text-pink-600 mr-1" />
             <h3 className="text-gray-500">Horas Trabajadas</h3>
           </div>
           <p className="text-2xl font-semibold">***REMOVED***resumen.horasTrabajadas.toFixed(1)***REMOVED***h</p>
@@ -151,7 +286,7 @@ const Estadisticas = () => ***REMOVED***
       
       <div className="bg-white p-4 rounded-xl shadow-md mb-6">
         <div className="flex items-center mb-3">
-          <TrendingUp size=***REMOVED***18***REMOVED*** className="text-indigo-600 mr-2" />
+          <TrendingUp size=***REMOVED***18***REMOVED*** className="text-pink-600 mr-2" />
           <h3 className="text-lg font-semibold">Promedio por Hora</h3>
         </div>
         <p className="text-3xl font-semibold text-center mt-2">$***REMOVED***resumen.promedioHora.toFixed(2)***REMOVED***/h</p>
@@ -162,7 +297,7 @@ const Estadisticas = () => ***REMOVED***
       
       <h3 className="text-lg font-semibold mb-3">
         <div className="flex items-center">
-          <BarChart2 size=***REMOVED***18***REMOVED*** className="text-indigo-600 mr-2" />
+          <BarChart2 size=***REMOVED***18***REMOVED*** className="text-pink-600 mr-2" />
           <span>Distribución de Horas por Trabajo</span>
         </div>
       </h3>
