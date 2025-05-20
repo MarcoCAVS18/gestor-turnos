@@ -1,23 +1,24 @@
-// src/contexts/AppContext.jsx - Corregido
-
+// src/contexts/AppContext.jsx
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { 
-  obtenerTrabajos, 
-  guardarTrabajo, 
-  actualizarTrabajo, 
-  eliminarTrabajo 
-} from '../services/trabajosService';
-import { 
-  obtenerTurnos, 
-  guardarTurno, 
-  actualizarTurno, 
-  eliminarTurno 
-} from '../services/turnosService';
+  doc, 
+  getDoc, 
+  updateDoc, 
+  collection, 
+  addDoc, 
+  deleteDoc, 
+  getDocs, 
+  query, 
+  where, 
+  orderBy 
+} from 'firebase/firestore';
+import { db } from '../services/firebase';
+import { useAuth } from './AuthContext';
 
-// Primero creamos el contexto
+// Crear el contexto
 export const AppContext = createContext();
 
-// Definimos PRIMERO el hook personalizado para usar el contexto
+// Hook personalizado para usar el contexto
 export const useApp = () => {
   const context = useContext(AppContext);
   if (!context) {
@@ -26,76 +27,161 @@ export const useApp = () => {
   return context;
 };
 
-// DESPUÉS definimos el proveedor del contexto
+// Proveedor del contexto
 export const AppProvider = ({ children }) => {
+  const { currentUser } = useAuth();
+  
+  // Estados para los datos principales
   const [trabajos, setTrabajos] = useState([]);
   const [turnos, setTurnos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Estados para preferencias de personalización
+  const [colorPrincipal, setColorPrincipal] = useState('#EC4899'); // pink-600 por defecto
+  const [emojiUsuario, setEmojiUsuario] = useState('😊'); // emoji predeterminado
+  const [descuentoDefault, setDescuentoDefault] = useState(15); // 15% por defecto
+  
+  // Estado para uso local vs desarrollo
   const [modoDesarrollo, setModoDesarrollo] = useState(true);
   
+  // Cargar datos y preferencias del usuario
   useEffect(() => {
+    // Función para cargar datos de desarrollo (modo demo)
+    const cargarDatosDeDesarrollo = () => {
+      const trabajosData = [
+        {
+          id: 'trabajo-1',
+          nombre: 'SunCorp Stadium',
+          color: '#FFC107',
+          tarifaBase: 30.13,
+          tarifas: {
+            diurno: 30.13,
+            tarde: 33.14,
+            noche: 36.16,
+            sabado: 45.20,
+            domingo: 60.26
+          }
+        },
+        {
+          id: 'trabajo-2',
+          nombre: 'StaffLink',
+          color: '#4CAF50',
+          tarifaBase: 28.50,
+          tarifas: {
+            diurno: 28.50,
+            tarde: 31.35,
+            noche: 34.20,
+            sabado: 42.75,
+            domingo: 57.00
+          }
+        }
+      ];
+
+      const turnosData = [
+        {
+          id: 'turno-1',
+          trabajoId: 'trabajo-1',
+          fecha: '2025-05-19',
+          horaInicio: '17:00',
+          horaFin: '23:30',
+          tipo: 'tarde'
+        },
+        {
+          id: 'turno-2',
+          trabajoId: 'trabajo-2',
+          fecha: '2025-05-19',
+          horaInicio: '08:00',
+          horaFin: '11:30',
+          tipo: 'diurno'
+        }
+      ];
+      
+      setTrabajos(trabajosData);
+      setTurnos(turnosData);
+      
+      // Cargar preferencias almacenadas en localStorage (si existen)
+      const colorGuardado = localStorage.getItem('colorPrincipal');
+      const emojiGuardado = localStorage.getItem('emojiUsuario');
+      const descuentoGuardado = localStorage.getItem('descuentoDefault');
+      
+      if (colorGuardado) setColorPrincipal(colorGuardado);
+      if (emojiGuardado) setEmojiUsuario(emojiGuardado);
+      if (descuentoGuardado) setDescuentoDefault(Number(descuentoGuardado));
+    };
+    
+    // Función para cargar datos reales del usuario desde Firebase
+    const cargarDatosUsuario = async () => {
+      if (!currentUser) return;
+      
+      try {
+        // Cargar trabajos del usuario
+        const trabajosRef = collection(db, 'trabajos');
+        const trabajosQuery = query(
+          trabajosRef,
+          where('userId', '==', currentUser.uid),
+          orderBy('nombre', 'asc')
+        );
+        
+        const trabajosSnapshot = await getDocs(trabajosQuery);
+        const trabajosData = trabajosSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        // Cargar turnos del usuario
+        const turnosRef = collection(db, 'turnos');
+        const turnosQuery = query(
+          turnosRef,
+          where('userId', '==', currentUser.uid),
+          orderBy('fecha', 'desc')
+        );
+        
+        const turnosSnapshot = await getDocs(turnosQuery);
+        const turnosData = turnosSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        // Cargar preferencias del usuario
+        const userDocRef = doc(db, 'usuarios', currentUser.uid);
+        const userDocSnapshot = await getDoc(userDocRef);
+        
+        if (userDocSnapshot.exists()) {
+          const userData = userDocSnapshot.data();
+          if (userData.ajustes) {
+            // Establecer preferencias si existen
+            setColorPrincipal(userData.ajustes.colorPrincipal || '#EC4899');
+            setEmojiUsuario(userData.ajustes.emojiUsuario || '😊');
+            setDescuentoDefault(userData.ajustes.descuentoDefault || 15);
+          }
+        }
+        
+        // Actualizar estados
+        setTrabajos(trabajosData);
+        setTurnos(turnosData);
+      } catch (error) {
+        console.error('Error al cargar datos del usuario:', error);
+        throw error;
+      }
+    };
+
+    // Función principal que decide qué datos cargar
     const cargarDatos = async () => {
+      if (!currentUser) {
+        // Si no hay usuario logueado, usar datos de desarrollo
+        cargarDatosDeDesarrollo();
+        return;
+      }
+      
       try {
         setCargando(true);
         
         if (modoDesarrollo) {
-          const trabajosData = [
-            {
-              id: 'trabajo-1',
-              nombre: 'SunCorp Stadium',
-              color: '#FFC107',
-              tarifaBase: 30.13,
-              tarifas: {
-                diurno: 30.13,
-                tarde: 33.14,
-                noche: 36.16,
-                sabado: 45.20,
-                domingo: 60.26
-              }
-            },
-            {
-              id: 'trabajo-2',
-              nombre: 'StaffLink',
-              color: '#4CAF50',
-              tarifaBase: 28.50,
-              tarifas: {
-                diurno: 28.50,
-                tarde: 31.35,
-                noche: 34.20,
-                sabado: 42.75,
-                domingo: 57.00
-              }
-            }
-          ];
-
-          const turnosData = [
-            {
-              id: 'turno-1',
-              trabajoId: 'trabajo-1',
-              fecha: '2025-05-19',
-              horaInicio: '17:00',
-              horaFin: '23:30',
-              tipo: 'tarde'
-            },
-            {
-              id: 'turno-2',
-              trabajoId: 'trabajo-2',
-              fecha: '2025-05-19',
-              horaInicio: '08:00',
-              horaFin: '11:30',
-              tipo: 'diurno'
-            }
-          ];
-          
-          setTrabajos(trabajosData);
-          setTurnos(turnosData);
+          cargarDatosDeDesarrollo();
         } else {
-          const trabajosData = await obtenerTrabajos();
-          const turnosData = await obtenerTurnos();
-          
-          setTrabajos(trabajosData);
-          setTurnos(turnosData);
+          // Cargar datos reales desde Firebase
+          await cargarDatosUsuario();
         }
         
         setCargando(false);
@@ -106,9 +192,9 @@ export const AppProvider = ({ children }) => {
     };
     
     cargarDatos();
-  }, [modoDesarrollo]);
+  }, [currentUser, modoDesarrollo]); // Dependencias reducidas
   
-  // Funciones para trabajos
+  // Funciones para gestionar trabajos
   const agregarTrabajo = async (nuevoTrabajo) => {
     try {
       let trabajoGuardado;
@@ -119,7 +205,17 @@ export const AppProvider = ({ children }) => {
           id: `trabajo-${Date.now()}`
         };
       } else {
-        trabajoGuardado = await guardarTrabajo(nuevoTrabajo);
+        // Añadir userId y timestamps
+        const trabajoConMetadata = {
+          ...nuevoTrabajo,
+          userId: currentUser.uid,
+          fechaCreacion: new Date(),
+          fechaActualizacion: new Date()
+        };
+        
+        // Guardar en Firebase
+        const docRef = await addDoc(collection(db, 'trabajos'), trabajoConMetadata);
+        trabajoGuardado = { ...trabajoConMetadata, id: docRef.id };
       }
       
       setTrabajos([...trabajos, trabajoGuardado]);
@@ -133,9 +229,18 @@ export const AppProvider = ({ children }) => {
   const editarTrabajo = async (id, datosActualizados) => {
     try {
       if (!modoDesarrollo) {
-        await actualizarTrabajo(id, datosActualizados);
+        // Añadir metadata
+        const datosConMetadata = {
+          ...datosActualizados,
+          fechaActualizacion: new Date()
+        };
+        
+        // Actualizar en Firebase
+        const docRef = doc(db, 'trabajos', id);
+        await updateDoc(docRef, datosConMetadata);
       }
       
+      // Actualizar estado local
       setTrabajos(trabajos.map(trabajo => 
         trabajo.id === id ? { ...trabajo, ...datosActualizados } : trabajo
       ));
@@ -148,9 +253,28 @@ export const AppProvider = ({ children }) => {
   const borrarTrabajo = async (id) => {
     try {
       if (!modoDesarrollo) {
-        await eliminarTrabajo(id);
+        // Borrar de Firebase
+        await deleteDoc(doc(db, 'trabajos', id));
+        
+        // También borrar los turnos asociados
+        const turnosRef = collection(db, 'turnos');
+        const turnosQuery = query(
+          turnosRef,
+          where('userId', '==', currentUser.uid),
+          where('trabajoId', '==', id)
+        );
+        
+        const turnosSnapshot = await getDocs(turnosQuery);
+        const batch = [];
+        
+        turnosSnapshot.forEach(doc => {
+          batch.push(deleteDoc(doc.ref));
+        });
+        
+        await Promise.all(batch);
       }
       
+      // Actualizar estados locales
       setTrabajos(trabajos.filter(trabajo => trabajo.id !== id));
       setTurnos(turnos.filter(turno => turno.trabajoId !== id));
     } catch (err) {
@@ -159,7 +283,7 @@ export const AppProvider = ({ children }) => {
     }
   };
   
-  // Funciones para turnos
+  // Funciones para gestionar turnos
   const agregarTurno = async (nuevoTurno) => {
     try {
       let turnoGuardado;
@@ -170,7 +294,17 @@ export const AppProvider = ({ children }) => {
           id: `turno-${Date.now()}`
         };
       } else {
-        turnoGuardado = await guardarTurno(nuevoTurno);
+        // Añadir userId y timestamps
+        const turnoConMetadata = {
+          ...nuevoTurno,
+          userId: currentUser.uid,
+          fechaCreacion: new Date(),
+          fechaActualizacion: new Date()
+        };
+        
+        // Guardar en Firebase
+        const docRef = await addDoc(collection(db, 'turnos'), turnoConMetadata);
+        turnoGuardado = { ...turnoConMetadata, id: docRef.id };
       }
       
       setTurnos([...turnos, turnoGuardado]);
@@ -184,9 +318,18 @@ export const AppProvider = ({ children }) => {
   const editarTurno = async (id, datosActualizados) => {
     try {
       if (!modoDesarrollo) {
-        await actualizarTurno(id, datosActualizados);
+        // Añadir metadata
+        const datosConMetadata = {
+          ...datosActualizados,
+          fechaActualizacion: new Date()
+        };
+        
+        // Actualizar en Firebase
+        const docRef = doc(db, 'turnos', id);
+        await updateDoc(docRef, datosConMetadata);
       }
       
+      // Actualizar estado local
       setTurnos(turnos.map(turno => 
         turno.id === id ? { ...turno, ...datosActualizados } : turno
       ));
@@ -199,12 +342,54 @@ export const AppProvider = ({ children }) => {
   const borrarTurno = async (id) => {
     try {
       if (!modoDesarrollo) {
-        await eliminarTurno(id);
+        // Borrar de Firebase
+        await deleteDoc(doc(db, 'turnos', id));
       }
       
+      // Actualizar estado local
       setTurnos(turnos.filter(turno => turno.id !== id));
     } catch (err) {
       setError('Error al eliminar turno: ' + err.message);
+      throw err;
+    }
+  };
+  
+  // Función para guardar preferencias de usuario
+  const guardarPreferencias = async (preferencias) => {
+    try {
+      const { colorPrincipal: nuevoColor, emojiUsuario: nuevoEmoji, descuentoDefault: nuevoDescuento } = preferencias;
+      
+      // Actualizar estados locales inmediatamente
+      if (nuevoColor !== undefined) setColorPrincipal(nuevoColor);
+      if (nuevoEmoji !== undefined) setEmojiUsuario(nuevoEmoji);
+      if (nuevoDescuento !== undefined) setDescuentoDefault(nuevoDescuento);
+      
+      // Guardar en localStorage para persistencia local
+      if (nuevoColor !== undefined) localStorage.setItem('colorPrincipal', nuevoColor);
+      if (nuevoEmoji !== undefined) localStorage.setItem('emojiUsuario', nuevoEmoji);
+      if (nuevoDescuento !== undefined) localStorage.setItem('descuentoDefault', nuevoDescuento.toString());
+      
+      // Si no estamos en modo desarrollo y hay un usuario logueado, guardar en Firebase
+      if (!modoDesarrollo && currentUser) {
+        const userDocRef = doc(db, 'usuarios', currentUser.uid);
+        
+        // Crear un objeto con solo las propiedades que se están actualizando
+        const datosActualizados = {};
+        
+        if (nuevoColor !== undefined) datosActualizados['ajustes.colorPrincipal'] = nuevoColor;
+        if (nuevoEmoji !== undefined) datosActualizados['ajustes.emojiUsuario'] = nuevoEmoji;
+        if (nuevoDescuento !== undefined) datosActualizados['ajustes.descuentoDefault'] = nuevoDescuento;
+        datosActualizados['fechaActualizacion'] = new Date();
+        
+        // Solo actualizar en Firebase si hay algo que actualizar
+        if (Object.keys(datosActualizados).length > 1) { // Más de 1 porque siempre incluye fechaActualizacion
+          await updateDoc(userDocRef, datosActualizados);
+        }
+      }
+      
+      return true;
+    } catch (err) {
+      setError('Error al guardar preferencias: ' + err.message);
       throw err;
     }
   };
@@ -263,7 +448,7 @@ export const AppProvider = ({ children }) => {
     }
     
     const total = horas * tarifa;
-    const totalConDescuento = total * 0.85; 
+    const totalConDescuento = total * (1 - descuentoDefault / 100); 
     
     return {
       total,
@@ -301,6 +486,9 @@ export const AppProvider = ({ children }) => {
     cargando,
     error,
     modoDesarrollo,
+    colorPrincipal,
+    emojiUsuario,
+    descuentoDefault,
     toggleModoDesarrollo,
     agregarTrabajo,
     editarTrabajo,
@@ -311,7 +499,8 @@ export const AppProvider = ({ children }) => {
     calcularHoras,
     calcularPago,
     calcularTotalDia,
-    formatearFecha
+    formatearFecha,
+    guardarPreferencias
   };
   
   return (
@@ -320,3 +509,5 @@ export const AppProvider = ({ children }) => {
     </AppContext.Provider>
   );
 };
+
+export default AppContext;

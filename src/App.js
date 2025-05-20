@@ -1,7 +1,11 @@
-// src/App.jsx
-import React, { useState } from 'react';
-import { AppProvider } from './contexts/AppContext';
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
+import { AppProvider } from './contexts/AppContext';
+
+// Componentes
+import AuthModal from './components/AuthModal';
 import Header from './components/Header';
 import Navegacion from './components/Navegacion';
 import Dashboard from './pages/Dashboard';
@@ -9,40 +13,73 @@ import Trabajos from './pages/Trabajos';
 import Turnos from './pages/Turnos';
 import Estadisticas from './pages/Estadisticas';
 import CalendarioView from './pages/CalendarioView';
+import Ajustes from './pages/Ajustes';
+import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 import ModalTrabajo from './components/ModalTrabajo';
 import ModalTurno from './components/ModalTurno';
-import AuthModal from './components/AuthModal'; // 🚨 Asegurate de tener este componente
-import { motion, AnimatePresence } from 'framer-motion';
 
-const config = {
-  velocities: true,
-  layout: 'always',
-};
 
-const vistas = ['dashboard', 'trabajos', 'calendario', 'turnos', 'estadisticas'];
-
-const App = () => {
+// Componente para rutas protegidas
+const PrivateRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
-
-  const [vistaActual, setVistaActual] = useState('dashboard');
-  const [modalTrabajoAbierto, setModalTrabajoAbierto] = useState(false);
-  const [modalTurnoAbierto, setModalTurnoAbierto] = useState(false);
-  const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(null);
-  const [turnoSeleccionado, setTurnoSeleccionado] = useState(null);
-  const [direccion, setDireccion] = useState(1);
-
+  
   if (loading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="h-12 w-12 rounded-full border-4 border-t-4 border-gray-200 border-t-pink-600 animate-spin"></div>
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+      </div>
+    );
+  }
+  
+  return currentUser ? children : <Navigate to="/login" />;
+};
+
+function App() {
+  const { currentUser, loading } = useAuth();
+  
+  // Si está cargando, mostrar spinner
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
       </div>
     );
   }
 
-  if (!currentUser) {
-    return <AuthModal />; // 🔐 Mostrar modal de login
-  }
+  return (
+    <Router>
+      <Routes>
+        {/* Rutas de autenticación */}
+        <Route path="/login" element={currentUser ? <Navigate to="/" /> : <AuthModal />} />
+        <Route path="/register" element={currentUser ? <Navigate to="/" /> : <Register />} />
+        <Route path="/forgot-password" element={currentUser ? <Navigate to="/" /> : <ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
+        {/* Rutas protegidas */}
+        <Route 
+          path="/" 
+          element={
+            <PrivateRoute>
+              <AppLayout />
+            </PrivateRoute>
+          } 
+        />
+      </Routes>
+    </Router>
+  );
+}
+
+// Componente para el layout de la aplicación cuando el usuario está autenticado
+function AppLayout() {
+  const [vistaActual, setVistaActual] = React.useState('dashboard');
+  const [modalTrabajoAbierto, setModalTrabajoAbierto] = React.useState(false);
+  const [modalTurnoAbierto, setModalTurnoAbierto] = React.useState(false);
+  const [trabajoSeleccionado, setTrabajoSeleccionado] = React.useState(null);
+  const [turnoSeleccionado, setTurnoSeleccionado] = React.useState(null);
+
+  // Funciones para manejar modales
   const abrirModalNuevoTrabajo = () => {
     setTrabajoSeleccionado(null);
     setModalTrabajoAbierto(true);
@@ -50,6 +87,16 @@ const App = () => {
 
   const abrirModalNuevoTurno = () => {
     setTurnoSeleccionado(null);
+    setModalTurnoAbierto(true);
+  };
+
+  const abrirModalEditarTrabajo = (trabajo) => {
+    setTrabajoSeleccionado(trabajo);
+    setModalTrabajoAbierto(true);
+  };
+
+  const abrirModalEditarTurno = (turno) => {
+    setTurnoSeleccionado(turno);
     setModalTurnoAbierto(true);
   };
 
@@ -63,112 +110,50 @@ const App = () => {
     setTurnoSeleccionado(null);
   };
 
-  const cambiarVista = (nuevaVista) => {
-    const indiceActual = vistas.indexOf(vistaActual);
-    const indiceNuevo = vistas.indexOf(nuevaVista);
-
-    if (config.velocities) {
-      setDireccion(indiceNuevo > indiceActual ? 1 : -1);
-    } else {
-      setDireccion(1);
-    }
-
-    setVistaActual(nuevaVista);
-  };
-
-  const pageVariants = {
-    enter: (direction) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction) => ({
-      x: direction > 0 ? -1000 : 1000,
-      opacity: 0,
-    }),
-  };
-
-  const pageTransition = {
-    type: "tween",
-    ease: "anticipate",
-    duration: 0.4,
-    stiffness: config.velocities ? 120 : 80,
-    damping: config.velocities ? 20 : 30,
-  };
-
-  const renderizarVista = () => {
-    let Component;
-
+  // Renderizar la vista actual
+  const renderVista = () => {
     switch (vistaActual) {
       case 'trabajos':
-        Component = Trabajos;
-        break;
+        return <Trabajos abrirModalEditarTrabajo={abrirModalEditarTrabajo} />;
       case 'turnos':
-        Component = Turnos;
-        break;
+        return <Turnos abrirModalEditarTurno={abrirModalEditarTurno} />;
       case 'estadisticas':
-        Component = Estadisticas;
-        break;
+        return <Estadisticas />;
       case 'calendario':
-        Component = CalendarioView;
-        break;
+        return <CalendarioView />;
+      case 'ajustes':
+        return <Ajustes />;
       default:
-        Component = Dashboard;
+        return <Dashboard />;
     }
-
-    return (
-      <AnimatePresence mode="wait" custom={direccion}>
-        <motion.div
-          key={vistaActual}
-          custom={direccion}
-          variants={pageVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={pageTransition}
-          className="w-full h-full"
-          layout={config.layout}
-          drag={config.velocities ? "x" : false}
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={0.2}
-          onDragEnd={(e, info) => {
-            if (Math.abs(info.offset.x) > 100) {
-              const indiceActual = vistas.indexOf(vistaActual);
-              const direccion = info.offset.x > 0 ? -1 : 1;
-              const nuevoIndice = Math.max(0, Math.min(vistas.length - 1, indiceActual + direccion));
-              cambiarVista(vistas[nuevoIndice]);
-            }
-          }}
-        >
-          <Component />
-        </motion.div>
-      </AnimatePresence>
-    );
   };
 
   return (
     <AppProvider>
-      <div className="font-poppins bg-gray-100 min-h-screen pb-20">
+      <div className="min-h-screen bg-gray-100 font-poppins">
         <Header 
-          vistaActual={vistaActual} 
+          vistaActual={vistaActual}
+          setVistaActual={setVistaActual} 
           abrirModalNuevoTrabajo={abrirModalNuevoTrabajo} 
           abrirModalNuevoTurno={abrirModalNuevoTurno} 
         />
-        <main className="max-w-md mx-auto">
-          {renderizarVista()}
+        
+        <main className="max-w-md mx-auto px-4 pb-20">
+          {renderVista()}
         </main>
+        
         <Navegacion 
           vistaActual={vistaActual} 
-          setVistaActual={cambiarVista} 
+          setVistaActual={setVistaActual} 
         />
+        
+        {/* Modales */}
         <ModalTrabajo 
           visible={modalTrabajoAbierto} 
           onClose={cerrarModalTrabajo} 
           trabajoSeleccionado={trabajoSeleccionado} 
         />
+        
         <ModalTurno 
           visible={modalTurnoAbierto} 
           onClose={cerrarModalTurno} 
@@ -177,6 +162,6 @@ const App = () => {
       </div>
     </AppProvider>
   );
-};
+}
 
 export default App;

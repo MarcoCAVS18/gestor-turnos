@@ -1,4 +1,4 @@
-// src/contexts/AuthContext.jsx
+// Actualización para src/contexts/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   createUserWithEmailAndPassword, 
@@ -6,10 +6,12 @@ import {
   signOut, 
   sendPasswordResetEmail,
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup
 } from 'firebase/auth';
 import { auth, db } from '../services/firebase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 
 // Crear el contexto
 const AuthContext = createContext();
@@ -41,27 +43,64 @@ export const AuthProvider = ({ children }) => {
         displayName,
         fechaCreacion: new Date(),
         ajustes: {
-          descuentoDefault: 15, // 15% de descuento por defecto
+          descuentoDefault: 15,
           moneda: '$',
-          colorPrincipal: '#EC4899' // Rosa por defecto (pink-600)
+          colorPrincipal: '#EC4899'
         }
       });
       
       return userCredential.user;
     } catch (error) {
+      console.error('Error al registrar usuario:', error);
       setError('Error al registrar usuario: ' + error.message);
       throw error;
     }
   };
 
-  // Iniciar sesión
+  // Iniciar sesión con email y contraseña
   const login = async (email, password) => {
     try {
       setError('');
+      console.log('Intentando iniciar sesión con:', email);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('Login exitoso:', userCredential.user);
       return userCredential.user;
     } catch (error) {
+      console.error('Error de login:', error);
       setError('Error al iniciar sesión: ' + error.message);
+      throw error;
+    }
+  };
+  
+  // Función para iniciar sesión con Google
+  const loginWithGoogle = async () => {
+    try {
+      setError('');
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      
+      // Verificar si es la primera vez que el usuario inicia sesión con Google
+      const userDoc = await getDoc(doc(db, 'usuarios', result.user.uid));
+      
+      if (!userDoc.exists()) {
+        // Si es la primera vez, crear documento de usuario en Firestore
+        await setDoc(doc(db, 'usuarios', result.user.uid), {
+          email: result.user.email,
+          displayName: result.user.displayName || 'Usuario',
+          fechaCreacion: new Date(),
+          metodoRegistro: 'google',
+          ajustes: {
+            descuentoDefault: 15,
+            moneda: '$',
+            colorPrincipal: '#EC4899'
+          }
+        });
+      }
+      
+      return result.user;
+    } catch (error) {
+      console.error('Error al iniciar sesión con Google:', error);
+      setError('Error al iniciar sesión con Google: ' + error.message);
       throw error;
     }
   };
@@ -103,9 +142,43 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Añadir esta función al AuthProvider
+const updateUserName = async (displayName) => {
+    try {
+      setError('');
+      
+      // Validar que hay un usuario y un displayName válido
+      if (!currentUser) throw new Error('No hay usuario logueado');
+      if (!displayName.trim()) throw new Error('El nombre no puede estar vacío');
+      
+      // Actualizar el displayName en Firebase Auth
+      await updateProfile(currentUser, { displayName });
+      
+      // Actualizar en Firestore también
+      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      await updateDoc(userDocRef, { 
+        displayName, 
+        fechaActualizacion: new Date() 
+      });
+      
+      // "Refrescar" el objeto currentUser manualmente
+      // El objeto auth.currentUser se actualizará, pero necesitamos disparar una actualización
+      // en nuestro contexto para que los componentes que dependen de él se actualicen
+      setCurrentUser({...currentUser, displayName});
+      
+      return true;
+    } catch (error) {
+      console.error('Error al actualizar nombre:', error);
+      setError('Error al actualizar nombre: ' + error.message);
+      throw error;
+    }
+  };
+
   // Monitorear cambios en el estado de autenticación
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    console.log('Configurando monitor de autenticación');
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('Estado de autenticación cambió:', user);
       setCurrentUser(user);
       setLoading(false);
     });
@@ -120,14 +193,20 @@ export const AuthProvider = ({ children }) => {
     error,
     signup,
     login,
+    loginWithGoogle,
     logout,
     resetPassword,
-    getUserData
+    getUserData,
+    updateUserName
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? (
+        <div className="hidden">Cargando estado de autenticación...</div> 
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };
