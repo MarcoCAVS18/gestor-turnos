@@ -1,5 +1,4 @@
 // src/components/Calendario.jsx
-
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
@@ -11,6 +10,7 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
     const [anioActual, setAnioActual] = useState(fechaActual.getFullYear());
     const [diasResaltados, setDiasResaltados] = useState([]);
     const [turnosVisibles, setTurnosVisibles] = useState([]);
+    const [diaSeleccionadoActual, setDiaSeleccionadoActual] = useState(null);
 
     // Usar useEffect para actualizar la fecha actual periódicamente
     useEffect(() => ***REMOVED***
@@ -132,6 +132,15 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
         setFechaActual(hoy);
         setMesActual(hoy.getMonth());
         setAnioActual(hoy.getFullYear());
+        
+        // También destacamos visualmente el día actual
+        const fechaStr = hoy.toISOString().split('T')[0];
+        setDiaSeleccionadoActual(fechaStr);
+        
+        // Y si hay un handler de selección, lo invocamos
+        if (onDiaSeleccionado) ***REMOVED***
+            onDiaSeleccionado(hoy);
+        ***REMOVED***
     ***REMOVED***;
 
     // Obtener nombre del mes
@@ -141,6 +150,9 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
 
     // Ir a día seleccionado
     const irADia = (fecha) => ***REMOVED***
+        const fechaStr = fecha.toISOString().split('T')[0];
+        setDiaSeleccionadoActual(fechaStr);
+        
         if (onDiaSeleccionado) ***REMOVED***
             onDiaSeleccionado(fecha);
         ***REMOVED***
@@ -165,13 +177,16 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
 
     const resumenMes = obtenerResumenMes();
     const dias = obtenerDiasDelMes();
+    
+    // Fecha actual en formato ISO para comparaciones
+    const fechaActualISO = fechaActual.toISOString().split('T')[0];
 
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="p-4 bg-indigo-700 text-white flex justify-between items-center">
+            <div className="p-4 bg-pink-600 text-white flex justify-between items-center">
                 <button
                     onClick=***REMOVED***() => cambiarMes(-1)***REMOVED***
-                    className="text-white hover:bg-indigo-600 p-2 rounded-full"
+                    className="text-white hover:bg-pink-700 p-2 rounded-full"
                 >
                     &lt;
                 </button>
@@ -181,21 +196,21 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
                     </h3>
                     <button
                         onClick=***REMOVED***irAHoy***REMOVED***
-                        className="text-xs bg-indigo-800 px-2 py-1 rounded-full mt-1 hover:bg-indigo-900"
+                        className="text-xs bg-pink-800 px-3 py-1 rounded-full mt-1 hover:bg-pink-900 transition-colors"
                     >
                         Hoy
                     </button>
                 </div>
                 <button
                     onClick=***REMOVED***() => cambiarMes(1)***REMOVED***
-                    className="text-white hover:bg-indigo-600 p-2 rounded-full"
+                    className="text-white hover:bg-pink-700 p-2 rounded-full"
                 >
                     &gt;
                 </button>
             </div>
 
             ***REMOVED***resumenMes.totalTurnos > 0 && (
-                <div className="bg-indigo-50 p-2 text-xs text-center text-indigo-700">
+                <div className="bg-pink-50 p-2 text-xs text-center text-pink-700 font-medium">
                     ***REMOVED***resumenMes.totalTurnos***REMOVED*** ***REMOVED***resumenMes.totalTurnos === 1 ? 'turno' : 'turnos'***REMOVED*** este mes
                 </div>
             )***REMOVED***
@@ -209,20 +224,46 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
             </div>
 
             <div className="grid grid-cols-7">
-                ***REMOVED***dias.map((dia, index) => (
-                    <button
-                        key=***REMOVED***index***REMOVED***
-                        onClick=***REMOVED***() => irADia(dia.fecha)***REMOVED***
-                        className=***REMOVED***`p-2 text-center relative hover:bg-gray-50 h-14 flex flex-col justify-center items-center $***REMOVED***!dia.mesActual ? 'text-gray-400' :
-                                dia.esHoy ? 'bg-indigo-50 text-indigo-700 font-bold' : 'text-gray-800'
-                            ***REMOVED***`***REMOVED***
-                    >
-                        <span>***REMOVED***dia.dia***REMOVED***</span>
-                        ***REMOVED***dia.tieneTurnos && (
-                            <div className="absolute bottom-1 w-4 h-1 rounded bg-indigo-500"></div>
-                        )***REMOVED***
-                    </button>
-                ))***REMOVED***
+                ***REMOVED***dias.map((dia, index) => ***REMOVED***
+                    const fechaDiaISO = dia.fecha.toISOString().split('T')[0];
+                    const esHoy = fechaDiaISO === fechaActualISO;
+                    const esSeleccionado = fechaDiaISO === diaSeleccionadoActual;
+                    
+                    return (
+                        <button
+                            key=***REMOVED***index***REMOVED***
+                            onClick=***REMOVED***() => irADia(dia.fecha)***REMOVED***
+                            className=***REMOVED***`
+                                p-2 text-center relative 
+                                hover:bg-gray-50 
+                                flex flex-col justify-center items-center
+                                $***REMOVED***!dia.mesActual ? 'text-gray-400' : 'text-gray-800'***REMOVED***
+                                $***REMOVED***esSeleccionado ? 'bg-pink-100' : ''***REMOVED***
+                            `***REMOVED***
+                        >
+                            ***REMOVED***/* Círculo para día actual */***REMOVED***
+                            <div className=***REMOVED***`
+                                $***REMOVED***esHoy ? 'absolute inset-0 m-auto rounded-full border-2 border-pink-500 w-10 h-10 animate-pulse' : ''***REMOVED***
+                            `***REMOVED***></div>
+                            
+                            ***REMOVED***/* Contenedor para número del día */***REMOVED***
+                            <div className=***REMOVED***`
+                                rounded-full w-8 h-8 flex items-center justify-center
+                                $***REMOVED***esHoy ? 'bg-pink-500 text-white font-bold shadow-lg' : ''***REMOVED***
+                                $***REMOVED***esSeleccionado && !esHoy ? 'bg-pink-200' : ''***REMOVED***
+                                transition-all duration-200
+                                transform $***REMOVED***esHoy ? 'scale-110' : ''***REMOVED***
+                            `***REMOVED***>
+                                <span className=***REMOVED***esHoy ? 'text-white' : ''***REMOVED***>***REMOVED***dia.dia***REMOVED***</span>
+                            </div>
+                            
+                            ***REMOVED***/* Indicador de turnos */***REMOVED***
+                            ***REMOVED***dia.tieneTurnos && (
+                                <div className="absolute bottom-1 w-4 h-1 rounded bg-pink-500"></div>
+                            )***REMOVED***
+                        </button>
+                    );
+                ***REMOVED***)***REMOVED***
             </div>
         </div>
     );

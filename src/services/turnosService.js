@@ -1,27 +1,29 @@
-// src/services/turnosService.js
+// src/services/turnoService.js
 import ***REMOVED*** 
     collection, 
-    addDoc, 
     doc, 
-    getDoc, 
-    getDocs, 
+    addDoc, 
     updateDoc, 
     deleteDoc, 
+    getDocs, 
     query, 
+    where, 
     orderBy, 
-    where 
+    serverTimestamp 
   ***REMOVED*** from 'firebase/firestore';
   import ***REMOVED*** db ***REMOVED*** from './firebase';
   
-  // Referencia a la colección de turnos
-  const turnosRef = collection(db, 'turnos');
-  
-  // Obtener todos los turnos
-  export const obtenerTurnos = async () => ***REMOVED***
+  // Obtener todos los turnos de un usuario
+  export const obtenerTurnos = async (userId) => ***REMOVED***
     try ***REMOVED***
-      const q = query(turnosRef, orderBy('fecha', 'desc'));
-      const querySnapshot = await getDocs(q);
+      const turnosRef = collection(db, 'turnos');
+      const q = query(
+        turnosRef,
+        where('userId', '==', userId),
+        orderBy('fecha', 'desc')
+      );
       
+      const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map(doc => (***REMOVED***
         id: doc.id,
         ...doc.data()
@@ -33,17 +35,18 @@ import ***REMOVED***
   ***REMOVED***;
   
   // Obtener turnos por rango de fechas
-  export const obtenerTurnosPorRango = async (fechaInicio, fechaFin) => ***REMOVED***
+  export const obtenerTurnosPorRango = async (userId, fechaInicio, fechaFin) => ***REMOVED***
     try ***REMOVED***
+      const turnosRef = collection(db, 'turnos');
       const q = query(
-        turnosRef, 
+        turnosRef,
+        where('userId', '==', userId),
         where('fecha', '>=', fechaInicio),
         where('fecha', '<=', fechaFin),
         orderBy('fecha', 'desc')
       );
       
       const querySnapshot = await getDocs(q);
-      
       return querySnapshot.docs.map(doc => (***REMOVED***
         id: doc.id,
         ...doc.data()
@@ -55,16 +58,17 @@ import ***REMOVED***
   ***REMOVED***;
   
   // Obtener turnos por trabajo
-  export const obtenerTurnosPorTrabajo = async (trabajoId) => ***REMOVED***
+  export const obtenerTurnosPorTrabajo = async (userId, trabajoId) => ***REMOVED***
     try ***REMOVED***
+      const turnosRef = collection(db, 'turnos');
       const q = query(
-        turnosRef, 
+        turnosRef,
+        where('userId', '==', userId),
         where('trabajoId', '==', trabajoId),
         orderBy('fecha', 'desc')
       );
       
       const querySnapshot = await getDocs(q);
-      
       return querySnapshot.docs.map(doc => (***REMOVED***
         id: doc.id,
         ...doc.data()
@@ -75,36 +79,16 @@ import ***REMOVED***
     ***REMOVED***
   ***REMOVED***;
   
-  // Obtener un turno por su ID
-  export const obtenerTurnoPorId = async (id) => ***REMOVED***
-    try ***REMOVED***
-      const docRef = doc(db, 'turnos', id);
-      const docSnap = await getDoc(docRef);
-      
-      if (docSnap.exists()) ***REMOVED***
-        return ***REMOVED***
-          id: docSnap.id,
-          ...docSnap.data()
-        ***REMOVED***;
-      ***REMOVED*** else ***REMOVED***
-        throw new Error('El turno no existe');
-      ***REMOVED***
-    ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al obtener turno:', error);
-      throw error;
-    ***REMOVED***
-  ***REMOVED***;
-  
   // Guardar un nuevo turno
   export const guardarTurno = async (turno) => ***REMOVED***
     try ***REMOVED***
       // Agregar timestamp
       const turnoConTimestamp = ***REMOVED***
         ...turno,
-        fechaCreacion: new Date()
+        fechaCreacion: serverTimestamp()
       ***REMOVED***;
       
-      const docRef = await addDoc(turnosRef, turnoConTimestamp);
+      const docRef = await addDoc(collection(db, 'turnos'), turnoConTimestamp);
       
       return ***REMOVED***
         id: docRef.id,
@@ -120,7 +104,10 @@ import ***REMOVED***
   export const actualizarTurno = async (id, datos) => ***REMOVED***
     try ***REMOVED***
       const docRef = doc(db, 'turnos', id);
-      await updateDoc(docRef, datos);
+      await updateDoc(docRef, ***REMOVED***
+        ...datos,
+        fechaActualizacion: serverTimestamp()
+      ***REMOVED***);
       
       return ***REMOVED***
         id,
