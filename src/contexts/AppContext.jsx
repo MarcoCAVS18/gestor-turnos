@@ -1,4 +1,5 @@
-// src/contexts/AppContext.jsx - Sin modo desarrollo
+// src/contexts/AppContext.jsx 
+
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { 
   doc, 

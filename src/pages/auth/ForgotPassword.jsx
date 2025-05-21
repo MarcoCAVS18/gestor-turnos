@@ -1,4 +1,5 @@
 // src/pages/auth/ForgotPassword.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
@@ -16,7 +17,6 @@ const ForgotPassword = () => {
 
   // Validar email cuando cambia
   useEffect(() => {
-    // Expresión regular para validar formato de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setEmailValid(emailRegex.test(email));
   }, [email]);

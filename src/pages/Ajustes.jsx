@@ -1,4 +1,5 @@
-// src/pages/Ajustes.jsx - Versión completa
+// src/pages/Ajustes.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
@@ -45,7 +46,7 @@ const Ajustes = () => {
   ];
 
   // Emojis comunes para sugerir
-  const emojisComunes = ['😊', '😎', '🚀', '💼', '⭐', '🔥', '💻', '📊', '💰'];
+  const emojisComunes = ['😊', '😎', '🚀', '💼', '⭐', '🔥', '💻', '📊'];
   
   // Cargar datos del usuario
   useEffect(() => {

@@ -1,4 +1,5 @@
 // src/pages/auth/ResetPassword.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { confirmPasswordReset } from 'firebase/auth';

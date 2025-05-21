@@ -1,4 +1,5 @@
 // src/pages/Estadisticas.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { BarChart2, TrendingUp, DollarSign, Clock, Calendar } from 'lucide-react';

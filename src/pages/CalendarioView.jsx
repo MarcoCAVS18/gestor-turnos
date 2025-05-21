@@ -1,4 +1,5 @@
-// src/pages/CalendarioView.jsx - Mejorado
+// src/pages/CalendarioView.jsx
+
 import React, { useState } from 'react';
 import Calendario from '../components/Calendario';
 import ResumenDia from '../components/ResumenDia';

@@ -1,4 +1,5 @@
-// src/components/Header.jsx - Versión completa
+// src/components/Header.jsx 
+
 import React, { useState, useEffect } from 'react';
 import { PlusCircle, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
