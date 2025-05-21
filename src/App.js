@@ -1,4 +1,5 @@
 // src/App.js
+
 import React from 'react';
 import ***REMOVED*** BrowserRouter as Router, Routes, Route, Navigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from './contexts/AuthContext';

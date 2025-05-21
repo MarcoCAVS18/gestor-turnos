@@ -1,4 +1,5 @@
-// src/components/Header.jsx - Versión completa
+// src/components/Header.jsx 
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** PlusCircle, Settings ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';

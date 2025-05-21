@@ -1,4 +1,5 @@
-// src/contexts/AppContext.jsx - Sin modo desarrollo
+// src/contexts/AppContext.jsx 
+
 import React, ***REMOVED*** createContext, useState, useEffect, useContext ***REMOVED*** from 'react';
 import ***REMOVED*** 
   doc, 

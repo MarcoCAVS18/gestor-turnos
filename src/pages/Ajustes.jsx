@@ -1,4 +1,5 @@
-// src/pages/Ajustes.jsx - Versión completa
+// src/pages/Ajustes.jsx
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
@@ -45,7 +46,7 @@ const Ajustes = () => ***REMOVED***
   ];
 
   // Emojis comunes para sugerir
-  const emojisComunes = ['😊', '😎', '🚀', '💼', '⭐', '🔥', '💻', '📊', '💰'];
+  const emojisComunes = ['😊', '😎', '🚀', '💼', '⭐', '🔥', '💻', '📊'];
   
   // Cargar datos del usuario
   useEffect(() => ***REMOVED***

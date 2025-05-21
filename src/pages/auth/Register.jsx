@@ -1,4 +1,5 @@
-// src/pages/auth/Register.jsx - Con validaciones mejoradas
+// src/pages/auth/Register.jsx
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Link, useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../contexts/AuthContext';
