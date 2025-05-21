@@ -3,14 +3,30 @@
 import React from 'react';
 import ***REMOVED*** Home, Briefcase, Calendar, BarChart2, CalendarDays ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
+import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext'; 
 
 const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => ***REMOVED***
+    // Obtener el color principal del contexto
+    const ***REMOVED*** colorPrincipal ***REMOVED*** = useApp();
+    
+    // Función para generar estilos dinámicos basados en el estado activo
+    const getActiveTextStyle = (vista) => ***REMOVED***
+        return vistaActual === vista ? ***REMOVED*** color: colorPrincipal ***REMOVED*** : ***REMOVED*** color: '#6B7280' ***REMOVED***; // gray-500
+    ***REMOVED***;
+    
+    // Estilos dinámicos para el botón central
+    const calendarButtonStyle = ***REMOVED***
+        backgroundColor: colorPrincipal,
+        borderColor: vistaActual === 'calendario' ? colorPrincipal + '80' : 'white' // Añadir transparencia al color para el borde
+    ***REMOVED***;
+    
     return (
         <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-lg px-4 py-6 z-10">
             <div className="grid grid-cols-5 items-center max-w-md mx-auto">
                 <button
                     onClick=***REMOVED***() => setVistaActual('dashboard')***REMOVED***
-                    className=***REMOVED***`flex flex-col items-center justify-center $***REMOVED***vistaActual === 'dashboard' ? 'text-pink-500' : 'text-gray-500'***REMOVED***`***REMOVED***
+                    className="flex flex-col items-center justify-center"
+                    style=***REMOVED***getActiveTextStyle('dashboard')***REMOVED***
                 >
                     <Home size=***REMOVED***20***REMOVED*** />
                     <span className="text-xs mt-1">Inicio</span>
@@ -18,7 +34,8 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => 
 
                 <button
                     onClick=***REMOVED***() => setVistaActual('trabajos')***REMOVED***
-                    className=***REMOVED***`flex flex-col items-center justify-center $***REMOVED***vistaActual === 'trabajos' ? 'text-pink-500' : 'text-gray-500'***REMOVED***`***REMOVED***
+                    className="flex flex-col items-center justify-center"
+                    style=***REMOVED***getActiveTextStyle('trabajos')***REMOVED***
                 >
                     <Briefcase size=***REMOVED***20***REMOVED*** />
                     <span className="text-xs mt-1">Trabajos</span>
@@ -27,12 +44,8 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => 
                 <div className="flex justify-center items-start -mt-6">
                     <motion.button
                         onClick=***REMOVED***() => setVistaActual('calendario')***REMOVED***
-                        className=***REMOVED***`
-              bg-pink-500 text-white w-16 h-16 rounded-full 
-              flex items-center justify-center shadow-lg 
-              border-4 border-white
-              $***REMOVED***vistaActual === 'calendario' ? 'border-pink-300' : 'border-white'***REMOVED***
-            `***REMOVED***
+                        className="text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-4"
+                        style=***REMOVED***calendarButtonStyle***REMOVED***
                         whileTap=***REMOVED******REMOVED*** scale: 0.95 ***REMOVED******REMOVED***
                     >
                         <CalendarDays size=***REMOVED***28***REMOVED*** />
@@ -41,7 +54,8 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => 
 
                 <button
                     onClick=***REMOVED***() => setVistaActual('turnos')***REMOVED***
-                    className=***REMOVED***`flex flex-col items-center justify-center $***REMOVED***vistaActual === 'turnos' ? 'text-pink-500' : 'text-gray-500'***REMOVED***`***REMOVED***
+                    className="flex flex-col items-center justify-center"
+                    style=***REMOVED***getActiveTextStyle('turnos')***REMOVED***
                 >
                     <Calendar size=***REMOVED***20***REMOVED*** />
                     <span className="text-xs mt-1">Turnos</span>
@@ -49,7 +63,8 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => 
 
                 <button
                     onClick=***REMOVED***() => setVistaActual('estadisticas')***REMOVED***
-                    className=***REMOVED***`flex flex-col items-center justify-center $***REMOVED***vistaActual === 'estadisticas' ? 'text-pink-500' : 'text-gray-500'***REMOVED***`***REMOVED***
+                    className="flex flex-col items-center justify-center"
+                    style=***REMOVED***getActiveTextStyle('estadisticas')***REMOVED***
                 >
                     <BarChart2 size=***REMOVED***20***REMOVED*** />
                     <span className="text-xs mt-1">Estadísticas</span>
