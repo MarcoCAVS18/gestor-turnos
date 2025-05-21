@@ -76,7 +76,19 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
   const loginWithGoogle = async () => ***REMOVED***
     try ***REMOVED***
       setError('');
+      // Crear una nueva instancia del proveedor cada vez
       const provider = new GoogleAuthProvider();
+      
+      // Asegurarnos de que solicitamos permisos de perfil básico
+      provider.addScope('profile');
+      provider.addScope('email');
+      
+      // Configuración adicional
+      provider.setCustomParameters(***REMOVED***
+        'prompt': 'select_account'
+      ***REMOVED***);
+      
+      // Usar signInWithPopup en lugar de signInWithRedirect para mejor manejo de errores
       const result = await signInWithPopup(auth, provider);
       
       // Verificar si es la primera vez que el usuario inicia sesión con Google
@@ -97,10 +109,18 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
         ***REMOVED***);
       ***REMOVED***
       
+      console.log('Google sign-in successful:', result.user);
       return result.user;
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al iniciar sesión con Google:', error);
-      setError('Error al iniciar sesión con Google: ' + error.message);
+      console.error('Error completo al iniciar sesión con Google:', error);
+      // Mensajes de error más descriptivos según el código
+      if (error.code === 'auth/popup-closed-by-user') ***REMOVED***
+        setError('El proceso de inicio de sesión fue cancelado. Por favor, inténtalo de nuevo.');
+      ***REMOVED*** else if (error.code === 'auth/popup-blocked') ***REMOVED***
+        setError('El navegador ha bloqueado el popup. Por favor, permite ventanas emergentes e inténtalo de nuevo.');
+      ***REMOVED*** else ***REMOVED***
+        setError('Error al iniciar sesión con Google: ' + error.message);
+      ***REMOVED***
       throw error;
     ***REMOVED***
   ***REMOVED***;
