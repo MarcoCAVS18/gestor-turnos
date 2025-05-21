@@ -1,13 +1,33 @@
 // src/pages/Turnos.jsx
-import React, ***REMOVED*** useState ***REMOVED*** from 'react';
+
+import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ResumenDia from '../components/ResumenDia';
 import ModalTurno from '../components/ModalTurno';
+import Loader from '../components/Loader';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 const Turnos = () => ***REMOVED***
   const ***REMOVED*** turnosPorFecha, cargando ***REMOVED*** = useApp();
   const [modalAbierto, setModalAbierto] = useState(false);
   const [turnoSeleccionado, setTurnoSeleccionado] = useState(null);
+  const [showLoading, setShowLoading] = useState(true);
+  
+  // Efecto para controlar el tiempo de carga
+  useEffect(() => ***REMOVED***
+    let timer;
+    
+    if (cargando) ***REMOVED***
+      setShowLoading(true);
+    ***REMOVED*** else ***REMOVED***
+      timer = setTimeout(() => ***REMOVED***
+        setShowLoading(false);
+      ***REMOVED***, 2000);
+    ***REMOVED***
+    
+    return () => ***REMOVED***
+      if (timer) clearTimeout(timer);
+    ***REMOVED***;
+  ***REMOVED***, [cargando]);
   
   const abrirModalNuevoTurno = () => ***REMOVED***
     setTurnoSeleccionado(null);
@@ -19,10 +39,10 @@ const Turnos = () => ***REMOVED***
     setTurnoSeleccionado(null);
   ***REMOVED***;
   
-  if (cargando) ***REMOVED***
+  if (showLoading) ***REMOVED***
     return (
-      <div className="px-4 py-6 text-center">
-        <p>Cargando datos...</p>
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
       </div>
     );
   ***REMOVED***
