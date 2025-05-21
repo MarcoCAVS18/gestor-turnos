@@ -1,13 +1,34 @@
 // src/pages/Trabajos.jsx
-import React, ***REMOVED*** useState ***REMOVED*** from 'react';
+
+import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import TarjetaTrabajo from '../components/TarjetaTrabajo';
 import ModalTrabajo from '../components/ModalTrabajo';
+import Loader from '../components/Loader';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 const Trabajos = () => ***REMOVED***
   const ***REMOVED*** trabajos, borrarTrabajo, cargando ***REMOVED*** = useApp();
   const [modalAbierto, setModalAbierto] = useState(false);
   const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(null);
+  const [showLoading, setShowLoading] = useState(true);
+  
+  // Efecto para controlar el tiempo de carga
+  useEffect(() => ***REMOVED***
+    let timer;
+    
+    if (cargando) ***REMOVED***
+      setShowLoading(true);
+    ***REMOVED*** else ***REMOVED***
+      // Si los datos ya se cargaron, esperar 3 segundos antes de mostrar el contenido
+      timer = setTimeout(() => ***REMOVED***
+        setShowLoading(false);
+      ***REMOVED***, 2000);
+    ***REMOVED***
+    
+    return () => ***REMOVED***
+      if (timer) clearTimeout(timer);
+    ***REMOVED***;
+  ***REMOVED***, [cargando]);
   
   const abrirModalNuevoTrabajo = () => ***REMOVED***
     setTrabajoSeleccionado(null);
@@ -24,10 +45,10 @@ const Trabajos = () => ***REMOVED***
     setTrabajoSeleccionado(null);
   ***REMOVED***;
   
-  if (cargando) ***REMOVED***
+  if (showLoading) ***REMOVED***
     return (
-      <div className="px-4 py-6 text-center">
-        <p>Cargando datos...</p>
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
       </div>
     );
   ***REMOVED***
