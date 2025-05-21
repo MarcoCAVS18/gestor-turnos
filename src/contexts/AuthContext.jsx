@@ -1,4 +1,5 @@
-// Actualización para src/contexts/AuthContext.jsx
+// src/contexts/AuthContext.jsx
+
 import React, ***REMOVED*** createContext, useContext, useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** 
   createUserWithEmailAndPassword, 
@@ -51,7 +52,6 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
       
       return userCredential.user;
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al registrar usuario:', error);
       setError('Error al registrar usuario: ' + error.message);
       throw error;
     ***REMOVED***
@@ -61,12 +61,9 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
   const login = async (email, password) => ***REMOVED***
     try ***REMOVED***
       setError('');
-      console.log('Intentando iniciar sesión con:', email);
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('Login exitoso:', userCredential.user);
       return userCredential.user;
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error de login:', error);
       setError('Error al iniciar sesión: ' + error.message);
       throw error;
     ***REMOVED***
@@ -109,11 +106,9 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
         ***REMOVED***);
       ***REMOVED***
       
-      console.log('Google sign-in successful:', result.user);
       return result.user;
     ***REMOVED*** catch (error) ***REMOVED***
       console.error('Error completo al iniciar sesión con Google:', error);
-      // Mensajes de error más descriptivos según el código
       if (error.code === 'auth/popup-closed-by-user') ***REMOVED***
         setError('El proceso de inicio de sesión fue cancelado. Por favor, inténtalo de nuevo.');
       ***REMOVED*** else if (error.code === 'auth/popup-blocked') ***REMOVED***
@@ -181,9 +176,6 @@ const updateUserName = async (displayName) => ***REMOVED***
         fechaActualizacion: new Date() 
       ***REMOVED***);
       
-      // "Refrescar" el objeto currentUser manualmente
-      // El objeto auth.currentUser se actualizará, pero necesitamos disparar una actualización
-      // en nuestro contexto para que los componentes que dependen de él se actualicen
       setCurrentUser(***REMOVED***...currentUser, displayName***REMOVED***);
       
       return true;
@@ -196,9 +188,7 @@ const updateUserName = async (displayName) => ***REMOVED***
 
   // Monitorear cambios en el estado de autenticación
   useEffect(() => ***REMOVED***
-    console.log('Configurando monitor de autenticación');
     const unsubscribe = onAuthStateChanged(auth, (user) => ***REMOVED***
-      console.log('Estado de autenticación cambió:', user);
       setCurrentUser(user);
       setLoading(false);
     ***REMOVED***);

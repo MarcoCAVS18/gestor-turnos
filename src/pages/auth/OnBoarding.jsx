@@ -1,4 +1,5 @@
 // src/pages/onboarding/Onboarding.jsx
+
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../contexts/AuthContext';

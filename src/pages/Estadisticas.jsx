@@ -1,4 +1,5 @@
 // src/pages/Estadisticas.jsx
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** BarChart2, TrendingUp, DollarSign, Clock, Calendar ***REMOVED*** from 'lucide-react';

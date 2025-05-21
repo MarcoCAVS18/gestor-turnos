@@ -1,5 +1,6 @@
 
 // src/components/PrivateRoute.jsx
+
 import React from 'react';
 import ***REMOVED*** Navigate, Outlet ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';

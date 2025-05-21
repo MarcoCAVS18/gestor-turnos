@@ -1,4 +1,5 @@
-// src/components/AuthModal.jsx - Con enlace de recuperación de contraseña
+// src/components/AuthModal.jsx 
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
@@ -22,10 +23,9 @@ const AuthModal = () => ***REMOVED***
       setSuccessMessage('Hemos enviado un link de recuperación a tu email.');
       setEmail(location.state.email || '');
       
-      // Limpiar el mensaje después de 5 segundos
       const timer = setTimeout(() => ***REMOVED***
         setSuccessMessage('');
-      ***REMOVED***, 5000);
+      ***REMOVED***, 4000);
       
       return () => clearTimeout(timer);
     ***REMOVED***
