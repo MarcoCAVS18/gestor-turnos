@@ -1,16 +1,36 @@
 // src/pages/Dashboard.jsx
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import TarjetaResumen from '../components/TarjetaResumen';
 import ResumenDia from '../components/ResumenDia';
+import Loader from '../components/Loader';
 import { useApp } from '../contexts/AppContext';
 
 const Dashboard = () => {
   const { trabajos, turnos, turnosPorFecha, cargando } = useApp();
+  const [showLoading, setShowLoading] = useState(true);
   
-  if (cargando) {
+  // Efecto para controlar el tiempo de carga
+  useEffect(() => {
+    let timer;
+    
+    if (cargando) {
+      setShowLoading(true);
+    } else {
+      timer = setTimeout(() => {
+        setShowLoading(false);
+      }, 2000);
+    }
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [cargando]);
+  
+  if (showLoading) {
     return (
-      <div className="px-4 py-6 text-center">
-        <p>Cargando datos...</p>
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
       </div>
     );
   }

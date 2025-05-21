@@ -1,13 +1,33 @@
 // src/pages/Turnos.jsx
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import ResumenDia from '../components/ResumenDia';
 import ModalTurno from '../components/ModalTurno';
+import Loader from '../components/Loader';
 import { useApp } from '../contexts/AppContext';
 
 const Turnos = () => {
   const { turnosPorFecha, cargando } = useApp();
   const [modalAbierto, setModalAbierto] = useState(false);
   const [turnoSeleccionado, setTurnoSeleccionado] = useState(null);
+  const [showLoading, setShowLoading] = useState(true);
+  
+  // Efecto para controlar el tiempo de carga
+  useEffect(() => {
+    let timer;
+    
+    if (cargando) {
+      setShowLoading(true);
+    } else {
+      timer = setTimeout(() => {
+        setShowLoading(false);
+      }, 2000);
+    }
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [cargando]);
   
   const abrirModalNuevoTurno = () => {
     setTurnoSeleccionado(null);
@@ -19,10 +39,10 @@ const Turnos = () => {
     setTurnoSeleccionado(null);
   };
   
-  if (cargando) {
+  if (showLoading) {
     return (
-      <div className="px-4 py-6 text-center">
-        <p>Cargando datos...</p>
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
       </div>
     );
   }
