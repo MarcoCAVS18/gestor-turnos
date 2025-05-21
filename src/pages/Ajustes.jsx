@@ -45,7 +45,7 @@ const Ajustes = () => {
   ];
 
   // Emojis comunes para sugerir
-  const emojisComunes = ['😊', '😎', '🚀', '💼', '⭐', '🔥', '💻', '📊', '💰', '✨'];
+  const emojisComunes = ['😊', '😎', '🚀', '💼', '⭐', '🔥', '💻', '📊', '💰'];
   
   // Cargar datos del usuario
   useEffect(() => {
