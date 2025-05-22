@@ -1,4 +1,5 @@
 // src/hooks/useTrabajosFirebase.js
+
 import ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** collection, query, onSnapshot, where, orderBy ***REMOVED*** from 'firebase/firestore';
 import ***REMOVED*** db ***REMOVED*** from '../services/firebase';

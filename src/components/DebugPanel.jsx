@@ -10,7 +10,7 @@ const DebugPanel = () => ***REMOVED***
   
   return (
     <div className="fixed bottom-4 right-4 bg-black text-white p-4 rounded-lg shadow-lg max-w-sm z-50">
-      <h3 className="text-lg font-bold mb-2">🔍 Debug Panel</h3>
+      <h3 className="text-lg font-bold mb-2">Debug Panel</h3>
       
       <div className="space-y-2 text-sm">
         <div>
@@ -20,7 +20,7 @@ const DebugPanel = () => ***REMOVED***
           <strong>UID:</strong> ***REMOVED***currentUser?.uid || 'N/A'***REMOVED***
         </div>
         <div>
-          <strong>Cargando:</strong> ***REMOVED***cargando ? '⏳ Sí' : '✅ No'***REMOVED***
+          <strong>Cargando:</strong> ***REMOVED***cargando ? ' Sí' : ' No'***REMOVED***
         </div>
         <div>
           <strong>Trabajos en estado:</strong> ***REMOVED***trabajos.length***REMOVED***
@@ -47,7 +47,7 @@ const DebugPanel = () => ***REMOVED***
             onClick=***REMOVED***debugFirestore***REMOVED***
             className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-xs"
           >
-            🔍 Debug Firestore
+            Debug Firestore
           </button>
         </div>
       </div>

@@ -2,9 +2,9 @@
 
 /**
  * Calcula las horas trabajadas entre dos horarios
- * @param ***REMOVED***string***REMOVED*** horaInicio - Hora de inicio en formato "HH:MM"
- * @param ***REMOVED***string***REMOVED*** horaFin - Hora de fin en formato "HH:MM"
- * @returns ***REMOVED***number***REMOVED*** Horas trabajadas (decimal)
+ * @param ***REMOVED***string***REMOVED*** horaInicio
+ * @param ***REMOVED***string***REMOVED*** horaFin
+ * @returns ***REMOVED***number***REMOVED***
  */
 export const calcularHoras = (horaInicio, horaFin) => ***REMOVED***
     const [horaIni, minIni] = horaInicio.split(':').map(n => parseInt(n));
@@ -18,9 +18,9 @@ export const calcularHoras = (horaInicio, horaFin) => ***REMOVED***
   
   /**
    * Calcula el pago de un turno según sus características
-   * @param ***REMOVED***Object***REMOVED*** turno - Turno a calcular
-   * @param ***REMOVED***Object***REMOVED*** trabajo - Trabajo asociado al turno
-   * @returns ***REMOVED***Object***REMOVED*** Resultado del cálculo con total, totalConDescuento y horas
+   * @param ***REMOVED***Object***REMOVED*** turno 
+   * @param ***REMOVED***Object***REMOVED*** trabajo 
+   * @returns ***REMOVED***Object***REMOVED***
    */
   export const calcularPago = (turno, trabajo) => ***REMOVED***
     const horas = calcularHoras(turno.horaInicio, turno.horaFin);
@@ -59,9 +59,9 @@ export const calcularHoras = (horaInicio, horaFin) => ***REMOVED***
   
   /**
    * Aplica el descuento para trabajos casuales (15%)
-   * @param ***REMOVED***number***REMOVED*** monto - Monto original sin descuento
-   * @param ***REMOVED***number***REMOVED*** porcentajeDescuento - Porcentaje de descuento (por defecto 15%)
-   * @returns ***REMOVED***number***REMOVED*** Monto con descuento aplicado
+   * @param ***REMOVED***number***REMOVED*** monto
+   * @param ***REMOVED***number***REMOVED*** porcentajeDescuento
+   * @returns ***REMOVED***number***REMOVED***
    */
   export const aplicarDescuento = (monto, porcentajeDescuento = 15) => ***REMOVED***
     return monto * (1 - porcentajeDescuento / 100);
@@ -69,9 +69,9 @@ export const calcularHoras = (horaInicio, horaFin) => ***REMOVED***
   
   /**
    * Calcula el total ganado en un día específico
-   * @param ***REMOVED***Array***REMOVED*** turnos - Lista de turnos del día
-   * @param ***REMOVED***Array***REMOVED*** trabajos - Lista de trabajos
-   * @returns ***REMOVED***number***REMOVED*** Total ganado en el día con descuento aplicado
+   * @param ***REMOVED***Array***REMOVED*** turnos
+   * @param ***REMOVED***Array***REMOVED*** trabajos 
+   * @returns ***REMOVED***number***REMOVED***
    */
   export const calcularTotalDia = (turnos, trabajos) => ***REMOVED***
     let total = 0;
@@ -89,12 +89,12 @@ export const calcularHoras = (horaInicio, horaFin) => ***REMOVED***
   
   /**
    * Determina automáticamente el tipo de turno según fecha y hora
-   * @param ***REMOVED***string***REMOVED*** fecha - Fecha en formato ISO "YYYY-MM-DD"
-   * @param ***REMOVED***string***REMOVED*** horaInicio - Hora de inicio en formato "HH:MM"
-   * @returns ***REMOVED***string***REMOVED*** Tipo de turno (diurno, tarde, noche, sabado, domingo)
+   * @param ***REMOVED***string***REMOVED*** fecha
+   * @param ***REMOVED***string***REMOVED*** horaInicio
+   * @returns ***REMOVED***string***REMOVED*** 
    */
   export const determinarTipoTurno = (fecha, horaInicio) => ***REMOVED***
-    const diaSemana = new Date(fecha).getDay(); // 0 = domingo, 6 = sábado
+    const diaSemana = new Date(fecha).getDay(); 
     const hora = parseInt(horaInicio.split(':')[0]);
     
     if (diaSemana === 0) return 'domingo';
@@ -107,9 +107,9 @@ export const calcularHoras = (horaInicio, horaFin) => ***REMOVED***
   
   /**
    * Calcula resumen estadístico de turnos
-   * @param ***REMOVED***Array***REMOVED*** turnos - Lista de todos los turnos
-   * @param ***REMOVED***Array***REMOVED*** trabajos - Lista de todos los trabajos
-   * @returns ***REMOVED***Object***REMOVED*** Objeto con estadísticas
+   * @param ***REMOVED***Array***REMOVED*** turnos 
+   * @param ***REMOVED***Array***REMOVED*** trabajos 
+   * @returns ***REMOVED***Object***REMOVED*** 
    */
   export const calcularEstadisticas = (turnos, trabajos) => ***REMOVED***
     let totalGanado = 0;

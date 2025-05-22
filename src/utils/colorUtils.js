@@ -1,9 +1,9 @@
-// src/utils/colorUtils.js - Utilidades para generar variaciones de color
+// src/utils/colorUtils.js
 
 /**
  * Convierte un color hex a valores RGB
- * @param ***REMOVED***string***REMOVED*** hex - Color en formato hex (#EC4899)
- * @returns ***REMOVED***Object***REMOVED*** - ***REMOVED***r, g, b***REMOVED***
+ * @param ***REMOVED***string***REMOVED*** hex
+ * @returns ***REMOVED***Object***REMOVED***
  */
 export const hexToRgb = (hex) => ***REMOVED***
     const result = /^#?([a-f\d]***REMOVED***2***REMOVED***)([a-f\d]***REMOVED***2***REMOVED***)([a-f\d]***REMOVED***2***REMOVED***)$/i.exec(hex);
@@ -16,10 +16,10 @@ export const hexToRgb = (hex) => ***REMOVED***
   
   /**
    * Convierte valores RGB a hex
-   * @param ***REMOVED***number***REMOVED*** r - Rojo (0-255)
-   * @param ***REMOVED***number***REMOVED*** g - Verde (0-255) 
-   * @param ***REMOVED***number***REMOVED*** b - Azul (0-255)
-   * @returns ***REMOVED***string***REMOVED*** - Color en formato hex
+   * @param ***REMOVED***number***REMOVED*** r 
+   * @param ***REMOVED***number***REMOVED*** g 
+   * @param ***REMOVED***number***REMOVED*** b 
+   * @returns ***REMOVED***string***REMOVED***
    */
   export const rgbToHex = (r, g, b) => ***REMOVED***
     const toHex = (n) => ***REMOVED***
@@ -31,8 +31,8 @@ export const hexToRgb = (hex) => ***REMOVED***
   
   /**
    * Genera variaciones de un color base
-   * @param ***REMOVED***string***REMOVED*** baseColor - Color base en hex (#EC4899)
-   * @returns ***REMOVED***Object***REMOVED*** - Objeto con variaciones del color
+   * @param ***REMOVED***string***REMOVED*** baseColor 
+   * @returns ***REMOVED***Object***REMOVED***
    */
   export const generateColorVariations = (baseColor) => ***REMOVED***
     const rgb = hexToRgb(baseColor);
@@ -41,7 +41,6 @@ export const hexToRgb = (hex) => ***REMOVED***
     const ***REMOVED*** r, g, b ***REMOVED*** = rgb;
   
     return ***REMOVED***
-      // Color base
       base: baseColor,
       
       // Variaciones más claras
@@ -96,10 +95,10 @@ export const hexToRgb = (hex) => ***REMOVED***
   
   /**
    * Determina si usar texto blanco o negro basado en el color de fondo
-   * @param ***REMOVED***number***REMOVED*** r - Rojo
-   * @param ***REMOVED***number***REMOVED*** g - Verde
-   * @param ***REMOVED***number***REMOVED*** b - Azul
-   * @returns ***REMOVED***string***REMOVED*** - '#ffffff' o '#000000'
+   * @param ***REMOVED***number***REMOVED*** r
+   * @param ***REMOVED***number***REMOVED*** g
+   * @param ***REMOVED***number***REMOVED*** b
+   * @returns ***REMOVED***string***REMOVED*** 
    */
   const getContrastText = (r, g, b) => ***REMOVED***
     // Calcular luminosidad usando la fórmula W3C
@@ -109,8 +108,8 @@ export const hexToRgb = (hex) => ***REMOVED***
   
   /**
    * Hook personalizado para usar colores temáticos
-   * @param ***REMOVED***string***REMOVED*** colorPrincipal - Color principal del usuario
-   * @returns ***REMOVED***Object***REMOVED*** - Objeto con todas las variaciones de color
+   * @param ***REMOVED***string***REMOVED*** colorPrincipal 
+   * @returns ***REMOVED***Object***REMOVED***
    */
   export const useThemeColors = (colorPrincipal) => ***REMOVED***
     return generateColorVariations(colorPrincipal);

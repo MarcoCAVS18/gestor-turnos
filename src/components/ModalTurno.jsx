@@ -3,9 +3,10 @@
 import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+import DynamicButton from './DynamicButton';
 
 const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInicial ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** trabajos, agregarTurno, editarTurno, rangosTurnos ***REMOVED*** = useApp();
+  const ***REMOVED*** trabajos, agregarTurno, editarTurno, rangosTurnos, coloresTemáticos ***REMOVED*** = useApp();
   
   // Función para obtener la fecha actual en formato local
   const getFechaActualLocal = () => ***REMOVED***
@@ -53,7 +54,7 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInic
       
       onClose();
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al guardar turno:', error);
+      // Error ya manejado en el contexto
     ***REMOVED***
   ***REMOVED***;
 
@@ -63,13 +64,6 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInic
     const [year, month, day] = fecha.split('-');
     const fechaLocal = new Date(year, month - 1, day);
     const diaSemana = fechaLocal.getDay(); // 0 = domingo, 6 = sábado
-    
-    console.log('🗓️ Determinando tipo de turno:', ***REMOVED***
-      fecha,
-      diaSemana,
-      nombreDia: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][diaSemana],
-      horaInicio
-    ***REMOVED***);
     
     // Primero verificar si es fin de semana
     if (diaSemana === 0) return 'domingo';
@@ -96,7 +90,6 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInic
   useEffect(() => ***REMOVED***
     if (nuevoTurno.fecha && nuevoTurno.horaInicio && !turnoSeleccionado) ***REMOVED***
       const tipoDetectado = determinarTipoTurno(nuevoTurno.fecha, nuevoTurno.horaInicio);
-      console.log('🤖 Tipo detectado automáticamente:', tipoDetectado);
       
       setNuevoTurno(prev => (***REMOVED***
         ...prev, 
@@ -116,7 +109,7 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInic
           </h2>
           <button 
             onClick=***REMOVED***onClose***REMOVED***
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 transition-colors"
           >
             <X size=***REMOVED***20***REMOVED*** />
           </button>
@@ -130,7 +123,11 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInic
             <select 
               value=***REMOVED***nuevoTurno.trabajoId***REMOVED***
               onChange=***REMOVED***(e) => setNuevoTurno(***REMOVED***...nuevoTurno, trabajoId: e.target.value***REMOVED***)***REMOVED***
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              style=***REMOVED******REMOVED*** 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                '--tw-ring-opacity': '0.5'
+              ***REMOVED******REMOVED***
             >
               <option value="">Selecciona un trabajo</option>
               ***REMOVED***trabajos.map(trabajo => (
@@ -149,7 +146,11 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInic
               type="date" 
               value=***REMOVED***nuevoTurno.fecha***REMOVED***
               onChange=***REMOVED***(e) => setNuevoTurno(***REMOVED***...nuevoTurno, fecha: e.target.value***REMOVED***)***REMOVED***
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              style=***REMOVED******REMOVED*** 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                '--tw-ring-opacity': '0.5'
+              ***REMOVED******REMOVED***
             />
           </div>
           
@@ -162,7 +163,11 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInic
                 type="time" 
                 value=***REMOVED***nuevoTurno.horaInicio***REMOVED***
                 onChange=***REMOVED***(e) => setNuevoTurno(***REMOVED***...nuevoTurno, horaInicio: e.target.value***REMOVED***)***REMOVED***
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                style=***REMOVED******REMOVED*** 
+                  '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                  '--tw-ring-opacity': '0.5'
+                ***REMOVED******REMOVED***
               />
             </div>
             
@@ -174,7 +179,11 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInic
                 type="time" 
                 value=***REMOVED***nuevoTurno.horaFin***REMOVED***
                 onChange=***REMOVED***(e) => setNuevoTurno(***REMOVED***...nuevoTurno, horaFin: e.target.value***REMOVED***)***REMOVED***
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                style=***REMOVED******REMOVED*** 
+                  '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                  '--tw-ring-opacity': '0.5'
+                ***REMOVED******REMOVED***
               />
             </div>
           </div>
@@ -188,7 +197,11 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInic
               <select 
                 value=***REMOVED***nuevoTurno.tipo***REMOVED***
                 onChange=***REMOVED***(e) => setNuevoTurno(***REMOVED***...nuevoTurno, tipo: e.target.value***REMOVED***)***REMOVED***
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                style=***REMOVED******REMOVED*** 
+                  '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                  '--tw-ring-opacity': '0.5'
+                ***REMOVED******REMOVED***
               >
                 <option value="diurno">Diurno</option>
                 <option value="tarde">Tarde</option>
@@ -206,26 +219,29 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInic
             <textarea 
               value=***REMOVED***nuevoTurno.notas***REMOVED***
               onChange=***REMOVED***(e) => setNuevoTurno(***REMOVED***...nuevoTurno, notas: e.target.value***REMOVED***)***REMOVED***
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              style=***REMOVED******REMOVED*** 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                '--tw-ring-opacity': '0.5'
+              ***REMOVED******REMOVED***
               rows=***REMOVED***3***REMOVED***
               placeholder="Agregar notas o comentarios sobre este turno..."
             />
           </div>
           
-          <div className="flex justify-end mt-6">
-            <button 
+          <div className="flex justify-end mt-6 gap-2">
+            <DynamicButton 
               onClick=***REMOVED***onClose***REMOVED***
-              className="px-4 py-2 mr-2 text-gray-600 hover:text-gray-800"
+              variant="ghost"
             >
               Cancelar
-            </button>
-            <button 
+            </DynamicButton>
+            <DynamicButton 
               onClick=***REMOVED***guardarTurno***REMOVED***
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-colors"
               disabled=***REMOVED***!nuevoTurno.trabajoId***REMOVED***
             >
               ***REMOVED***turnoSeleccionado ? 'Actualizar' : 'Guardar'***REMOVED***
-            </button>
+            </DynamicButton>
           </div>
         </div>
       </div>
