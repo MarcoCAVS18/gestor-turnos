@@ -146,6 +146,7 @@ const Turnos = () => {
           {Object.entries(turnosPorFecha)
             .sort(([fechaA], [fechaB]) => new Date(fechaB) - new Date(fechaA))
             .map(([fecha, turnosDia]) => {
+              // eslint-disable-next-line 
               const totalDia = calcularTotalDia(turnosDia);
               
               return (
@@ -166,17 +167,6 @@ const Turnos = () => {
                           month: '2-digit' 
                         })})
                       </span>
-                    </div>
-                    <div className="text-right">
-                      <p 
-                        className="font-bold text-lg"
-                        style={{ color: coloresTemáticos?.base || '#EC4899' }}
-                      >
-                        ${totalDia.toFixed(2)}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {turnosDia.length} {turnosDia.length === 1 ? 'turno' : 'turnos'}
-                      </p>
                     </div>
                   </div>
                   
