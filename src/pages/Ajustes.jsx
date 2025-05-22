@@ -1,10 +1,10 @@
-// src/pages/Ajustes.jsx
+// src/pages/Ajustes.jsx 
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
-import ***REMOVED*** Settings, User, LogOut, Edit2, Save, Clock, Smile ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Settings, User, LogOut, Edit2, Save, Clock, Smile, Sun, Sunset, Moon ***REMOVED*** from 'lucide-react';
 
 const Ajustes = () => ***REMOVED***
   const ***REMOVED*** currentUser, logout, getUserData, updateUserName ***REMOVED*** = useAuth();
@@ -12,6 +12,7 @@ const Ajustes = () => ***REMOVED***
     colorPrincipal: appColor, 
     emojiUsuario: appEmoji, 
     descuentoDefault: appDescuento,
+    rangosTurnos: appRangos,
     guardarPreferencias 
   ***REMOVED*** = useApp();
   
@@ -21,19 +22,25 @@ const Ajustes = () => ***REMOVED***
   const [editingName, setEditingName] = useState(false);
   const [descuentoDefault, setDescuentoDefault] = useState(appDescuento);
   const [emojiInput, setEmojiInput] = useState(appEmoji);
+  const [rangosTurnos, setRangosTurnos] = useState(appRangos || ***REMOVED***
+    diurnoInicio: 6,
+    diurnoFin: 14,
+    tardeInicio: 14,
+    tardeFin: 20,
+    nocheInicio: 20
+  ***REMOVED***);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   
-  // Actualizar el emoji local cuando cambia en el contexto
+  // Actualizar estados cuando cambian en el contexto
   useEffect(() => ***REMOVED***
     setEmojiInput(appEmoji);
-  ***REMOVED***, [appEmoji]);
-  
-  // Actualizar otros estados cuando cambian en el contexto
-  useEffect(() => ***REMOVED***
     setDescuentoDefault(appDescuento);
-  ***REMOVED***, [appDescuento]);
+    if (appRangos) ***REMOVED***
+      setRangosTurnos(appRangos);
+    ***REMOVED***
+  ***REMOVED***, [appEmoji, appDescuento, appRangos]);
   
   // Colores disponibles
   const colores = [
@@ -58,6 +65,9 @@ const Ajustes = () => ***REMOVED***
           const userData = await getUserData(currentUser.uid);
           if (userData && userData.ajustes) ***REMOVED***
             setDescuentoDefault(userData.ajustes.descuentoDefault || 15);
+            if (userData.ajustes.rangosTurnos) ***REMOVED***
+              setRangosTurnos(userData.ajustes.rangosTurnos);
+            ***REMOVED***
           ***REMOVED***
         ***REMOVED*** catch (error) ***REMOVED***
           console.error('Error al cargar datos del usuario:', error);
@@ -70,7 +80,6 @@ const Ajustes = () => ***REMOVED***
   
   // Función para cambiar el color en tiempo real
   const cambiarColor = (nuevoColor) => ***REMOVED***
-    // Actualizar inmediatamente en el contexto
     guardarPreferencias(***REMOVED***
       colorPrincipal: nuevoColor
     ***REMOVED***);
@@ -79,8 +88,6 @@ const Ajustes = () => ***REMOVED***
   // Función para cambiar el emoji en tiempo real
   const cambiarEmoji = (nuevoEmoji) => ***REMOVED***
     setEmojiInput(nuevoEmoji);
-    
-    // Actualizar inmediatamente en el contexto
     guardarPreferencias(***REMOVED***
       emojiUsuario: nuevoEmoji
     ***REMOVED***);
@@ -91,9 +98,7 @@ const Ajustes = () => ***REMOVED***
     const valor = e.target.value;
     setEmojiInput(valor);
     
-    // Solo actualizar en el contexto al terminar de escribir
     if (valor.trim() === '') ***REMOVED***
-      // Si está vacío, usar un emoji predeterminado
       guardarPreferencias(***REMOVED***
         emojiUsuario: '😊'
       ***REMOVED***);
@@ -104,16 +109,42 @@ const Ajustes = () => ***REMOVED***
     ***REMOVED***
   ***REMOVED***;
   
-  // Guardar descuento
+  // Validar rangos de turnos
+  const validarRangos = (rangos) => ***REMOVED***
+    if (rangos.diurnoInicio >= rangos.diurnoFin) ***REMOVED***
+      return 'La hora de inicio del turno diurno debe ser menor a la hora de fin';
+    ***REMOVED***
+    if (rangos.tardeInicio >= rangos.tardeFin) ***REMOVED***
+      return 'La hora de inicio del turno de tarde debe ser menor a la hora de fin';
+    ***REMOVED***
+    if (rangos.diurnoFin > rangos.tardeInicio) ***REMOVED***
+      return 'El turno de tarde debe comenzar después o al mismo tiempo que termina el diurno';
+    ***REMOVED***
+    if (rangos.tardeFin > rangos.nocheInicio) ***REMOVED***
+      return 'El turno de noche debe comenzar después o al mismo tiempo que termina la tarde';
+    ***REMOVED***
+    return null;
+  ***REMOVED***;
+  
+  // Guardar configuración
   const handleSaveSettings = async () => ***REMOVED***
     try ***REMOVED***
       setLoading(true);
       setMessage('');
       setError('');
       
-      // Guardar el descuento
+      // Validar rangos
+      const errorValidacion = validarRangos(rangosTurnos);
+      if (errorValidacion) ***REMOVED***
+        setError(errorValidacion);
+        setLoading(false);
+        return;
+      ***REMOVED***
+      
+      // Guardar descuento y rangos
       await guardarPreferencias(***REMOVED***
-        descuentoDefault
+        descuentoDefault,
+        rangosTurnos
       ***REMOVED***);
       
       setMessage('Configuración guardada correctamente');
@@ -135,7 +166,6 @@ const Ajustes = () => ***REMOVED***
       setLoading(true);
       setError('');
       
-      // Usar la función actualizada para cambiar el nombre en Firebase
       await updateUserName(displayName);
       
       setEditingName(false);
@@ -288,6 +318,128 @@ const Ajustes = () => ***REMOVED***
                   <span className="text-xs">***REMOVED***color.name***REMOVED***</span>
                 </button>
               ))***REMOVED***
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      ***REMOVED***/* Nueva sección: Configuración de rangos de turnos */***REMOVED***
+      <div className="bg-white rounded-xl shadow-md p-4 mb-6">
+        <div className="flex items-center mb-4">
+          <Clock className="h-5 w-5 text-gray-500 mr-2" />
+          <h2 className="text-lg font-semibold">Rangos de Turnos</h2>
+        </div>
+        <p className="text-sm text-gray-600 mb-4">
+          Configura los rangos de horarios para la detección automática de tipos de turno.
+        </p>
+        
+        <div className="space-y-4">
+          ***REMOVED***/* Turno Diurno */***REMOVED***
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center mb-3">
+              <Sun className="h-5 w-5 text-yellow-500 mr-2" />
+              <h3 className="font-medium">Turno Diurno</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Hora de inicio</label>
+                <select
+                  value=***REMOVED***rangosTurnos.diurnoInicio***REMOVED***
+                  onChange=***REMOVED***(e) => setRangosTurnos(***REMOVED***
+                    ...rangosTurnos,
+                    diurnoInicio: parseInt(e.target.value)
+                  ***REMOVED***)***REMOVED***
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+                >
+                  ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
+                    <option key=***REMOVED***i***REMOVED*** value=***REMOVED***i***REMOVED***>***REMOVED***i.toString().padStart(2, '0')***REMOVED***:00</option>
+                  ))***REMOVED***
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Hora de fin</label>
+                <select
+                  value=***REMOVED***rangosTurnos.diurnoFin***REMOVED***
+                  onChange=***REMOVED***(e) => setRangosTurnos(***REMOVED***
+                    ...rangosTurnos,
+                    diurnoFin: parseInt(e.target.value)
+                  ***REMOVED***)***REMOVED***
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+                >
+                  ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
+                    <option key=***REMOVED***i***REMOVED*** value=***REMOVED***i***REMOVED***>***REMOVED***i.toString().padStart(2, '0')***REMOVED***:00</option>
+                  ))***REMOVED***
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          ***REMOVED***/* Turno Tarde */***REMOVED***
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center mb-3">
+              <Sunset className="h-5 w-5 text-orange-500 mr-2" />
+              <h3 className="font-medium">Turno Tarde</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Hora de inicio</label>
+                <select
+                  value=***REMOVED***rangosTurnos.tardeInicio***REMOVED***
+                  onChange=***REMOVED***(e) => setRangosTurnos(***REMOVED***
+                    ...rangosTurnos,
+                    tardeInicio: parseInt(e.target.value)
+                  ***REMOVED***)***REMOVED***
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+                >
+                  ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
+                    <option key=***REMOVED***i***REMOVED*** value=***REMOVED***i***REMOVED***>***REMOVED***i.toString().padStart(2, '0')***REMOVED***:00</option>
+                  ))***REMOVED***
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Hora de fin</label>
+                <select
+                  value=***REMOVED***rangosTurnos.tardeFin***REMOVED***
+                  onChange=***REMOVED***(e) => setRangosTurnos(***REMOVED***
+                    ...rangosTurnos,
+                    tardeFin: parseInt(e.target.value)
+                  ***REMOVED***)***REMOVED***
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+                >
+                  ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
+                    <option key=***REMOVED***i***REMOVED*** value=***REMOVED***i***REMOVED***>***REMOVED***i.toString().padStart(2, '0')***REMOVED***:00</option>
+                  ))***REMOVED***
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          ***REMOVED***/* Turno Noche */***REMOVED***
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center mb-3">
+              <Moon className="h-5 w-5 text-blue-500 mr-2" />
+              <h3 className="font-medium">Turno Noche</h3>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">Hora de inicio</label>
+              <select
+                value=***REMOVED***rangosTurnos.nocheInicio***REMOVED***
+                onChange=***REMOVED***(e) => setRangosTurnos(***REMOVED***
+                  ...rangosTurnos,
+                  nocheInicio: parseInt(e.target.value)
+                ***REMOVED***)***REMOVED***
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+              >
+                ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
+                  <option key=***REMOVED***i***REMOVED*** value=***REMOVED***i***REMOVED***>***REMOVED***i.toString().padStart(2, '0')***REMOVED***:00</option>
+                ))***REMOVED***
+              </select>
+              <p className="text-xs text-gray-500 mt-1">El turno de noche se extiende hasta el final del día</p>
             </div>
           </div>
         </div>
