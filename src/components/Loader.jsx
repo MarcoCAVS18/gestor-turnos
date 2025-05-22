@@ -1,4 +1,4 @@
-// src/components/Loader.jsx
+// src/components/Loader.jsx - ACTUALIZADO CON COLORES TEMÁTICOS
 
 import React from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
@@ -14,8 +14,9 @@ const Loader = (***REMOVED*** size = 65, fullScreen = false ***REMOVED***) => **
   const loaderStyle = ***REMOVED***
     width: `$***REMOVED***size***REMOVED***px`,
     aspectRatio: '1',
-    background: getBackgroundGradient(colorPrincipal),
+    backgroundImage: getBackgroundGradient(colorPrincipal),
     backgroundSize: `$***REMOVED***size * 0.46***REMOVED***px $***REMOVED***size * 0.46***REMOVED***px`,
+    backgroundRepeat: 'no-repeat',
     animation: 'loaderAnimation 1.5s infinite'
   ***REMOVED***;
   
@@ -29,20 +30,18 @@ const Loader = (***REMOVED*** size = 65, fullScreen = false ***REMOVED***) => **
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    transform: 'translateY(-5vh)',
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     zIndex: 9999
   ***REMOVED*** : ***REMOVED***
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    transform: 'translateY(-5vh)',
     padding: '20px'
   ***REMOVED***;
   
   // Función para generar el gradiente con el color personalizado
   function getBackgroundGradient(color) ***REMOVED***
-    const gradient = `radial-gradient(farthest-side, #0000 calc(95% - 3px), $***REMOVED***color***REMOVED*** calc(100% - 3px) 98%, #0000 101%) no-repeat`;
+    const gradient = `radial-gradient(farthest-side, #0000 calc(95% - 3px), $***REMOVED***color***REMOVED*** calc(100% - 3px) 98%, #0000 101%)`;
     return `$***REMOVED***gradient***REMOVED***, $***REMOVED***gradient***REMOVED***, $***REMOVED***gradient***REMOVED***`;
   ***REMOVED***
   
