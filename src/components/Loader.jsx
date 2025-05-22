@@ -29,12 +29,14 @@ const Loader = ({ size = 65, fullScreen = false }) => {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    transform: 'translateY(-5vh)',
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     zIndex: 9999
   } : {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    transform: 'translateY(-5vh)',
     padding: '20px'
   };
   

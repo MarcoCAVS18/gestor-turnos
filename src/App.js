@@ -21,7 +21,6 @@ import ResetPassword from './pages/auth/ResetPassword';
 import ModalTrabajo from './components/ModalTrabajo';
 import ModalTurno from './components/ModalTurno';
 
-
 // Componente para rutas protegidas
 const PrivateRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
@@ -34,7 +33,7 @@ const PrivateRoute = ({ children }) => {
     );
   }
   
-  return currentUser ? children : <Navigate to="/login" />;
+  return currentUser ? children : <Navigate to="/login" replace />;
 };
 
 function App() {
@@ -53,32 +52,70 @@ function App() {
     <Router>
       <Routes>
         {/* Rutas de autenticación */}
-        <Route path="/login" element={currentUser ? <Navigate to="/" /> : <AuthModal />} />
-        <Route path="/register" element={currentUser ? <Navigate to="/" /> : <Register />} />
-        <Route path="/forgot-password" element={currentUser ? <Navigate to="/" /> : <ForgotPassword />} />
+        <Route path="/login" element={currentUser ? <Navigate to="/dashboard" replace /> : <AuthModal />} />
+        <Route path="/register" element={currentUser ? <Navigate to="/dashboard" replace /> : <Register />} />
+        <Route path="/forgot-password" element={currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Rutas protegidas */}
-        <Route 
-          path="/" 
-          element={
-            <PrivateRoute>
-              <AppLayout />
-            </PrivateRoute>
-          } 
-        />
+        <Route path="/dashboard" element={
+          <PrivateRoute>
+            <AppLayout currentView="dashboard" />
+          </PrivateRoute>
+        } />
+        
+        <Route path="/trabajos" element={
+          <PrivateRoute>
+            <AppLayout currentView="trabajos" />
+          </PrivateRoute>
+        } />
+        
+        <Route path="/turnos" element={
+          <PrivateRoute>
+            <AppLayout currentView="turnos" />
+          </PrivateRoute>
+        } />
+        
+        <Route path="/estadisticas" element={
+          <PrivateRoute>
+            <AppLayout currentView="estadisticas" />
+          </PrivateRoute>
+        } />
+        
+        <Route path="/calendario" element={
+          <PrivateRoute>
+            <AppLayout currentView="calendario" />
+          </PrivateRoute>
+        } />
+        
+        <Route path="/ajustes" element={
+          <PrivateRoute>
+            <AppLayout currentView="ajustes" />
+          </PrivateRoute>
+        } />
+
+        {/* Ruta por defecto - redirigir a dashboard */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        
+        {/* Ruta catch-all para URLs no encontradas */}
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
   );
 }
 
 // Componente para el layout de la aplicación cuando el usuario está autenticado
-function AppLayout() {
-  const [vistaActual, setVistaActual] = React.useState('dashboard');
+function AppLayout({ currentView }) {
+  const [vistaActual, setVistaActual] = React.useState(currentView);
   const [modalTrabajoAbierto, setModalTrabajoAbierto] = React.useState(false);
   const [modalTurnoAbierto, setModalTurnoAbierto] = React.useState(false);
   const [trabajoSeleccionado, setTrabajoSeleccionado] = React.useState(null);
   const [turnoSeleccionado, setTurnoSeleccionado] = React.useState(null);
+
+  // Actualizar vista cuando cambia la prop
+  React.useEffect(() => {
+    setVistaActual(currentView);
+  }, [currentView]);
 
   // Funciones para manejar modales
   const abrirModalNuevoTrabajo = () => {
@@ -124,6 +161,7 @@ function AppLayout() {
         return <CalendarioView />;
       case 'ajustes':
         return <Ajustes />;
+      case 'dashboard':
       default:
         return <Dashboard />;
     }
