@@ -1,4 +1,4 @@
-// src/contexts/AppContext.jsx
+// src/contexts/AppContext.jsx - REESCRITURA COMPLETA
 
 import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { 
@@ -40,9 +40,9 @@ export const AppProvider = ({ children }) => {
   const [error, setError] = useState(null);
   
   // Estados para preferencias de personalización
-  const [colorPrincipal, setColorPrincipal] = useState('#EC4899'); // pink-600
+  const [colorPrincipal, setColorPrincipal] = useState('#EC4899');
   const [emojiUsuario, setEmojiUsuario] = useState('😊');
-  const [descuentoDefault, setDescuentoDefault] = useState(15); // 15%
+  const [descuentoDefault, setDescuentoDefault] = useState(15);
   const [rangosTurnos, setRangosTurnos] = useState({
     diurnoInicio: 6,
     diurnoFin: 14,
@@ -62,12 +62,10 @@ export const AppProvider = ({ children }) => {
       return null;
     }
     
-    const refs = {
+    return {
       trabajosRef: collection(db, 'usuarios', currentUser.uid, 'trabajos'),
       turnosRef: collection(db, 'usuarios', currentUser.uid, 'turnos')
     };
-    
-    return refs;
   }, [currentUser]);
 
   // Función para crear o verificar documento de usuario
@@ -116,7 +114,6 @@ export const AppProvider = ({ children }) => {
         
         await setDoc(userDocRef, defaultUserData);
         
-        // Establecer valores por defecto
         setColorPrincipal('#EC4899');
         setEmojiUsuario('😊');
         setDescuentoDefault(15);
@@ -133,12 +130,104 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentUser]);
 
+  // Función mejorada para calcular horas trabajadas
+  const calcularHoras = useCallback((inicio, fin) => {
+    const [horaIni, minIni] = inicio.split(':').map(n => parseInt(n));
+    const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
+    
+    let inicioMinutos = horaIni * 60 + minIni;
+    let finMinutos = horaFn * 60 + minFn;
+    
+    // Si el turno cruza medianoche
+    if (finMinutos <= inicioMinutos) {
+      finMinutos += 24 * 60;
+    }
+    
+    return (finMinutos - inicioMinutos) / 60;
+  }, []);
+
+  // Función mejorada para calcular el pago considerando rangos horarios múltiples
+  const calcularPago = useCallback((turno) => {
+    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
+    if (!trabajo) return { total: 0, totalConDescuento: 0, horas: 0 };
+    
+    const { horaInicio, horaFin } = turno;
+    
+    // Convertir horas a minutos
+    const [horaIni, minIni] = horaInicio.split(':').map(n => parseInt(n));
+    const [horaFn, minFn] = horaFin.split(':').map(n => parseInt(n));
+    
+    let inicioMinutos = horaIni * 60 + minIni;
+    let finMinutos = horaFn * 60 + minFn;
+    
+    // Si el turno cruza medianoche
+    if (finMinutos <= inicioMinutos) {
+      finMinutos += 24 * 60;
+    }
+    
+    const totalMinutos = finMinutos - inicioMinutos;
+    const horas = totalMinutos / 60;
+    
+    // Verificar si es fin de semana
+    const [year, month, day] = turno.fecha.split('-');
+    const fecha = new Date(year, month - 1, day);
+    const diaSemana = fecha.getDay();
+    
+    let total = 0;
+    
+    if (diaSemana === 0) {
+      // Domingo - toda la tarifa de domingo
+      total = horas * trabajo.tarifas.domingo;
+    } else if (diaSemana === 6) {
+      // Sábado - toda la tarifa de sábado
+      total = horas * trabajo.tarifas.sabado;
+    } else {
+      // Día de semana - calcular por rangos horarios
+      const rangos = rangosTurnos || {
+        diurnoInicio: 6, diurnoFin: 14,
+        tardeInicio: 14, tardeFin: 20,
+        nocheInicio: 20
+      };
+      
+      // Convertir rangos a minutos
+      const diurnoInicioMin = rangos.diurnoInicio * 60;
+      const diurnoFinMin = rangos.diurnoFin * 60;
+      const tardeInicioMin = rangos.tardeInicio * 60;
+      const tardeFinMin = rangos.tardeFin * 60;
+      
+      // Calcular minuto por minuto para manejar cambios de tarifa
+      for (let minuto = inicioMinutos; minuto < finMinutos; minuto++) {
+        const horaActual = minuto % (24 * 60); // Manejar cruce de medianoche
+        let tarifa = trabajo.tarifaBase;
+        
+        // Determinar tarifa según la hora
+        if (horaActual >= diurnoInicioMin && horaActual < diurnoFinMin) {
+          tarifa = trabajo.tarifas.diurno;
+        } else if (horaActual >= tardeInicioMin && horaActual < tardeFinMin) {
+          tarifa = trabajo.tarifas.tarde;
+        } else {
+          tarifa = trabajo.tarifas.noche;
+        }
+        
+        // Agregar pago por este minuto (tarifa / 60 para convertir a minuto)
+        total += tarifa / 60;
+      }
+    }
+    
+    const totalConDescuento = total * (1 - descuentoDefault / 100);
+    
+    return {
+      total,
+      totalConDescuento,
+      horas
+    };
+  }, [trabajos, rangosTurnos, descuentoDefault]);
+
   // Cargar datos y preferencias del usuario
   useEffect(() => {
     let unsubscribeTrabajos = null;
     let unsubscribeTurnos = null;
     
-    // Función para cargar datos reales del usuario desde Firebase
     const cargarDatosUsuario = async () => {
       if (!currentUser) {
         setCargando(false);
@@ -152,7 +241,6 @@ export const AppProvider = ({ children }) => {
         setCargando(true);
         setError(null);
         
-        // Verificar/crear documento de usuario y cargar preferencias
         await ensureUserDocument();
         
         const subcollections = getUserSubcollections();
@@ -173,10 +261,8 @@ export const AppProvider = ({ children }) => {
           } else {
             const trabajosData = [];
             snapshot.forEach(doc => {
-              const data = { id: doc.id, ...doc.data() };
-              trabajosData.push(data);
+              trabajosData.push({ id: doc.id, ...doc.data() });
             });
-            
             setTrabajos(trabajosData);
           }
         }, (error) => {
@@ -195,13 +281,10 @@ export const AppProvider = ({ children }) => {
           } else {
             const turnosData = [];
             snapshot.forEach(doc => {
-              const data = { id: doc.id, ...doc.data() };
-              turnosData.push(data);
+              turnosData.push({ id: doc.id, ...doc.data() });
             });
-            
             setTurnos(turnosData);
           }
-          
           setCargando(false);
         }, (error) => {
           setError('Error al cargar turnos: ' + error.message);
@@ -216,47 +299,32 @@ export const AppProvider = ({ children }) => {
 
     cargarDatosUsuario();
     
-    // Cleanup cuando el componente se desmonte o cambie el usuario
     return () => {
-      if (unsubscribeTrabajos) {
-        unsubscribeTrabajos();
-      }
-      if (unsubscribeTurnos) {
-        unsubscribeTurnos();
-      }
+      if (unsubscribeTrabajos) unsubscribeTrabajos();
+      if (unsubscribeTurnos) unsubscribeTurnos();
     };
   }, [currentUser, getUserSubcollections, ensureUserDocument]);
   
-  // Funciones para gestionar trabajos usando subcolecciones
+  // Funciones CRUD para trabajos
   const agregarTrabajo = useCallback(async (nuevoTrabajo) => {
     try {
-      if (!currentUser) {
-        throw new Error('Usuario no autenticado');
-      }
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) {
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      }
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Validar datos del trabajo
       if (!nuevoTrabajo.nombre || !nuevoTrabajo.nombre.trim()) {
         throw new Error('El nombre del trabajo es requerido');
       }
       
-      // Añadir metadata (sin userId porque ya está en la subcolección)
       const trabajoConMetadata = {
         ...nuevoTrabajo,
         fechaCreacion: new Date(),
         fechaActualizacion: new Date()
       };
       
-      // Guardar en la subcolección del usuario
       const docRef = await addDoc(subcollections.trabajosRef, trabajoConMetadata);
-      
-      const trabajoGuardado = { ...trabajoConMetadata, id: docRef.id };
-      
-      return trabajoGuardado;
+      return { ...trabajoConMetadata, id: docRef.id };
     } catch (err) {
       setError('Error al agregar trabajo: ' + err.message);
       throw err;
@@ -265,25 +333,18 @@ export const AppProvider = ({ children }) => {
   
   const editarTrabajo = useCallback(async (id, datosActualizados) => {
     try {
-      if (!currentUser) {
-        throw new Error('Usuario no autenticado');
-      }
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) {
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      }
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Añadir metadata
       const datosConMetadata = {
         ...datosActualizados,
         fechaActualizacion: new Date()
       };
       
-      // Actualizar en la subcolección del usuario
       const docRef = doc(subcollections.trabajosRef, id);
       await updateDoc(docRef, datosConMetadata);
-      
     } catch (err) {
       setError('Error al editar trabajo: ' + err.message);
       throw err;
@@ -292,63 +353,45 @@ export const AppProvider = ({ children }) => {
   
   const borrarTrabajo = useCallback(async (id) => {
     try {
-      if (!currentUser) {
-        throw new Error('Usuario no autenticado');
-      }
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) {
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      }
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Borrar trabajo de la subcolección
       await deleteDoc(doc(subcollections.trabajosRef, id));
       
-      // Borrar turnos asociados de la subcolección
       const turnosAsociados = turnos.filter(turno => turno.trabajoId === id);
-      
       const promesasBorrado = turnosAsociados.map(turno => 
         deleteDoc(doc(subcollections.turnosRef, turno.id))
       );
       
       await Promise.all(promesasBorrado);
-      
     } catch (err) {
       setError('Error al eliminar trabajo: ' + err.message);
       throw err;
     }
   }, [currentUser, getUserSubcollections, turnos]);
   
-  // Funciones para gestionar turnos usando subcolecciones
+  // Funciones CRUD para turnos
   const agregarTurno = useCallback(async (nuevoTurno) => {
     try {
-      if (!currentUser) {
-        throw new Error('Usuario no autenticado');
-      }
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) {
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      }
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Validar datos del turno
       if (!nuevoTurno.trabajoId || !nuevoTurno.fecha || !nuevoTurno.horaInicio || !nuevoTurno.horaFin) {
         throw new Error('Todos los campos del turno son requeridos');
       }
       
-      // Añadir metadata (sin userId porque ya está en la subcolección)
       const turnoConMetadata = {
         ...nuevoTurno,
         fechaCreacion: new Date(),
         fechaActualizacion: new Date()
       };
       
-      // Guardar en la subcolección del usuario
       const docRef = await addDoc(subcollections.turnosRef, turnoConMetadata);
-      
-      const turnoGuardado = { ...turnoConMetadata, id: docRef.id };
-      
-      return turnoGuardado;
+      return { ...turnoConMetadata, id: docRef.id };
     } catch (err) {
       setError('Error al agregar turno: ' + err.message);
       throw err;
@@ -357,25 +400,18 @@ export const AppProvider = ({ children }) => {
   
   const editarTurno = useCallback(async (id, datosActualizados) => {
     try {
-      if (!currentUser) {
-        throw new Error('Usuario no autenticado');
-      }
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) {
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      }
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Añadir metadata
       const datosConMetadata = {
         ...datosActualizados,
         fechaActualizacion: new Date()
       };
       
-      // Actualizar en la subcolección del usuario
       const docRef = doc(subcollections.turnosRef, id);
       await updateDoc(docRef, datosConMetadata);
-      
     } catch (err) {
       setError('Error al editar turno: ' + err.message);
       throw err;
@@ -384,18 +420,12 @@ export const AppProvider = ({ children }) => {
   
   const borrarTurno = useCallback(async (id) => {
     try {
-      if (!currentUser) {
-        throw new Error('Usuario no autenticado');
-      }
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) {
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      }
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Borrar de la subcolección del usuario
       await deleteDoc(doc(subcollections.turnosRef, id));
-      
     } catch (err) {
       setError('Error al eliminar turno: ' + err.message);
       throw err;
@@ -405,9 +435,7 @@ export const AppProvider = ({ children }) => {
   // Función para guardar preferencias de usuario
   const guardarPreferencias = useCallback(async (preferencias) => {
     try {
-      if (!currentUser) {
-        throw new Error('Usuario no autenticado');
-      }
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const { 
         colorPrincipal: nuevoColor, 
@@ -416,22 +444,17 @@ export const AppProvider = ({ children }) => {
         rangosTurnos: nuevosRangos
       } = preferencias;
       
-      // Actualizar estados locales inmediatamente
       if (nuevoColor !== undefined) setColorPrincipal(nuevoColor);
       if (nuevoEmoji !== undefined) setEmojiUsuario(nuevoEmoji);
       if (nuevoDescuento !== undefined) setDescuentoDefault(nuevoDescuento);
       if (nuevosRangos !== undefined) setRangosTurnos(nuevosRangos);
       
-      // Guardar en localStorage para persistencia local
       if (nuevoColor !== undefined) localStorage.setItem('colorPrincipal', nuevoColor);
       if (nuevoEmoji !== undefined) localStorage.setItem('emojiUsuario', nuevoEmoji);
       if (nuevoDescuento !== undefined) localStorage.setItem('descuentoDefault', nuevoDescuento.toString());
       if (nuevosRangos !== undefined) localStorage.setItem('rangosTurnos', JSON.stringify(nuevosRangos));
       
-      // Guardar en Firebase
       const userDocRef = doc(db, 'usuarios', currentUser.uid);
-      
-      // Crear un objeto con solo las propiedades que se están actualizando
       const datosActualizados = {};
       
       if (nuevoColor !== undefined) datosActualizados['ajustes.colorPrincipal'] = nuevoColor;
@@ -440,8 +463,7 @@ export const AppProvider = ({ children }) => {
       if (nuevosRangos !== undefined) datosActualizados['ajustes.rangosTurnos'] = nuevosRangos;
       datosActualizados['fechaActualizacion'] = new Date();
       
-      // Solo actualizar en Firebase si hay algo que actualizar
-      if (Object.keys(datosActualizados).length > 1) { // Más de 1 porque siempre incluye fechaActualizacion
+      if (Object.keys(datosActualizados).length > 1) {
         await updateDoc(userDocRef, datosActualizados);
       }
       
@@ -453,62 +475,15 @@ export const AppProvider = ({ children }) => {
   }, [currentUser]);
   
   // Agrupar turnos por fecha
-  const turnosPorFecha = turnos.reduce((acc, turno) => {
-    if (!acc[turno.fecha]) {
-      acc[turno.fecha] = [];
-    }
-    acc[turno.fecha].push(turno);
-    return acc;
-  }, {});
-  
-  // Calcular horas trabajadas
-  const calcularHoras = useCallback((inicio, fin) => {
-    const [horaInicio, minInicio] = inicio.split(':').map(n => parseInt(n));
-    const [horaFin, minFin] = fin.split(':').map(n => parseInt(n));
-    
-    const inicioMinutos = horaInicio * 60 + minInicio;
-    const finMinutos = horaFin * 60 + minFin;
-    
-    return (finMinutos - inicioMinutos) / 60;
-  }, []);
-  
-  // Calcular el pago de un turno
-  const calcularPago = useCallback((turno) => {
-    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-    if (!trabajo) return { total: 0, totalConDescuento: 0, horas: 0 };
-    
-    const horas = calcularHoras(turno.horaInicio, turno.horaFin);
-    let tarifa = trabajo.tarifaBase;
-    
-    switch (turno.tipo) {
-      case 'diurno':
-        tarifa = trabajo.tarifas.diurno;
-        break;
-      case 'tarde':
-        tarifa = trabajo.tarifas.tarde;
-        break;
-      case 'noche':
-        tarifa = trabajo.tarifas.noche;
-        break;
-      case 'sabado':
-        tarifa = trabajo.tarifas.sabado;
-        break;
-      case 'domingo':
-        tarifa = trabajo.tarifas.domingo;
-        break;
-      default:
-        tarifa = trabajo.tarifaBase;
-    }
-    
-    const total = horas * tarifa;
-    const totalConDescuento = total * (1 - descuentoDefault / 100); 
-    
-    return {
-      total,
-      totalConDescuento,
-      horas
-    };
-  }, [trabajos, calcularHoras, descuentoDefault]);
+  const turnosPorFecha = useMemo(() => {
+    return turnos.reduce((acc, turno) => {
+      if (!acc[turno.fecha]) {
+        acc[turno.fecha] = [];
+      }
+      acc[turno.fecha].push(turno);
+      return acc;
+    }, {});
+  }, [turnos]);
   
   // Calcular total del día
   const calcularTotalDia = useCallback((turnosDia) => {
@@ -522,7 +497,7 @@ export const AppProvider = ({ children }) => {
   
   // Formatear fecha
   const formatearFecha = useCallback((fechaStr) => {
-    const fecha = new Date(fechaStr);
+    const fecha = new Date(fechaStr + 'T00:00:00');
     return fecha.toLocaleDateString('es-ES', { 
       weekday: 'long', 
       year: 'numeric', 
