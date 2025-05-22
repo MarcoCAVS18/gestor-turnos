@@ -146,6 +146,7 @@ const Turnos = () => ***REMOVED***
           ***REMOVED***Object.entries(turnosPorFecha)
             .sort(([fechaA], [fechaB]) => new Date(fechaB) - new Date(fechaA))
             .map(([fecha, turnosDia]) => ***REMOVED***
+              // eslint-disable-next-line 
               const totalDia = calcularTotalDia(turnosDia);
               
               return (
@@ -166,17 +167,6 @@ const Turnos = () => ***REMOVED***
                           month: '2-digit' 
                         ***REMOVED***)***REMOVED***)
                       </span>
-                    </div>
-                    <div className="text-right">
-                      <p 
-                        className="font-bold text-lg"
-                        style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
-                      >
-                        $***REMOVED***totalDia.toFixed(2)***REMOVED***
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        ***REMOVED***turnosDia.length***REMOVED*** ***REMOVED***turnosDia.length === 1 ? 'turno' : 'turnos'***REMOVED***
-                      </p>
                     </div>
                   </div>
                   
