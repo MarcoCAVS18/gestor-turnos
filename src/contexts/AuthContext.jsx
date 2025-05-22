@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
   const signup = async (email, password, displayName) => {
     try {
       setError('');
-      // Crear usuario en Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
       // Actualizar perfil con displayName
@@ -108,7 +107,6 @@ export const AuthProvider = ({ children }) => {
       
       return result.user;
     } catch (error) {
-      console.error('Error completo al iniciar sesión con Google:', error);
       if (error.code === 'auth/popup-closed-by-user') {
         setError('El proceso de inicio de sesión fue cancelado. Por favor, inténtalo de nuevo.');
       } else if (error.code === 'auth/popup-blocked') {
@@ -157,8 +155,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Añadir esta función al AuthProvider
-const updateUserName = async (displayName) => {
+  // Actualizar nombre del usuario
+  const updateUserName = async (displayName) => {
     try {
       setError('');
       
@@ -180,7 +178,6 @@ const updateUserName = async (displayName) => {
       
       return true;
     } catch (error) {
-      console.error('Error al actualizar nombre:', error);
       setError('Error al actualizar nombre: ' + error.message);
       throw error;
     }

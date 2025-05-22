@@ -1,8 +1,9 @@
-// src/components/TarjetaTrabajo.jsx 
+// src/components/TarjetaTrabajo.jsx
 
 import React, { useState } from 'react';
 import { Edit, Trash2, Clock, DollarSign, Users, Info } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import DynamicButton from './DynamicButton';
 
 const TarjetaTrabajo = ({ trabajo, abrirModalEditarTrabajo, eliminarTrabajo }) => {
   const { turnos, calcularPago } = useApp();
@@ -32,21 +33,25 @@ const TarjetaTrabajo = ({ trabajo, abrirModalEditarTrabajo, eliminarTrabajo }) =
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-lg font-semibold">{trabajo.nombre}</h3>
           <div className="flex gap-2">
-            <button 
+            <DynamicButton 
               onClick={() => setMostrarDetalles(!mostrarDetalles)}
-              className="text-gray-500 hover:text-indigo-600 transition-colors"
+              variant="ghost"
+              size="sm"
+              className="!p-1"
             >
               <Info size={18} />
-            </button>
-            <button 
+            </DynamicButton>
+            <DynamicButton 
               onClick={() => abrirModalEditarTrabajo(trabajo)}
-              className="text-gray-500 hover:text-indigo-600 transition-colors"
+              variant="ghost"
+              size="sm"
+              className="!p-1"
             >
               <Edit size={18} />
-            </button>
+            </DynamicButton>
             <button 
               onClick={() => eliminarTrabajo(trabajo.id)}
-              className="text-gray-500 hover:text-red-600 transition-colors"
+              className="text-gray-500 hover:text-red-600 transition-colors p-1"
             >
               <Trash2 size={18} />
             </button>

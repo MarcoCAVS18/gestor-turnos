@@ -29,7 +29,8 @@ const ResetPassword = () => {
   
   useEffect(() => {
     if (!oobCode) {
-      setError('Enlace inválido o expirado. Por favor, solicita un nuevo enlace de recuperación.');
+      setError
+      ('Enlace inválido o expirado. Por favor, solicita un nuevo enlace de recuperación.');
     }
   }, [oobCode]);
   

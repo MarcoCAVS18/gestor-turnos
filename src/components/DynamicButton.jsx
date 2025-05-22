@@ -1,4 +1,4 @@
-// src/components/DynamicButton.jsx - Botón que usa colores temáticos
+// src/components/DynamicButton.jsx
 
 import React from 'react';
 import { useApp } from '../contexts/AppContext';

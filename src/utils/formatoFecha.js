@@ -2,8 +2,8 @@
 
 /**
  * Formatea una fecha ISO a formato largo en español
- * @param {string} fechaStr - Fecha en formato ISO "YYYY-MM-DD"
- * @returns {string} Fecha formateada (ej: "lunes, 15 de mayo de 2023")
+ * @param {string} fechaStr 
+ * @returns {string} 
  */
 export const formatearFechaLarga = (fechaStr) => {
     const fecha = new Date(fechaStr);
@@ -17,8 +17,8 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Formatea una fecha ISO a formato corto en español
-   * @param {string} fechaStr - Fecha en formato ISO "YYYY-MM-DD"
-   * @returns {string} Fecha formateada (ej: "15/05/2023")
+   * @param {string} fechaStr 
+   * @returns {string} 
    */
   export const formatearFechaCorta = (fechaStr) => {
     const fecha = new Date(fechaStr);
@@ -31,8 +31,8 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Obtiene el nombre del mes en español
-   * @param {number} mes - Número de mes (0-11)
-   * @returns {string} Nombre del mes en español
+   * @param {number} mes 
+   * @returns {string} 
    */
   export const obtenerNombreMes = (mes) => {
     const meses = [
@@ -45,8 +45,8 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Obtiene el nombre del día de la semana en español
-   * @param {number} dia - Número de día (0-6, donde 0 es domingo)
-   * @returns {string} Nombre del día en español
+   * @param {number} dia 
+   * @returns {string}
    */
   export const obtenerNombreDia = (dia) => {
     const dias = [
@@ -59,8 +59,8 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Obtiene la abreviatura del día de la semana en español
-   * @param {number} dia - Número de día (0-6, donde 0 es domingo)
-   * @returns {string} Abreviatura del día en español
+   * @param {number} dia 
+   * @returns {string} 
    */
   export const obtenerAbreviaturaDia = (dia) => {
     const abreviaturas = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -69,8 +69,8 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Verifica si una fecha es hoy
-   * @param {Date} fecha - Fecha a verificar
-   * @returns {boolean} - true si es hoy, false en caso contrario
+   * @param {Date} fecha 
+   * @returns {boolean} 
    */
   export const esHoy = (fecha) => {
     const hoy = new Date();
@@ -81,8 +81,8 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Convierte una fecha de objeto Date a formato ISO (YYYY-MM-DD)
-   * @param {Date} fecha - Fecha a convertir
-   * @returns {string} Fecha en formato ISO
+   * @param {Date} fecha
+   * @returns {string} 
    */
   export const fechaAIso = (fecha) => {
     return fecha.toISOString().split('T')[0];
@@ -90,8 +90,8 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Formatea hora en formato 24h (HH:MM)
-   * @param {Date} fecha - Fecha y hora a formatear
-   * @returns {string} Hora formateada "HH:MM"
+   * @param {Date} fecha
+   * @returns {string}
    */
   export const formatearHora = (fecha) => {
     return fecha.toLocaleTimeString('es-ES', {
@@ -103,9 +103,9 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Obtiene el primer día del mes actual
-   * @param {number} anio - Año
-   * @param {number} mes - Mes (0-11)
-   * @returns {Date} Primer día del mes
+   * @param {number} anio
+   * @param {number} mes 
+   * @returns {Date}
    */
   export const obtenerPrimerDiaMes = (anio, mes) => {
     return new Date(anio, mes, 1);
@@ -113,9 +113,9 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Obtiene el último día del mes actual
-   * @param {number} anio - Año
-   * @param {number} mes - Mes (0-11)
-   * @returns {Date} Último día del mes
+   * @param {number} anio 
+   * @param {number} mes 
+   * @returns {Date} 
    */
   export const obtenerUltimoDiaMes = (anio, mes) => {
     return new Date(anio, mes + 1, 0);
@@ -123,9 +123,9 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Obtiene el rango de fechas para un mes
-   * @param {number} anio - Año
-   * @param {number} mes - Mes (0-11)
-   * @returns {Object} Objeto con fechaInicio y fechaFin en formato ISO
+   * @param {number} anio 
+   * @param {number} mes 
+   * @returns {Object} 
    */
   export const obtenerRangoMes = (anio, mes) => {
     const fechaInicio = obtenerPrimerDiaMes(anio, mes);
@@ -139,8 +139,8 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Agrupa turnos por fecha
-   * @param {Array} turnos - Lista de turnos
-   * @returns {Object} Turnos agrupados por fecha
+   * @param {Array} turnos 
+   * @returns {Object} 
    */
   export const agruparTurnosPorFecha = (turnos) => {
     return turnos.reduce((acc, turno) => {
@@ -154,8 +154,8 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Ordena fechas de más reciente a más antigua
-   * @param {Array} fechas - Lista de fechas en formato ISO
-   * @returns {Array} Fechas ordenadas
+   * @param {Array} fechas 
+   * @returns {Array} 
    */
   export const ordenarFechasDescendente = (fechas) => {
     return [...fechas].sort((a, b) => new Date(b) - new Date(a));
@@ -163,8 +163,8 @@ export const formatearFechaLarga = (fechaStr) => {
   
   /**
    * Obtiene el nombre del día y el número del día de una fecha
-   * @param {string} fechaStr - Fecha en formato ISO
-   * @returns {Object} Objeto con nombreDia y numeroDia
+   * @param {string} fechaStr 
+   * @returns {Object} 
    */
   export const obtenerDiaYNumero = (fechaStr) => {
     const fecha = new Date(fechaStr);

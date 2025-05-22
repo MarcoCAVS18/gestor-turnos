@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import ResumenDia from '../components/ResumenDia';
 import ModalTurno from '../components/ModalTurno';
 import Loader from '../components/Loader';
+import DynamicButton from '../components/DynamicButton';
+import { PlusCircle } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 
 const Turnos = () => {
@@ -51,12 +53,13 @@ const Turnos = () => {
     <div className="px-4 py-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Resumen de Turnos</h2>
-        <button 
+        <DynamicButton 
           onClick={abrirModalNuevoTurno}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition-colors flex items-center"
+          className="flex items-center gap-2"
         >
+          <PlusCircle size={20} />
           <span>Nuevo Turno</span>
-        </button>
+        </DynamicButton>
       </div>
       
       {Object.entries(turnosPorFecha).length > 0 ? (
@@ -69,13 +72,14 @@ const Turnos = () => {
         ))
       ) : (
         <div className="text-center py-8 bg-white rounded-xl shadow-md">
-          <p className="text-gray-500">No hay turnos registrados</p>
-          <button 
+          <p className="text-gray-500 mb-4">No hay turnos registrados</p>
+          <DynamicButton 
             onClick={abrirModalNuevoTurno}
-            className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition-colors"
+            className="flex items-center gap-2"
           >
-            Agregar turno
-          </button>
+            <PlusCircle size={20} />
+            <span>Agregar turno</span>
+          </DynamicButton>
         </div>
       )}
       

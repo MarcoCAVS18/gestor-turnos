@@ -1,4 +1,4 @@
-// src/pages/auth/Register.jsx
+// src/pages/auth/Register.jsx -
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -56,7 +56,7 @@ const Register = () => {
         hasNumber: /[0-9]/.test(password)
       };
       
-      // SOLUCIÓN: Agregando paréntesis para clarificar el orden de las operaciones
+      // Agregando paréntesis para clarificar el orden de las operaciones
       strength.isValid = strength.hasMinLength && (
                         (strength.hasUpperCase && strength.hasLowerCase) || 
                         (strength.hasNumber && (strength.hasUpperCase || strength.hasLowerCase))
@@ -116,7 +116,6 @@ const Register = () => {
       } else {
         setError('Error al crear la cuenta. Inténtalo de nuevo.');
       }
-      console.error(error);
       setLoading(false);
     }
   };

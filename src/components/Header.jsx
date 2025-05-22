@@ -1,13 +1,14 @@
-// src/components/Header.jsx 
+// src/components/Header.jsx
 
 import React, { useState, useEffect } from 'react';
 import { PlusCircle, Settings } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
+import DynamicButton from './DynamicButton';
 
 const Header = ({ abrirModalNuevoTrabajo, abrirModalNuevoTurno, vistaActual, setVistaActual }) => {
   const { currentUser } = useAuth();
-  const { colorPrincipal, emojiUsuario } = useApp();
+  const { coloresTemáticos, emojiUsuario } = useApp();
   
   // Estado local para el nombre de usuario para asegurar que se actualiza
   const [userName, setUserName] = useState('Usuario');
@@ -15,7 +16,6 @@ const Header = ({ abrirModalNuevoTrabajo, abrirModalNuevoTurno, vistaActual, set
   // Actualizar el nombre cuando cambia currentUser
   useEffect(() => {
     if (currentUser) {
-      // Usar displayName si existe, o el email, o 'Usuario' como fallback
       setUserName(
         currentUser.displayName || 
         (currentUser.email ? currentUser.email.split('@')[0] : 'Usuario')
@@ -30,37 +30,49 @@ const Header = ({ abrirModalNuevoTrabajo, abrirModalNuevoTurno, vistaActual, set
   return (
     <header 
       className="flex justify-between items-center px-4 py-3 text-white shadow-md"
-      style={{ backgroundColor: colorPrincipal }}
+      style={{ backgroundColor: coloresTemáticos?.base || '#EC4899' }}
     >
       <h1 className="text-xl font-semibold">
         Mi Gestión de Turnos - {userName} {emojiUsuario || '😊'}
       </h1>
       <div className="flex gap-2">
-        <button 
+        <DynamicButton
           onClick={handleSettingsClick}
-          className="bg-white rounded-full p-1 shadow-md hover:bg-opacity-90 transition-colors"
-          style={{ color: colorPrincipal }}
+          variant="ghost"
+          size="sm"
+          className="!bg-white !text-current rounded-full p-1 shadow-md"
+          style={{ 
+            color: coloresTemáticos?.base || '#EC4899'
+          }}
         >
           <Settings size={24} />
-        </button>
+        </DynamicButton>
         
         {vistaActual === 'trabajos' && (
-          <button 
+          <DynamicButton
             onClick={abrirModalNuevoTrabajo}
-            className="bg-white rounded-full p-1 shadow-md hover:bg-opacity-90 transition-colors"
-            style={{ color: colorPrincipal }}
+            variant="ghost"
+            size="sm"
+            className="!bg-white !text-current rounded-full p-1 shadow-md"
+            style={{ 
+              color: coloresTemáticos?.base || '#EC4899'
+            }}
           >
             <PlusCircle size={24} />
-          </button>
+          </DynamicButton>
         )}
         {vistaActual === 'turnos' && (
-          <button 
+          <DynamicButton
             onClick={abrirModalNuevoTurno}
-            className="bg-white rounded-full p-1 shadow-md hover:bg-opacity-90 transition-colors"
-            style={{ color: colorPrincipal }}
+            variant="ghost"
+            size="sm"
+            className="!bg-white !text-current rounded-full p-1 shadow-md"
+            style={{ 
+              color: coloresTemáticos?.base || '#EC4899'
+            }}
           >
             <PlusCircle size={24} />
-          </button>
+          </DynamicButton>
         )}
       </div>
     </header>

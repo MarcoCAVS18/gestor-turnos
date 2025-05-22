@@ -1,10 +1,9 @@
-// src/pages/Dashboard.jsx - VERSIÓN TEMPORAL CON DEBUGGING
+// src/pages/Dashboard.jsx
 
 import React, { useState, useEffect } from 'react';
 import TarjetaResumen from '../components/TarjetaResumen';
 import ResumenDia from '../components/ResumenDia';
 import Loader from '../components/Loader';
-import DebugPanel from '../components/DebugPanel'; // ← AÑADIR ESTO
 import { useApp } from '../contexts/AppContext';
 
 const Dashboard = () => {
@@ -61,9 +60,6 @@ const Dashboard = () => {
           <p className="text-gray-500">No hay turnos recientes</p>
         </div>
       )}
-      
-      {/* Panel de debugging - TEMPORAL */}
-      <DebugPanel />
     </div>
   );
 };

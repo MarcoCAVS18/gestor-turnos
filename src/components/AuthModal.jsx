@@ -1,4 +1,4 @@
-// src/components/AuthModal.jsx 
+// src/components/AuthModal.jsx
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -43,7 +43,6 @@ const AuthModal = () => {
       await login(email, password);
       // El login exitoso actualizará el estado en AuthContext
     } catch (err) {
-      console.error('Error de login:', err);
       setError('Email o contraseña incorrectos');
       setLoading(false);
     }
@@ -54,9 +53,7 @@ const AuthModal = () => {
     setError('');
     try {
       await loginWithGoogle();
-      // El login exitoso actualizará el estado en AuthContext
     } catch (err) {
-      console.error('Error de login con Google:', err);
       setError('Error al iniciar sesión con Google');
       setGoogleLoading(false);
     }
@@ -72,6 +69,7 @@ const AuthModal = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
+
       {/* Video de fondo */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black opacity-50 z-10"></div>

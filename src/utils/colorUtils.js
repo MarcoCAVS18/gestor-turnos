@@ -1,9 +1,9 @@
-// src/utils/colorUtils.js - Utilidades para generar variaciones de color
+// src/utils/colorUtils.js
 
 /**
  * Convierte un color hex a valores RGB
- * @param {string} hex - Color en formato hex (#EC4899)
- * @returns {Object} - {r, g, b}
+ * @param {string} hex
+ * @returns {Object}
  */
 export const hexToRgb = (hex) => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -16,10 +16,10 @@ export const hexToRgb = (hex) => {
   
   /**
    * Convierte valores RGB a hex
-   * @param {number} r - Rojo (0-255)
-   * @param {number} g - Verde (0-255) 
-   * @param {number} b - Azul (0-255)
-   * @returns {string} - Color en formato hex
+   * @param {number} r 
+   * @param {number} g 
+   * @param {number} b 
+   * @returns {string}
    */
   export const rgbToHex = (r, g, b) => {
     const toHex = (n) => {
@@ -31,8 +31,8 @@ export const hexToRgb = (hex) => {
   
   /**
    * Genera variaciones de un color base
-   * @param {string} baseColor - Color base en hex (#EC4899)
-   * @returns {Object} - Objeto con variaciones del color
+   * @param {string} baseColor 
+   * @returns {Object}
    */
   export const generateColorVariations = (baseColor) => {
     const rgb = hexToRgb(baseColor);
@@ -41,7 +41,6 @@ export const hexToRgb = (hex) => {
     const { r, g, b } = rgb;
   
     return {
-      // Color base
       base: baseColor,
       
       // Variaciones más claras
@@ -96,10 +95,10 @@ export const hexToRgb = (hex) => {
   
   /**
    * Determina si usar texto blanco o negro basado en el color de fondo
-   * @param {number} r - Rojo
-   * @param {number} g - Verde
-   * @param {number} b - Azul
-   * @returns {string} - '#ffffff' o '#000000'
+   * @param {number} r
+   * @param {number} g
+   * @param {number} b
+   * @returns {string} 
    */
   const getContrastText = (r, g, b) => {
     // Calcular luminosidad usando la fórmula W3C
@@ -109,8 +108,8 @@ export const hexToRgb = (hex) => {
   
   /**
    * Hook personalizado para usar colores temáticos
-   * @param {string} colorPrincipal - Color principal del usuario
-   * @returns {Object} - Objeto con todas las variaciones de color
+   * @param {string} colorPrincipal 
+   * @returns {Object}
    */
   export const useThemeColors = (colorPrincipal) => {
     return generateColorVariations(colorPrincipal);

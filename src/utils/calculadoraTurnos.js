@@ -2,9 +2,9 @@
 
 /**
  * Calcula las horas trabajadas entre dos horarios
- * @param {string} horaInicio - Hora de inicio en formato "HH:MM"
- * @param {string} horaFin - Hora de fin en formato "HH:MM"
- * @returns {number} Horas trabajadas (decimal)
+ * @param {string} horaInicio
+ * @param {string} horaFin
+ * @returns {number}
  */
 export const calcularHoras = (horaInicio, horaFin) => {
     const [horaIni, minIni] = horaInicio.split(':').map(n => parseInt(n));
@@ -18,9 +18,9 @@ export const calcularHoras = (horaInicio, horaFin) => {
   
   /**
    * Calcula el pago de un turno según sus características
-   * @param {Object} turno - Turno a calcular
-   * @param {Object} trabajo - Trabajo asociado al turno
-   * @returns {Object} Resultado del cálculo con total, totalConDescuento y horas
+   * @param {Object} turno 
+   * @param {Object} trabajo 
+   * @returns {Object}
    */
   export const calcularPago = (turno, trabajo) => {
     const horas = calcularHoras(turno.horaInicio, turno.horaFin);
@@ -59,9 +59,9 @@ export const calcularHoras = (horaInicio, horaFin) => {
   
   /**
    * Aplica el descuento para trabajos casuales (15%)
-   * @param {number} monto - Monto original sin descuento
-   * @param {number} porcentajeDescuento - Porcentaje de descuento (por defecto 15%)
-   * @returns {number} Monto con descuento aplicado
+   * @param {number} monto
+   * @param {number} porcentajeDescuento
+   * @returns {number}
    */
   export const aplicarDescuento = (monto, porcentajeDescuento = 15) => {
     return monto * (1 - porcentajeDescuento / 100);
@@ -69,9 +69,9 @@ export const calcularHoras = (horaInicio, horaFin) => {
   
   /**
    * Calcula el total ganado en un día específico
-   * @param {Array} turnos - Lista de turnos del día
-   * @param {Array} trabajos - Lista de trabajos
-   * @returns {number} Total ganado en el día con descuento aplicado
+   * @param {Array} turnos
+   * @param {Array} trabajos 
+   * @returns {number}
    */
   export const calcularTotalDia = (turnos, trabajos) => {
     let total = 0;
@@ -89,12 +89,12 @@ export const calcularHoras = (horaInicio, horaFin) => {
   
   /**
    * Determina automáticamente el tipo de turno según fecha y hora
-   * @param {string} fecha - Fecha en formato ISO "YYYY-MM-DD"
-   * @param {string} horaInicio - Hora de inicio en formato "HH:MM"
-   * @returns {string} Tipo de turno (diurno, tarde, noche, sabado, domingo)
+   * @param {string} fecha
+   * @param {string} horaInicio
+   * @returns {string} 
    */
   export const determinarTipoTurno = (fecha, horaInicio) => {
-    const diaSemana = new Date(fecha).getDay(); // 0 = domingo, 6 = sábado
+    const diaSemana = new Date(fecha).getDay(); 
     const hora = parseInt(horaInicio.split(':')[0]);
     
     if (diaSemana === 0) return 'domingo';
@@ -107,9 +107,9 @@ export const calcularHoras = (horaInicio, horaFin) => {
   
   /**
    * Calcula resumen estadístico de turnos
-   * @param {Array} turnos - Lista de todos los turnos
-   * @param {Array} trabajos - Lista de todos los trabajos
-   * @returns {Object} Objeto con estadísticas
+   * @param {Array} turnos 
+   * @param {Array} trabajos 
+   * @returns {Object} 
    */
   export const calcularEstadisticas = (turnos, trabajos) => {
     let totalGanado = 0;

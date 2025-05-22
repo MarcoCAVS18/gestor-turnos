@@ -1,5 +1,4 @@
-// src/components/Calendario.jsx - VERSIÓN CORREGIDA
-
+// src/components/Calendario.jsx 
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
 
@@ -15,7 +14,6 @@ const Calendario = ({ onDiaSeleccionado }) => {
 
     // Función para crear fecha local sin problemas de zona horaria
     const crearFechaLocal = (year, month, day) => {
-        // Crear fecha usando el constructor local (sin UTC)
         return new Date(year, month, day);
     };
 
@@ -45,13 +43,7 @@ const Calendario = ({ onDiaSeleccionado }) => {
 
     // Usar useEffect para marcar los días con turnos
     useEffect(() => {
-        console.log('📅 Procesando turnos para el calendario:', turnos.length);
-        
-        const diasConTurnos = turnos.map(turno => {
-            console.log('🔍 Turno:', turno.fecha);
-            return turno.fecha;
-        });
-        
+        const diasConTurnos = turnos.map(turno => turno.fecha);
         setDiasResaltados(diasConTurnos);
 
         const primerDiaMes = crearFechaLocal(anioActual, mesActual, 1);
@@ -60,17 +52,10 @@ const Calendario = ({ onDiaSeleccionado }) => {
         const primerDiaStr = fechaLocalAISO(primerDiaMes);
         const ultimoDiaStr = fechaLocalAISO(ultimoDiaMes);
 
-        console.log('📊 Rango del mes:', { primerDiaStr, ultimoDiaStr });
-
         const turnosFiltrados = turnos.filter(turno => {
-            const turnoEnRango = turno.fecha >= primerDiaStr && turno.fecha <= ultimoDiaStr;
-            if (turnoEnRango) {
-                console.log('✅ Turno en rango:', turno.fecha);
-            }
-            return turnoEnRango;
+            return turno.fecha >= primerDiaStr && turno.fecha <= ultimoDiaStr;
         });
 
-        console.log('📋 Turnos visibles en el mes:', turnosFiltrados.length);
         setTurnosVisibles(turnosFiltrados);
     }, [turnos, mesActual, anioActual]);
 
@@ -126,13 +111,7 @@ const Calendario = ({ onDiaSeleccionado }) => {
     // Verificar si hay turnos en una fecha específica
     const verificarTurnosEnFecha = (fecha) => {
         const fechaStr = fechaLocalAISO(fecha);
-        const tieneTurnos = diasResaltados.includes(fechaStr);
-        
-        if (tieneTurnos) {
-            console.log('🎯 Día con turnos encontrado:', fechaStr);
-        }
-        
-        return tieneTurnos;
+        return diasResaltados.includes(fechaStr);
     };
 
     // Verificar si una fecha es hoy
@@ -171,8 +150,6 @@ const Calendario = ({ onDiaSeleccionado }) => {
         const fechaStr = fechaLocalAISO(hoy);
         setDiaSeleccionadoActual(fechaStr);
         
-        console.log('🏠 Navegando a hoy:', fechaStr);
-        
         // Y si hay un handler de selección, lo invocamos
         if (onDiaSeleccionado) {
             onDiaSeleccionado(hoy);
@@ -188,8 +165,6 @@ const Calendario = ({ onDiaSeleccionado }) => {
     const irADia = (fecha) => {
         const fechaStr = fechaLocalAISO(fecha);
         setDiaSeleccionadoActual(fechaStr);
-        
-        console.log('👆 Día seleccionado:', fechaStr);
         
         if (onDiaSeleccionado) {
             onDiaSeleccionado(fecha);

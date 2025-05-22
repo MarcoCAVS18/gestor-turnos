@@ -3,9 +3,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import DynamicButton from './DynamicButton';
 
 const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
-  const { trabajos, agregarTurno, editarTurno, rangosTurnos } = useApp();
+  const { trabajos, agregarTurno, editarTurno, rangosTurnos, coloresTemáticos } = useApp();
   
   // Función para obtener la fecha actual en formato local
   const getFechaActualLocal = () => {
@@ -53,7 +54,7 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
       
       onClose();
     } catch (error) {
-      console.error('Error al guardar turno:', error);
+      // Error ya manejado en el contexto
     }
   };
 
@@ -63,13 +64,6 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
     const [year, month, day] = fecha.split('-');
     const fechaLocal = new Date(year, month - 1, day);
     const diaSemana = fechaLocal.getDay(); // 0 = domingo, 6 = sábado
-    
-    console.log('🗓️ Determinando tipo de turno:', {
-      fecha,
-      diaSemana,
-      nombreDia: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][diaSemana],
-      horaInicio
-    });
     
     // Primero verificar si es fin de semana
     if (diaSemana === 0) return 'domingo';
@@ -96,7 +90,6 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
   useEffect(() => {
     if (nuevoTurno.fecha && nuevoTurno.horaInicio && !turnoSeleccionado) {
       const tipoDetectado = determinarTipoTurno(nuevoTurno.fecha, nuevoTurno.horaInicio);
-      console.log('🤖 Tipo detectado automáticamente:', tipoDetectado);
       
       setNuevoTurno(prev => ({
         ...prev, 
@@ -116,7 +109,7 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
           </h2>
           <button 
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 transition-colors"
           >
             <X size={20} />
           </button>
@@ -130,7 +123,11 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
             <select 
               value={nuevoTurno.trabajoId}
               onChange={(e) => setNuevoTurno({...nuevoTurno, trabajoId: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              style={{ 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                '--tw-ring-opacity': '0.5'
+              }}
             >
               <option value="">Selecciona un trabajo</option>
               {trabajos.map(trabajo => (
@@ -149,7 +146,11 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
               type="date" 
               value={nuevoTurno.fecha}
               onChange={(e) => setNuevoTurno({...nuevoTurno, fecha: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              style={{ 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                '--tw-ring-opacity': '0.5'
+              }}
             />
           </div>
           
@@ -162,7 +163,11 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
                 type="time" 
                 value={nuevoTurno.horaInicio}
                 onChange={(e) => setNuevoTurno({...nuevoTurno, horaInicio: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                style={{ 
+                  '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                  '--tw-ring-opacity': '0.5'
+                }}
               />
             </div>
             
@@ -174,7 +179,11 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
                 type="time" 
                 value={nuevoTurno.horaFin}
                 onChange={(e) => setNuevoTurno({...nuevoTurno, horaFin: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                style={{ 
+                  '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                  '--tw-ring-opacity': '0.5'
+                }}
               />
             </div>
           </div>
@@ -188,7 +197,11 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
               <select 
                 value={nuevoTurno.tipo}
                 onChange={(e) => setNuevoTurno({...nuevoTurno, tipo: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                style={{ 
+                  '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                  '--tw-ring-opacity': '0.5'
+                }}
               >
                 <option value="diurno">Diurno</option>
                 <option value="tarde">Tarde</option>
@@ -206,26 +219,29 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
             <textarea 
               value={nuevoTurno.notas}
               onChange={(e) => setNuevoTurno({...nuevoTurno, notas: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+              style={{ 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+                '--tw-ring-opacity': '0.5'
+              }}
               rows={3}
               placeholder="Agregar notas o comentarios sobre este turno..."
             />
           </div>
           
-          <div className="flex justify-end mt-6">
-            <button 
+          <div className="flex justify-end mt-6 gap-2">
+            <DynamicButton 
               onClick={onClose}
-              className="px-4 py-2 mr-2 text-gray-600 hover:text-gray-800"
+              variant="ghost"
             >
               Cancelar
-            </button>
-            <button 
+            </DynamicButton>
+            <DynamicButton 
               onClick={guardarTurno}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow-md hover:bg-indigo-700 transition-colors"
               disabled={!nuevoTurno.trabajoId}
             >
               {turnoSeleccionado ? 'Actualizar' : 'Guardar'}
-            </button>
+            </DynamicButton>
           </div>
         </div>
       </div>

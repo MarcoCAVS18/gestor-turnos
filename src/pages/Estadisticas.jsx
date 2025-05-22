@@ -5,7 +5,7 @@ import { useApp } from '../contexts/AppContext';
 import { BarChart2, TrendingUp, DollarSign, Clock, Calendar } from 'lucide-react';
 
 const Estadisticas = () => {
-  const { turnos, trabajos, calcularPago } = useApp();
+  const { turnos, trabajos, calcularPago, coloresTemáticos } = useApp();
   const [resumen, setResumen] = useState({
     totalGanado: 0,
     horasTrabajadas: 0,
@@ -23,7 +23,7 @@ const Estadisticas = () => {
   // Obtener fechas de inicio y fin de la semana actual (lunes a domingo)
   const obtenerFechasSemana = () => {
     const hoy = new Date();
-    const diaSemana = hoy.getDay(); // 0: domingo, 1-6: lunes a sábado
+    const diaSemana = hoy.getDay();
     
     // Ajuste para que la semana comience el lunes
     const diffInicio = diaSemana === 0 ? 6 : diaSemana - 1;
@@ -180,7 +180,6 @@ const Estadisticas = () => {
   
   // Función para renderizar el gráfico de distribución de horas
   const renderHorasPorTrabajoChart = () => {
-    // Si no hay datos suficientes, mostrar mensaje
     if (!resumen.horasPorTrabajo || Object.keys(resumen.horasPorTrabajo).length === 0) {
       return (
         <div className="p-4 text-center text-gray-500">
@@ -219,11 +218,9 @@ const Estadisticas = () => {
   return (
     <div className="px-4 py-6">
       <h2 className="text-xl font-semibold mb-4">Estadísticas</h2>
-      
-      {/* Nueva sección: Resumen de la semana actual */}
-      <div className="bg-white p-4 rounded-xl shadow-md mb-6">
+        <div className="bg-white p-4 rounded-xl shadow-md mb-6">
         <div className="flex items-center mb-3">
-          <Calendar size={18} className="text-pink-600 mr-2" />
+          <Calendar size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
           <h3 className="text-lg font-semibold">Semana Actual</h3>
         </div>
         
@@ -231,7 +228,10 @@ const Estadisticas = () => {
           {resumenSemana.fechaInicio} - {resumenSemana.fechaFin}
         </div>
         
-        <div className="text-3xl font-bold text-center mt-2 mb-4 text-pink-600">
+        <div 
+          className="text-3xl font-bold text-center mt-2 mb-4"
+          style={{ color: coloresTemáticos?.base || '#EC4899' }}
+        >
           ${resumenSemana.total.toFixed(2)}
         </div>
         
@@ -243,15 +243,23 @@ const Estadisticas = () => {
                 <span className={`text-sm ${dia === 'Sábado' || dia === 'Domingo' ? 'font-semibold' : ''}`}>
                   {dia}
                 </span>
-                <span className={`text-sm font-medium ${ganancia > 0 ? 'text-pink-600' : 'text-gray-400'}`}>
+                <span 
+                  className={`text-sm font-medium ${ganancia > 0 ? '' : 'text-gray-400'}`}
+                  style={{ color: ganancia > 0 ? coloresTemáticos?.base || '#EC4899' : undefined }}
+                >
                   ${ganancia.toFixed(2)}
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 {ganancia > 0 && (
                   <div 
-                    className={`h-2 rounded-full ${dia === 'Sábado' || dia === 'Domingo' ? 'bg-pink-500' : 'bg-pink-400'}`} 
-                    style={{ width: `${(ganancia / resumenSemana.total) * 100}%` }}
+                    className="h-2 rounded-full"
+                    style={{ 
+                      width: `${(ganancia / resumenSemana.total) * 100}%`,
+                      backgroundColor: dia === 'Sábado' || dia === 'Domingo' 
+                        ? coloresTemáticos?.dark || '#BE185D'
+                        : coloresTemáticos?.base || '#EC4899'
+                    }}
                   ></div>
                 )}
               </div>
@@ -270,7 +278,7 @@ const Estadisticas = () => {
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-white p-4 rounded-xl shadow-md">
           <div className="flex items-center mb-1">
-            <DollarSign size={16} className="text-pink-600 mr-1" />
+            <DollarSign size={16} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-1" />
             <h3 className="text-gray-500">Total Ganado</h3>
           </div>
           <p className="text-2xl font-semibold">${resumen.totalGanado.toFixed(2)}</p>
@@ -278,7 +286,7 @@ const Estadisticas = () => {
         
         <div className="bg-white p-4 rounded-xl shadow-md">
           <div className="flex items-center mb-1">
-            <Clock size={16} className="text-pink-600 mr-1" />
+            <Clock size={16} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-1" />
             <h3 className="text-gray-500">Horas Trabajadas</h3>
           </div>
           <p className="text-2xl font-semibold">{resumen.horasTrabajadas.toFixed(1)}h</p>
@@ -287,10 +295,15 @@ const Estadisticas = () => {
       
       <div className="bg-white p-4 rounded-xl shadow-md mb-6">
         <div className="flex items-center mb-3">
-          <TrendingUp size={18} className="text-pink-600 mr-2" />
+          <TrendingUp size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
           <h3 className="text-lg font-semibold">Promedio por Hora</h3>
         </div>
-        <p className="text-3xl font-semibold text-center mt-2">${resumen.promedioHora.toFixed(2)}/h</p>
+        <p 
+          className="text-3xl font-semibold text-center mt-2"
+          style={{ color: coloresTemáticos?.base || '#EC4899' }}
+        >
+          ${resumen.promedioHora.toFixed(2)}/h
+        </p>
         <p className="text-center text-gray-500 text-sm mt-1">
           Basado en {resumen.horasTrabajadas.toFixed(1)} horas trabajadas
         </p>
@@ -298,7 +311,7 @@ const Estadisticas = () => {
       
       <h3 className="text-lg font-semibold mb-3">
         <div className="flex items-center">
-          <BarChart2 size={18} className="text-pink-600 mr-2" />
+          <BarChart2 size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
           <span>Distribución de Horas por Trabajo</span>
         </div>
       </h3>

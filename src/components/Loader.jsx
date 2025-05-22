@@ -4,8 +4,11 @@ import React from 'react';
 import { useApp } from '../contexts/AppContext';
 
 const Loader = ({ size = 65, fullScreen = false }) => {
-  // Obtener el color principal del contexto
-  const { colorPrincipal } = useApp();
+  // Obtener los colores temáticos del contexto
+  const { coloresTemáticos } = useApp();
+  
+  // Usar el color base o fallback
+  const colorPrincipal = coloresTemáticos?.base || '#EC4899';
   
   // Estilo en línea para el loader
   const loaderStyle = {
