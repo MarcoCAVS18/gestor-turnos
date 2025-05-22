@@ -21,7 +21,6 @@ import ResetPassword from './pages/auth/ResetPassword';
 import ModalTrabajo from './components/ModalTrabajo';
 import ModalTurno from './components/ModalTurno';
 
-
 // Componente para rutas protegidas
 const PrivateRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser, loading ***REMOVED*** = useAuth();
@@ -34,7 +33,7 @@ const PrivateRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
     );
   ***REMOVED***
   
-  return currentUser ? children : <Navigate to="/login" />;
+  return currentUser ? children : <Navigate to="/login" replace />;
 ***REMOVED***;
 
 function App() ***REMOVED***
@@ -53,32 +52,70 @@ function App() ***REMOVED***
     <Router>
       <Routes>
         ***REMOVED***/* Rutas de autenticación */***REMOVED***
-        <Route path="/login" element=***REMOVED***currentUser ? <Navigate to="/" /> : <AuthModal />***REMOVED*** />
-        <Route path="/register" element=***REMOVED***currentUser ? <Navigate to="/" /> : <Register />***REMOVED*** />
-        <Route path="/forgot-password" element=***REMOVED***currentUser ? <Navigate to="/" /> : <ForgotPassword />***REMOVED*** />
+        <Route path="/login" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <AuthModal />***REMOVED*** />
+        <Route path="/register" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <Register />***REMOVED*** />
+        <Route path="/forgot-password" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />***REMOVED*** />
         <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />
 
         ***REMOVED***/* Rutas protegidas */***REMOVED***
-        <Route 
-          path="/" 
-          element=***REMOVED***
-            <PrivateRoute>
-              <AppLayout />
-            </PrivateRoute>
-          ***REMOVED*** 
-        />
+        <Route path="/dashboard" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="dashboard" />
+          </PrivateRoute>
+        ***REMOVED*** />
+        
+        <Route path="/trabajos" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="trabajos" />
+          </PrivateRoute>
+        ***REMOVED*** />
+        
+        <Route path="/turnos" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="turnos" />
+          </PrivateRoute>
+        ***REMOVED*** />
+        
+        <Route path="/estadisticas" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="estadisticas" />
+          </PrivateRoute>
+        ***REMOVED*** />
+        
+        <Route path="/calendario" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="calendario" />
+          </PrivateRoute>
+        ***REMOVED*** />
+        
+        <Route path="/ajustes" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="ajustes" />
+          </PrivateRoute>
+        ***REMOVED*** />
+
+        ***REMOVED***/* Ruta por defecto - redirigir a dashboard */***REMOVED***
+        <Route path="/" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
+        
+        ***REMOVED***/* Ruta catch-all para URLs no encontradas */***REMOVED***
+        <Route path="*" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
       </Routes>
     </Router>
   );
 ***REMOVED***
 
 // Componente para el layout de la aplicación cuando el usuario está autenticado
-function AppLayout() ***REMOVED***
-  const [vistaActual, setVistaActual] = React.useState('dashboard');
+function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
+  const [vistaActual, setVistaActual] = React.useState(currentView);
   const [modalTrabajoAbierto, setModalTrabajoAbierto] = React.useState(false);
   const [modalTurnoAbierto, setModalTurnoAbierto] = React.useState(false);
   const [trabajoSeleccionado, setTrabajoSeleccionado] = React.useState(null);
   const [turnoSeleccionado, setTurnoSeleccionado] = React.useState(null);
+
+  // Actualizar vista cuando cambia la prop
+  React.useEffect(() => ***REMOVED***
+    setVistaActual(currentView);
+  ***REMOVED***, [currentView]);
 
   // Funciones para manejar modales
   const abrirModalNuevoTrabajo = () => ***REMOVED***
@@ -124,6 +161,7 @@ function AppLayout() ***REMOVED***
         return <CalendarioView />;
       case 'ajustes':
         return <Ajustes />;
+      case 'dashboard':
       default:
         return <Dashboard />;
     ***REMOVED***
