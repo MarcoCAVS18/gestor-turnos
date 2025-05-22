@@ -8,7 +8,7 @@ const firebaseConfig = ***REMOVED***
   apiKey: "AIzaSyDy4THJlI_fKQR0aXwBohDxkhkIzhqDJ1k",
   authDomain: "gestionturnos-7ec99.firebaseapp.com",
   projectId: "gestionturnos-7ec99",
-  storageBucket: "gestionturnos-7ec99.appspot.com", // Corregido
+  storageBucket: "gestionturnos-7ec99.appspot.com",
   messagingSenderId: "314406109434",
   appId: "1:314406109434:web:64fbf8f1f87d12b45c0943"
 ***REMOVED***;

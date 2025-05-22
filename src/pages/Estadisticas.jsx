@@ -5,7 +5,7 @@ import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** BarChart2, TrendingUp, DollarSign, Clock, Calendar ***REMOVED*** from 'lucide-react';
 
 const Estadisticas = () => ***REMOVED***
-  const ***REMOVED*** turnos, trabajos, calcularPago ***REMOVED*** = useApp();
+  const ***REMOVED*** turnos, trabajos, calcularPago, coloresTemáticos ***REMOVED*** = useApp();
   const [resumen, setResumen] = useState(***REMOVED***
     totalGanado: 0,
     horasTrabajadas: 0,
@@ -23,7 +23,7 @@ const Estadisticas = () => ***REMOVED***
   // Obtener fechas de inicio y fin de la semana actual (lunes a domingo)
   const obtenerFechasSemana = () => ***REMOVED***
     const hoy = new Date();
-    const diaSemana = hoy.getDay(); // 0: domingo, 1-6: lunes a sábado
+    const diaSemana = hoy.getDay();
     
     // Ajuste para que la semana comience el lunes
     const diffInicio = diaSemana === 0 ? 6 : diaSemana - 1;
@@ -180,7 +180,6 @@ const Estadisticas = () => ***REMOVED***
   
   // Función para renderizar el gráfico de distribución de horas
   const renderHorasPorTrabajoChart = () => ***REMOVED***
-    // Si no hay datos suficientes, mostrar mensaje
     if (!resumen.horasPorTrabajo || Object.keys(resumen.horasPorTrabajo).length === 0) ***REMOVED***
       return (
         <div className="p-4 text-center text-gray-500">
@@ -219,11 +218,9 @@ const Estadisticas = () => ***REMOVED***
   return (
     <div className="px-4 py-6">
       <h2 className="text-xl font-semibold mb-4">Estadísticas</h2>
-      
-      ***REMOVED***/* Nueva sección: Resumen de la semana actual */***REMOVED***
-      <div className="bg-white p-4 rounded-xl shadow-md mb-6">
+        <div className="bg-white p-4 rounded-xl shadow-md mb-6">
         <div className="flex items-center mb-3">
-          <Calendar size=***REMOVED***18***REMOVED*** className="text-pink-600 mr-2" />
+          <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
           <h3 className="text-lg font-semibold">Semana Actual</h3>
         </div>
         
@@ -231,7 +228,10 @@ const Estadisticas = () => ***REMOVED***
           ***REMOVED***resumenSemana.fechaInicio***REMOVED*** - ***REMOVED***resumenSemana.fechaFin***REMOVED***
         </div>
         
-        <div className="text-3xl font-bold text-center mt-2 mb-4 text-pink-600">
+        <div 
+          className="text-3xl font-bold text-center mt-2 mb-4"
+          style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+        >
           $***REMOVED***resumenSemana.total.toFixed(2)***REMOVED***
         </div>
         
@@ -243,15 +243,23 @@ const Estadisticas = () => ***REMOVED***
                 <span className=***REMOVED***`text-sm $***REMOVED***dia === 'Sábado' || dia === 'Domingo' ? 'font-semibold' : ''***REMOVED***`***REMOVED***>
                   ***REMOVED***dia***REMOVED***
                 </span>
-                <span className=***REMOVED***`text-sm font-medium $***REMOVED***ganancia > 0 ? 'text-pink-600' : 'text-gray-400'***REMOVED***`***REMOVED***>
+                <span 
+                  className=***REMOVED***`text-sm font-medium $***REMOVED***ganancia > 0 ? '' : 'text-gray-400'***REMOVED***`***REMOVED***
+                  style=***REMOVED******REMOVED*** color: ganancia > 0 ? coloresTemáticos?.base || '#EC4899' : undefined ***REMOVED******REMOVED***
+                >
                   $***REMOVED***ganancia.toFixed(2)***REMOVED***
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
                 ***REMOVED***ganancia > 0 && (
                   <div 
-                    className=***REMOVED***`h-2 rounded-full $***REMOVED***dia === 'Sábado' || dia === 'Domingo' ? 'bg-pink-500' : 'bg-pink-400'***REMOVED***`***REMOVED*** 
-                    style=***REMOVED******REMOVED*** width: `$***REMOVED***(ganancia / resumenSemana.total) * 100***REMOVED***%` ***REMOVED******REMOVED***
+                    className="h-2 rounded-full"
+                    style=***REMOVED******REMOVED*** 
+                      width: `$***REMOVED***(ganancia / resumenSemana.total) * 100***REMOVED***%`,
+                      backgroundColor: dia === 'Sábado' || dia === 'Domingo' 
+                        ? coloresTemáticos?.dark || '#BE185D'
+                        : coloresTemáticos?.base || '#EC4899'
+                    ***REMOVED******REMOVED***
                   ></div>
                 )***REMOVED***
               </div>
@@ -270,7 +278,7 @@ const Estadisticas = () => ***REMOVED***
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-white p-4 rounded-xl shadow-md">
           <div className="flex items-center mb-1">
-            <DollarSign size=***REMOVED***16***REMOVED*** className="text-pink-600 mr-1" />
+            <DollarSign size=***REMOVED***16***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-1" />
             <h3 className="text-gray-500">Total Ganado</h3>
           </div>
           <p className="text-2xl font-semibold">$***REMOVED***resumen.totalGanado.toFixed(2)***REMOVED***</p>
@@ -278,7 +286,7 @@ const Estadisticas = () => ***REMOVED***
         
         <div className="bg-white p-4 rounded-xl shadow-md">
           <div className="flex items-center mb-1">
-            <Clock size=***REMOVED***16***REMOVED*** className="text-pink-600 mr-1" />
+            <Clock size=***REMOVED***16***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-1" />
             <h3 className="text-gray-500">Horas Trabajadas</h3>
           </div>
           <p className="text-2xl font-semibold">***REMOVED***resumen.horasTrabajadas.toFixed(1)***REMOVED***h</p>
@@ -287,10 +295,15 @@ const Estadisticas = () => ***REMOVED***
       
       <div className="bg-white p-4 rounded-xl shadow-md mb-6">
         <div className="flex items-center mb-3">
-          <TrendingUp size=***REMOVED***18***REMOVED*** className="text-pink-600 mr-2" />
+          <TrendingUp size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
           <h3 className="text-lg font-semibold">Promedio por Hora</h3>
         </div>
-        <p className="text-3xl font-semibold text-center mt-2">$***REMOVED***resumen.promedioHora.toFixed(2)***REMOVED***/h</p>
+        <p 
+          className="text-3xl font-semibold text-center mt-2"
+          style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+        >
+          $***REMOVED***resumen.promedioHora.toFixed(2)***REMOVED***/h
+        </p>
         <p className="text-center text-gray-500 text-sm mt-1">
           Basado en ***REMOVED***resumen.horasTrabajadas.toFixed(1)***REMOVED*** horas trabajadas
         </p>
@@ -298,7 +311,7 @@ const Estadisticas = () => ***REMOVED***
       
       <h3 className="text-lg font-semibold mb-3">
         <div className="flex items-center">
-          <BarChart2 size=***REMOVED***18***REMOVED*** className="text-pink-600 mr-2" />
+          <BarChart2 size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
           <span>Distribución de Horas por Trabajo</span>
         </div>
       </h3>

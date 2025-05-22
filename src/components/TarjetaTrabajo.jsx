@@ -1,8 +1,9 @@
-// src/components/TarjetaTrabajo.jsx 
+// src/components/TarjetaTrabajo.jsx
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Edit, Trash2, Clock, DollarSign, Users, Info ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+import DynamicButton from './DynamicButton';
 
 const TarjetaTrabajo = (***REMOVED*** trabajo, abrirModalEditarTrabajo, eliminarTrabajo ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** turnos, calcularPago ***REMOVED*** = useApp();
@@ -32,21 +33,25 @@ const TarjetaTrabajo = (***REMOVED*** trabajo, abrirModalEditarTrabajo, eliminar
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-lg font-semibold">***REMOVED***trabajo.nombre***REMOVED***</h3>
           <div className="flex gap-2">
-            <button 
+            <DynamicButton 
               onClick=***REMOVED***() => setMostrarDetalles(!mostrarDetalles)***REMOVED***
-              className="text-gray-500 hover:text-indigo-600 transition-colors"
+              variant="ghost"
+              size="sm"
+              className="!p-1"
             >
               <Info size=***REMOVED***18***REMOVED*** />
-            </button>
-            <button 
+            </DynamicButton>
+            <DynamicButton 
               onClick=***REMOVED***() => abrirModalEditarTrabajo(trabajo)***REMOVED***
-              className="text-gray-500 hover:text-indigo-600 transition-colors"
+              variant="ghost"
+              size="sm"
+              className="!p-1"
             >
               <Edit size=***REMOVED***18***REMOVED*** />
-            </button>
+            </DynamicButton>
             <button 
               onClick=***REMOVED***() => eliminarTrabajo(trabajo.id)***REMOVED***
-              className="text-gray-500 hover:text-red-600 transition-colors"
+              className="text-gray-500 hover:text-red-600 transition-colors p-1"
             >
               <Trash2 size=***REMOVED***18***REMOVED*** />
             </button>

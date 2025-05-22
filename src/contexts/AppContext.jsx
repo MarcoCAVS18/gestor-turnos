@@ -1,10 +1,9 @@
-// src/contexts/AppContext.jsx - VERSIÓN COMPLETA Y ACTUALIZADA
+// src/contexts/AppContext.jsx
 
 import React, ***REMOVED*** createContext, useState, useEffect, useContext, useCallback, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** 
   doc, 
   getDoc, 
-  getDocs,
   setDoc,
   updateDoc, 
   collection, 
@@ -60,7 +59,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   // Función para obtener las referencias de las subcolecciones del usuario
   const getUserSubcollections = useCallback(() => ***REMOVED***
     if (!currentUser) ***REMOVED***
-      console.log('⚠️ No hay usuario para obtener subcolecciones');
       return null;
     ***REMOVED***
     
@@ -69,29 +67,21 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       turnosRef: collection(db, 'usuarios', currentUser.uid, 'turnos')
     ***REMOVED***;
     
-    console.log('📁 Referencias obtenidas para usuario:', currentUser.uid);
-    console.log('🔧 Trabajos path:', refs.trabajosRef.path);
-    console.log('⏰ Turnos path:', refs.turnosRef.path);
-    
     return refs;
   ***REMOVED***, [currentUser]);
 
   // Función para crear o verificar documento de usuario
   const ensureUserDocument = useCallback(async () => ***REMOVED***
     if (!currentUser) ***REMOVED***
-      console.log('⚠️ No hay usuario para verificar documento');
       return;
     ***REMOVED***
     
     try ***REMOVED***
-      console.log('🔍 Verificando documento de usuario:', currentUser.uid);
       const userDocRef = doc(db, 'usuarios', currentUser.uid);
       const userDocSnapshot = await getDoc(userDocRef);
       
       if (userDocSnapshot.exists()) ***REMOVED***
         const userData = userDocSnapshot.data();
-        console.log('✅ Documento de usuario encontrado');
-        console.log('⚙️ Ajustes del usuario:', userData.ajustes);
         
         if (userData.ajustes) ***REMOVED***
           setColorPrincipal(userData.ajustes.colorPrincipal || '#EC4899');
@@ -106,7 +96,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           ***REMOVED***);
         ***REMOVED***
       ***REMOVED*** else ***REMOVED***
-        console.log('⚠️ Documento de usuario no encontrado, creando uno nuevo...');
         const defaultUserData = ***REMOVED***
           email: currentUser.email,
           displayName: currentUser.displayName || 'Usuario',
@@ -126,7 +115,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         ***REMOVED***;
         
         await setDoc(userDocRef, defaultUserData);
-        console.log('✅ Documento de usuario creado');
         
         // Establecer valores por defecto
         setColorPrincipal('#EC4899');
@@ -141,91 +129,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         ***REMOVED***);
       ***REMOVED***
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('❌ Error al verificar/crear documento de usuario:', error);
       setError('Error al configurar usuario: ' + error.message);
     ***REMOVED***
   ***REMOVED***, [currentUser]);
-
-  // Función de debugging para verificar manualmente los datos
-  const debugFirestore = useCallback(async () => ***REMOVED***
-    if (!currentUser) ***REMOVED***
-      console.log('🚫 No hay usuario autenticado para debugging');
-      return;
-    ***REMOVED***
-    
-    try ***REMOVED***
-      console.log('🔍 === DEBUGGING FIRESTORE COMPLETO ===');
-      console.log('👤 Usuario actual:', currentUser.uid);
-      console.log('📧 Email:', currentUser.email);
-      console.log('🕐 Timestamp:', new Date().toISOString());
-      
-      const subcollections = getUserSubcollections();
-      if (!subcollections) ***REMOVED***
-        console.log('❌ No se pudieron obtener las subcolecciones');
-        return;
-      ***REMOVED***
-      
-      console.log('📁 Referencias de subcolecciones configuradas:');
-      console.log('🔧 Trabajos ref path:', subcollections.trabajosRef.path);
-      console.log('⏰ Turnos ref path:', subcollections.turnosRef.path);
-      
-      // Verificar trabajos usando getDocs (lectura directa sin listener)
-      console.log('🔍 Verificando trabajos con getDocs...');
-      const trabajosSnapshot = await getDocs(subcollections.trabajosRef);
-      console.log('📊 Trabajos encontrados en Firestore:', trabajosSnapshot.size);
-      
-      if (trabajosSnapshot.empty) ***REMOVED***
-        console.log('📊 La subcolección de trabajos está vacía');
-      ***REMOVED*** else ***REMOVED***
-        trabajosSnapshot.forEach((doc, index) => ***REMOVED***
-          const data = doc.data();
-          console.log(`🔧 Trabajo $***REMOVED***index + 1***REMOVED***:`, ***REMOVED***
-            id: doc.id,
-            nombre: data.nombre,
-            color: data.color,
-            tarifaBase: data.tarifaBase,
-            fechaCreacion: data.fechaCreacion
-          ***REMOVED***);
-        ***REMOVED***);
-      ***REMOVED***
-      
-      // Verificar turnos usando getDocs
-      console.log('🔍 Verificando turnos con getDocs...');
-      const turnosSnapshot = await getDocs(subcollections.turnosRef);
-      console.log('📅 Turnos encontrados en Firestore:', turnosSnapshot.size);
-      
-      if (turnosSnapshot.empty) ***REMOVED***
-        console.log('📅 La subcolección de turnos está vacía');
-      ***REMOVED*** else ***REMOVED***
-        turnosSnapshot.forEach((doc, index) => ***REMOVED***
-          const data = doc.data();
-          console.log(`⏰ Turno $***REMOVED***index + 1***REMOVED***:`, ***REMOVED***
-            id: doc.id,
-            fecha: data.fecha,
-            trabajoId: data.trabajoId,
-            horaInicio: data.horaInicio,
-            horaFin: data.horaFin,
-            tipo: data.tipo
-          ***REMOVED***);
-        ***REMOVED***);
-      ***REMOVED***
-      
-      // Estado actual en React
-      console.log('🔍 Estado actual en React:');
-      console.log('📊 Trabajos en estado:', trabajos.length);
-      console.log('📅 Turnos en estado:', turnos.length);
-      console.log('⏳ Cargando:', cargando);
-      console.log('❌ Error:', error);
-      
-      console.log('🔍 === FIN DEBUGGING FIRESTORE ===');
-      
-    ***REMOVED*** catch (error) ***REMOVED***
-      console.error('❌ Error crítico en debugging:', error);
-      console.error('❌ Código:', error.code);
-      console.error('❌ Mensaje:', error.message);
-      console.error('❌ Stack:', error.stack);
-    ***REMOVED***
-  ***REMOVED***, [currentUser, getUserSubcollections, trabajos.length, turnos.length, cargando, error]);
 
   // Cargar datos y preferencias del usuario
   useEffect(() => ***REMOVED***
@@ -235,7 +141,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     // Función para cargar datos reales del usuario desde Firebase
     const cargarDatosUsuario = async () => ***REMOVED***
       if (!currentUser) ***REMOVED***
-        console.log('🚫 No hay usuario autenticado, limpiando estados');
         setCargando(false);
         setTrabajos([]);
         setTurnos([]);
@@ -244,7 +149,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       ***REMOVED***
       
       try ***REMOVED***
-        console.log('🔄 Iniciando carga de datos para usuario:', currentUser.uid);
         setCargando(true);
         setError(null);
         
@@ -253,99 +157,58 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         
         const subcollections = getUserSubcollections();
         if (!subcollections) ***REMOVED***
-          console.log('❌ No se pudieron obtener subcolecciones');
           setCargando(false);
           return;
         ***REMOVED***
         
         // Configurar listener para trabajos
-        console.log('🔍 Configurando listener de trabajos...');
         const trabajosQuery = query(
           subcollections.trabajosRef,
           orderBy('nombre', 'asc')
         );
         
         unsubscribeTrabajos = onSnapshot(trabajosQuery, (snapshot) => ***REMOVED***
-          console.log('📊 === SNAPSHOT DE TRABAJOS ===');
-          console.log('📊 Snapshot metadata:', ***REMOVED***
-            size: snapshot.size,
-            empty: snapshot.empty,
-            hasPendingWrites: snapshot.metadata.hasPendingWrites,
-            isFromCache: snapshot.metadata.fromCache
-          ***REMOVED***);
-          
           if (snapshot.empty) ***REMOVED***
-            console.log('📊 Snapshot de trabajos está vacío');
             setTrabajos([]);
           ***REMOVED*** else ***REMOVED***
             const trabajosData = [];
             snapshot.forEach(doc => ***REMOVED***
               const data = ***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***;
-              console.log('🔧 Trabajo procesado:', data.nombre, data.id);
               trabajosData.push(data);
             ***REMOVED***);
-            
-            console.log('📊 Total trabajos a establecer en estado:', trabajosData.length);
-            console.log('📊 Lista de nombres:', trabajosData.map(t => t.nombre));
             
             setTrabajos(trabajosData);
           ***REMOVED***
         ***REMOVED***, (error) => ***REMOVED***
-          console.error('❌ Error en listener de trabajos:', error);
-          console.error('❌ Código:', error.code);
-          console.error('❌ Mensaje:', error.message);
           setError('Error al cargar trabajos: ' + error.message);
         ***REMOVED***);
         
         // Configurar listener para turnos
-        console.log('🔍 Configurando listener de turnos...');
         const turnosQuery = query(
           subcollections.turnosRef,
           orderBy('fecha', 'desc')
         );
         
         unsubscribeTurnos = onSnapshot(turnosQuery, (snapshot) => ***REMOVED***
-          console.log('📅 === SNAPSHOT DE TURNOS ===');
-          console.log('📅 Snapshot metadata:', ***REMOVED***
-            size: snapshot.size,
-            empty: snapshot.empty,
-            hasPendingWrites: snapshot.metadata.hasPendingWrites,
-            isFromCache: snapshot.metadata.fromCache
-          ***REMOVED***);
-          
           if (snapshot.empty) ***REMOVED***
-            console.log('📅 Snapshot de turnos está vacío');
             setTurnos([]);
           ***REMOVED*** else ***REMOVED***
             const turnosData = [];
             snapshot.forEach(doc => ***REMOVED***
               const data = ***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***;
-              console.log('⏰ Turno procesado:', data.fecha, data.id);
               turnosData.push(data);
             ***REMOVED***);
-            
-            console.log('📅 Total turnos a establecer en estado:', turnosData.length);
-            console.log('📅 Lista de fechas:', turnosData.map(t => t.fecha));
             
             setTurnos(turnosData);
           ***REMOVED***
           
           setCargando(false);
-          console.log('✅ Carga inicial completada');
         ***REMOVED***, (error) => ***REMOVED***
-          console.error('❌ Error en listener de turnos:', error);
-          console.error('❌ Código:', error.code);
-          console.error('❌ Mensaje:', error.message);
           setError('Error al cargar turnos: ' + error.message);
           setCargando(false);
         ***REMOVED***);
         
-        console.log('✅ Listeners configurados exitosamente');
-        
       ***REMOVED*** catch (error) ***REMOVED***
-        console.error('❌ Error crítico al cargar datos del usuario:', error);
-        console.error('❌ Código:', error.code);
-        console.error('❌ Mensaje:', error.message);
         setError('Error crítico al cargar datos: ' + error.message);
         setCargando(false);
       ***REMOVED***
@@ -355,14 +218,11 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     
     // Cleanup cuando el componente se desmonte o cambie el usuario
     return () => ***REMOVED***
-      console.log('🧹 Limpiando listeners...');
       if (unsubscribeTrabajos) ***REMOVED***
         unsubscribeTrabajos();
-        console.log('🧹 Listener de trabajos desconectado');
       ***REMOVED***
       if (unsubscribeTurnos) ***REMOVED***
         unsubscribeTurnos();
-        console.log('🧹 Listener de turnos desconectado');
       ***REMOVED***
     ***REMOVED***;
   ***REMOVED***, [currentUser, getUserSubcollections, ensureUserDocument]);
@@ -373,8 +233,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       if (!currentUser) ***REMOVED***
         throw new Error('Usuario no autenticado');
       ***REMOVED***
-      
-      console.log('➕ Agregando trabajo:', nuevoTrabajo.nombre, 'para usuario:', currentUser.uid);
       
       const subcollections = getUserSubcollections();
       if (!subcollections) ***REMOVED***
@@ -393,20 +251,13 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         fechaActualizacion: new Date()
       ***REMOVED***;
       
-      console.log('📤 Datos a guardar:', trabajoConMetadata);
-      
       // Guardar en la subcolección del usuario
       const docRef = await addDoc(subcollections.trabajosRef, trabajoConMetadata);
-      console.log('✅ Trabajo guardado con ID:', docRef.id);
       
       const trabajoGuardado = ***REMOVED*** ...trabajoConMetadata, id: docRef.id ***REMOVED***;
       
-      // Nota: No actualizamos el estado manualmente porque onSnapshot lo hará automáticamente
-      console.log('✅ Trabajo procesado, esperando actualización de onSnapshot...');
-      
       return trabajoGuardado;
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('❌ Error al agregar trabajo:', err);
       setError('Error al agregar trabajo: ' + err.message);
       throw err;
     ***REMOVED***
@@ -417,8 +268,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       if (!currentUser) ***REMOVED***
         throw new Error('Usuario no autenticado');
       ***REMOVED***
-      
-      console.log('✏️ Editando trabajo:', id);
       
       const subcollections = getUserSubcollections();
       if (!subcollections) ***REMOVED***
@@ -434,10 +283,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       // Actualizar en la subcolección del usuario
       const docRef = doc(subcollections.trabajosRef, id);
       await updateDoc(docRef, datosConMetadata);
-      console.log('✅ Trabajo actualizado:', id);
       
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('❌ Error al editar trabajo:', err);
       setError('Error al editar trabajo: ' + err.message);
       throw err;
     ***REMOVED***
@@ -449,8 +296,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         throw new Error('Usuario no autenticado');
       ***REMOVED***
       
-      console.log('🗑️ Borrando trabajo:', id);
-      
       const subcollections = getUserSubcollections();
       if (!subcollections) ***REMOVED***
         throw new Error('No se pudieron obtener las referencias de las subcolecciones');
@@ -461,17 +306,14 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       
       // Borrar turnos asociados de la subcolección
       const turnosAsociados = turnos.filter(turno => turno.trabajoId === id);
-      console.log('🗑️ Borrando turnos asociados:', turnosAsociados.length);
       
       const promesasBorrado = turnosAsociados.map(turno => 
         deleteDoc(doc(subcollections.turnosRef, turno.id))
       );
       
       await Promise.all(promesasBorrado);
-      console.log('✅ Trabajo y turnos asociados borrados:', id);
       
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('❌ Error al eliminar trabajo:', err);
       setError('Error al eliminar trabajo: ' + err.message);
       throw err;
     ***REMOVED***
@@ -483,8 +325,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       if (!currentUser) ***REMOVED***
         throw new Error('Usuario no autenticado');
       ***REMOVED***
-      
-      console.log('➕ Agregando turno:', nuevoTurno.fecha, 'para usuario:', currentUser.uid);
       
       const subcollections = getUserSubcollections();
       if (!subcollections) ***REMOVED***
@@ -503,20 +343,13 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         fechaActualizacion: new Date()
       ***REMOVED***;
       
-      console.log('📤 Datos del turno a guardar:', turnoConMetadata);
-      
       // Guardar en la subcolección del usuario
       const docRef = await addDoc(subcollections.turnosRef, turnoConMetadata);
-      console.log('✅ Turno guardado con ID:', docRef.id);
       
       const turnoGuardado = ***REMOVED*** ...turnoConMetadata, id: docRef.id ***REMOVED***;
       
-      // Nota: No actualizamos el estado manualmente porque onSnapshot lo hará automáticamente
-      console.log('✅ Turno procesado, esperando actualización de onSnapshot...');
-      
       return turnoGuardado;
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('❌ Error al agregar turno:', err);
       setError('Error al agregar turno: ' + err.message);
       throw err;
     ***REMOVED***
@@ -527,8 +360,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       if (!currentUser) ***REMOVED***
         throw new Error('Usuario no autenticado');
       ***REMOVED***
-      
-      console.log('✏️ Editando turno:', id);
       
       const subcollections = getUserSubcollections();
       if (!subcollections) ***REMOVED***
@@ -544,10 +375,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       // Actualizar en la subcolección del usuario
       const docRef = doc(subcollections.turnosRef, id);
       await updateDoc(docRef, datosConMetadata);
-      console.log('✅ Turno actualizado:', id);
       
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('❌ Error al editar turno:', err);
       setError('Error al editar turno: ' + err.message);
       throw err;
     ***REMOVED***
@@ -559,8 +388,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         throw new Error('Usuario no autenticado');
       ***REMOVED***
       
-      console.log('🗑️ Borrando turno:', id);
-      
       const subcollections = getUserSubcollections();
       if (!subcollections) ***REMOVED***
         throw new Error('No se pudieron obtener las referencias de las subcolecciones');
@@ -568,10 +395,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       
       // Borrar de la subcolección del usuario
       await deleteDoc(doc(subcollections.turnosRef, id));
-      console.log('✅ Turno borrado:', id);
       
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('❌ Error al eliminar turno:', err);
       setError('Error al eliminar turno: ' + err.message);
       throw err;
     ***REMOVED***
@@ -583,8 +408,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       if (!currentUser) ***REMOVED***
         throw new Error('Usuario no autenticado');
       ***REMOVED***
-      
-      console.log('💾 Guardando preferencias:', preferencias);
       
       const ***REMOVED*** 
         colorPrincipal: nuevoColor, 
@@ -620,12 +443,10 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       // Solo actualizar en Firebase si hay algo que actualizar
       if (Object.keys(datosActualizados).length > 1) ***REMOVED*** // Más de 1 porque siempre incluye fechaActualizacion
         await updateDoc(userDocRef, datosActualizados);
-        console.log('✅ Preferencias guardadas en Firebase');
       ***REMOVED***
       
       return true;
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('❌ Error al guardar preferencias:', err);
       setError('Error al guardar preferencias: ' + err.message);
       throw err;
     ***REMOVED***
@@ -743,10 +564,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     formatearFecha,
     
     // Funciones de configuración
-    guardarPreferencias,
-    
-    // Función de debugging
-    debugFirestore
+    guardarPreferencias
   ***REMOVED***;
   
   return (

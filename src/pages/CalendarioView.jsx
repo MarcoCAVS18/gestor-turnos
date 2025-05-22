@@ -1,4 +1,4 @@
-// src/pages/CalendarioView.jsx - VERSIÓN CON COLORES DINÁMICOS
+// src/pages/CalendarioView.jsx
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import Calendario from '../components/Calendario';

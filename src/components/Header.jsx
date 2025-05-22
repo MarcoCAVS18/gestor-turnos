@@ -1,13 +1,14 @@
-// src/components/Header.jsx 
+// src/components/Header.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** PlusCircle, Settings ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+import DynamicButton from './DynamicButton';
 
 const Header = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno, vistaActual, setVistaActual ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
-  const ***REMOVED*** colorPrincipal, emojiUsuario ***REMOVED*** = useApp();
+  const ***REMOVED*** coloresTemáticos, emojiUsuario ***REMOVED*** = useApp();
   
   // Estado local para el nombre de usuario para asegurar que se actualiza
   const [userName, setUserName] = useState('Usuario');
@@ -15,7 +16,6 @@ const Header = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno, vist
   // Actualizar el nombre cuando cambia currentUser
   useEffect(() => ***REMOVED***
     if (currentUser) ***REMOVED***
-      // Usar displayName si existe, o el email, o 'Usuario' como fallback
       setUserName(
         currentUser.displayName || 
         (currentUser.email ? currentUser.email.split('@')[0] : 'Usuario')
@@ -30,37 +30,49 @@ const Header = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno, vist
   return (
     <header 
       className="flex justify-between items-center px-4 py-3 text-white shadow-md"
-      style=***REMOVED******REMOVED*** backgroundColor: colorPrincipal ***REMOVED******REMOVED***
+      style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
     >
       <h1 className="text-xl font-semibold">
         Mi Gestión de Turnos - ***REMOVED***userName***REMOVED*** ***REMOVED***emojiUsuario || '😊'***REMOVED***
       </h1>
       <div className="flex gap-2">
-        <button 
+        <DynamicButton
           onClick=***REMOVED***handleSettingsClick***REMOVED***
-          className="bg-white rounded-full p-1 shadow-md hover:bg-opacity-90 transition-colors"
-          style=***REMOVED******REMOVED*** color: colorPrincipal ***REMOVED******REMOVED***
+          variant="ghost"
+          size="sm"
+          className="!bg-white !text-current rounded-full p-1 shadow-md"
+          style=***REMOVED******REMOVED*** 
+            color: coloresTemáticos?.base || '#EC4899'
+          ***REMOVED******REMOVED***
         >
           <Settings size=***REMOVED***24***REMOVED*** />
-        </button>
+        </DynamicButton>
         
         ***REMOVED***vistaActual === 'trabajos' && (
-          <button 
+          <DynamicButton
             onClick=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
-            className="bg-white rounded-full p-1 shadow-md hover:bg-opacity-90 transition-colors"
-            style=***REMOVED******REMOVED*** color: colorPrincipal ***REMOVED******REMOVED***
+            variant="ghost"
+            size="sm"
+            className="!bg-white !text-current rounded-full p-1 shadow-md"
+            style=***REMOVED******REMOVED*** 
+              color: coloresTemáticos?.base || '#EC4899'
+            ***REMOVED******REMOVED***
           >
             <PlusCircle size=***REMOVED***24***REMOVED*** />
-          </button>
+          </DynamicButton>
         )***REMOVED***
         ***REMOVED***vistaActual === 'turnos' && (
-          <button 
+          <DynamicButton
             onClick=***REMOVED***abrirModalNuevoTurno***REMOVED***
-            className="bg-white rounded-full p-1 shadow-md hover:bg-opacity-90 transition-colors"
-            style=***REMOVED******REMOVED*** color: colorPrincipal ***REMOVED******REMOVED***
+            variant="ghost"
+            size="sm"
+            className="!bg-white !text-current rounded-full p-1 shadow-md"
+            style=***REMOVED******REMOVED*** 
+              color: coloresTemáticos?.base || '#EC4899'
+            ***REMOVED******REMOVED***
           >
             <PlusCircle size=***REMOVED***24***REMOVED*** />
-          </button>
+          </DynamicButton>
         )***REMOVED***
       </div>
     </header>

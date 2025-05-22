@@ -4,6 +4,8 @@ import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import TarjetaTrabajo from '../components/TarjetaTrabajo';
 import ModalTrabajo from '../components/ModalTrabajo';
 import Loader from '../components/Loader';
+import DynamicButton from '../components/DynamicButton';
+import ***REMOVED*** PlusCircle ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 const Trabajos = () => ***REMOVED***
@@ -19,7 +21,6 @@ const Trabajos = () => ***REMOVED***
     if (cargando) ***REMOVED***
       setShowLoading(true);
     ***REMOVED*** else ***REMOVED***
-      // Si los datos ya se cargaron, esperar 3 segundos antes de mostrar el contenido
       timer = setTimeout(() => ***REMOVED***
         setShowLoading(false);
       ***REMOVED***, 2000);
@@ -57,12 +58,13 @@ const Trabajos = () => ***REMOVED***
     <div className="px-4 py-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Mis Trabajos</h2>
-        <button 
+        <DynamicButton 
           onClick=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition-colors flex items-center"
+          className="flex items-center gap-2"
         >
+          <PlusCircle size=***REMOVED***20***REMOVED*** />
           <span>Nuevo</span>
-        </button>
+        </DynamicButton>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -77,13 +79,14 @@ const Trabajos = () => ***REMOVED***
           ))
         ) : (
           <div className="col-span-2 text-center py-8 bg-white rounded-xl shadow-md">
-            <p className="text-gray-500">No hay trabajos registrados</p>
-            <button 
+            <p className="text-gray-500 mb-4">No hay trabajos registrados</p>
+            <DynamicButton 
               onClick=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
-              className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-indigo-700 transition-colors"
+              className="flex items-center gap-2"
             >
-              Agregar trabajo
-            </button>
+              <PlusCircle size=***REMOVED***20***REMOVED*** />
+              <span>Agregar trabajo</span>
+            </DynamicButton>
           </div>
         )***REMOVED***
       </div>

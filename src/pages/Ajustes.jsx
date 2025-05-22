@@ -1,10 +1,11 @@
-// src/pages/Ajustes.jsx 
+// src/pages/Ajustes.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** Settings, User, LogOut, Edit2, Save, Clock, Smile, Sun, Sunset, Moon ***REMOVED*** from 'lucide-react';
+import DynamicButton from '../components/DynamicButton';
 
 const Ajustes = () => ***REMOVED***
   const ***REMOVED*** currentUser, logout, getUserData, updateUserName ***REMOVED*** = useAuth();
@@ -13,7 +14,8 @@ const Ajustes = () => ***REMOVED***
     emojiUsuario: appEmoji, 
     descuentoDefault: appDescuento,
     rangosTurnos: appRangos,
-    guardarPreferencias 
+    guardarPreferencias,
+    coloresTemáticos
   ***REMOVED*** = useApp();
   
   const navigate = useNavigate();
@@ -44,12 +46,12 @@ const Ajustes = () => ***REMOVED***
   
   // Colores disponibles
   const colores = [
-    ***REMOVED*** name: 'Rosa', value: '#EC4899' ***REMOVED***, // pink-600
-    ***REMOVED*** name: 'Índigo', value: '#6366F1' ***REMOVED***, // indigo-500
-    ***REMOVED*** name: 'Rojo', value: '#EF4444' ***REMOVED***, // red-500
-    ***REMOVED*** name: 'Verde', value: '#10B981' ***REMOVED***, // emerald-500
-    ***REMOVED*** name: 'Púrpura', value: '#8B5CF6' ***REMOVED***, // violet-500
-    ***REMOVED*** name: 'Azul', value: '#3B82F6' ***REMOVED*** // blue-500
+    ***REMOVED*** name: 'Rosa', value: '#EC4899' ***REMOVED***, 
+    ***REMOVED*** name: 'Índigo', value: '#6366F1' ***REMOVED***, 
+    ***REMOVED*** name: 'Rojo', value: '#EF4444' ***REMOVED***, 
+    ***REMOVED*** name: 'Verde', value: '#10B981' ***REMOVED***, 
+    ***REMOVED*** name: 'Púrpura', value: '#8B5CF6' ***REMOVED***, 
+    ***REMOVED*** name: 'Azul', value: '#3B82F6' ***REMOVED*** 
   ];
 
   // Emojis comunes para sugerir
@@ -70,7 +72,7 @@ const Ajustes = () => ***REMOVED***
             ***REMOVED***
           ***REMOVED***
         ***REMOVED*** catch (error) ***REMOVED***
-          console.error('Error al cargar datos del usuario:', error);
+          // Error ya manejado
         ***REMOVED***
       ***REMOVED***
     ***REMOVED***;
@@ -155,7 +157,6 @@ const Ajustes = () => ***REMOVED***
       
     ***REMOVED*** catch (error) ***REMOVED***
       setError('Error al guardar ajustes: ' + error.message);
-      console.error(error);
       setLoading(false);
     ***REMOVED***
   ***REMOVED***;
@@ -173,7 +174,6 @@ const Ajustes = () => ***REMOVED***
       
     ***REMOVED*** catch (error) ***REMOVED***
       setError('Error al actualizar nombre: ' + error.message);
-      console.error(error);
     ***REMOVED*** finally ***REMOVED***
       setLoading(false);
     ***REMOVED***
@@ -186,7 +186,6 @@ const Ajustes = () => ***REMOVED***
       navigate('/login');
     ***REMOVED*** catch (error) ***REMOVED***
       setError('Error al cerrar sesión: ' + error.message);
-      console.error(error);
     ***REMOVED***
   ***REMOVED***;
   
@@ -222,30 +221,30 @@ const Ajustes = () => ***REMOVED***
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
             ***REMOVED***editingName ? (
-              <div className="flex items-center">
+              <div className="flex items-center gap-2">
                 <input
                   type="text"
                   value=***REMOVED***displayName***REMOVED***
                   onChange=***REMOVED***(e) => setDisplayName(e.target.value)***REMOVED***
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm"
-                  style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                  style=***REMOVED******REMOVED*** '--tw-ring-color': coloresTemáticos?.base || appColor ***REMOVED******REMOVED***
                 />
-                <button
+                <DynamicButton
                   onClick=***REMOVED***handleSaveName***REMOVED***
                   disabled=***REMOVED***loading***REMOVED***
-                  className="ml-2 inline-flex items-center p-2 border border-transparent rounded-full shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
-                  style=***REMOVED******REMOVED*** backgroundColor: appColor ***REMOVED******REMOVED***
+                  size="sm"
+                  className="!p-2"
                 >
                   <Save className="h-4 w-4" />
-                </button>
+                </DynamicButton>
               </div>
             ) : (
               <div className="flex items-center">
                 <div className="text-gray-900">***REMOVED***displayName***REMOVED***</div>
                 <button
                   onClick=***REMOVED***() => setEditingName(true)***REMOVED***
-                  className="ml-2"
-                  style=***REMOVED******REMOVED*** color: appColor ***REMOVED******REMOVED***
+                  className="ml-2 transition-colors"
+                  style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || appColor ***REMOVED******REMOVED***
                 >
                   <Edit2 className="h-4 w-4" />
                 </button>
@@ -273,8 +272,8 @@ const Ajustes = () => ***REMOVED***
                 type="text"
                 value=***REMOVED***emojiInput***REMOVED***
                 onChange=***REMOVED***handleEmojiChange***REMOVED***
-                className="w-16 h-10 border border-gray-300 rounded-md shadow-sm px-3 focus:outline-none focus:ring-2 focus:ring-offset-2 text-xl"
-                style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+                className="w-16 h-10 border border-gray-300 rounded-md shadow-sm px-3 focus:outline-none focus:ring-2 text-xl"
+                style=***REMOVED******REMOVED*** '--tw-ring-color': coloresTemáticos?.base || appColor ***REMOVED******REMOVED***
               />
               <p className="ml-3 text-sm text-gray-500">
                 <Smile className="inline h-4 w-4 mb-1 mr-1" />
@@ -287,7 +286,7 @@ const Ajustes = () => ***REMOVED***
                 <button
                   key=***REMOVED***emoji***REMOVED***
                   onClick=***REMOVED***() => cambiarEmoji(emoji)***REMOVED***
-                  className="w-8 h-8 rounded-md flex items-center justify-center text-lg hover:bg-gray-100"
+                  className="w-8 h-8 rounded-md flex items-center justify-center text-lg hover:bg-gray-100 transition-colors"
                 >
                   ***REMOVED***emoji***REMOVED***
                 </button>
@@ -349,8 +348,8 @@ const Ajustes = () => ***REMOVED***
                     ...rangosTurnos,
                     diurnoInicio: parseInt(e.target.value)
                   ***REMOVED***)***REMOVED***
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
-                  style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                  style=***REMOVED******REMOVED*** '--tw-ring-color': coloresTemáticos?.base || appColor ***REMOVED******REMOVED***
                 >
                   ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
                     <option key=***REMOVED***i***REMOVED*** value=***REMOVED***i***REMOVED***>***REMOVED***i.toString().padStart(2, '0')***REMOVED***:00</option>
@@ -365,8 +364,8 @@ const Ajustes = () => ***REMOVED***
                     ...rangosTurnos,
                     diurnoFin: parseInt(e.target.value)
                   ***REMOVED***)***REMOVED***
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
-                  style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                  style=***REMOVED******REMOVED*** '--tw-ring-color': coloresTemáticos?.base || appColor ***REMOVED******REMOVED***
                 >
                   ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
                     <option key=***REMOVED***i***REMOVED*** value=***REMOVED***i***REMOVED***>***REMOVED***i.toString().padStart(2, '0')***REMOVED***:00</option>
@@ -391,8 +390,8 @@ const Ajustes = () => ***REMOVED***
                     ...rangosTurnos,
                     tardeInicio: parseInt(e.target.value)
                   ***REMOVED***)***REMOVED***
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
-                  style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                  style=***REMOVED******REMOVED*** '--tw-ring-color': coloresTemáticos?.base || appColor ***REMOVED******REMOVED***
                 >
                   ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
                     <option key=***REMOVED***i***REMOVED*** value=***REMOVED***i***REMOVED***>***REMOVED***i.toString().padStart(2, '0')***REMOVED***:00</option>
@@ -407,8 +406,8 @@ const Ajustes = () => ***REMOVED***
                     ...rangosTurnos,
                     tardeFin: parseInt(e.target.value)
                   ***REMOVED***)***REMOVED***
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
-                  style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                  style=***REMOVED******REMOVED*** '--tw-ring-color': coloresTemáticos?.base || appColor ***REMOVED******REMOVED***
                 >
                   ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
                     <option key=***REMOVED***i***REMOVED*** value=***REMOVED***i***REMOVED***>***REMOVED***i.toString().padStart(2, '0')***REMOVED***:00</option>
@@ -432,8 +431,8 @@ const Ajustes = () => ***REMOVED***
                   ...rangosTurnos,
                   nocheInicio: parseInt(e.target.value)
                 ***REMOVED***)***REMOVED***
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
-                style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                style=***REMOVED******REMOVED*** '--tw-ring-color': coloresTemáticos?.base || appColor ***REMOVED******REMOVED***
               >
                 ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
                   <option key=***REMOVED***i***REMOVED*** value=***REMOVED***i***REMOVED***>***REMOVED***i.toString().padStart(2, '0')***REMOVED***:00</option>
@@ -454,7 +453,7 @@ const Ajustes = () => ***REMOVED***
         
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Descuento por defecto
+            Porcentaje de descuento
           </label>
           <div className="flex rounded-md shadow-sm">
             <input
@@ -463,28 +462,25 @@ const Ajustes = () => ***REMOVED***
               max="100"
               value=***REMOVED***descuentoDefault***REMOVED***
               onChange=***REMOVED***(e) => setDescuentoDefault(Number(e.target.value))***REMOVED***
-              className="flex-1 min-w-0 block w-full px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-sm"
-              style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+              className="flex-1 px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2"
+              style=***REMOVED******REMOVED*** '--tw-ring-color': coloresTemáticos?.base || appColor ***REMOVED******REMOVED***
+              placeholder="15"
             />
-            <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+            <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
               %
             </span>
           </div>
           <p className="mt-1 text-sm text-gray-500">
-            Este descuento se aplicará por defecto a todos tus turnos.
+            Este descuento se aplicará por defecto a todos tus turnos y trabajos. Podrás modificarlo más adelante.
           </p>
           
-          <button
+          <DynamicButton
             onClick=***REMOVED***handleSaveSettings***REMOVED***
             disabled=***REMOVED***loading***REMOVED***
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white mt-4 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50"
-            style=***REMOVED******REMOVED*** 
-              backgroundColor: appColor,
-              '--tw-ring-color': appColor 
-            ***REMOVED******REMOVED***
+            className="w-full mt-4"
           >
             ***REMOVED***loading ? 'Guardando...' : 'Guardar cambios'***REMOVED***
-          </button>
+          </DynamicButton>
         </div>
       </div>
       
@@ -495,14 +491,14 @@ const Ajustes = () => ***REMOVED***
           <h2 className="text-lg font-semibold">Sesión</h2>
         </div>
         
-        <button
+        <DynamicButton
           onClick=***REMOVED***handleLogout***REMOVED***
-          className="w-full flex justify-center items-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2"
-          style=***REMOVED******REMOVED*** '--tw-ring-color': appColor ***REMOVED******REMOVED***
+          variant="outline"
+          className="w-full flex items-center justify-center gap-2"
         >
-          <LogOut className="h-4 w-4 mr-2" />
-          Cerrar sesión
-        </button>
+          <LogOut className="h-4 w-4" />
+          <span>Cerrar sesión</span>
+        </DynamicButton>
       </div>
     </div>
   );

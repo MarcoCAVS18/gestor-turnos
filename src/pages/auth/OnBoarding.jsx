@@ -14,7 +14,7 @@ const Onboarding = () => ***REMOVED***
   const [loading, setLoading] = useState(false);
   const [tipoTrabajo, setTipoTrabajo] = useState('');
   const [descuento, setDescuento] = useState(15);
-  const [colorTema, setColorTema] = useState('#EC4899'); // pink-600 por defecto
+  const [colorTema, setColorTema] = useState('#EC4899');
   
   const opciones = [
     ***REMOVED***
