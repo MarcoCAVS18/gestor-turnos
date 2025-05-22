@@ -1,10 +1,10 @@
-// src/pages/Ajustes.jsx
+// src/pages/Ajustes.jsx 
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
-import { Settings, User, LogOut, Edit2, Save, Clock, Smile } from 'lucide-react';
+import { Settings, User, LogOut, Edit2, Save, Clock, Smile, Sun, Sunset, Moon } from 'lucide-react';
 
 const Ajustes = () => {
   const { currentUser, logout, getUserData, updateUserName } = useAuth();
@@ -12,6 +12,7 @@ const Ajustes = () => {
     colorPrincipal: appColor, 
     emojiUsuario: appEmoji, 
     descuentoDefault: appDescuento,
+    rangosTurnos: appRangos,
     guardarPreferencias 
   } = useApp();
   
@@ -21,19 +22,25 @@ const Ajustes = () => {
   const [editingName, setEditingName] = useState(false);
   const [descuentoDefault, setDescuentoDefault] = useState(appDescuento);
   const [emojiInput, setEmojiInput] = useState(appEmoji);
+  const [rangosTurnos, setRangosTurnos] = useState(appRangos || {
+    diurnoInicio: 6,
+    diurnoFin: 14,
+    tardeInicio: 14,
+    tardeFin: 20,
+    nocheInicio: 20
+  });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   
-  // Actualizar el emoji local cuando cambia en el contexto
+  // Actualizar estados cuando cambian en el contexto
   useEffect(() => {
     setEmojiInput(appEmoji);
-  }, [appEmoji]);
-  
-  // Actualizar otros estados cuando cambian en el contexto
-  useEffect(() => {
     setDescuentoDefault(appDescuento);
-  }, [appDescuento]);
+    if (appRangos) {
+      setRangosTurnos(appRangos);
+    }
+  }, [appEmoji, appDescuento, appRangos]);
   
   // Colores disponibles
   const colores = [
@@ -58,6 +65,9 @@ const Ajustes = () => {
           const userData = await getUserData(currentUser.uid);
           if (userData && userData.ajustes) {
             setDescuentoDefault(userData.ajustes.descuentoDefault || 15);
+            if (userData.ajustes.rangosTurnos) {
+              setRangosTurnos(userData.ajustes.rangosTurnos);
+            }
           }
         } catch (error) {
           console.error('Error al cargar datos del usuario:', error);
@@ -70,7 +80,6 @@ const Ajustes = () => {
   
   // Función para cambiar el color en tiempo real
   const cambiarColor = (nuevoColor) => {
-    // Actualizar inmediatamente en el contexto
     guardarPreferencias({
       colorPrincipal: nuevoColor
     });
@@ -79,8 +88,6 @@ const Ajustes = () => {
   // Función para cambiar el emoji en tiempo real
   const cambiarEmoji = (nuevoEmoji) => {
     setEmojiInput(nuevoEmoji);
-    
-    // Actualizar inmediatamente en el contexto
     guardarPreferencias({
       emojiUsuario: nuevoEmoji
     });
@@ -91,9 +98,7 @@ const Ajustes = () => {
     const valor = e.target.value;
     setEmojiInput(valor);
     
-    // Solo actualizar en el contexto al terminar de escribir
     if (valor.trim() === '') {
-      // Si está vacío, usar un emoji predeterminado
       guardarPreferencias({
         emojiUsuario: '😊'
       });
@@ -104,16 +109,42 @@ const Ajustes = () => {
     }
   };
   
-  // Guardar descuento
+  // Validar rangos de turnos
+  const validarRangos = (rangos) => {
+    if (rangos.diurnoInicio >= rangos.diurnoFin) {
+      return 'La hora de inicio del turno diurno debe ser menor a la hora de fin';
+    }
+    if (rangos.tardeInicio >= rangos.tardeFin) {
+      return 'La hora de inicio del turno de tarde debe ser menor a la hora de fin';
+    }
+    if (rangos.diurnoFin > rangos.tardeInicio) {
+      return 'El turno de tarde debe comenzar después o al mismo tiempo que termina el diurno';
+    }
+    if (rangos.tardeFin > rangos.nocheInicio) {
+      return 'El turno de noche debe comenzar después o al mismo tiempo que termina la tarde';
+    }
+    return null;
+  };
+  
+  // Guardar configuración
   const handleSaveSettings = async () => {
     try {
       setLoading(true);
       setMessage('');
       setError('');
       
-      // Guardar el descuento
+      // Validar rangos
+      const errorValidacion = validarRangos(rangosTurnos);
+      if (errorValidacion) {
+        setError(errorValidacion);
+        setLoading(false);
+        return;
+      }
+      
+      // Guardar descuento y rangos
       await guardarPreferencias({
-        descuentoDefault
+        descuentoDefault,
+        rangosTurnos
       });
       
       setMessage('Configuración guardada correctamente');
@@ -135,7 +166,6 @@ const Ajustes = () => {
       setLoading(true);
       setError('');
       
-      // Usar la función actualizada para cambiar el nombre en Firebase
       await updateUserName(displayName);
       
       setEditingName(false);
@@ -288,6 +318,128 @@ const Ajustes = () => {
                   <span className="text-xs">{color.name}</span>
                 </button>
               ))}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Nueva sección: Configuración de rangos de turnos */}
+      <div className="bg-white rounded-xl shadow-md p-4 mb-6">
+        <div className="flex items-center mb-4">
+          <Clock className="h-5 w-5 text-gray-500 mr-2" />
+          <h2 className="text-lg font-semibold">Rangos de Turnos</h2>
+        </div>
+        <p className="text-sm text-gray-600 mb-4">
+          Configura los rangos de horarios para la detección automática de tipos de turno.
+        </p>
+        
+        <div className="space-y-4">
+          {/* Turno Diurno */}
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center mb-3">
+              <Sun className="h-5 w-5 text-yellow-500 mr-2" />
+              <h3 className="font-medium">Turno Diurno</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Hora de inicio</label>
+                <select
+                  value={rangosTurnos.diurnoInicio}
+                  onChange={(e) => setRangosTurnos({
+                    ...rangosTurnos,
+                    diurnoInicio: parseInt(e.target.value)
+                  })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style={{ '--tw-ring-color': appColor }}
+                >
+                  {Array.from({length: 24}, (_, i) => (
+                    <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Hora de fin</label>
+                <select
+                  value={rangosTurnos.diurnoFin}
+                  onChange={(e) => setRangosTurnos({
+                    ...rangosTurnos,
+                    diurnoFin: parseInt(e.target.value)
+                  })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style={{ '--tw-ring-color': appColor }}
+                >
+                  {Array.from({length: 24}, (_, i) => (
+                    <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          {/* Turno Tarde */}
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center mb-3">
+              <Sunset className="h-5 w-5 text-orange-500 mr-2" />
+              <h3 className="font-medium">Turno Tarde</h3>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Hora de inicio</label>
+                <select
+                  value={rangosTurnos.tardeInicio}
+                  onChange={(e) => setRangosTurnos({
+                    ...rangosTurnos,
+                    tardeInicio: parseInt(e.target.value)
+                  })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style={{ '--tw-ring-color': appColor }}
+                >
+                  {Array.from({length: 24}, (_, i) => (
+                    <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm text-gray-600 mb-1">Hora de fin</label>
+                <select
+                  value={rangosTurnos.tardeFin}
+                  onChange={(e) => setRangosTurnos({
+                    ...rangosTurnos,
+                    tardeFin: parseInt(e.target.value)
+                  })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                  style={{ '--tw-ring-color': appColor }}
+                >
+                  {Array.from({length: 24}, (_, i) => (
+                    <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+          
+          {/* Turno Noche */}
+          <div className="border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center mb-3">
+              <Moon className="h-5 w-5 text-blue-500 mr-2" />
+              <h3 className="font-medium">Turno Noche</h3>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-600 mb-1">Hora de inicio</label>
+              <select
+                value={rangosTurnos.nocheInicio}
+                onChange={(e) => setRangosTurnos({
+                  ...rangosTurnos,
+                  nocheInicio: parseInt(e.target.value)
+                })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2"
+                style={{ '--tw-ring-color': appColor }}
+              >
+                {Array.from({length: 24}, (_, i) => (
+                  <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">El turno de noche se extiende hasta el final del día</p>
             </div>
           </div>
         </div>

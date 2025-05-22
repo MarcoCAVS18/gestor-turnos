@@ -1,9 +1,10 @@
-// src/pages/CalendarioView.jsx
+// src/pages/CalendarioView.jsx - VERSIÓN CON COLORES DINÁMICOS
 
 import React, { useState } from 'react';
 import Calendario from '../components/Calendario';
 import ResumenDia from '../components/ResumenDia';
 import ModalTurno from '../components/ModalTurno';
+import DynamicButton from '../components/DynamicButton';
 import { motion } from 'framer-motion';
 import { useApp } from '../contexts/AppContext';
 import { PlusCircle } from 'lucide-react';
@@ -14,13 +15,22 @@ const CalendarioView = () => {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [nuevoTurnoFecha, setNuevoTurnoFecha] = useState(null);
   
+  // Función para convertir fecha local a ISO
+  const fechaLocalAISO = (fecha) => {
+    const year = fecha.getFullYear();
+    const month = String(fecha.getMonth() + 1).padStart(2, '0');
+    const day = String(fecha.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
   const seleccionarDia = (fecha) => {
-    const fechaStr = fecha.toISOString().split('T')[0];
+    const fechaStr = fechaLocalAISO(fecha);
     setFechaSeleccionada(fechaStr);
   };
   
   const abrirModalNuevoTurno = (fecha) => {
-    setNuevoTurnoFecha(fecha.toISOString().split('T')[0]);
+    const fechaISO = fechaLocalAISO(fecha);
+    setNuevoTurnoFecha(fechaISO);
     setModalAbierto(true);
   };
   
@@ -73,15 +83,16 @@ const CalendarioView = () => {
             <h3 className="text-lg font-semibold">
               Turnos del día seleccionado
             </h3>
-            <motion.button 
-              onClick={() => abrirModalNuevoTurno(new Date(fechaSeleccionada))}
-              className="bg-pink-500 text-white px-3 py-1 rounded-lg shadow-md flex items-center gap-1"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <PlusCircle size={16} />
-              <span>Nuevo</span>
-            </motion.button>
+            <motion.div>
+              <DynamicButton
+                onClick={() => abrirModalNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))}
+                size="sm"
+                className="flex items-center gap-1"
+              >
+                <PlusCircle size={16} />
+                <span>Nuevo</span>
+              </DynamicButton>
+            </motion.div>
           </div>
           
           {turnosSeleccionados.length > 0 ? (
@@ -97,15 +108,15 @@ const CalendarioView = () => {
               transition={{ delay: 0.3 }}
             >
               <p className="text-gray-500">No hay turnos para esta fecha</p>
-              <motion.button 
-                onClick={() => abrirModalNuevoTurno(new Date(fechaSeleccionada))}
-                className="mt-4 bg-pink-500 text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2 mx-auto"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <PlusCircle size={20} />
-                <span>Agregar turno</span>
-              </motion.button>
+              <motion.div>
+                <DynamicButton
+                  onClick={() => abrirModalNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))}
+                  className="flex items-center gap-2"
+                >
+                  <PlusCircle size={20} />
+                  <span>Agregar turno</span>
+                </DynamicButton>
+              </motion.div>
             </motion.div>
           )}
         </motion.div>

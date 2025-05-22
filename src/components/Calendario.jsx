@@ -1,9 +1,10 @@
-// src/components/Calendario.jsx
+// src/components/Calendario.jsx - VERSIÓN CORREGIDA
+
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
 
 const Calendario = ({ onDiaSeleccionado }) => {
-    const { turnos } = useApp();
+    const { turnos, coloresTemáticos } = useApp();
     const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     const [fechaActual, setFechaActual] = useState(new Date());
     const [mesActual, setMesActual] = useState(fechaActual.getMonth());
@@ -11,6 +12,20 @@ const Calendario = ({ onDiaSeleccionado }) => {
     const [diasResaltados, setDiasResaltados] = useState([]);
     const [turnosVisibles, setTurnosVisibles] = useState([]);
     const [diaSeleccionadoActual, setDiaSeleccionadoActual] = useState(null);
+
+    // Función para crear fecha local sin problemas de zona horaria
+    const crearFechaLocal = (year, month, day) => {
+        // Crear fecha usando el constructor local (sin UTC)
+        return new Date(year, month, day);
+    };
+
+    // Función para convertir fecha local a ISO
+    const fechaLocalAISO = (fecha) => {
+        const year = fecha.getFullYear();
+        const month = String(fecha.getMonth() + 1).padStart(2, '0');
+        const day = String(fecha.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
 
     // Usar useEffect para actualizar la fecha actual periódicamente
     useEffect(() => {
@@ -30,26 +45,39 @@ const Calendario = ({ onDiaSeleccionado }) => {
 
     // Usar useEffect para marcar los días con turnos
     useEffect(() => {
-        const diasConTurnos = turnos.map(turno => turno.fecha);
+        console.log('📅 Procesando turnos para el calendario:', turnos.length);
+        
+        const diasConTurnos = turnos.map(turno => {
+            console.log('🔍 Turno:', turno.fecha);
+            return turno.fecha;
+        });
+        
         setDiasResaltados(diasConTurnos);
 
-        const primerDiaMes = new Date(anioActual, mesActual, 1);
-        const ultimoDiaMes = new Date(anioActual, mesActual + 1, 0);
+        const primerDiaMes = crearFechaLocal(anioActual, mesActual, 1);
+        const ultimoDiaMes = crearFechaLocal(anioActual, mesActual + 1, 0);
 
-        const primerDiaStr = primerDiaMes.toISOString().split('T')[0];
-        const ultimoDiaStr = ultimoDiaMes.toISOString().split('T')[0];
+        const primerDiaStr = fechaLocalAISO(primerDiaMes);
+        const ultimoDiaStr = fechaLocalAISO(ultimoDiaMes);
+
+        console.log('📊 Rango del mes:', { primerDiaStr, ultimoDiaStr });
 
         const turnosFiltrados = turnos.filter(turno => {
-            return turno.fecha >= primerDiaStr && turno.fecha <= ultimoDiaStr;
+            const turnoEnRango = turno.fecha >= primerDiaStr && turno.fecha <= ultimoDiaStr;
+            if (turnoEnRango) {
+                console.log('✅ Turno en rango:', turno.fecha);
+            }
+            return turnoEnRango;
         });
 
+        console.log('📋 Turnos visibles en el mes:', turnosFiltrados.length);
         setTurnosVisibles(turnosFiltrados);
     }, [turnos, mesActual, anioActual]);
 
     // Obtener días del mes actual
     const obtenerDiasDelMes = () => {
-        const primerDia = new Date(anioActual, mesActual, 1);
-        const ultimoDia = new Date(anioActual, mesActual + 1, 0);
+        const primerDia = crearFechaLocal(anioActual, mesActual, 1);
+        const ultimoDia = crearFechaLocal(anioActual, mesActual + 1, 0);
 
         // Ajustar para que la semana empiece en lunes (0 = lunes, 6 = domingo)
         let diaInicio = primerDia.getDay() - 1;
@@ -59,7 +87,7 @@ const Calendario = ({ onDiaSeleccionado }) => {
 
         // Días del mes anterior
         for (let i = diaInicio; i > 0; i--) {
-            const fecha = new Date(anioActual, mesActual, -i + 1);
+            const fecha = crearFechaLocal(anioActual, mesActual, -i + 1);
             dias.push({
                 fecha,
                 dia: fecha.getDate(),
@@ -70,7 +98,7 @@ const Calendario = ({ onDiaSeleccionado }) => {
 
         // Días del mes actual
         for (let i = 1; i <= ultimoDia.getDate(); i++) {
-            const fecha = new Date(anioActual, mesActual, i);
+            const fecha = crearFechaLocal(anioActual, mesActual, i);
             dias.push({
                 fecha,
                 dia: i,
@@ -83,7 +111,7 @@ const Calendario = ({ onDiaSeleccionado }) => {
         // Completar la última semana con días del mes siguiente
         const diasRestantes = 42 - dias.length; // 6 semanas * 7 días = 42
         for (let i = 1; i <= diasRestantes; i++) {
-            const fecha = new Date(anioActual, mesActual + 1, i);
+            const fecha = crearFechaLocal(anioActual, mesActual + 1, i);
             dias.push({
                 fecha,
                 dia: i,
@@ -95,10 +123,16 @@ const Calendario = ({ onDiaSeleccionado }) => {
         return dias;
     };
 
-    // Verificar si hay turnos en una fecha específica (usando diasResaltados)
+    // Verificar si hay turnos en una fecha específica
     const verificarTurnosEnFecha = (fecha) => {
-        const fechaStr = fecha.toISOString().split('T')[0];
-        return diasResaltados.includes(fechaStr);
+        const fechaStr = fechaLocalAISO(fecha);
+        const tieneTurnos = diasResaltados.includes(fechaStr);
+        
+        if (tieneTurnos) {
+            console.log('🎯 Día con turnos encontrado:', fechaStr);
+        }
+        
+        return tieneTurnos;
     };
 
     // Verificar si una fecha es hoy
@@ -134,8 +168,10 @@ const Calendario = ({ onDiaSeleccionado }) => {
         setAnioActual(hoy.getFullYear());
         
         // También destacamos visualmente el día actual
-        const fechaStr = hoy.toISOString().split('T')[0];
+        const fechaStr = fechaLocalAISO(hoy);
         setDiaSeleccionadoActual(fechaStr);
+        
+        console.log('🏠 Navegando a hoy:', fechaStr);
         
         // Y si hay un handler de selección, lo invocamos
         if (onDiaSeleccionado) {
@@ -145,13 +181,15 @@ const Calendario = ({ onDiaSeleccionado }) => {
 
     // Obtener nombre del mes
     const getNombreMes = () => {
-        return new Date(anioActual, mesActual, 1).toLocaleDateString('es-ES', { month: 'long' });
+        return crearFechaLocal(anioActual, mesActual, 1).toLocaleDateString('es-ES', { month: 'long' });
     };
 
     // Ir a día seleccionado
     const irADia = (fecha) => {
-        const fechaStr = fecha.toISOString().split('T')[0];
+        const fechaStr = fechaLocalAISO(fecha);
         setDiaSeleccionadoActual(fechaStr);
+        
+        console.log('👆 Día seleccionado:', fechaStr);
         
         if (onDiaSeleccionado) {
             onDiaSeleccionado(fecha);
@@ -179,14 +217,23 @@ const Calendario = ({ onDiaSeleccionado }) => {
     const dias = obtenerDiasDelMes();
     
     // Fecha actual en formato ISO para comparaciones
-    const fechaActualISO = fechaActual.toISOString().split('T')[0];
+    const fechaActualISO = fechaLocalAISO(fechaActual);
 
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="p-4 bg-pink-600 text-white flex justify-between items-center">
+            <div 
+                className="p-4 text-white flex justify-between items-center"
+                style={{ backgroundColor: coloresTemáticos?.base || '#EC4899' }}
+            >
                 <button
                     onClick={() => cambiarMes(-1)}
-                    className="text-white hover:bg-pink-700 p-2 rounded-full"
+                    className="text-white p-2 rounded-full transition-colors"
+                    style={{ 
+                        backgroundColor: 'transparent',
+                        ':hover': { backgroundColor: coloresTemáticos?.dark || '#BE185D' }
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = coloresTemáticos?.dark || '#BE185D'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                 >
                     &lt;
                 </button>
@@ -196,21 +243,39 @@ const Calendario = ({ onDiaSeleccionado }) => {
                     </h3>
                     <button
                         onClick={irAHoy}
-                        className="text-xs bg-pink-800 px-3 py-1 rounded-full mt-1 hover:bg-pink-900 transition-colors"
+                        className="text-xs px-3 py-1 rounded-full mt-1 transition-colors"
+                        style={{ 
+                            backgroundColor: coloresTemáticos?.dark || '#BE185D',
+                            ':hover': { backgroundColor: coloresTemáticos?.darker || '#9F1239' }
+                        }}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = coloresTemáticos?.darker || '#9F1239'}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = coloresTemáticos?.dark || '#BE185D'}
                     >
                         Hoy
                     </button>
                 </div>
                 <button
                     onClick={() => cambiarMes(1)}
-                    className="text-white hover:bg-pink-700 p-2 rounded-full"
+                    className="text-white p-2 rounded-full transition-colors"
+                    style={{ 
+                        backgroundColor: 'transparent',
+                        ':hover': { backgroundColor: coloresTemáticos?.dark || '#BE185D' }
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = coloresTemáticos?.dark || '#BE185D'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
                 >
                     &gt;
                 </button>
             </div>
 
             {resumenMes.totalTurnos > 0 && (
-                <div className="bg-pink-50 p-2 text-xs text-center text-pink-700 font-medium">
+                <div 
+                    className="p-2 text-xs text-center font-medium"
+                    style={{ 
+                        backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)',
+                        color: coloresTemáticos?.dark || '#BE185D'
+                    }}
+                >
                     {resumenMes.totalTurnos} {resumenMes.totalTurnos === 1 ? 'turno' : 'turnos'} este mes
                 </div>
             )}
@@ -225,7 +290,7 @@ const Calendario = ({ onDiaSeleccionado }) => {
 
             <div className="grid grid-cols-7">
                 {dias.map((dia, index) => {
-                    const fechaDiaISO = dia.fecha.toISOString().split('T')[0];
+                    const fechaDiaISO = fechaLocalAISO(dia.fecha);
                     const esHoy = fechaDiaISO === fechaActualISO;
                     const esSeleccionado = fechaDiaISO === diaSeleccionadoActual;
                     
@@ -238,28 +303,53 @@ const Calendario = ({ onDiaSeleccionado }) => {
                                 hover:bg-gray-50 
                                 flex flex-col justify-center items-center
                                 ${!dia.mesActual ? 'text-gray-400' : 'text-gray-800'}
-                                ${esSeleccionado ? 'bg-pink-100' : ''}
                             `}
+                            style={{
+                                backgroundColor: esSeleccionado 
+                                    ? coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)'
+                                    : 'transparent'
+                            }}
                         >
                             {/* Círculo para día actual */}
-                            <div className={`
-                                ${esHoy ? 'absolute inset-0 m-auto rounded-full border-2 border-pink-500 w-10 h-10 animate-pulse' : ''}
-                            `}></div>
+                            {esHoy && (
+                                <div 
+                                    className="absolute inset-0 m-auto rounded-full w-10 h-10 animate-pulse"
+                                    style={{ 
+                                        border: `2px solid ${coloresTemáticos?.base || '#EC4899'}`
+                                    }}
+                                ></div>
+                            )}
                             
                             {/* Contenedor para número del día */}
-                            <div className={`
-                                rounded-full w-8 h-8 flex items-center justify-center
-                                ${esHoy ? 'bg-pink-500 text-white font-bold shadow-lg' : ''}
-                                ${esSeleccionado && !esHoy ? 'bg-pink-200' : ''}
-                                transition-all duration-200
-                                transform ${esHoy ? 'scale-110' : ''}
-                            `}>
-                                <span className={esHoy ? 'text-white' : ''}>{dia.dia}</span>
+                            <div 
+                                className="rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200 transform"
+                                style={{
+                                    backgroundColor: esHoy 
+                                        ? coloresTemáticos?.base || '#EC4899'
+                                        : (esSeleccionado && !esHoy)
+                                            ? coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+                                            : 'transparent',
+                                    color: esHoy 
+                                        ? coloresTemáticos?.textContrast || '#ffffff'
+                                        : 'inherit',
+                                    fontWeight: esHoy ? 'bold' : 'normal',
+                                    transform: esHoy ? 'scale(1.1)' : 'scale(1)',
+                                    boxShadow: esHoy 
+                                        ? `0 4px 12px ${coloresTemáticos?.transparent50 || 'rgba(236, 72, 153, 0.5)'}`
+                                        : 'none'
+                                }}
+                            >
+                                <span>{dia.dia}</span>
                             </div>
                             
                             {/* Indicador de turnos */}
                             {dia.tieneTurnos && (
-                                <div className="absolute bottom-1 w-4 h-1 rounded bg-pink-500"></div>
+                                <div 
+                                    className="absolute bottom-1 w-4 h-1 rounded"
+                                    style={{ 
+                                        backgroundColor: coloresTemáticos?.base || '#EC4899'
+                                    }}
+                                ></div>
                             )}
                         </button>
                     );
