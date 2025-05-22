@@ -1,16 +1,50 @@
 // src/components/Navegacion.jsx
 
 import React from 'react';
+import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Home, Briefcase, Calendar, BarChart2, CalendarDays ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext'; 
 
 const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => ***REMOVED***
+    const navigate = useNavigate();
+    const location = useLocation();
+    
+    // Obtener los colores temáticos del contexto
     const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+    
+    // Determinar la vista actual basada en la ruta
+    const getCurrentView = () => ***REMOVED***
+        const path = location.pathname;
+        if (path === '/dashboard' || path === '/') return 'dashboard';
+        if (path === '/trabajos') return 'trabajos';
+        if (path === '/turnos') return 'turnos';
+        if (path === '/estadisticas') return 'estadisticas';
+        if (path === '/calendario') return 'calendario';
+        if (path === '/ajustes') return 'ajustes';
+        return 'dashboard';
+    ***REMOVED***;
+    
+    const currentView = getCurrentView();
+    
+    // Función para navegar a una vista
+    const navigateToView = (view) => ***REMOVED***
+        const routes = ***REMOVED***
+            'dashboard': '/dashboard',
+            'trabajos': '/trabajos',
+            'turnos': '/turnos',
+            'estadisticas': '/estadisticas',
+            'calendario': '/calendario',
+            'ajustes': '/ajustes'
+        ***REMOVED***;
+        
+        navigate(routes[view]);
+        setVistaActual(view);
+    ***REMOVED***;
     
     // Función para generar estilos dinámicos basados en el estado activo
     const getActiveTextStyle = (vista) => ***REMOVED***
-        return vistaActual === vista 
+        return currentView === vista 
             ? ***REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED*** 
             : ***REMOVED*** color: '#6B7280' ***REMOVED***; // gray-500
     ***REMOVED***;
@@ -18,7 +52,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => 
     // Estilos dinámicos para el botón central
     const calendarButtonStyle = ***REMOVED***
         backgroundColor: coloresTemáticos?.base || '#EC4899',
-        borderColor: vistaActual === 'calendario' 
+        borderColor: currentView === 'calendario' 
             ? coloresTemáticos?.dark || '#BE185D'
             : 'white'
     ***REMOVED***;
@@ -27,7 +61,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => 
         <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-lg px-4 py-6 z-10">
             <div className="grid grid-cols-5 items-center max-w-md mx-auto">
                 <button
-                    onClick=***REMOVED***() => setVistaActual('dashboard')***REMOVED***
+                    onClick=***REMOVED***() => navigateToView('dashboard')***REMOVED***
                     className="flex flex-col items-center justify-center transition-colors duration-200"
                     style=***REMOVED***getActiveTextStyle('dashboard')***REMOVED***
                 >
@@ -36,7 +70,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => 
                 </button>
 
                 <button
-                    onClick=***REMOVED***() => setVistaActual('trabajos')***REMOVED***
+                    onClick=***REMOVED***() => navigateToView('trabajos')***REMOVED***
                     className="flex flex-col items-center justify-center transition-colors duration-200"
                     style=***REMOVED***getActiveTextStyle('trabajos')***REMOVED***
                 >
@@ -46,7 +80,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => 
 
                 <div className="flex justify-center items-start -mt-6">
                     <motion.button
-                        onClick=***REMOVED***() => setVistaActual('calendario')***REMOVED***
+                        onClick=***REMOVED***() => navigateToView('calendario')***REMOVED***
                         className="text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-4 transition-all duration-200"
                         style=***REMOVED***calendarButtonStyle***REMOVED***
                         whileTap=***REMOVED******REMOVED*** scale: 0.95 ***REMOVED******REMOVED***
@@ -60,7 +94,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => 
                 </div>
 
                 <button
-                    onClick=***REMOVED***() => setVistaActual('turnos')***REMOVED***
+                    onClick=***REMOVED***() => navigateToView('turnos')***REMOVED***
                     className="flex flex-col items-center justify-center transition-colors duration-200"
                     style=***REMOVED***getActiveTextStyle('turnos')***REMOVED***
                 >
@@ -69,7 +103,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual ***REMOVED***) => 
                 </button>
 
                 <button
-                    onClick=***REMOVED***() => setVistaActual('estadisticas')***REMOVED***
+                    onClick=***REMOVED***() => navigateToView('estadisticas')***REMOVED***
                     className="flex flex-col items-center justify-center transition-colors duration-200"
                     style=***REMOVED***getActiveTextStyle('estadisticas')***REMOVED***
                 >
