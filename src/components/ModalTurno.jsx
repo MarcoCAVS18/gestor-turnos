@@ -1,14 +1,24 @@
 // src/components/ModalTurno.jsx
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
+import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
-const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** trabajos, agregarTurno, editarTurno ***REMOVED*** = useApp();
+const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInicial ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** trabajos, agregarTurno, editarTurno, rangosTurnos ***REMOVED*** = useApp();
+  
+  // Función para obtener la fecha actual en formato local
+  const getFechaActualLocal = () => ***REMOVED***
+    const hoy = new Date();
+    const year = hoy.getFullYear();
+    const month = String(hoy.getMonth() + 1).padStart(2, '0');
+    const day = String(hoy.getDate()).padStart(2, '0');
+    return `$***REMOVED***year***REMOVED***-$***REMOVED***month***REMOVED***-$***REMOVED***day***REMOVED***`;
+  ***REMOVED***;
+  
   const [nuevoTurno, setNuevoTurno] = useState(***REMOVED***
     trabajoId: '',
-    fecha: new Date().toISOString().slice(0, 10),
+    fecha: fechaInicial || getFechaActualLocal(),
     horaInicio: '09:00',
     horaFin: '17:00',
     tipo: 'diurno',
@@ -22,14 +32,14 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado ***REMOVED
     ***REMOVED*** else ***REMOVED***
       setNuevoTurno(***REMOVED***
         trabajoId: '',
-        fecha: new Date().toISOString().slice(0, 10),
+        fecha: fechaInicial || getFechaActualLocal(),
         horaInicio: '09:00',
         horaFin: '17:00',
         tipo: 'diurno',
         notas: ''
       ***REMOVED***);
     ***REMOVED***
-  ***REMOVED***, [turnoSeleccionado, visible]);
+  ***REMOVED***, [turnoSeleccionado, visible, fechaInicial]);
 
   const guardarTurno = async () => ***REMOVED***
     try ***REMOVED***
@@ -47,26 +57,53 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado ***REMOVED
     ***REMOVED***
   ***REMOVED***;
 
-  // Determinar el tipo de turno automáticamente según la hora
-  const determinarTipoTurno = (fecha, horaInicio) => ***REMOVED***
-    const diaSemana = new Date(fecha).getDay(); // 0 = domingo, 6 = sábado
-    const hora = parseInt(horaInicio.split(':')[0]);
+  // Función mejorada para determinar el tipo de turno automáticamente
+  const determinarTipoTurno = useCallback((fecha, horaInicio) => ***REMOVED***
+    // Crear fecha correctamente para evitar problemas de zona horaria
+    const [year, month, day] = fecha.split('-');
+    const fechaLocal = new Date(year, month - 1, day);
+    const diaSemana = fechaLocal.getDay(); // 0 = domingo, 6 = sábado
     
+    console.log('🗓️ Determinando tipo de turno:', ***REMOVED***
+      fecha,
+      diaSemana,
+      nombreDia: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'][diaSemana],
+      horaInicio
+    ***REMOVED***);
+    
+    // Primero verificar si es fin de semana
     if (diaSemana === 0) return 'domingo';
     if (diaSemana === 6) return 'sabado';
     
-    if (hora >= 5 && hora < 14) return 'diurno';
-    if (hora >= 14 && hora < 22) return 'tarde';
+    // Si es día de semana, determinar por hora
+    const hora = parseInt(horaInicio.split(':')[0]);
+    
+    // Usar rangos configurables del contexto (con valores por defecto)
+    const rangos = rangosTurnos || ***REMOVED***
+      diurnoInicio: 6,
+      diurnoFin: 14,
+      tardeInicio: 14,
+      tardeFin: 20,
+      nocheInicio: 20
+    ***REMOVED***;
+    
+    if (hora >= rangos.diurnoInicio && hora < rangos.diurnoFin) return 'diurno';
+    if (hora >= rangos.tardeInicio && hora < rangos.tardeFin) return 'tarde';
     return 'noche';
-  ***REMOVED***;
+  ***REMOVED***, [rangosTurnos]);
 
   // Actualizar tipo de turno automáticamente al cambiar fecha u hora
   useEffect(() => ***REMOVED***
-    if (nuevoTurno.fecha && nuevoTurno.horaInicio) ***REMOVED***
-      const tipo = determinarTipoTurno(nuevoTurno.fecha, nuevoTurno.horaInicio);
-      setNuevoTurno(prev => (***REMOVED***...prev, tipo***REMOVED***));
+    if (nuevoTurno.fecha && nuevoTurno.horaInicio && !turnoSeleccionado) ***REMOVED***
+      const tipoDetectado = determinarTipoTurno(nuevoTurno.fecha, nuevoTurno.horaInicio);
+      console.log('🤖 Tipo detectado automáticamente:', tipoDetectado);
+      
+      setNuevoTurno(prev => (***REMOVED***
+        ...prev, 
+        tipo: tipoDetectado
+      ***REMOVED***));
     ***REMOVED***
-  ***REMOVED***, [nuevoTurno.fecha, nuevoTurno.horaInicio]);
+  ***REMOVED***, [nuevoTurno.fecha, nuevoTurno.horaInicio, turnoSeleccionado, determinarTipoTurno]);
 
   if (!visible) return null;
 
@@ -142,22 +179,25 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado ***REMOVED
             </div>
           </div>
           
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-medium mb-2">
-              Tipo de turno
-            </label>
-            <select 
-              value=***REMOVED***nuevoTurno.tipo***REMOVED***
-              onChange=***REMOVED***(e) => setNuevoTurno(***REMOVED***...nuevoTurno, tipo: e.target.value***REMOVED***)***REMOVED***
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="diurno">Diurno</option>
-              <option value="tarde">Tarde</option>
-              <option value="noche">Noche</option>
-              <option value="sabado">Sábado</option>
-              <option value="domingo">Domingo</option>
-            </select>
-          </div>
+          ***REMOVED***/* Tipo de turno - Solo mostrar selector si estamos editando un turno existente */***REMOVED***
+          ***REMOVED***turnoSeleccionado && (
+            <div className="mb-4">
+              <label className="block text-gray-700 text-sm font-medium mb-2">
+                Tipo de turno
+              </label>
+              <select 
+                value=***REMOVED***nuevoTurno.tipo***REMOVED***
+                onChange=***REMOVED***(e) => setNuevoTurno(***REMOVED***...nuevoTurno, tipo: e.target.value***REMOVED***)***REMOVED***
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                <option value="diurno">Diurno</option>
+                <option value="tarde">Tarde</option>
+                <option value="noche">Noche</option>
+                <option value="sabado">Sábado</option>
+                <option value="domingo">Domingo</option>
+              </select>
+            </div>
+          )***REMOVED***
           
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-medium mb-2">

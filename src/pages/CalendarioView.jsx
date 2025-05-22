@@ -1,9 +1,10 @@
-// src/pages/CalendarioView.jsx
+// src/pages/CalendarioView.jsx - VERSIÓN CON COLORES DINÁMICOS
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import Calendario from '../components/Calendario';
 import ResumenDia from '../components/ResumenDia';
 import ModalTurno from '../components/ModalTurno';
+import DynamicButton from '../components/DynamicButton';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** PlusCircle ***REMOVED*** from 'lucide-react';
@@ -14,13 +15,22 @@ const CalendarioView = () => ***REMOVED***
   const [modalAbierto, setModalAbierto] = useState(false);
   const [nuevoTurnoFecha, setNuevoTurnoFecha] = useState(null);
   
+  // Función para convertir fecha local a ISO
+  const fechaLocalAISO = (fecha) => ***REMOVED***
+    const year = fecha.getFullYear();
+    const month = String(fecha.getMonth() + 1).padStart(2, '0');
+    const day = String(fecha.getDate()).padStart(2, '0');
+    return `$***REMOVED***year***REMOVED***-$***REMOVED***month***REMOVED***-$***REMOVED***day***REMOVED***`;
+  ***REMOVED***;
+  
   const seleccionarDia = (fecha) => ***REMOVED***
-    const fechaStr = fecha.toISOString().split('T')[0];
+    const fechaStr = fechaLocalAISO(fecha);
     setFechaSeleccionada(fechaStr);
   ***REMOVED***;
   
   const abrirModalNuevoTurno = (fecha) => ***REMOVED***
-    setNuevoTurnoFecha(fecha.toISOString().split('T')[0]);
+    const fechaISO = fechaLocalAISO(fecha);
+    setNuevoTurnoFecha(fechaISO);
     setModalAbierto(true);
   ***REMOVED***;
   
@@ -73,15 +83,16 @@ const CalendarioView = () => ***REMOVED***
             <h3 className="text-lg font-semibold">
               Turnos del día seleccionado
             </h3>
-            <motion.button 
-              onClick=***REMOVED***() => abrirModalNuevoTurno(new Date(fechaSeleccionada))***REMOVED***
-              className="bg-pink-500 text-white px-3 py-1 rounded-lg shadow-md flex items-center gap-1"
-              whileHover=***REMOVED******REMOVED*** scale: 1.05 ***REMOVED******REMOVED***
-              whileTap=***REMOVED******REMOVED*** scale: 0.95 ***REMOVED******REMOVED***
-            >
-              <PlusCircle size=***REMOVED***16***REMOVED*** />
-              <span>Nuevo</span>
-            </motion.button>
+            <motion.div>
+              <DynamicButton
+                onClick=***REMOVED***() => abrirModalNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
+                size="sm"
+                className="flex items-center gap-1"
+              >
+                <PlusCircle size=***REMOVED***16***REMOVED*** />
+                <span>Nuevo</span>
+              </DynamicButton>
+            </motion.div>
           </div>
           
           ***REMOVED***turnosSeleccionados.length > 0 ? (
@@ -97,15 +108,15 @@ const CalendarioView = () => ***REMOVED***
               transition=***REMOVED******REMOVED*** delay: 0.3 ***REMOVED******REMOVED***
             >
               <p className="text-gray-500">No hay turnos para esta fecha</p>
-              <motion.button 
-                onClick=***REMOVED***() => abrirModalNuevoTurno(new Date(fechaSeleccionada))***REMOVED***
-                className="mt-4 bg-pink-500 text-white px-4 py-2 rounded-lg shadow-md flex items-center gap-2 mx-auto"
-                whileHover=***REMOVED******REMOVED*** scale: 1.05 ***REMOVED******REMOVED***
-                whileTap=***REMOVED******REMOVED*** scale: 0.95 ***REMOVED******REMOVED***
-              >
-                <PlusCircle size=***REMOVED***20***REMOVED*** />
-                <span>Agregar turno</span>
-              </motion.button>
+              <motion.div>
+                <DynamicButton
+                  onClick=***REMOVED***() => abrirModalNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
+                  className="flex items-center gap-2"
+                >
+                  <PlusCircle size=***REMOVED***20***REMOVED*** />
+                  <span>Agregar turno</span>
+                </DynamicButton>
+              </motion.div>
             </motion.div>
           )***REMOVED***
         </motion.div>
