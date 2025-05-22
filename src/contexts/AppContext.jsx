@@ -1,4 +1,4 @@
-// src/contexts/AppContext.jsx
+// src/contexts/AppContext.jsx - REESCRITURA COMPLETA
 
 import React, ***REMOVED*** createContext, useState, useEffect, useContext, useCallback, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** 
@@ -40,9 +40,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   const [error, setError] = useState(null);
   
   // Estados para preferencias de personalización
-  const [colorPrincipal, setColorPrincipal] = useState('#EC4899'); // pink-600
+  const [colorPrincipal, setColorPrincipal] = useState('#EC4899');
   const [emojiUsuario, setEmojiUsuario] = useState('😊');
-  const [descuentoDefault, setDescuentoDefault] = useState(15); // 15%
+  const [descuentoDefault, setDescuentoDefault] = useState(15);
   const [rangosTurnos, setRangosTurnos] = useState(***REMOVED***
     diurnoInicio: 6,
     diurnoFin: 14,
@@ -62,12 +62,10 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       return null;
     ***REMOVED***
     
-    const refs = ***REMOVED***
+    return ***REMOVED***
       trabajosRef: collection(db, 'usuarios', currentUser.uid, 'trabajos'),
       turnosRef: collection(db, 'usuarios', currentUser.uid, 'turnos')
     ***REMOVED***;
-    
-    return refs;
   ***REMOVED***, [currentUser]);
 
   // Función para crear o verificar documento de usuario
@@ -116,7 +114,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         
         await setDoc(userDocRef, defaultUserData);
         
-        // Establecer valores por defecto
         setColorPrincipal('#EC4899');
         setEmojiUsuario('😊');
         setDescuentoDefault(15);
@@ -133,12 +130,104 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***
   ***REMOVED***, [currentUser]);
 
+  // Función mejorada para calcular horas trabajadas
+  const calcularHoras = useCallback((inicio, fin) => ***REMOVED***
+    const [horaIni, minIni] = inicio.split(':').map(n => parseInt(n));
+    const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
+    
+    let inicioMinutos = horaIni * 60 + minIni;
+    let finMinutos = horaFn * 60 + minFn;
+    
+    // Si el turno cruza medianoche
+    if (finMinutos <= inicioMinutos) ***REMOVED***
+      finMinutos += 24 * 60;
+    ***REMOVED***
+    
+    return (finMinutos - inicioMinutos) / 60;
+  ***REMOVED***, []);
+
+  // Función mejorada para calcular el pago considerando rangos horarios múltiples
+  const calcularPago = useCallback((turno) => ***REMOVED***
+    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
+    if (!trabajo) return ***REMOVED*** total: 0, totalConDescuento: 0, horas: 0 ***REMOVED***;
+    
+    const ***REMOVED*** horaInicio, horaFin ***REMOVED*** = turno;
+    
+    // Convertir horas a minutos
+    const [horaIni, minIni] = horaInicio.split(':').map(n => parseInt(n));
+    const [horaFn, minFn] = horaFin.split(':').map(n => parseInt(n));
+    
+    let inicioMinutos = horaIni * 60 + minIni;
+    let finMinutos = horaFn * 60 + minFn;
+    
+    // Si el turno cruza medianoche
+    if (finMinutos <= inicioMinutos) ***REMOVED***
+      finMinutos += 24 * 60;
+    ***REMOVED***
+    
+    const totalMinutos = finMinutos - inicioMinutos;
+    const horas = totalMinutos / 60;
+    
+    // Verificar si es fin de semana
+    const [year, month, day] = turno.fecha.split('-');
+    const fecha = new Date(year, month - 1, day);
+    const diaSemana = fecha.getDay();
+    
+    let total = 0;
+    
+    if (diaSemana === 0) ***REMOVED***
+      // Domingo - toda la tarifa de domingo
+      total = horas * trabajo.tarifas.domingo;
+    ***REMOVED*** else if (diaSemana === 6) ***REMOVED***
+      // Sábado - toda la tarifa de sábado
+      total = horas * trabajo.tarifas.sabado;
+    ***REMOVED*** else ***REMOVED***
+      // Día de semana - calcular por rangos horarios
+      const rangos = rangosTurnos || ***REMOVED***
+        diurnoInicio: 6, diurnoFin: 14,
+        tardeInicio: 14, tardeFin: 20,
+        nocheInicio: 20
+      ***REMOVED***;
+      
+      // Convertir rangos a minutos
+      const diurnoInicioMin = rangos.diurnoInicio * 60;
+      const diurnoFinMin = rangos.diurnoFin * 60;
+      const tardeInicioMin = rangos.tardeInicio * 60;
+      const tardeFinMin = rangos.tardeFin * 60;
+      
+      // Calcular minuto por minuto para manejar cambios de tarifa
+      for (let minuto = inicioMinutos; minuto < finMinutos; minuto++) ***REMOVED***
+        const horaActual = minuto % (24 * 60); // Manejar cruce de medianoche
+        let tarifa = trabajo.tarifaBase;
+        
+        // Determinar tarifa según la hora
+        if (horaActual >= diurnoInicioMin && horaActual < diurnoFinMin) ***REMOVED***
+          tarifa = trabajo.tarifas.diurno;
+        ***REMOVED*** else if (horaActual >= tardeInicioMin && horaActual < tardeFinMin) ***REMOVED***
+          tarifa = trabajo.tarifas.tarde;
+        ***REMOVED*** else ***REMOVED***
+          tarifa = trabajo.tarifas.noche;
+        ***REMOVED***
+        
+        // Agregar pago por este minuto (tarifa / 60 para convertir a minuto)
+        total += tarifa / 60;
+      ***REMOVED***
+    ***REMOVED***
+    
+    const totalConDescuento = total * (1 - descuentoDefault / 100);
+    
+    return ***REMOVED***
+      total,
+      totalConDescuento,
+      horas
+    ***REMOVED***;
+  ***REMOVED***, [trabajos, rangosTurnos, descuentoDefault]);
+
   // Cargar datos y preferencias del usuario
   useEffect(() => ***REMOVED***
     let unsubscribeTrabajos = null;
     let unsubscribeTurnos = null;
     
-    // Función para cargar datos reales del usuario desde Firebase
     const cargarDatosUsuario = async () => ***REMOVED***
       if (!currentUser) ***REMOVED***
         setCargando(false);
@@ -152,7 +241,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         setCargando(true);
         setError(null);
         
-        // Verificar/crear documento de usuario y cargar preferencias
         await ensureUserDocument();
         
         const subcollections = getUserSubcollections();
@@ -173,10 +261,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           ***REMOVED*** else ***REMOVED***
             const trabajosData = [];
             snapshot.forEach(doc => ***REMOVED***
-              const data = ***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***;
-              trabajosData.push(data);
+              trabajosData.push(***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***);
             ***REMOVED***);
-            
             setTrabajos(trabajosData);
           ***REMOVED***
         ***REMOVED***, (error) => ***REMOVED***
@@ -195,13 +281,10 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           ***REMOVED*** else ***REMOVED***
             const turnosData = [];
             snapshot.forEach(doc => ***REMOVED***
-              const data = ***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***;
-              turnosData.push(data);
+              turnosData.push(***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***);
             ***REMOVED***);
-            
             setTurnos(turnosData);
           ***REMOVED***
-          
           setCargando(false);
         ***REMOVED***, (error) => ***REMOVED***
           setError('Error al cargar turnos: ' + error.message);
@@ -216,47 +299,32 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
     cargarDatosUsuario();
     
-    // Cleanup cuando el componente se desmonte o cambie el usuario
     return () => ***REMOVED***
-      if (unsubscribeTrabajos) ***REMOVED***
-        unsubscribeTrabajos();
-      ***REMOVED***
-      if (unsubscribeTurnos) ***REMOVED***
-        unsubscribeTurnos();
-      ***REMOVED***
+      if (unsubscribeTrabajos) unsubscribeTrabajos();
+      if (unsubscribeTurnos) unsubscribeTurnos();
     ***REMOVED***;
   ***REMOVED***, [currentUser, getUserSubcollections, ensureUserDocument]);
   
-  // Funciones para gestionar trabajos usando subcolecciones
+  // Funciones CRUD para trabajos
   const agregarTrabajo = useCallback(async (nuevoTrabajo) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) ***REMOVED***
-        throw new Error('Usuario no autenticado');
-      ***REMOVED***
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) ***REMOVED***
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      ***REMOVED***
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Validar datos del trabajo
       if (!nuevoTrabajo.nombre || !nuevoTrabajo.nombre.trim()) ***REMOVED***
         throw new Error('El nombre del trabajo es requerido');
       ***REMOVED***
       
-      // Añadir metadata (sin userId porque ya está en la subcolección)
       const trabajoConMetadata = ***REMOVED***
         ...nuevoTrabajo,
         fechaCreacion: new Date(),
         fechaActualizacion: new Date()
       ***REMOVED***;
       
-      // Guardar en la subcolección del usuario
       const docRef = await addDoc(subcollections.trabajosRef, trabajoConMetadata);
-      
-      const trabajoGuardado = ***REMOVED*** ...trabajoConMetadata, id: docRef.id ***REMOVED***;
-      
-      return trabajoGuardado;
+      return ***REMOVED*** ...trabajoConMetadata, id: docRef.id ***REMOVED***;
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al agregar trabajo: ' + err.message);
       throw err;
@@ -265,25 +333,18 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   
   const editarTrabajo = useCallback(async (id, datosActualizados) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) ***REMOVED***
-        throw new Error('Usuario no autenticado');
-      ***REMOVED***
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) ***REMOVED***
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      ***REMOVED***
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Añadir metadata
       const datosConMetadata = ***REMOVED***
         ...datosActualizados,
         fechaActualizacion: new Date()
       ***REMOVED***;
       
-      // Actualizar en la subcolección del usuario
       const docRef = doc(subcollections.trabajosRef, id);
       await updateDoc(docRef, datosConMetadata);
-      
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al editar trabajo: ' + err.message);
       throw err;
@@ -292,63 +353,45 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   
   const borrarTrabajo = useCallback(async (id) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) ***REMOVED***
-        throw new Error('Usuario no autenticado');
-      ***REMOVED***
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) ***REMOVED***
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      ***REMOVED***
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Borrar trabajo de la subcolección
       await deleteDoc(doc(subcollections.trabajosRef, id));
       
-      // Borrar turnos asociados de la subcolección
       const turnosAsociados = turnos.filter(turno => turno.trabajoId === id);
-      
       const promesasBorrado = turnosAsociados.map(turno => 
         deleteDoc(doc(subcollections.turnosRef, turno.id))
       );
       
       await Promise.all(promesasBorrado);
-      
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al eliminar trabajo: ' + err.message);
       throw err;
     ***REMOVED***
   ***REMOVED***, [currentUser, getUserSubcollections, turnos]);
   
-  // Funciones para gestionar turnos usando subcolecciones
+  // Funciones CRUD para turnos
   const agregarTurno = useCallback(async (nuevoTurno) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) ***REMOVED***
-        throw new Error('Usuario no autenticado');
-      ***REMOVED***
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) ***REMOVED***
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      ***REMOVED***
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Validar datos del turno
       if (!nuevoTurno.trabajoId || !nuevoTurno.fecha || !nuevoTurno.horaInicio || !nuevoTurno.horaFin) ***REMOVED***
         throw new Error('Todos los campos del turno son requeridos');
       ***REMOVED***
       
-      // Añadir metadata (sin userId porque ya está en la subcolección)
       const turnoConMetadata = ***REMOVED***
         ...nuevoTurno,
         fechaCreacion: new Date(),
         fechaActualizacion: new Date()
       ***REMOVED***;
       
-      // Guardar en la subcolección del usuario
       const docRef = await addDoc(subcollections.turnosRef, turnoConMetadata);
-      
-      const turnoGuardado = ***REMOVED*** ...turnoConMetadata, id: docRef.id ***REMOVED***;
-      
-      return turnoGuardado;
+      return ***REMOVED*** ...turnoConMetadata, id: docRef.id ***REMOVED***;
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al agregar turno: ' + err.message);
       throw err;
@@ -357,25 +400,18 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   
   const editarTurno = useCallback(async (id, datosActualizados) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) ***REMOVED***
-        throw new Error('Usuario no autenticado');
-      ***REMOVED***
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) ***REMOVED***
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      ***REMOVED***
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Añadir metadata
       const datosConMetadata = ***REMOVED***
         ...datosActualizados,
         fechaActualizacion: new Date()
       ***REMOVED***;
       
-      // Actualizar en la subcolección del usuario
       const docRef = doc(subcollections.turnosRef, id);
       await updateDoc(docRef, datosConMetadata);
-      
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al editar turno: ' + err.message);
       throw err;
@@ -384,18 +420,12 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   
   const borrarTurno = useCallback(async (id) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) ***REMOVED***
-        throw new Error('Usuario no autenticado');
-      ***REMOVED***
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const subcollections = getUserSubcollections();
-      if (!subcollections) ***REMOVED***
-        throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-      ***REMOVED***
+      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
       
-      // Borrar de la subcolección del usuario
       await deleteDoc(doc(subcollections.turnosRef, id));
-      
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al eliminar turno: ' + err.message);
       throw err;
@@ -405,9 +435,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   // Función para guardar preferencias de usuario
   const guardarPreferencias = useCallback(async (preferencias) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) ***REMOVED***
-        throw new Error('Usuario no autenticado');
-      ***REMOVED***
+      if (!currentUser) throw new Error('Usuario no autenticado');
       
       const ***REMOVED*** 
         colorPrincipal: nuevoColor, 
@@ -416,22 +444,17 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         rangosTurnos: nuevosRangos
       ***REMOVED*** = preferencias;
       
-      // Actualizar estados locales inmediatamente
       if (nuevoColor !== undefined) setColorPrincipal(nuevoColor);
       if (nuevoEmoji !== undefined) setEmojiUsuario(nuevoEmoji);
       if (nuevoDescuento !== undefined) setDescuentoDefault(nuevoDescuento);
       if (nuevosRangos !== undefined) setRangosTurnos(nuevosRangos);
       
-      // Guardar en localStorage para persistencia local
       if (nuevoColor !== undefined) localStorage.setItem('colorPrincipal', nuevoColor);
       if (nuevoEmoji !== undefined) localStorage.setItem('emojiUsuario', nuevoEmoji);
       if (nuevoDescuento !== undefined) localStorage.setItem('descuentoDefault', nuevoDescuento.toString());
       if (nuevosRangos !== undefined) localStorage.setItem('rangosTurnos', JSON.stringify(nuevosRangos));
       
-      // Guardar en Firebase
       const userDocRef = doc(db, 'usuarios', currentUser.uid);
-      
-      // Crear un objeto con solo las propiedades que se están actualizando
       const datosActualizados = ***REMOVED******REMOVED***;
       
       if (nuevoColor !== undefined) datosActualizados['ajustes.colorPrincipal'] = nuevoColor;
@@ -440,8 +463,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       if (nuevosRangos !== undefined) datosActualizados['ajustes.rangosTurnos'] = nuevosRangos;
       datosActualizados['fechaActualizacion'] = new Date();
       
-      // Solo actualizar en Firebase si hay algo que actualizar
-      if (Object.keys(datosActualizados).length > 1) ***REMOVED*** // Más de 1 porque siempre incluye fechaActualizacion
+      if (Object.keys(datosActualizados).length > 1) ***REMOVED***
         await updateDoc(userDocRef, datosActualizados);
       ***REMOVED***
       
@@ -453,62 +475,15 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   ***REMOVED***, [currentUser]);
   
   // Agrupar turnos por fecha
-  const turnosPorFecha = turnos.reduce((acc, turno) => ***REMOVED***
-    if (!acc[turno.fecha]) ***REMOVED***
-      acc[turno.fecha] = [];
-    ***REMOVED***
-    acc[turno.fecha].push(turno);
-    return acc;
-  ***REMOVED***, ***REMOVED******REMOVED***);
-  
-  // Calcular horas trabajadas
-  const calcularHoras = useCallback((inicio, fin) => ***REMOVED***
-    const [horaInicio, minInicio] = inicio.split(':').map(n => parseInt(n));
-    const [horaFin, minFin] = fin.split(':').map(n => parseInt(n));
-    
-    const inicioMinutos = horaInicio * 60 + minInicio;
-    const finMinutos = horaFin * 60 + minFin;
-    
-    return (finMinutos - inicioMinutos) / 60;
-  ***REMOVED***, []);
-  
-  // Calcular el pago de un turno
-  const calcularPago = useCallback((turno) => ***REMOVED***
-    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-    if (!trabajo) return ***REMOVED*** total: 0, totalConDescuento: 0, horas: 0 ***REMOVED***;
-    
-    const horas = calcularHoras(turno.horaInicio, turno.horaFin);
-    let tarifa = trabajo.tarifaBase;
-    
-    switch (turno.tipo) ***REMOVED***
-      case 'diurno':
-        tarifa = trabajo.tarifas.diurno;
-        break;
-      case 'tarde':
-        tarifa = trabajo.tarifas.tarde;
-        break;
-      case 'noche':
-        tarifa = trabajo.tarifas.noche;
-        break;
-      case 'sabado':
-        tarifa = trabajo.tarifas.sabado;
-        break;
-      case 'domingo':
-        tarifa = trabajo.tarifas.domingo;
-        break;
-      default:
-        tarifa = trabajo.tarifaBase;
-    ***REMOVED***
-    
-    const total = horas * tarifa;
-    const totalConDescuento = total * (1 - descuentoDefault / 100); 
-    
-    return ***REMOVED***
-      total,
-      totalConDescuento,
-      horas
-    ***REMOVED***;
-  ***REMOVED***, [trabajos, calcularHoras, descuentoDefault]);
+  const turnosPorFecha = useMemo(() => ***REMOVED***
+    return turnos.reduce((acc, turno) => ***REMOVED***
+      if (!acc[turno.fecha]) ***REMOVED***
+        acc[turno.fecha] = [];
+      ***REMOVED***
+      acc[turno.fecha].push(turno);
+      return acc;
+    ***REMOVED***, ***REMOVED******REMOVED***);
+  ***REMOVED***, [turnos]);
   
   // Calcular total del día
   const calcularTotalDia = useCallback((turnosDia) => ***REMOVED***
@@ -522,7 +497,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   
   // Formatear fecha
   const formatearFecha = useCallback((fechaStr) => ***REMOVED***
-    const fecha = new Date(fechaStr);
+    const fecha = new Date(fechaStr + 'T00:00:00');
     return fecha.toLocaleDateString('es-ES', ***REMOVED*** 
       weekday: 'long', 
       year: 'numeric', 
