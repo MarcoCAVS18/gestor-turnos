@@ -1,7 +1,7 @@
 // src/pages/auth/Register.jsx -
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** Link, useNavigate ***REMOVED*** from 'react-router-dom';
+import ***REMOVED*** Link, useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../contexts/AuthContext';
 
 const Register = () => ***REMOVED***
@@ -14,6 +14,10 @@ const Register = () => ***REMOVED***
   const [showPassword, setShowPassword] = useState(false);
   const ***REMOVED*** signup, loginWithGoogle ***REMOVED*** = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Obtener la ruta de redirección de los state de navegación
+  const redirectTo = location.state?.redirectTo || '/';
   
   // Estados para validaciones
   const [emailValid, setEmailValid] = useState(true);
@@ -107,7 +111,9 @@ const Register = () => ***REMOVED***
       setError('');
       setLoading(true);
       await signup(email, password, displayName);
-      navigate('/');
+      
+      // Navegar a la ruta de redirección
+      navigate(redirectTo);
     ***REMOVED*** catch (error) ***REMOVED***
       if (error.code === 'auth/email-already-in-use') ***REMOVED***
         setError('Este email ya está en uso. Intenta iniciar sesión.');
@@ -125,12 +131,15 @@ const Register = () => ***REMOVED***
       setLoading(true);
       setError('');
       await loginWithGoogle();
-      navigate('/');
+      
+      // Navegar a la ruta de redirección
+      navigate(redirectTo);
     ***REMOVED*** catch (error) ***REMOVED***
       setError('Error al registrarse con Google: ' + error.message);
       setLoading(false);
     ***REMOVED***
   ***REMOVED***;
+
 
   return (
     <div className="fixed inset-0 overflow-hidden">

@@ -1,14 +1,18 @@
-// src/pages/Trabajos.jsx - CON ALERTA DE ELIMINACIÓN
+
+// src/pages/Trabajos.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ModalTrabajo from '../components/ModalTrabajo';
 import AlertaEliminacion from '../components/AlertaEliminacion';
 import Loader from '../components/Loader';
 import DynamicButton from '../components/DynamicButton';
-import ***REMOVED*** PlusCircle, Briefcase, Edit, Trash2 ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** PlusCircle, Briefcase, Edit, Trash2, Share2 ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+import ***REMOVED*** compartirTrabajoNativo ***REMOVED*** from '../services/shareService';
 
 const Trabajos = () => ***REMOVED***
+  const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
   const ***REMOVED*** trabajos, cargando, borrarTrabajo, turnos ***REMOVED*** = useApp();
   const [modalAbierto, setModalAbierto] = useState(false);
   const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(null);
@@ -18,6 +22,10 @@ const Trabajos = () => ***REMOVED***
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [trabajoAEliminar, setTrabajoAEliminar] = useState(null);
   const [eliminando, setEliminando] = useState(false);
+  
+  // Estados para funcionalidad de compartir
+  const [compartiendoTrabajo, setCompartiendoTrabajo] = useState(***REMOVED******REMOVED***);
+  const [mensajesCompartir, setMensajesCompartir] = useState(***REMOVED******REMOVED***);
   
   // Efecto para controlar el tiempo de carga
   useEffect(() => ***REMOVED***
@@ -78,6 +86,38 @@ const Trabajos = () => ***REMOVED***
     ***REMOVED***
   ***REMOVED***;
   
+  // Función para manejar el compartir trabajo
+  const handleCompartirTrabajo = async (trabajo) => ***REMOVED***
+    try ***REMOVED***
+      setCompartiendoTrabajo(prev => (***REMOVED*** ...prev, [trabajo.id]: true ***REMOVED***));
+      setMensajesCompartir(prev => (***REMOVED*** ...prev, [trabajo.id]: '' ***REMOVED***));
+      
+      // Usar la función de compartir nativo
+      await compartirTrabajoNativo(currentUser.uid, trabajo);
+      
+      setMensajesCompartir(prev => (***REMOVED*** 
+        ...prev, 
+        [trabajo.id]: 'Trabajo compartido exitosamente' 
+      ***REMOVED***));
+      
+      // Limpiar mensaje después de 3 segundos
+      setTimeout(() => ***REMOVED***
+        setMensajesCompartir(prev => (***REMOVED*** ...prev, [trabajo.id]: '' ***REMOVED***));
+      ***REMOVED***, 3000);
+      
+    ***REMOVED*** catch (error) ***REMOVED***
+      setMensajesCompartir(prev => (***REMOVED*** 
+        ...prev, 
+        [trabajo.id]: 'Error al compartir trabajo' 
+      ***REMOVED***));
+      setTimeout(() => ***REMOVED***
+        setMensajesCompartir(prev => (***REMOVED*** ...prev, [trabajo.id]: '' ***REMOVED***));
+      ***REMOVED***, 3000);
+    ***REMOVED*** finally ***REMOVED***
+      setCompartiendoTrabajo(prev => (***REMOVED*** ...prev, [trabajo.id]: false ***REMOVED***));
+    ***REMOVED***
+  ***REMOVED***;
+  
   // Función para contar turnos de un trabajo
   const contarTurnosTrabajo = (trabajoId) => ***REMOVED***
     return turnos.filter(turno => turno.trabajoId === trabajoId).length;
@@ -91,7 +131,7 @@ const Trabajos = () => ***REMOVED***
     
     return [
       trabajo.nombre,
-      `Tarifa base: $$***REMOVED***trabajo.tarifaBase?.toFixed(2) || '0.00'***REMOVED***`,
+      `Tarifa base: $***REMOVED***trabajo.tarifaBase?.toFixed(2) || '0.00'***REMOVED***`,
       turnosAsociados > 0 ? `$***REMOVED***turnosAsociados***REMOVED*** $***REMOVED***turnosAsociados === 1 ? 'turno registrado' : 'turnos registrados'***REMOVED***` : 'Sin turnos registrados'
     ];
   ***REMOVED***;
@@ -135,6 +175,8 @@ const Trabajos = () => ***REMOVED***
         <div className="space-y-4">
           ***REMOVED***trabajos.map(trabajo => ***REMOVED***
             const turnosCount = contarTurnosTrabajo(trabajo.id);
+            const estaCompartiendo = compartiendoTrabajo[trabajo.id] || false;
+            const mensajeCompartir = mensajesCompartir[trabajo.id] || '';
             
             return (
               <div 
@@ -169,6 +211,13 @@ const Trabajos = () => ***REMOVED***
                         <Edit size=***REMOVED***18***REMOVED*** />
                       </button>
                       <button
+                        onClick=***REMOVED***() => handleCompartirTrabajo(trabajo)***REMOVED***
+                        disabled=***REMOVED***estaCompartiendo***REMOVED***
+                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        <Share2 size=***REMOVED***18***REMOVED*** />
+                      </button>
+                      <button
                         onClick=***REMOVED***() => iniciarEliminacion(trabajo)***REMOVED***
                         className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       >
@@ -176,6 +225,13 @@ const Trabajos = () => ***REMOVED***
                       </button>
                     </div>
                   </div>
+                  
+                  ***REMOVED***/* Mensaje de compartir */***REMOVED***
+                  ***REMOVED***mensajeCompartir && (
+                    <div className="mb-3 p-2 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-700">***REMOVED***mensajeCompartir***REMOVED***</p>
+                    </div>
+                  )***REMOVED***
                   
                   ***REMOVED***/* Información de tarifas */***REMOVED***
                   <div className="grid grid-cols-2 gap-4 text-sm">
