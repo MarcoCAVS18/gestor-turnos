@@ -161,15 +161,13 @@ function App() ***REMOVED***
         <Route path="/forgot-password" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />***REMOVED*** />
         <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />
         
-        ***REMOVED***/* Ruta para compartir trabajos */***REMOVED***
+        ***REMOVED***/* Ruta para compartir trabajos - CORREGIDA */***REMOVED***
         <Route path="/compartir/:token" element=***REMOVED***
-          currentUser ? (
-            <PrivateRoute>
+          <PrivateRoute>
+            <AppProvider>
               <TrabajoCompartido />
-            </PrivateRoute>
-          ) : (
-            <AuthModal redirectTo=***REMOVED***window.location.pathname***REMOVED*** />
-          )
+            </AppProvider>
+          </PrivateRoute>
         ***REMOVED*** />
 
         ***REMOVED***/* Rutas protegidas */***REMOVED***
