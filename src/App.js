@@ -161,15 +161,13 @@ function App() {
         <Route path="/forgot-password" element={currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         
-        {/* Ruta para compartir trabajos */}
+        {/* Ruta para compartir trabajos - CORREGIDA */}
         <Route path="/compartir/:token" element={
-          currentUser ? (
-            <PrivateRoute>
+          <PrivateRoute>
+            <AppProvider>
               <TrabajoCompartido />
-            </PrivateRoute>
-          ) : (
-            <AuthModal redirectTo={window.location.pathname} />
-          )
+            </AppProvider>
+          </PrivateRoute>
         } />
 
         {/* Rutas protegidas */}

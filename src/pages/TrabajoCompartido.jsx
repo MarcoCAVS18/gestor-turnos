@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { obtenerTrabajoCompartido, aceptarTrabajoCompartido } from '../services/shareService';
-import { Briefcase, DollarSign, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { Briefcase, DollarSign, AlertCircle, CheckCircle } from 'lucide-react';
 import DynamicButton from '../components/DynamicButton';
+import Loader from '../components/Loader';
 
 const TrabajoCompartido = () => {
   const { token } = useParams();
@@ -24,23 +25,34 @@ const TrabajoCompartido = () => {
         setLoading(true);
         setError('');
         
+        if (!token) {
+          throw new Error('Token de compartir inválido');
+        }
+
+        console.log('Cargando trabajo compartido con token:', token);
         const datos = await obtenerTrabajoCompartido(token);
+        console.log('Datos del trabajo compartido:', datos);
         setTrabajoData(datos);
         
       } catch (err) {
+        console.error('Error al cargar trabajo compartido:', err);
         setError(err.message || 'No se pudo cargar el trabajo compartido');
       } finally {
         setLoading(false);
       }
     };
 
-    if (token) {
+    // Solo cargar si hay un usuario logueado
+    if (currentUser && token) {
       cargarTrabajoCompartido();
+    } else if (!currentUser) {
+      setError('Debes iniciar sesión para ver este trabajo compartido');
+      setLoading(false);
     } else {
       setError('Token de compartir inválido');
       setLoading(false);
     }
-  }, [token]);
+  }, [token, currentUser]);
 
   const handleAceptarTrabajo = async () => {
     if (!currentUser) {
@@ -52,7 +64,9 @@ const TrabajoCompartido = () => {
       setAceptando(true);
       setError('');
       
+      console.log('Aceptando trabajo compartido...');
       await aceptarTrabajoCompartido(currentUser.uid, token);
+      console.log('Trabajo aceptado exitosamente');
       
       setExitoso(true);
       
@@ -62,6 +76,7 @@ const TrabajoCompartido = () => {
       }, 3000);
       
     } catch (err) {
+      console.error('Error al aceptar trabajo:', err);
       setError(err.message || 'No se pudo agregar el trabajo a tu perfil');
     } finally {
       setAceptando(false);
@@ -72,14 +87,16 @@ const TrabajoCompartido = () => {
     navigate('/dashboard');
   };
 
+  const handleIniciarSesion = () => {
+    navigate('/login', { state: { redirectTo: `/compartir/${token}` } });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-white rounded-xl shadow-md p-8 max-w-md w-full mx-4">
-          <div className="flex items-center justify-center mb-4">
-            <Loader className="animate-spin h-8 w-8 text-pink-600" />
-          </div>
-          <p className="text-center text-gray-600">Cargando trabajo compartido...</p>
+          <Loader size={65} />
+          <p className="text-center text-gray-600 mt-4">Cargando trabajo compartido...</p>
         </div>
       </div>
     );
@@ -96,12 +113,32 @@ const TrabajoCompartido = () => {
             Error al cargar
           </h2>
           <p className="text-center text-gray-600 mb-6">{error}</p>
-          <DynamicButton
-            onClick={() => navigate('/dashboard')}
-            className="w-full"
-          >
-            Volver al inicio
-          </DynamicButton>
+          <div className="flex gap-3">
+            {!currentUser ? (
+              <>
+                <DynamicButton
+                  onClick={handleIniciarSesion}
+                  className="flex-1"
+                >
+                  Iniciar sesión
+                </DynamicButton>
+                <DynamicButton
+                  onClick={() => navigate('/')}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Cancelar
+                </DynamicButton>
+              </>
+            ) : (
+              <DynamicButton
+                onClick={() => navigate('/dashboard')}
+                className="w-full"
+              >
+                Volver al inicio
+              </DynamicButton>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -239,7 +276,9 @@ const TrabajoCompartido = () => {
             >
               {aceptando ? (
                 <span className="flex items-center">
-                  <Loader size={16} className="animate-spin mr-2" />
+                  <div className="mr-2">
+                    <Loader size={16} />
+                  </div>
                   Agregando...
                 </span>
               ) : (
