@@ -5,8 +5,13 @@ import ***REMOVED*** BrowserRouter as Router, Routes, Route, Navigate ***REMOVED
 import ***REMOVED*** useAuth ***REMOVED*** from './contexts/AuthContext';
 import ***REMOVED*** AppProvider ***REMOVED*** from './contexts/AppContext';
 
-// Componentes
+// Componentes de autenticación
 import AuthModal from './components/AuthModal';
+import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
+
+// Componentes principales
 import Header from './components/Header';
 import Navegacion from './components/Navegacion';
 import Dashboard from './pages/Dashboard';
@@ -15,9 +20,9 @@ import Turnos from './pages/Turnos';
 import Estadisticas from './pages/Estadisticas';
 import CalendarioView from './pages/CalendarioView';
 import Ajustes from './pages/Ajustes';
-import Register from './pages/auth/Register';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import ResetPassword from './pages/auth/ResetPassword';
+import TrabajoCompartido from './pages/TrabajoCompartido';
+
+// Modales
 import ModalTrabajo from './components/ModalTrabajo';
 import ModalTurno from './components/ModalTurno';
 
@@ -35,74 +40,6 @@ const PrivateRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   
   return currentUser ? children : <Navigate to="/login" replace />;
 ***REMOVED***;
-
-function App() ***REMOVED***
-  const ***REMOVED*** currentUser, loading ***REMOVED*** = useAuth();
-  
-  // Si está cargando, mostrar spinner
-  if (loading) ***REMOVED***
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
-      </div>
-    );
-  ***REMOVED***
-
-  return (
-    <Router>
-      <Routes>
-        ***REMOVED***/* Rutas de autenticación */***REMOVED***
-        <Route path="/login" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <AuthModal />***REMOVED*** />
-        <Route path="/register" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <Register />***REMOVED*** />
-        <Route path="/forgot-password" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />***REMOVED*** />
-        <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />
-
-        ***REMOVED***/* Rutas protegidas */***REMOVED***
-        <Route path="/dashboard" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="dashboard" />
-          </PrivateRoute>
-        ***REMOVED*** />
-        
-        <Route path="/trabajos" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="trabajos" />
-          </PrivateRoute>
-        ***REMOVED*** />
-        
-        <Route path="/turnos" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="turnos" />
-          </PrivateRoute>
-        ***REMOVED*** />
-        
-        <Route path="/estadisticas" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="estadisticas" />
-          </PrivateRoute>
-        ***REMOVED*** />
-        
-        <Route path="/calendario" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="calendario" />
-          </PrivateRoute>
-        ***REMOVED*** />
-        
-        <Route path="/ajustes" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="ajustes" />
-          </PrivateRoute>
-        ***REMOVED*** />
-
-        ***REMOVED***/* Ruta por defecto - redirigir a dashboard */***REMOVED***
-        <Route path="/" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
-        
-        ***REMOVED***/* Ruta catch-all para URLs no encontradas */***REMOVED***
-        <Route path="*" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
-      </Routes>
-    </Router>
-  );
-***REMOVED***
 
 // Componente para el layout de la aplicación cuando el usuario está autenticado
 function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
@@ -200,6 +137,85 @@ function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
         />
       </div>
     </AppProvider>
+  );
+***REMOVED***
+
+function App() ***REMOVED***
+  const ***REMOVED*** currentUser, loading ***REMOVED*** = useAuth();
+  
+  // Si está cargando, mostrar spinner
+  if (loading) ***REMOVED***
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+      </div>
+    );
+  ***REMOVED***
+
+  return (
+    <Router>
+      <Routes>
+        ***REMOVED***/* Rutas de autenticación */***REMOVED***
+        <Route path="/login" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <AuthModal />***REMOVED*** />
+        <Route path="/register" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <Register />***REMOVED*** />
+        <Route path="/forgot-password" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />***REMOVED*** />
+        <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />
+        
+        ***REMOVED***/* Ruta para compartir trabajos */***REMOVED***
+        <Route path="/compartir/:token" element=***REMOVED***
+          currentUser ? (
+            <PrivateRoute>
+              <TrabajoCompartido />
+            </PrivateRoute>
+          ) : (
+            <AuthModal redirectTo=***REMOVED***window.location.pathname***REMOVED*** />
+          )
+        ***REMOVED*** />
+
+        ***REMOVED***/* Rutas protegidas */***REMOVED***
+        <Route path="/dashboard" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="dashboard" />
+          </PrivateRoute>
+        ***REMOVED*** />
+        
+        <Route path="/trabajos" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="trabajos" />
+          </PrivateRoute>
+        ***REMOVED*** />
+        
+        <Route path="/turnos" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="turnos" />
+          </PrivateRoute>
+        ***REMOVED*** />
+        
+        <Route path="/estadisticas" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="estadisticas" />
+          </PrivateRoute>
+        ***REMOVED*** />
+        
+        <Route path="/calendario" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="calendario" />
+          </PrivateRoute>
+        ***REMOVED*** />
+        
+        <Route path="/ajustes" element=***REMOVED***
+          <PrivateRoute>
+            <AppLayout currentView="ajustes" />
+          </PrivateRoute>
+        ***REMOVED*** />
+
+        ***REMOVED***/* Ruta por defecto - redirigir a dashboard */***REMOVED***
+        <Route path="/" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
+        
+        ***REMOVED***/* Ruta catch-all para URLs no encontradas */***REMOVED***
+        <Route path="*" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
+      </Routes>
+    </Router>
   );
 ***REMOVED***
 

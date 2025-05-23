@@ -1,13 +1,18 @@
 // src/components/TarjetaTrabajo.jsx
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
-import ***REMOVED*** Edit, Trash2, Clock, DollarSign, Users, Info ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Edit, Trash2, Clock, DollarSign, Users, Info, Share2 ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+import ***REMOVED*** compartirTrabajoNativo ***REMOVED*** from '../services/shareService';
 import DynamicButton from './DynamicButton';
 
 const TarjetaTrabajo = (***REMOVED*** trabajo, abrirModalEditarTrabajo, eliminarTrabajo ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
   const ***REMOVED*** turnos, calcularPago ***REMOVED*** = useApp();
   const [mostrarDetalles, setMostrarDetalles] = useState(false);
+  const [compartiendoTrabajo, setCompartiendoTrabajo] = useState(false);
+  const [mensajeCompartir, setMensajeCompartir] = useState('');
   
   // Calcular estadísticas del trabajo
   const turnosDelTrabajo = turnos.filter(turno => turno.trabajoId === trabajo.id);
@@ -24,6 +29,32 @@ const TarjetaTrabajo = (***REMOVED*** trabajo, abrirModalEditarTrabajo, eliminar
     return total + horas;
   ***REMOVED***, 0);
   
+  // Función para manejar el compartir trabajo
+  const handleCompartirTrabajo = async () => ***REMOVED***
+    try ***REMOVED***
+      setCompartiendoTrabajo(true);
+      setMensajeCompartir('');
+      
+      // Usar la función de compartir nativo
+      await compartirTrabajoNativo(currentUser.uid, trabajo);
+      
+      setMensajeCompartir('Trabajo compartido exitosamente');
+      
+      // Limpiar mensaje después de 3 segundos
+      setTimeout(() => ***REMOVED***
+        setMensajeCompartir('');
+      ***REMOVED***, 3000);
+      
+    ***REMOVED*** catch (error) ***REMOVED***
+      setMensajeCompartir('Error al compartir trabajo');
+      setTimeout(() => ***REMOVED***
+        setMensajeCompartir('');
+      ***REMOVED***, 3000);
+    ***REMOVED*** finally ***REMOVED***
+      setCompartiendoTrabajo(false);
+    ***REMOVED***
+  ***REMOVED***;
+  
   return (
     <div 
       className="bg-white rounded-xl shadow-lg overflow-hidden transition-all hover:shadow-xl hover:translate-y-[-5px]"
@@ -33,22 +64,25 @@ const TarjetaTrabajo = (***REMOVED*** trabajo, abrirModalEditarTrabajo, eliminar
         <div className="flex justify-between items-start mb-4">
           <h3 className="text-lg font-semibold">***REMOVED***trabajo.nombre***REMOVED***</h3>
           <div className="flex gap-2">
-            <DynamicButton 
+            <button
               onClick=***REMOVED***() => setMostrarDetalles(!mostrarDetalles)***REMOVED***
-              variant="ghost"
-              size="sm"
-              className="!p-1"
+              className="text-gray-500 hover:text-blue-600 transition-colors p-1"
             >
               <Info size=***REMOVED***18***REMOVED*** />
-            </DynamicButton>
-            <DynamicButton 
+            </button>
+            <button
               onClick=***REMOVED***() => abrirModalEditarTrabajo(trabajo)***REMOVED***
-              variant="ghost"
-              size="sm"
-              className="!p-1"
+              className="text-gray-500 hover:text-blue-600 transition-colors p-1"
             >
               <Edit size=***REMOVED***18***REMOVED*** />
-            </DynamicButton>
+            </button>
+            <button
+              onClick=***REMOVED***handleCompartirTrabajo***REMOVED***
+              disabled=***REMOVED***compartiendoTrabajo***REMOVED***
+              className="text-gray-500 hover:text-blue-600 transition-colors p-1 disabled:opacity-50"
+            >
+              <Share2 size=***REMOVED***18***REMOVED*** />
+            </button>
             <button 
               onClick=***REMOVED***() => eliminarTrabajo(trabajo.id)***REMOVED***
               className="text-gray-500 hover:text-red-600 transition-colors p-1"
@@ -57,6 +91,13 @@ const TarjetaTrabajo = (***REMOVED*** trabajo, abrirModalEditarTrabajo, eliminar
             </button>
           </div>
         </div>
+        
+        ***REMOVED***/* Mensaje de compartir */***REMOVED***
+        ***REMOVED***mensajeCompartir && (
+          <div className="mb-3 p-2 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-sm text-green-700">***REMOVED***mensajeCompartir***REMOVED***</p>
+          </div>
+        )***REMOVED***
         
         ***REMOVED***mostrarDetalles && (
           <div className="mb-4 bg-gray-50 p-3 rounded-lg">
