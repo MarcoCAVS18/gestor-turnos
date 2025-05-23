@@ -1,14 +1,18 @@
-// src/pages/Trabajos.jsx - CON ALERTA DE ELIMINACIÓN
+
+// src/pages/Trabajos.jsx
 
 import React, { useState, useEffect } from 'react';
 import ModalTrabajo from '../components/ModalTrabajo';
 import AlertaEliminacion from '../components/AlertaEliminacion';
 import Loader from '../components/Loader';
 import DynamicButton from '../components/DynamicButton';
-import { PlusCircle, Briefcase, Edit, Trash2 } from 'lucide-react';
+import { PlusCircle, Briefcase, Edit, Trash2, Share2 } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
+import { compartirTrabajoNativo } from '../services/shareService';
 
 const Trabajos = () => {
+  const { currentUser } = useAuth();
   const { trabajos, cargando, borrarTrabajo, turnos } = useApp();
   const [modalAbierto, setModalAbierto] = useState(false);
   const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(null);
@@ -18,6 +22,10 @@ const Trabajos = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [trabajoAEliminar, setTrabajoAEliminar] = useState(null);
   const [eliminando, setEliminando] = useState(false);
+  
+  // Estados para funcionalidad de compartir
+  const [compartiendoTrabajo, setCompartiendoTrabajo] = useState({});
+  const [mensajesCompartir, setMensajesCompartir] = useState({});
   
   // Efecto para controlar el tiempo de carga
   useEffect(() => {
@@ -78,6 +86,38 @@ const Trabajos = () => {
     }
   };
   
+  // Función para manejar el compartir trabajo
+  const handleCompartirTrabajo = async (trabajo) => {
+    try {
+      setCompartiendoTrabajo(prev => ({ ...prev, [trabajo.id]: true }));
+      setMensajesCompartir(prev => ({ ...prev, [trabajo.id]: '' }));
+      
+      // Usar la función de compartir nativo
+      await compartirTrabajoNativo(currentUser.uid, trabajo);
+      
+      setMensajesCompartir(prev => ({ 
+        ...prev, 
+        [trabajo.id]: 'Trabajo compartido exitosamente' 
+      }));
+      
+      // Limpiar mensaje después de 3 segundos
+      setTimeout(() => {
+        setMensajesCompartir(prev => ({ ...prev, [trabajo.id]: '' }));
+      }, 3000);
+      
+    } catch (error) {
+      setMensajesCompartir(prev => ({ 
+        ...prev, 
+        [trabajo.id]: 'Error al compartir trabajo' 
+      }));
+      setTimeout(() => {
+        setMensajesCompartir(prev => ({ ...prev, [trabajo.id]: '' }));
+      }, 3000);
+    } finally {
+      setCompartiendoTrabajo(prev => ({ ...prev, [trabajo.id]: false }));
+    }
+  };
+  
   // Función para contar turnos de un trabajo
   const contarTurnosTrabajo = (trabajoId) => {
     return turnos.filter(turno => turno.trabajoId === trabajoId).length;
@@ -91,7 +131,7 @@ const Trabajos = () => {
     
     return [
       trabajo.nombre,
-      `Tarifa base: $${trabajo.tarifaBase?.toFixed(2) || '0.00'}`,
+      `Tarifa base: ${trabajo.tarifaBase?.toFixed(2) || '0.00'}`,
       turnosAsociados > 0 ? `${turnosAsociados} ${turnosAsociados === 1 ? 'turno registrado' : 'turnos registrados'}` : 'Sin turnos registrados'
     ];
   };
@@ -135,6 +175,8 @@ const Trabajos = () => {
         <div className="space-y-4">
           {trabajos.map(trabajo => {
             const turnosCount = contarTurnosTrabajo(trabajo.id);
+            const estaCompartiendo = compartiendoTrabajo[trabajo.id] || false;
+            const mensajeCompartir = mensajesCompartir[trabajo.id] || '';
             
             return (
               <div 
@@ -169,6 +211,13 @@ const Trabajos = () => {
                         <Edit size={18} />
                       </button>
                       <button
+                        onClick={() => handleCompartirTrabajo(trabajo)}
+                        disabled={estaCompartiendo}
+                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
+                      >
+                        <Share2 size={18} />
+                      </button>
+                      <button
                         onClick={() => iniciarEliminacion(trabajo)}
                         className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       >
@@ -176,6 +225,13 @@ const Trabajos = () => {
                       </button>
                     </div>
                   </div>
+                  
+                  {/* Mensaje de compartir */}
+                  {mensajeCompartir && (
+                    <div className="mb-3 p-2 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-700">{mensajeCompartir}</p>
+                    </div>
+                  )}
                   
                   {/* Información de tarifas */}
                   <div className="grid grid-cols-2 gap-4 text-sm">

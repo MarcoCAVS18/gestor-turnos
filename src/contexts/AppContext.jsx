@@ -1,4 +1,4 @@
-// src/contexts/AppContext.jsx - REESCRITURA COMPLETA
+// src/contexts/AppContext.jsx
 
 import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { 

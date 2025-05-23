@@ -1,7 +1,7 @@
 // src/pages/auth/Register.jsx -
 
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Register = () => {
@@ -14,6 +14,10 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { signup, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Obtener la ruta de redirección de los state de navegación
+  const redirectTo = location.state?.redirectTo || '/';
   
   // Estados para validaciones
   const [emailValid, setEmailValid] = useState(true);
@@ -107,7 +111,9 @@ const Register = () => {
       setError('');
       setLoading(true);
       await signup(email, password, displayName);
-      navigate('/');
+      
+      // Navegar a la ruta de redirección
+      navigate(redirectTo);
     } catch (error) {
       if (error.code === 'auth/email-already-in-use') {
         setError('Este email ya está en uso. Intenta iniciar sesión.');
@@ -125,12 +131,15 @@ const Register = () => {
       setLoading(true);
       setError('');
       await loginWithGoogle();
-      navigate('/');
+      
+      // Navegar a la ruta de redirección
+      navigate(redirectTo);
     } catch (error) {
       setError('Error al registrarse con Google: ' + error.message);
       setLoading(false);
     }
   };
+
 
   return (
     <div className="fixed inset-0 overflow-hidden">

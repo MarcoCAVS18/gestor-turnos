@@ -17,7 +17,10 @@ const AuthModal = () => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Detectar si venimos de forgot-password para mostrar mensaje de éxito
+  // Obtener la ruta de redirección de los state de navegación
+  const redirectTo = location.state?.redirectTo || '/dashboard';
+
+  // Detectar si venimos de forgot-password o de un enlace compartido
   useEffect(() => {
     if (location.state && location.state.emailSent) {
       setSuccessMessage('Hemos enviado un link de recuperación a tu email.');
@@ -41,7 +44,9 @@ const AuthModal = () => {
     setError('');
     try {
       await login(email, password);
-      // El login exitoso actualizará el estado en AuthContext
+      
+      // Navegar a la ruta de redirección
+      navigate(redirectTo);
     } catch (err) {
       setError('Email o contraseña incorrectos');
       setLoading(false);
@@ -53,6 +58,9 @@ const AuthModal = () => {
     setError('');
     try {
       await loginWithGoogle();
+      
+      // Navegar a la ruta de redirección
+      navigate(redirectTo);
     } catch (err) {
       setError('Error al iniciar sesión con Google');
       setGoogleLoading(false);
@@ -60,7 +68,9 @@ const AuthModal = () => {
   };
 
   const handleRegister = () => {
-    navigate('/register');
+    navigate('/register', { 
+      state: redirectTo ? { redirectTo } : undefined 
+    });
   };
 
   const handleForgotPassword = () => {
@@ -69,7 +79,6 @@ const AuthModal = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
-
       {/* Video de fondo */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
