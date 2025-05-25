@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useApp } from '../contexts/AppContext';
-import { 
-  BarChart2, 
-  TrendingUp, 
+import {
+  BarChart2,
+  TrendingUp,
   TrendingDown,
-  DollarSign, 
-  Clock, 
+  DollarSign,
+  Clock,
   Calendar,
   ChevronLeft,
   ChevronRight,
@@ -21,25 +21,25 @@ const Estadisticas = () => {
   const { turnos, trabajos, calcularPago, coloresTemáticos } = useApp();
   const [semanaActual, setSemanaActual] = useState(0);
   const [animacionActiva, setAnimacionActiva] = useState(false);
-  
+
   // Función para obtener fechas de una semana específica
   const obtenerFechasSemana = useCallback((offsetSemanas = 0) => {
     const hoy = new Date();
     const diaSemana = hoy.getDay();
-    
+
     // Ajuste para que la semana comience el lunes
     const diffInicio = diaSemana === 0 ? 6 : diaSemana - 1;
-    
+
     // Fecha de inicio (lunes de la semana específica)
     const fechaInicio = new Date(hoy);
     fechaInicio.setDate(hoy.getDate() - diffInicio + (offsetSemanas * 7));
     fechaInicio.setHours(0, 0, 0, 0);
-    
+
     // Fecha de fin (domingo de la semana específica)
     const fechaFin = new Date(fechaInicio);
     fechaFin.setDate(fechaInicio.getDate() + 6);
     fechaFin.setHours(23, 59, 59, 999);
-    
+
     return { fechaInicio, fechaFin };
   }, []);
 
@@ -48,12 +48,12 @@ const Estadisticas = () => {
     const { fechaInicio, fechaFin } = obtenerFechasSemana(offsetSemanas);
     const fechaInicioISO = fechaInicio.toISOString().split('T')[0];
     const fechaFinISO = fechaFin.toISOString().split('T')[0];
-    
+
     // Filtrar turnos de la semana específica
     const turnosSemana = turnos.filter(turno => {
       return turno.fecha >= fechaInicioISO && turno.fecha <= fechaFinISO;
     });
-    
+
     // Calcular estadísticas
     let totalGanado = 0;
     let horasTrabajadas = 0;
@@ -66,28 +66,28 @@ const Estadisticas = () => {
       "Sábado": { ganancia: 0, horas: 0, turnos: 0 },
       "Domingo": { ganancia: 0, horas: 0, turnos: 0 }
     };
-    
+
     const gananciaPorTrabajo = {};
     const tiposDeTurno = {};
-    
+
     turnosSemana.forEach(turno => {
       const trabajo = trabajos.find(t => t.id === turno.trabajoId);
       if (!trabajo) return;
-      
+
       const { totalConDescuento, horas } = calcularPago(turno);
       totalGanado += totalConDescuento;
       horasTrabajadas += horas;
-      
+
       // Estadísticas por día
       const fecha = new Date(turno.fecha);
       const diaSemana = fecha.getDay();
       const nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
       const nombreDia = nombresDias[diaSemana];
-      
+
       gananciaPorDia[nombreDia].ganancia += totalConDescuento;
       gananciaPorDia[nombreDia].horas += horas;
       gananciaPorDia[nombreDia].turnos += 1;
-      
+
       // Estadísticas por trabajo
       if (!gananciaPorTrabajo[trabajo.id]) {
         gananciaPorTrabajo[trabajo.id] = {
@@ -101,7 +101,7 @@ const Estadisticas = () => {
       gananciaPorTrabajo[trabajo.id].ganancia += totalConDescuento;
       gananciaPorTrabajo[trabajo.id].horas += horas;
       gananciaPorTrabajo[trabajo.id].turnos += 1;
-      
+
       // Estadísticas por tipo de turno
       if (!tiposDeTurno[turno.tipo]) {
         tiposDeTurno[turno.tipo] = { turnos: 0, horas: 0, ganancia: 0 };
@@ -110,17 +110,17 @@ const Estadisticas = () => {
       tiposDeTurno[turno.tipo].horas += horas;
       tiposDeTurno[turno.tipo].ganancia += totalConDescuento;
     });
-    
+
     // Calcular métricas adicionales
     const diasTrabajados = Object.values(gananciaPorDia).filter(dia => dia.turnos > 0).length;
     const promedioHorasPorDia = diasTrabajados > 0 ? horasTrabajadas / diasTrabajados : 0;
     const promedioPorHora = horasTrabajadas > 0 ? totalGanado / horasTrabajadas : 0;
-    
+
     // Encontrar el día más productivo
     const diaMasProductivo = Object.entries(gananciaPorDia).reduce((max, [dia, datos]) => {
       return datos.ganancia > max.ganancia ? { dia, ...datos } : max;
     }, { dia: 'Ninguno', ganancia: 0, horas: 0, turnos: 0 });
-    
+
     return {
       fechaInicio,
       fechaFin,
@@ -150,14 +150,14 @@ const Estadisticas = () => {
 
   // Calcular comparaciones
   const comparaciones = useMemo(() => {
-    const cambioGanancias = datosSemanaAnterior.totalGanado > 0 
+    const cambioGanancias = datosSemanaAnterior.totalGanado > 0
       ? ((datosSemanaActual.totalGanado - datosSemanaAnterior.totalGanado) / datosSemanaAnterior.totalGanado) * 100
       : 0;
-    
+
     const cambioHoras = datosSemanaAnterior.horasTrabajadas > 0
       ? ((datosSemanaActual.horasTrabajadas - datosSemanaAnterior.horasTrabajadas) / datosSemanaAnterior.horasTrabajadas) * 100
       : 0;
-    
+
     const cambioTurnos = datosSemanaAnterior.totalTurnos > 0
       ? ((datosSemanaActual.totalTurnos - datosSemanaAnterior.totalTurnos) / datosSemanaAnterior.totalTurnos) * 100
       : 0;
@@ -176,9 +176,9 @@ const Estadisticas = () => {
 
   // Formatear fecha para mostrar
   const formatearFecha = (fecha) => {
-    return fecha.toLocaleDateString('es-ES', { 
-      day: 'numeric', 
-      month: 'long' 
+    return fecha.toLocaleDateString('es-ES', {
+      day: 'numeric',
+      month: 'long'
     });
   };
 
@@ -195,13 +195,12 @@ const Estadisticas = () => {
   const CambioPorcentual = ({ valor, mostrarPositivo = true }) => {
     const esPositivo = valor > 0;
     const esNegativo = valor < 0;
-    
+
     if (valor === 0) return <span className="text-gray-500">Sin cambios</span>;
-    
+
     return (
-      <span className={`flex items-center text-sm ${
-        esPositivo ? 'text-green-600' : esNegativo ? 'text-red-600' : 'text-gray-500'
-      }`}>
+      <span className={`flex items-center text-sm ${esPositivo ? 'text-green-600' : esNegativo ? 'text-red-600' : 'text-gray-500'
+        }`}>
         {esPositivo ? <TrendingUp size={14} className="mr-1" /> : <TrendingDown size={14} className="mr-1" />}
         {esPositivo && mostrarPositivo ? '+' : ''}{valor.toFixed(1)}%
       </span>
@@ -211,7 +210,7 @@ const Estadisticas = () => {
   // Componente para barra de progreso animada
   const BarraProgreso = ({ valor, maximo, color, label, sublabel }) => {
     const porcentaje = maximo > 0 ? (valor / maximo) * 100 : 0;
-    
+
     return (
       <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
@@ -226,11 +225,11 @@ const Estadisticas = () => {
           </div>
         </div>
         <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-          <div 
+          <div
             className={`h-3 rounded-full transition-all duration-1000 ease-out ${animacionActiva ? 'animate-pulse' : ''}`}
-            style={{ 
+            style={{
               width: `${Math.min(porcentaje, 100)}%`,
-              backgroundColor: color 
+              backgroundColor: color
             }}
           />
         </div>
@@ -246,25 +245,25 @@ const Estadisticas = () => {
           <button
             onClick={() => setSemanaActual(semanaActual - 1)}
             className="p-2 rounded-full transition-colors"
-            style={{ 
+            style={{
               backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)',
               color: coloresTemáticos?.base || '#EC4899'
             }}
           >
             <ChevronLeft size={20} />
           </button>
-          
+
           <div className="text-center">
             <h2 className="text-xl font-semibold">{obtenerTituloSemana()}</h2>
             <p className="text-sm text-gray-600">
               {formatearFecha(datosSemanaActual.fechaInicio)} - {formatearFecha(datosSemanaActual.fechaFin)}
             </p>
           </div>
-          
+
           <button
             onClick={() => setSemanaActual(semanaActual + 1)}
             className="p-2 rounded-full transition-colors"
-            style={{ 
+            style={{
               backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)',
               color: coloresTemáticos?.base || '#EC4899'
             }}
@@ -272,7 +271,7 @@ const Estadisticas = () => {
             <ChevronRight size={20} />
           </button>
         </div>
-        
+
         {/* Estadísticas principales con comparación */}
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center p-4 bg-gray-50 rounded-lg">
@@ -285,7 +284,7 @@ const Estadisticas = () => {
             </p>
             <CambioPorcentual valor={comparaciones.ganancias} />
           </div>
-          
+
           <div className="text-center p-4 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-center mb-2">
               <Clock size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-1" />
@@ -316,7 +315,7 @@ const Estadisticas = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-white rounded-xl shadow-md p-4">
           <div className="flex items-center mb-3">
             <Activity size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
@@ -368,14 +367,14 @@ const Estadisticas = () => {
           <Calendar size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
           <h3 className="font-semibold">Distribución semanal</h3>
         </div>
-        
+
         <div className="space-y-3">
           {Object.entries(datosSemanaActual.gananciaPorDia).map(([dia, datos]) => (
             <BarraProgreso
               key={dia}
               valor={datos.ganancia}
               maximo={datosSemanaActual.totalGanado}
-              color={dia === 'Sábado' || dia === 'Domingo' 
+              color={dia === 'Sábado' || dia === 'Domingo'
                 ? coloresTemáticos?.dark || '#BE185D'
                 : coloresTemáticos?.base || '#EC4899'
               }
@@ -393,7 +392,7 @@ const Estadisticas = () => {
             <BarChart2 size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
             <h3 className="font-semibold">Por trabajo</h3>
           </div>
-          
+
           <div className="space-y-3">
             {datosSemanaActual.gananciaPorTrabajo.map((trabajo, index) => (
               <BarraProgreso
@@ -416,7 +415,7 @@ const Estadisticas = () => {
             <Zap size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
             <h3 className="font-semibold">Tipos de turno</h3>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             {Object.entries(datosSemanaActual.tiposDeTurno).map(([tipo, datos]) => {
               const colores = {
@@ -424,16 +423,19 @@ const Estadisticas = () => {
                 'tarde': '#F59E0B',
                 'noche': '#6366F1',
                 'sabado': '#8B5CF6',
-                'domingo': '#EF4444'
+                'domingo': '#EF4444',
+                'mixto': '#6B7280'
               };
-              
+
+                const tipoMostrado = tipo === 'undefined' ? 'MIXTO' : tipo;
+
               return (
                 <div key={tipo} className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div 
+                  <div
                     className="w-3 h-3 rounded-full mx-auto mb-2"
                     style={{ backgroundColor: colores[tipo] || '#6B7280' }}
                   />
-                  <p className="text-xs text-gray-600 capitalize">{tipo}</p>
+                  <p className="text-xs text-gray-600 capitalize">{tipoMostrado}</p>
                   <p className="font-semibold">{datos.turnos} turnos</p>
                   <p className="text-xs text-gray-500">{datos.horas.toFixed(1)}h</p>
                 </div>
