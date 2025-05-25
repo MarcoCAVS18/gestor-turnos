@@ -1,361 +1,467 @@
 // src/pages/Estadisticas.jsx
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
+import React, ***REMOVED*** useState, useEffect, useMemo, useCallback ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
-import ***REMOVED*** BarChart2, TrendingUp, DollarSign, Clock, Calendar ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** 
+  BarChart2, 
+  TrendingUp, 
+  TrendingDown,
+  DollarSign, 
+  Clock, 
+  Calendar,
+  ChevronLeft,
+  ChevronRight,
+  Target,
+  Award,
+  Activity,
+  Zap
+***REMOVED*** from 'lucide-react';
 
 const Estadisticas = () => ***REMOVED***
   const ***REMOVED*** turnos, trabajos, calcularPago, coloresTemáticos ***REMOVED*** = useApp();
-  const [resumen, setResumen] = useState(***REMOVED***
-    totalGanado: 0,
-    horasTrabajadas: 0,
-    trabajosMasRentables: [],
-    turnosPorDia: ***REMOVED******REMOVED***,
-    promedioHora: 0
-  ***REMOVED***);
-  const [resumenSemana, setResumenSemana] = useState(***REMOVED***
-    total: 0,
-    turnos: [],
-    porDia: ***REMOVED******REMOVED***,
-    semanaActual: true
-  ***REMOVED***);
+  const [semanaActual, setSemanaActual] = useState(0);
+  const [animacionActiva, setAnimacionActiva] = useState(false);
   
-  // Obtener fechas de inicio y fin de la semana actual (lunes a domingo)
-  const obtenerFechasSemana = () => ***REMOVED***
+  // Función para obtener fechas de una semana específica
+  const obtenerFechasSemana = useCallback((offsetSemanas = 0) => ***REMOVED***
     const hoy = new Date();
     const diaSemana = hoy.getDay();
     
     // Ajuste para que la semana comience el lunes
     const diffInicio = diaSemana === 0 ? 6 : diaSemana - 1;
     
-    // Fecha de inicio (lunes de la semana actual)
+    // Fecha de inicio (lunes de la semana específica)
     const fechaInicio = new Date(hoy);
-    fechaInicio.setDate(hoy.getDate() - diffInicio);
+    fechaInicio.setDate(hoy.getDate() - diffInicio + (offsetSemanas * 7));
     fechaInicio.setHours(0, 0, 0, 0);
     
-    // Fecha de fin (domingo de la semana actual)
+    // Fecha de fin (domingo de la semana específica)
     const fechaFin = new Date(fechaInicio);
     fechaFin.setDate(fechaInicio.getDate() + 6);
     fechaFin.setHours(23, 59, 59, 999);
     
     return ***REMOVED*** fechaInicio, fechaFin ***REMOVED***;
-  ***REMOVED***;
-  
-  // Formatear fecha para mostrar
-  const formatearFecha = (fecha) => ***REMOVED***
-    return fecha.toLocaleDateString('es-ES', ***REMOVED*** 
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long' 
-    ***REMOVED***);
-  ***REMOVED***;
-  
-  useEffect(() => ***REMOVED***
-    if (turnos.length === 0 || trabajos.length === 0) return;
-    
-    // Calcular estadísticas
-    let totalGanado = 0;
-    let horasTrabajadas = 0;
-    const gananciaPorTrabajo = ***REMOVED******REMOVED***;
-    const horasPorTrabajo = ***REMOVED******REMOVED***;
-    const turnosPorDia = ***REMOVED***
-      "Lunes": 0,
-      "Martes": 0,
-      "Miércoles": 0,
-      "Jueves": 0,
-      "Viernes": 0,
-      "Sábado": 0,
-      "Domingo": 0
-    ***REMOVED***;
-    
-    turnos.forEach(turno => ***REMOVED***
-      const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-      if (!trabajo) return;
-      
-      const ***REMOVED*** totalConDescuento, horas ***REMOVED*** = calcularPago(turno);
-      
-      // Acumular totales
-      totalGanado += totalConDescuento;
-      horasTrabajadas += horas;
-      
-      // Acumular por trabajo
-      if (!gananciaPorTrabajo[trabajo.id]) ***REMOVED***
-        gananciaPorTrabajo[trabajo.id] = ***REMOVED***
-          id: trabajo.id,
-          nombre: trabajo.nombre,
-          color: trabajo.color,
-          ganancia: 0,
-          horas: 0
-        ***REMOVED***;
-        
-        // Inicializar horas por trabajo
-        horasPorTrabajo[trabajo.id] = 0;
-      ***REMOVED***
-      gananciaPorTrabajo[trabajo.id].ganancia += totalConDescuento;
-      gananciaPorTrabajo[trabajo.id].horas += horas;
-      horasPorTrabajo[trabajo.id] += horas;
-      
-      // Contar turnos por día
-      const diaSemana = new Date(turno.fecha).getDay(); // 0 = domingo, 6 = sábado
-      const nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-      turnosPorDia[nombresDias[diaSemana]]++;
-    ***REMOVED***);
-    
-    // Convertir el objeto en array y ordenar por ganancia
-    const trabajosMasRentables = Object.values(gananciaPorTrabajo).sort((a, b) => b.ganancia - a.ganancia);
-    
-    // Calcular promedio por hora
-    const promedioHora = horasTrabajadas > 0 ? totalGanado / horasTrabajadas : 0;
-    
-    // Generar datos para el gráfico de distribución de horas por trabajo
-    const datosDistribucionHoras = Object.entries(horasPorTrabajo).map(([id, horas]) => ***REMOVED***
-      const trabajo = trabajos.find(t => t.id === id);
-      return ***REMOVED***
-        nombre: trabajo ? trabajo.nombre : 'Desconocido',
-        horas,
-        color: trabajo ? trabajo.color : '#999',
-        porcentaje: (horas / horasTrabajadas) * 100
-      ***REMOVED***;
-    ***REMOVED***).sort((a, b) => b.horas - a.horas);
-    
-    setResumen(***REMOVED***
-      totalGanado,
-      horasTrabajadas,
-      trabajosMasRentables,
-      turnosPorDia,
-      promedioHora,
-      datosDistribucionHoras,
-      horasPorTrabajo
-    ***REMOVED***);
-    
-    // Calcular estadísticas de la semana actual
-    const ***REMOVED*** fechaInicio, fechaFin ***REMOVED*** = obtenerFechasSemana();
+  ***REMOVED***, []);
+
+  // Función para obtener datos de una semana específica
+  const obtenerDatosSemana = useCallback((offsetSemanas = 0) => ***REMOVED***
+    const ***REMOVED*** fechaInicio, fechaFin ***REMOVED*** = obtenerFechasSemana(offsetSemanas);
     const fechaInicioISO = fechaInicio.toISOString().split('T')[0];
     const fechaFinISO = fechaFin.toISOString().split('T')[0];
     
-    // Filtrar turnos de la semana actual
+    // Filtrar turnos de la semana específica
     const turnosSemana = turnos.filter(turno => ***REMOVED***
       return turno.fecha >= fechaInicioISO && turno.fecha <= fechaFinISO;
     ***REMOVED***);
     
-    // Inicializar objeto para acumular ganancias por día
+    // Calcular estadísticas
+    let totalGanado = 0;
+    let horasTrabajadas = 0;
     const gananciaPorDia = ***REMOVED***
-      "Lunes": 0,
-      "Martes": 0,
-      "Miércoles": 0,
-      "Jueves": 0,
-      "Viernes": 0,
-      "Sábado": 0,
-      "Domingo": 0
+      "Lunes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Martes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Miércoles": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Jueves": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Viernes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Sábado": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Domingo": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***
     ***REMOVED***;
     
-    // Calcular ganancias por día
-    let totalSemana = 0;
+    const gananciaPorTrabajo = ***REMOVED******REMOVED***;
+    const tiposDeTurno = ***REMOVED******REMOVED***;
     
     turnosSemana.forEach(turno => ***REMOVED***
       const trabajo = trabajos.find(t => t.id === turno.trabajoId);
       if (!trabajo) return;
       
-      const ***REMOVED*** totalConDescuento ***REMOVED*** = calcularPago(turno);
-      totalSemana += totalConDescuento;
+      const ***REMOVED*** totalConDescuento, horas ***REMOVED*** = calcularPago(turno);
+      totalGanado += totalConDescuento;
+      horasTrabajadas += horas;
       
-      // Sumar al día correspondiente
+      // Estadísticas por día
       const fecha = new Date(turno.fecha);
-      const diaSemana = fecha.getDay(); // 0: domingo, 1-6: lunes a sábado
+      const diaSemana = fecha.getDay();
       const nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
       const nombreDia = nombresDias[diaSemana];
       
-      gananciaPorDia[nombreDia] += totalConDescuento;
+      gananciaPorDia[nombreDia].ganancia += totalConDescuento;
+      gananciaPorDia[nombreDia].horas += horas;
+      gananciaPorDia[nombreDia].turnos += 1;
+      
+      // Estadísticas por trabajo
+      if (!gananciaPorTrabajo[trabajo.id]) ***REMOVED***
+        gananciaPorTrabajo[trabajo.id] = ***REMOVED***
+          nombre: trabajo.nombre,
+          color: trabajo.color,
+          ganancia: 0,
+          horas: 0,
+          turnos: 0
+        ***REMOVED***;
+      ***REMOVED***
+      gananciaPorTrabajo[trabajo.id].ganancia += totalConDescuento;
+      gananciaPorTrabajo[trabajo.id].horas += horas;
+      gananciaPorTrabajo[trabajo.id].turnos += 1;
+      
+      // Estadísticas por tipo de turno
+      if (!tiposDeTurno[turno.tipo]) ***REMOVED***
+        tiposDeTurno[turno.tipo] = ***REMOVED*** turnos: 0, horas: 0, ganancia: 0 ***REMOVED***;
+      ***REMOVED***
+      tiposDeTurno[turno.tipo].turnos += 1;
+      tiposDeTurno[turno.tipo].horas += horas;
+      tiposDeTurno[turno.tipo].ganancia += totalConDescuento;
     ***REMOVED***);
     
-    setResumenSemana(***REMOVED***
-      total: totalSemana,
-      turnos: turnosSemana,
-      porDia: gananciaPorDia,
-      fechaInicio: formatearFecha(fechaInicio),
-      fechaFin: formatearFecha(fechaFin)
+    // Calcular métricas adicionales
+    const diasTrabajados = Object.values(gananciaPorDia).filter(dia => dia.turnos > 0).length;
+    const promedioHorasPorDia = diasTrabajados > 0 ? horasTrabajadas / diasTrabajados : 0;
+    const promedioPorHora = horasTrabajadas > 0 ? totalGanado / horasTrabajadas : 0;
+    
+    // Encontrar el día más productivo
+    const diaMasProductivo = Object.entries(gananciaPorDia).reduce((max, [dia, datos]) => ***REMOVED***
+      return datos.ganancia > max.ganancia ? ***REMOVED*** dia, ...datos ***REMOVED*** : max;
+    ***REMOVED***, ***REMOVED*** dia: 'Ninguno', ganancia: 0, horas: 0, turnos: 0 ***REMOVED***);
+    
+    return ***REMOVED***
+      fechaInicio,
+      fechaFin,
+      totalGanado,
+      horasTrabajadas,
+      totalTurnos: turnosSemana.length,
+      gananciaPorDia,
+      gananciaPorTrabajo: Object.values(gananciaPorTrabajo).sort((a, b) => b.ganancia - a.ganancia),
+      tiposDeTurno,
+      diasTrabajados,
+      promedioHorasPorDia,
+      promedioPorHora,
+      diaMasProductivo
+    ***REMOVED***;
+  ***REMOVED***, [turnos, trabajos, calcularPago, obtenerFechasSemana]);
+
+  // Efecto para activar animaciones cuando cambia la semana
+  useEffect(() => ***REMOVED***
+    setAnimacionActiva(true);
+    const timer = setTimeout(() => setAnimacionActiva(false), 1000);
+    return () => clearTimeout(timer);
+  ***REMOVED***, [semanaActual]);
+
+  // Obtener datos de la semana actual y anterior para comparación
+  const datosSemanaActual = useMemo(() => obtenerDatosSemana(semanaActual), [obtenerDatosSemana, semanaActual]);
+  const datosSemanaAnterior = useMemo(() => obtenerDatosSemana(semanaActual - 1), [obtenerDatosSemana, semanaActual]);
+
+  // Calcular comparaciones
+  const comparaciones = useMemo(() => ***REMOVED***
+    const cambioGanancias = datosSemanaAnterior.totalGanado > 0 
+      ? ((datosSemanaActual.totalGanado - datosSemanaAnterior.totalGanado) / datosSemanaAnterior.totalGanado) * 100
+      : 0;
+    
+    const cambioHoras = datosSemanaAnterior.horasTrabajadas > 0
+      ? ((datosSemanaActual.horasTrabajadas - datosSemanaAnterior.horasTrabajadas) / datosSemanaAnterior.horasTrabajadas) * 100
+      : 0;
+    
+    const cambioTurnos = datosSemanaAnterior.totalTurnos > 0
+      ? ((datosSemanaActual.totalTurnos - datosSemanaAnterior.totalTurnos) / datosSemanaAnterior.totalTurnos) * 100
+      : 0;
+
+    const cambioPromedio = datosSemanaAnterior.promedioPorHora > 0
+      ? ((datosSemanaActual.promedioPorHora - datosSemanaAnterior.promedioPorHora) / datosSemanaAnterior.promedioPorHora) * 100
+      : 0;
+
+    return ***REMOVED***
+      ganancias: cambioGanancias,
+      horas: cambioHoras,
+      turnos: cambioTurnos,
+      promedio: cambioPromedio
+    ***REMOVED***;
+  ***REMOVED***, [datosSemanaActual, datosSemanaAnterior]);
+
+  // Formatear fecha para mostrar
+  const formatearFecha = (fecha) => ***REMOVED***
+    return fecha.toLocaleDateString('es-ES', ***REMOVED*** 
+      day: 'numeric', 
+      month: 'long' 
     ***REMOVED***);
+  ***REMOVED***;
+
+  // Obtener título de la semana
+  const obtenerTituloSemana = () => ***REMOVED***
+    if (semanaActual === 0) return 'Esta semana';
+    if (semanaActual === -1) return 'Semana pasada';
+    return `Hace $***REMOVED***Math.abs(semanaActual)***REMOVED*** semanas`;
+  ***REMOVED***;
+
+  // Componente para mostrar cambio porcentual
+  const CambioPorcentual = (***REMOVED*** valor, mostrarPositivo = true ***REMOVED***) => ***REMOVED***
+    const esPositivo = valor > 0;
+    const esNegativo = valor < 0;
     
-  ***REMOVED***, [turnos, trabajos, calcularPago]);
-  
-  // Función para renderizar el gráfico de distribución de horas
-  const renderHorasPorTrabajoChart = () => ***REMOVED***
-    if (!resumen.horasPorTrabajo || Object.keys(resumen.horasPorTrabajo).length === 0) ***REMOVED***
-      return (
-        <div className="p-4 text-center text-gray-500">
-          Aún no hay datos suficientes
-        </div>
-      );
-    ***REMOVED***
+    if (valor === 0) return <span className="text-gray-500">Sin cambios</span>;
     
-    // Mostrar gráfico de distribución de horas por trabajo
     return (
-      <div className="p-4">
-        ***REMOVED***resumen.datosDistribucionHoras.map((item, index) => (
-          <div key=***REMOVED***index***REMOVED*** className="mb-3 last:mb-0">
-            <div className="flex justify-between mb-1">
-              <span className="text-sm">***REMOVED***item.nombre***REMOVED***</span>
-              <div className="flex items-center">
-                <span className="text-sm font-medium mr-2">***REMOVED***item.horas.toFixed(1)***REMOVED***h</span>
-                <span className="text-xs text-gray-500">(***REMOVED***item.porcentaje.toFixed(1)***REMOVED***%)</span>
-              </div>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
-              <div 
-                className="h-2.5 rounded-full" 
-                style=***REMOVED******REMOVED*** 
-                  width: `$***REMOVED***item.porcentaje***REMOVED***%`,
-                  backgroundColor: item.color 
-                ***REMOVED******REMOVED***
-              ></div>
-            </div>
+      <span className=***REMOVED***`flex items-center text-sm $***REMOVED***
+        esPositivo ? 'text-green-600' : esNegativo ? 'text-red-600' : 'text-gray-500'
+      ***REMOVED***`***REMOVED***>
+        ***REMOVED***esPositivo ? <TrendingUp size=***REMOVED***14***REMOVED*** className="mr-1" /> : <TrendingDown size=***REMOVED***14***REMOVED*** className="mr-1" />***REMOVED***
+        ***REMOVED***esPositivo && mostrarPositivo ? '+' : ''***REMOVED******REMOVED***valor.toFixed(1)***REMOVED***%
+      </span>
+    );
+  ***REMOVED***;
+
+  // Componente para barra de progreso animada
+  const BarraProgreso = (***REMOVED*** valor, maximo, color, label, sublabel ***REMOVED***) => ***REMOVED***
+    const porcentaje = maximo > 0 ? (valor / maximo) * 100 : 0;
+    
+    return (
+      <div className="mb-4">
+        <div className="flex justify-between items-center mb-2">
+          <span className="text-sm font-medium text-gray-700">***REMOVED***label***REMOVED***</span>
+          <div className="text-right">
+            <span className="text-sm font-bold" style=***REMOVED******REMOVED*** color ***REMOVED******REMOVED***>
+              $***REMOVED***valor.toFixed(2)***REMOVED***
+            </span>
+            ***REMOVED***sublabel && (
+              <p className="text-xs text-gray-500">***REMOVED***sublabel***REMOVED***</p>
+            )***REMOVED***
           </div>
-        ))***REMOVED***
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+          <div 
+            className=***REMOVED***`h-3 rounded-full transition-all duration-1000 ease-out $***REMOVED***animacionActiva ? 'animate-pulse' : ''***REMOVED***`***REMOVED***
+            style=***REMOVED******REMOVED*** 
+              width: `$***REMOVED***Math.min(porcentaje, 100)***REMOVED***%`,
+              backgroundColor: color 
+            ***REMOVED******REMOVED***
+          />
+        </div>
       </div>
     );
   ***REMOVED***;
-  
+
   return (
-    <div className="px-4 py-6">
-      <h2 className="text-xl font-semibold mb-4">Estadísticas</h2>
-        <div className="bg-white p-4 rounded-xl shadow-md mb-6">
-        <div className="flex items-center mb-3">
-          <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
-          <h3 className="text-lg font-semibold">Semana Actual</h3>
+    <div className="px-4 py-6 space-y-6">
+      ***REMOVED***/* Header con navegación de semanas */***REMOVED***
+      <div className="bg-white rounded-xl shadow-md p-4">
+        <div className="flex items-center justify-between mb-4">
+          <button
+            onClick=***REMOVED***() => setSemanaActual(semanaActual - 1)***REMOVED***
+            className="p-2 rounded-full transition-colors"
+            style=***REMOVED******REMOVED*** 
+              backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)',
+              color: coloresTemáticos?.base || '#EC4899'
+            ***REMOVED******REMOVED***
+          >
+            <ChevronLeft size=***REMOVED***20***REMOVED*** />
+          </button>
+          
+          <div className="text-center">
+            <h2 className="text-xl font-semibold">***REMOVED***obtenerTituloSemana()***REMOVED***</h2>
+            <p className="text-sm text-gray-600">
+              ***REMOVED***formatearFecha(datosSemanaActual.fechaInicio)***REMOVED*** - ***REMOVED***formatearFecha(datosSemanaActual.fechaFin)***REMOVED***
+            </p>
+          </div>
+          
+          <button
+            onClick=***REMOVED***() => setSemanaActual(semanaActual + 1)***REMOVED***
+            disabled=***REMOVED***semanaActual >= 0***REMOVED***
+            className="p-2 rounded-full transition-colors disabled:opacity-50"
+            style=***REMOVED******REMOVED*** 
+              backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)',
+              color: coloresTemáticos?.base || '#EC4899'
+            ***REMOVED******REMOVED***
+          >
+            <ChevronRight size=***REMOVED***20***REMOVED*** />
+          </button>
         </div>
         
-        <div className="text-sm text-gray-500 mb-3">
-          ***REMOVED***resumenSemana.fechaInicio***REMOVED*** - ***REMOVED***resumenSemana.fechaFin***REMOVED***
-        </div>
-        
-        <div 
-          className="text-3xl font-bold text-center mt-2 mb-4"
-          style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
-        >
-          $***REMOVED***resumenSemana.total.toFixed(2)***REMOVED***
-        </div>
-        
-        ***REMOVED***/* Gráfico de barras para ganancias por día de la semana */***REMOVED***
-        <div className="mt-4">
-          ***REMOVED***Object.entries(resumenSemana.porDia).map(([dia, ganancia]) => (
-            <div key=***REMOVED***dia***REMOVED*** className="mb-2">
-              <div className="flex justify-between items-center mb-1">
-                <span className=***REMOVED***`text-sm $***REMOVED***dia === 'Sábado' || dia === 'Domingo' ? 'font-semibold' : ''***REMOVED***`***REMOVED***>
-                  ***REMOVED***dia***REMOVED***
-                </span>
-                <span 
-                  className=***REMOVED***`text-sm font-medium $***REMOVED***ganancia > 0 ? '' : 'text-gray-400'***REMOVED***`***REMOVED***
-                  style=***REMOVED******REMOVED*** color: ganancia > 0 ? coloresTemáticos?.base || '#EC4899' : undefined ***REMOVED******REMOVED***
-                >
-                  $***REMOVED***ganancia.toFixed(2)***REMOVED***
-                </span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-2">
-                ***REMOVED***ganancia > 0 && (
-                  <div 
-                    className="h-2 rounded-full"
-                    style=***REMOVED******REMOVED*** 
-                      width: `$***REMOVED***(ganancia / resumenSemana.total) * 100***REMOVED***%`,
-                      backgroundColor: dia === 'Sábado' || dia === 'Domingo' 
-                        ? coloresTemáticos?.dark || '#BE185D'
-                        : coloresTemáticos?.base || '#EC4899'
-                    ***REMOVED******REMOVED***
-                  ></div>
-                )***REMOVED***
-              </div>
+        ***REMOVED***/* Estadísticas principales con comparación */***REMOVED***
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-center p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-center mb-2">
+              <DollarSign size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-1" />
+              <span className="text-sm text-gray-600">Total ganado</span>
             </div>
+            <p className="text-2xl font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>
+              $***REMOVED***datosSemanaActual.totalGanado.toFixed(2)***REMOVED***
+            </p>
+            <CambioPorcentual valor=***REMOVED***comparaciones.ganancias***REMOVED*** />
+          </div>
+          
+          <div className="text-center p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-center mb-2">
+              <Clock size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-1" />
+              <span className="text-sm text-gray-600">Horas trabajadas</span>
+            </div>
+            <p className="text-2xl font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>
+              ***REMOVED***datosSemanaActual.horasTrabajadas.toFixed(1)***REMOVED***h
+            </p>
+            <CambioPorcentual valor=***REMOVED***comparaciones.horas***REMOVED*** />
+          </div>
+        </div>
+      </div>
+
+      ***REMOVED***/* Métricas avanzadas */***REMOVED***
+      <div className="grid grid-cols-2 gap-4">
+        <div className="bg-white rounded-xl shadow-md p-4">
+          <div className="flex items-center mb-3">
+            <Target size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+            <h3 className="font-semibold">Eficiencia</h3>
+          </div>
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs text-gray-600">Promedio por hora</p>
+              <p className="text-lg font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>
+                $***REMOVED***datosSemanaActual.promedioPorHora.toFixed(2)***REMOVED***/h
+              </p>
+              <CambioPorcentual valor=***REMOVED***comparaciones.promedio***REMOVED*** />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-xl shadow-md p-4">
+          <div className="flex items-center mb-3">
+            <Activity size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+            <h3 className="font-semibold">Actividad</h3>
+          </div>
+          <div className="space-y-2">
+            <div>
+              <p className="text-xs text-gray-600">Días trabajados</p>
+              <p className="text-lg font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>
+                ***REMOVED***datosSemanaActual.diasTrabajados***REMOVED***/7
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-600">Promedio horas/día</p>
+              <p className="text-sm font-medium">
+                ***REMOVED***datosSemanaActual.promedioHorasPorDia.toFixed(1)***REMOVED***h
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      ***REMOVED***/* Día más productivo */***REMOVED***
+      ***REMOVED***datosSemanaActual.diaMasProductivo.ganancia > 0 && (
+        <div className="bg-white rounded-xl shadow-md p-4">
+          <div className="flex items-center mb-3">
+            <Award size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+            <h3 className="font-semibold">Día más productivo</h3>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-bold text-lg">***REMOVED***datosSemanaActual.diaMasProductivo.dia***REMOVED***</p>
+              <p className="text-sm text-gray-600">
+                ***REMOVED***datosSemanaActual.diaMasProductivo.turnos***REMOVED*** turnos · ***REMOVED***datosSemanaActual.diaMasProductivo.horas.toFixed(1)***REMOVED***h
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-xl font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>
+                $***REMOVED***datosSemanaActual.diaMasProductivo.ganancia.toFixed(2)***REMOVED***
+              </p>
+            </div>
+          </div>
+        </div>
+      )***REMOVED***
+
+      ***REMOVED***/* Distribución por día mejorada */***REMOVED***
+      <div className="bg-white rounded-xl shadow-md p-4">
+        <div className="flex items-center mb-4">
+          <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+          <h3 className="font-semibold">Distribución semanal</h3>
+        </div>
+        
+        <div className="space-y-3">
+          ***REMOVED***Object.entries(datosSemanaActual.gananciaPorDia).map(([dia, datos]) => (
+            <BarraProgreso
+              key=***REMOVED***dia***REMOVED***
+              valor=***REMOVED***datos.ganancia***REMOVED***
+              maximo=***REMOVED***datosSemanaActual.totalGanado***REMOVED***
+              color=***REMOVED***dia === 'Sábado' || dia === 'Domingo' 
+                ? coloresTemáticos?.dark || '#BE185D'
+                : coloresTemáticos?.base || '#EC4899'
+              ***REMOVED***
+              label=***REMOVED***dia***REMOVED***
+              sublabel=***REMOVED***datos.turnos > 0 ? `$***REMOVED***datos.turnos***REMOVED*** turnos · $***REMOVED***datos.horas.toFixed(1)***REMOVED***h` : 'Sin actividad'***REMOVED***
+            />
           ))***REMOVED***
         </div>
-        
-        ***REMOVED***resumenSemana.turnos.length === 0 && (
-          <div className="text-center py-4 text-gray-500">
-            No hay turnos registrados esta semana
+      </div>
+
+      ***REMOVED***/* Estadísticas por trabajo */***REMOVED***
+      ***REMOVED***datosSemanaActual.gananciaPorTrabajo.length > 0 && (
+        <div className="bg-white rounded-xl shadow-md p-4">
+          <div className="flex items-center mb-4">
+            <BarChart2 size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+            <h3 className="font-semibold">Por trabajo</h3>
           </div>
-        )***REMOVED***
-      </div>
-      
-      ***REMOVED***/* Resumen General */***REMOVED***
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <div className="flex items-center mb-1">
-            <DollarSign size=***REMOVED***16***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-1" />
-            <h3 className="text-gray-500">Total Ganado</h3>
-          </div>
-          <p className="text-2xl font-semibold">$***REMOVED***resumen.totalGanado.toFixed(2)***REMOVED***</p>
-        </div>
-        
-        <div className="bg-white p-4 rounded-xl shadow-md">
-          <div className="flex items-center mb-1">
-            <Clock size=***REMOVED***16***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-1" />
-            <h3 className="text-gray-500">Horas Trabajadas</h3>
-          </div>
-          <p className="text-2xl font-semibold">***REMOVED***resumen.horasTrabajadas.toFixed(1)***REMOVED***h</p>
-        </div>
-      </div>
-      
-      <div className="bg-white p-4 rounded-xl shadow-md mb-6">
-        <div className="flex items-center mb-3">
-          <TrendingUp size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
-          <h3 className="text-lg font-semibold">Promedio por Hora</h3>
-        </div>
-        <p 
-          className="text-3xl font-semibold text-center mt-2"
-          style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
-        >
-          $***REMOVED***resumen.promedioHora.toFixed(2)***REMOVED***/h
-        </p>
-        <p className="text-center text-gray-500 text-sm mt-1">
-          Basado en ***REMOVED***resumen.horasTrabajadas.toFixed(1)***REMOVED*** horas trabajadas
-        </p>
-      </div>
-      
-      <h3 className="text-lg font-semibold mb-3">
-        <div className="flex items-center">
-          <BarChart2 size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
-          <span>Distribución de Horas por Trabajo</span>
-        </div>
-      </h3>
-      
-      <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-        ***REMOVED***renderHorasPorTrabajoChart()***REMOVED***
-      </div>
-      
-      <h3 className="text-lg font-semibold mb-3">Trabajos Más Rentables</h3>
-      <div className="bg-white rounded-xl shadow-md overflow-hidden mb-6">
-        ***REMOVED***resumen.trabajosMasRentables.length > 0 ? (
-          <div className="divide-y">
-            ***REMOVED***resumen.trabajosMasRentables.map(trabajo => (
-              <div key=***REMOVED***trabajo.id***REMOVED*** className="p-4 flex justify-between items-center">
-                <div className="flex items-center">
-                  <div 
-                    className="w-3 h-3 rounded-full mr-2" 
-                    style=***REMOVED******REMOVED*** backgroundColor: trabajo.color ***REMOVED******REMOVED*** 
-                  />
-                  <span>***REMOVED***trabajo.nombre***REMOVED***</span>
-                </div>
-                <div className="text-right">
-                  <p className="font-semibold">$***REMOVED***trabajo.ganancia.toFixed(2)***REMOVED***</p>
-                  <p className="text-gray-500 text-sm">***REMOVED***trabajo.horas.toFixed(1)***REMOVED***h</p>
-                </div>
-              </div>
+          
+          <div className="space-y-3">
+            ***REMOVED***datosSemanaActual.gananciaPorTrabajo.map((trabajo, index) => (
+              <BarraProgreso
+                key=***REMOVED***index***REMOVED***
+                valor=***REMOVED***trabajo.ganancia***REMOVED***
+                maximo=***REMOVED***datosSemanaActual.totalGanado***REMOVED***
+                color=***REMOVED***trabajo.color***REMOVED***
+                label=***REMOVED***trabajo.nombre***REMOVED***
+                sublabel=***REMOVED***`$***REMOVED***trabajo.turnos***REMOVED*** turnos · $***REMOVED***trabajo.horas.toFixed(1)***REMOVED***h`***REMOVED***
+              />
             ))***REMOVED***
           </div>
-        ) : (
-          <div className="p-4 text-center text-gray-500">
-            Aún no hay datos suficientes
+        </div>
+      )***REMOVED***
+
+      ***REMOVED***/* Distribución por tipo de turno */***REMOVED***
+      ***REMOVED***Object.keys(datosSemanaActual.tiposDeTurno).length > 0 && (
+        <div className="bg-white rounded-xl shadow-md p-4">
+          <div className="flex items-center mb-4">
+            <Zap size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+            <h3 className="font-semibold">Tipos de turno</h3>
           </div>
-        )***REMOVED***
-      </div>
-      
-      <h3 className="text-lg font-semibold mb-3">Turnos por Día</h3>
-      <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-        ***REMOVED***Object.entries(resumen.turnosPorDia).map(([dia, cantidad]) => (
-          <div key=***REMOVED***dia***REMOVED*** className="flex justify-between py-2 border-b last:border-0">
-            <span>***REMOVED***dia***REMOVED***</span>
-            <span className="font-semibold">***REMOVED***cantidad***REMOVED***</span>
+          
+          <div className="grid grid-cols-2 gap-4">
+            ***REMOVED***Object.entries(datosSemanaActual.tiposDeTurno).map(([tipo, datos]) => ***REMOVED***
+              const colores = ***REMOVED***
+                'diurno': '#10B981',
+                'tarde': '#F59E0B',
+                'noche': '#6366F1',
+                'sabado': '#8B5CF6',
+                'domingo': '#EF4444'
+              ***REMOVED***;
+              
+              return (
+                <div key=***REMOVED***tipo***REMOVED*** className="text-center p-3 bg-gray-50 rounded-lg">
+                  <div 
+                    className="w-3 h-3 rounded-full mx-auto mb-2"
+                    style=***REMOVED******REMOVED*** backgroundColor: colores[tipo] || '#6B7280' ***REMOVED******REMOVED***
+                  />
+                  <p className="text-xs text-gray-600 capitalize">***REMOVED***tipo***REMOVED***</p>
+                  <p className="font-semibold">***REMOVED***datos.turnos***REMOVED*** turnos</p>
+                  <p className="text-xs text-gray-500">***REMOVED***datos.horas.toFixed(1)***REMOVED***h</p>
+                </div>
+              );
+            ***REMOVED***)***REMOVED***
           </div>
-        ))***REMOVED***
-      </div>
+        </div>
+      )***REMOVED***
+
+      ***REMOVED***/* Proyección mensual */***REMOVED***
+      ***REMOVED***datosSemanaActual.totalGanado > 0 && semanaActual === 0 && (
+        <div className="bg-white rounded-xl shadow-md p-4">
+          <div className="flex items-center mb-3">
+            <TrendingUp size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+            <h3 className="font-semibold">Proyección mensual</h3>
+          </div>
+          <div className="text-center">
+            <p className="text-sm text-gray-600 mb-2">
+              Si mantienes este ritmo durante todo el mes
+            </p>
+            <p className="text-3xl font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>
+              $***REMOVED***(datosSemanaActual.totalGanado * 4.33).toFixed(2)***REMOVED***
+            </p>
+            <p className="text-sm text-gray-500">
+              ~***REMOVED***(datosSemanaActual.horasTrabajadas * 4.33).toFixed(0)***REMOVED*** horas
+            </p>
+          </div>
+        </div>
+      )***REMOVED***
     </div>
   );
 ***REMOVED***;
