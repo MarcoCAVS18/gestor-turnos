@@ -24,7 +24,7 @@ const generarTokenCompartir = () => {
  * Crea un enlace para compartir un trabajo directamente por correo o mensajería
  * @param {string} userId - ID del usuario que comparte
  * @param {Object} trabajo - Datos del trabajo a compartir
- * @returns {Promise<string>} - Texto de compartir
+ * @returns {Promise<string>} - URL del enlace de compartir
  */
 export const crearEnlaceCompartir = async (userId, trabajo) => {
   try {
@@ -58,8 +58,6 @@ export const crearEnlaceCompartir = async (userId, trabajo) => {
     const enlaceCompartir = `${baseUrl}/compartir/${token}`;
 
     return enlaceCompartir;
-
-    
     
   } catch (error) {
     console.error('Error al crear enlace de compartir:', error);
@@ -77,33 +75,40 @@ export const compartirTrabajoNativo = async (userId, trabajo) => {
     // Generar enlace de compartir
     const enlace = await crearEnlaceCompartir(userId, trabajo);
     
-    // Texto para compartir
-    const textoCompartir = `¡Te comparto los detalles de mi trabajo "${trabajo.nombre}"!\n\nVisita este enlace para más información:\n${enlace}`;
+    // Texto para compartir (mensaje + enlace)
+    const mensaje = `¡Te comparto los detalles de mi trabajo "${trabajo.nombre}"!`;
+    const textoCompartir = `${mensaje}\n\nVisita este enlace para más información:\n${enlace}`;
     
     // Verificar si el navegador soporta Web Share API
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'Compartir Trabajo',
-          text: textoCompartir,
+          title: `Trabajo: ${trabajo.nombre}`,
+          text: mensaje,
           url: enlace
         });
+        console.log('Compartido exitosamente con Web Share API');
+        return true;
       } catch (error) {
-        console.error('Error al compartir:', error);
-        // Fallback a copiar al portapapeles si falla
-        await copiarAlPortapapeles(textoCompartir);
+        // Si el usuario cancela o hay un error, usar fallback
+        if (error.name !== 'AbortError') {
+          console.log('Web Share API falló, usando fallback:', error);
+          return await copiarAlPortapapeles(textoCompartir);
+        }
+        // Si el usuario canceló, no hacer nada más
+        console.log('Usuario canceló el compartir');
+        return false;
       }
     } else {
       // Fallback para navegadores que no soportan Web Share API
-      await copiarAlPortapapeles(textoCompartir);
+      console.log('Web Share API no disponible, usando fallback');
+      return await copiarAlPortapapeles(textoCompartir);
     }
   } catch (error) {
     console.error('Error al compartir trabajo:', error);
     throw error;
   }
 };
-
-
 
 /**
  * Obtiene los datos de un trabajo compartido usando el token
@@ -208,7 +213,7 @@ export const aceptarTrabajoCompartido = async (userId, token) => {
 };
 
 /**
- * Copia un texto al portapapeles
+ * Copia un texto al portapapeles y muestra una notificación
  * @param {string} texto - Texto a copiar
  * @returns {Promise<boolean>} - true si se copió exitosamente
  */
@@ -217,6 +222,14 @@ export const copiarAlPortapapeles = async (texto) => {
     if (navigator.clipboard && window.isSecureContext) {
       // Usar la API moderna de clipboard
       await navigator.clipboard.writeText(texto);
+      
+      // Mostrar notificación visual opcional
+      if (window.showToast) {
+        window.showToast('Enlace copiado al portapapeles');
+      } else {
+        console.log('Texto copiado al portapapeles');
+      }
+      
       return true;
     } else {
       // Fallback para navegadores más antiguos
@@ -231,6 +244,10 @@ export const copiarAlPortapapeles = async (texto) => {
       
       const resultado = document.execCommand('copy');
       document.body.removeChild(textArea);
+      
+      if (resultado) {
+        console.log('Texto copiado al portapapeles (fallback)');
+      }
       
       return resultado;
     }
