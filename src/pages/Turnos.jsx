@@ -1,4 +1,4 @@
-// src/pages/Turnos.jsx - PÁGINA COMPLETA CON EDICIÓN Y ELIMINACIÓN
+// src/pages/Turnos.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import TarjetaTurno from '../components/TarjetaTurno';
