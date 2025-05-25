@@ -1,9 +1,10 @@
-// src/components/Calendario.jsx 
+// src/components/Calendario.jsx
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED***
-    const ***REMOVED*** turnos, coloresTemáticos ***REMOVED*** = useApp();
+    const ***REMOVED*** turnos, trabajos, coloresTemáticos ***REMOVED*** = useApp();
     const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     const [fechaActual, setFechaActual] = useState(new Date());
     const [mesActual, setMesActual] = useState(fechaActual.getMonth());
@@ -77,7 +78,8 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
                 fecha,
                 dia: fecha.getDate(),
                 mesActual: false,
-                tieneTurnos: verificarTurnosEnFecha(fecha)
+                tieneTurnos: verificarTurnosEnFecha(fecha),
+                turnosDelDia: obtenerTurnosDelDia(fecha)
             ***REMOVED***);
         ***REMOVED***
 
@@ -89,6 +91,7 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
                 dia: i,
                 mesActual: true,
                 tieneTurnos: verificarTurnosEnFecha(fecha),
+                turnosDelDia: obtenerTurnosDelDia(fecha),
                 esHoy: fechaEsHoy(fecha)
             ***REMOVED***);
         ***REMOVED***
@@ -101,7 +104,8 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
                 fecha,
                 dia: i,
                 mesActual: false,
-                tieneTurnos: verificarTurnosEnFecha(fecha)
+                tieneTurnos: verificarTurnosEnFecha(fecha),
+                turnosDelDia: obtenerTurnosDelDia(fecha)
             ***REMOVED***);
         ***REMOVED***
 
@@ -112,6 +116,26 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
     const verificarTurnosEnFecha = (fecha) => ***REMOVED***
         const fechaStr = fechaLocalAISO(fecha);
         return diasResaltados.includes(fechaStr);
+    ***REMOVED***;
+
+    // Obtener los turnos de un día específico
+    const obtenerTurnosDelDia = (fecha) => ***REMOVED***
+        const fechaStr = fechaLocalAISO(fecha);
+        return turnos.filter(turno => turno.fecha === fechaStr);
+    ***REMOVED***;
+
+    // Obtener colores únicos de trabajos para un día
+    const obtenerColoresTrabajos = (turnosDelDia) => ***REMOVED***
+        const coloresUnicos = new Set();
+
+        turnosDelDia.forEach(turno => ***REMOVED***
+            const trabajo = trabajos.find(t => t.id === turno.trabajoId);
+            if (trabajo) ***REMOVED***
+                coloresUnicos.add(trabajo.color);
+            ***REMOVED***
+        ***REMOVED***);
+
+        return Array.from(coloresUnicos).slice(0, 3);
     ***REMOVED***;
 
     // Verificar si una fecha es hoy
@@ -145,11 +169,11 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
         setFechaActual(hoy);
         setMesActual(hoy.getMonth());
         setAnioActual(hoy.getFullYear());
-        
+
         // También destacamos visualmente el día actual
         const fechaStr = fechaLocalAISO(hoy);
         setDiaSeleccionadoActual(fechaStr);
-        
+
         // Y si hay un handler de selección, lo invocamos
         if (onDiaSeleccionado) ***REMOVED***
             onDiaSeleccionado(hoy);
@@ -165,7 +189,7 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
     const irADia = (fecha) => ***REMOVED***
         const fechaStr = fechaLocalAISO(fecha);
         setDiaSeleccionadoActual(fechaStr);
-        
+
         if (onDiaSeleccionado) ***REMOVED***
             onDiaSeleccionado(fecha);
         ***REMOVED***
@@ -190,20 +214,20 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
 
     const resumenMes = obtenerResumenMes();
     const dias = obtenerDiasDelMes();
-    
+
     // Fecha actual en formato ISO para comparaciones
     const fechaActualISO = fechaLocalAISO(fechaActual);
 
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div 
+            <div
                 className="p-4 text-white flex justify-between items-center"
                 style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
             >
                 <button
                     onClick=***REMOVED***() => cambiarMes(-1)***REMOVED***
                     className="text-white p-2 rounded-full transition-colors"
-                    style=***REMOVED******REMOVED*** 
+                    style=***REMOVED******REMOVED***
                         backgroundColor: 'transparent',
                         ':hover': ***REMOVED*** backgroundColor: coloresTemáticos?.dark || '#BE185D' ***REMOVED***
                     ***REMOVED******REMOVED***
@@ -219,7 +243,7 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
                     <button
                         onClick=***REMOVED***irAHoy***REMOVED***
                         className="text-xs px-3 py-1 rounded-full mt-1 transition-colors"
-                        style=***REMOVED******REMOVED*** 
+                        style=***REMOVED******REMOVED***
                             backgroundColor: coloresTemáticos?.dark || '#BE185D',
                             ':hover': ***REMOVED*** backgroundColor: coloresTemáticos?.darker || '#9F1239' ***REMOVED***
                         ***REMOVED******REMOVED***
@@ -232,7 +256,7 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
                 <button
                     onClick=***REMOVED***() => cambiarMes(1)***REMOVED***
                     className="text-white p-2 rounded-full transition-colors"
-                    style=***REMOVED******REMOVED*** 
+                    style=***REMOVED******REMOVED***
                         backgroundColor: 'transparent',
                         ':hover': ***REMOVED*** backgroundColor: coloresTemáticos?.dark || '#BE185D' ***REMOVED***
                     ***REMOVED******REMOVED***
@@ -244,9 +268,9 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
             </div>
 
             ***REMOVED***resumenMes.totalTurnos > 0 && (
-                <div 
+                <div
                     className="p-2 text-xs text-center font-medium"
-                    style=***REMOVED******REMOVED*** 
+                    style=***REMOVED******REMOVED***
                         backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)',
                         color: coloresTemáticos?.dark || '#BE185D'
                     ***REMOVED******REMOVED***
@@ -268,7 +292,8 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
                     const fechaDiaISO = fechaLocalAISO(dia.fecha);
                     const esHoy = fechaDiaISO === fechaActualISO;
                     const esSeleccionado = fechaDiaISO === diaSeleccionadoActual;
-                    
+                    const coloresTrabajos = obtenerColoresTrabajos(dia.turnosDelDia);
+
                     return (
                         <button
                             key=***REMOVED***index***REMOVED***
@@ -280,51 +305,82 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
                                 $***REMOVED***!dia.mesActual ? 'text-gray-400' : 'text-gray-800'***REMOVED***
                             `***REMOVED***
                             style=***REMOVED******REMOVED***
-                                backgroundColor: esSeleccionado 
+                                backgroundColor: esSeleccionado
                                     ? coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)'
                                     : 'transparent'
                             ***REMOVED******REMOVED***
                         >
                             ***REMOVED***/* Círculo para día actual */***REMOVED***
                             ***REMOVED***esHoy && (
-                                <div 
+                                <div
                                     className="absolute inset-0 m-auto rounded-full w-10 h-10 animate-pulse"
-                                    style=***REMOVED******REMOVED*** 
+                                    style=***REMOVED******REMOVED***
                                         border: `2px solid $***REMOVED***coloresTemáticos?.base || '#EC4899'***REMOVED***`
                                     ***REMOVED******REMOVED***
                                 ></div>
                             )***REMOVED***
-                            
+
                             ***REMOVED***/* Contenedor para número del día */***REMOVED***
-                            <div 
+                            <div
                                 className="rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200 transform"
                                 style=***REMOVED******REMOVED***
-                                    backgroundColor: esHoy 
+                                    backgroundColor: esHoy
                                         ? coloresTemáticos?.base || '#EC4899'
                                         : (esSeleccionado && !esHoy)
                                             ? coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)'
                                             : 'transparent',
-                                    color: esHoy 
+                                    color: esHoy
                                         ? coloresTemáticos?.textContrast || '#ffffff'
                                         : 'inherit',
                                     fontWeight: esHoy ? 'bold' : 'normal',
                                     transform: esHoy ? 'scale(1.1)' : 'scale(1)',
-                                    boxShadow: esHoy 
+                                    boxShadow: esHoy
                                         ? `0 4px 12px $***REMOVED***coloresTemáticos?.transparent50 || 'rgba(236, 72, 153, 0.5)'***REMOVED***`
                                         : 'none'
                                 ***REMOVED******REMOVED***
                             >
                                 <span>***REMOVED***dia.dia***REMOVED***</span>
                             </div>
-                            
-                            ***REMOVED***/* Indicador de turnos */***REMOVED***
+
+                            ***REMOVED***/* Indicadores de turnos con colores de trabajos */***REMOVED***
                             ***REMOVED***dia.tieneTurnos && (
-                                <div 
-                                    className="absolute bottom-1 w-4 h-1 rounded"
-                                    style=***REMOVED******REMOVED*** 
-                                        backgroundColor: coloresTemáticos?.base || '#EC4899'
-                                    ***REMOVED******REMOVED***
-                                ></div>
+                                <div className="absolute bottom-1 flex justify-center gap-1">
+                                    ***REMOVED***coloresTrabajos.length === 1 ? (
+                                        // Un solo trabajo: línea completa
+                                        <div
+                                            className="w-4 h-1 rounded"
+                                            style=***REMOVED******REMOVED*** backgroundColor: coloresTrabajos[0] ***REMOVED******REMOVED***
+                                        />
+                                    ) : coloresTrabajos.length === 2 ? (
+                                        // Dos trabajos: dos líneas
+                                        <>
+                                            <div
+                                                className="w-2 h-1 rounded"
+                                                style=***REMOVED******REMOVED*** backgroundColor: coloresTrabajos[0] ***REMOVED******REMOVED***
+                                            />
+                                            <div
+                                                className="w-2 h-1 rounded"
+                                                style=***REMOVED******REMOVED*** backgroundColor: coloresTrabajos[1] ***REMOVED******REMOVED***
+                                            />
+                                        </>
+                                    ) : coloresTrabajos.length >= 3 ? (
+                                        // Tres o más trabajos: tres pequeñas líneas
+                                        <>
+                                            <div
+                                                className="w-1 h-1 rounded-full"
+                                                style=***REMOVED******REMOVED*** backgroundColor: coloresTrabajos[0] ***REMOVED******REMOVED***
+                                            />
+                                            <div
+                                                className="w-1 h-1 rounded-full"
+                                                style=***REMOVED******REMOVED*** backgroundColor: coloresTrabajos[1] ***REMOVED******REMOVED***
+                                            />
+                                            <div
+                                                className="w-1 h-1 rounded-full"
+                                                style=***REMOVED******REMOVED*** backgroundColor: coloresTrabajos[2] ***REMOVED******REMOVED***
+                                            />
+                                        </>
+                                    ) : null***REMOVED***
+                                </div>
                             )***REMOVED***
                         </button>
                     );
