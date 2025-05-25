@@ -24,7 +24,7 @@ const generarTokenCompartir = () => ***REMOVED***
  * Crea un enlace para compartir un trabajo directamente por correo o mensajería
  * @param ***REMOVED***string***REMOVED*** userId - ID del usuario que comparte
  * @param ***REMOVED***Object***REMOVED*** trabajo - Datos del trabajo a compartir
- * @returns ***REMOVED***Promise<string>***REMOVED*** - Texto de compartir
+ * @returns ***REMOVED***Promise<string>***REMOVED*** - URL del enlace de compartir
  */
 export const crearEnlaceCompartir = async (userId, trabajo) => ***REMOVED***
   try ***REMOVED***
@@ -58,8 +58,6 @@ export const crearEnlaceCompartir = async (userId, trabajo) => ***REMOVED***
     const enlaceCompartir = `$***REMOVED***baseUrl***REMOVED***/compartir/$***REMOVED***token***REMOVED***`;
 
     return enlaceCompartir;
-
-    
     
   ***REMOVED*** catch (error) ***REMOVED***
     console.error('Error al crear enlace de compartir:', error);
@@ -77,33 +75,40 @@ export const compartirTrabajoNativo = async (userId, trabajo) => ***REMOVED***
     // Generar enlace de compartir
     const enlace = await crearEnlaceCompartir(userId, trabajo);
     
-    // Texto para compartir
-    const textoCompartir = `¡Te comparto los detalles de mi trabajo "$***REMOVED***trabajo.nombre***REMOVED***"!\n\nVisita este enlace para más información:\n$***REMOVED***enlace***REMOVED***`;
+    // Texto para compartir (mensaje + enlace)
+    const mensaje = `¡Te comparto los detalles de mi trabajo "$***REMOVED***trabajo.nombre***REMOVED***"!`;
+    const textoCompartir = `$***REMOVED***mensaje***REMOVED***\n\nVisita este enlace para más información:\n$***REMOVED***enlace***REMOVED***`;
     
     // Verificar si el navegador soporta Web Share API
     if (navigator.share) ***REMOVED***
       try ***REMOVED***
         await navigator.share(***REMOVED***
-          title: 'Compartir Trabajo',
-          text: textoCompartir,
+          title: `Trabajo: $***REMOVED***trabajo.nombre***REMOVED***`,
+          text: mensaje,
           url: enlace
         ***REMOVED***);
+        console.log('Compartido exitosamente con Web Share API');
+        return true;
       ***REMOVED*** catch (error) ***REMOVED***
-        console.error('Error al compartir:', error);
-        // Fallback a copiar al portapapeles si falla
-        await copiarAlPortapapeles(textoCompartir);
+        // Si el usuario cancela o hay un error, usar fallback
+        if (error.name !== 'AbortError') ***REMOVED***
+          console.log('Web Share API falló, usando fallback:', error);
+          return await copiarAlPortapapeles(textoCompartir);
+        ***REMOVED***
+        // Si el usuario canceló, no hacer nada más
+        console.log('Usuario canceló el compartir');
+        return false;
       ***REMOVED***
     ***REMOVED*** else ***REMOVED***
       // Fallback para navegadores que no soportan Web Share API
-      await copiarAlPortapapeles(textoCompartir);
+      console.log('Web Share API no disponible, usando fallback');
+      return await copiarAlPortapapeles(textoCompartir);
     ***REMOVED***
   ***REMOVED*** catch (error) ***REMOVED***
     console.error('Error al compartir trabajo:', error);
     throw error;
   ***REMOVED***
 ***REMOVED***;
-
-
 
 /**
  * Obtiene los datos de un trabajo compartido usando el token
@@ -208,7 +213,7 @@ export const aceptarTrabajoCompartido = async (userId, token) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Copia un texto al portapapeles
+ * Copia un texto al portapapeles y muestra una notificación
  * @param ***REMOVED***string***REMOVED*** texto - Texto a copiar
  * @returns ***REMOVED***Promise<boolean>***REMOVED*** - true si se copió exitosamente
  */
@@ -217,6 +222,14 @@ export const copiarAlPortapapeles = async (texto) => ***REMOVED***
     if (navigator.clipboard && window.isSecureContext) ***REMOVED***
       // Usar la API moderna de clipboard
       await navigator.clipboard.writeText(texto);
+      
+      // Mostrar notificación visual opcional
+      if (window.showToast) ***REMOVED***
+        window.showToast('Enlace copiado al portapapeles');
+      ***REMOVED*** else ***REMOVED***
+        console.log('Texto copiado al portapapeles');
+      ***REMOVED***
+      
       return true;
     ***REMOVED*** else ***REMOVED***
       // Fallback para navegadores más antiguos
@@ -231,6 +244,10 @@ export const copiarAlPortapapeles = async (texto) => ***REMOVED***
       
       const resultado = document.execCommand('copy');
       document.body.removeChild(textArea);
+      
+      if (resultado) ***REMOVED***
+        console.log('Texto copiado al portapapeles (fallback)');
+      ***REMOVED***
       
       return resultado;
     ***REMOVED***
