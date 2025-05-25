@@ -1,12 +1,12 @@
-// src/components/ModalTurno.jsx - TIPO CALCULADO AUTOMÁTICAMENTE
+// src/components/ModalTurno.jsx 
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { X, Clock, Calendar, MapPin, FileText } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Clock, Calendar, FileText } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import DynamicButton from './DynamicButton';
 
-const ModalTurno = ({ visible, onClose, turnoSeleccionado }) => {
-  const { trabajos, agregarTurno, editarTurno, coloresTemáticos, rangosTurnos } = useApp();
+const ModalTurno = ({ visible, onClose, turnoSeleccionado, fechaInicial }) => {
+  const { trabajos, agregarTurno, editarTurno, coloresTemáticos } = useApp();
   
   // Estados del formulario
   const [formData, setFormData] = useState({
@@ -19,46 +19,11 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado }) => {
   
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState('');
-  const [tipoCalculado, setTipoCalculado] = useState('');
 
-  // Función para calcular el tipo de turno automáticamente
-  const calcularTipoTurno = useCallback((horaInicio, fecha) => {
-    if (!horaInicio || !fecha) return '';
-    
-    // Verificar si es fin de semana
-    const fechaObj = new Date(fecha + 'T00:00:00');
-    const diaSemana = fechaObj.getDay();
-    
-    if (diaSemana === 0) return 'domingo';
-    if (diaSemana === 6) return 'sabado';
-    
-    // Convertir hora a número para comparar
-    const [hora, minuto] = horaInicio.split(':').map(Number);
-    const horaEnMinutos = hora * 60 + minuto;
-    
-    const rangos = rangosTurnos || {
-      diurnoInicio: 6, diurnoFin: 14,
-      tardeInicio: 14, tardeFin: 20,
-      nocheInicio: 20
-    };
-    
-    const diurnoInicioMin = rangos.diurnoInicio * 60;
-    const diurnoFinMin = rangos.diurnoFin * 60;
-    const tardeInicioMin = rangos.tardeInicio * 60;
-    const tardeFinMin = rangos.tardeFin * 60;
-    
-    if (horaEnMinutos >= diurnoInicioMin && horaEnMinutos < diurnoFinMin) {
-      return 'diurno';
-    } else if (horaEnMinutos >= tardeInicioMin && horaEnMinutos < tardeFinMin) {
-      return 'tarde';
-    } else {
-      return 'noche';
-    }
-  }, [rangosTurnos]);
-
-  // Efecto para cargar datos del turno seleccionado
+  // Efecto para cargar datos del turno seleccionado o fecha inicial
   useEffect(() => {
     if (turnoSeleccionado) {
+      // Editando turno existente
       setFormData({
         trabajoId: turnoSeleccionado.trabajoId || '',
         fecha: turnoSeleccionado.fecha || '',
@@ -66,29 +31,18 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado }) => {
         horaFin: turnoSeleccionado.horaFin || '',
         notas: turnoSeleccionado.notas || ''
       });
-      
-      // Calcular tipo basado en los datos existentes
-      const tipo = calcularTipoTurno(turnoSeleccionado.horaInicio, turnoSeleccionado.fecha);
-      setTipoCalculado(tipo);
     } else {
-      // Resetear formulario para nuevo turno
+      // Nuevo turno - usar fecha inicial si está disponible
       setFormData({
         trabajoId: '',
-        fecha: '',
+        fecha: fechaInicial || '',
         horaInicio: '',
         horaFin: '',
         notas: ''
       });
-      setTipoCalculado('');
     }
     setError('');
-  }, [turnoSeleccionado, visible, calcularTipoTurno]);
-
-  // Efecto para recalcular tipo cuando cambian hora o fecha
-  useEffect(() => {
-    const tipo = calcularTipoTurno(formData.horaInicio, formData.fecha);
-    setTipoCalculado(tipo);
-  }, [formData.horaInicio, formData.fecha, calcularTipoTurno]);
+  }, [turnoSeleccionado, fechaInicial, visible]);
 
   // Manejar cambios en inputs
   const handleInputChange = (field, value) => {
@@ -147,15 +101,10 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado }) => {
     setError('');
     
     try {
-      const datosCompletos = {
-        ...formData,
-        tipo: tipoCalculado // Agregar el tipo calculado automáticamente
-      };
-      
       if (turnoSeleccionado) {
-        await editarTurno(turnoSeleccionado.id, datosCompletos);
+        await editarTurno(turnoSeleccionado.id, formData);
       } else {
-        await agregarTurno(datosCompletos);
+        await agregarTurno(formData);
       }
       
       onClose();
@@ -164,30 +113,6 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado }) => {
     } finally {
       setCargando(false);
     }
-  };
-
-  // Obtener nombre del tipo para mostrar
-  const obtenerNombreTipo = (tipo) => {
-    const nombres = {
-      'diurno': 'Diurno',
-      'tarde': 'Tarde', 
-      'noche': 'Nocturno',
-      'sabado': 'Sábado',
-      'domingo': 'Domingo'
-    };
-    return nombres[tipo] || tipo;
-  };
-
-  // Obtener color del tipo
-  const obtenerColorTipo = (tipo) => {
-    const colores = {
-      'diurno': '#10B981',    // Verde
-      'tarde': '#F59E0B',     // Amarillo
-      'noche': '#6366F1',     // Índigo
-      'sabado': '#8B5CF6',    // Violeta
-      'domingo': '#EF4444'    // Rojo
-    };
-    return colores[tipo] || '#6B7280';
   };
 
   if (!visible) return null;
@@ -291,30 +216,6 @@ const ModalTurno = ({ visible, onClose, turnoSeleccionado }) => {
               />
             </div>
           </div>
-
-          {/* Tipo calculado automáticamente */}
-          {tipoCalculado && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <MapPin size={16} className="inline mr-2" />
-                Tipo de Turno (Calculado automáticamente)
-              </label>
-              <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-                <div 
-                  className="w-3 h-3 rounded-full mr-3"
-                  style={{ backgroundColor: obtenerColorTipo(tipoCalculado) }}
-                />
-                <span className="font-medium text-gray-800">
-                  {obtenerNombreTipo(tipoCalculado)}
-                </span>
-                <span className="text-sm text-gray-500 ml-2">
-                  {tipoCalculado === 'sabado' || tipoCalculado === 'domingo' 
-                    ? '(Fin de semana)' 
-                    : `(${formData.horaInicio ? formData.horaInicio : '--:--'})`}
-                </span>
-              </div>
-            </div>
-          )}
 
           {/* Notas */}
           <div>

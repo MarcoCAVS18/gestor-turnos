@@ -186,6 +186,8 @@ const Estadisticas = () => {
   const obtenerTituloSemana = () => {
     if (semanaActual === 0) return 'Esta semana';
     if (semanaActual === -1) return 'Semana pasada';
+    if (semanaActual === 1) return 'Próxima semana';
+    if (semanaActual > 1) return `En ${semanaActual} semanas`;
     return `Hace ${Math.abs(semanaActual)} semanas`;
   };
 
@@ -261,8 +263,7 @@ const Estadisticas = () => {
           
           <button
             onClick={() => setSemanaActual(semanaActual + 1)}
-            disabled={semanaActual >= 0}
-            className="p-2 rounded-full transition-colors disabled:opacity-50"
+            className="p-2 rounded-full transition-colors"
             style={{ 
               backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)',
               color: coloresTemáticos?.base || '#EC4899'
@@ -442,7 +443,7 @@ const Estadisticas = () => {
         </div>
       )}
 
-      {/* Proyección mensual */}
+      {/* Proyección mensual - Solo mostrar para semana actual */}
       {datosSemanaActual.totalGanado > 0 && semanaActual === 0 && (
         <div className="bg-white rounded-xl shadow-md p-4">
           <div className="flex items-center mb-3">
@@ -460,6 +461,17 @@ const Estadisticas = () => {
               ~{(datosSemanaActual.horasTrabajadas * 4.33).toFixed(0)} horas
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Mensaje informativo para semanas futuras sin datos */}
+      {semanaActual > 0 && datosSemanaActual.totalTurnos === 0 && (
+        <div className="bg-white rounded-xl shadow-md p-6 text-center">
+          <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
+          <h3 className="text-lg font-semibold text-gray-600 mb-2">Sin turnos programados</h3>
+          <p className="text-gray-500">
+            {semanaActual === 1 ? 'Aún no tienes turnos para la próxima semana' : `No hay turnos programados para esta semana`}
+          </p>
         </div>
       )}
     </div>

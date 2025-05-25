@@ -4,8 +4,6 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-
-// Componente para rutas que requieren autenticación
 const PrivateRoute = () => {
   const { currentUser, loading } = useAuth();
 

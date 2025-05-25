@@ -1,11 +1,11 @@
-// src/components/TarjetaTurno.jsx - COMPONENTE COMPLETO CON SWIPE
+// src/components/TarjetaTurno.jsx
 
 import React, { useState, useRef } from 'react';
 import { Edit, Trash2, Clock, DollarSign } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 
 const TarjetaTurno = ({ turno, trabajo, onEdit, onDelete }) => {
-  const { calcularPago, coloresTemáticos } = useApp();
+  const { calcularPago, coloresTemáticos, rangosTurnos } = useApp();
   const [isSwipeOpen, setIsSwipeOpen] = useState(false);
   const [startX, setStartX] = useState(null);
   const [currentX, setCurrentX] = useState(0);
@@ -13,6 +13,76 @@ const TarjetaTurno = ({ turno, trabajo, onEdit, onDelete }) => {
   const cardRef = useRef(null);
   
   const { horas, total, totalConDescuento } = calcularPago(turno);
+  
+  // Función para calcular TODOS los tipos de turno que abarca
+  const calcularTiposTurno = (turno) => {
+    const fecha = new Date(turno.fecha + 'T00:00:00');
+    const diaSemana = fecha.getDay();
+    
+    // Si es fin de semana, solo devolver ese tipo
+    if (diaSemana === 0) return [{ tipo: 'Domingo', color: '#EF4444' }];
+    if (diaSemana === 6) return [{ tipo: 'Sábado', color: '#8B5CF6' }];
+    
+    // Para días de semana, analizar rangos horarios
+    const rangos = rangosTurnos || {
+      diurnoInicio: 6, diurnoFin: 14,
+      tardeInicio: 14, tardeFin: 20,
+      nocheInicio: 20
+    };
+    
+    const [horaIni, minIni] = turno.horaInicio.split(':').map(Number);
+    const [horaFin, minFin] = turno.horaFin.split(':').map(Number);
+    
+    let inicioMinutos = horaIni * 60 + minIni;
+    let finMinutos = horaFin * 60 + minFin;
+    
+    // Si cruza medianoche
+    if (finMinutos <= inicioMinutos) {
+      finMinutos += 24 * 60;
+    }
+    
+    const tipos = [];
+    const tiposEncontrados = new Set();
+    
+    // Analizar cada minuto del turno
+    for (let minuto = inicioMinutos; minuto < finMinutos; minuto++) {
+      const horaActual = minuto % (24 * 60);
+      
+      let tipoActual = '';
+      if (horaActual >= rangos.diurnoInicio * 60 && horaActual < rangos.diurnoFin * 60) {
+        tipoActual = 'Diurno';
+      } else if (horaActual >= rangos.tardeInicio * 60 && horaActual < rangos.tardeFin * 60) {
+        tipoActual = 'Tarde';
+      } else {
+        tipoActual = 'Nocturno';
+      }
+      
+      tiposEncontrados.add(tipoActual);
+    }
+    
+    // Convertir a array con colores
+    const coloresTipos = {
+      'Diurno': '#10B981',
+      'Tarde': '#F59E0B',
+      'Nocturno': '#6366F1',
+      'Sábado': '#8B5CF6',
+      'Domingo': '#EF4444'
+    };
+    
+    // Ordenar los tipos según el orden lógico
+    const ordenTipos = ['Diurno', 'Tarde', 'Nocturno'];
+    
+    ordenTipos.forEach(tipo => {
+      if (tiposEncontrados.has(tipo)) {
+        tipos.push({
+          tipo,
+          color: coloresTipos[tipo]
+        });
+      }
+    });
+    
+    return tipos;
+  };
   
   // Manejar inicio del touch
   const handleTouchStart = (e) => {
@@ -29,7 +99,7 @@ const TarjetaTurno = ({ turno, trabajo, onEdit, onDelete }) => {
     
     // Solo permitir swipe hacia la izquierda
     if (diffX > 0) {
-      setCurrentX(Math.min(diffX, 80)); // Ajustado para el nuevo ancho de botones
+      setCurrentX(Math.min(diffX, 80));
     } else {
       setCurrentX(0);
     }
@@ -42,7 +112,7 @@ const TarjetaTurno = ({ turno, trabajo, onEdit, onDelete }) => {
     // Si se deslizó más de 50px, abrir completamente
     if (currentX > 50) {
       setIsSwipeOpen(true);
-      setCurrentX(80); // Ajustado para el nuevo ancho de botones
+      setCurrentX(80); 
     } else {
       setIsSwipeOpen(false);
       setCurrentX(0);
@@ -71,7 +141,6 @@ const TarjetaTurno = ({ turno, trabajo, onEdit, onDelete }) => {
   
   return (
     <div className="relative overflow-hidden rounded-lg mb-3 bg-white shadow-sm">
-      {/* Botones de acción (por debajo) */}
       <div className="absolute right-0 top-0 bottom-0 flex flex-col w-20">
         <button
           onClick={(e) => {
@@ -112,7 +181,6 @@ const TarjetaTurno = ({ turno, trabajo, onEdit, onDelete }) => {
         onClick={handleClick}
       >
         <div className="p-4">
-          {/* Header con trabajo y fecha */}
           <div className="flex justify-between items-start mb-3">
             <div className="flex-1">
               <div className="flex items-center mb-1">
@@ -153,14 +221,19 @@ const TarjetaTurno = ({ turno, trabajo, onEdit, onDelete }) => {
             </div>
           </div>
           
-          {/* Tipo de turno */}
+          {/* Tipos de turno - MÚLTIPLES ETIQUETAS */}
           <div className="mt-3">
-            <span 
-              className="inline-block px-2 py-1 rounded-full text-xs font-medium text-white"
-              style={{ backgroundColor: trabajo.color }}
-            >
-              {turno.tipo.charAt(0).toUpperCase() + turno.tipo.slice(1)}
-            </span>
+            <div className="flex flex-wrap gap-1">
+              {calcularTiposTurno(turno).map((tipoInfo, index) => (
+                <span 
+                  key={index}
+                  className="inline-block px-2 py-1 rounded-full text-xs font-medium text-white"
+                  style={{ backgroundColor: tipoInfo.color }}
+                >
+                  {tipoInfo.tipo}
+                </span>
+              ))}
+            </div>
           </div>
           
           {/* Notas si las hay */}
