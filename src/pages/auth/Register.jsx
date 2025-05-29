@@ -1,8 +1,11 @@
-// src/pages/auth/Register.jsx -
+// src/pages/auth/Register.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Link, useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../contexts/AuthContext';
+
+// Nueva importación estructurada
+import Button from '../../components/ui/Button';
 
 const Register = () => ***REMOVED***
   const [displayName, setDisplayName] = useState('');
@@ -139,7 +142,6 @@ const Register = () => ***REMOVED***
       setLoading(false);
     ***REMOVED***
   ***REMOVED***;
-
 
   return (
     <div className="fixed inset-0 overflow-hidden">
@@ -281,13 +283,14 @@ const Register = () => ***REMOVED***
               )***REMOVED***
             </div>
             
-            <button
+            <Button
               type="submit"
               disabled=***REMOVED***loading || !emailValid || !passwordStrength.isValid || !passwordsMatch || !nameValid***REMOVED***
-              className="w-full py-2 px-4 bg-pink-600 hover:bg-pink-700 text-white font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50"
+              loading=***REMOVED***loading***REMOVED***
+              className="w-full"
             >
-              ***REMOVED***loading ? "Creando cuenta..." : "Registrarse"***REMOVED***
-            </button>
+              Registrarse
+            </Button>
           </form>
           
           <div className="relative my-6">

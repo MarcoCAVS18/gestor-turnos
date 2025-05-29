@@ -5,8 +5,10 @@ import ***REMOVED*** useParams, useNavigate ***REMOVED*** from 'react-router-dom
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
 import ***REMOVED*** obtenerTrabajoCompartido, aceptarTrabajoCompartido ***REMOVED*** from '../services/shareService';
 import ***REMOVED*** Briefcase, DollarSign, AlertCircle, CheckCircle ***REMOVED*** from 'lucide-react';
-import DynamicButton from '../components/DynamicButton';
-import Loader from '../components/Loader';
+
+// Nuevas importaciones estructuradas
+import Button from '../components/ui/Button';
+import Loader from '../components/other/Loader';
 
 const TrabajoCompartido = () => ***REMOVED***
   const ***REMOVED*** token ***REMOVED*** = useParams();
@@ -116,27 +118,27 @@ const TrabajoCompartido = () => ***REMOVED***
           <div className="flex gap-3">
             ***REMOVED***!currentUser ? (
               <>
-                <DynamicButton
+                <Button
                   onClick=***REMOVED***handleIniciarSesion***REMOVED***
                   className="flex-1"
                 >
                   Iniciar sesión
-                </DynamicButton>
-                <DynamicButton
+                </Button>
+                <Button
                   onClick=***REMOVED***() => navigate('/')***REMOVED***
                   variant="outline"
                   className="flex-1"
                 >
                   Cancelar
-                </DynamicButton>
+                </Button>
               </>
             ) : (
-              <DynamicButton
+              <Button
                 onClick=***REMOVED***() => navigate('/dashboard')***REMOVED***
                 className="w-full"
               >
                 Volver al inicio
-              </DynamicButton>
+              </Button>
             )***REMOVED***
           </div>
         </div>
@@ -261,30 +263,21 @@ const TrabajoCompartido = () => ***REMOVED***
 
           ***REMOVED***/* Botones de acción */***REMOVED***
           <div className="flex gap-3">
-            <DynamicButton
+            <Button
               onClick=***REMOVED***handleRechazar***REMOVED***
               variant="outline"
               className="flex-1"
               disabled=***REMOVED***aceptando***REMOVED***
             >
               No, gracias
-            </DynamicButton>
-            <DynamicButton
+            </Button>
+            <Button
               onClick=***REMOVED***handleAceptarTrabajo***REMOVED***
               className="flex-1"
-              disabled=***REMOVED***aceptando***REMOVED***
+              loading=***REMOVED***aceptando***REMOVED***
             >
-              ***REMOVED***aceptando ? (
-                <span className="flex items-center">
-                  <div className="mr-2">
-                    <Loader size=***REMOVED***16***REMOVED*** />
-                  </div>
-                  Agregando...
-                </span>
-              ) : (
-                'Sí, agregar trabajo'
-              )***REMOVED***
-            </DynamicButton>
+              Sí, agregar trabajo
+            </Button>
           </div>
 
           ***REMOVED***/* Error message */***REMOVED***

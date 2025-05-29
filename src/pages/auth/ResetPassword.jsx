@@ -5,6 +5,9 @@ import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-d
 import ***REMOVED*** confirmPasswordReset ***REMOVED*** from 'firebase/auth';
 import ***REMOVED*** auth ***REMOVED*** from '../../services/firebase';
 
+// Nueva importación estructurada
+import Button from '../../components/ui/Button';
+
 const ResetPassword = () => ***REMOVED***
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,8 +32,7 @@ const ResetPassword = () => ***REMOVED***
   
   useEffect(() => ***REMOVED***
     if (!oobCode) ***REMOVED***
-      setError
-      ('Enlace inválido o expirado. Por favor, solicita un nuevo enlace de recuperación.');
+      setError('Enlace inválido o expirado. Por favor, solicita un nuevo enlace de recuperación.');
     ***REMOVED***
   ***REMOVED***, [oobCode]);
   
@@ -180,24 +182,26 @@ const ResetPassword = () => ***REMOVED***
                 )***REMOVED***
               </div>
               
-              <button
+              <Button
                 type="submit"
                 disabled=***REMOVED***loading || !passwordStrength.isValid || !passwordsMatch***REMOVED***
-                className="w-full py-2 px-4 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-md disabled:opacity-50"
+                loading=***REMOVED***loading***REMOVED***
+                className="w-full"
               >
-                ***REMOVED***loading ? "Procesando..." : "Confirmar nueva contraseña"***REMOVED***
-              </button>
+                Confirmar nueva contraseña
+              </Button>
             </form>
           )***REMOVED***
           
           <div className="mt-4 text-center">
-            <button
+            <Button
               type="button"
               onClick=***REMOVED***() => navigate('/login')***REMOVED***
+              variant="ghost"
               className="text-sm text-pink-600 hover:text-pink-800"
             >
               Volver a inicio de sesión
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -6,14 +6,14 @@ import ***REMOVED*** useAuth ***REMOVED*** from './contexts/AuthContext';
 import ***REMOVED*** AppProvider ***REMOVED*** from './contexts/AppContext';
 
 // Componentes de autenticación
-import AuthModal from './components/AuthModal';
+import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 
-// Componentes principales
-import Header from './components/Header';
-import Navegacion from './components/Navegacion';
+// Componentes principales - NUEVAS RUTAS
+import Header from './components/layout/Header';
+import Navegacion from './components/layout/Navegacion';
 import Dashboard from './pages/Dashboard';
 import Trabajos from './pages/Trabajos';
 import Turnos from './pages/Turnos';
@@ -22,13 +22,12 @@ import CalendarioView from './pages/CalendarioView';
 import Ajustes from './pages/Ajustes';
 import TrabajoCompartido from './pages/TrabajoCompartido';
 
-// Modales
-import ModalTrabajo from './components/ModalTrabajo';
-import ModalTurno from './components/ModalTurno';
+// Modales - NUEVAS RUTAS
+import ModalTrabajo from './components/modals/ModalTrabajo';
+import ModalTurno from './components/modals/ModalTurno';
 
 // Temporal en desarrollo
 import TestPage from './pages/TestPage';
-
 
 // Componente para rutas protegidas
 const PrivateRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
@@ -129,15 +128,15 @@ function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
 
         ***REMOVED***/* Modales */***REMOVED***
         <ModalTrabajo
-          visible=***REMOVED***modalTrabajoAbierto***REMOVED***
+          isOpen=***REMOVED***modalTrabajoAbierto***REMOVED***
           onClose=***REMOVED***cerrarModalTrabajo***REMOVED***
-          trabajoSeleccionado=***REMOVED***trabajoSeleccionado***REMOVED***
+          trabajo=***REMOVED***trabajoSeleccionado***REMOVED***
         />
 
         <ModalTurno
-          visible=***REMOVED***modalTurnoAbierto***REMOVED***
+          isOpen=***REMOVED***modalTurnoAbierto***REMOVED***
           onClose=***REMOVED***cerrarModalTurno***REMOVED***
-          turnoSeleccionado=***REMOVED***turnoSeleccionado***REMOVED***
+          turno=***REMOVED***turnoSeleccionado***REMOVED***
         />
       </div>
     </AppProvider>
@@ -160,7 +159,7 @@ function App() ***REMOVED***
     <Router>
       <Routes>
         ***REMOVED***/* Rutas de autenticación */***REMOVED***
-        <Route path="/login" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <AuthModal />***REMOVED*** />
+        <Route path="/login" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <Login />***REMOVED*** />
         <Route path="/register" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <Register />***REMOVED*** />
         <Route path="/forgot-password" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />***REMOVED*** />
         <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />

@@ -5,7 +5,9 @@ import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** Settings, User, LogOut, Edit2, Save, Clock, Smile, Sun, Sunset, Moon ***REMOVED*** from 'lucide-react';
-import DynamicButton from '../components/DynamicButton';
+
+// Nueva importación estructurada
+import Button from '../components/ui/Button';
 
 const Ajustes = () => ***REMOVED***
   const ***REMOVED*** currentUser, logout, getUserData, updateUserName ***REMOVED*** = useAuth();
@@ -229,14 +231,13 @@ const Ajustes = () => ***REMOVED***
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
                   style=***REMOVED******REMOVED*** '--tw-ring-color': coloresTemáticos?.base || appColor ***REMOVED******REMOVED***
                 />
-                <DynamicButton
+                <Button
                   onClick=***REMOVED***handleSaveName***REMOVED***
                   disabled=***REMOVED***loading***REMOVED***
                   size="sm"
                   className="!p-2"
-                >
-                  <Save className="h-4 w-4" />
-                </DynamicButton>
+                  icon=***REMOVED***Save***REMOVED***
+                />
               </div>
             ) : (
               <div className="flex items-center">
@@ -474,13 +475,14 @@ const Ajustes = () => ***REMOVED***
             Este descuento se aplicará por defecto a todos tus turnos y trabajos. Podrás modificarlo más adelante.
           </p>
           
-          <DynamicButton
+          <Button
             onClick=***REMOVED***handleSaveSettings***REMOVED***
             disabled=***REMOVED***loading***REMOVED***
+            loading=***REMOVED***loading***REMOVED***
             className="w-full mt-4"
           >
-            ***REMOVED***loading ? 'Guardando...' : 'Guardar cambios'***REMOVED***
-          </DynamicButton>
+            Guardar cambios
+          </Button>
         </div>
       </div>
       
@@ -491,14 +493,14 @@ const Ajustes = () => ***REMOVED***
           <h2 className="text-lg font-semibold">Sesión</h2>
         </div>
         
-        <DynamicButton
+        <Button
           onClick=***REMOVED***handleLogout***REMOVED***
           variant="outline"
           className="w-full flex items-center justify-center gap-2"
+          icon=***REMOVED***LogOut***REMOVED***
         >
-          <LogOut className="h-4 w-4" />
-          <span>Cerrar sesión</span>
-        </DynamicButton>
+          Cerrar sesión
+        </Button>
       </div>
     </div>
   );

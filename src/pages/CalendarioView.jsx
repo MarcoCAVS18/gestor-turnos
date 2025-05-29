@@ -1,13 +1,15 @@
 // src/pages/CalendarioView.jsx
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
-import Calendario from '../components/Calendario';
-import ResumenDia from '../components/ResumenDia';
-import ModalTurno from '../components/ModalTurno';
-import DynamicButton from '../components/DynamicButton';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
-import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** PlusCircle ***REMOVED*** from 'lucide-react';
+
+// Nuevas importaciones
+import Calendario from '../components/calendar/Calendario';
+import ResumenDia from '../components/summaries/ResumenDia';
+import ModalTurno from '../components/modals/ModalTurno';
+import Button from '../components/ui/Button';
+import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 const CalendarioView = () => ***REMOVED***
   const ***REMOVED*** turnosPorFecha ***REMOVED*** = useApp();
@@ -84,14 +86,14 @@ const CalendarioView = () => ***REMOVED***
               Turnos del día seleccionado
             </h3>
             <motion.div>
-              <DynamicButton
+              <Button
                 onClick=***REMOVED***() => abrirModalNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
                 size="sm"
                 className="flex items-center gap-1"
+                icon=***REMOVED***PlusCircle***REMOVED***
               >
-                <PlusCircle size=***REMOVED***16***REMOVED*** />
-                <span>Nuevo</span>
-              </DynamicButton>
+                Nuevo
+              </Button>
             </motion.div>
           </div>
           
@@ -107,23 +109,21 @@ const CalendarioView = () => ***REMOVED***
               animate=***REMOVED******REMOVED*** opacity: 1 ***REMOVED******REMOVED***
               transition=***REMOVED******REMOVED*** delay: 0.3 ***REMOVED******REMOVED***
             >
-              <p className="text-gray-500">No hay turnos para esta fecha</p>
-              <motion.div>
-                <DynamicButton
-                  onClick=***REMOVED***() => abrirModalNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
-                  className="flex items-center gap-2"
-                >
-                  <PlusCircle size=***REMOVED***20***REMOVED*** />
-                  <span>Agregar turno</span>
-                </DynamicButton>
-              </motion.div>
+              <p className="text-gray-500 mb-4">No hay turnos para esta fecha</p>
+              <Button
+                onClick=***REMOVED***() => abrirModalNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
+                className="flex items-center gap-2"
+                icon=***REMOVED***PlusCircle***REMOVED***
+              >
+                Agregar turno
+              </Button>
             </motion.div>
           )***REMOVED***
         </motion.div>
       )***REMOVED***
       
       <ModalTurno 
-        visible=***REMOVED***modalAbierto***REMOVED*** 
+        isOpen=***REMOVED***modalAbierto***REMOVED*** 
         onClose=***REMOVED***cerrarModal***REMOVED*** 
         fechaInicial=***REMOVED***nuevoTurnoFecha***REMOVED***
       />
