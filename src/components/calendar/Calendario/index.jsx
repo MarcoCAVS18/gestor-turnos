@@ -1,7 +1,8 @@
-// src/components/Calendario.jsx
+// src/components/calendar/Calendario/index.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import Card from '../../ui/Card';
 
 const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED***
     const ***REMOVED*** turnos, trabajos, coloresTemáticos ***REMOVED*** = useApp();
@@ -219,20 +220,14 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
     const fechaActualISO = fechaLocalAISO(fechaActual);
 
     return (
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <Card className="overflow-hidden">
             <div
                 className="p-4 text-white flex justify-between items-center"
                 style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
             >
                 <button
                     onClick=***REMOVED***() => cambiarMes(-1)***REMOVED***
-                    className="text-white p-2 rounded-full transition-colors"
-                    style=***REMOVED******REMOVED***
-                        backgroundColor: 'transparent',
-                        ':hover': ***REMOVED*** backgroundColor: coloresTemáticos?.dark || '#BE185D' ***REMOVED***
-                    ***REMOVED******REMOVED***
-                    onMouseEnter=***REMOVED***(e) => e.target.style.backgroundColor = coloresTemáticos?.dark || '#BE185D'***REMOVED***
-                    onMouseLeave=***REMOVED***(e) => e.target.style.backgroundColor = 'transparent'***REMOVED***
+                    className="text-white p-2 rounded-full transition-colors hover:bg-black hover:bg-opacity-20"
                 >
                     &lt;
                 </button>
@@ -242,26 +237,14 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
                     </h3>
                     <button
                         onClick=***REMOVED***irAHoy***REMOVED***
-                        className="text-xs px-3 py-1 rounded-full mt-1 transition-colors"
-                        style=***REMOVED******REMOVED***
-                            backgroundColor: coloresTemáticos?.dark || '#BE185D',
-                            ':hover': ***REMOVED*** backgroundColor: coloresTemáticos?.darker || '#9F1239' ***REMOVED***
-                        ***REMOVED******REMOVED***
-                        onMouseEnter=***REMOVED***(e) => e.target.style.backgroundColor = coloresTemáticos?.darker || '#9F1239'***REMOVED***
-                        onMouseLeave=***REMOVED***(e) => e.target.style.backgroundColor = coloresTemáticos?.dark || '#BE185D'***REMOVED***
+                        className="text-xs px-3 py-1 rounded-full mt-1 transition-colors bg-white bg-opacity-20 hover:bg-opacity-30"
                     >
                         Hoy
                     </button>
                 </div>
                 <button
                     onClick=***REMOVED***() => cambiarMes(1)***REMOVED***
-                    className="text-white p-2 rounded-full transition-colors"
-                    style=***REMOVED******REMOVED***
-                        backgroundColor: 'transparent',
-                        ':hover': ***REMOVED*** backgroundColor: coloresTemáticos?.dark || '#BE185D' ***REMOVED***
-                    ***REMOVED******REMOVED***
-                    onMouseEnter=***REMOVED***(e) => e.target.style.backgroundColor = coloresTemáticos?.dark || '#BE185D'***REMOVED***
-                    onMouseLeave=***REMOVED***(e) => e.target.style.backgroundColor = 'transparent'***REMOVED***
+                    className="text-white p-2 rounded-full transition-colors hover:bg-black hover:bg-opacity-20"
                 >
                     &gt;
                 </button>
@@ -386,7 +369,7 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
                     );
                 ***REMOVED***)***REMOVED***
             </div>
-        </div>
+        </Card>
     );
 ***REMOVED***;
 

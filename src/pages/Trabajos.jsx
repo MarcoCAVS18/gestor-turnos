@@ -1,15 +1,16 @@
-
 // src/pages/Trabajos.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ModalTrabajo from '../components/ModalTrabajo';
-import AlertaEliminacion from '../components/AlertaEliminacion';
-import Loader from '../components/Loader';
-import DynamicButton from '../components/DynamicButton';
 import ***REMOVED*** PlusCircle, Briefcase, Edit, Trash2, Share2 ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** compartirTrabajoNativo ***REMOVED*** from '../services/shareService';
+
+// Nuevas importaciones estructuradas
+import ModalTrabajo from '../components/modals/ModalTrabajo';
+import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
+import Loader from '../components/other/Loader';
+import Button from '../components/ui/Button';
 
 const Trabajos = () => ***REMOVED***
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
@@ -131,7 +132,7 @@ const Trabajos = () => ***REMOVED***
     
     return [
       trabajo.nombre,
-      `Tarifa base: $***REMOVED***trabajo.tarifaBase?.toFixed(2) || '0.00'***REMOVED***`,
+      `Tarifa base: $$***REMOVED***trabajo.tarifaBase?.toFixed(2) || '0.00'***REMOVED***`,
       turnosAsociados > 0 ? `$***REMOVED***turnosAsociados***REMOVED*** $***REMOVED***turnosAsociados === 1 ? 'turno registrado' : 'turnos registrados'***REMOVED***` : 'Sin turnos registrados'
     ];
   ***REMOVED***;
@@ -161,13 +162,13 @@ const Trabajos = () => ***REMOVED***
     <div className="px-4 py-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Mis Trabajos</h2>
-        <DynamicButton 
+        <Button 
           onClick=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
           className="flex items-center gap-2"
+          icon=***REMOVED***PlusCircle***REMOVED***
         >
-          <PlusCircle size=***REMOVED***20***REMOVED*** />
-          <span>Nuevo Trabajo</span>
-        </DynamicButton>
+          Nuevo Trabajo
+        </Button>
       </div>
       
       ***REMOVED***/* Contenido principal */***REMOVED***
@@ -204,25 +205,28 @@ const Trabajos = () => ***REMOVED***
                     
                     ***REMOVED***/* Botones de acción */***REMOVED***
                     <div className="flex gap-2">
-                      <button
+                      <Button
                         onClick=***REMOVED***() => abrirModalEditarTrabajo(trabajo)***REMOVED***
-                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      >
-                        <Edit size=***REMOVED***18***REMOVED*** />
-                      </button>
-                      <button
+                        variant="ghost"
+                        size="sm"
+                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                        icon=***REMOVED***Edit***REMOVED***
+                      />
+                      <Button
                         onClick=***REMOVED***() => handleCompartirTrabajo(trabajo)***REMOVED***
                         disabled=***REMOVED***estaCompartiendo***REMOVED***
-                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        <Share2 size=***REMOVED***18***REMOVED*** />
-                      </button>
-                      <button
+                        variant="ghost"
+                        size="sm"
+                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-50"
+                        icon=***REMOVED***Share2***REMOVED***
+                      />
+                      <Button
                         onClick=***REMOVED***() => iniciarEliminacion(trabajo)***REMOVED***
-                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <Trash2 size=***REMOVED***18***REMOVED*** />
-                      </button>
+                        variant="ghost"
+                        size="sm"
+                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50"
+                        icon=***REMOVED***Trash2***REMOVED***
+                      />
                     </div>
                   </div>
                   
@@ -281,21 +285,21 @@ const Trabajos = () => ***REMOVED***
           <Briefcase size=***REMOVED***48***REMOVED*** className="mx-auto text-gray-400 mb-4" />
           <h3 className="text-lg font-semibold text-gray-600 mb-2">No hay trabajos registrados</h3>
           <p className="text-gray-500 mb-6">Comienza agregando tu primer trabajo</p>
-          <DynamicButton 
+          <Button 
             onClick=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
             className="flex items-center gap-2"
+            icon=***REMOVED***PlusCircle***REMOVED***
           >
-            <PlusCircle size=***REMOVED***20***REMOVED*** />
-            <span>Agregar primer trabajo</span>
-          </DynamicButton>
+            Agregar primer trabajo
+          </Button>
         </div>
       )***REMOVED***
       
       ***REMOVED***/* Modal para agregar/editar trabajo */***REMOVED***
       <ModalTrabajo 
-        visible=***REMOVED***modalAbierto***REMOVED*** 
+        isOpen=***REMOVED***modalAbierto***REMOVED*** 
         onClose=***REMOVED***cerrarModal***REMOVED*** 
-        trabajoSeleccionado=***REMOVED***trabajoSeleccionado***REMOVED*** 
+        trabajo=***REMOVED***trabajoSeleccionado***REMOVED*** 
       />
       
       ***REMOVED***/* Modal de confirmación para eliminar */***REMOVED***

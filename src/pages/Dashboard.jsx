@@ -2,9 +2,6 @@
 
 import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
-import Loader from '../components/Loader';
-import DynamicButton from '../components/DynamicButton';
-import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** 
   Calendar, 
   Clock, 
@@ -19,6 +16,11 @@ import ***REMOVED***
   Activity,
   BarChart3
 ***REMOVED*** from 'lucide-react';
+
+// Nuevas importaciones
+import Loader from '../components/other/Loader';
+import Button from '../components/ui/Button';
+import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 const Dashboard = () => ***REMOVED***
   const ***REMOVED*** 
@@ -300,13 +302,14 @@ const Dashboard = () => ***REMOVED***
                 ***REMOVED***formatearFecha(estadisticas.proximoTurno.fecha)***REMOVED*** • ***REMOVED***estadisticas.proximoTurno.horaInicio***REMOVED***
               </p>
             </div>
-            <DynamicButton
+            <Button
               onClick=***REMOVED***() => navigate('/calendario')***REMOVED***
               size="sm"
               className="flex items-center gap-1"
+              icon=***REMOVED***ChevronRight***REMOVED***
             >
-              Ver <ChevronRight size=***REMOVED***16***REMOVED*** />
-            </DynamicButton>
+              Ver
+            </Button>
           </div>
         </div>
       )***REMOVED***
@@ -348,14 +351,15 @@ const Dashboard = () => ***REMOVED***
               <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
               Trabajos favoritos
             </h3>
-            <DynamicButton
+            <Button
               onClick=***REMOVED***() => navigate('/estadisticas')***REMOVED***
               size="sm"
               variant="ghost"
               className="flex items-center gap-1"
+              icon=***REMOVED***ChevronRight***REMOVED***
             >
-              Ver más <ChevronRight size=***REMOVED***16***REMOVED*** />
-            </DynamicButton>
+              Ver más
+            </Button>
           </div>
           
           <div className="space-y-3">
@@ -387,26 +391,24 @@ const Dashboard = () => ***REMOVED***
       <div className="bg-white rounded-xl shadow-md p-6">
         <h3 className="text-lg font-semibold mb-4">Acciones rápidas</h3>
         <div className="grid grid-cols-2 gap-3">
-          <DynamicButton
+          <Button
             onClick=***REMOVED***() => navigate('/turnos')***REMOVED***
             variant="outline"
             className="flex items-center justify-center gap-2"
+            icon=***REMOVED***Plus***REMOVED***
           >
-            <Plus size=***REMOVED***18***REMOVED*** />
             Nuevo turno
-          </DynamicButton>
-          <DynamicButton
+          </Button>
+          <Button
             onClick=***REMOVED***() => navigate('/trabajos')***REMOVED***
             variant="outline"
             className="flex items-center justify-center gap-2"
+            icon=***REMOVED***Briefcase***REMOVED***
           >
-            <Briefcase size=***REMOVED***18***REMOVED*** />
             Nuevo trabajo
-          </DynamicButton>
+          </Button>
         </div>
       </div>
-
-
     </div>
   );
 ***REMOVED***;

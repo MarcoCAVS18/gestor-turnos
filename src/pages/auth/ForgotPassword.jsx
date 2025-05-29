@@ -4,6 +4,9 @@ import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../contexts/AuthContext';
 
+// Nueva importación estructurada
+import Button from '../../components/ui/Button';
+
 const ForgotPassword = () => ***REMOVED***
   const ***REMOVED*** resetPassword ***REMOVED*** = useAuth();
   const navigate = useNavigate();
@@ -92,21 +95,23 @@ const ForgotPassword = () => ***REMOVED***
             </div>
             
             <div className="flex items-center space-x-4">
-              <button
+              <Button
                 type="button"
                 onClick=***REMOVED***() => navigate('/login')***REMOVED***
-                className="py-2 px-4 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                variant="outline"
+                disabled=***REMOVED***loading***REMOVED***
               >
                 Cancelar
-              </button>
+              </Button>
               
-              <button
+              <Button
                 type="submit"
                 disabled=***REMOVED***loading || !emailValid***REMOVED***
-                className="flex-1 py-2 px-4 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-md disabled:opacity-50"
+                loading=***REMOVED***loading***REMOVED***
+                className="flex-1"
               >
-                ***REMOVED***loading ? "Enviando..." : "Recuperar contraseña"***REMOVED***
-              </button>
+                Recuperar contraseña
+              </Button>
             </div>
           </form>
         </div>

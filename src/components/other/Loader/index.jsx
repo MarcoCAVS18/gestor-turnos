@@ -1,5 +1,6 @@
 import React, ***REMOVED*** useEffect, useRef ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** gsap ***REMOVED*** from 'gsap';
 
 const Loader = (***REMOVED*** size = 65, fullScreen = false, onAnimationComplete ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();

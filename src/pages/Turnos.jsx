@@ -1,12 +1,14 @@
 // src/pages/Turnos.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import TarjetaTurno from '../components/TarjetaTurno';
-import ModalTurno from '../components/ModalTurno';
-import Loader from '../components/Loader';
-import DynamicButton from '../components/DynamicButton';
 import ***REMOVED*** PlusCircle, Calendar, AlertTriangle ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+
+// Nuevas importaciones estructuradas
+import TarjetaTurno from '../components/cards/TarjetaTurno';
+import ModalTurno from '../components/modals/ModalTurno';
+import Loader from '../components/other/Loader';
+import Button from '../components/ui/Button';
 
 const Turnos = () => ***REMOVED***
   const ***REMOVED*** turnosPorFecha, cargando, borrarTurno, coloresTemáticos, calcularPago, trabajos ***REMOVED*** = useApp();
@@ -131,13 +133,13 @@ const Turnos = () => ***REMOVED***
     <div className="px-4 py-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Mis Turnos</h2>
-        <DynamicButton 
+        <Button 
           onClick=***REMOVED***abrirModalNuevoTurno***REMOVED***
           className="flex items-center gap-2"
+          icon=***REMOVED***PlusCircle***REMOVED***
         >
-          <PlusCircle size=***REMOVED***20***REMOVED*** />
-          <span>Nuevo Turno</span>
-        </DynamicButton>
+          Nuevo Turno
+        </Button>
       </div>
       
       ***REMOVED***/* Contenido principal */***REMOVED***
@@ -196,21 +198,21 @@ const Turnos = () => ***REMOVED***
           <Calendar size=***REMOVED***48***REMOVED*** className="mx-auto text-gray-400 mb-4" />
           <h3 className="text-lg font-semibold text-gray-600 mb-2">No hay turnos registrados</h3>
           <p className="text-gray-500 mb-6">Comienza agregando tu primer turno</p>
-          <DynamicButton 
+          <Button 
             onClick=***REMOVED***abrirModalNuevoTurno***REMOVED***
             className="flex items-center gap-2"
+            icon=***REMOVED***PlusCircle***REMOVED***
           >
-            <PlusCircle size=***REMOVED***20***REMOVED*** />
-            <span>Agregar primer turno</span>
-          </DynamicButton>
+            Agregar primer turno
+          </Button>
         </div>
       )***REMOVED***
       
       ***REMOVED***/* Modal para agregar/editar turno */***REMOVED***
       <ModalTurno 
-        visible=***REMOVED***modalAbierto***REMOVED*** 
+        isOpen=***REMOVED***modalAbierto***REMOVED*** 
         onClose=***REMOVED***cerrarModal***REMOVED*** 
-        turnoSeleccionado=***REMOVED***turnoSeleccionado***REMOVED*** 
+        turno=***REMOVED***turnoSeleccionado***REMOVED*** 
       />
       
       ***REMOVED***/* Modal de confirmación para eliminar */***REMOVED***
@@ -249,21 +251,22 @@ const Turnos = () => ***REMOVED***
               
               ***REMOVED***/* Botones */***REMOVED***
               <div className="flex gap-3">
-                <DynamicButton
+                <Button
                   onClick=***REMOVED***cancelarEliminacion***REMOVED***
                   variant="outline"
                   className="flex-1"
                   disabled=***REMOVED***eliminando***REMOVED***
                 >
                   Cancelar
-                </DynamicButton>
-                <button
+                </Button>
+                <Button
                   onClick=***REMOVED***confirmarEliminacion***REMOVED***
-                  disabled=***REMOVED***eliminando***REMOVED***
-                  className="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                  variant="danger"
+                  className="flex-1"
+                  loading=***REMOVED***eliminando***REMOVED***
                 >
-                  ***REMOVED***eliminando ? 'Eliminando...' : 'Eliminar'***REMOVED***
-                </button>
+                  Eliminar
+                </Button>
               </div>
             </div>
           </div>
