@@ -3,8 +3,7 @@
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** X, Briefcase, DollarSign, Palette, FileText ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
-import DynamicButton from './DynamicButton';
-
+import Button from './ui/Button';
 const ModalTrabajo = (***REMOVED*** visible, onClose, trabajoSeleccionado ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** agregarTrabajo, editarTrabajo, coloresTemáticos ***REMOVED*** = useApp();
   
@@ -308,7 +307,7 @@ const ModalTrabajo = (***REMOVED*** visible, onClose, trabajoSeleccionado ***REM
 
           ***REMOVED***/* Botones */***REMOVED***
           <div className="flex gap-3 pt-4">
-            <DynamicButton
+            <Button
               type="button"
               onClick=***REMOVED***onClose***REMOVED***
               variant="outline"
@@ -316,8 +315,8 @@ const ModalTrabajo = (***REMOVED*** visible, onClose, trabajoSeleccionado ***REM
               disabled=***REMOVED***cargando***REMOVED***
             >
               Cancelar
-            </DynamicButton>
-            <DynamicButton
+            </Button>
+            <Button
               type="submit"
               className="flex-1"
               disabled=***REMOVED***cargando***REMOVED***
@@ -326,7 +325,7 @@ const ModalTrabajo = (***REMOVED*** visible, onClose, trabajoSeleccionado ***REM
                 ? (trabajoSeleccionado ? 'Guardando...' : 'Creando...') 
                 : (trabajoSeleccionado ? 'Guardar Cambios' : 'Crear Trabajo')
               ***REMOVED***
-            </DynamicButton>
+            </Button>
           </div>
         </form>
       </div>
