@@ -5,8 +5,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { obtenerTrabajoCompartido, aceptarTrabajoCompartido } from '../services/shareService';
 import { Briefcase, DollarSign, AlertCircle, CheckCircle } from 'lucide-react';
-import DynamicButton from '../components/DynamicButton';
-import Loader from '../components/Loader';
+
+// Nuevas importaciones estructuradas
+import Button from '../components/ui/Button';
+import Loader from '../components/other/Loader';
 
 const TrabajoCompartido = () => {
   const { token } = useParams();
@@ -116,27 +118,27 @@ const TrabajoCompartido = () => {
           <div className="flex gap-3">
             {!currentUser ? (
               <>
-                <DynamicButton
+                <Button
                   onClick={handleIniciarSesion}
                   className="flex-1"
                 >
                   Iniciar sesión
-                </DynamicButton>
-                <DynamicButton
+                </Button>
+                <Button
                   onClick={() => navigate('/')}
                   variant="outline"
                   className="flex-1"
                 >
                   Cancelar
-                </DynamicButton>
+                </Button>
               </>
             ) : (
-              <DynamicButton
+              <Button
                 onClick={() => navigate('/dashboard')}
                 className="w-full"
               >
                 Volver al inicio
-              </DynamicButton>
+              </Button>
             )}
           </div>
         </div>
@@ -261,30 +263,21 @@ const TrabajoCompartido = () => {
 
           {/* Botones de acción */}
           <div className="flex gap-3">
-            <DynamicButton
+            <Button
               onClick={handleRechazar}
               variant="outline"
               className="flex-1"
               disabled={aceptando}
             >
               No, gracias
-            </DynamicButton>
-            <DynamicButton
+            </Button>
+            <Button
               onClick={handleAceptarTrabajo}
               className="flex-1"
-              disabled={aceptando}
+              loading={aceptando}
             >
-              {aceptando ? (
-                <span className="flex items-center">
-                  <div className="mr-2">
-                    <Loader size={16} />
-                  </div>
-                  Agregando...
-                </span>
-              ) : (
-                'Sí, agregar trabajo'
-              )}
-            </DynamicButton>
+              Sí, agregar trabajo
+            </Button>
           </div>
 
           {/* Error message */}

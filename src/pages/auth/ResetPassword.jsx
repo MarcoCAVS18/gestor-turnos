@@ -5,6 +5,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { confirmPasswordReset } from 'firebase/auth';
 import { auth } from '../../services/firebase';
 
+// Nueva importación estructurada
+import Button from '../../components/ui/Button';
+
 const ResetPassword = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,8 +32,7 @@ const ResetPassword = () => {
   
   useEffect(() => {
     if (!oobCode) {
-      setError
-      ('Enlace inválido o expirado. Por favor, solicita un nuevo enlace de recuperación.');
+      setError('Enlace inválido o expirado. Por favor, solicita un nuevo enlace de recuperación.');
     }
   }, [oobCode]);
   
@@ -180,24 +182,26 @@ const ResetPassword = () => {
                 )}
               </div>
               
-              <button
+              <Button
                 type="submit"
                 disabled={loading || !passwordStrength.isValid || !passwordsMatch}
-                className="w-full py-2 px-4 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-md disabled:opacity-50"
+                loading={loading}
+                className="w-full"
               >
-                {loading ? "Procesando..." : "Confirmar nueva contraseña"}
-              </button>
+                Confirmar nueva contraseña
+              </Button>
             </form>
           )}
           
           <div className="mt-4 text-center">
-            <button
+            <Button
               type="button"
               onClick={() => navigate('/login')}
+              variant="ghost"
               className="text-sm text-pink-600 hover:text-pink-800"
             >
               Volver a inicio de sesión
-            </button>
+            </Button>
           </div>
         </div>
       </div>

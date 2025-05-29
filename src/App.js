@@ -6,14 +6,14 @@ import { useAuth } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
 
 // Componentes de autenticación
-import AuthModal from './components/AuthModal';
+import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 
-// Componentes principales
-import Header from './components/Header';
-import Navegacion from './components/Navegacion';
+// Componentes principales - NUEVAS RUTAS
+import Header from './components/layout/Header';
+import Navegacion from './components/layout/Navegacion';
 import Dashboard from './pages/Dashboard';
 import Trabajos from './pages/Trabajos';
 import Turnos from './pages/Turnos';
@@ -22,13 +22,12 @@ import CalendarioView from './pages/CalendarioView';
 import Ajustes from './pages/Ajustes';
 import TrabajoCompartido from './pages/TrabajoCompartido';
 
-// Modales
-import ModalTrabajo from './components/ModalTrabajo';
-import ModalTurno from './components/ModalTurno';
+// Modales - NUEVAS RUTAS
+import ModalTrabajo from './components/modals/ModalTrabajo';
+import ModalTurno from './components/modals/ModalTurno';
 
 // Temporal en desarrollo
 import TestPage from './pages/TestPage';
-
 
 // Componente para rutas protegidas
 const PrivateRoute = ({ children }) => {
@@ -129,15 +128,15 @@ function AppLayout({ currentView }) {
 
         {/* Modales */}
         <ModalTrabajo
-          visible={modalTrabajoAbierto}
+          isOpen={modalTrabajoAbierto}
           onClose={cerrarModalTrabajo}
-          trabajoSeleccionado={trabajoSeleccionado}
+          trabajo={trabajoSeleccionado}
         />
 
         <ModalTurno
-          visible={modalTurnoAbierto}
+          isOpen={modalTurnoAbierto}
           onClose={cerrarModalTurno}
-          turnoSeleccionado={turnoSeleccionado}
+          turno={turnoSeleccionado}
         />
       </div>
     </AppProvider>
@@ -160,7 +159,7 @@ function App() {
     <Router>
       <Routes>
         {/* Rutas de autenticación */}
-        <Route path="/login" element={currentUser ? <Navigate to="/dashboard" replace /> : <AuthModal />} />
+        <Route path="/login" element={currentUser ? <Navigate to="/dashboard" replace /> : <Login />} />
         <Route path="/register" element={currentUser ? <Navigate to="/dashboard" replace /> : <Register />} />
         <Route path="/forgot-password" element={currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />

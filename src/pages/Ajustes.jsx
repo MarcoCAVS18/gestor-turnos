@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
 import { Settings, User, LogOut, Edit2, Save, Clock, Smile, Sun, Sunset, Moon } from 'lucide-react';
-import DynamicButton from '../components/DynamicButton';
+
+// Nueva importación estructurada
+import Button from '../components/ui/Button';
 
 const Ajustes = () => {
   const { currentUser, logout, getUserData, updateUserName } = useAuth();
@@ -229,14 +231,13 @@ const Ajustes = () => {
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
                   style={{ '--tw-ring-color': coloresTemáticos?.base || appColor }}
                 />
-                <DynamicButton
+                <Button
                   onClick={handleSaveName}
                   disabled={loading}
                   size="sm"
                   className="!p-2"
-                >
-                  <Save className="h-4 w-4" />
-                </DynamicButton>
+                  icon={Save}
+                />
               </div>
             ) : (
               <div className="flex items-center">
@@ -474,13 +475,14 @@ const Ajustes = () => {
             Este descuento se aplicará por defecto a todos tus turnos y trabajos. Podrás modificarlo más adelante.
           </p>
           
-          <DynamicButton
+          <Button
             onClick={handleSaveSettings}
             disabled={loading}
+            loading={loading}
             className="w-full mt-4"
           >
-            {loading ? 'Guardando...' : 'Guardar cambios'}
-          </DynamicButton>
+            Guardar cambios
+          </Button>
         </div>
       </div>
       
@@ -491,14 +493,14 @@ const Ajustes = () => {
           <h2 className="text-lg font-semibold">Sesión</h2>
         </div>
         
-        <DynamicButton
+        <Button
           onClick={handleLogout}
           variant="outline"
           className="w-full flex items-center justify-center gap-2"
+          icon={LogOut}
         >
-          <LogOut className="h-4 w-4" />
-          <span>Cerrar sesión</span>
-        </DynamicButton>
+          Cerrar sesión
+        </Button>
       </div>
     </div>
   );

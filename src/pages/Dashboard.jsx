@@ -2,9 +2,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Loader from '../components/Loader';
-import DynamicButton from '../components/DynamicButton';
-import { useApp } from '../contexts/AppContext';
 import { 
   Calendar, 
   Clock, 
@@ -19,6 +16,11 @@ import {
   Activity,
   BarChart3
 } from 'lucide-react';
+
+// Nuevas importaciones
+import Loader from '../components/other/Loader';
+import Button from '../components/ui/Button';
+import { useApp } from '../contexts/AppContext';
 
 const Dashboard = () => {
   const { 
@@ -300,13 +302,14 @@ const Dashboard = () => {
                 {formatearFecha(estadisticas.proximoTurno.fecha)} • {estadisticas.proximoTurno.horaInicio}
               </p>
             </div>
-            <DynamicButton
+            <Button
               onClick={() => navigate('/calendario')}
               size="sm"
               className="flex items-center gap-1"
+              icon={ChevronRight}
             >
-              Ver <ChevronRight size={16} />
-            </DynamicButton>
+              Ver
+            </Button>
           </div>
         </div>
       )}
@@ -348,14 +351,15 @@ const Dashboard = () => {
               <BarChart3 size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
               Trabajos favoritos
             </h3>
-            <DynamicButton
+            <Button
               onClick={() => navigate('/estadisticas')}
               size="sm"
               variant="ghost"
               className="flex items-center gap-1"
+              icon={ChevronRight}
             >
-              Ver más <ChevronRight size={16} />
-            </DynamicButton>
+              Ver más
+            </Button>
           </div>
           
           <div className="space-y-3">
@@ -387,26 +391,24 @@ const Dashboard = () => {
       <div className="bg-white rounded-xl shadow-md p-6">
         <h3 className="text-lg font-semibold mb-4">Acciones rápidas</h3>
         <div className="grid grid-cols-2 gap-3">
-          <DynamicButton
+          <Button
             onClick={() => navigate('/turnos')}
             variant="outline"
             className="flex items-center justify-center gap-2"
+            icon={Plus}
           >
-            <Plus size={18} />
             Nuevo turno
-          </DynamicButton>
-          <DynamicButton
+          </Button>
+          <Button
             onClick={() => navigate('/trabajos')}
             variant="outline"
             className="flex items-center justify-center gap-2"
+            icon={Briefcase}
           >
-            <Briefcase size={18} />
             Nuevo trabajo
-          </DynamicButton>
+          </Button>
         </div>
       </div>
-
-
     </div>
   );
 };

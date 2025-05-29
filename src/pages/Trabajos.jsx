@@ -1,15 +1,16 @@
-
 // src/pages/Trabajos.jsx
 
 import React, { useState, useEffect } from 'react';
-import ModalTrabajo from '../components/ModalTrabajo';
-import AlertaEliminacion from '../components/AlertaEliminacion';
-import Loader from '../components/Loader';
-import DynamicButton from '../components/DynamicButton';
 import { PlusCircle, Briefcase, Edit, Trash2, Share2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useApp } from '../contexts/AppContext';
 import { compartirTrabajoNativo } from '../services/shareService';
+
+// Nuevas importaciones estructuradas
+import ModalTrabajo from '../components/modals/ModalTrabajo';
+import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
+import Loader from '../components/other/Loader';
+import Button from '../components/ui/Button';
 
 const Trabajos = () => {
   const { currentUser } = useAuth();
@@ -131,7 +132,7 @@ const Trabajos = () => {
     
     return [
       trabajo.nombre,
-      `Tarifa base: ${trabajo.tarifaBase?.toFixed(2) || '0.00'}`,
+      `Tarifa base: $${trabajo.tarifaBase?.toFixed(2) || '0.00'}`,
       turnosAsociados > 0 ? `${turnosAsociados} ${turnosAsociados === 1 ? 'turno registrado' : 'turnos registrados'}` : 'Sin turnos registrados'
     ];
   };
@@ -161,13 +162,13 @@ const Trabajos = () => {
     <div className="px-4 py-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Mis Trabajos</h2>
-        <DynamicButton 
+        <Button 
           onClick={abrirModalNuevoTrabajo}
           className="flex items-center gap-2"
+          icon={PlusCircle}
         >
-          <PlusCircle size={20} />
-          <span>Nuevo Trabajo</span>
-        </DynamicButton>
+          Nuevo Trabajo
+        </Button>
       </div>
       
       {/* Contenido principal */}
@@ -204,25 +205,28 @@ const Trabajos = () => {
                     
                     {/* Botones de acción */}
                     <div className="flex gap-2">
-                      <button
+                      <Button
                         onClick={() => abrirModalEditarTrabajo(trabajo)}
-                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button
+                        variant="ghost"
+                        size="sm"
+                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50"
+                        icon={Edit}
+                      />
+                      <Button
                         onClick={() => handleCompartirTrabajo(trabajo)}
                         disabled={estaCompartiendo}
-                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
-                      >
-                        <Share2 size={18} />
-                      </button>
-                      <button
+                        variant="ghost"
+                        size="sm"
+                        className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 disabled:opacity-50"
+                        icon={Share2}
+                      />
+                      <Button
                         onClick={() => iniciarEliminacion(trabajo)}
-                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                        variant="ghost"
+                        size="sm"
+                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50"
+                        icon={Trash2}
+                      />
                     </div>
                   </div>
                   
@@ -281,21 +285,21 @@ const Trabajos = () => {
           <Briefcase size={48} className="mx-auto text-gray-400 mb-4" />
           <h3 className="text-lg font-semibold text-gray-600 mb-2">No hay trabajos registrados</h3>
           <p className="text-gray-500 mb-6">Comienza agregando tu primer trabajo</p>
-          <DynamicButton 
+          <Button 
             onClick={abrirModalNuevoTrabajo}
             className="flex items-center gap-2"
+            icon={PlusCircle}
           >
-            <PlusCircle size={20} />
-            <span>Agregar primer trabajo</span>
-          </DynamicButton>
+            Agregar primer trabajo
+          </Button>
         </div>
       )}
       
       {/* Modal para agregar/editar trabajo */}
       <ModalTrabajo 
-        visible={modalAbierto} 
+        isOpen={modalAbierto} 
         onClose={cerrarModal} 
-        trabajoSeleccionado={trabajoSeleccionado} 
+        trabajo={trabajoSeleccionado} 
       />
       
       {/* Modal de confirmación para eliminar */}

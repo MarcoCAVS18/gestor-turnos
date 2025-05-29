@@ -1,12 +1,14 @@
 // src/pages/Turnos.jsx
 
 import React, { useState, useEffect } from 'react';
-import TarjetaTurno from '../components/TarjetaTurno';
-import ModalTurno from '../components/ModalTurno';
-import Loader from '../components/Loader';
-import DynamicButton from '../components/DynamicButton';
 import { PlusCircle, Calendar, AlertTriangle } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+
+// Nuevas importaciones estructuradas
+import TarjetaTurno from '../components/cards/TarjetaTurno';
+import ModalTurno from '../components/modals/ModalTurno';
+import Loader from '../components/other/Loader';
+import Button from '../components/ui/Button';
 
 const Turnos = () => {
   const { turnosPorFecha, cargando, borrarTurno, coloresTemáticos, calcularPago, trabajos } = useApp();
@@ -131,13 +133,13 @@ const Turnos = () => {
     <div className="px-4 py-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Mis Turnos</h2>
-        <DynamicButton 
+        <Button 
           onClick={abrirModalNuevoTurno}
           className="flex items-center gap-2"
+          icon={PlusCircle}
         >
-          <PlusCircle size={20} />
-          <span>Nuevo Turno</span>
-        </DynamicButton>
+          Nuevo Turno
+        </Button>
       </div>
       
       {/* Contenido principal */}
@@ -196,21 +198,21 @@ const Turnos = () => {
           <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
           <h3 className="text-lg font-semibold text-gray-600 mb-2">No hay turnos registrados</h3>
           <p className="text-gray-500 mb-6">Comienza agregando tu primer turno</p>
-          <DynamicButton 
+          <Button 
             onClick={abrirModalNuevoTurno}
             className="flex items-center gap-2"
+            icon={PlusCircle}
           >
-            <PlusCircle size={20} />
-            <span>Agregar primer turno</span>
-          </DynamicButton>
+            Agregar primer turno
+          </Button>
         </div>
       )}
       
       {/* Modal para agregar/editar turno */}
       <ModalTurno 
-        visible={modalAbierto} 
+        isOpen={modalAbierto} 
         onClose={cerrarModal} 
-        turnoSeleccionado={turnoSeleccionado} 
+        turno={turnoSeleccionado} 
       />
       
       {/* Modal de confirmación para eliminar */}
@@ -249,21 +251,22 @@ const Turnos = () => {
               
               {/* Botones */}
               <div className="flex gap-3">
-                <DynamicButton
+                <Button
                   onClick={cancelarEliminacion}
                   variant="outline"
                   className="flex-1"
                   disabled={eliminando}
                 >
                   Cancelar
-                </DynamicButton>
-                <button
+                </Button>
+                <Button
                   onClick={confirmarEliminacion}
-                  disabled={eliminando}
-                  className="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+                  variant="danger"
+                  className="flex-1"
+                  loading={eliminando}
                 >
-                  {eliminando ? 'Eliminando...' : 'Eliminar'}
-                </button>
+                  Eliminar
+                </Button>
               </div>
             </div>
           </div>
