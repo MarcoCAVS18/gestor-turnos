@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Briefcase, DollarSign, Palette, FileText } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
-import DynamicButton from './DynamicButton';
-
+import Button from './ui/Button';
 const ModalTrabajo = ({ visible, onClose, trabajoSeleccionado }) => {
   const { agregarTrabajo, editarTrabajo, coloresTemáticos } = useApp();
   
@@ -308,7 +307,7 @@ const ModalTrabajo = ({ visible, onClose, trabajoSeleccionado }) => {
 
           {/* Botones */}
           <div className="flex gap-3 pt-4">
-            <DynamicButton
+            <Button
               type="button"
               onClick={onClose}
               variant="outline"
@@ -316,8 +315,8 @@ const ModalTrabajo = ({ visible, onClose, trabajoSeleccionado }) => {
               disabled={cargando}
             >
               Cancelar
-            </DynamicButton>
-            <DynamicButton
+            </Button>
+            <Button
               type="submit"
               className="flex-1"
               disabled={cargando}
@@ -326,7 +325,7 @@ const ModalTrabajo = ({ visible, onClose, trabajoSeleccionado }) => {
                 ? (trabajoSeleccionado ? 'Guardando...' : 'Creando...') 
                 : (trabajoSeleccionado ? 'Guardar Cambios' : 'Crear Trabajo')
               }
-            </DynamicButton>
+            </Button>
           </div>
         </form>
       </div>

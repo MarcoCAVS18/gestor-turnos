@@ -26,10 +26,14 @@ import TrabajoCompartido from './pages/TrabajoCompartido';
 import ModalTrabajo from './components/ModalTrabajo';
 import ModalTurno from './components/ModalTurno';
 
+// Temporal en desarrollo
+import TestPage from './pages/TestPage';
+
+
 // Componente para rutas protegidas
 const PrivateRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -37,7 +41,7 @@ const PrivateRoute = ({ children }) => {
       </div>
     );
   }
-  
+
   return currentUser ? children : <Navigate to="/login" replace />;
 };
 
@@ -107,33 +111,33 @@ function AppLayout({ currentView }) {
   return (
     <AppProvider>
       <div className="min-h-screen bg-gray-100 font-poppins">
-        <Header 
+        <Header
           vistaActual={vistaActual}
-          setVistaActual={setVistaActual} 
-          abrirModalNuevoTrabajo={abrirModalNuevoTrabajo} 
-          abrirModalNuevoTurno={abrirModalNuevoTurno} 
+          setVistaActual={setVistaActual}
+          abrirModalNuevoTrabajo={abrirModalNuevoTrabajo}
+          abrirModalNuevoTurno={abrirModalNuevoTurno}
         />
-        
+
         <main className="max-w-md mx-auto px-4 pb-20">
           {renderVista()}
         </main>
-        
-        <Navegacion 
-          vistaActual={vistaActual} 
-          setVistaActual={setVistaActual} 
+
+        <Navegacion
+          vistaActual={vistaActual}
+          setVistaActual={setVistaActual}
         />
-        
+
         {/* Modales */}
-        <ModalTrabajo 
-          visible={modalTrabajoAbierto} 
-          onClose={cerrarModalTrabajo} 
-          trabajoSeleccionado={trabajoSeleccionado} 
+        <ModalTrabajo
+          visible={modalTrabajoAbierto}
+          onClose={cerrarModalTrabajo}
+          trabajoSeleccionado={trabajoSeleccionado}
         />
-        
-        <ModalTurno 
-          visible={modalTurnoAbierto} 
-          onClose={cerrarModalTurno} 
-          turnoSeleccionado={turnoSeleccionado} 
+
+        <ModalTurno
+          visible={modalTurnoAbierto}
+          onClose={cerrarModalTurno}
+          turnoSeleccionado={turnoSeleccionado}
         />
       </div>
     </AppProvider>
@@ -142,7 +146,7 @@ function AppLayout({ currentView }) {
 
 function App() {
   const { currentUser, loading } = useAuth();
-  
+
   // Si está cargando, mostrar spinner
   if (loading) {
     return (
@@ -160,8 +164,8 @@ function App() {
         <Route path="/register" element={currentUser ? <Navigate to="/dashboard" replace /> : <Register />} />
         <Route path="/forgot-password" element={currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        
-        {/* Ruta para compartir trabajos - CORREGIDA */}
+
+        {/* Ruta para compartir trabajos */}
         <Route path="/compartir/:token" element={
           <PrivateRoute>
             <AppProvider>
@@ -170,37 +174,48 @@ function App() {
           </PrivateRoute>
         } />
 
+        {/* RUTA TEMPORAL - REMOVER EN PRODUCCIÓN */}
+        {process.env.NODE_ENV === 'development' && (
+          <Route path="/test" element={
+            <PrivateRoute>
+              <AppProvider>
+                <TestPage />
+              </AppProvider>
+            </PrivateRoute>
+          } />
+        )}
+
         {/* Rutas protegidas */}
         <Route path="/dashboard" element={
           <PrivateRoute>
             <AppLayout currentView="dashboard" />
           </PrivateRoute>
         } />
-        
+
         <Route path="/trabajos" element={
           <PrivateRoute>
             <AppLayout currentView="trabajos" />
           </PrivateRoute>
         } />
-        
+
         <Route path="/turnos" element={
           <PrivateRoute>
             <AppLayout currentView="turnos" />
           </PrivateRoute>
         } />
-        
+
         <Route path="/estadisticas" element={
           <PrivateRoute>
             <AppLayout currentView="estadisticas" />
           </PrivateRoute>
         } />
-        
+
         <Route path="/calendario" element={
           <PrivateRoute>
             <AppLayout currentView="calendario" />
           </PrivateRoute>
         } />
-        
+
         <Route path="/ajustes" element={
           <PrivateRoute>
             <AppLayout currentView="ajustes" />
@@ -209,7 +224,7 @@ function App() {
 
         {/* Ruta por defecto - redirigir a dashboard */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        
+
         {/* Ruta catch-all para URLs no encontradas */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
