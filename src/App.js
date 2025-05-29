@@ -26,10 +26,14 @@ import TrabajoCompartido from './pages/TrabajoCompartido';
 import ModalTrabajo from './components/ModalTrabajo';
 import ModalTurno from './components/ModalTurno';
 
+// Temporal en desarrollo
+import TestPage from './pages/TestPage';
+
+
 // Componente para rutas protegidas
 const PrivateRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser, loading ***REMOVED*** = useAuth();
-  
+
   if (loading) ***REMOVED***
     return (
       <div className="flex items-center justify-center h-screen">
@@ -37,7 +41,7 @@ const PrivateRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
       </div>
     );
   ***REMOVED***
-  
+
   return currentUser ? children : <Navigate to="/login" replace />;
 ***REMOVED***;
 
@@ -107,33 +111,33 @@ function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
   return (
     <AppProvider>
       <div className="min-h-screen bg-gray-100 font-poppins">
-        <Header 
+        <Header
           vistaActual=***REMOVED***vistaActual***REMOVED***
-          setVistaActual=***REMOVED***setVistaActual***REMOVED*** 
-          abrirModalNuevoTrabajo=***REMOVED***abrirModalNuevoTrabajo***REMOVED*** 
-          abrirModalNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED*** 
+          setVistaActual=***REMOVED***setVistaActual***REMOVED***
+          abrirModalNuevoTrabajo=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
+          abrirModalNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED***
         />
-        
+
         <main className="max-w-md mx-auto px-4 pb-20">
           ***REMOVED***renderVista()***REMOVED***
         </main>
-        
-        <Navegacion 
-          vistaActual=***REMOVED***vistaActual***REMOVED*** 
-          setVistaActual=***REMOVED***setVistaActual***REMOVED*** 
+
+        <Navegacion
+          vistaActual=***REMOVED***vistaActual***REMOVED***
+          setVistaActual=***REMOVED***setVistaActual***REMOVED***
         />
-        
+
         ***REMOVED***/* Modales */***REMOVED***
-        <ModalTrabajo 
-          visible=***REMOVED***modalTrabajoAbierto***REMOVED*** 
-          onClose=***REMOVED***cerrarModalTrabajo***REMOVED*** 
-          trabajoSeleccionado=***REMOVED***trabajoSeleccionado***REMOVED*** 
+        <ModalTrabajo
+          visible=***REMOVED***modalTrabajoAbierto***REMOVED***
+          onClose=***REMOVED***cerrarModalTrabajo***REMOVED***
+          trabajoSeleccionado=***REMOVED***trabajoSeleccionado***REMOVED***
         />
-        
-        <ModalTurno 
-          visible=***REMOVED***modalTurnoAbierto***REMOVED*** 
-          onClose=***REMOVED***cerrarModalTurno***REMOVED*** 
-          turnoSeleccionado=***REMOVED***turnoSeleccionado***REMOVED*** 
+
+        <ModalTurno
+          visible=***REMOVED***modalTurnoAbierto***REMOVED***
+          onClose=***REMOVED***cerrarModalTurno***REMOVED***
+          turnoSeleccionado=***REMOVED***turnoSeleccionado***REMOVED***
         />
       </div>
     </AppProvider>
@@ -142,7 +146,7 @@ function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
 
 function App() ***REMOVED***
   const ***REMOVED*** currentUser, loading ***REMOVED*** = useAuth();
-  
+
   // Si está cargando, mostrar spinner
   if (loading) ***REMOVED***
     return (
@@ -160,8 +164,8 @@ function App() ***REMOVED***
         <Route path="/register" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <Register />***REMOVED*** />
         <Route path="/forgot-password" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />***REMOVED*** />
         <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />
-        
-        ***REMOVED***/* Ruta para compartir trabajos - CORREGIDA */***REMOVED***
+
+        ***REMOVED***/* Ruta para compartir trabajos */***REMOVED***
         <Route path="/compartir/:token" element=***REMOVED***
           <PrivateRoute>
             <AppProvider>
@@ -170,37 +174,48 @@ function App() ***REMOVED***
           </PrivateRoute>
         ***REMOVED*** />
 
+        ***REMOVED***/* RUTA TEMPORAL - REMOVER EN PRODUCCIÓN */***REMOVED***
+        ***REMOVED***process.env.NODE_ENV === 'development' && (
+          <Route path="/test" element=***REMOVED***
+            <PrivateRoute>
+              <AppProvider>
+                <TestPage />
+              </AppProvider>
+            </PrivateRoute>
+          ***REMOVED*** />
+        )***REMOVED***
+
         ***REMOVED***/* Rutas protegidas */***REMOVED***
         <Route path="/dashboard" element=***REMOVED***
           <PrivateRoute>
             <AppLayout currentView="dashboard" />
           </PrivateRoute>
         ***REMOVED*** />
-        
+
         <Route path="/trabajos" element=***REMOVED***
           <PrivateRoute>
             <AppLayout currentView="trabajos" />
           </PrivateRoute>
         ***REMOVED*** />
-        
+
         <Route path="/turnos" element=***REMOVED***
           <PrivateRoute>
             <AppLayout currentView="turnos" />
           </PrivateRoute>
         ***REMOVED*** />
-        
+
         <Route path="/estadisticas" element=***REMOVED***
           <PrivateRoute>
             <AppLayout currentView="estadisticas" />
           </PrivateRoute>
         ***REMOVED*** />
-        
+
         <Route path="/calendario" element=***REMOVED***
           <PrivateRoute>
             <AppLayout currentView="calendario" />
           </PrivateRoute>
         ***REMOVED*** />
-        
+
         <Route path="/ajustes" element=***REMOVED***
           <PrivateRoute>
             <AppLayout currentView="ajustes" />
@@ -209,7 +224,7 @@ function App() ***REMOVED***
 
         ***REMOVED***/* Ruta por defecto - redirigir a dashboard */***REMOVED***
         <Route path="/" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
-        
+
         ***REMOVED***/* Ruta catch-all para URLs no encontradas */***REMOVED***
         <Route path="*" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
       </Routes>
