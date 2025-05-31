@@ -1,12 +1,10 @@
-// src/pages/Dashboard.jsx
+// src/pages/Dashboard.jsx - VERSION COMPLETA
 
-import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react';
+import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** 
   Calendar, 
   Clock, 
-  TrendingUp, 
-  TrendingDown,
   Briefcase,
   Target,
   Star,
@@ -14,12 +12,14 @@ import ***REMOVED***
   Plus,
   Award,
   Activity,
-  BarChart3
+  BarChart3,
+  TrendingUp,
+  TrendingDown
 ***REMOVED*** from 'lucide-react';
 
-// Nuevas importaciones
 import Loader from '../components/other/Loader';
 import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 const Dashboard = () => ***REMOVED***
@@ -28,9 +28,10 @@ const Dashboard = () => ***REMOVED***
     turnos, 
     cargando, 
     calcularPago, 
-    coloresTemáticos,
+    coloresTemáticos, 
     emojiUsuario 
   ***REMOVED*** = useApp();
+  
   const [showLoading, setShowLoading] = useState(true);
   const navigate = useNavigate();
   
@@ -51,20 +52,22 @@ const Dashboard = () => ***REMOVED***
     ***REMOVED***;
   ***REMOVED***, [cargando]);
 
-  // Calcular estadísticas avanzadas
-  const estadisticas = useMemo(() => ***REMOVED***
+  // Calcular estadísticas completas
+  const calcularEstadisticasCompletas = () => ***REMOVED***
     if (turnos.length === 0) ***REMOVED***
       return ***REMOVED***
         totalGanado: 0,
         horasTrabajadas: 0,
         promedioPorHora: 0,
+        turnosTotal: 0,
         trabajoMasRentable: null,
-        diasTrabajados: 0,
+        proximoTurno: null,
         turnosEstaSemana: 0,
         gananciasEstaSemana: 0,
         tendenciaSemanal: 0,
-        proximoTurno: null,
-        trabajosFavoritos: []
+        trabajosFavoritos: [],
+        proyeccionMensual: 0,
+        diasTrabajados: 0
       ***REMOVED***;
     ***REMOVED***
 
@@ -144,19 +147,24 @@ const Dashboard = () => ***REMOVED***
       .sort((a, b) => b.turnos - a.turnos)
       .slice(0, 3);
 
+    // Proyección mensual
+    const proyeccionMensual = gananciasEstaSemana * 4.33;
+
     return ***REMOVED***
       totalGanado,
       horasTrabajadas,
       promedioPorHora: horasTrabajadas > 0 ? totalGanado / horasTrabajadas : 0,
+      turnosTotal: turnos.length,
       trabajoMasRentable,
-      diasTrabajados: fechasUnicas.size,
+      proximoTurno,
       turnosEstaSemana,
       gananciasEstaSemana,
       tendenciaSemanal,
-      proximoTurno,
-      trabajosFavoritos
+      trabajosFavoritos,
+      proyeccionMensual,
+      diasTrabajados: fechasUnicas.size
     ***REMOVED***;
-  ***REMOVED***, [turnos, trabajos, calcularPago]);
+  ***REMOVED***;
 
   // Función para formatear fecha
   const formatearFecha = (fechaStr) => ***REMOVED***
@@ -179,6 +187,8 @@ const Dashboard = () => ***REMOVED***
     ***REMOVED***);
   ***REMOVED***;
 
+  const stats = calcularEstadisticasCompletas();
+
   if (showLoading) ***REMOVED***
     return (
       <div className="flex justify-center items-center h-screen">
@@ -190,7 +200,7 @@ const Dashboard = () => ***REMOVED***
   return (
     <div className="px-4 py-6 space-y-6">
       ***REMOVED***/* Saludo personalizado */***REMOVED***
-      <div className="bg-white rounded-xl shadow-md p-6">
+      <Card>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">
@@ -207,67 +217,64 @@ const Dashboard = () => ***REMOVED***
               className="text-2xl font-bold"
               style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
             >
-              $***REMOVED***estadisticas.totalGanado.toFixed(2)***REMOVED***
+              $***REMOVED***stats.totalGanado.toFixed(2)***REMOVED***
             </p>
           </div>
         </div>
-      </div>
+      </Card>
 
       ***REMOVED***/* Estadísticas principales */***REMOVED***
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl shadow-md p-4">
+        <Card>
           <div className="flex items-center mb-2">
             <Briefcase size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
             <span className="text-sm text-gray-600">Trabajos</span>
           </div>
           <p className="text-2xl font-bold text-gray-800">***REMOVED***trabajos.length***REMOVED***</p>
           <p className="text-xs text-gray-500">activos</p>
-        </div>
+        </Card>
         
-        <div className="bg-white rounded-xl shadow-md p-4">
+        <Card>
           <div className="flex items-center mb-2">
             <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
             <span className="text-sm text-gray-600">Turnos</span>
           </div>
-          <p className="text-2xl font-bold text-gray-800">***REMOVED***turnos.length***REMOVED***</p>
+          <p className="text-2xl font-bold text-gray-800">***REMOVED***stats.turnosTotal***REMOVED***</p>
           <p className="text-xs text-gray-500">completados</p>
-        </div>
+        </Card>
         
-        <div className="bg-white rounded-xl shadow-md p-4">
+        <Card>
           <div className="flex items-center mb-2">
             <Clock size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
             <span className="text-sm text-gray-600">Horas</span>
           </div>
-          <p className="text-2xl font-bold text-gray-800">***REMOVED***estadisticas.horasTrabajadas.toFixed(0)***REMOVED***</p>
+          <p className="text-2xl font-bold text-gray-800">***REMOVED***stats.horasTrabajadas.toFixed(0)***REMOVED***</p>
           <p className="text-xs text-gray-500">trabajadas</p>
-        </div>
+        </Card>
         
-        <div className="bg-white rounded-xl shadow-md p-4">
+        <Card>
           <div className="flex items-center mb-2">
             <Target size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
             <span className="text-sm text-gray-600">Promedio</span>
           </div>
-          <p className="text-2xl font-bold text-gray-800">$***REMOVED***estadisticas.promedioPorHora.toFixed(0)***REMOVED***</p>
+          <p className="text-2xl font-bold text-gray-800">$***REMOVED***stats.promedioPorHora.toFixed(0)***REMOVED***</p>
           <p className="text-xs text-gray-500">por hora</p>
-        </div>
+        </Card>
       </div>
 
-      ***REMOVED***/* Esta semana */***REMOVED***
-      <div className="bg-white rounded-xl shadow-md p-6">
+      ***REMOVED***/* Esta semana - Usando Activity */***REMOVED***
+      <Card>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold flex items-center">
             <Activity size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
             Esta semana
           </h3>
-          ***REMOVED***estadisticas.tendenciaSemanal !== 0 && (
+          ***REMOVED***stats.tendenciaSemanal !== 0 && (
             <div className=***REMOVED***`flex items-center text-sm $***REMOVED***
-              estadisticas.tendenciaSemanal > 0 ? 'text-green-600' : 'text-red-600'
+              stats.tendenciaSemanal > 0 ? 'text-green-600' : 'text-red-600'
             ***REMOVED***`***REMOVED***>
-              ***REMOVED***estadisticas.tendenciaSemanal > 0 ? 
-                <TrendingUp size=***REMOVED***16***REMOVED*** className="mr-1" /> : 
-                <TrendingDown size=***REMOVED***16***REMOVED*** className="mr-1" />
-              ***REMOVED***
-              ***REMOVED***estadisticas.tendenciaSemanal.toFixed(1)***REMOVED***%
+              ***REMOVED***stats.tendenciaSemanal > 0 ? <TrendingUp size=***REMOVED***16***REMOVED*** className="mr-1" /> : <TrendingDown size=***REMOVED***16***REMOVED*** className="mr-1" />***REMOVED***
+              ***REMOVED***stats.tendenciaSemanal.toFixed(1)***REMOVED***%
             </div>
           )***REMOVED***
         </div>
@@ -275,20 +282,20 @@ const Dashboard = () => ***REMOVED***
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-600">Turnos completados</p>
-            <p className="text-xl font-bold">***REMOVED***estadisticas.turnosEstaSemana***REMOVED***</p>
+            <p className="text-xl font-bold">***REMOVED***stats.turnosEstaSemana***REMOVED***</p>
           </div>
           <div>
             <p className="text-sm text-gray-600">Ganancias</p>
             <p className="text-xl font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED***>
-              $***REMOVED***estadisticas.gananciasEstaSemana.toFixed(2)***REMOVED***
+              $***REMOVED***stats.gananciasEstaSemana.toFixed(2)***REMOVED***
             </p>
           </div>
         </div>
-      </div>
+      </Card>
 
-      ***REMOVED***/* Próximo turno */***REMOVED***
-      ***REMOVED***estadisticas.proximoTurno && (
-        <div className="bg-white rounded-xl shadow-md p-6">
+      ***REMOVED***/* Próximo turno - Usando Star */***REMOVED***
+      ***REMOVED***stats.proximoTurno && (
+        <Card>
           <h3 className="text-lg font-semibold mb-4 flex items-center">
             <Star size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
             Próximo turno
@@ -296,10 +303,10 @@ const Dashboard = () => ***REMOVED***
           <div className="flex items-center justify-between">
             <div>
               <p className="font-semibold text-gray-800">
-                ***REMOVED***trabajos.find(t => t.id === estadisticas.proximoTurno.trabajoId)?.nombre***REMOVED***
+                ***REMOVED***trabajos.find(t => t.id === stats.proximoTurno.trabajoId)?.nombre***REMOVED***
               </p>
               <p className="text-sm text-gray-600">
-                ***REMOVED***formatearFecha(estadisticas.proximoTurno.fecha)***REMOVED*** • ***REMOVED***estadisticas.proximoTurno.horaInicio***REMOVED***
+                ***REMOVED***formatearFecha(stats.proximoTurno.fecha)***REMOVED*** • ***REMOVED***stats.proximoTurno.horaInicio***REMOVED***
               </p>
             </div>
             <Button
@@ -311,12 +318,12 @@ const Dashboard = () => ***REMOVED***
               Ver
             </Button>
           </div>
-        </div>
+        </Card>
       )***REMOVED***
 
-      ***REMOVED***/* Trabajo más rentable */***REMOVED***
-      ***REMOVED***estadisticas.trabajoMasRentable && (
-        <div className="bg-white rounded-xl shadow-md p-6">
+      ***REMOVED***/* Trabajo más rentable - Usando Award */***REMOVED***
+      ***REMOVED***stats.trabajoMasRentable && (
+        <Card>
           <h3 className="text-lg font-semibold mb-4 flex items-center">
             <Award size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
             Trabajo más rentable
@@ -325,27 +332,27 @@ const Dashboard = () => ***REMOVED***
             <div className="flex items-center">
               <div 
                 className="w-4 h-4 rounded-full mr-3"
-                style=***REMOVED******REMOVED*** backgroundColor: estadisticas.trabajoMasRentable.trabajo.color ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** backgroundColor: stats.trabajoMasRentable.trabajo.color ***REMOVED******REMOVED***
               />
               <div>
                 <p className="font-semibold text-gray-800">
-                  ***REMOVED***estadisticas.trabajoMasRentable.trabajo.nombre***REMOVED***
+                  ***REMOVED***stats.trabajoMasRentable.trabajo.nombre***REMOVED***
                 </p>
                 <p className="text-sm text-gray-600">
-                  ***REMOVED***estadisticas.trabajoMasRentable.turnos***REMOVED*** turnos • ***REMOVED***estadisticas.trabajoMasRentable.horas.toFixed(1)***REMOVED***h
+                  ***REMOVED***stats.trabajoMasRentable.turnos***REMOVED*** turnos • ***REMOVED***stats.trabajoMasRentable.horas.toFixed(1)***REMOVED***h
                 </p>
               </div>
             </div>
             <p className="text-xl font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED***>
-              $***REMOVED***estadisticas.trabajoMasRentable.ganancia.toFixed(2)***REMOVED***
+              $***REMOVED***stats.trabajoMasRentable.ganancia.toFixed(2)***REMOVED***
             </p>
           </div>
-        </div>
+        </Card>
       )***REMOVED***
 
-      ***REMOVED***/* Top trabajos favoritos */***REMOVED***
-      ***REMOVED***estadisticas.trabajosFavoritos.length > 0 && (
-        <div className="bg-white rounded-xl shadow-md p-6">
+      ***REMOVED***/* Top trabajos favoritos - Usando BarChart3 */***REMOVED***
+      ***REMOVED***stats.trabajosFavoritos.length > 0 && (
+        <Card>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold flex items-center">
               <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
@@ -363,7 +370,7 @@ const Dashboard = () => ***REMOVED***
           </div>
           
           <div className="space-y-3">
-            ***REMOVED***estadisticas.trabajosFavoritos.map((trabajoInfo, index) => (
+            ***REMOVED***stats.trabajosFavoritos.map((trabajoInfo, index) => (
               <div key=***REMOVED***trabajoInfo.trabajo.id***REMOVED*** className="flex items-center justify-between">
                 <div className="flex items-center">
                   <span className="text-sm font-semibold text-gray-400 mr-3">
@@ -384,11 +391,32 @@ const Dashboard = () => ***REMOVED***
               </div>
             ))***REMOVED***
           </div>
-        </div>
+        </Card>
+      )***REMOVED***
+
+      ***REMOVED***/* Proyección mensual */***REMOVED***
+      ***REMOVED***stats.proyeccionMensual > 0 && (
+        <Card>
+          <h3 className="text-lg font-semibold mb-3 flex items-center">
+            <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
+            Proyección mensual
+          </h3>
+          <div className="text-center">
+            <p className="text-sm text-gray-600 mb-2">
+              Si mantienes este ritmo durante todo el mes
+            </p>
+            <p className="text-3xl font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED***>
+              $***REMOVED***stats.proyeccionMensual.toFixed(2)***REMOVED***
+            </p>
+            <p className="text-sm text-gray-500">
+              ~***REMOVED***(stats.horasTrabajadas * 4.33).toFixed(0)***REMOVED*** horas
+            </p>
+          </div>
+        </Card>
       )***REMOVED***
 
       ***REMOVED***/* Acciones rápidas */***REMOVED***
-      <div className="bg-white rounded-xl shadow-md p-6">
+      <Card>
         <h3 className="text-lg font-semibold mb-4">Acciones rápidas</h3>
         <div className="grid grid-cols-2 gap-3">
           <Button
@@ -408,7 +436,7 @@ const Dashboard = () => ***REMOVED***
             Nuevo trabajo
           </Button>
         </div>
-      </div>
+      </Card>
     </div>
   );
 ***REMOVED***;
