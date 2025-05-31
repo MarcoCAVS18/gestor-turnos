@@ -1,12 +1,10 @@
-// src/pages/Dashboard.jsx
+// src/pages/Dashboard.jsx - VERSION COMPLETA
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Calendar, 
   Clock, 
-  TrendingUp, 
-  TrendingDown,
   Briefcase,
   Target,
   Star,
@@ -14,12 +12,14 @@ import {
   Plus,
   Award,
   Activity,
-  BarChart3
+  BarChart3,
+  TrendingUp,
+  TrendingDown
 } from 'lucide-react';
 
-// Nuevas importaciones
 import Loader from '../components/other/Loader';
 import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
 import { useApp } from '../contexts/AppContext';
 
 const Dashboard = () => {
@@ -28,9 +28,10 @@ const Dashboard = () => {
     turnos, 
     cargando, 
     calcularPago, 
-    coloresTemáticos,
+    coloresTemáticos, 
     emojiUsuario 
   } = useApp();
+  
   const [showLoading, setShowLoading] = useState(true);
   const navigate = useNavigate();
   
@@ -51,20 +52,22 @@ const Dashboard = () => {
     };
   }, [cargando]);
 
-  // Calcular estadísticas avanzadas
-  const estadisticas = useMemo(() => {
+  // Calcular estadísticas completas
+  const calcularEstadisticasCompletas = () => {
     if (turnos.length === 0) {
       return {
         totalGanado: 0,
         horasTrabajadas: 0,
         promedioPorHora: 0,
+        turnosTotal: 0,
         trabajoMasRentable: null,
-        diasTrabajados: 0,
+        proximoTurno: null,
         turnosEstaSemana: 0,
         gananciasEstaSemana: 0,
         tendenciaSemanal: 0,
-        proximoTurno: null,
-        trabajosFavoritos: []
+        trabajosFavoritos: [],
+        proyeccionMensual: 0,
+        diasTrabajados: 0
       };
     }
 
@@ -144,19 +147,24 @@ const Dashboard = () => {
       .sort((a, b) => b.turnos - a.turnos)
       .slice(0, 3);
 
+    // Proyección mensual
+    const proyeccionMensual = gananciasEstaSemana * 4.33;
+
     return {
       totalGanado,
       horasTrabajadas,
       promedioPorHora: horasTrabajadas > 0 ? totalGanado / horasTrabajadas : 0,
+      turnosTotal: turnos.length,
       trabajoMasRentable,
-      diasTrabajados: fechasUnicas.size,
+      proximoTurno,
       turnosEstaSemana,
       gananciasEstaSemana,
       tendenciaSemanal,
-      proximoTurno,
-      trabajosFavoritos
+      trabajosFavoritos,
+      proyeccionMensual,
+      diasTrabajados: fechasUnicas.size
     };
-  }, [turnos, trabajos, calcularPago]);
+  };
 
   // Función para formatear fecha
   const formatearFecha = (fechaStr) => {
@@ -179,6 +187,8 @@ const Dashboard = () => {
     });
   };
 
+  const stats = calcularEstadisticasCompletas();
+
   if (showLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -190,7 +200,7 @@ const Dashboard = () => {
   return (
     <div className="px-4 py-6 space-y-6">
       {/* Saludo personalizado */}
-      <div className="bg-white rounded-xl shadow-md p-6">
+      <Card>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">
@@ -207,67 +217,64 @@ const Dashboard = () => {
               className="text-2xl font-bold"
               style={{ color: coloresTemáticos?.base || '#EC4899' }}
             >
-              ${estadisticas.totalGanado.toFixed(2)}
+              ${stats.totalGanado.toFixed(2)}
             </p>
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Estadísticas principales */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl shadow-md p-4">
+        <Card>
           <div className="flex items-center mb-2">
             <Briefcase size={18} style={{ color: coloresTemáticos?.base }} className="mr-2" />
             <span className="text-sm text-gray-600">Trabajos</span>
           </div>
           <p className="text-2xl font-bold text-gray-800">{trabajos.length}</p>
           <p className="text-xs text-gray-500">activos</p>
-        </div>
+        </Card>
         
-        <div className="bg-white rounded-xl shadow-md p-4">
+        <Card>
           <div className="flex items-center mb-2">
             <Calendar size={18} style={{ color: coloresTemáticos?.base }} className="mr-2" />
             <span className="text-sm text-gray-600">Turnos</span>
           </div>
-          <p className="text-2xl font-bold text-gray-800">{turnos.length}</p>
+          <p className="text-2xl font-bold text-gray-800">{stats.turnosTotal}</p>
           <p className="text-xs text-gray-500">completados</p>
-        </div>
+        </Card>
         
-        <div className="bg-white rounded-xl shadow-md p-4">
+        <Card>
           <div className="flex items-center mb-2">
             <Clock size={18} style={{ color: coloresTemáticos?.base }} className="mr-2" />
             <span className="text-sm text-gray-600">Horas</span>
           </div>
-          <p className="text-2xl font-bold text-gray-800">{estadisticas.horasTrabajadas.toFixed(0)}</p>
+          <p className="text-2xl font-bold text-gray-800">{stats.horasTrabajadas.toFixed(0)}</p>
           <p className="text-xs text-gray-500">trabajadas</p>
-        </div>
+        </Card>
         
-        <div className="bg-white rounded-xl shadow-md p-4">
+        <Card>
           <div className="flex items-center mb-2">
             <Target size={18} style={{ color: coloresTemáticos?.base }} className="mr-2" />
             <span className="text-sm text-gray-600">Promedio</span>
           </div>
-          <p className="text-2xl font-bold text-gray-800">${estadisticas.promedioPorHora.toFixed(0)}</p>
+          <p className="text-2xl font-bold text-gray-800">${stats.promedioPorHora.toFixed(0)}</p>
           <p className="text-xs text-gray-500">por hora</p>
-        </div>
+        </Card>
       </div>
 
-      {/* Esta semana */}
-      <div className="bg-white rounded-xl shadow-md p-6">
+      {/* Esta semana - Usando Activity */}
+      <Card>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold flex items-center">
             <Activity size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
             Esta semana
           </h3>
-          {estadisticas.tendenciaSemanal !== 0 && (
+          {stats.tendenciaSemanal !== 0 && (
             <div className={`flex items-center text-sm ${
-              estadisticas.tendenciaSemanal > 0 ? 'text-green-600' : 'text-red-600'
+              stats.tendenciaSemanal > 0 ? 'text-green-600' : 'text-red-600'
             }`}>
-              {estadisticas.tendenciaSemanal > 0 ? 
-                <TrendingUp size={16} className="mr-1" /> : 
-                <TrendingDown size={16} className="mr-1" />
-              }
-              {estadisticas.tendenciaSemanal.toFixed(1)}%
+              {stats.tendenciaSemanal > 0 ? <TrendingUp size={16} className="mr-1" /> : <TrendingDown size={16} className="mr-1" />}
+              {stats.tendenciaSemanal.toFixed(1)}%
             </div>
           )}
         </div>
@@ -275,20 +282,20 @@ const Dashboard = () => {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-sm text-gray-600">Turnos completados</p>
-            <p className="text-xl font-bold">{estadisticas.turnosEstaSemana}</p>
+            <p className="text-xl font-bold">{stats.turnosEstaSemana}</p>
           </div>
           <div>
             <p className="text-sm text-gray-600">Ganancias</p>
             <p className="text-xl font-bold" style={{ color: coloresTemáticos?.base }}>
-              ${estadisticas.gananciasEstaSemana.toFixed(2)}
+              ${stats.gananciasEstaSemana.toFixed(2)}
             </p>
           </div>
         </div>
-      </div>
+      </Card>
 
-      {/* Próximo turno */}
-      {estadisticas.proximoTurno && (
-        <div className="bg-white rounded-xl shadow-md p-6">
+      {/* Próximo turno - Usando Star */}
+      {stats.proximoTurno && (
+        <Card>
           <h3 className="text-lg font-semibold mb-4 flex items-center">
             <Star size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
             Próximo turno
@@ -296,10 +303,10 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="font-semibold text-gray-800">
-                {trabajos.find(t => t.id === estadisticas.proximoTurno.trabajoId)?.nombre}
+                {trabajos.find(t => t.id === stats.proximoTurno.trabajoId)?.nombre}
               </p>
               <p className="text-sm text-gray-600">
-                {formatearFecha(estadisticas.proximoTurno.fecha)} • {estadisticas.proximoTurno.horaInicio}
+                {formatearFecha(stats.proximoTurno.fecha)} • {stats.proximoTurno.horaInicio}
               </p>
             </div>
             <Button
@@ -311,12 +318,12 @@ const Dashboard = () => {
               Ver
             </Button>
           </div>
-        </div>
+        </Card>
       )}
 
-      {/* Trabajo más rentable */}
-      {estadisticas.trabajoMasRentable && (
-        <div className="bg-white rounded-xl shadow-md p-6">
+      {/* Trabajo más rentable - Usando Award */}
+      {stats.trabajoMasRentable && (
+        <Card>
           <h3 className="text-lg font-semibold mb-4 flex items-center">
             <Award size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
             Trabajo más rentable
@@ -325,27 +332,27 @@ const Dashboard = () => {
             <div className="flex items-center">
               <div 
                 className="w-4 h-4 rounded-full mr-3"
-                style={{ backgroundColor: estadisticas.trabajoMasRentable.trabajo.color }}
+                style={{ backgroundColor: stats.trabajoMasRentable.trabajo.color }}
               />
               <div>
                 <p className="font-semibold text-gray-800">
-                  {estadisticas.trabajoMasRentable.trabajo.nombre}
+                  {stats.trabajoMasRentable.trabajo.nombre}
                 </p>
                 <p className="text-sm text-gray-600">
-                  {estadisticas.trabajoMasRentable.turnos} turnos • {estadisticas.trabajoMasRentable.horas.toFixed(1)}h
+                  {stats.trabajoMasRentable.turnos} turnos • {stats.trabajoMasRentable.horas.toFixed(1)}h
                 </p>
               </div>
             </div>
             <p className="text-xl font-bold" style={{ color: coloresTemáticos?.base }}>
-              ${estadisticas.trabajoMasRentable.ganancia.toFixed(2)}
+              ${stats.trabajoMasRentable.ganancia.toFixed(2)}
             </p>
           </div>
-        </div>
+        </Card>
       )}
 
-      {/* Top trabajos favoritos */}
-      {estadisticas.trabajosFavoritos.length > 0 && (
-        <div className="bg-white rounded-xl shadow-md p-6">
+      {/* Top trabajos favoritos - Usando BarChart3 */}
+      {stats.trabajosFavoritos.length > 0 && (
+        <Card>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold flex items-center">
               <BarChart3 size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
@@ -363,7 +370,7 @@ const Dashboard = () => {
           </div>
           
           <div className="space-y-3">
-            {estadisticas.trabajosFavoritos.map((trabajoInfo, index) => (
+            {stats.trabajosFavoritos.map((trabajoInfo, index) => (
               <div key={trabajoInfo.trabajo.id} className="flex items-center justify-between">
                 <div className="flex items-center">
                   <span className="text-sm font-semibold text-gray-400 mr-3">
@@ -384,11 +391,32 @@ const Dashboard = () => {
               </div>
             ))}
           </div>
-        </div>
+        </Card>
+      )}
+
+      {/* Proyección mensual */}
+      {stats.proyeccionMensual > 0 && (
+        <Card>
+          <h3 className="text-lg font-semibold mb-3 flex items-center">
+            <BarChart3 size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
+            Proyección mensual
+          </h3>
+          <div className="text-center">
+            <p className="text-sm text-gray-600 mb-2">
+              Si mantienes este ritmo durante todo el mes
+            </p>
+            <p className="text-3xl font-bold" style={{ color: coloresTemáticos?.base }}>
+              ${stats.proyeccionMensual.toFixed(2)}
+            </p>
+            <p className="text-sm text-gray-500">
+              ~{(stats.horasTrabajadas * 4.33).toFixed(0)} horas
+            </p>
+          </div>
+        </Card>
       )}
 
       {/* Acciones rápidas */}
-      <div className="bg-white rounded-xl shadow-md p-6">
+      <Card>
         <h3 className="text-lg font-semibold mb-4">Acciones rápidas</h3>
         <div className="grid grid-cols-2 gap-3">
           <Button
@@ -408,7 +436,7 @@ const Dashboard = () => {
             Nuevo trabajo
           </Button>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

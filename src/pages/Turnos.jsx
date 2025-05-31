@@ -1,44 +1,83 @@
-// src/pages/Turnos.jsx
+// src/pages/Turnos.jsx - REFACTORIZADO
 
-import React, { useState, useEffect } from 'react';
-import { PlusCircle, Calendar, AlertTriangle } from 'lucide-react';
+import React, { useState } from 'react';
+import { PlusCircle, Calendar } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 
-// Nuevas importaciones estructuradas
 import TarjetaTurno from '../components/cards/TarjetaTurno';
 import ModalTurno from '../components/modals/ModalTurno';
-import Loader from '../components/other/Loader';
-import Button from '../components/ui/Button';
+import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
+import LoadingWrapper from '../components/layout/LoadingWrapper';
+import ListSection from '../components/sections/ListSection';
+import Card from '../components/ui/Card';
+import { useDeleteManager } from '../hooks/useDeleteManager';
+import { useUtils } from '../hooks/useUtils';
+
+const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => {
+  const { formatDate, isToday, isYesterday } = useUtils();
+  const { coloresTemáticos } = useApp();
+  
+  const formatearFechaEncabezado = (fechaStr) => {
+    if (isToday(fechaStr)) return 'Hoy';
+    if (isYesterday(fechaStr)) return 'Ayer';
+    return formatDate(fechaStr, 'full');
+  };
+  
+  const obtenerTrabajo = (trabajoId) => {
+    return trabajos.find(trabajo => trabajo.id === trabajoId);
+  };
+
+  return (
+    <Card className="overflow-hidden" padding="none">
+      {/* Header del día */}
+      <div 
+        className="px-4 py-3 border-b flex justify-between items-center"
+        style={{ backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
+      >
+        <div className="flex items-center">
+          <Calendar size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
+          <h3 className="font-semibold text-gray-800 capitalize">
+            {formatearFechaEncabezado(fecha)}
+          </h3>
+          <span className="ml-2 text-sm text-gray-500">
+            ({new Date(fecha + 'T00:00:00').toLocaleDateString('es-ES', { 
+              day: '2-digit', 
+              month: '2-digit' 
+            })})
+          </span>
+        </div>
+      </div>
+      
+      {/* Lista de turnos */}
+      <div className="p-4 space-y-3">
+        {turnos.map(turno => {
+          const trabajo = obtenerTrabajo(turno.trabajoId);
+          if (!trabajo) return null;
+          
+          return (
+            <TarjetaTurno
+              key={turno.id}
+              turno={turno}
+              trabajo={trabajo}
+              onEdit={onEditTurno}
+              onDelete={onDeleteTurno}
+            />
+          );
+        })}
+      </div>
+    </Card>
+  );
+};
 
 const Turnos = () => {
-  const { turnosPorFecha, cargando, borrarTurno, coloresTemáticos, calcularPago, trabajos } = useApp();
+  const { turnosPorFecha, cargando, borrarTurno, trabajos } = useApp();
   const [modalAbierto, setModalAbierto] = useState(false);
   const [turnoSeleccionado, setTurnoSeleccionado] = useState(null);
-  const [showLoading, setShowLoading] = useState(true);
   
-  // Estados para modal de eliminación
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [turnoAEliminar, setTurnoAEliminar] = useState(null);
-  const [eliminando, setEliminando] = useState(false);
+  const { sortByDateDesc } = useUtils();
+  const deleteManager = useDeleteManager(borrarTurno);
   
-  // Efecto para controlar el tiempo de carga
-  useEffect(() => {
-    let timer;
-    
-    if (cargando) {
-      setShowLoading(true);
-    } else {
-      timer = setTimeout(() => {
-        setShowLoading(false);
-      }, 2000);
-    }
-    
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [cargando]);
-  
-  // Funciones para manejar modales
+  // Funciones para modales
   const abrirModalNuevoTurno = () => {
     setTurnoSeleccionado(null);
     setModalAbierto(true);
@@ -54,225 +93,81 @@ const Turnos = () => {
     setTurnoSeleccionado(null);
   };
   
-  // Funciones para manejar eliminación
-  const iniciarEliminacion = (turno) => {
-    setTurnoAEliminar(turno);
-    setShowDeleteModal(true);
-  };
-  
-  const cancelarEliminacion = () => {
-    setShowDeleteModal(false);
-    setTurnoAEliminar(null);
-  };
-  
-  const confirmarEliminacion = async () => {
-    if (!turnoAEliminar) return;
-    
-    setEliminando(true);
-    try {
-      await borrarTurno(turnoAEliminar.id);
-      setShowDeleteModal(false);
-      setTurnoAEliminar(null);
-    } catch (error) {
-      // Error ya manejado en el contexto
-    } finally {
-      setEliminando(false);
-    }
-  };
-  
-  // Función para obtener el trabajo de un turno
+  // Obtener trabajo de un turno
   const obtenerTrabajo = (trabajoId) => {
     return trabajos.find(trabajo => trabajo.id === trabajoId);
   };
   
-  // Función para formatear fecha como encabezado
-  const formatearFechaEncabezado = (fechaStr) => {
-    const fecha = new Date(fechaStr + 'T00:00:00');
-    const hoy = new Date();
-    const ayer = new Date(hoy);
-    ayer.setDate(hoy.getDate() - 1);
+  // Generar detalles para eliminación
+  const generarDetallesTurno = (turno) => {
+    if (!turno) return [];
     
-    const fechaLocal = fecha.toDateString();
-    const hoyLocal = hoy.toDateString();
-    const ayerLocal = ayer.toDateString();
+    const trabajo = obtenerTrabajo(turno.trabajoId);
     
-    if (fechaLocal === hoyLocal) {
-      return 'Hoy';
-    } else if (fechaLocal === ayerLocal) {
-      return 'Ayer';
-    } else {
-      return fecha.toLocaleDateString('es-ES', { 
-        weekday: 'long', 
-        day: 'numeric', 
-        month: 'long',
-        year: fecha.getFullYear() !== hoy.getFullYear() ? 'numeric' : undefined
-      });
-    }
+    return [
+      trabajo?.nombre || 'Trabajo no encontrado',
+      new Date(turno.fecha + 'T00:00:00').toLocaleDateString('es-ES', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long'
+      }),
+      `${turno.horaInicio} - ${turno.horaFin}`
+    ];
   };
-  
-  // Calcular total por día
-  const calcularTotalDia = (turnosDia) => {
-    return turnosDia.reduce((total, turno) => {
-      const trabajo = obtenerTrabajo(turno.trabajoId);
-      if (!trabajo) return total;
-      
-      const { totalConDescuento } = calcularPago(turno);
-      return total + totalConDescuento;
-    }, 0);
-  };
-  
-  if (showLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader />
-      </div>
-    );
-  }
-  
+
+  // Ordenar fechas y crear componentes de día
+  const diasOrdenados = Object.entries(turnosPorFecha)
+    .sort(([fechaA], [fechaB]) => new Date(fechaB) - new Date(fechaA));
+
   return (
-    <div className="px-4 py-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Mis Turnos</h2>
-        <Button 
-          onClick={abrirModalNuevoTurno}
-          className="flex items-center gap-2"
-          icon={PlusCircle}
-        >
-          Nuevo Turno
-        </Button>
-      </div>
+    <LoadingWrapper loading={cargando}>
+      <ListSection
+        title="Mis Turnos"
+        action={{
+          label: 'Nuevo Turno',
+          icon: PlusCircle,
+          onClick: abrirModalNuevoTurno
+        }}
+        items={diasOrdenados}
+        emptyState={{
+          icon: Calendar,
+          title: 'No hay turnos registrados',
+          description: 'Comienza agregando tu primer turno',
+          action: {
+            label: 'Agregar primer turno',
+            icon: PlusCircle,
+            onClick: abrirModalNuevoTurno
+          }
+        }}
+        renderItem={([fecha, turnosDia]) => (
+          <DaySection
+            key={fecha}
+            fecha={fecha}
+            turnos={turnosDia}
+            trabajos={trabajos}
+            onEditTurno={abrirModalEditarTurno}
+            onDeleteTurno={deleteManager.startDeletion}
+          />
+        )}
+        className="space-y-6"
+      />
       
-      {/* Contenido principal */}
-      {Object.entries(turnosPorFecha).length > 0 ? (
-        <div className="space-y-6">
-          {Object.entries(turnosPorFecha)
-            .sort(([fechaA], [fechaB]) => new Date(fechaB) - new Date(fechaA))
-            .map(([fecha, turnosDia]) => {
-              // eslint-disable-next-line 
-              const totalDia = calcularTotalDia(turnosDia);
-              
-              return (
-                <div key={fecha} className="bg-white rounded-xl shadow-md overflow-hidden">
-                  {/* Encabezado del día */}
-                  <div 
-                    className="px-4 py-3 border-b flex justify-between items-center"
-                    style={{ backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
-                  >
-                    <div className="flex items-center">
-                      <Calendar size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
-                      <h3 className="font-semibold text-gray-800 capitalize">
-                        {formatearFechaEncabezado(fecha)}
-                      </h3>
-                      <span className="ml-2 text-sm text-gray-500">
-                        ({new Date(fecha + 'T00:00:00').toLocaleDateString('es-ES', { 
-                          day: '2-digit', 
-                          month: '2-digit' 
-                        })})
-                      </span>
-                    </div>
-                  </div>
-                  
-                  {/* Lista de turnos del día */}
-                  <div className="p-4 space-y-3">
-                    {turnosDia.map(turno => {
-                      const trabajo = obtenerTrabajo(turno.trabajoId);
-                      if (!trabajo) return null;
-                      
-                      return (
-                        <TarjetaTurno
-                          key={turno.id}
-                          turno={turno}
-                          trabajo={trabajo}
-                          onEdit={abrirModalEditarTurno}
-                          onDelete={iniciarEliminacion}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-        </div>
-      ) : (
-        <div className="text-center py-12 bg-white rounded-xl shadow-md">
-          <Calendar size={48} className="mx-auto text-gray-400 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-600 mb-2">No hay turnos registrados</h3>
-          <p className="text-gray-500 mb-6">Comienza agregando tu primer turno</p>
-          <Button 
-            onClick={abrirModalNuevoTurno}
-            className="flex items-center gap-2"
-            icon={PlusCircle}
-          >
-            Agregar primer turno
-          </Button>
-        </div>
-      )}
-      
-      {/* Modal para agregar/editar turno */}
+      {/* Modales */}
       <ModalTurno 
         isOpen={modalAbierto} 
         onClose={cerrarModal} 
         turno={turnoSeleccionado} 
       />
       
-      {/* Modal de confirmación para eliminar */}
-      {showDeleteModal && turnoAEliminar && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full">
-            <div className="p-6">
-              {/* Icono de advertencia */}
-              <div className="flex items-center justify-center w-12 h-12 bg-red-100 rounded-full mx-auto mb-4">
-                <AlertTriangle size={24} className="text-red-600" />
-              </div>
-              
-              {/* Título */}
-              <h3 className="text-lg font-semibold text-center text-gray-900 mb-2">
-                ¿Eliminar turno?
-              </h3>
-              
-              {/* Información del turno */}
-              <div className="bg-gray-50 rounded-lg p-3 mb-6">
-                <div className="text-sm space-y-1">
-                  <p className="font-medium text-gray-900">
-                    {obtenerTrabajo(turnoAEliminar.trabajoId)?.nombre}
-                  </p>
-                  <p className="text-gray-600">
-                    {new Date(turnoAEliminar.fecha + 'T00:00:00').toLocaleDateString('es-ES', {
-                      weekday: 'long',
-                      day: 'numeric',
-                      month: 'long'
-                    })}
-                  </p>
-                  <p className="text-gray-600">
-                    {turnoAEliminar.horaInicio} - {turnoAEliminar.horaFin}
-                  </p>
-                </div>
-              </div>
-              
-              {/* Botones */}
-              <div className="flex gap-3">
-                <Button
-                  onClick={cancelarEliminacion}
-                  variant="outline"
-                  className="flex-1"
-                  disabled={eliminando}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  onClick={confirmarEliminacion}
-                  variant="danger"
-                  className="flex-1"
-                  loading={eliminando}
-                >
-                  Eliminar
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      <AlertaEliminacion
+        visible={deleteManager.showDeleteModal}
+        onCancel={deleteManager.cancelDeletion}
+        onConfirm={deleteManager.confirmDeletion}
+        eliminando={deleteManager.deleting}
+        tipo="turno"
+        detalles={generarDetallesTurno(deleteManager.itemToDelete)}
+      />
+    </LoadingWrapper>
   );
 };
 
