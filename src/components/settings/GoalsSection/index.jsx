@@ -29,7 +29,7 @@ const GoalsSection = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
+    <div className="bg-white rounded-xl shadow-md p-6 mb-6">
       <div className="flex items-center mb-4">
         <Target size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
         <h3 className="text-lg font-semibold">Metas Semanales</h3>
@@ -124,7 +124,7 @@ const GoalsSection = () => {
 
         <div className="p-3 bg-blue-50 rounded-lg">
           <p className="text-sm text-blue-700">
-            <strong>💡 Consejo:</strong> Configura una meta realista para ver tu progreso semanal 
+            <strong>Consejo:</strong> Configura una meta realista para ver tu progreso semanal 
             en la barra de progreso de Estadísticas.
           </p>
         </div>

@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import ProfileSection from '../components/settings/ProfileSection';
 import CustomizationSection from '../components/settings/CustomizationSection';
 import TurnRangeSection from '../components/settings/TurnRangeSection';
+import GoalsSection from '../components/settings/GoalsSection';
 import PreferencesSection from '../components/settings/PreferencesSection';
 import SessionSection from '../components/settings/SessionSection';
 import NotificationBanner from '../components/ui/NotificationBanner';
@@ -51,6 +52,8 @@ const Ajustes = () => {
       />
       
       <CustomizationSection />
+
+      <GoalsSection />
       
       <TurnRangeSection 
         onError={handleError} 
