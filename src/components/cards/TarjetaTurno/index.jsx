@@ -1,4 +1,4 @@
-// src/components/cards/TarjetaTurno/index.jsx - SIMPLIFICADO
+// src/components/cards/TarjetaTurno/index.jsx
 import React from 'react';
 import { Edit, Trash2 } from 'lucide-react';
 import Card from '../../ui/Card';
@@ -7,7 +7,14 @@ import ShiftDetails from '../../shift/ShiftDetails';
 import ShiftTypeBadge from '../../shift/ShiftTypeBadge';
 import { useApp } from '../../../contexts/AppContext';
 
-const TarjetaTurno = ({ turno, trabajo, onEdit, onDelete, showActions = true }) => {
+const TarjetaTurno = ({ 
+  turno, 
+  trabajo, 
+  onEdit, 
+  onDelete, 
+  showActions = true,
+  variant = 'card' // 'card' | 'compact'
+}) => {
   const { rangosTurnos } = useApp();
 
   const obtenerTipoTurno = (hora) => {
@@ -32,23 +39,53 @@ const TarjetaTurno = ({ turno, trabajo, onEdit, onDelete, showActions = true }) 
     { icon: Trash2, label: 'Eliminar', onClick: () => onDelete?.(turno), variant: 'danger' }
   ];
 
+  // Si es variant 'compact', no usar Card wrapper
+  if (variant === 'compact') {
+    return (
+      <div className=" rounded-lg hover:bg-gray-100 transition-colors">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-800 mb-2">{trabajo.nombre}</h3>
+            
+            <ShiftDetails 
+              turno={turno} 
+              trabajo={trabajo}
+              badges={
+                <div className="flex items-center gap-1">
+                  <ShiftTypeBadge tipoTurno={tipoInicio} />
+                  {tipoInicio !== tipoFin && (
+                    <ShiftTypeBadge tipoTurno={tipoFin} />
+                  )}
+                </div>
+              }
+            />
+          </div>
+
+          {showActions && <ActionsMenu actions={actions} />}
+        </div>
+      </div>
+    );
+  }
+
+  // Variante por defecto con Card
   return (
     <Card className="relative">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-gray-800">{trabajo.nombre}</h3>
-            
-            {/* Badges de tipos de turno */}
-            <div className="flex items-center gap-1">
-              <ShiftTypeBadge tipoTurno={tipoInicio} />
-              {tipoInicio !== tipoFin && (
-                <ShiftTypeBadge tipoTurno={tipoFin} />
-              )}
-            </div>
-          </div>
+          <h3 className="font-semibold text-gray-800 mb-2">{trabajo.nombre}</h3>
           
-          <ShiftDetails turno={turno} trabajo={trabajo} />
+          <ShiftDetails 
+            turno={turno} 
+            trabajo={trabajo}
+            badges={
+              <div className="flex items-center gap-1">
+                <ShiftTypeBadge tipoTurno={tipoInicio} />
+                {tipoInicio !== tipoFin && (
+                  <ShiftTypeBadge tipoTurno={tipoFin} />
+                )}
+              </div>
+            }
+          />
         </div>
 
         {showActions && <ActionsMenu actions={actions} />}

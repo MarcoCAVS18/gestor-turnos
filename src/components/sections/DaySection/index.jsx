@@ -42,7 +42,7 @@ const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => 
         </div>
       </div>
       
-      {/* Lista de turnos */}
+      {/* Lista de turnos usando variant="compact" */}
       <div className="p-4 space-y-3">
         {turnos.map(turno => {
           const trabajo = obtenerTrabajo(turno.trabajoId);
@@ -55,6 +55,7 @@ const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => 
               trabajo={trabajo}
               onEdit={onEditTurno}
               onDelete={onDeleteTurno}
+              variant="compact" 
             />
           );
         })}
