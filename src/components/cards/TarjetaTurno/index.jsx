@@ -1,4 +1,4 @@
-// src/components/cards/TarjetaTurno/index.jsx - SIMPLIFICADO
+// src/components/cards/TarjetaTurno/index.jsx
 import React from 'react';
 import ***REMOVED*** Edit, Trash2 ***REMOVED*** from 'lucide-react';
 import Card from '../../ui/Card';
@@ -7,7 +7,14 @@ import ShiftDetails from '../../shift/ShiftDetails';
 import ShiftTypeBadge from '../../shift/ShiftTypeBadge';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
-const TarjetaTurno = (***REMOVED*** turno, trabajo, onEdit, onDelete, showActions = true ***REMOVED***) => ***REMOVED***
+const TarjetaTurno = (***REMOVED*** 
+  turno, 
+  trabajo, 
+  onEdit, 
+  onDelete, 
+  showActions = true,
+  variant = 'card' // 'card' | 'compact'
+***REMOVED***) => ***REMOVED***
   const ***REMOVED*** rangosTurnos ***REMOVED*** = useApp();
 
   const obtenerTipoTurno = (hora) => ***REMOVED***
@@ -32,23 +39,53 @@ const TarjetaTurno = (***REMOVED*** turno, trabajo, onEdit, onDelete, showAction
     ***REMOVED*** icon: Trash2, label: 'Eliminar', onClick: () => onDelete?.(turno), variant: 'danger' ***REMOVED***
   ];
 
+  // Si es variant 'compact', no usar Card wrapper
+  if (variant === 'compact') ***REMOVED***
+    return (
+      <div className=" rounded-lg hover:bg-gray-100 transition-colors">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="font-semibold text-gray-800 mb-2">***REMOVED***trabajo.nombre***REMOVED***</h3>
+            
+            <ShiftDetails 
+              turno=***REMOVED***turno***REMOVED*** 
+              trabajo=***REMOVED***trabajo***REMOVED***
+              badges=***REMOVED***
+                <div className="flex items-center gap-1">
+                  <ShiftTypeBadge tipoTurno=***REMOVED***tipoInicio***REMOVED*** />
+                  ***REMOVED***tipoInicio !== tipoFin && (
+                    <ShiftTypeBadge tipoTurno=***REMOVED***tipoFin***REMOVED*** />
+                  )***REMOVED***
+                </div>
+              ***REMOVED***
+            />
+          </div>
+
+          ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
+        </div>
+      </div>
+    );
+  ***REMOVED***
+
+  // Variante por defecto con Card
   return (
     <Card className="relative">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-gray-800">***REMOVED***trabajo.nombre***REMOVED***</h3>
-            
-            ***REMOVED***/* Badges de tipos de turno */***REMOVED***
-            <div className="flex items-center gap-1">
-              <ShiftTypeBadge tipoTurno=***REMOVED***tipoInicio***REMOVED*** />
-              ***REMOVED***tipoInicio !== tipoFin && (
-                <ShiftTypeBadge tipoTurno=***REMOVED***tipoFin***REMOVED*** />
-              )***REMOVED***
-            </div>
-          </div>
+          <h3 className="font-semibold text-gray-800 mb-2">***REMOVED***trabajo.nombre***REMOVED***</h3>
           
-          <ShiftDetails turno=***REMOVED***turno***REMOVED*** trabajo=***REMOVED***trabajo***REMOVED*** />
+          <ShiftDetails 
+            turno=***REMOVED***turno***REMOVED*** 
+            trabajo=***REMOVED***trabajo***REMOVED***
+            badges=***REMOVED***
+              <div className="flex items-center gap-1">
+                <ShiftTypeBadge tipoTurno=***REMOVED***tipoInicio***REMOVED*** />
+                ***REMOVED***tipoInicio !== tipoFin && (
+                  <ShiftTypeBadge tipoTurno=***REMOVED***tipoFin***REMOVED*** />
+                )***REMOVED***
+              </div>
+            ***REMOVED***
+          />
         </div>
 
         ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***

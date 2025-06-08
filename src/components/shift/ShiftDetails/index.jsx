@@ -4,7 +4,7 @@ import React from 'react';
 import ***REMOVED*** Clock, DollarSign, Timer ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
-const ShiftDetails = (***REMOVED*** turno, trabajo ***REMOVED***) => ***REMOVED***
+const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** calcularPago ***REMOVED*** = useApp();
   const ***REMOVED*** totalConDescuento, horas ***REMOVED*** = calcularPago(turno);
 
@@ -24,11 +24,20 @@ const ShiftDetails = (***REMOVED*** turno, trabajo ***REMOVED***) => ***REMOVED*
         <span className="text-sm text-gray-600">***REMOVED***horas.toFixed(1)***REMOVED*** horas</span>
       </div>
       
-      ***REMOVED***/* Ganancia */***REMOVED***
-      <div className="flex items-center">
-        <DollarSign size=***REMOVED***14***REMOVED*** className="text-yellow-500 mr-1" />
-        <span className="text-sm font-medium">$***REMOVED***totalConDescuento.toFixed(2)***REMOVED***</span>
-        <span className="text-xs text-gray-500 ml-1">total</span>
+      ***REMOVED***/* Ganancia y Badges en la misma línea */***REMOVED***
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <DollarSign size=***REMOVED***14***REMOVED*** className="text-yellow-500 mr-1" />
+          <span className="text-sm font-medium">$***REMOVED***totalConDescuento.toFixed(2)***REMOVED***</span>
+          <span className="text-xs text-gray-500 ml-1">total</span>
+        </div>
+        
+        ***REMOVED***/* Badges alineados a la derecha */***REMOVED***
+        ***REMOVED***badges && (
+          <div className="ml-auto">
+            ***REMOVED***badges***REMOVED***
+          </div>
+        )***REMOVED***
       </div>
     </div>
   );

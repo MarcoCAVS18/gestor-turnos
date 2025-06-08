@@ -4,7 +4,7 @@ import React, ***REMOVED*** useEffect, useRef ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** gsap ***REMOVED*** from 'gsap';
 
-const Loader = (***REMOVED*** size = 65, fullScreen = false, onAnimationComplete ***REMOVED***) => ***REMOVED***
+const Loader = (***REMOVED*** size = 40, fullScreen = false, onAnimationComplete ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
   const colorPrincipal = coloresTemáticos?.base || '#EC4899';
   const svgRef = useRef(null);
