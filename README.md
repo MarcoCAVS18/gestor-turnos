@@ -1,4 +1,4 @@
-# Mi Gestión de Turnos - Marco Piermatei
+# Mi Gestión de Turnos
 
 Una aplicación web moderna para la gestión eficiente de turnos y trabajos personales, desarrollada con React y tecnologías de vanguardia.
 
@@ -9,7 +9,7 @@ Una aplicación web moderna para la gestión eficiente de turnos y trabajos pers
 
 ## Descripción
 
-Aplicación web completa diseñada para facilitar la administración de trabajos, turnos y estadísticas laborales personales. Con una interfaz moderna e intuitiva, permite organizar eficientemente el tiempo de trabajo y obtener insights sobre productividad.
+Aplicación web completa diseñada para facilitar la administración de trabajos, turnos y estadísticas laborales personales. Con una interfaz moderna e intuitiva, permite organizar eficientemente el tiempo de trabajo y obtener insights sobre productividad. Cuenta con la capacidad de compartir tu trabajo y sus detalles a traves de multiplataformas.
 
 ## Funcionalidades
 
