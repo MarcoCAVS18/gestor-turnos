@@ -4,14 +4,14 @@ import ***REMOVED*** initializeApp ***REMOVED*** from 'firebase/app';
 import ***REMOVED*** getFirestore ***REMOVED*** from 'firebase/firestore';
 import ***REMOVED*** getAuth ***REMOVED*** from 'firebase/auth';
 
-// Configuración corregida de Firebase
+// Configuración de Firebase usando variables de entorno
 const firebaseConfig = ***REMOVED***
-  apiKey: "AIzaSyDy4THJlI_fKQR0aXwBohDxkhkIzhqDJ1k",
-  authDomain: "gestionturnos-7ec99.firebaseapp.com",
-  projectId: "gestionturnos-7ec99",
-  storageBucket: "gestionturnos-7ec99.appspot.com",
-  messagingSenderId: "314406109434",
-  appId: "1:314406109434:web:64fbf8f1f87d12b45c0943"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "AIzaSyDy4THJlI_fKQR0aXwBohDxkhkIzhqDJ1k",
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "gestionturnos-7ec99.firebaseapp.com",
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "gestionturnos-7ec99",
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "gestionturnos-7ec99.appspot.com",
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "314406109434",
+  appId: process.env.REACT_APP_FIREBASE_APP_ID || "1:314406109434:web:64fbf8f1f87d12b45c0943"
 ***REMOVED***;
 
 // Inicializar Firebase y Firestore

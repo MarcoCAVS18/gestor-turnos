@@ -87,21 +87,17 @@ export const compartirTrabajoNativo = async (userId, trabajo) => ***REMOVED***
           text: mensaje,
           url: enlace
         ***REMOVED***);
-        console.log('Compartido exitosamente con Web Share API');
         return true;
       ***REMOVED*** catch (error) ***REMOVED***
         // Si el usuario cancela o hay un error, usar fallback
         if (error.name !== 'AbortError') ***REMOVED***
-          console.log('Web Share API falló, usando fallback:', error);
           return await copiarAlPortapapeles(textoCompartir);
         ***REMOVED***
         // Si el usuario canceló, no hacer nada más
-        console.log('Usuario canceló el compartir');
         return false;
       ***REMOVED***
     ***REMOVED*** else ***REMOVED***
       // Fallback para navegadores que no soportan Web Share API
-      console.log('Web Share API no disponible, usando fallback');
       return await copiarAlPortapapeles(textoCompartir);
     ***REMOVED***
   ***REMOVED*** catch (error) ***REMOVED***
@@ -227,8 +223,7 @@ export const copiarAlPortapapeles = async (texto) => ***REMOVED***
       if (window.showToast) ***REMOVED***
         window.showToast('Enlace copiado al portapapeles');
       ***REMOVED*** else ***REMOVED***
-        console.log('Texto copiado al portapapeles');
-      ***REMOVED***
+          ***REMOVED***
       
       return true;
     ***REMOVED*** else ***REMOVED***
@@ -246,8 +241,7 @@ export const copiarAlPortapapeles = async (texto) => ***REMOVED***
       document.body.removeChild(textArea);
       
       if (resultado) ***REMOVED***
-        console.log('Texto copiado al portapapeles (fallback)');
-      ***REMOVED***
+          ***REMOVED***
       
       return resultado;
     ***REMOVED***

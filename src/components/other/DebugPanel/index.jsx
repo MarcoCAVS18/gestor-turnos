@@ -9,9 +9,22 @@ const DebugPanel = () => ***REMOVED***
   const ***REMOVED*** trabajos, turnos, cargando, debugFirestore ***REMOVED*** = useApp();
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
   
+  // Verificar si el debug mode está habilitado
+  const debugEnabled = process.env.REACT_APP_DEBUG_MODE === 'true';
+  const environment = process.env.REACT_APP_ENVIRONMENT || 'production';
+  
+  // No renderizar si el debug no está habilitado
+  if (!debugEnabled) ***REMOVED***
+    return null;
+  ***REMOVED***
+  
   return (
     <div className="fixed bottom-4 right-4 bg-black text-white p-4 rounded-lg shadow-lg max-w-sm z-50">
       <h3 className="text-lg font-bold mb-2">Debug Panel</h3>
+      
+      <div className="mb-2 text-xs text-yellow-400">
+        Entorno: ***REMOVED***environment***REMOVED***
+      </div>
       
       <div className="space-y-2 text-sm">
         <div>
