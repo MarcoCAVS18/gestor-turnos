@@ -5,7 +5,7 @@ import Loader from '../../other/Loader';
 
 const LoadingWrapper = (***REMOVED*** 
   loading, 
-  delay = 2000, 
+  delay = 3000, 
   children, 
   className = '' 
 ***REMOVED***) => ***REMOVED***

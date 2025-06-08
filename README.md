@@ -1,70 +1,84 @@
-# Getting Started with Create React App
+# Mi Gestión de Turnos - Marco Piermatei
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Una aplicación web moderna para la gestión eficiente de turnos y trabajos personales, desarrollada con React y tecnologías de vanguardia.
 
-## Available Scripts
+![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
-In the project directory, you can run:
+## Descripción
 
-### `npm start`
+Aplicación web completa diseñada para facilitar la administración de trabajos, turnos y estadísticas laborales personales. Con una interfaz moderna e intuitiva, permite organizar eficientemente el tiempo de trabajo y obtener insights sobre productividad.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Funcionalidades
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Dashboard**: Resumen general con estadísticas en tiempo real y accesos rápidos
+- **Gestión de Trabajos**: Crear, editar y eliminar trabajos con colores personalizados
+- **Calendario Interactivo**: Vista mensual con indicadores visuales de turnos por trabajo
+- **Gestión de Turnos**: Registro y edición de turnos con asignación a trabajos específicos
+- **Estadísticas**: Gráficos interactivos de productividad y análisis de tiempo por trabajo
+- **Personalización**: Temas de colores y configuraciones de usuario
 
-### `npm test`
+## Tecnologías
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Frontend**: React 18, Vite, React Router DOM, Tailwind CSS
+**Animaciones**: Framer Motion, GSAP, Lucide React
+**Estado**: React Context API, Local Storage, Custom Hooks
+**Desarrollo**: ESLint, Prettier, Git, GitHub
+**IA**: Claude Sonnet 4 (Anthropic) para desarrollo, arquitectura y refactorización
 
-### `npm run build`
+## Instalación
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Prerrequisitos
+- Node.js (versión 16+)
+- npm o yarn
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Pasos
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+# Clonar repositorio
+git clone https://github.com/tu-usuario/gestion-turnos.git
+cd gestion-turnos
 
-### `npm run eject`
+# Instalar dependencias
+npm install
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# Ejecutar en desarrollo
+npm run dev
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Abrir en navegador
+http://localhost:3000
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Scripts
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```bash
+npm run dev      # Servidor de desarrollo
+npm run build    # Construir para producción
+npm run preview  # Vista previa de construcción
+npm run lint     # Ejecutar ESLint
+```
 
-## Learn More
+## Estructura
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+src/
+├── components/     # Componentes reutilizables
+│   ├── calendar/  # Componentes del calendario
+│   ├── forms/     # Formularios
+│   ├── layout/    # Navegación y layout
+│   ├── other/     # Loader y otros
+│   └── ui/        # Componentes base
+├── contexts/      # Contextos de React
+├── hooks/         # Hooks personalizados
+├── pages/         # Páginas principales
+├── utils/         # Utilidades
+└── styles/        # Estilos globales
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Desarrollador
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+**Marco Piermatei**
+- GitHub: [@MarcoCAVS18](https://github.com/MarcoCAVS18)
+- Email: marcopiermatei1@gmail.com

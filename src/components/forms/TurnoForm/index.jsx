@@ -1,9 +1,11 @@
+// src/components/forms/TurnoForm/index.jsx
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Calendar, Clock, FileText ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useFormValidation ***REMOVED*** from '../../../hooks/useFormValidation';
 import ***REMOVED*** VALIDATION_RULES ***REMOVED*** from '../../../constants/validation';
-import Input from '../../ui/Input';
+import ThemeInput from '../../ui/ThemeInput';
 import Button from '../../ui/Button';
 
 const TurnoForm = (***REMOVED*** turno, fechaInicial, onSubmit, onCancel, loading ***REMOVED***) => ***REMOVED***
@@ -103,7 +105,7 @@ const TurnoForm = (***REMOVED*** turno, fechaInicial, onSubmit, onCancel, loadin
       </div>
 
       ***REMOVED***/* Fecha */***REMOVED***
-      <Input
+      <ThemeInput
         label="Fecha"
         icon=***REMOVED***Calendar***REMOVED***
         type="date"
@@ -115,7 +117,7 @@ const TurnoForm = (***REMOVED*** turno, fechaInicial, onSubmit, onCancel, loadin
 
       ***REMOVED***/* Horarios */***REMOVED***
       <div className="grid grid-cols-2 gap-4">
-        <Input
+        <ThemeInput
           label="Hora Inicio"
           icon=***REMOVED***Clock***REMOVED***
           type="time"
@@ -125,7 +127,7 @@ const TurnoForm = (***REMOVED*** turno, fechaInicial, onSubmit, onCancel, loadin
           required
         />
 
-        <Input
+        <ThemeInput
           label="Hora Fin"
           icon=***REMOVED***Clock***REMOVED***
           type="time"

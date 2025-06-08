@@ -1,3 +1,5 @@
+// src/hooks/useShare.js
+
 import ***REMOVED*** useState, useCallback ***REMOVED*** from 'react';
 import ***REMOVED*** compartirTrabajoNativo ***REMOVED*** from '../services/shareService';
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';

@@ -1,4 +1,4 @@
-// src/utils/helpers.js - LIMPIO Y OPTIMIZADO
+// src/utils/helpers.js
 
 // Formateo de moneda (usado en componentes)
 export const formatCurrency = (amount, currency = '$') => ***REMOVED***

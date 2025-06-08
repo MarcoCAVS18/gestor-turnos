@@ -6,20 +6,21 @@ import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 export const useDashboardStats = () => ***REMOVED***
   const ***REMOVED*** trabajos, turnos, calcularPago ***REMOVED*** = useApp();
 
-  const estadisticas = useMemo(() => ***REMOVED***
+  const stats = useMemo(() => ***REMOVED***
     if (turnos.length === 0) ***REMOVED***
       return ***REMOVED***
         totalGanado: 0,
         horasTrabajadas: 0,
         promedioPorHora: 0,
+        turnosTotal: 0,
         trabajoMasRentable: null,
-        diasTrabajados: 0,
+        proximoTurno: null,
         turnosEstaSemana: 0,
         gananciasEstaSemana: 0,
         tendenciaSemanal: 0,
-        proximoTurno: null,
         trabajosFavoritos: [],
-        proyeccionMensual: 0
+        proyeccionMensual: 0,
+        diasTrabajados: 0
       ***REMOVED***;
     ***REMOVED***
 
@@ -31,7 +32,7 @@ export const useDashboardStats = () => ***REMOVED***
     // Calcular fecha de inicio de esta semana
     const hoy = new Date();
     const inicioSemana = new Date(hoy);
-    inicioSemana.setDate(hoy.getDate() - hoy.getDay() + 1); // Lunes
+    inicioSemana.setDate(hoy.getDate() - hoy.getDay() + 1);
     inicioSemana.setHours(0, 0, 0, 0);
     
     const inicioSemanaAnterior = new Date(inicioSemana);
@@ -100,20 +101,21 @@ export const useDashboardStats = () => ***REMOVED***
       .slice(0, 3);
 
     // Proyección mensual
-    const proyeccionMensual = gananciasEstaSemana * 4.33; // Promedio de semanas por mes
+    const proyeccionMensual = gananciasEstaSemana * 4.33;
 
     return ***REMOVED***
       totalGanado,
       horasTrabajadas,
       promedioPorHora: horasTrabajadas > 0 ? totalGanado / horasTrabajadas : 0,
+      turnosTotal: turnos.length,
       trabajoMasRentable,
-      diasTrabajados: fechasUnicas.size,
+      proximoTurno,
       turnosEstaSemana,
       gananciasEstaSemana,
       tendenciaSemanal,
-      proximoTurno,
       trabajosFavoritos,
-      proyeccionMensual
+      proyeccionMensual,
+      diasTrabajados: fechasUnicas.size
     ***REMOVED***;
   ***REMOVED***, [turnos, trabajos, calcularPago]);
 
@@ -139,7 +141,7 @@ export const useDashboardStats = () => ***REMOVED***
   ***REMOVED***;
 
   return ***REMOVED***
-    ...estadisticas,
+    ...stats,
     formatearFecha
   ***REMOVED***;
 ***REMOVED***;

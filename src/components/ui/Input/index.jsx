@@ -1,5 +1,4 @@
 import React from 'react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const Input = (***REMOVED***
   label,
@@ -8,12 +7,9 @@ const Input = (***REMOVED***
   icon: Icon,
   className = '',
   required = false,
+  focusColor = '#EC4899',
   ...props
 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
-
-  const focusRingColor = coloresTemáticos?.base || '#EC4899';
-
   return (
     <div className=***REMOVED***className***REMOVED***>
       ***REMOVED***label && (
@@ -32,7 +28,7 @@ const Input = (***REMOVED***
               : 'focus:border-transparent'
           ***REMOVED***`***REMOVED***
           style=***REMOVED******REMOVED***
-            '--tw-ring-color': error ? '#EF4444' : focusRingColor
+            '--tw-ring-color': error ? '#EF4444' : focusColor
           ***REMOVED******REMOVED***
           ***REMOVED***...props***REMOVED***
         />

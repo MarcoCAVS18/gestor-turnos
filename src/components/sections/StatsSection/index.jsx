@@ -1,46 +1,52 @@
 // src/components/sections/StatsSection/index.jsx
 
 import React from 'react';
-import StatCard from '../../cards/StatCard';
+import WeekNavigator from '../../stats/WeekNavigator';
+import StatsProgressBar from '../../stats/StatsProgressBar';
+import WeeklyStatsGrid from '../../stats/WeeklyStatsGrid';
+import WorkDistributionChart from '../../stats/WorkDistributionChart';
+import DailyBreakdownCard from '../../stats/DailyBreakdownCard';
 
-const StatsSection = (***REMOVED*** 
-  title, 
-  stats, 
-  columns = 2, 
-  cardSize = 'md',
-  className = '' 
-***REMOVED***) => ***REMOVED***
-  const getGridClasses = () => ***REMOVED***
-    const grids = ***REMOVED***
-      1: 'grid-cols-1',
-      2: 'grid-cols-2', 
-      3: 'grid-cols-3',
-      4: 'grid-cols-4'
-    ***REMOVED***;
-    return grids[columns] || grids[2];
-  ***REMOVED***;
+const StatsSection = (***REMOVED*** weekStatsData = ***REMOVED******REMOVED***, trabajos = [] ***REMOVED***) => ***REMOVED***
+  const ***REMOVED***
+    semanaActual = 0,
+    horasSemanales = 0,
+    gananciaTotal = 0,
+    distribucionTrabajos = [],
+    turnosPorDia = ***REMOVED******REMOVED***,
+    promedioHorasPorDia = 0,
+    trabajoMasFrecuente = null
+  ***REMOVED*** = weekStatsData;
 
   return (
-    <div className=***REMOVED***className***REMOVED***>
-      ***REMOVED***title && (
-        <h3 className="text-lg font-semibold mb-4">***REMOVED***title***REMOVED***</h3>
-      )***REMOVED***
+    <div className="space-y-6">
+      <WeekNavigator semanaActual=***REMOVED***semanaActual***REMOVED*** />
       
-      <div className=***REMOVED***`grid $***REMOVED***getGridClasses()***REMOVED*** gap-4`***REMOVED***>
-        ***REMOVED***stats.map((stat, index) => (
-          <StatCard
-            key=***REMOVED***stat.key || index***REMOVED***
-            title=***REMOVED***stat.title***REMOVED***
-            value=***REMOVED***stat.value***REMOVED***
-            subtitle=***REMOVED***stat.subtitle***REMOVED***
-            icon=***REMOVED***stat.icon***REMOVED***
-            trend=***REMOVED***stat.trend***REMOVED***
-            trendLabel=***REMOVED***stat.trendLabel***REMOVED***
-            size=***REMOVED***cardSize***REMOVED***
-            onClick=***REMOVED***stat.onClick***REMOVED***
-          />
-        ))***REMOVED***
-      </div>
+      ***REMOVED***/* Barra de progreso */***REMOVED***
+      <StatsProgressBar 
+        horasSemanales=***REMOVED***horasSemanales***REMOVED***
+        metaHoras=***REMOVED***40***REMOVED***
+        gananciaTotal=***REMOVED***gananciaTotal***REMOVED***
+      />
+      
+      ***REMOVED***/* Grid de estadísticas semanales */***REMOVED***
+      <WeeklyStatsGrid 
+        horasSemanales=***REMOVED***horasSemanales***REMOVED***
+        gananciaTotal=***REMOVED***gananciaTotal***REMOVED***
+        promedioHorasPorDia=***REMOVED***promedioHorasPorDia***REMOVED***
+        trabajoMasFrecuente=***REMOVED***trabajoMasFrecuente***REMOVED***
+      />
+      
+      ***REMOVED***/* Gráfico de distribución */***REMOVED***
+      <WorkDistributionChart 
+        distribucionTrabajos=***REMOVED***distribucionTrabajos***REMOVED***
+      />
+      
+      ***REMOVED***/* Desglose diario */***REMOVED***
+      <DailyBreakdownCard 
+        turnosPorDia=***REMOVED***turnosPorDia***REMOVED***
+        trabajos=***REMOVED***trabajos***REMOVED***
+      />
     </div>
   );
 ***REMOVED***;

@@ -1,9 +1,11 @@
+// src/components/modals/ModalTurno/index.jsx
+
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import Modal from '../../ui/Modal';
 import TurnoForm from '../../forms/TurnoForm';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
-const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInicial ***REMOVED***) => ***REMOVED***
+const ModalTurno = (***REMOVED*** isOpen, onClose, turnoSeleccionado, fechaInicial ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** agregarTurno, editarTurno ***REMOVED*** = useApp();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -29,7 +31,7 @@ const ModalTurno = (***REMOVED*** visible, onClose, turnoSeleccionado, fechaInic
 
   return (
     <Modal
-      isOpen=***REMOVED***visible***REMOVED***
+      isOpen=***REMOVED***isOpen***REMOVED***
       onClose=***REMOVED***onClose***REMOVED***
       title=***REMOVED***turnoSeleccionado ? 'Editar Turno' : 'Nuevo Turno'***REMOVED***
       size="md"

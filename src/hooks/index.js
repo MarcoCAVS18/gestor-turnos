@@ -1,4 +1,4 @@
-// src/hooks/index.js - HOOKS CENTRALIZADOS
+// src/hooks/index.js
 
 // Custom App Hooks
 export ***REMOVED*** useDashboardStats ***REMOVED*** from './useDashboardStats';
@@ -15,7 +15,3 @@ export ***REMOVED*** useShare ***REMOVED*** from './useShare';
 
 // Storage Hooks
 export ***REMOVED*** useLocalStorage ***REMOVED*** from './useLocalStorage';
-
-// HOOKS REMOVIDOS (ya no son necesarios):
-// - useTrabajosFirebase (lógica movida al contexto)
-// - useTurnosFirebase (lógica movida al contexto)
