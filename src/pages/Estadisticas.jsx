@@ -5,13 +5,14 @@ import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** useWeeklyStats ***REMOVED*** from '../hooks/useWeeklyStats';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import WeekNavigator from '../components/stats/WeekNavigator';
+import StatsProgressBar from '../components/stats/StatsProgressBar';
 import WeeklyStatsGrid from '../components/stats/WeeklyStatsGrid';
 import WeeklyComparison from '../components/stats/WeeklyComparison';
 import DailyDistribution from '../components/stats/DailyDistribution';
 import ShiftTypeStats from '../components/stats/ShiftTypeStats';
 
 const Estadisticas = () => ***REMOVED***
-  const ***REMOVED*** turnos, trabajos, cargando ***REMOVED*** = useApp();
+  const ***REMOVED*** turnos, trabajos, cargando, metaHorasSemanales ***REMOVED*** = useApp();
   const [offsetSemana, setOffsetSemana] = useState(0);
   
   // Obtener datos de la semana actual y anterior
@@ -29,6 +30,15 @@ const Estadisticas = () => ***REMOVED***
           fechaInicio=***REMOVED***datosActuales.fechaInicio***REMOVED***
           fechaFin=***REMOVED***datosActuales.fechaFin***REMOVED***
         />
+
+        ***REMOVED***/* Barra de progreso semanal */***REMOVED***
+        ***REMOVED***metaHorasSemanales && (
+          <StatsProgressBar 
+            horasSemanales=***REMOVED***datosActuales.horasTrabajadas***REMOVED***
+            metaHoras=***REMOVED***metaHorasSemanales***REMOVED***
+            gananciaTotal=***REMOVED***datosActuales.totalGanado***REMOVED***
+          />
+        )***REMOVED***
 
         ***REMOVED***/* Grid de estadísticas principales */***REMOVED***
         <WeeklyStatsGrid 
