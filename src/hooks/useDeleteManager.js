@@ -26,7 +26,6 @@ export const useDeleteManager = (deleteFunction) => {
       setShowDeleteModal(false);
       setItemToDelete(null);
     } catch (error) {
-      // Error ya manejado en el contexto
     } finally {
       setDeleting(false);
     }

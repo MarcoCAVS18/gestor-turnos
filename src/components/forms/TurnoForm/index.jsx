@@ -1,9 +1,11 @@
+// src/components/forms/TurnoForm/index.jsx
+
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, FileText } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useFormValidation } from '../../../hooks/useFormValidation';
 import { VALIDATION_RULES } from '../../../constants/validation';
-import Input from '../../ui/Input';
+import ThemeInput from '../../ui/ThemeInput';
 import Button from '../../ui/Button';
 
 const TurnoForm = ({ turno, fechaInicial, onSubmit, onCancel, loading }) => {
@@ -103,7 +105,7 @@ const TurnoForm = ({ turno, fechaInicial, onSubmit, onCancel, loading }) => {
       </div>
 
       {/* Fecha */}
-      <Input
+      <ThemeInput
         label="Fecha"
         icon={Calendar}
         type="date"
@@ -115,7 +117,7 @@ const TurnoForm = ({ turno, fechaInicial, onSubmit, onCancel, loading }) => {
 
       {/* Horarios */}
       <div className="grid grid-cols-2 gap-4">
-        <Input
+        <ThemeInput
           label="Hora Inicio"
           icon={Clock}
           type="time"
@@ -125,7 +127,7 @@ const TurnoForm = ({ turno, fechaInicial, onSubmit, onCancel, loading }) => {
           required
         />
 
-        <Input
+        <ThemeInput
           label="Hora Fin"
           icon={Clock}
           type="time"

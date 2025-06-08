@@ -1,0 +1,61 @@
+// src/components/ui/ActionsMenu/index.jsx
+
+import React, { useState } from 'react';
+import { MoreVertical } from 'lucide-react';
+import { useApp } from '../../../contexts/AppContext';
+
+const ActionsMenu = ({ actions = [] }) => {
+  const { coloresTemáticos } = useApp();
+  const [isOpen, setIsOpen] = useState(false);
+
+  if (actions.length === 0) return null;
+
+  return (
+    <div className="relative">
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen(!isOpen);
+        }}
+        className="p-2 rounded-lg transition-colors flex-shrink-0"
+        style={{ 
+          backgroundColor: isOpen ? coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' : 'transparent',
+          color: isOpen ? coloresTemáticos?.base || '#EC4899' : '#6B7280'
+        }}
+      >
+        <MoreVertical size={16} />
+      </button>
+
+      {isOpen && (
+        <>
+          <div 
+            className="fixed inset-0 z-10" 
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border z-20 py-1 min-w-[140px]">
+            {actions.map((action, index) => (
+              <button
+                key={index}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsOpen(false);
+                  action.onClick();
+                }}
+                className={`w-full px-3 py-2 text-left text-sm flex items-center transition-colors ${
+                  action.variant === 'danger' 
+                    ? 'hover:bg-red-50 text-red-600' 
+                    : 'hover:bg-gray-50'
+                }`}
+              >
+                {action.icon && <action.icon size={14} className="mr-2" />}
+                {action.label}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default ActionsMenu;

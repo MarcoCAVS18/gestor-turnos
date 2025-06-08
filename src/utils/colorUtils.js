@@ -69,7 +69,7 @@ export const hexToRgb = (hex) => {
         Math.max(0, b - 80)
       ),
       
-      // Variaciones con opacidad (para backgrounds)
+      // Variaciones con opacidad
       transparent10: `rgba(${r}, ${g}, ${b}, 0.1)`,
       transparent20: `rgba(${r}, ${g}, ${b}, 0.2)`,
       transparent50: `rgba(${r}, ${g}, ${b}, 0.5)`,
@@ -77,14 +77,14 @@ export const hexToRgb = (hex) => {
       // Color de texto contrastante
       textContrast: getContrastText(r, g, b),
       
-      // Variación hover (un poco más oscura)
+      // Variación hover
       hover: rgbToHex(
         Math.max(0, r - 20),
         Math.max(0, g - 20),
         Math.max(0, b - 20)
       ),
       
-      // Variación active (más oscura)
+      // Variación active
       active: rgbToHex(
         Math.max(0, r - 60),
         Math.max(0, g - 60),
@@ -101,7 +101,6 @@ export const hexToRgb = (hex) => {
    * @returns {string} 
    */
   const getContrastText = (r, g, b) => {
-    // Calcular luminosidad usando la fórmula W3C
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     return luminance > 0.5 ? '#000000' : '#ffffff';
   };

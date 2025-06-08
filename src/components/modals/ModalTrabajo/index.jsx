@@ -1,9 +1,12 @@
+// src/components/modals/ModalTrabajo/index.jsx
+
 import React, { useState } from 'react';
 import Modal from '../../ui/Modal';
 import TrabajoForm from '../../forms/TrabajoForm';
 import { useApp } from '../../../contexts/AppContext';
 
-const ModalTrabajo = ({ visible, onClose, trabajoSeleccionado }) => {
+const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
+  
   const { agregarTrabajo, editarTrabajo } = useApp();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -13,8 +16,8 @@ const ModalTrabajo = ({ visible, onClose, trabajoSeleccionado }) => {
       setLoading(true);
       setError('');
       
-      if (trabajoSeleccionado) {
-        await editarTrabajo(trabajoSeleccionado.id, formData);
+      if (trabajo) {
+        await editarTrabajo(trabajo.id, formData);
       } else {
         await agregarTrabajo(formData);
       }
@@ -29,9 +32,9 @@ const ModalTrabajo = ({ visible, onClose, trabajoSeleccionado }) => {
 
   return (
     <Modal
-      isOpen={visible}
+      isOpen={isOpen}
       onClose={onClose}
-      title={trabajoSeleccionado ? 'Editar Trabajo' : 'Nuevo Trabajo'}
+      title={trabajo ? 'Editar Trabajo' : 'Nuevo Trabajo'}
       size="lg"
     >
       {error && (
@@ -41,7 +44,7 @@ const ModalTrabajo = ({ visible, onClose, trabajoSeleccionado }) => {
       )}
       
       <TrabajoForm
-        trabajo={trabajoSeleccionado}
+        trabajo={trabajo}
         onSubmit={handleSubmit}
         onCancel={onClose}
         loading={loading}

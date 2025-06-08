@@ -1,4 +1,5 @@
 // src/hooks/useFormValidation.js
+
 import { useState, useCallback } from 'react';
 
 export const useFormValidation = (validationRules = {}) => {

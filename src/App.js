@@ -11,7 +11,7 @@ import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 
-// Componentes principales - NUEVAS RUTAS
+// Componentes principales
 import Header from './components/layout/Header';
 import Navegacion from './components/layout/Navegacion';
 import Dashboard from './pages/Dashboard';
@@ -22,14 +22,11 @@ import CalendarioView from './pages/CalendarioView';
 import Ajustes from './pages/Ajustes';
 import TrabajoCompartido from './pages/TrabajoCompartido';
 
-// Modales - NUEVAS RUTAS
+// Modales
 import ModalTrabajo from './components/modals/ModalTrabajo';
 import ModalTurno from './components/modals/ModalTurno';
 
-// Temporal en desarrollo
-import TestPage from './pages/TestPage';
-
-// Componente para rutas protegidas
+// Ruta protegida
 const PrivateRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
 
@@ -44,7 +41,7 @@ const PrivateRoute = ({ children }) => {
   return currentUser ? children : <Navigate to="/login" replace />;
 };
 
-// Componente para el layout de la aplicación cuando el usuario está autenticado
+// Layout general de la app
 function AppLayout({ currentView }) {
   const [vistaActual, setVistaActual] = React.useState(currentView);
   const [modalTrabajoAbierto, setModalTrabajoAbierto] = React.useState(false);
@@ -52,12 +49,10 @@ function AppLayout({ currentView }) {
   const [trabajoSeleccionado, setTrabajoSeleccionado] = React.useState(null);
   const [turnoSeleccionado, setTurnoSeleccionado] = React.useState(null);
 
-  // Actualizar vista cuando cambia la prop
   React.useEffect(() => {
     setVistaActual(currentView);
   }, [currentView]);
 
-  // Funciones para manejar modales
   const abrirModalNuevoTrabajo = () => {
     setTrabajoSeleccionado(null);
     setModalTrabajoAbierto(true);
@@ -88,7 +83,6 @@ function AppLayout({ currentView }) {
     setTurnoSeleccionado(null);
   };
 
-  // Renderizar la vista actual
   const renderVista = () => {
     switch (vistaActual) {
       case 'trabajos':
@@ -108,45 +102,42 @@ function AppLayout({ currentView }) {
   };
 
   return (
-    <AppProvider>
-      <div className="min-h-screen bg-gray-100 font-poppins">
-        <Header
-          vistaActual={vistaActual}
-          setVistaActual={setVistaActual}
-          abrirModalNuevoTrabajo={abrirModalNuevoTrabajo}
-          abrirModalNuevoTurno={abrirModalNuevoTurno}
-        />
+    <div className="min-h-screen bg-gray-100 font-poppins">
+      <Header
+        vistaActual={vistaActual}
+        setVistaActual={setVistaActual}
+        abrirModalNuevoTrabajo={abrirModalNuevoTrabajo}
+        abrirModalNuevoTurno={abrirModalNuevoTurno}
+      />
 
-        <main className="max-w-md mx-auto px-4 pb-20">
-          {renderVista()}
-        </main>
+      <main className="max-w-md mx-auto px-4 pb-20">
+        {renderVista()}
+      </main>
 
-        <Navegacion
-          vistaActual={vistaActual}
-          setVistaActual={setVistaActual}
-        />
+      <Navegacion
+        vistaActual={vistaActual}
+        setVistaActual={setVistaActual}
+      />
 
-        {/* Modales */}
-        <ModalTrabajo
-          isOpen={modalTrabajoAbierto}
-          onClose={cerrarModalTrabajo}
-          trabajo={trabajoSeleccionado}
-        />
+      <ModalTrabajo
+        isOpen={modalTrabajoAbierto}
+        onClose={cerrarModalTrabajo}
+        trabajo={trabajoSeleccionado}
+      />
 
-        <ModalTurno
-          isOpen={modalTurnoAbierto}
-          onClose={cerrarModalTurno}
-          turno={turnoSeleccionado}
-        />
-      </div>
-    </AppProvider>
+      <ModalTurno
+        isOpen={modalTurnoAbierto}
+        onClose={cerrarModalTurno}
+        turno={turnoSeleccionado}
+      />
+    </div>
   );
 }
 
+// App principal
 function App() {
-  const { currentUser, loading } = useAuth();
+  const { loading } = useAuth();
 
-  // Si está cargando, mostrar spinner
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -158,73 +149,91 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Rutas de autenticación */}
-        <Route path="/login" element={currentUser ? <Navigate to="/dashboard" replace /> : <Login />} />
-        <Route path="/register" element={currentUser ? <Navigate to="/dashboard" replace /> : <Register />} />
-        <Route path="/forgot-password" element={currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />} />
+        {/* Autenticación */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Ruta para compartir trabajos */}
-        <Route path="/compartir/:token" element={
-          <PrivateRoute>
-            <AppProvider>
-              <TrabajoCompartido />
-            </AppProvider>
-          </PrivateRoute>
-        } />
-
-        {/* RUTA TEMPORAL - REMOVER EN PRODUCCIÓN */}
-        {process.env.NODE_ENV === 'development' && (
-          <Route path="/test" element={
+        {/* Rutas protegidas con AppProvider aplicado solo una vez */}
+        <Route
+          path="/compartir/:token"
+          element={
             <PrivateRoute>
               <AppProvider>
-                <TestPage />
+                <TrabajoCompartido />
               </AppProvider>
             </PrivateRoute>
-          } />
-        )}
+          }
+        />
 
-        {/* Rutas protegidas */}
-        <Route path="/dashboard" element={
-          <PrivateRoute>
-            <AppLayout currentView="dashboard" />
-          </PrivateRoute>
-        } />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="dashboard" />
+              </AppProvider>
+            </PrivateRoute>
+          }
+        />
 
-        <Route path="/trabajos" element={
-          <PrivateRoute>
-            <AppLayout currentView="trabajos" />
-          </PrivateRoute>
-        } />
+        <Route
+          path="/trabajos"
+          element={
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="trabajos" />
+              </AppProvider>
+            </PrivateRoute>
+          }
+        />
 
-        <Route path="/turnos" element={
-          <PrivateRoute>
-            <AppLayout currentView="turnos" />
-          </PrivateRoute>
-        } />
+        <Route
+          path="/turnos"
+          element={
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="turnos" />
+              </AppProvider>
+            </PrivateRoute>
+          }
+        />
 
-        <Route path="/estadisticas" element={
-          <PrivateRoute>
-            <AppLayout currentView="estadisticas" />
-          </PrivateRoute>
-        } />
+        <Route
+          path="/estadisticas"
+          element={
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="estadisticas" />
+              </AppProvider>
+            </PrivateRoute>
+          }
+        />
 
-        <Route path="/calendario" element={
-          <PrivateRoute>
-            <AppLayout currentView="calendario" />
-          </PrivateRoute>
-        } />
+        <Route
+          path="/calendario"
+          element={
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="calendario" />
+              </AppProvider>
+            </PrivateRoute>
+          }
+        />
 
-        <Route path="/ajustes" element={
-          <PrivateRoute>
-            <AppLayout currentView="ajustes" />
-          </PrivateRoute>
-        } />
+        <Route
+          path="/ajustes"
+          element={
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="ajustes" />
+              </AppProvider>
+            </PrivateRoute>
+          }
+        />
 
-        {/* Ruta por defecto - redirigir a dashboard */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-        {/* Ruta catch-all para URLs no encontradas */}
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>

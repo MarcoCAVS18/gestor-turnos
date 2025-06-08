@@ -1,46 +1,52 @@
 // src/components/sections/StatsSection/index.jsx
 
 import React from 'react';
-import StatCard from '../../cards/StatCard';
+import WeekNavigator from '../../stats/WeekNavigator';
+import StatsProgressBar from '../../stats/StatsProgressBar';
+import WeeklyStatsGrid from '../../stats/WeeklyStatsGrid';
+import WorkDistributionChart from '../../stats/WorkDistributionChart';
+import DailyBreakdownCard from '../../stats/DailyBreakdownCard';
 
-const StatsSection = ({ 
-  title, 
-  stats, 
-  columns = 2, 
-  cardSize = 'md',
-  className = '' 
-}) => {
-  const getGridClasses = () => {
-    const grids = {
-      1: 'grid-cols-1',
-      2: 'grid-cols-2', 
-      3: 'grid-cols-3',
-      4: 'grid-cols-4'
-    };
-    return grids[columns] || grids[2];
-  };
+const StatsSection = ({ weekStatsData = {}, trabajos = [] }) => {
+  const {
+    semanaActual = 0,
+    horasSemanales = 0,
+    gananciaTotal = 0,
+    distribucionTrabajos = [],
+    turnosPorDia = {},
+    promedioHorasPorDia = 0,
+    trabajoMasFrecuente = null
+  } = weekStatsData;
 
   return (
-    <div className={className}>
-      {title && (
-        <h3 className="text-lg font-semibold mb-4">{title}</h3>
-      )}
+    <div className="space-y-6">
+      <WeekNavigator semanaActual={semanaActual} />
       
-      <div className={`grid ${getGridClasses()} gap-4`}>
-        {stats.map((stat, index) => (
-          <StatCard
-            key={stat.key || index}
-            title={stat.title}
-            value={stat.value}
-            subtitle={stat.subtitle}
-            icon={stat.icon}
-            trend={stat.trend}
-            trendLabel={stat.trendLabel}
-            size={cardSize}
-            onClick={stat.onClick}
-          />
-        ))}
-      </div>
+      {/* Barra de progreso */}
+      <StatsProgressBar 
+        horasSemanales={horasSemanales}
+        metaHoras={40}
+        gananciaTotal={gananciaTotal}
+      />
+      
+      {/* Grid de estadísticas semanales */}
+      <WeeklyStatsGrid 
+        horasSemanales={horasSemanales}
+        gananciaTotal={gananciaTotal}
+        promedioHorasPorDia={promedioHorasPorDia}
+        trabajoMasFrecuente={trabajoMasFrecuente}
+      />
+      
+      {/* Gráfico de distribución */}
+      <WorkDistributionChart 
+        distribucionTrabajos={distribucionTrabajos}
+      />
+      
+      {/* Desglose diario */}
+      <DailyBreakdownCard 
+        turnosPorDia={turnosPorDia}
+        trabajos={trabajos}
+      />
     </div>
   );
 };

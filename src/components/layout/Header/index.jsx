@@ -1,3 +1,5 @@
+// src/components/layout/Header/index.jsx
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Settings } from 'lucide-react';

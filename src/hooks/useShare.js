@@ -1,3 +1,5 @@
+// src/hooks/useShare.js
+
 import { useState, useCallback } from 'react';
 import { compartirTrabajoNativo } from '../services/shareService';
 import { useAuth } from '../contexts/AuthContext';

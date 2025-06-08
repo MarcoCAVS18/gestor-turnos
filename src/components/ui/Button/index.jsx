@@ -1,5 +1,5 @@
+// src/components/ui/Button/index.jsx
 import React from 'react';
-import { useApp } from '../../../contexts/AppContext';
 
 const Button = ({ 
   children, 
@@ -10,10 +10,9 @@ const Button = ({
   disabled = false,
   loading = false,
   icon: Icon,
+  themeColor = '#EC4899',
   ...props 
 }) => {
-  const { coloresTemáticos } = useApp();
-
   const getVariantClasses = () => {
     const base = 'inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2';
     
@@ -38,35 +37,46 @@ const Button = ({
   };
 
   const getStyles = () => {
-    if (!coloresTemáticos) return {};
-    
     const styles = {
       primary: {
-        backgroundColor: coloresTemáticos.base,
-        borderColor: coloresTemáticos.base,
-        '--tw-ring-color': coloresTemáticos.base
+        backgroundColor: themeColor,
+        borderColor: themeColor,
+        '--tw-ring-color': themeColor
       },
       outline: {
-        borderColor: coloresTemáticos.base,
-        color: coloresTemáticos.base,
-        '--tw-ring-color': coloresTemáticos.base
+        borderColor: themeColor,
+        color: themeColor,
+        '--tw-ring-color': themeColor
       },
       ghost: {
-        color: coloresTemáticos.base,
-        '--tw-ring-color': coloresTemáticos.base
+        color: themeColor,
+        '--tw-ring-color': themeColor
       }
     };
 
     return styles[variant] || styles.primary;
   };
 
+  const getHoverColor = (baseColor) => {
+    const hex = baseColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    const darkerR = Math.max(0, r - 40);
+    const darkerG = Math.max(0, g - 40);
+    const darkerB = Math.max(0, b - 40);
+    
+    return `#${darkerR.toString(16).padStart(2, '0')}${darkerG.toString(16).padStart(2, '0')}${darkerB.toString(16).padStart(2, '0')}`;
+  };
+
   const handleMouseEnter = (e) => {
     if (disabled || loading) return;
     
     if (variant === 'primary') {
-      e.target.style.backgroundColor = coloresTemáticos?.hover || '#BE185D';
+      e.target.style.backgroundColor = getHoverColor(themeColor);
     } else if (variant === 'outline') {
-      e.target.style.backgroundColor = coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+      e.target.style.backgroundColor = `${themeColor}1A`; 
     }
   };
 
@@ -74,7 +84,7 @@ const Button = ({
     if (disabled || loading) return;
     
     if (variant === 'primary') {
-      e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+      e.target.style.backgroundColor = themeColor;
     } else if (variant === 'outline') {
       e.target.style.backgroundColor = 'transparent';
     }

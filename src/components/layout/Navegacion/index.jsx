@@ -1,8 +1,11 @@
+// src/components/layout/Navegacion/index.jsx
+
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Briefcase, Calendar, BarChart2, CalendarDays } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useApp } from '../../../contexts/AppContext';
+import './index.css';
 
 const Navegacion = ({ vistaActual, setVistaActual }) => {
   const navigate = useNavigate();
@@ -50,7 +53,7 @@ const Navegacion = ({ vistaActual, setVistaActual }) => {
   };
   
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white shadow-lg px-4 py-6 z-10">
+    <nav className="navbar-container fixed bottom-0 left-0 right-0 bg-white px-4 py-6">
       <div className="grid grid-cols-5 items-center max-w-md mx-auto">
         <button
           onClick={() => navigateToView('dashboard')}

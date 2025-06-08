@@ -1,4 +1,5 @@
 // src/components/other/DebugPanel/index.jsx
+
 import React from 'react';
 import { useApp } from '../../../contexts/AppContext';
 import { useAuth } from '../../../contexts/AuthContext';

@@ -1,10 +1,11 @@
-// src/components/forms/TrabajoForm/index.jsx (FORMULARIO SEPARADO)
+// src/components/forms/TrabajoForm/index.jsx
+
 import React, { useState, useEffect } from 'react';
 import { Briefcase, DollarSign, Palette, FileText } from 'lucide-react';
 import { useFormValidation } from '../../../hooks/useFormValidation';
 import { VALIDATION_RULES } from '../../../constants/validation';
 import { PREDEFINED_COLORS } from '../../../constants/colors';
-import Input from '../../ui/Input';
+import ThemeInput from '../../ui/ThemeInput';
 import Button from '../../ui/Button';
 
 const TrabajoForm = ({ trabajo, onSubmit, onCancel, loading }) => {
@@ -103,7 +104,7 @@ const TrabajoForm = ({ trabajo, onSubmit, onCancel, loading }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Nombre de la empresa */}
-      <Input
+      <ThemeInput
         label="Nombre de la empresa"
         icon={Briefcase}
         value={formData.nombre}
@@ -146,7 +147,7 @@ const TrabajoForm = ({ trabajo, onSubmit, onCancel, loading }) => {
       </div>
 
       {/* Tarifa base */}
-      <Input
+      <ThemeInput
         label="Tarifa base por hora"
         icon={DollarSign}
         type="number"
@@ -172,7 +173,7 @@ const TrabajoForm = ({ trabajo, onSubmit, onCancel, loading }) => {
             sabado: 'Sábado',
             domingo: 'Domingo'
           }).map(([tipo, label]) => (
-            <Input
+            <ThemeInput
               key={tipo}
               label={label}
               type="number"

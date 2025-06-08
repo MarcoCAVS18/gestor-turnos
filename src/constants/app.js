@@ -1,4 +1,5 @@
 // src/constants/app.js
+
 export const DEFAULT_USER_SETTINGS = {
   colorPrincipal: '#EC4899',
   emojiUsuario: '😊',
