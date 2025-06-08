@@ -1,6 +1,6 @@
 # Mi Gestión de Turnos
 
-Una aplicación web moderna para la gestión eficiente de turnos y trabajos personales, desarrollada con React y tecnologías de vanguardia.
+Una aplicación web moderna para la gestión eficiente de turnos y trabajos personales, desarrollada con React y nuevas tecnologias.
 
 ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
@@ -38,7 +38,7 @@ Aplicación web completa diseñada para facilitar la administración de trabajos
 
 ```bash
 # Clonar repositorio
-git clone https://github.com/tu-usuario/gestion-turnos.git
+git clone https://github.com/MarcoCAVS18/gestor-turnos.git
 cd gestion-turnos
 
 # Instalar dependencias
