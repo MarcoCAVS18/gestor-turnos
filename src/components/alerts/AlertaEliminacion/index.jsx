@@ -1,3 +1,5 @@
+// src/components/alerts/AlertaEliminacion/index.jsx
+
 import React from 'react';
 import ***REMOVED*** AlertTriangle ***REMOVED*** from 'lucide-react';
 import Button from '../../ui/Button';

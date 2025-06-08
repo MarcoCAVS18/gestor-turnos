@@ -1,4 +1,5 @@
 // src/services/firebase.js
+
 import ***REMOVED*** initializeApp ***REMOVED*** from 'firebase/app';
 import ***REMOVED*** getFirestore ***REMOVED*** from 'firebase/firestore';
 import ***REMOVED*** getAuth ***REMOVED*** from 'firebase/auth';

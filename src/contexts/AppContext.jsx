@@ -38,6 +38,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   const [turnos, setTurnos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
+  const [metaHorasSemanales, setMetaHorasSemanales] = useState(null);
+
 
   // Estados para preferencias de personalización
   const [colorPrincipal, setColorPrincipal] = useState('#EC4899');
@@ -68,56 +70,24 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***;
   ***REMOVED***, [currentUser]);
 
-  // Función para crear o verificar documento de usuario
-  const ensureUserDocument = useCallback(async () => ***REMOVED***
-    if (!currentUser) ***REMOVED***
-      return;
-    ***REMOVED***
+ const ensureUserDocument = useCallback(async () => ***REMOVED***
+  if (!currentUser) ***REMOVED***
+    return;
+  ***REMOVED***
 
-    try ***REMOVED***
-      const userDocRef = doc(db, 'usuarios', currentUser.uid);
-      const userDocSnapshot = await getDoc(userDocRef);
+  try ***REMOVED***
+    const userDocRef = doc(db, 'usuarios', currentUser.uid);
+    const userDocSnapshot = await getDoc(userDocRef);
 
-      if (userDocSnapshot.exists()) ***REMOVED***
-        const userData = userDocSnapshot.data();
+    if (userDocSnapshot.exists()) ***REMOVED***
+      const userData = userDocSnapshot.data();
 
-        if (userData.ajustes) ***REMOVED***
-          setColorPrincipal(userData.ajustes.colorPrincipal || '#EC4899');
-          setEmojiUsuario(userData.ajustes.emojiUsuario || '😊');
-          setDescuentoDefault(userData.ajustes.descuentoDefault || 15);
-          setRangosTurnos(userData.ajustes.rangosTurnos || ***REMOVED***
-            diurnoInicio: 6,
-            diurnoFin: 14,
-            tardeInicio: 14,
-            tardeFin: 20,
-            nocheInicio: 20
-          ***REMOVED***);
-        ***REMOVED***
-      ***REMOVED*** else ***REMOVED***
-        const defaultUserData = ***REMOVED***
-          email: currentUser.email,
-          displayName: currentUser.displayName || 'Usuario',
-          fechaCreacion: new Date(),
-          ajustes: ***REMOVED***
-            colorPrincipal: '#EC4899',
-            emojiUsuario: '😊',
-            descuentoDefault: 15,
-            rangosTurnos: ***REMOVED***
-              diurnoInicio: 6,
-              diurnoFin: 14,
-              tardeInicio: 14,
-              tardeFin: 20,
-              nocheInicio: 20
-            ***REMOVED***
-          ***REMOVED***
-        ***REMOVED***;
-
-        await setDoc(userDocRef, defaultUserData);
-
-        setColorPrincipal('#EC4899');
-        setEmojiUsuario('😊');
-        setDescuentoDefault(15);
-        setRangosTurnos(***REMOVED***
+      if (userData.ajustes) ***REMOVED***
+        setColorPrincipal(userData.ajustes.colorPrincipal || '#EC4899');
+        setEmojiUsuario(userData.ajustes.emojiUsuario || '😊');
+        setDescuentoDefault(userData.ajustes.descuentoDefault || 15);
+        setMetaHorasSemanales(userData.ajustes.metaHorasSemanales || null);
+        setRangosTurnos(userData.ajustes.rangosTurnos || ***REMOVED***
           diurnoInicio: 6,
           diurnoFin: 14,
           tardeInicio: 14,
@@ -125,10 +95,44 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           nocheInicio: 20
         ***REMOVED***);
       ***REMOVED***
-    ***REMOVED*** catch (error) ***REMOVED***
-      setError('Error al configurar usuario: ' + error.message);
+    ***REMOVED*** else ***REMOVED***
+      const defaultUserData = ***REMOVED***
+        email: currentUser.email,
+        displayName: currentUser.displayName || 'Usuario',
+        fechaCreacion: new Date(),
+        ajustes: ***REMOVED***
+          colorPrincipal: '#EC4899',
+          emojiUsuario: '😊',
+          descuentoDefault: 15,
+          metaHorasSemanales: null, 
+          rangosTurnos: ***REMOVED***
+            diurnoInicio: 6,
+            diurnoFin: 14,
+            tardeInicio: 14,
+            tardeFin: 20,
+            nocheInicio: 20
+          ***REMOVED***
+        ***REMOVED***
+      ***REMOVED***;
+
+      await setDoc(userDocRef, defaultUserData);
+
+      setColorPrincipal('#EC4899');
+      setEmojiUsuario('😊');
+      setDescuentoDefault(15);
+      setMetaHorasSemanales(null);
+      setRangosTurnos(***REMOVED***
+        diurnoInicio: 6,
+        diurnoFin: 14,
+        tardeInicio: 14,
+        tardeFin: 20,
+        nocheInicio: 20
+      ***REMOVED***);
     ***REMOVED***
-  ***REMOVED***, [currentUser]);
+  ***REMOVED*** catch (error) ***REMOVED***
+    setError('Error al configurar usuario: ' + error.message);
+  ***REMOVED***
+***REMOVED***, [currentUser]);
 
   // Función mejorada para calcular horas trabajadas
   const calcularHoras = useCallback((inicio, fin) => ***REMOVED***
@@ -146,7 +150,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     return (finMinutos - inicioMinutos) / 60;
   ***REMOVED***, []);
 
-  // Función mejorada para calcular el pago considerando rangos horarios múltiples
   // Función mejorada para calcular el pago considerando rangos horarios múltiples
   const calcularPago = useCallback((turno) => ***REMOVED***
     const trabajo = trabajos.find(t => t.id === turno.trabajoId);
@@ -183,7 +186,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       // Sábado - toda la tarifa de sábado
       total = horas * trabajo.tarifas.sabado;
     ***REMOVED*** else ***REMOVED***
-      // Día de semana - calcular por rangos horarios INTELIGENTE
+      // Día de semana 
       const rangos = rangosTurnos || ***REMOVED***
         diurnoInicio: 6, diurnoFin: 14,
         tardeInicio: 14, tardeFin: 20,
@@ -476,6 +479,34 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***
   ***REMOVED***, [currentUser]);
 
+  const actualizarMetaHorasSemanales = useCallback(async (meta) => ***REMOVED***
+  try ***REMOVED***
+    if (!currentUser) throw new Error('Usuario no autenticado');
+
+    const metaValida = meta && !isNaN(meta) && meta > 0 ? Number(meta) : null;
+    setMetaHorasSemanales(metaValida);
+
+    // Guardar en localStorage
+    if (metaValida) ***REMOVED***
+      localStorage.setItem('metaHorasSemanales', metaValida.toString());
+    ***REMOVED*** else ***REMOVED***
+      localStorage.removeItem('metaHorasSemanales');
+    ***REMOVED***
+
+    // Guardar en Firestore
+    const userDocRef = doc(db, 'usuarios', currentUser.uid);
+    await updateDoc(userDocRef, ***REMOVED***
+      'ajustes.metaHorasSemanales': metaValida,
+      'fechaActualizacion': new Date()
+    ***REMOVED***);
+
+    return true;
+  ***REMOVED*** catch (err) ***REMOVED***
+    setError('Error al actualizar meta de horas: ' + err.message);
+    throw err;
+  ***REMOVED***
+***REMOVED***, [currentUser]);
+
   // Agrupar turnos por fecha
   const turnosPorFecha = useMemo(() => ***REMOVED***
     return turnos.reduce((acc, turno) => ***REMOVED***
@@ -508,7 +539,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***);
   ***REMOVED***, []);
 
-  // Valor del contexto
   const contextValue = ***REMOVED***
     // Datos principales
     trabajos,
@@ -523,6 +553,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     emojiUsuario,
     descuentoDefault,
     rangosTurnos,
+    metaHorasSemanales,
 
     // Funciones CRUD para trabajos
     agregarTrabajo,
@@ -539,6 +570,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     calcularPago,
     calcularTotalDia,
     formatearFecha,
+    actualizarMetaHorasSemanales,
+
 
     // Funciones de configuración
     guardarPreferencias

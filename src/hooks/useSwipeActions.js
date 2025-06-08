@@ -1,3 +1,5 @@
+// src/hooks/useSwipeActions.js
+
 import ***REMOVED*** useState, useRef, useCallback ***REMOVED*** from 'react';
 
 export const useSwipeActions = (threshold = 80) => ***REMOVED***

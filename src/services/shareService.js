@@ -45,10 +45,10 @@ export const crearEnlaceCompartir = async (userId, trabajo) => ***REMOVED***
       // Metadatos de compartir
       compartidoPor: userId,
       fechaCreacion: serverTimestamp(),
-      fechaExpiracion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 días
+      fechaExpiracion: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       activo: true,
       vecesUsado: 0,
-      limiteUsos: 10 // Límite de veces que se puede usar el enlace
+      limiteUsos: 10
     ***REMOVED***;
     
     await setDoc(shareDocRef, datosCompartir);

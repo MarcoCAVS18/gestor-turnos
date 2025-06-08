@@ -1,3 +1,5 @@
+// src/components/layout/Header/index.jsx
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** PlusCircle, Settings ***REMOVED*** from 'lucide-react';

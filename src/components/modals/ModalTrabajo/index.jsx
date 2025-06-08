@@ -1,9 +1,12 @@
+// src/components/modals/ModalTrabajo/index.jsx
+
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import Modal from '../../ui/Modal';
 import TrabajoForm from '../../forms/TrabajoForm';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
-const ModalTrabajo = (***REMOVED*** visible, onClose, trabajoSeleccionado ***REMOVED***) => ***REMOVED***
+const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
+  
   const ***REMOVED*** agregarTrabajo, editarTrabajo ***REMOVED*** = useApp();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -13,8 +16,8 @@ const ModalTrabajo = (***REMOVED*** visible, onClose, trabajoSeleccionado ***REM
       setLoading(true);
       setError('');
       
-      if (trabajoSeleccionado) ***REMOVED***
-        await editarTrabajo(trabajoSeleccionado.id, formData);
+      if (trabajo) ***REMOVED***
+        await editarTrabajo(trabajo.id, formData);
       ***REMOVED*** else ***REMOVED***
         await agregarTrabajo(formData);
       ***REMOVED***
@@ -29,9 +32,9 @@ const ModalTrabajo = (***REMOVED*** visible, onClose, trabajoSeleccionado ***REM
 
   return (
     <Modal
-      isOpen=***REMOVED***visible***REMOVED***
+      isOpen=***REMOVED***isOpen***REMOVED***
       onClose=***REMOVED***onClose***REMOVED***
-      title=***REMOVED***trabajoSeleccionado ? 'Editar Trabajo' : 'Nuevo Trabajo'***REMOVED***
+      title=***REMOVED***trabajo ? 'Editar Trabajo' : 'Nuevo Trabajo'***REMOVED***
       size="lg"
     >
       ***REMOVED***error && (
@@ -41,7 +44,7 @@ const ModalTrabajo = (***REMOVED*** visible, onClose, trabajoSeleccionado ***REM
       )***REMOVED***
       
       <TrabajoForm
-        trabajo=***REMOVED***trabajoSeleccionado***REMOVED***
+        trabajo=***REMOVED***trabajo***REMOVED***
         onSubmit=***REMOVED***handleSubmit***REMOVED***
         onCancel=***REMOVED***onClose***REMOVED***
         loading=***REMOVED***loading***REMOVED***

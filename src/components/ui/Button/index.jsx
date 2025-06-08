@@ -1,5 +1,5 @@
+// src/components/ui/Button/index.jsx
 import React from 'react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const Button = (***REMOVED*** 
   children, 
@@ -10,10 +10,9 @@ const Button = (***REMOVED***
   disabled = false,
   loading = false,
   icon: Icon,
+  themeColor = '#EC4899',
   ...props 
 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
-
   const getVariantClasses = () => ***REMOVED***
     const base = 'inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2';
     
@@ -38,35 +37,46 @@ const Button = (***REMOVED***
   ***REMOVED***;
 
   const getStyles = () => ***REMOVED***
-    if (!coloresTemáticos) return ***REMOVED******REMOVED***;
-    
     const styles = ***REMOVED***
       primary: ***REMOVED***
-        backgroundColor: coloresTemáticos.base,
-        borderColor: coloresTemáticos.base,
-        '--tw-ring-color': coloresTemáticos.base
+        backgroundColor: themeColor,
+        borderColor: themeColor,
+        '--tw-ring-color': themeColor
       ***REMOVED***,
       outline: ***REMOVED***
-        borderColor: coloresTemáticos.base,
-        color: coloresTemáticos.base,
-        '--tw-ring-color': coloresTemáticos.base
+        borderColor: themeColor,
+        color: themeColor,
+        '--tw-ring-color': themeColor
       ***REMOVED***,
       ghost: ***REMOVED***
-        color: coloresTemáticos.base,
-        '--tw-ring-color': coloresTemáticos.base
+        color: themeColor,
+        '--tw-ring-color': themeColor
       ***REMOVED***
     ***REMOVED***;
 
     return styles[variant] || styles.primary;
   ***REMOVED***;
 
+  const getHoverColor = (baseColor) => ***REMOVED***
+    const hex = baseColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    const darkerR = Math.max(0, r - 40);
+    const darkerG = Math.max(0, g - 40);
+    const darkerB = Math.max(0, b - 40);
+    
+    return `#$***REMOVED***darkerR.toString(16).padStart(2, '0')***REMOVED***$***REMOVED***darkerG.toString(16).padStart(2, '0')***REMOVED***$***REMOVED***darkerB.toString(16).padStart(2, '0')***REMOVED***`;
+  ***REMOVED***;
+
   const handleMouseEnter = (e) => ***REMOVED***
     if (disabled || loading) return;
     
     if (variant === 'primary') ***REMOVED***
-      e.target.style.backgroundColor = coloresTemáticos?.hover || '#BE185D';
+      e.target.style.backgroundColor = getHoverColor(themeColor);
     ***REMOVED*** else if (variant === 'outline') ***REMOVED***
-      e.target.style.backgroundColor = coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+      e.target.style.backgroundColor = `$***REMOVED***themeColor***REMOVED***1A`; 
     ***REMOVED***
   ***REMOVED***;
 
@@ -74,7 +84,7 @@ const Button = (***REMOVED***
     if (disabled || loading) return;
     
     if (variant === 'primary') ***REMOVED***
-      e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+      e.target.style.backgroundColor = themeColor;
     ***REMOVED*** else if (variant === 'outline') ***REMOVED***
       e.target.style.backgroundColor = 'transparent';
     ***REMOVED***

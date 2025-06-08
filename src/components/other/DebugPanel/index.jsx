@@ -1,4 +1,5 @@
 // src/components/other/DebugPanel/index.jsx
+
 import React from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';

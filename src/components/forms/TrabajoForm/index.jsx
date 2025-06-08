@@ -1,10 +1,11 @@
-// src/components/forms/TrabajoForm/index.jsx (FORMULARIO SEPARADO)
+// src/components/forms/TrabajoForm/index.jsx
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Briefcase, DollarSign, Palette, FileText ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useFormValidation ***REMOVED*** from '../../../hooks/useFormValidation';
 import ***REMOVED*** VALIDATION_RULES ***REMOVED*** from '../../../constants/validation';
 import ***REMOVED*** PREDEFINED_COLORS ***REMOVED*** from '../../../constants/colors';
-import Input from '../../ui/Input';
+import ThemeInput from '../../ui/ThemeInput';
 import Button from '../../ui/Button';
 
 const TrabajoForm = (***REMOVED*** trabajo, onSubmit, onCancel, loading ***REMOVED***) => ***REMOVED***
@@ -103,7 +104,7 @@ const TrabajoForm = (***REMOVED*** trabajo, onSubmit, onCancel, loading ***REMOV
   return (
     <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className="space-y-6">
       ***REMOVED***/* Nombre de la empresa */***REMOVED***
-      <Input
+      <ThemeInput
         label="Nombre de la empresa"
         icon=***REMOVED***Briefcase***REMOVED***
         value=***REMOVED***formData.nombre***REMOVED***
@@ -146,7 +147,7 @@ const TrabajoForm = (***REMOVED*** trabajo, onSubmit, onCancel, loading ***REMOV
       </div>
 
       ***REMOVED***/* Tarifa base */***REMOVED***
-      <Input
+      <ThemeInput
         label="Tarifa base por hora"
         icon=***REMOVED***DollarSign***REMOVED***
         type="number"
@@ -172,7 +173,7 @@ const TrabajoForm = (***REMOVED*** trabajo, onSubmit, onCancel, loading ***REMOV
             sabado: 'Sábado',
             domingo: 'Domingo'
           ***REMOVED***).map(([tipo, label]) => (
-            <Input
+            <ThemeInput
               key=***REMOVED***tipo***REMOVED***
               label=***REMOVED***label***REMOVED***
               type="number"

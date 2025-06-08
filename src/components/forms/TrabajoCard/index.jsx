@@ -1,4 +1,5 @@
 // src/components/cards/TrabajoCard/index.jsx
+
 import React from 'react';
 import ***REMOVED*** Edit, Trash2, Share2, Info ***REMOVED*** from 'lucide-react';
 import Card from '../../ui/Card';

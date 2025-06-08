@@ -13,11 +13,11 @@ export const PREDEFINED_COLORS = [
 ];
 
 export const TURN_TYPE_COLORS = ***REMOVED***
-  'Diurno': '#10B981',    // Verde
-  'Tarde': '#F59E0B',     // Amarillo
-  'Nocturno': '#6366F1',  // Índigo
-  'Sábado': '#8B5CF6',    // Violeta
-  'Domingo': '#EF4444'    // Rojo
+  'Diurno': '#10B981',
+  'Tarde': '#F59E0B',
+  'Nocturno': '#6366F1',
+  'Sábado': '#8B5CF6',
+  'Domingo': '#EF4444'
 ***REMOVED***;
 
 export const DEFAULT_THEME_COLOR = '#EC4899';

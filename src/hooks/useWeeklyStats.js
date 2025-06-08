@@ -1,0 +1,166 @@
+// src/hooks/useWeeklyStats.js
+
+import ***REMOVED*** useMemo ***REMOVED*** from 'react';
+import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+
+export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) => ***REMOVED***
+  const ***REMOVED*** calcularPago, calcularHoras ***REMOVED*** = useApp();
+
+  return useMemo(() => ***REMOVED***
+    const turnosValidos = Array.isArray(turnos) ? turnos : [];
+    const trabajosValidos = Array.isArray(trabajos) ? trabajos : [];
+
+    // Función para obtener fechas de una semana específica
+    const obtenerFechasSemana = (offset) => ***REMOVED***
+      const hoy = new Date();
+      const diaSemana = hoy.getDay();
+      const diffInicio = diaSemana === 0 ? 6 : diaSemana - 1;
+
+      const fechaInicio = new Date(hoy);
+      fechaInicio.setDate(hoy.getDate() - diffInicio + (offset * 7));
+      fechaInicio.setHours(0, 0, 0, 0);
+
+      const fechaFin = new Date(fechaInicio);
+      fechaFin.setDate(fechaInicio.getDate() + 6);
+      fechaFin.setHours(23, 59, 59, 999);
+
+      return ***REMOVED*** fechaInicio, fechaFin ***REMOVED***;
+    ***REMOVED***;
+
+    const ***REMOVED*** fechaInicio, fechaFin ***REMOVED*** = obtenerFechasSemana(offsetSemanas);
+    const fechaInicioISO = fechaInicio.toISOString().split('T')[0];
+    const fechaFinISO = fechaFin.toISOString().split('T')[0];
+
+    // Filtrar turnos de la semana específica
+    const turnosSemana = turnosValidos.filter(turno => ***REMOVED***
+      return turno.fecha >= fechaInicioISO && turno.fecha <= fechaFinISO;
+    ***REMOVED***);
+
+    // Si no hay datos, retornar estructura por defecto
+    if (turnosSemana.length === 0) ***REMOVED***
+      return ***REMOVED***
+        fechaInicio,
+        fechaFin,
+        totalGanado: 0,
+        horasTrabajadas: 0,
+        totalTurnos: 0,
+        gananciaPorDia: ***REMOVED***
+          "Lunes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+          "Martes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+          "Miércoles": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+          "Jueves": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+          "Viernes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+          "Sábado": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+          "Domingo": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***
+        ***REMOVED***,
+        gananciaPorTrabajo: [],
+        tiposDeTurno: ***REMOVED******REMOVED***,
+        diasTrabajados: 0,
+        promedioHorasPorDia: 0,
+        promedioPorHora: 0,
+        diaMasProductivo: ***REMOVED*** dia: 'Ninguno', ganancia: 0, horas: 0, turnos: 0 ***REMOVED***
+      ***REMOVED***;
+    ***REMOVED***
+
+    // Calcular estadísticas
+    let totalGanado = 0;
+    let horasTrabajadas = 0;
+    const gananciaPorDia = ***REMOVED***
+      "Lunes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Martes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Miércoles": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Jueves": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Viernes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Sábado": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***,
+      "Domingo": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***
+    ***REMOVED***;
+
+    const gananciaPorTrabajo = ***REMOVED******REMOVED***;
+    const tiposDeTurno = ***REMOVED******REMOVED***;
+
+    turnosSemana.forEach(turno => ***REMOVED***
+      const trabajo = trabajosValidos.find(t => t.id === turno.trabajoId);
+      if (!trabajo) return;
+
+      const horas = calcularHoras ? calcularHoras(turno.horaInicio, turno.horaFin) : 0;
+      const resultadoPago = calcularPago ? calcularPago(turno) : ***REMOVED*** totalConDescuento: 0, horas: 0 ***REMOVED***;
+      const ganancia = resultadoPago.totalConDescuento || 0;
+
+      totalGanado += ganancia;
+      horasTrabajadas += horas;
+
+      // Estadísticas por día
+      const fecha = new Date(turno.fecha + 'T00:00:00');
+      const diaSemana = fecha.getDay();
+      const nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+      const nombreDia = nombresDias[diaSemana];
+
+      gananciaPorDia[nombreDia].ganancia += ganancia;
+      gananciaPorDia[nombreDia].horas += horas;
+      gananciaPorDia[nombreDia].turnos += 1;
+
+      // Estadísticas por trabajo
+      if (!gananciaPorTrabajo[trabajo.id]) ***REMOVED***
+        gananciaPorTrabajo[trabajo.id] = ***REMOVED***
+          nombre: trabajo.nombre,
+          color: trabajo.color,
+          ganancia: 0,
+          horas: 0,
+          turnos: 0
+        ***REMOVED***;
+      ***REMOVED***
+      gananciaPorTrabajo[trabajo.id].ganancia += ganancia;
+      gananciaPorTrabajo[trabajo.id].horas += horas;
+      gananciaPorTrabajo[trabajo.id].turnos += 1;
+
+      // Estadísticas por tipo de turno
+      const tipo = obtenerTipoTurno(turno.horaInicio) || 'mixto';
+      if (!tiposDeTurno[tipo]) ***REMOVED***
+        tiposDeTurno[tipo] = ***REMOVED*** turnos: 0, horas: 0, ganancia: 0 ***REMOVED***;
+      ***REMOVED***
+      tiposDeTurno[tipo].turnos += 1;
+      tiposDeTurno[tipo].horas += horas;
+      tiposDeTurno[tipo].ganancia += ganancia;
+    ***REMOVED***);
+
+    // Calcular métricas adicionales
+    const diasTrabajados = Object.values(gananciaPorDia).filter(dia => dia.turnos > 0).length;
+    const promedioHorasPorDia = diasTrabajados > 0 ? horasTrabajadas / diasTrabajados : 0;
+    const promedioPorHora = horasTrabajadas > 0 ? totalGanado / horasTrabajadas : 0;
+
+    // Encontrar el día más productivo
+    const diaMasProductivo = Object.entries(gananciaPorDia).reduce((max, [dia, datos]) => ***REMOVED***
+      return datos.ganancia > max.ganancia ? ***REMOVED*** dia, ...datos ***REMOVED*** : max;
+    ***REMOVED***, ***REMOVED*** dia: 'Ninguno', ganancia: 0, horas: 0, turnos: 0 ***REMOVED***);
+
+    return ***REMOVED***
+      fechaInicio,
+      fechaFin,
+      totalGanado,
+      horasTrabajadas,
+      totalTurnos: turnosSemana.length,
+      gananciaPorDia,
+      gananciaPorTrabajo: Object.values(gananciaPorTrabajo).sort((a, b) => b.ganancia - a.ganancia),
+      tiposDeTurno,
+      diasTrabajados,
+      promedioHorasPorDia,
+      promedioPorHora,
+      diaMasProductivo
+    ***REMOVED***;
+  ***REMOVED***, [turnos, trabajos, offsetSemanas, calcularPago, calcularHoras]);
+***REMOVED***;
+
+// Función auxiliar para tipo de turno (mantenemos esta)
+const obtenerTipoTurno = (horaInicio) => ***REMOVED***
+  try ***REMOVED***
+    const hora = parseInt(horaInicio.split(':')[0]);
+
+    if (hora >= 6 && hora < 14) return 'diurno';
+    if (hora >= 14 && hora < 20) return 'tarde';
+    if (hora >= 20 || hora < 6) return 'noche';
+
+    return 'mixto';
+  ***REMOVED*** catch (error) ***REMOVED***
+    return 'mixto';
+  ***REMOVED***
+***REMOVED***;

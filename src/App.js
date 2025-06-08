@@ -11,7 +11,7 @@ import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 
-// Componentes principales - NUEVAS RUTAS
+// Componentes principales
 import Header from './components/layout/Header';
 import Navegacion from './components/layout/Navegacion';
 import Dashboard from './pages/Dashboard';
@@ -22,14 +22,11 @@ import CalendarioView from './pages/CalendarioView';
 import Ajustes from './pages/Ajustes';
 import TrabajoCompartido from './pages/TrabajoCompartido';
 
-// Modales - NUEVAS RUTAS
+// Modales
 import ModalTrabajo from './components/modals/ModalTrabajo';
 import ModalTurno from './components/modals/ModalTurno';
 
-// Temporal en desarrollo
-import TestPage from './pages/TestPage';
-
-// Componente para rutas protegidas
+// Ruta protegida
 const PrivateRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser, loading ***REMOVED*** = useAuth();
 
@@ -44,7 +41,7 @@ const PrivateRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   return currentUser ? children : <Navigate to="/login" replace />;
 ***REMOVED***;
 
-// Componente para el layout de la aplicación cuando el usuario está autenticado
+// Layout general de la app
 function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
   const [vistaActual, setVistaActual] = React.useState(currentView);
   const [modalTrabajoAbierto, setModalTrabajoAbierto] = React.useState(false);
@@ -52,12 +49,10 @@ function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
   const [trabajoSeleccionado, setTrabajoSeleccionado] = React.useState(null);
   const [turnoSeleccionado, setTurnoSeleccionado] = React.useState(null);
 
-  // Actualizar vista cuando cambia la prop
   React.useEffect(() => ***REMOVED***
     setVistaActual(currentView);
   ***REMOVED***, [currentView]);
 
-  // Funciones para manejar modales
   const abrirModalNuevoTrabajo = () => ***REMOVED***
     setTrabajoSeleccionado(null);
     setModalTrabajoAbierto(true);
@@ -88,7 +83,6 @@ function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
     setTurnoSeleccionado(null);
   ***REMOVED***;
 
-  // Renderizar la vista actual
   const renderVista = () => ***REMOVED***
     switch (vistaActual) ***REMOVED***
       case 'trabajos':
@@ -108,45 +102,42 @@ function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
   ***REMOVED***;
 
   return (
-    <AppProvider>
-      <div className="min-h-screen bg-gray-100 font-poppins">
-        <Header
-          vistaActual=***REMOVED***vistaActual***REMOVED***
-          setVistaActual=***REMOVED***setVistaActual***REMOVED***
-          abrirModalNuevoTrabajo=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
-          abrirModalNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED***
-        />
+    <div className="min-h-screen bg-gray-100 font-poppins">
+      <Header
+        vistaActual=***REMOVED***vistaActual***REMOVED***
+        setVistaActual=***REMOVED***setVistaActual***REMOVED***
+        abrirModalNuevoTrabajo=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
+        abrirModalNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED***
+      />
 
-        <main className="max-w-md mx-auto px-4 pb-20">
-          ***REMOVED***renderVista()***REMOVED***
-        </main>
+      <main className="max-w-md mx-auto px-4 pb-20">
+        ***REMOVED***renderVista()***REMOVED***
+      </main>
 
-        <Navegacion
-          vistaActual=***REMOVED***vistaActual***REMOVED***
-          setVistaActual=***REMOVED***setVistaActual***REMOVED***
-        />
+      <Navegacion
+        vistaActual=***REMOVED***vistaActual***REMOVED***
+        setVistaActual=***REMOVED***setVistaActual***REMOVED***
+      />
 
-        ***REMOVED***/* Modales */***REMOVED***
-        <ModalTrabajo
-          isOpen=***REMOVED***modalTrabajoAbierto***REMOVED***
-          onClose=***REMOVED***cerrarModalTrabajo***REMOVED***
-          trabajo=***REMOVED***trabajoSeleccionado***REMOVED***
-        />
+      <ModalTrabajo
+        isOpen=***REMOVED***modalTrabajoAbierto***REMOVED***
+        onClose=***REMOVED***cerrarModalTrabajo***REMOVED***
+        trabajo=***REMOVED***trabajoSeleccionado***REMOVED***
+      />
 
-        <ModalTurno
-          isOpen=***REMOVED***modalTurnoAbierto***REMOVED***
-          onClose=***REMOVED***cerrarModalTurno***REMOVED***
-          turno=***REMOVED***turnoSeleccionado***REMOVED***
-        />
-      </div>
-    </AppProvider>
+      <ModalTurno
+        isOpen=***REMOVED***modalTurnoAbierto***REMOVED***
+        onClose=***REMOVED***cerrarModalTurno***REMOVED***
+        turno=***REMOVED***turnoSeleccionado***REMOVED***
+      />
+    </div>
   );
 ***REMOVED***
 
+// App principal
 function App() ***REMOVED***
-  const ***REMOVED*** currentUser, loading ***REMOVED*** = useAuth();
+  const ***REMOVED*** loading ***REMOVED*** = useAuth();
 
-  // Si está cargando, mostrar spinner
   if (loading) ***REMOVED***
     return (
       <div className="flex items-center justify-center h-screen">
@@ -158,73 +149,91 @@ function App() ***REMOVED***
   return (
     <Router>
       <Routes>
-        ***REMOVED***/* Rutas de autenticación */***REMOVED***
-        <Route path="/login" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <Login />***REMOVED*** />
-        <Route path="/register" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <Register />***REMOVED*** />
-        <Route path="/forgot-password" element=***REMOVED***currentUser ? <Navigate to="/dashboard" replace /> : <ForgotPassword />***REMOVED*** />
+        ***REMOVED***/* Autenticación */***REMOVED***
+        <Route path="/login" element=***REMOVED***<Login />***REMOVED*** />
+        <Route path="/register" element=***REMOVED***<Register />***REMOVED*** />
+        <Route path="/forgot-password" element=***REMOVED***<ForgotPassword />***REMOVED*** />
         <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />
 
-        ***REMOVED***/* Ruta para compartir trabajos */***REMOVED***
-        <Route path="/compartir/:token" element=***REMOVED***
-          <PrivateRoute>
-            <AppProvider>
-              <TrabajoCompartido />
-            </AppProvider>
-          </PrivateRoute>
-        ***REMOVED*** />
-
-        ***REMOVED***/* RUTA TEMPORAL - REMOVER EN PRODUCCIÓN */***REMOVED***
-        ***REMOVED***process.env.NODE_ENV === 'development' && (
-          <Route path="/test" element=***REMOVED***
+        ***REMOVED***/* Rutas protegidas con AppProvider aplicado solo una vez */***REMOVED***
+        <Route
+          path="/compartir/:token"
+          element=***REMOVED***
             <PrivateRoute>
               <AppProvider>
-                <TestPage />
+                <TrabajoCompartido />
               </AppProvider>
             </PrivateRoute>
-          ***REMOVED*** />
-        )***REMOVED***
+          ***REMOVED***
+        />
 
-        ***REMOVED***/* Rutas protegidas */***REMOVED***
-        <Route path="/dashboard" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="dashboard" />
-          </PrivateRoute>
-        ***REMOVED*** />
+        <Route
+          path="/dashboard"
+          element=***REMOVED***
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="dashboard" />
+              </AppProvider>
+            </PrivateRoute>
+          ***REMOVED***
+        />
 
-        <Route path="/trabajos" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="trabajos" />
-          </PrivateRoute>
-        ***REMOVED*** />
+        <Route
+          path="/trabajos"
+          element=***REMOVED***
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="trabajos" />
+              </AppProvider>
+            </PrivateRoute>
+          ***REMOVED***
+        />
 
-        <Route path="/turnos" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="turnos" />
-          </PrivateRoute>
-        ***REMOVED*** />
+        <Route
+          path="/turnos"
+          element=***REMOVED***
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="turnos" />
+              </AppProvider>
+            </PrivateRoute>
+          ***REMOVED***
+        />
 
-        <Route path="/estadisticas" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="estadisticas" />
-          </PrivateRoute>
-        ***REMOVED*** />
+        <Route
+          path="/estadisticas"
+          element=***REMOVED***
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="estadisticas" />
+              </AppProvider>
+            </PrivateRoute>
+          ***REMOVED***
+        />
 
-        <Route path="/calendario" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="calendario" />
-          </PrivateRoute>
-        ***REMOVED*** />
+        <Route
+          path="/calendario"
+          element=***REMOVED***
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="calendario" />
+              </AppProvider>
+            </PrivateRoute>
+          ***REMOVED***
+        />
 
-        <Route path="/ajustes" element=***REMOVED***
-          <PrivateRoute>
-            <AppLayout currentView="ajustes" />
-          </PrivateRoute>
-        ***REMOVED*** />
+        <Route
+          path="/ajustes"
+          element=***REMOVED***
+            <PrivateRoute>
+              <AppProvider>
+                <AppLayout currentView="ajustes" />
+              </AppProvider>
+            </PrivateRoute>
+          ***REMOVED***
+        />
 
-        ***REMOVED***/* Ruta por defecto - redirigir a dashboard */***REMOVED***
         <Route path="/" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
-
-        ***REMOVED***/* Ruta catch-all para URLs no encontradas */***REMOVED***
         <Route path="*" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
       </Routes>
     </Router>

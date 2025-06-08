@@ -1,4 +1,5 @@
 // src/constants/validation.js
+
 export const VALIDATION_RULES = ***REMOVED***
   required: (value) => !value || !value.toString().trim() ? 'Este campo es requerido' : '',
   
