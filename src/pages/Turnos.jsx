@@ -22,14 +22,28 @@ const Turnos = () => ***REMOVED***
 
   const generarDetallesTurno = (turno) => ***REMOVED***
     if (!turno) return [];
+    
     const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-    return [
+    const fecha = new Date(turno.fecha + 'T00:00:00');
+    const detalles = [
       trabajo?.nombre || 'Trabajo no encontrado',
-      new Date(turno.fecha + 'T00:00:00').toLocaleDateString('es-ES', ***REMOVED***
-        weekday: 'long', day: 'numeric', month: 'long'
+      fecha.toLocaleDateString('es-ES', ***REMOVED***
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long'
       ***REMOVED***),
       `$***REMOVED***turno.horaInicio***REMOVED*** - $***REMOVED***turno.horaFin***REMOVED***`
     ];
+    
+    // Agregar detalles específicos según el tipo
+    if (turno.tipo === 'delivery') ***REMOVED***
+      detalles.push('Turno de Delivery');
+      if (turno.numeroPedidos) ***REMOVED***
+        detalles.push(`$***REMOVED***turno.numeroPedidos***REMOVED*** pedidos completados`);
+      ***REMOVED***
+    ***REMOVED***
+    
+    return detalles;
   ***REMOVED***;
 
   return (

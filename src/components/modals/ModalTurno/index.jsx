@@ -1,55 +1,92 @@
-// src/components/modals/ModalTurno/index.jsx
+// src/components/modals/ModalTurno.jsx
 
-import React, ***REMOVED*** useState ***REMOVED*** from 'react';
-import Modal from '../../ui/Modal';
-import TurnoForm from '../../forms/TurnoForm';
+import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
+import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import TurnoForm from '../../forms/TurnoForm';
+import TurnoDeliveryForm from '../../forms/TurnoDeliveryForm';
 
-const ModalTurno = (***REMOVED*** isOpen, onClose, turnoSeleccionado, fechaInicial ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** agregarTurno, editarTurno ***REMOVED*** = useApp();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (formData) => ***REMOVED***
-    try ***REMOVED***
-      setLoading(true);
-      setError('');
-      
-      if (turnoSeleccionado) ***REMOVED***
-        await editarTurno(turnoSeleccionado.id, formData);
-      ***REMOVED*** else ***REMOVED***
-        await agregarTurno(formData);
-      ***REMOVED***
-      
-      onClose();
-    ***REMOVED*** catch (err) ***REMOVED***
-      setError(err.message || 'Error al guardar el turno');
-    ***REMOVED*** finally ***REMOVED***
-      setLoading(false);
+const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** agregarTurno, editarTurno, trabajos ***REMOVED*** = useApp();
+  const [trabajoSeleccionadoId, setTrabajoSeleccionadoId] = useState(trabajoId || '');
+  const [formularioTipo, setFormularioTipo] = useState('tradicional');
+  
+  // Determinar el tipo de formulario basado en el trabajo
+  useEffect(() => ***REMOVED***
+    if (turno?.tipo === 'delivery') ***REMOVED***
+      setFormularioTipo('delivery');
+    ***REMOVED*** else if (trabajoSeleccionadoId) ***REMOVED***
+      const trabajo = trabajos.find(t => t.id === trabajoSeleccionadoId);
+      setFormularioTipo(trabajo?.tipo === 'delivery' ? 'delivery' : 'tradicional');
+    ***REMOVED*** else ***REMOVED***
+      setFormularioTipo('tradicional');
     ***REMOVED***
+  ***REMOVED***, [trabajoSeleccionadoId, trabajos, turno]);
+
+  // Reset cuando se abre/cierra el modal
+  useEffect(() => ***REMOVED***
+    if (!isOpen) ***REMOVED***
+      setTrabajoSeleccionadoId('');
+      setFormularioTipo('tradicional');
+    ***REMOVED*** else if (turno) ***REMOVED***
+      setTrabajoSeleccionadoId(turno.trabajoId || '');
+    ***REMOVED*** else if (trabajoId) ***REMOVED***
+      setTrabajoSeleccionadoId(trabajoId);
+    ***REMOVED***
+  ***REMOVED***, [isOpen, turno, trabajoId]);
+
+  const manejarGuardado = async (datosTurno) => ***REMOVED***
+    if (turno) ***REMOVED***
+      await editarTurno(turno.id, datosTurno);
+    ***REMOVED*** else ***REMOVED***
+      await agregarTurno(datosTurno);
+    ***REMOVED***
+    onClose();
   ***REMOVED***;
 
+  const manejarCambioTrabajo = (nuevoTrabajoId) => ***REMOVED***
+    setTrabajoSeleccionadoId(nuevoTrabajoId);
+  ***REMOVED***;
+
+  if (!isOpen) return null;
+
   return (
-    <Modal
-      isOpen=***REMOVED***isOpen***REMOVED***
-      onClose=***REMOVED***onClose***REMOVED***
-      title=***REMOVED***turnoSeleccionado ? 'Editar Turno' : 'Nuevo Turno'***REMOVED***
-      size="md"
-    >
-      ***REMOVED***error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-600">***REMOVED***error***REMOVED***</p>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg w-full max-w-lg max-h-[90vh] overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+          <h2 className="text-xl font-semibold">
+            ***REMOVED***turno ? 'Editar Turno' : 'Nuevo Turno'***REMOVED***
+            ***REMOVED***formularioTipo === 'delivery' && ' de Delivery'***REMOVED***
+          </h2>
+          <button
+            onClick=***REMOVED***onClose***REMOVED***
+            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <X size=***REMOVED***20***REMOVED*** />
+          </button>
         </div>
-      )***REMOVED***
-      
-      <TurnoForm
-        turno=***REMOVED***turnoSeleccionado***REMOVED***
-        fechaInicial=***REMOVED***fechaInicial***REMOVED***
-        onSubmit=***REMOVED***handleSubmit***REMOVED***
-        onCancel=***REMOVED***onClose***REMOVED***
-        loading=***REMOVED***loading***REMOVED***
-      />
-    </Modal>
+
+        <div className="p-4">
+          ***REMOVED***formularioTipo === 'delivery' ? (
+            <TurnoDeliveryForm
+              turno=***REMOVED***turno***REMOVED***
+              trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
+              onSubmit=***REMOVED***manejarGuardado***REMOVED***
+              onCancel=***REMOVED***onClose***REMOVED***
+              onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
+            />
+          ) : (
+            <TurnoForm
+              turno=***REMOVED***turno***REMOVED***
+              trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
+              onSubmit=***REMOVED***manejarGuardado***REMOVED***
+              onCancel=***REMOVED***onClose***REMOVED***
+              onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
+            />
+          )***REMOVED***
+        </div>
+      </div>
+    </div>
   );
 ***REMOVED***;
 

@@ -8,6 +8,7 @@ import GoalsSection from '../components/settings/GoalsSection';
 import PreferencesSection from '../components/settings/PreferencesSection';
 import SessionSection from '../components/settings/SessionSection';
 import NotificationBanner from '../components/ui/NotificationBanner';
+import DeliverySection from '../components/settings/DeliverySection';
 
 const Ajustes = () => ***REMOVED***
   const [message, setMessage] = useState('');
@@ -52,6 +53,8 @@ const Ajustes = () => ***REMOVED***
       />
       
       <CustomizationSection />
+
+      <DeliverySection />
 
       <GoalsSection />
       

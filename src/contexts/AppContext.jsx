@@ -39,6 +39,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [metaHorasSemanales, setMetaHorasSemanales] = useState(null);
+  const [deliveryEnabled, setDeliveryEnabled] = useState(false);
+
 
 
   // Estados para preferencias de personalización
@@ -70,24 +72,61 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***;
   ***REMOVED***, [currentUser]);
 
- const ensureUserDocument = useCallback(async () => ***REMOVED***
-  if (!currentUser) ***REMOVED***
-    return;
-  ***REMOVED***
+  const ensureUserDocument = useCallback(async () => ***REMOVED***
+    if (!currentUser) ***REMOVED***
+      return;
+    ***REMOVED***
 
-  try ***REMOVED***
-    const userDocRef = doc(db, 'usuarios', currentUser.uid);
-    const userDocSnapshot = await getDoc(userDocRef);
+    try ***REMOVED***
+      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      const userDocSnapshot = await getDoc(userDocRef);
 
-    if (userDocSnapshot.exists()) ***REMOVED***
-      const userData = userDocSnapshot.data();
+      if (userDocSnapshot.exists()) ***REMOVED***
+        const userData = userDocSnapshot.data();
 
-      if (userData.ajustes) ***REMOVED***
-        setColorPrincipal(userData.ajustes.colorPrincipal || '#EC4899');
-        setEmojiUsuario(userData.ajustes.emojiUsuario || '😊');
-        setDescuentoDefault(userData.ajustes.descuentoDefault || 15);
-        setMetaHorasSemanales(userData.ajustes.metaHorasSemanales || null);
-        setRangosTurnos(userData.ajustes.rangosTurnos || ***REMOVED***
+        if (userData.ajustes) ***REMOVED***
+          setColorPrincipal(userData.ajustes.colorPrincipal || '#EC4899');
+          setEmojiUsuario(userData.ajustes.emojiUsuario || '😊');
+          setDescuentoDefault(userData.ajustes.descuentoDefault || 15);
+          setMetaHorasSemanales(userData.ajustes.metaHorasSemanales || null);
+          setDeliveryEnabled(userData.ajustes.deliveryEnabled || false);
+          setRangosTurnos(userData.ajustes.rangosTurnos || ***REMOVED***
+            diurnoInicio: 6,
+            diurnoFin: 14,
+            tardeInicio: 14,
+            tardeFin: 20,
+            nocheInicio: 20
+          ***REMOVED***);
+        ***REMOVED***
+      ***REMOVED*** else ***REMOVED***
+        const defaultUserData = ***REMOVED***
+          email: currentUser.email,
+          displayName: currentUser.displayName || 'Usuario',
+          fechaCreacion: new Date(),
+          ajustes: ***REMOVED***
+            colorPrincipal: '#EC4899',
+            emojiUsuario: '😊',
+            descuentoDefault: 15,
+            metaHorasSemanales: null,
+            deliveryEnabled: false,
+            rangosTurnos: ***REMOVED***
+              diurnoInicio: 6,
+              diurnoFin: 14,
+              tardeInicio: 14,
+              tardeFin: 20,
+              nocheInicio: 20
+            ***REMOVED***
+          ***REMOVED***
+        ***REMOVED***;
+
+        await setDoc(userDocRef, defaultUserData);
+
+        setColorPrincipal('#EC4899');
+        setEmojiUsuario('😊');
+        setDescuentoDefault(15);
+        setMetaHorasSemanales(null);
+        setDeliveryEnabled(false);
+        setRangosTurnos(***REMOVED***
           diurnoInicio: 6,
           diurnoFin: 14,
           tardeInicio: 14,
@@ -95,44 +134,10 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           nocheInicio: 20
         ***REMOVED***);
       ***REMOVED***
-    ***REMOVED*** else ***REMOVED***
-      const defaultUserData = ***REMOVED***
-        email: currentUser.email,
-        displayName: currentUser.displayName || 'Usuario',
-        fechaCreacion: new Date(),
-        ajustes: ***REMOVED***
-          colorPrincipal: '#EC4899',
-          emojiUsuario: '😊',
-          descuentoDefault: 15,
-          metaHorasSemanales: null, 
-          rangosTurnos: ***REMOVED***
-            diurnoInicio: 6,
-            diurnoFin: 14,
-            tardeInicio: 14,
-            tardeFin: 20,
-            nocheInicio: 20
-          ***REMOVED***
-        ***REMOVED***
-      ***REMOVED***;
-
-      await setDoc(userDocRef, defaultUserData);
-
-      setColorPrincipal('#EC4899');
-      setEmojiUsuario('😊');
-      setDescuentoDefault(15);
-      setMetaHorasSemanales(null);
-      setRangosTurnos(***REMOVED***
-        diurnoInicio: 6,
-        diurnoFin: 14,
-        tardeInicio: 14,
-        tardeFin: 20,
-        nocheInicio: 20
-      ***REMOVED***);
+    ***REMOVED*** catch (error) ***REMOVED***
+      setError('Error al configurar usuario: ' + error.message);
     ***REMOVED***
-  ***REMOVED*** catch (error) ***REMOVED***
-    setError('Error al configurar usuario: ' + error.message);
-  ***REMOVED***
-***REMOVED***, [currentUser]);
+  ***REMOVED***, [currentUser]);
 
   // Función mejorada para calcular horas trabajadas
   const calcularHoras = useCallback((inicio, fin) => ***REMOVED***
@@ -154,6 +159,18 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   const calcularPago = useCallback((turno) => ***REMOVED***
     const trabajo = trabajos.find(t => t.id === turno.trabajoId);
     if (!trabajo) return ***REMOVED*** total: 0, totalConDescuento: 0, horas: 0 ***REMOVED***;
+
+    // Si es un turno de delivery, retornar directamente la ganancia
+    if (turno.tipo === 'delivery') ***REMOVED***
+      const horas = calcularHoras(turno.horaInicio, turno.horaFin);
+      return ***REMOVED***
+        total: turno.gananciaTotal || 0,
+        totalConDescuento: turno.gananciaTotal || 0,
+        horas,
+        propinas: turno.propinas || 0,
+        esDelivery: true
+      ***REMOVED***;
+    ***REMOVED***
 
     const ***REMOVED*** horaInicio, horaFin ***REMOVED*** = turno;
 
@@ -226,7 +243,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       totalConDescuento,
       horas
     ***REMOVED***;
-  ***REMOVED***, [trabajos, rangosTurnos, descuentoDefault]);
+  ***REMOVED***, [trabajos, rangosTurnos, descuentoDefault, calcularHoras]);
 
   // Cargar datos y preferencias del usuario
   useEffect(() => ***REMOVED***
@@ -446,18 +463,30 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         colorPrincipal: nuevoColor,
         emojiUsuario: nuevoEmoji,
         descuentoDefault: nuevoDescuento,
-        rangosTurnos: nuevosRangos
+        rangosTurnos: nuevosRangos,
+        deliveryEnabled: nuevoDelivery,
+        metaHorasSemanales: nuevaMeta,
       ***REMOVED*** = preferencias;
 
       if (nuevoColor !== undefined) setColorPrincipal(nuevoColor);
       if (nuevoEmoji !== undefined) setEmojiUsuario(nuevoEmoji);
       if (nuevoDescuento !== undefined) setDescuentoDefault(nuevoDescuento);
       if (nuevosRangos !== undefined) setRangosTurnos(nuevosRangos);
+      if (nuevoDelivery !== undefined) setDeliveryEnabled(nuevoDelivery);
+      if (nuevaMeta !== undefined) setMetaHorasSemanales(nuevaMeta);
 
       if (nuevoColor !== undefined) localStorage.setItem('colorPrincipal', nuevoColor);
       if (nuevoEmoji !== undefined) localStorage.setItem('emojiUsuario', nuevoEmoji);
       if (nuevoDescuento !== undefined) localStorage.setItem('descuentoDefault', nuevoDescuento.toString());
       if (nuevosRangos !== undefined) localStorage.setItem('rangosTurnos', JSON.stringify(nuevosRangos));
+      if (nuevoDelivery !== undefined) localStorage.setItem('deliveryEnabled', nuevoDelivery.toString());
+      if (nuevaMeta !== undefined) ***REMOVED***
+        if (nuevaMeta) ***REMOVED***
+          localStorage.setItem('metaHorasSemanales', nuevaMeta.toString());
+        ***REMOVED*** else ***REMOVED***
+          localStorage.removeItem('metaHorasSemanales');
+        ***REMOVED***
+      ***REMOVED***
 
       const userDocRef = doc(db, 'usuarios', currentUser.uid);
       const datosActualizados = ***REMOVED******REMOVED***;
@@ -466,6 +495,10 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       if (nuevoEmoji !== undefined) datosActualizados['ajustes.emojiUsuario'] = nuevoEmoji;
       if (nuevoDescuento !== undefined) datosActualizados['ajustes.descuentoDefault'] = nuevoDescuento;
       if (nuevosRangos !== undefined) datosActualizados['ajustes.rangosTurnos'] = nuevosRangos;
+      if (nuevoDelivery !== undefined) datosActualizados['ajustes.deliveryEnabled'] = nuevoDelivery;
+      if (nuevaMeta !== undefined) datosActualizados['ajustes.metaHorasSemanales'] = nuevaMeta;
+
+      // Agregar fecha de actualización
       datosActualizados['fechaActualizacion'] = new Date();
 
       if (Object.keys(datosActualizados).length > 1) ***REMOVED***
@@ -479,33 +512,51 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***
   ***REMOVED***, [currentUser]);
 
+  // Agrega un useEffect para cargar desde localStorage (después del useEffect principal)
+  useEffect(() => ***REMOVED***
+    // Cargar preferencias de localStorage al iniciar
+    const savedColor = localStorage.getItem('colorPrincipal');
+    const savedEmoji = localStorage.getItem('emojiUsuario');
+    const savedDescuento = localStorage.getItem('descuentoDefault');
+    const savedRangos = localStorage.getItem('rangosTurnos');
+    const savedMeta = localStorage.getItem('metaHorasSemanales');
+    const savedDelivery = localStorage.getItem('deliveryEnabled');
+
+    if (savedColor) setColorPrincipal(savedColor);
+    if (savedEmoji) setEmojiUsuario(savedEmoji);
+    if (savedDescuento) setDescuentoDefault(parseInt(savedDescuento));
+    if (savedRangos) setRangosTurnos(JSON.parse(savedRangos));
+    if (savedMeta) setMetaHorasSemanales(savedMeta === 'null' ? null : parseInt(savedMeta));
+    if (savedDelivery !== null) setDeliveryEnabled(savedDelivery === 'true');
+  ***REMOVED***, []);
+
   const actualizarMetaHorasSemanales = useCallback(async (meta) => ***REMOVED***
-  try ***REMOVED***
-    if (!currentUser) throw new Error('Usuario no autenticado');
+    try ***REMOVED***
+      if (!currentUser) throw new Error('Usuario no autenticado');
 
-    const metaValida = meta && !isNaN(meta) && meta > 0 ? Number(meta) : null;
-    setMetaHorasSemanales(metaValida);
+      const metaValida = meta && !isNaN(meta) && meta > 0 ? Number(meta) : null;
+      setMetaHorasSemanales(metaValida);
 
-    // Guardar en localStorage
-    if (metaValida) ***REMOVED***
-      localStorage.setItem('metaHorasSemanales', metaValida.toString());
-    ***REMOVED*** else ***REMOVED***
-      localStorage.removeItem('metaHorasSemanales');
+      // Guardar en localStorage
+      if (metaValida) ***REMOVED***
+        localStorage.setItem('metaHorasSemanales', metaValida.toString());
+      ***REMOVED*** else ***REMOVED***
+        localStorage.removeItem('metaHorasSemanales');
+      ***REMOVED***
+
+      // Guardar en Firestore
+      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      await updateDoc(userDocRef, ***REMOVED***
+        'ajustes.metaHorasSemanales': metaValida,
+        'fechaActualizacion': new Date()
+      ***REMOVED***);
+
+      return true;
+    ***REMOVED*** catch (err) ***REMOVED***
+      setError('Error al actualizar meta de horas: ' + err.message);
+      throw err;
     ***REMOVED***
-
-    // Guardar en Firestore
-    const userDocRef = doc(db, 'usuarios', currentUser.uid);
-    await updateDoc(userDocRef, ***REMOVED***
-      'ajustes.metaHorasSemanales': metaValida,
-      'fechaActualizacion': new Date()
-    ***REMOVED***);
-
-    return true;
-  ***REMOVED*** catch (err) ***REMOVED***
-    setError('Error al actualizar meta de horas: ' + err.message);
-    throw err;
-  ***REMOVED***
-***REMOVED***, [currentUser]);
+  ***REMOVED***, [currentUser]);
 
   // Agrupar turnos por fecha
   const turnosPorFecha = useMemo(() => ***REMOVED***
@@ -519,14 +570,25 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   ***REMOVED***, [turnos]);
 
   // Calcular total del día
-  const calcularTotalDia = useCallback((turnosDia) => ***REMOVED***
-    let total = 0;
-    turnosDia.forEach(turno => ***REMOVED***
-      const ***REMOVED*** totalConDescuento ***REMOVED*** = calcularPago(turno);
-      total += totalConDescuento;
-    ***REMOVED***);
-    return total;
-  ***REMOVED***, [calcularPago]);
+  const calcularTotalDia = (turnosDia) => ***REMOVED***
+    return turnosDia.reduce((total, turno) => ***REMOVED***
+      if (turno.tipo === 'delivery') ***REMOVED***
+        // Para turnos de delivery, usar la ganancia neta (ganancia total - combustible)
+        const gananciaNeta = turno.gananciaTotal - (turno.gastoCombustible || 0);
+        return ***REMOVED***
+          horas: total.horas, // No sumar horas para delivery
+          total: total.total + gananciaNeta
+        ***REMOVED***;
+      ***REMOVED*** else ***REMOVED***
+        // Para turnos tradicionales, calcular según tarifa
+        const resultado = calcularPago(turno);
+        return ***REMOVED***
+          horas: total.horas + resultado.horas,
+          total: total.total + resultado.total
+        ***REMOVED***;
+      ***REMOVED***
+    ***REMOVED***, ***REMOVED*** horas: 0, total: 0 ***REMOVED***);
+  ***REMOVED***;
 
   // Formatear fecha
   const formatearFecha = useCallback((fechaStr) => ***REMOVED***
@@ -554,6 +616,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     descuentoDefault,
     rangosTurnos,
     metaHorasSemanales,
+    deliveryEnabled,
 
     // Funciones CRUD para trabajos
     agregarTrabajo,
