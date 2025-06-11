@@ -1,10 +1,10 @@
 // src/pages/Trabajos.jsx
-
 import React from 'react';
 import { PlusCircle, Briefcase } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useDeleteManager } from '../hooks/useDeleteManager';
 import TarjetaTrabajo from '../components/cards/TarjetaTrabajo';
+import TarjetaDelivery from '../components/cards/TarjetaTrabajoDelivery';
 import ModalTrabajo from '../components/modals/ModalTrabajo';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
@@ -34,6 +34,21 @@ const Trabajos = () => {
     setTrabajoSeleccionado(null);
   };
 
+  // Función para generar detalles del trabajo para eliminación
+  const generarDetallesTrabajo = (trabajo) => {
+    if (!trabajo) return [];
+    const detalles = [trabajo.nombre];
+    
+    if (trabajo.tipo === 'delivery') {
+      detalles.push('Trabajo de Delivery');
+      if (trabajo.plataforma) detalles.push(`Plataforma: ${trabajo.plataforma}`);
+    } else {
+      detalles.push('Trabajo por Horas');
+    }
+    
+    return detalles;
+  };
+
   return (
     <LoadingWrapper loading={cargando}>
       <ListSection
@@ -54,15 +69,31 @@ const Trabajos = () => {
             onClick: abrirModalNuevo
           }
         }}
-        renderItem={(trabajo) => (
-          <TarjetaTrabajo
-            key={trabajo.id}
-            trabajo={trabajo}
-            onEdit={abrirModalEditar}
-            onDelete={deleteManager.startDeletion}
-            showActions={true}
-          />
-        )}
+        renderItem={(trabajo) => {
+          // Renderizar tarjeta según tipo de trabajo
+          if (trabajo.tipo === 'delivery') {
+            return (
+              <TarjetaDelivery
+                key={trabajo.id}
+                trabajo={trabajo}
+                onEdit={abrirModalEditar}
+                onDelete={deleteManager.startDeletion}
+                showActions={true}
+              />
+            );
+          }
+          
+          // Trabajo tradicional
+          return (
+            <TarjetaTrabajo
+              key={trabajo.id}
+              trabajo={trabajo}
+              onEdit={abrirModalEditar}
+              onDelete={deleteManager.startDeletion}
+              showActions={true}
+            />
+          );
+        }}
         className="space-y-4"
       />
 
@@ -78,7 +109,7 @@ const Trabajos = () => {
         onConfirm={deleteManager.confirmDeletion}
         eliminando={deleteManager.deleting}
         tipo="trabajo"
-        detalles={deleteManager.itemToDelete ? [deleteManager.itemToDelete.nombre] : []}
+        detalles={generarDetallesTrabajo(deleteManager.itemToDelete)}
       />
     </LoadingWrapper>
   );

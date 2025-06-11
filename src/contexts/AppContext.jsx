@@ -39,6 +39,8 @@ export const AppProvider = ({ children }) => {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [metaHorasSemanales, setMetaHorasSemanales] = useState(null);
+  const [deliveryEnabled, setDeliveryEnabled] = useState(false);
+
 
 
   // Estados para preferencias de personalización
@@ -70,24 +72,61 @@ export const AppProvider = ({ children }) => {
     };
   }, [currentUser]);
 
- const ensureUserDocument = useCallback(async () => {
-  if (!currentUser) {
-    return;
-  }
+  const ensureUserDocument = useCallback(async () => {
+    if (!currentUser) {
+      return;
+    }
 
-  try {
-    const userDocRef = doc(db, 'usuarios', currentUser.uid);
-    const userDocSnapshot = await getDoc(userDocRef);
+    try {
+      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      const userDocSnapshot = await getDoc(userDocRef);
 
-    if (userDocSnapshot.exists()) {
-      const userData = userDocSnapshot.data();
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
 
-      if (userData.ajustes) {
-        setColorPrincipal(userData.ajustes.colorPrincipal || '#EC4899');
-        setEmojiUsuario(userData.ajustes.emojiUsuario || '😊');
-        setDescuentoDefault(userData.ajustes.descuentoDefault || 15);
-        setMetaHorasSemanales(userData.ajustes.metaHorasSemanales || null);
-        setRangosTurnos(userData.ajustes.rangosTurnos || {
+        if (userData.ajustes) {
+          setColorPrincipal(userData.ajustes.colorPrincipal || '#EC4899');
+          setEmojiUsuario(userData.ajustes.emojiUsuario || '😊');
+          setDescuentoDefault(userData.ajustes.descuentoDefault || 15);
+          setMetaHorasSemanales(userData.ajustes.metaHorasSemanales || null);
+          setDeliveryEnabled(userData.ajustes.deliveryEnabled || false);
+          setRangosTurnos(userData.ajustes.rangosTurnos || {
+            diurnoInicio: 6,
+            diurnoFin: 14,
+            tardeInicio: 14,
+            tardeFin: 20,
+            nocheInicio: 20
+          });
+        }
+      } else {
+        const defaultUserData = {
+          email: currentUser.email,
+          displayName: currentUser.displayName || 'Usuario',
+          fechaCreacion: new Date(),
+          ajustes: {
+            colorPrincipal: '#EC4899',
+            emojiUsuario: '😊',
+            descuentoDefault: 15,
+            metaHorasSemanales: null,
+            deliveryEnabled: false,
+            rangosTurnos: {
+              diurnoInicio: 6,
+              diurnoFin: 14,
+              tardeInicio: 14,
+              tardeFin: 20,
+              nocheInicio: 20
+            }
+          }
+        };
+
+        await setDoc(userDocRef, defaultUserData);
+
+        setColorPrincipal('#EC4899');
+        setEmojiUsuario('😊');
+        setDescuentoDefault(15);
+        setMetaHorasSemanales(null);
+        setDeliveryEnabled(false);
+        setRangosTurnos({
           diurnoInicio: 6,
           diurnoFin: 14,
           tardeInicio: 14,
@@ -95,44 +134,10 @@ export const AppProvider = ({ children }) => {
           nocheInicio: 20
         });
       }
-    } else {
-      const defaultUserData = {
-        email: currentUser.email,
-        displayName: currentUser.displayName || 'Usuario',
-        fechaCreacion: new Date(),
-        ajustes: {
-          colorPrincipal: '#EC4899',
-          emojiUsuario: '😊',
-          descuentoDefault: 15,
-          metaHorasSemanales: null, 
-          rangosTurnos: {
-            diurnoInicio: 6,
-            diurnoFin: 14,
-            tardeInicio: 14,
-            tardeFin: 20,
-            nocheInicio: 20
-          }
-        }
-      };
-
-      await setDoc(userDocRef, defaultUserData);
-
-      setColorPrincipal('#EC4899');
-      setEmojiUsuario('😊');
-      setDescuentoDefault(15);
-      setMetaHorasSemanales(null);
-      setRangosTurnos({
-        diurnoInicio: 6,
-        diurnoFin: 14,
-        tardeInicio: 14,
-        tardeFin: 20,
-        nocheInicio: 20
-      });
+    } catch (error) {
+      setError('Error al configurar usuario: ' + error.message);
     }
-  } catch (error) {
-    setError('Error al configurar usuario: ' + error.message);
-  }
-}, [currentUser]);
+  }, [currentUser]);
 
   // Función mejorada para calcular horas trabajadas
   const calcularHoras = useCallback((inicio, fin) => {
@@ -154,6 +159,18 @@ export const AppProvider = ({ children }) => {
   const calcularPago = useCallback((turno) => {
     const trabajo = trabajos.find(t => t.id === turno.trabajoId);
     if (!trabajo) return { total: 0, totalConDescuento: 0, horas: 0 };
+
+    // Si es un turno de delivery, retornar directamente la ganancia
+    if (turno.tipo === 'delivery') {
+      const horas = calcularHoras(turno.horaInicio, turno.horaFin);
+      return {
+        total: turno.gananciaTotal || 0,
+        totalConDescuento: turno.gananciaTotal || 0,
+        horas,
+        propinas: turno.propinas || 0,
+        esDelivery: true
+      };
+    }
 
     const { horaInicio, horaFin } = turno;
 
@@ -226,7 +243,7 @@ export const AppProvider = ({ children }) => {
       totalConDescuento,
       horas
     };
-  }, [trabajos, rangosTurnos, descuentoDefault]);
+  }, [trabajos, rangosTurnos, descuentoDefault, calcularHoras]);
 
   // Cargar datos y preferencias del usuario
   useEffect(() => {
@@ -446,18 +463,30 @@ export const AppProvider = ({ children }) => {
         colorPrincipal: nuevoColor,
         emojiUsuario: nuevoEmoji,
         descuentoDefault: nuevoDescuento,
-        rangosTurnos: nuevosRangos
+        rangosTurnos: nuevosRangos,
+        deliveryEnabled: nuevoDelivery,
+        metaHorasSemanales: nuevaMeta,
       } = preferencias;
 
       if (nuevoColor !== undefined) setColorPrincipal(nuevoColor);
       if (nuevoEmoji !== undefined) setEmojiUsuario(nuevoEmoji);
       if (nuevoDescuento !== undefined) setDescuentoDefault(nuevoDescuento);
       if (nuevosRangos !== undefined) setRangosTurnos(nuevosRangos);
+      if (nuevoDelivery !== undefined) setDeliveryEnabled(nuevoDelivery);
+      if (nuevaMeta !== undefined) setMetaHorasSemanales(nuevaMeta);
 
       if (nuevoColor !== undefined) localStorage.setItem('colorPrincipal', nuevoColor);
       if (nuevoEmoji !== undefined) localStorage.setItem('emojiUsuario', nuevoEmoji);
       if (nuevoDescuento !== undefined) localStorage.setItem('descuentoDefault', nuevoDescuento.toString());
       if (nuevosRangos !== undefined) localStorage.setItem('rangosTurnos', JSON.stringify(nuevosRangos));
+      if (nuevoDelivery !== undefined) localStorage.setItem('deliveryEnabled', nuevoDelivery.toString());
+      if (nuevaMeta !== undefined) {
+        if (nuevaMeta) {
+          localStorage.setItem('metaHorasSemanales', nuevaMeta.toString());
+        } else {
+          localStorage.removeItem('metaHorasSemanales');
+        }
+      }
 
       const userDocRef = doc(db, 'usuarios', currentUser.uid);
       const datosActualizados = {};
@@ -466,6 +495,10 @@ export const AppProvider = ({ children }) => {
       if (nuevoEmoji !== undefined) datosActualizados['ajustes.emojiUsuario'] = nuevoEmoji;
       if (nuevoDescuento !== undefined) datosActualizados['ajustes.descuentoDefault'] = nuevoDescuento;
       if (nuevosRangos !== undefined) datosActualizados['ajustes.rangosTurnos'] = nuevosRangos;
+      if (nuevoDelivery !== undefined) datosActualizados['ajustes.deliveryEnabled'] = nuevoDelivery;
+      if (nuevaMeta !== undefined) datosActualizados['ajustes.metaHorasSemanales'] = nuevaMeta;
+
+      // Agregar fecha de actualización
       datosActualizados['fechaActualizacion'] = new Date();
 
       if (Object.keys(datosActualizados).length > 1) {
@@ -479,33 +512,51 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentUser]);
 
+  // Agrega un useEffect para cargar desde localStorage (después del useEffect principal)
+  useEffect(() => {
+    // Cargar preferencias de localStorage al iniciar
+    const savedColor = localStorage.getItem('colorPrincipal');
+    const savedEmoji = localStorage.getItem('emojiUsuario');
+    const savedDescuento = localStorage.getItem('descuentoDefault');
+    const savedRangos = localStorage.getItem('rangosTurnos');
+    const savedMeta = localStorage.getItem('metaHorasSemanales');
+    const savedDelivery = localStorage.getItem('deliveryEnabled');
+
+    if (savedColor) setColorPrincipal(savedColor);
+    if (savedEmoji) setEmojiUsuario(savedEmoji);
+    if (savedDescuento) setDescuentoDefault(parseInt(savedDescuento));
+    if (savedRangos) setRangosTurnos(JSON.parse(savedRangos));
+    if (savedMeta) setMetaHorasSemanales(savedMeta === 'null' ? null : parseInt(savedMeta));
+    if (savedDelivery !== null) setDeliveryEnabled(savedDelivery === 'true');
+  }, []);
+
   const actualizarMetaHorasSemanales = useCallback(async (meta) => {
-  try {
-    if (!currentUser) throw new Error('Usuario no autenticado');
+    try {
+      if (!currentUser) throw new Error('Usuario no autenticado');
 
-    const metaValida = meta && !isNaN(meta) && meta > 0 ? Number(meta) : null;
-    setMetaHorasSemanales(metaValida);
+      const metaValida = meta && !isNaN(meta) && meta > 0 ? Number(meta) : null;
+      setMetaHorasSemanales(metaValida);
 
-    // Guardar en localStorage
-    if (metaValida) {
-      localStorage.setItem('metaHorasSemanales', metaValida.toString());
-    } else {
-      localStorage.removeItem('metaHorasSemanales');
+      // Guardar en localStorage
+      if (metaValida) {
+        localStorage.setItem('metaHorasSemanales', metaValida.toString());
+      } else {
+        localStorage.removeItem('metaHorasSemanales');
+      }
+
+      // Guardar en Firestore
+      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      await updateDoc(userDocRef, {
+        'ajustes.metaHorasSemanales': metaValida,
+        'fechaActualizacion': new Date()
+      });
+
+      return true;
+    } catch (err) {
+      setError('Error al actualizar meta de horas: ' + err.message);
+      throw err;
     }
-
-    // Guardar en Firestore
-    const userDocRef = doc(db, 'usuarios', currentUser.uid);
-    await updateDoc(userDocRef, {
-      'ajustes.metaHorasSemanales': metaValida,
-      'fechaActualizacion': new Date()
-    });
-
-    return true;
-  } catch (err) {
-    setError('Error al actualizar meta de horas: ' + err.message);
-    throw err;
-  }
-}, [currentUser]);
+  }, [currentUser]);
 
   // Agrupar turnos por fecha
   const turnosPorFecha = useMemo(() => {
@@ -519,14 +570,25 @@ export const AppProvider = ({ children }) => {
   }, [turnos]);
 
   // Calcular total del día
-  const calcularTotalDia = useCallback((turnosDia) => {
-    let total = 0;
-    turnosDia.forEach(turno => {
-      const { totalConDescuento } = calcularPago(turno);
-      total += totalConDescuento;
-    });
-    return total;
-  }, [calcularPago]);
+  const calcularTotalDia = (turnosDia) => {
+    return turnosDia.reduce((total, turno) => {
+      if (turno.tipo === 'delivery') {
+        // Para turnos de delivery, usar la ganancia neta (ganancia total - combustible)
+        const gananciaNeta = turno.gananciaTotal - (turno.gastoCombustible || 0);
+        return {
+          horas: total.horas, // No sumar horas para delivery
+          total: total.total + gananciaNeta
+        };
+      } else {
+        // Para turnos tradicionales, calcular según tarifa
+        const resultado = calcularPago(turno);
+        return {
+          horas: total.horas + resultado.horas,
+          total: total.total + resultado.total
+        };
+      }
+    }, { horas: 0, total: 0 });
+  };
 
   // Formatear fecha
   const formatearFecha = useCallback((fechaStr) => {
@@ -554,6 +616,7 @@ export const AppProvider = ({ children }) => {
     descuentoDefault,
     rangosTurnos,
     metaHorasSemanales,
+    deliveryEnabled,
 
     // Funciones CRUD para trabajos
     agregarTrabajo,

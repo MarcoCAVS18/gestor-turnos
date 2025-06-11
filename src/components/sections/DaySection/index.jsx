@@ -1,52 +1,51 @@
-// src/components/sections/DaySection/index.jsx
+// src/components/sections/DaySection.jsx
 
 import React from 'react';
 import { Calendar } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
-import { useUtils } from '../../../hooks/useUtils';
 import TarjetaTurno from '../../cards/TarjetaTurno';
-import Card from '../../ui/Card';
+import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
 
 const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => {
-  const { formatDate, isToday, isYesterday } = useUtils();
   const { coloresTemáticos } = useApp();
-  
-  const formatearFechaEncabezado = (fechaStr) => {
-    if (isToday(fechaStr)) return 'Hoy';
-    if (isYesterday(fechaStr)) return 'Ayer';
-    return formatDate(fechaStr, 'full');
-  };
-  
-  const obtenerTrabajo = (trabajoId) => {
-    return trabajos.find(trabajo => trabajo.id === trabajoId);
-  };
+
+  // Formatear fecha
+  const fechaObj = new Date(fecha + 'T00:00:00');
+  const diaSemana = fechaObj.toLocaleDateString('es-ES', { weekday: 'long' });
+  const fechaFormateada = fechaObj.toLocaleDateString('es-ES', { 
+    day: 'numeric', 
+    month: 'long', 
+    year: 'numeric' 
+  });
 
   return (
-    <Card className="overflow-hidden" padding="none">
-      {/* Header del día */}
-      <div 
-        className="px-4 py-3 border-b flex justify-between items-center"
-        style={{ backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
-      >
-        <div className="flex items-center">
-          <Calendar size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
-          <h3 className="font-semibold text-gray-800 capitalize">
-            {formatearFechaEncabezado(fecha)}
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      {/* Encabezado del día - SIN HORAS NI VALORES */}
+      <div className="p-4 border-b border-gray-200" style={{ backgroundColor: coloresTemáticos?.transparent5 }}>
+        <div className="flex items-center gap-2">
+          <Calendar size={20} style={{ color: coloresTemáticos?.base }} />
+          <h3 className="font-semibold text-gray-900 capitalize">
+            {diaSemana}, {fechaFormateada}
           </h3>
-          <span className="ml-2 text-sm text-gray-500">
-            ({new Date(fecha + 'T00:00:00').toLocaleDateString('es-ES', { 
-              day: '2-digit', 
-              month: '2-digit' 
-            })})
-          </span>
         </div>
       </div>
-      
-      {/* Lista de turnos usando variant="compact" */}
+
+      {/* Lista de turnos */}
       <div className="p-4 space-y-3">
         {turnos.map(turno => {
-          const trabajo = obtenerTrabajo(turno.trabajoId);
-          if (!trabajo) return null;
+          const trabajo = trabajos.find(t => t.id === turno.trabajoId);
+          
+          if (turno.tipo === 'delivery') {
+            return (
+              <TarjetaTurnoDelivery
+                key={turno.id}
+                turno={turno}
+                trabajo={trabajo}
+                onEdit={onEditTurno}
+                onDelete={onDeleteTurno}
+              />
+            );
+          }
           
           return (
             <TarjetaTurno
@@ -55,12 +54,11 @@ const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => 
               trabajo={trabajo}
               onEdit={onEditTurno}
               onDelete={onDeleteTurno}
-              variant="compact" 
             />
           );
         })}
       </div>
-    </Card>
+    </div>
   );
 };
 

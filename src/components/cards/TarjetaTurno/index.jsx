@@ -42,7 +42,7 @@ const TarjetaTurno = ({
   // Si es variant 'compact', no usar Card wrapper
   if (variant === 'compact') {
     return (
-      <div className=" rounded-lg hover:bg-gray-100 transition-colors">
+      <div className=" rounded-lg transition-colors">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-semibold text-gray-800 mb-2">{trabajo.nombre}</h3>

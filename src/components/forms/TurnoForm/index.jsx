@@ -1,176 +1,237 @@
-// src/components/forms/TurnoForm/index.jsx
-
+// src/components/forms/TurnoForm.jsx
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, FileText } from 'lucide-react';
+import { Calendar, Clock, Briefcase } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
-import { useFormValidation } from '../../../hooks/useFormValidation';
-import { VALIDATION_RULES } from '../../../constants/validation';
-import ThemeInput from '../../ui/ThemeInput';
-import Button from '../../ui/Button';
 
-const TurnoForm = ({ turno, fechaInicial, onSubmit, onCancel, loading }) => {
-  const { trabajos } = useApp();
+const TurnoForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChange }) => {
+  const { trabajos, coloresTemáticos } = useApp();
   
-  const [formData, setFormData] = useState({
-    trabajoId: '',
-    fecha: '',
-    horaInicio: '',
-    horaFin: '',
-    notas: ''
-  });
+  // Estados del formulario
+  const [fecha, setFecha] = useState('');
+  const [horaInicio, setHoraInicio] = useState('');
+  const [horaFin, setHoraFin] = useState('');
+  const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(trabajoId || '');
+  const [notas, setNotas] = useState('');
+  const [guardando, setGuardando] = useState(false);
+  const [error, setError] = useState('');
 
-  const validationRules = {
-    trabajoId: [VALIDATION_RULES.required],
-    fecha: [VALIDATION_RULES.required, VALIDATION_RULES.dateFormat],
-    horaInicio: [VALIDATION_RULES.required, VALIDATION_RULES.timeFormat],
-    horaFin: [VALIDATION_RULES.required, VALIDATION_RULES.timeFormat]
-  };
-
-  const { errors, validateForm, handleFieldChange } = useFormValidation(validationRules);
-
+  // Cargar datos si es edición
   useEffect(() => {
     if (turno) {
-      setFormData({
-        trabajoId: turno.trabajoId || '',
-        fecha: turno.fecha || '',
-        horaInicio: turno.horaInicio || '',
-        horaFin: turno.horaFin || '',
-        notas: turno.notas || ''
-      });
-    } else {
-      setFormData({
-        trabajoId: '',
-        fecha: fechaInicial || '',
-        horaInicio: '',
-        horaFin: '',
-        notas: ''
-      });
+      setFecha(turno.fecha || '');
+      setHoraInicio(turno.horaInicio || '');
+      setHoraFin(turno.horaFin || '');
+      setTrabajoSeleccionado(turno.trabajoId || '');
+      setNotas(turno.notas || '');
     }
-  }, [turno, fechaInicial]);
+  }, [turno]);
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    handleFieldChange(field, value);
+  // Actualizar trabajo seleccionado si cambia el prop
+  useEffect(() => {
+    if (trabajoId && trabajoId !== trabajoSeleccionado) {
+      setTrabajoSeleccionado(trabajoId);
+    }
+  }, [trabajoId, trabajoSeleccionado]);
+
+  const handleTrabajoChange = (e) => {
+    const nuevoTrabajoId = e.target.value;
+    setTrabajoSeleccionado(nuevoTrabajoId);
+    
+    // Notificar al modal si el trabajo seleccionado es de delivery
+    if (onTrabajoChange) {
+      onTrabajoChange(nuevoTrabajoId);
+    }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!validateForm(formData)) return;
-
-    // Validación adicional de horarios
-    const [horaIni, minIni] = formData.horaInicio.split(':').map(Number);
-    const [horaFin, minFin] = formData.horaFin.split(':').map(Number);
-    
-    const inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFin * 60 + minFin;
-    
-    if (finMinutos <= inicioMinutos) {
-      if (finMinutos === inicioMinutos) {
-        // Error: horas iguales
-        return;
-      }
-      // OK: turno nocturno que cruza medianoche
+  const validarFormulario = () => {
+    if (!fecha) {
+      setError('La fecha es requerida');
+      return false;
+    }
+    if (!horaInicio || !horaFin) {
+      setError('Las horas de inicio y fin son requeridas');
+      return false;
+    }
+    if (!trabajoSeleccionado) {
+      setError('Debes seleccionar un trabajo');
+      return false;
     }
     
-    onSubmit(formData);
+    // Validar que la hora de fin sea mayor que la de inicio
+    const [horaI, minI] = horaInicio.split(':').map(Number);
+    const [horaF, minF] = horaFin.split(':').map(Number);
+    const minutosInicio = horaI * 60 + minI;
+    const minutosFin = horaF * 60 + minF;
+    
+    if (minutosFin <= minutosInicio) {
+      setError('La hora de fin debe ser posterior a la hora de inicio');
+      return false;
+    }
+    
+    return true;
+  };
+
+  const manejarSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validarFormulario()) return;
+
+    setGuardando(true);
+    setError('');
+
+    try {
+      const datosTurno = {
+        fecha,
+        horaInicio,
+        horaFin,
+        trabajoId: trabajoSeleccionado,
+        notas: notas.trim()
+      };
+
+      await onSubmit(datosTurno);
+    } catch (err) {
+      setError(err.message || 'Error al guardar el turno');
+      setGuardando(false);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Selección de trabajo */}
+    <form onSubmit={manejarSubmit} className="space-y-4">
+      {/* Selector de trabajo */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Trabajo *
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          <Briefcase size={16} className="inline mr-1" />
+          Trabajo
         </label>
         <select
-          value={formData.trabajoId}
-          onChange={(e) => handleInputChange('trabajoId', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-2 transition-colors"
+          value={trabajoSeleccionado}
+          onChange={handleTrabajoChange}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+          style={{ 
+            '--tw-ring-color': coloresTemáticos?.transparent20,
+          }}
           required
+          disabled={turno} // No permitir cambiar trabajo en edición
         >
-          <option value="">Selecciona un trabajo</option>
+          <option value="">Seleccionar trabajo</option>
           {trabajos.map(trabajo => (
             <option key={trabajo.id} value={trabajo.id}>
-              {trabajo.nombre}
+              {trabajo.nombre} {trabajo.tipo === 'delivery' && '(Delivery)'}
             </option>
           ))}
         </select>
-        {errors.trabajoId && (
-          <p className="mt-1 text-sm text-red-600">{errors.trabajoId}</p>
+        {trabajos.length === 0 && (
+          <p className="text-sm text-gray-500 mt-1">
+            No hay trabajos registrados. Crea uno primero.
+          </p>
         )}
       </div>
 
       {/* Fecha */}
-      <ThemeInput
-        label="Fecha"
-        icon={Calendar}
-        type="date"
-        value={formData.fecha}
-        onChange={(e) => handleInputChange('fecha', e.target.value)}
-        error={errors.fecha}
-        required
-      />
-
-      {/* Horarios */}
-      <div className="grid grid-cols-2 gap-4">
-        <ThemeInput
-          label="Hora Inicio"
-          icon={Clock}
-          type="time"
-          value={formData.horaInicio}
-          onChange={(e) => handleInputChange('horaInicio', e.target.value)}
-          error={errors.horaInicio}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          <Calendar size={16} className="inline mr-1" />
+          Fecha
+        </label>
+        <input
+          type="date"
+          value={fecha}
+          onChange={(e) => setFecha(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+          style={{ 
+            '--tw-ring-color': coloresTemáticos?.transparent20,
+          }}
           required
         />
+      </div>
 
-        <ThemeInput
-          label="Hora Fin"
-          icon={Clock}
-          type="time"
-          value={formData.horaFin}
-          onChange={(e) => handleInputChange('horaFin', e.target.value)}
-          error={errors.horaFin}
-          required
-        />
+      {/* Horario */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            <Clock size={16} className="inline mr-1" />
+            Hora inicio
+          </label>
+          <input
+            type="time"
+            value={horaInicio}
+            onChange={(e) => setHoraInicio(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+            style={{ 
+              '--tw-ring-color': coloresTemáticos?.transparent20,
+            }}
+            required
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            <Clock size={16} className="inline mr-1" />
+            Hora fin
+          </label>
+          <input
+            type="time"
+            value={horaFin}
+            onChange={(e) => setHoraFin(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+            style={{ 
+              '--tw-ring-color': coloresTemáticos?.transparent20,
+            }}
+            required
+          />
+        </div>
       </div>
 
       {/* Notas */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          <FileText size={16} className="inline mr-2" />
+        <label className="block text-sm font-medium text-gray-700 mb-1">
           Notas (opcional)
         </label>
         <textarea
-          value={formData.notas}
-          onChange={(e) => handleInputChange('notas', e.target.value)}
-          placeholder="Agrega notas adicionales sobre este turno..."
-          rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-2 transition-colors resize-none"
+          value={notas}
+          onChange={(e) => setNotas(e.target.value)}
+          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+          style={{ 
+            '--tw-ring-color': coloresTemáticos?.transparent20,
+          }}
+          rows="2"
+          placeholder="Agregar notas sobre el turno..."
         />
       </div>
 
+      {/* Mensajes de error */}
+      {error && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
+
       {/* Botones */}
-      <div className="flex gap-3 pt-4">
-        <Button
+      <div className="flex gap-3 pt-2">
+        <button
           type="button"
           onClick={onCancel}
-          variant="outline"
-          className="flex-1"
-          disabled={loading}
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          disabled={guardando}
         >
           Cancelar
-        </Button>
-        <Button
+        </button>
+        <button
           type="submit"
-          className="flex-1"
-          loading={loading}
+          disabled={guardando}
+          className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+          style={{ 
+            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base,
+          }}
+          onMouseEnter={(e) => {
+            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.dark;
+          }}
+          onMouseLeave={(e) => {
+            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.base;
+          }}
         >
-          {turno ? 'Guardar Cambios' : 'Crear Turno'}
-        </Button>
+          {guardando ? 'Guardando...' : (turno ? 'Guardar Cambios' : 'Crear Turno')}
+        </button>
       </div>
     </form>
   );

@@ -22,14 +22,28 @@ const Turnos = () => {
 
   const generarDetallesTurno = (turno) => {
     if (!turno) return [];
+    
     const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-    return [
+    const fecha = new Date(turno.fecha + 'T00:00:00');
+    const detalles = [
       trabajo?.nombre || 'Trabajo no encontrado',
-      new Date(turno.fecha + 'T00:00:00').toLocaleDateString('es-ES', {
-        weekday: 'long', day: 'numeric', month: 'long'
+      fecha.toLocaleDateString('es-ES', {
+        weekday: 'long', 
+        day: 'numeric', 
+        month: 'long'
       }),
       `${turno.horaInicio} - ${turno.horaFin}`
     ];
+    
+    // Agregar detalles específicos según el tipo
+    if (turno.tipo === 'delivery') {
+      detalles.push('Turno de Delivery');
+      if (turno.numeroPedidos) {
+        detalles.push(`${turno.numeroPedidos} pedidos completados`);
+      }
+    }
+    
+    return detalles;
   };
 
   return (
