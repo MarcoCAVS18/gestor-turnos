@@ -1,10 +1,10 @@
 // src/pages/Trabajos.jsx
-
 import React from 'react';
 import ***REMOVED*** PlusCircle, Briefcase ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** useDeleteManager ***REMOVED*** from '../hooks/useDeleteManager';
 import TarjetaTrabajo from '../components/cards/TarjetaTrabajo';
+import TarjetaDelivery from '../components/cards/TarjetaTrabajoDelivery';
 import ModalTrabajo from '../components/modals/ModalTrabajo';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
@@ -34,6 +34,21 @@ const Trabajos = () => ***REMOVED***
     setTrabajoSeleccionado(null);
   ***REMOVED***;
 
+  // Función para generar detalles del trabajo para eliminación
+  const generarDetallesTrabajo = (trabajo) => ***REMOVED***
+    if (!trabajo) return [];
+    const detalles = [trabajo.nombre];
+    
+    if (trabajo.tipo === 'delivery') ***REMOVED***
+      detalles.push('Trabajo de Delivery');
+      if (trabajo.plataforma) detalles.push(`Plataforma: $***REMOVED***trabajo.plataforma***REMOVED***`);
+    ***REMOVED*** else ***REMOVED***
+      detalles.push('Trabajo por Horas');
+    ***REMOVED***
+    
+    return detalles;
+  ***REMOVED***;
+
   return (
     <LoadingWrapper loading=***REMOVED***cargando***REMOVED***>
       <ListSection
@@ -54,15 +69,31 @@ const Trabajos = () => ***REMOVED***
             onClick: abrirModalNuevo
           ***REMOVED***
         ***REMOVED******REMOVED***
-        renderItem=***REMOVED***(trabajo) => (
-          <TarjetaTrabajo
-            key=***REMOVED***trabajo.id***REMOVED***
-            trabajo=***REMOVED***trabajo***REMOVED***
-            onEdit=***REMOVED***abrirModalEditar***REMOVED***
-            onDelete=***REMOVED***deleteManager.startDeletion***REMOVED***
-            showActions=***REMOVED***true***REMOVED***
-          />
-        )***REMOVED***
+        renderItem=***REMOVED***(trabajo) => ***REMOVED***
+          // Renderizar tarjeta según tipo de trabajo
+          if (trabajo.tipo === 'delivery') ***REMOVED***
+            return (
+              <TarjetaDelivery
+                key=***REMOVED***trabajo.id***REMOVED***
+                trabajo=***REMOVED***trabajo***REMOVED***
+                onEdit=***REMOVED***abrirModalEditar***REMOVED***
+                onDelete=***REMOVED***deleteManager.startDeletion***REMOVED***
+                showActions=***REMOVED***true***REMOVED***
+              />
+            );
+          ***REMOVED***
+          
+          // Trabajo tradicional
+          return (
+            <TarjetaTrabajo
+              key=***REMOVED***trabajo.id***REMOVED***
+              trabajo=***REMOVED***trabajo***REMOVED***
+              onEdit=***REMOVED***abrirModalEditar***REMOVED***
+              onDelete=***REMOVED***deleteManager.startDeletion***REMOVED***
+              showActions=***REMOVED***true***REMOVED***
+            />
+          );
+        ***REMOVED******REMOVED***
         className="space-y-4"
       />
 
@@ -78,7 +109,7 @@ const Trabajos = () => ***REMOVED***
         onConfirm=***REMOVED***deleteManager.confirmDeletion***REMOVED***
         eliminando=***REMOVED***deleteManager.deleting***REMOVED***
         tipo="trabajo"
-        detalles=***REMOVED***deleteManager.itemToDelete ? [deleteManager.itemToDelete.nombre] : []***REMOVED***
+        detalles=***REMOVED***generarDetallesTrabajo(deleteManager.itemToDelete)***REMOVED***
       />
     </LoadingWrapper>
   );

@@ -42,7 +42,7 @@ const TarjetaTurno = (***REMOVED***
   // Si es variant 'compact', no usar Card wrapper
   if (variant === 'compact') ***REMOVED***
     return (
-      <div className=" rounded-lg hover:bg-gray-100 transition-colors">
+      <div className=" rounded-lg transition-colors">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-semibold text-gray-800 mb-2">***REMOVED***trabajo.nombre***REMOVED***</h3>
