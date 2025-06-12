@@ -1,16 +1,21 @@
 /* src/components/layout/Navegacion/index.css */
 
 .navbar-container ***REMOVED***
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1), 
-              0 -2px 4px rgba(0, 0, 0, 0.05);
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1),
+    0 -2px 4px rgba(0, 0, 0, 0.05);
   border-top: 1px solid rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   position: fixed !important;
-  bottom: 0 !important; 
+  bottom: 0 !important;
   left: 0 !important;
   right: 0 !important;
-  z-index: 50; 
-  transform: translateZ(0); 
+  z-index: 50;
+  transform: translateZ(0);
   backface-visibility: hidden;
+  z-index: 10 !important;
+
 ***REMOVED***
 
 .navbar-container-subtle ***REMOVED***
@@ -27,4 +32,38 @@
 
 .content-with-navbar ***REMOVED***
   padding-bottom: 100px;
+***REMOVED***
+
+/* Asegurar que el botón flotante del calendario también respete el z-index */
+.navbar-container .calendar-button ***REMOVED***
+  position: relative;
+  z-index: 11;
+***REMOVED***
+
+/* Para elementos que puedan aparecer sobre la navegación pero bajo los modales */
+.dropdown-menu,
+.tooltip,
+.popover ***REMOVED***
+  z-index: 100;
+***REMOVED***
+
+/* Para asegurar que los modales siempre estén encima */
+.modal-overlay ***REMOVED***
+  z-index: 9999;
+***REMOVED***
+
+/* Si tienes algún loading overlay global */
+.loading-global ***REMOVED***
+  z-index: 99999;
+***REMOVED***
+
+/* Animaciones del calendario que no interfieran con z-index */
+.navbar-container button ***REMOVED***
+  transform-origin: center;
+  transition: all 0.2s ease-in-out;
+***REMOVED***
+
+/* Hover effects que respeten el z-index */
+.navbar-container button:hover ***REMOVED***
+  transform: translateY(-1px);
 ***REMOVED***

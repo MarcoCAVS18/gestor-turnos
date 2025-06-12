@@ -226,13 +226,13 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
 
       ***REMOVED***/* Información financiera */***REMOVED***
       <div className="space-y-3">
-        <h3 className="text-sm font-medium text-gray-700">Ganancias y gastos</h3>
+        <h3 className="text-sm font-medium text-gray-700">Ganancias en App.</h3>
         
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm text-gray-600 mb-1">
               <DollarSign size=***REMOVED***14***REMOVED*** className="inline mr-1" />
-              Ganancia total (incluye propinas)
+              Ganancia total
             </label>
             <input
               type="number"

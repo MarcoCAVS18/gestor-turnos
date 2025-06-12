@@ -23,12 +23,18 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
         promedioPorPedido: 0,
         promedioPorKilometro: 0,
         promedioPorHora: 0,
+        promedioPropinasPorPedido: 0,
         mejorDia: null,
-        peorDia: null,
         mejorTurno: null,
         turnosPorPlataforma: ***REMOVED******REMOVED***,
+        estadisticasPorVehiculo: ***REMOVED******REMOVED***,
         estadisticasPorDia: ***REMOVED******REMOVED***,
-        tendencia: 0
+        tendencia: 0,
+        diasTrabajados: 0,
+        turnosRealizados: 0,
+        totalHoras: 0,
+        eficienciaCombustible: 0, // km por peso gastado
+        costoPorKilometro: 0
       ***REMOVED***;
     ***REMOVED***
     
@@ -69,17 +75,20 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
     
     const estadisticasPorDia = ***REMOVED******REMOVED***;
     const turnosPorPlataforma = ***REMOVED******REMOVED***;
+    const estadisticasPorVehiculo = ***REMOVED******REMOVED***;
     
     turnosPeriodo.forEach(turno => ***REMOVED***
       const trabajo = trabajosDelivery.find(t => t.id === turno.trabajoId);
       if (!trabajo) return;
       
       // Sumar totales
-      totalGanado += turno.gananciaTotal || 0;
-      totalPropinas += turno.propinas || 0;
-      totalPedidos += turno.cantidadPedidos || 0;
+      const gananciaBase = turno.gananciaBase || 0;
+      const propinas = turno.propinas || 0;
+      totalGanado += gananciaBase + propinas;
+      totalPropinas += propinas;
+      totalPedidos += turno.numeroPedidos || 0;
       totalKilometros += turno.kilometros || 0;
-      totalGastos += turno.gastosCombustible || 0;
+      totalGastos += turno.gastoCombustible || 0;
       
       // Calcular horas trabajadas
       const [horaIni, minIni] = turno.horaInicio.split(':').map(Number);
@@ -101,11 +110,11 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
         ***REMOVED***;
       ***REMOVED***
       
-      estadisticasPorDia[turno.fecha].ganancia += turno.gananciaTotal || 0;
-      estadisticasPorDia[turno.fecha].propinas += turno.propinas || 0;
-      estadisticasPorDia[turno.fecha].pedidos += turno.cantidadPedidos || 0;
+      estadisticasPorDia[turno.fecha].ganancia += gananciaBase + propinas;
+      estadisticasPorDia[turno.fecha].propinas += propinas;
+      estadisticasPorDia[turno.fecha].pedidos += turno.numeroPedidos || 0;
       estadisticasPorDia[turno.fecha].kilometros += turno.kilometros || 0;
-      estadisticasPorDia[turno.fecha].gastos += turno.gastosCombustible || 0;
+      estadisticasPorDia[turno.fecha].gastos += turno.gastoCombustible || 0;
       estadisticasPorDia[turno.fecha].horas += horas;
       estadisticasPorDia[turno.fecha].turnos.push(***REMOVED***
         ...turno,
@@ -118,28 +127,58 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
       if (!turnosPorPlataforma[plataforma]) ***REMOVED***
         turnosPorPlataforma[plataforma] = ***REMOVED***
           nombre: trabajo.nombre,
-          color: trabajo.color,
-          icono: trabajo.icono,
+          color: trabajo.colorAvatar || trabajo.color,
           totalGanado: 0,
           totalPedidos: 0,
           totalPropinas: 0,
           totalHoras: 0,
+          totalKilometros: 0,
+          totalGastos: 0,
           turnos: 0
         ***REMOVED***;
       ***REMOVED***
       
-      turnosPorPlataforma[plataforma].totalGanado += turno.gananciaTotal || 0;
-      turnosPorPlataforma[plataforma].totalPedidos += turno.cantidadPedidos || 0;
-      turnosPorPlataforma[plataforma].totalPropinas += turno.propinas || 0;
+      turnosPorPlataforma[plataforma].totalGanado += gananciaBase + propinas;
+      turnosPorPlataforma[plataforma].totalPedidos += turno.numeroPedidos || 0;
+      turnosPorPlataforma[plataforma].totalPropinas += propinas;
       turnosPorPlataforma[plataforma].totalHoras += horas;
+      turnosPorPlataforma[plataforma].totalKilometros += turno.kilometros || 0;
+      turnosPorPlataforma[plataforma].totalGastos += turno.gastoCombustible || 0;
       turnosPorPlataforma[plataforma].turnos += 1;
+      
+      // Estadísticas por vehículo
+      const vehiculo = trabajo.vehiculo || 'No especificado';
+      if (!estadisticasPorVehiculo[vehiculo]) ***REMOVED***
+        estadisticasPorVehiculo[vehiculo] = ***REMOVED***
+          nombre: vehiculo,
+          totalGanado: 0,
+          totalPedidos: 0,
+          totalKilometros: 0,
+          totalGastos: 0,
+          totalHoras: 0,
+          turnos: 0,
+          eficiencia: 0 // km por peso gastado
+        ***REMOVED***;
+      ***REMOVED***
+      
+      estadisticasPorVehiculo[vehiculo].totalGanado += gananciaBase + propinas;
+      estadisticasPorVehiculo[vehiculo].totalPedidos += turno.numeroPedidos || 0;
+      estadisticasPorVehiculo[vehiculo].totalKilometros += turno.kilometros || 0;
+      estadisticasPorVehiculo[vehiculo].totalGastos += turno.gastoCombustible || 0;
+      estadisticasPorVehiculo[vehiculo].totalHoras += horas;
+      estadisticasPorVehiculo[vehiculo].turnos += 1;
+    ***REMOVED***);
+    
+    // Calcular eficiencia para cada vehículo
+    Object.values(estadisticasPorVehiculo).forEach(vehiculo => ***REMOVED***
+      if (vehiculo.totalGastos > 0) ***REMOVED***
+        vehiculo.eficiencia = vehiculo.totalKilometros / vehiculo.totalGastos;
+      ***REMOVED***
     ***REMOVED***);
     
     // Encontrar mejor y peor día
     let mejorDia = null;
-    let peorDia = null;
     let mejorGanancia = 0;
-    let peorGanancia = Infinity;
     
     Object.entries(estadisticasPorDia).forEach(([fecha, stats]) => ***REMOVED***
       const gananciaLiquida = stats.ganancia - stats.gastos;
@@ -151,18 +190,9 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
           ganancia: stats.ganancia,
           gananciaLiquida,
           pedidos: stats.pedidos,
-          horas: stats.horas
-        ***REMOVED***;
-      ***REMOVED***
-      
-      if (gananciaLiquida < peorGanancia && gananciaLiquida > 0) ***REMOVED***
-        peorGanancia = gananciaLiquida;
-        peorDia = ***REMOVED***
-          fecha,
-          ganancia: stats.ganancia,
-          gananciaLiquida,
-          pedidos: stats.pedidos,
-          horas: stats.horas
+          horas: stats.horas,
+          kilometros: stats.kilometros,
+          gastos: stats.gastos
         ***REMOVED***;
       ***REMOVED***
     ***REMOVED***);
@@ -172,7 +202,7 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
     let mejorGananciaTurno = 0;
     
     turnosPeriodo.forEach(turno => ***REMOVED***
-      const gananciaLiquida = (turno.gananciaTotal || 0) - (turno.gastosCombustible || 0);
+      const gananciaLiquida = (turno.gananciaBase || 0) + (turno.propinas || 0) - (turno.gastoCombustible || 0);
       if (gananciaLiquida > mejorGananciaTurno) ***REMOVED***
         mejorGananciaTurno = gananciaLiquida;
         mejorTurno = ***REMOVED***
@@ -183,18 +213,14 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
       ***REMOVED***
     ***REMOVED***);
     
-    // Calcular tendencia (comparar con periodo anterior)
-    const diasPeriodo = Object.keys(estadisticasPorDia).length;
-    const gananciaPromedioDiaria = diasPeriodo > 0 ? totalGanado / diasPeriodo : 0;
-    
-    // TODO: Implementar comparación con periodo anterior para tendencia
-    const tendencia = 0;
-    
     // Calcular promedios y totales finales
     const gananciaLiquida = totalGanado - totalGastos;
     const promedioPorPedido = totalPedidos > 0 ? totalGanado / totalPedidos : 0;
     const promedioPorKilometro = totalKilometros > 0 ? totalGanado / totalKilometros : 0;
     const promedioPorHora = totalHoras > 0 ? totalGanado / totalHoras : 0;
+    const promedioPropinasPorPedido = totalPedidos > 0 ? totalPropinas / totalPedidos : 0;
+    const eficienciaCombustible = totalGastos > 0 ? totalKilometros / totalGastos : 0;
+    const costoPorKilometro = totalKilometros > 0 ? totalGastos / totalKilometros : 0;
     
     return ***REMOVED***
       // Totales
@@ -210,61 +236,22 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
       promedioPorPedido,
       promedioPorKilometro,
       promedioPorHora,
-      promedioPropinasPorPedido: totalPedidos > 0 ? totalPropinas / totalPedidos : 0,
+      promedioPropinasPorPedido,
+      eficienciaCombustible,
+      costoPorKilometro,
       
       // Mejores/Peores
       mejorDia,
-      peorDia,
       mejorTurno,
       
       // Por categoría
       turnosPorPlataforma,
+      estadisticasPorVehiculo,
       estadisticasPorDia,
-      
-      // Tendencia
-      tendencia,
-      gananciaPromedioDiaria,
       
       // Metadata
       diasTrabajados: Object.keys(estadisticasPorDia).length,
       turnosRealizados: turnosPeriodo.length
     ***REMOVED***;
   ***REMOVED***, [turnos, trabajos, periodo]);
-***REMOVED***;
-
-// Hook para estadísticas en tiempo real
-export const useDeliveryRealtime = () => ***REMOVED***
-  const ***REMOVED*** turnos, trabajos ***REMOVED*** = useApp();
-  
-  return useMemo(() => ***REMOVED***
-    const hoy = new Date().toISOString().split('T')[0];
-    const turnosHoy = turnos.filter(t => t.tipo === 'delivery' && t.fecha === hoy);
-    const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
-    
-    let gananciaHoy = 0;
-    let pedidosHoy = 0;
-    let propinasHoy = 0;
-    let kilometrosHoy = 0;
-    
-    turnosHoy.forEach(turno => ***REMOVED***
-      gananciaHoy += turno.gananciaTotal || 0;
-      pedidosHoy += turno.cantidadPedidos || 0;
-      propinasHoy += turno.propinas || 0;
-      kilometrosHoy += turno.kilometros || 0;
-    ***REMOVED***);
-    
-    return ***REMOVED***
-      activo: turnosHoy.length > 0,
-      gananciaHoy,
-      pedidosHoy,
-      propinasHoy,
-      kilometrosHoy,
-      promedioPorPedidoHoy: pedidosHoy > 0 ? gananciaHoy / pedidosHoy : 0,
-      turnosHoy: turnosHoy.length,
-      plataformasActivas: [...new Set(turnosHoy.map(t => ***REMOVED***
-        const trabajo = trabajosDelivery.find(w => w.id === t.trabajoId);
-        return trabajo?.nombre || 'Desconocido';
-      ***REMOVED***))]
-    ***REMOVED***;
-  ***REMOVED***, [turnos, trabajos]);
 ***REMOVED***;
