@@ -1,160 +1,316 @@
-// src/components/forms/TrabajoDeliveryForm.jsx
+// src/components/forms/TrabajoDeliveryForm/index.jsx
 
 import React, { useState, useEffect } from 'react';
-import { AlertCircle } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { Truck, Clock } from 'lucide-react';
 
-const TrabajoDeliveryForm = ({ trabajo, onSubmit, onCancel }) => {
-  const { coloresTemáticos } = useApp();
+const TrabajoDeliveryForm = ({ isOpen, onClose, onSubmit, trabajoId = null, initialData = null }) => {
+  const { coloresTemáticos, vehiculos = [], plataformasDelivery = [] } = useApp();
   
-  // Plataformas australianas con sus colores
-  const plataformasAustralia = [
-    { nombre: 'Uber Eats', color: '#06C167', colorDark: '#049C52' },
-    { nombre: 'Menulog', color: '#FF8000', colorDark: '#E67300' },
-    { nombre: 'DoorDash', color: '#FF3008', colorDark: '#E62A07' },
-    { nombre: 'Deliveroo', color: '#00CCBC', colorDark: '#00B3A6' },
-    { nombre: 'Independiente', color: '#6B7280', colorDark: '#4B5563' }
-  ];
-  
-  // Estados del formulario
-  const [plataforma, setPlataforma] = useState('');
-  const [vehiculo, setVehiculo] = useState('');
-  const [guardando, setGuardando] = useState(false);
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState({
+    fecha: new Date().toISOString().split('T')[0],
+    horaInicio: '',
+    horaFin: '',
+    tipoTrabajo: 'delivery',
+    plataforma: '',
+    vehiculo: '',
+    pedidos: 1,
+    kilometros: 0,
+    ganancia: 0,
+    propinas: 0,
+    gastos: 0,
+    notas: ''
+  });
 
-  // Cargar datos si es edición
-  useEffect(() => {
-    if (trabajo) {
-      setPlataforma(trabajo.plataforma || trabajo.nombre || '');
-      setVehiculo(trabajo.vehiculo || '');
-    }
-  }, [trabajo]);
+  const [errors, setErrors] = useState({});
 
-  const validarFormulario = () => {
-    if (!plataforma) {
-      setError('Debes seleccionar una plataforma');
-      return false;
+  // Función para formatear horas
+  const formatearHoras = (horas) => {
+    if (horas === 0) return '0h';
+    if (horas < 1) {
+      const minutos = Math.round(horas * 60);
+      return `${minutos}min`;
     }
-    return true;
+    const horasEnteras = Math.floor(horas);
+    const minutos = Math.round((horas - horasEnteras) * 60);
+    
+    if (minutos === 0) {
+      return `${horasEnteras}h`;
+    }
+    return `${horasEnteras}h ${minutos}min`;
   };
 
-  const manejarSubmit = async (e) => {
+  // Calcular horas trabajadas
+  const calcularHorasTrabajadas = () => {
+    if (!formData.horaInicio || !formData.horaFin) return 0;
+    
+    const inicio = new Date(`2000-01-01T${formData.horaInicio}:00`);
+    const fin = new Date(`2000-01-01T${formData.horaFin}:00`);
+    
+    if (fin <= inicio) {
+      fin.setDate(fin.getDate() + 1);
+    }
+    
+    return (fin - inicio) / (1000 * 60 * 60);
+  };
+
+  const horasTrabajadas = calcularHorasTrabajadas();
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        ...initialData,
+        fecha: initialData.fecha || new Date().toISOString().split('T')[0]
+      });
+    }
+  }, [initialData]);
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.horaInicio) newErrors.horaInicio = 'Requerido';
+    if (!formData.horaFin) newErrors.horaFin = 'Requerido';
+    if (!formData.plataforma) newErrors.plataforma = 'Selecciona una plataforma';
+    if (!formData.vehiculo) newErrors.vehiculo = 'Selecciona un vehículo';
+    if (formData.ganancia <= 0) newErrors.ganancia = 'Debe ser mayor a 0';
+    
+    if (formData.horaInicio && formData.horaFin && formData.horaInicio >= formData.horaFin) {
+      newErrors.horaFin = 'Debe ser posterior al inicio';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!validarFormulario()) return;
+    if (!validateForm()) {
+      return;
+    }
 
-    setGuardando(true);
-    setError('');
+    const turnoData = {
+      ...formData,
+      id: trabajoId || Date.now().toString(),
+      horasTrabajadas: horasTrabajadas,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
 
-    try {
-      // Encontrar los colores de la plataforma
-      const plataformaSeleccionada = plataformasAustralia.find(p => p.nombre === plataforma);
-      
-      const datosDelivery = {
-        nombre: plataforma, // El nombre será la plataforma
-        tipo: 'delivery',
-        plataforma: plataforma,
-        vehiculo: vehiculo || 'No especificado',
-        // Agregar colores para el WorkAvatar
-        colorAvatar: plataformaSeleccionada?.color || '#6B7280',
-        colorAvatarDark: plataformaSeleccionada?.colorDark || '#4B5563'
-      };
+    onSubmit(turnoData);
+    onClose();
+  };
 
-      await onSubmit(datosDelivery);
-    } catch (err) {
-      setError(err.message || 'Error al guardar el trabajo');
-      setGuardando(false);
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    
+    if (errors[field]) {
+      setErrors(prev => ({
+        ...prev,
+        [field]: undefined
+      }));
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <form onSubmit={manejarSubmit} className="space-y-4">
-      {/* Indicador de tipo */}
-      <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-        <p className="text-sm font-medium text-green-700">
-          Trabajo de Delivery
-        </p>
-      </div>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm max-h-[90vh] overflow-y-auto">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold flex items-center">
+              <Truck size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
+              {trabajoId ? 'Editar' : 'Nuevo'} Turno
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700 text-xl"
+            >
+              ×
+            </button>
+          </div>
 
-      {/* Plataforma */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Plataforma de delivery
-        </label>
-        <select
-          value={plataforma}
-          onChange={(e) => setPlataforma(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
-          required
-        >
-          <option value="">Seleccionar plataforma</option>
-          {plataformasAustralia.map(p => (
-            <option key={p.nombre} value={p.nombre}>{p.nombre}</option>
-          ))}
-        </select>
-      </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Fecha */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Fecha</label>
+              <input
+                type="date"
+                value={formData.fecha}
+                onChange={(e) => handleInputChange('fecha', e.target.value)}
+                className="w-full p-2 border rounded-lg text-sm"
+              />
+            </div>
 
-      {/* Vehículo */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Vehículo
-        </label>
-        <select
-          value={vehiculo}
-          onChange={(e) => setVehiculo(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
-        >
-          <option value="">Seleccionar vehículo</option>
-          <option value="Bicicleta">Bicicleta</option>
-          <option value="Moto">Moto</option>
-          <option value="Auto">Auto</option>
-          <option value="A pie">A pie</option>
-        </select>
-      </div>
+            {/* Horarios */}
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-xs font-medium mb-1">Inicio</label>
+                <input
+                  type="time"
+                  value={formData.horaInicio}
+                  onChange={(e) => handleInputChange('horaInicio', e.target.value)}
+                  className={`w-full p-2 border rounded-lg text-sm ${errors.horaInicio ? 'border-red-500' : ''}`}
+                />
+                {errors.horaInicio && <p className="text-red-500 text-xs">{errors.horaInicio}</p>}
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1">Fin</label>
+                <input
+                  type="time"
+                  value={formData.horaFin}
+                  onChange={(e) => handleInputChange('horaFin', e.target.value)}
+                  className={`w-full p-2 border rounded-lg text-sm ${errors.horaFin ? 'border-red-500' : ''}`}
+                />
+                {errors.horaFin && <p className="text-red-500 text-xs">{errors.horaFin}</p>}
+              </div>
+            </div>
 
-      {/* Información adicional */}
-      <div className="p-3 bg-blue-50 rounded-lg">
-        <p className="text-sm text-blue-700 flex items-start">
-          <AlertCircle size={16} className="mr-2 mt-0.5 flex-shrink-0" />
-          Las ganancias, propinas y gastos se registrarán al crear cada turno de delivery
-        </p>
-      </div>
+            {/* Tiempo trabajado */}
+            {horasTrabajadas > 0 && (
+              <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg flex items-center">
+                <Clock size={14} className="mr-1" />
+                Tiempo: {formatearHoras(horasTrabajadas)}
+              </div>
+            )}
 
-      {/* Mensajes de error */}
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-600">{error}</p>
+            {/* ========== LAS DOS SELECCIONES PRINCIPALES ========== */}
+            
+            {/* PLATAFORMA */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                🚗 Plataforma *
+              </label>
+              <select
+                value={formData.plataforma}
+                onChange={(e) => handleInputChange('plataforma', e.target.value)}
+                className={`w-full p-3 border rounded-lg text-sm ${errors.plataforma ? 'border-red-500' : 'border-gray-300'}`}
+              >
+                <option value="">-- Seleccionar Plataforma --</option>
+                {plataformasDelivery.map(plataforma => (
+                  <option key={plataforma.id} value={plataforma.nombre}>
+                    {plataforma.nombre}
+                  </option>
+                ))}
+              </select>
+              {errors.plataforma && <p className="text-red-500 text-xs mt-1">{errors.plataforma}</p>}
+            </div>
+
+            {/* VEHÍCULO */}
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                🚴 Vehículo *
+              </label>
+              <select
+                value={formData.vehiculo}
+                onChange={(e) => handleInputChange('vehiculo', e.target.value)}
+                className={`w-full p-3 border rounded-lg text-sm ${errors.vehiculo ? 'border-red-500' : 'border-gray-300'}`}
+              >
+                <option value="">-- Seleccionar Vehículo --</option>
+                {vehiculos.map(vehiculo => (
+                  <option key={vehiculo.id} value={vehiculo.nombre}>
+                    {vehiculo.nombre}
+                  </option>
+                ))}
+              </select>
+              {errors.vehiculo && <p className="text-red-500 text-xs mt-1">{errors.vehiculo}</p>}
+            </div>
+
+            {/* ========== CAMPOS ADICIONALES (COMPACTOS) ========== */}
+            
+            {/* Pedidos y Kilómetros */}
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-xs font-medium mb-1">Pedidos</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={formData.pedidos}
+                  onChange={(e) => handleInputChange('pedidos', parseInt(e.target.value) || 1)}
+                  className="w-full p-2 border rounded-lg text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1">Km</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  value={formData.kilometros}
+                  onChange={(e) => handleInputChange('kilometros', parseFloat(e.target.value) || 0)}
+                  className="w-full p-2 border rounded-lg text-sm"
+                />
+              </div>
+            </div>
+
+            {/* Ganancia */}
+            <div>
+              <label className="block text-sm font-medium mb-1">💰 Ganancia *</label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={formData.ganancia}
+                onChange={(e) => handleInputChange('ganancia', parseFloat(e.target.value) || 0)}
+                className={`w-full p-2 border rounded-lg text-sm ${errors.ganancia ? 'border-red-500' : ''}`}
+                placeholder="0.00"
+              />
+              {errors.ganancia && <p className="text-red-500 text-xs mt-1">{errors.ganancia}</p>}
+            </div>
+
+            {/* Propinas y Gastos */}
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="block text-xs font-medium mb-1">Propinas</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formData.propinas}
+                  onChange={(e) => handleInputChange('propinas', parseFloat(e.target.value) || 0)}
+                  className="w-full p-2 border rounded-lg text-sm"
+                  placeholder="0.00"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium mb-1">Combustible</label>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={formData.gastos}
+                  onChange={(e) => handleInputChange('gastos', parseFloat(e.target.value) || 0)}
+                  className="w-full p-2 border rounded-lg text-sm"
+                  placeholder="0.00"
+                />
+              </div>
+            </div>
+
+            {/* Botones */}
+            <div className="flex space-x-2 pt-4">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="flex-1 py-2 px-4 text-white rounded-lg hover:opacity-90 text-sm"
+                style={{ backgroundColor: coloresTemáticos?.base || '#3B82F6' }}
+              >
+                {trabajoId ? 'Actualizar' : 'Guardar'}
+              </button>
+            </div>
+          </form>
         </div>
-      )}
-
-      {/* Botones */}
-      <div className="flex gap-3 pt-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          disabled={guardando}
-        >
-          Cancelar
-        </button>
-        <button
-          type="submit"
-          disabled={guardando}
-          className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
-          style={{ 
-            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base,
-          }}
-          onMouseEnter={(e) => {
-            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.dark;
-          }}
-          onMouseLeave={(e) => {
-            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.base;
-          }}
-        >
-          {guardando ? 'Guardando...' : (trabajo ? 'Guardar Cambios' : 'Crear Trabajo')}
-        </button>
       </div>
-    </form>
+    </div>
   );
 };
 

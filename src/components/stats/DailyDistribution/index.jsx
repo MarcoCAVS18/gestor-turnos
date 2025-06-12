@@ -14,6 +14,22 @@ const DailyDistribution = ({ gananciaPorDia }) => {
     return () => clearTimeout(timer);
   }, [gananciaPorDia]);
 
+  // Función para formatear horas (ahora la usamos aquí)
+  const formatearHoras = (horas) => {
+    if (horas === 0) return '0h';
+    if (horas < 1) {
+      const minutos = Math.round(horas * 60);
+      return `${minutos}min`;
+    }
+    const horasEnteras = Math.floor(horas);
+    const minutos = Math.round((horas - horasEnteras) * 60);
+    
+    if (minutos === 0) {
+      return `${horasEnteras}h`;
+    }
+    return `${horasEnteras}h ${minutos}min`;
+  };
+
   if (!gananciaPorDia || typeof gananciaPorDia !== 'object') {
     return (
       <div className="bg-white rounded-xl shadow-md p-4">
@@ -64,7 +80,7 @@ const DailyDistribution = ({ gananciaPorDia }) => {
             <div>
               <p className="font-bold text-lg">{diaMasProductivo.dia}</p>
               <p className="text-sm text-gray-600">
-                {diaMasProductivo.turnos} turnos · {diaMasProductivo.horas.toFixed(1)}h
+                {diaMasProductivo.turnos} turnos · {formatearHoras(diaMasProductivo.horas)}
               </p>
             </div>
             <div className="text-right">
@@ -114,7 +130,7 @@ const DailyDistribution = ({ gananciaPorDia }) => {
                     <div className="flex items-center">
                       <Clock size={14} className="mr-1 text-gray-500" />
                       <span className="text-sm text-gray-600">
-                        {datosSeguro.horas.toFixed(1)}h
+                        {formatearHoras(datosSeguro.horas)}
                       </span>
                     </div>
                     <div className="text-sm text-gray-500">

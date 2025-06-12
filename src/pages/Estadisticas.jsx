@@ -1,8 +1,9 @@
-// src/pages/Estadisticas.jsx
+// src/pages/Estadisticas.jsx - Versión con debug de imports
 
 import React, { useState } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { useWeeklyStats } from '../hooks/useWeeklyStats';
+import { useDeliveryStats } from '../hooks/useDeliveryStats';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import WeekNavigator from '../components/stats/WeekNavigator';
 import StatsProgressBar from '../components/stats/StatsProgressBar';
@@ -11,19 +12,35 @@ import WeeklyComparison from '../components/stats/WeeklyComparison';
 import DailyDistribution from '../components/stats/DailyDistribution';
 import ShiftTypeStats from '../components/stats/ShiftTypeStats';
 
+// Componentes de delivery - verificando imports uno por uno
+import ResumenDelivery from '../components/stats/ResumenDelivery';
+import EficienciaVehiculos from '../components/stats/EficienciaVehiculos';
+import ComparacionPlataformas from '../components/stats/ComparacionPlataformas';
+import SeguimientoCombustible from '../components/stats/SeguimientoCombustible';
+
+// Debug: Verificar que todos los componentes se importaron correctamente
+console.log('Componentes importados:', {
+  ResumenDelivery,
+  EficienciaVehiculos,
+  ComparacionPlataformas,
+  SeguimientoCombustible
+});
+
 const Estadisticas = () => {
-  const { turnos, trabajos, cargando, metaHorasSemanales } = useApp();
+  const { turnos, trabajos, cargando, metaHorasSemanales, deliveryEnabled } = useApp();
   const [offsetSemana, setOffsetSemana] = useState(0);
   
-  // Obtener datos de la semana actual y anterior
   const datosActuales = useWeeklyStats(turnos, trabajos, offsetSemana);
   const datosAnteriores = useWeeklyStats(turnos, trabajos, offsetSemana - 1);
+  
+  // Obtener estadísticas de delivery si está habilitado
+  const deliveryStats = useDeliveryStats('mes');
+  const tieneDelivery = deliveryEnabled && deliveryStats.totalPedidos > 0;
 
   return (
     <LoadingWrapper loading={cargando}>
       <div className="px-4 py-6 space-y-6">
 
-        {/* Navegador de semana */}
         <WeekNavigator 
           offsetSemana={offsetSemana}
           onSemanaChange={setOffsetSemana}
@@ -31,7 +48,6 @@ const Estadisticas = () => {
           fechaFin={datosActuales.fechaFin}
         />
 
-        {/* Barra de progreso semanal */}
         {metaHorasSemanales && (
           <StatsProgressBar 
             horasSemanales={datosActuales.horasTrabajadas}
@@ -40,27 +56,38 @@ const Estadisticas = () => {
           />
         )}
 
-        {/* Grid de estadísticas principales */}
         <WeeklyStatsGrid 
           datos={datosActuales}
         />
 
-        {/* Comparación con semana anterior */}
         <WeeklyComparison 
           datosActuales={datosActuales}
           datosAnteriores={datosAnteriores}
         />
 
-        {/* Distribución diaria */}
         <DailyDistribution 
           gananciaPorDia={datosActuales.gananciaPorDia}
         />
 
-        {/* Estadísticas por tipo de turno */}
         {datosActuales.tiposDeTurno && Object.keys(datosActuales.tiposDeTurno).length > 0 && (
           <ShiftTypeStats 
             tiposDeTurno={datosActuales.tiposDeTurno}
           />
+        )}
+
+        {/* Sección de estadísticas de delivery - solo visible si está habilitado */}
+        {tieneDelivery && (
+          <>
+            {ResumenDelivery && <ResumenDelivery deliveryStats={deliveryStats} />}
+            
+            {/* Tarjetas horizontales una debajo de la otra */}
+            <div className="space-y-6">
+              {EficienciaVehiculos && <EficienciaVehiculos deliveryStats={deliveryStats} />}
+              {SeguimientoCombustible && <SeguimientoCombustible deliveryStats={deliveryStats} />}
+            </div>
+            
+            {ComparacionPlataformas && <ComparacionPlataformas deliveryStats={deliveryStats} />}
+          </>
         )}
       </div>
     </LoadingWrapper>

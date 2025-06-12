@@ -1,4 +1,4 @@
-// src/components/index.js - EXPORTACIONES ACTUALIZADAS (sin ShiftAvatar)
+// src/components/index.js
 
 // UI Components
 export { default as Button } from './ui/Button';
@@ -25,7 +25,7 @@ export { default as TrabajoCard } from './forms/TrabajoCard';
 export { default as WorkAvatar } from './work/WorkAvatar';
 export { default as WorkRates } from './work/WorkRates';
 
-// Shift Components (sin ShiftAvatar)
+// Shift Components
 export { default as ShiftDetails } from './shift/ShiftDetails';
 export { default as ShiftTypeBadge } from './shift/ShiftTypeBadge';
 
@@ -64,6 +64,12 @@ export { default as WeeklyStatsGrid } from './stats/WeeklyStatsGrid';
 export { default as WorkDistributionChart } from './stats/WorkDistributionChart';
 export { default as DailyBreakdownCard } from './stats/DailyBreakdownCard';
 
+// Delivery Stats Components
+export { default as ResumenDelivery } from './stats/ResumenDelivery';
+export { default as EficienciaVehiculos } from './stats/EficienciaVehiculos';
+export { default as ComparacionPlataformas } from './stats/ComparacionPlataformas';
+export { default as SeguimientoCombustible } from './stats/SeguimientoCombustible';
+
 // Dashboard Components
 export { default as WelcomeCard } from './dashboard/WelcomeCard';
 export { default as QuickStatsGrid } from './dashboard/QuickStatsGrid';
@@ -84,7 +90,7 @@ export { default as EmptyState } from './states/EmptyState';
 export { default as Loader } from './other/Loader';
 export { default as DebugPanel } from './other/DebugPanel';
 
-// Legacy Components (mantener por compatibilidad)
+// Legacy Components
 export { default as DynamicButton } from './DynamicButton';
 
 // Auth Components
