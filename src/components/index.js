@@ -1,4 +1,4 @@
-// src/components/index.js - EXPORTACIONES ACTUALIZADAS (sin ShiftAvatar)
+// src/components/index.js
 
 // UI Components
 export ***REMOVED*** default as Button ***REMOVED*** from './ui/Button';
@@ -25,7 +25,7 @@ export ***REMOVED*** default as TrabajoCard ***REMOVED*** from './forms/TrabajoC
 export ***REMOVED*** default as WorkAvatar ***REMOVED*** from './work/WorkAvatar';
 export ***REMOVED*** default as WorkRates ***REMOVED*** from './work/WorkRates';
 
-// Shift Components (sin ShiftAvatar)
+// Shift Components
 export ***REMOVED*** default as ShiftDetails ***REMOVED*** from './shift/ShiftDetails';
 export ***REMOVED*** default as ShiftTypeBadge ***REMOVED*** from './shift/ShiftTypeBadge';
 
@@ -64,6 +64,12 @@ export ***REMOVED*** default as WeeklyStatsGrid ***REMOVED*** from './stats/Week
 export ***REMOVED*** default as WorkDistributionChart ***REMOVED*** from './stats/WorkDistributionChart';
 export ***REMOVED*** default as DailyBreakdownCard ***REMOVED*** from './stats/DailyBreakdownCard';
 
+// Delivery Stats Components
+export ***REMOVED*** default as ResumenDelivery ***REMOVED*** from './stats/ResumenDelivery';
+export ***REMOVED*** default as EficienciaVehiculos ***REMOVED*** from './stats/EficienciaVehiculos';
+export ***REMOVED*** default as ComparacionPlataformas ***REMOVED*** from './stats/ComparacionPlataformas';
+export ***REMOVED*** default as SeguimientoCombustible ***REMOVED*** from './stats/SeguimientoCombustible';
+
 // Dashboard Components
 export ***REMOVED*** default as WelcomeCard ***REMOVED*** from './dashboard/WelcomeCard';
 export ***REMOVED*** default as QuickStatsGrid ***REMOVED*** from './dashboard/QuickStatsGrid';
@@ -84,7 +90,7 @@ export ***REMOVED*** default as EmptyState ***REMOVED*** from './states/EmptySta
 export ***REMOVED*** default as Loader ***REMOVED*** from './other/Loader';
 export ***REMOVED*** default as DebugPanel ***REMOVED*** from './other/DebugPanel';
 
-// Legacy Components (mantener por compatibilidad)
+// Legacy Components
 export ***REMOVED*** default as DynamicButton ***REMOVED*** from './DynamicButton';
 
 // Auth Components

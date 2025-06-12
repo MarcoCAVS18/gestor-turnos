@@ -14,6 +14,22 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
     return () => clearTimeout(timer);
   ***REMOVED***, [gananciaPorDia]);
 
+  // Función para formatear horas (ahora la usamos aquí)
+  const formatearHoras = (horas) => ***REMOVED***
+    if (horas === 0) return '0h';
+    if (horas < 1) ***REMOVED***
+      const minutos = Math.round(horas * 60);
+      return `$***REMOVED***minutos***REMOVED***min`;
+    ***REMOVED***
+    const horasEnteras = Math.floor(horas);
+    const minutos = Math.round((horas - horasEnteras) * 60);
+    
+    if (minutos === 0) ***REMOVED***
+      return `$***REMOVED***horasEnteras***REMOVED***h`;
+    ***REMOVED***
+    return `$***REMOVED***horasEnteras***REMOVED***h $***REMOVED***minutos***REMOVED***min`;
+  ***REMOVED***;
+
   if (!gananciaPorDia || typeof gananciaPorDia !== 'object') ***REMOVED***
     return (
       <div className="bg-white rounded-xl shadow-md p-4">
@@ -64,7 +80,7 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
             <div>
               <p className="font-bold text-lg">***REMOVED***diaMasProductivo.dia***REMOVED***</p>
               <p className="text-sm text-gray-600">
-                ***REMOVED***diaMasProductivo.turnos***REMOVED*** turnos · ***REMOVED***diaMasProductivo.horas.toFixed(1)***REMOVED***h
+                ***REMOVED***diaMasProductivo.turnos***REMOVED*** turnos · ***REMOVED***formatearHoras(diaMasProductivo.horas)***REMOVED***
               </p>
             </div>
             <div className="text-right">
@@ -114,7 +130,7 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
                     <div className="flex items-center">
                       <Clock size=***REMOVED***14***REMOVED*** className="mr-1 text-gray-500" />
                       <span className="text-sm text-gray-600">
-                        ***REMOVED***datosSeguro.horas.toFixed(1)***REMOVED***h
+                        ***REMOVED***formatearHoras(datosSeguro.horas)***REMOVED***
                       </span>
                     </div>
                     <div className="text-sm text-gray-500">
