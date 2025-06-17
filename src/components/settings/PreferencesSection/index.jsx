@@ -5,6 +5,7 @@ import ***REMOVED*** Clock ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
+import InfoTooltip from '../../ui/InfoTooltip';
 
 const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
@@ -35,9 +36,16 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => *
   return (
     <SettingsSection icon=***REMOVED***Clock***REMOVED*** title="Configuración de trabajo">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Porcentaje de descuento
-        </label>
+        <div className="flex items-center gap-2 mb-1">
+          <label className="block text-sm font-medium text-gray-700">
+            Porcentaje de descuento
+          </label>
+          <InfoTooltip 
+            content="El 15% es el cálculo promedio para empleados con contrato casual. Este descuento se aplicará por defecto a todos tus turnos."
+            position="top"
+            size="sm"
+          />
+        </div>
         <div className="flex rounded-md shadow-sm">
           <input
             type="number"
@@ -54,7 +62,7 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => *
           </span>
         </div>
         <p className="mt-1 text-sm text-gray-500">
-          Este descuento se aplicará por defecto a todos tus turnos y trabajos. Podrás modificarlo más adelante.
+          Podrás modificarlo más adelante para cada trabajo específico.
         </p>
         
         <Button

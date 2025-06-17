@@ -1,8 +1,10 @@
-// src/components/modals/ModalTrabajoDelivery.jsx
+// src/components/modals/ModalTrabajoDelivery/index.jsx
 
 import React from 'react';
-import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** X, Truck ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import PlatformSelector from '../../delivery/PlatformSelector';
+import ***REMOVED*** DELIVERY_VEHICLES ***REMOVED*** from '../../../constants/delivery';
 
 const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** agregarTrabajo, editarTrabajo, coloresTemáticos ***REMOVED*** = useApp();
@@ -26,7 +28,8 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
       <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg font-semibold flex items-center">
+            <Truck size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
             ***REMOVED***trabajo ? 'Editar' : 'Nuevo'***REMOVED*** Trabajo Delivery
           </h2>
           <button
@@ -50,7 +53,6 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
   );
 ***REMOVED***;
 
-// Componente del formulario integrado directamente
 const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, coloresTemáticos ***REMOVED***) => ***REMOVED***
   const [formData, setFormData] = React.useState(***REMOVED***
     nombre: '',
@@ -62,24 +64,6 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
 
   const [errors, setErrors] = React.useState(***REMOVED******REMOVED***);
   const [guardando, setGuardando] = React.useState(false);
-
-  // Opciones predefinidas
-  const plataformasDisponibles = [
-    'Uber Eats',
-    'PedidosYa', 
-    'Rappi',
-    'Glovo',
-    'DoorDash',
-    'Menulog',
-    'Deliveroo'
-  ];
-
-  const vehiculosDisponibles = [
-    'Bicicleta',
-    'Moto',
-    'Auto',
-    'A pie'
-  ];
 
   React.useEffect(() => ***REMOVED***
     if (trabajo) ***REMOVED***
@@ -154,7 +138,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
       ***REMOVED***/* Nombre del trabajo */***REMOVED***
       <div>
         <label className="block text-sm font-medium mb-1">
-          Nombre del trabajo *
+          Nombre del trabajo
         </label>
         <input
           type="text"
@@ -166,32 +150,19 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
         ***REMOVED***errors.nombre && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.nombre***REMOVED***</p>***REMOVED***
       </div>
 
-      ***REMOVED***/* ========== LAS DOS SELECCIONES PRINCIPALES ========== */***REMOVED***
-      
-      ***REMOVED***/* PLATAFORMA */***REMOVED***
+      ***REMOVED***/* Selector de plataforma */***REMOVED***
       <div>
-        <label className="block text-sm font-medium mb-1">
-          🚗 Plataforma *
-        </label>
-        <select
-          value=***REMOVED***formData.plataforma***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('plataforma', e.target.value)***REMOVED***
-          className=***REMOVED***`w-full p-3 border rounded-lg text-sm $***REMOVED***errors.plataforma ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
-        >
-          <option value="">-- Seleccionar Plataforma --</option>
-          ***REMOVED***plataformasDisponibles.map(plataforma => (
-            <option key=***REMOVED***plataforma***REMOVED*** value=***REMOVED***plataforma***REMOVED***>
-              ***REMOVED***plataforma***REMOVED***
-            </option>
-          ))***REMOVED***
-        </select>
+        <PlatformSelector
+          selectedPlatform=***REMOVED***formData.plataforma***REMOVED***
+          onPlatformSelect=***REMOVED***(plataforma) => handleInputChange('plataforma', plataforma)***REMOVED***
+        />
         ***REMOVED***errors.plataforma && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.plataforma***REMOVED***</p>***REMOVED***
       </div>
 
-      ***REMOVED***/* VEHÍCULO */***REMOVED***
+      ***REMOVED***/* Selector de vehículo */***REMOVED***
       <div>
         <label className="block text-sm font-medium mb-1">
-          🚴 Vehículo *
+          Vehículo
         </label>
         <select
           value=***REMOVED***formData.vehiculo***REMOVED***
@@ -199,7 +170,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
           className=***REMOVED***`w-full p-3 border rounded-lg text-sm $***REMOVED***errors.vehiculo ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
         >
           <option value="">-- Seleccionar Vehículo --</option>
-          ***REMOVED***vehiculosDisponibles.map(vehiculo => (
+          ***REMOVED***DELIVERY_VEHICLES.map(vehiculo => (
             <option key=***REMOVED***vehiculo***REMOVED*** value=***REMOVED***vehiculo***REMOVED***>
               ***REMOVED***vehiculo***REMOVED***
             </option>
@@ -223,11 +194,11 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
       </div>
 
       ***REMOVED***/* Botones */***REMOVED***
-      <div className="flex space-x-2 pt-4">
+      <div className="flex space-x-3 pt-4">
         <button
           type="button"
           onClick=***REMOVED***onCancel***REMOVED***
-          className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm"
+          className="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium"
           disabled=***REMOVED***guardando***REMOVED***
         >
           Cancelar
@@ -235,7 +206,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
         <button
           type="submit"
           disabled=***REMOVED***guardando***REMOVED***
-          className="flex-1 py-2 px-4 text-white rounded-lg hover:opacity-90 text-sm disabled:opacity-50"
+          className="flex-1 py-3 px-4 text-white rounded-lg hover:opacity-90 text-sm font-medium disabled:opacity-50"
           style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base || '#3B82F6' ***REMOVED******REMOVED***
         >
           ***REMOVED***guardando ? 'Guardando...' : (trabajo ? 'Actualizar' : 'Crear')***REMOVED***

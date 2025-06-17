@@ -15,13 +15,10 @@ const ResumenDelivery = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVE
     return () => clearTimeout(timer);
   ***REMOVED***, [deliveryStats]);
 
-  // Debug: Ver qué datos llegan
-  console.log('deliveryStats en ResumenDelivery:', deliveryStats);
-
   const formatCurrency = (amount) => ***REMOVED***
-    return new Intl.NumberFormat('us-AU', ***REMOVED***
+    return new Intl.NumberFormat('es-AR', ***REMOVED***
       style: 'currency',
-      currency: 'AUD',
+      currency: 'ARS',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     ***REMOVED***).format(amount);
@@ -45,13 +42,6 @@ const ResumenDelivery = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVE
 
   // Usar el que tenga valor
   const promedioPorPedido = promedioPorPedido2 || promedioPorPedido3 || promedioPorPedido1;
-
-  console.log('Cálculos promedio por pedido:', ***REMOVED***
-    promedioPorPedido1,
-    promedioPorPedido2,
-    promedioPorPedido3,
-    final: promedioPorPedido
-  ***REMOVED***);
 
   if (deliveryStats.totalPedidos === 0) ***REMOVED***
     return (
@@ -92,15 +82,11 @@ const ResumenDelivery = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVE
         </div>
 
         <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <div className="text-2xl mb-2">💰</div>
+          <DollarSign size=***REMOVED***24***REMOVED*** className="mx-auto mb-2" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** />
           <p className="text-2xl font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED***>
             ***REMOVED***formatCurrency(promedioPorPedido)***REMOVED***
           </p>
           <p className="text-sm text-gray-600">Por Pedido</p>
-          ***REMOVED***/* Debug info */***REMOVED***
-          <p className="text-xs text-gray-400 mt-1">
-            Debug: ***REMOVED***deliveryStats.totalGanado***REMOVED*** / ***REMOVED***deliveryStats.totalPedidos***REMOVED*** = ***REMOVED***promedioPorPedido.toFixed(2)***REMOVED***
-          </p>
         </div>
       </div>
     </Card>

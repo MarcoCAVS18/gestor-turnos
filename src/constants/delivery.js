@@ -1,67 +1,51 @@
 // src/constants/delivery.js
 
-export const DELIVERY_PLATFORMS = [
+export const DELIVERY_PLATFORMS_AUSTRALIA = [
   ***REMOVED***
     id: 'uber_eats',
     nombre: 'Uber Eats',
-    color: '#000000',
-    icono: '🚗',
-    categoria: 'comida'
+    color: '#000000'
+  ***REMOVED***,
+  ***REMOVED***
+    id: 'menulog',
+    nombre: 'Menulog',
+    color: '#FF6B35'
+  ***REMOVED***,
+  ***REMOVED***
+    id: 'deliveroo',
+    nombre: 'Deliveroo',
+    color: '#00CCBC'
   ***REMOVED***,
   ***REMOVED***
     id: 'doordash',
     nombre: 'DoorDash',
-    color: '#FF3008',
-    icono: '🛵',
-    categoria: 'comida'
+    color: '#FF3008'
   ***REMOVED***,
   ***REMOVED***
-    id: 'rappi',
-    nombre: 'Rappi',
-    color: '#FE6B42',
-    icono: '📦',
-    categoria: 'multi'
+    id: 'pedidos_ya',
+    nombre: 'Pedidos Ya',
+    color: '#000000'
   ***REMOVED***,
   ***REMOVED***
-    id: 'pedidosya',
-    nombre: 'PedidosYa',
-    color: '#FF0080',
-    icono: '🏍️',
-    categoria: 'comida'
+    id: 'didi',
+    nombre: 'DiDi',
+    color: '#FF6B00'
   ***REMOVED***,
   ***REMOVED***
-    id: 'uber',
-    nombre: 'Uber (Viajes)',
-    color: '#000000',
-    icono: '🚙',
-    categoria: 'transporte'
-  ***REMOVED***,
-  ***REMOVED***
-    id: 'cabify',
-    nombre: 'Cabify',
-    color: '#6C4BF6',
-    icono: '🚕',
-    categoria: 'transporte'
-  ***REMOVED***,
-  ***REMOVED***
-    id: 'glovo',
-    nombre: 'Glovo',
-    color: '#FFC244',
-    icono: '🛴',
-    categoria: 'multi'
+    id: 'amazon_flex',
+    nombre: 'Amazon Flex',
+    color: '#FF9900'
   ***REMOVED***,
   ***REMOVED***
     id: 'otro',
     nombre: 'Otra plataforma',
-    color: '#6B7280',
-    icono: '📱',
-    categoria: 'otro'
+    color: '#6B7280'
   ***REMOVED***
 ];
 
-export const DELIVERY_CATEGORIES = ***REMOVED***
-  comida: 'Entrega de comida',
-  transporte: 'Transporte de personas',
-  multi: 'Entregas múltiples',
-  otro: 'Otro tipo'
-***REMOVED***;
+export const DELIVERY_VEHICLES = [
+  'Bicicleta',
+  'Moto',
+  'Auto',
+  'A pie'
+];

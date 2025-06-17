@@ -5,7 +5,6 @@ import ***REMOVED***
   crearFechaLocal, 
   fechaLocalAISO, 
   fechaEsHoy, 
-  verificarTurnosEnFecha, 
   obtenerTurnosDelDia 
 ***REMOVED*** from '../utils/calendarUtils';
 
@@ -43,24 +42,26 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => ***REMOVED***
     // Días del mes anterior
     for (let i = diaInicio; i > 0; i--) ***REMOVED***
       const fecha = crearFechaLocal(anioActual, mesActual, -i + 1);
+      const turnosDelDia = obtenerTurnosDelDia(fecha, turnos);
       dias.push(***REMOVED***
         fecha,
         dia: fecha.getDate(),
         mesActual: false,
-        tieneTurnos: verificarTurnosEnFecha(fecha, turnos),
-        turnosDelDia: obtenerTurnosDelDia(fecha, turnos)
+        tieneTurnos: turnosDelDia.length > 0,
+        turnosDelDia
       ***REMOVED***);
     ***REMOVED***
 
     // Días del mes actual
     for (let i = 1; i <= ultimoDia.getDate(); i++) ***REMOVED***
       const fecha = crearFechaLocal(anioActual, mesActual, i);
+      const turnosDelDia = obtenerTurnosDelDia(fecha, turnos);
       dias.push(***REMOVED***
         fecha,
         dia: i,
         mesActual: true,
-        tieneTurnos: verificarTurnosEnFecha(fecha, turnos),
-        turnosDelDia: obtenerTurnosDelDia(fecha, turnos),
+        tieneTurnos: turnosDelDia.length > 0,
+        turnosDelDia,
         esHoy: fechaEsHoy(fecha, fechaActual)
       ***REMOVED***);
     ***REMOVED***
@@ -69,12 +70,13 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => ***REMOVED***
     const diasRestantes = 42 - dias.length;
     for (let i = 1; i <= diasRestantes; i++) ***REMOVED***
       const fecha = crearFechaLocal(anioActual, mesActual + 1, i);
+      const turnosDelDia = obtenerTurnosDelDia(fecha, turnos);
       dias.push(***REMOVED***
         fecha,
         dia: i,
         mesActual: false,
-        tieneTurnos: verificarTurnosEnFecha(fecha, turnos),
-        turnosDelDia: obtenerTurnosDelDia(fecha, turnos)
+        tieneTurnos: turnosDelDia.length > 0,
+        turnosDelDia
       ***REMOVED***);
     ***REMOVED***
 

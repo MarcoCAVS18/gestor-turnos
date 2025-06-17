@@ -2,12 +2,11 @@
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** PlusCircle, Settings ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Settings ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import Button from '../../ui/Button';
 
-const Header = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno, vistaActual, setVistaActual ***REMOVED***) => ***REMOVED***
+const Header = (***REMOVED*** setVistaActual ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
   const ***REMOVED*** coloresTemáticos, emojiUsuario ***REMOVED*** = useApp();
   const navigate = useNavigate();
@@ -33,38 +32,39 @@ const Header = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno, vist
       className="flex justify-between items-center px-4 py-3 text-white shadow-md"
       style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
     >
-      <h1 className="text-xl font-semibold">
-        Mi Gestión de Turnos - ***REMOVED***userName***REMOVED*** ***REMOVED***emojiUsuario || '😊'***REMOVED***
-      </h1>
+      <div className="flex flex-col">
+        <h1 className="text-xl font-semibold leading-tight p-2">
+          Mi Gestión de Turnos
+        </h1>
+        <p className="text-sm opacity-90 leading-tight pl-2">
+          ***REMOVED***userName***REMOVED*** ***REMOVED***emojiUsuario || '😊'***REMOVED***
+        </p>
+      </div>
       
       <div className="flex gap-2">
-        <Button
+        <button
           onClick=***REMOVED***handleSettingsClick***REMOVED***
-          variant="ghost"
-          size="sm"
-          className="bg-white hover:bg-gray-50 text-gray-700 rounded-full p-2 shadow-md"
-          icon=***REMOVED***Settings***REMOVED***
-        />
-        
-        ***REMOVED***vistaActual === 'trabajos' && (
-          <Button
-            onClick=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
-            variant="ghost"
-            size="sm"
-            className="bg-white hover:bg-gray-50 text-gray-700 rounded-full p-2 shadow-md"
-            icon=***REMOVED***PlusCircle***REMOVED***
-          />
-        )***REMOVED***
-        
-        ***REMOVED***vistaActual === 'turnos' && (
-          <Button
-            onClick=***REMOVED***abrirModalNuevoTurno***REMOVED***
-            variant="ghost"
-            size="sm"
-            className="bg-white hover:bg-gray-50 text-gray-700 rounded-full p-2 shadow-md"
-            icon=***REMOVED***PlusCircle***REMOVED***
-          />
-        )***REMOVED***
+          className="text-white rounded-lg p-3 transition-all duration-200"
+          onMouseEnter=***REMOVED***(e) => ***REMOVED***
+            const baseColor = coloresTemáticos?.base || '#EC4899';
+            const hex = baseColor.replace('#', '');
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            
+            const lighterR = Math.min(255, r + 60);
+            const lighterG = Math.min(255, g + 60);
+            const lighterB = Math.min(255, b + 60);
+            
+            const lighterColor = `rgb($***REMOVED***lighterR***REMOVED***, $***REMOVED***lighterG***REMOVED***, $***REMOVED***lighterB***REMOVED***, 0.3)`;
+            e.target.style.backgroundColor = lighterColor;
+          ***REMOVED******REMOVED***
+          onMouseLeave=***REMOVED***(e) => ***REMOVED***
+            e.target.style.backgroundColor = 'transparent';
+          ***REMOVED******REMOVED***
+        >
+          <Settings className="h-6 w-6" />
+        </button>
       </div>
     </header>
   );
