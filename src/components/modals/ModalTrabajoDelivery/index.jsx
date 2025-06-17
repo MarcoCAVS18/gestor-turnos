@@ -1,8 +1,10 @@
-// src/components/modals/ModalTrabajoDelivery.jsx
+// src/components/modals/ModalTrabajoDelivery/index.jsx
 
 import React from 'react';
-import { X } from 'lucide-react';
+import { X, Truck } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import PlatformSelector from '../../delivery/PlatformSelector';
+import { DELIVERY_VEHICLES } from '../../../constants/delivery';
 
 const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
   const { agregarTrabajo, editarTrabajo, coloresTemáticos } = useApp();
@@ -26,7 +28,8 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
       <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">
+          <h2 className="text-lg font-semibold flex items-center">
+            <Truck size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
             {trabajo ? 'Editar' : 'Nuevo'} Trabajo Delivery
           </h2>
           <button
@@ -50,7 +53,6 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
   );
 };
 
-// Componente del formulario integrado directamente
 const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemáticos }) => {
   const [formData, setFormData] = React.useState({
     nombre: '',
@@ -62,24 +64,6 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
 
   const [errors, setErrors] = React.useState({});
   const [guardando, setGuardando] = React.useState(false);
-
-  // Opciones predefinidas
-  const plataformasDisponibles = [
-    'Uber Eats',
-    'PedidosYa', 
-    'Rappi',
-    'Glovo',
-    'DoorDash',
-    'Menulog',
-    'Deliveroo'
-  ];
-
-  const vehiculosDisponibles = [
-    'Bicicleta',
-    'Moto',
-    'Auto',
-    'A pie'
-  ];
 
   React.useEffect(() => {
     if (trabajo) {
@@ -154,7 +138,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
       {/* Nombre del trabajo */}
       <div>
         <label className="block text-sm font-medium mb-1">
-          Nombre del trabajo *
+          Nombre del trabajo
         </label>
         <input
           type="text"
@@ -166,32 +150,19 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
         {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre}</p>}
       </div>
 
-      {/* ========== LAS DOS SELECCIONES PRINCIPALES ========== */}
-      
-      {/* PLATAFORMA */}
+      {/* Selector de plataforma */}
       <div>
-        <label className="block text-sm font-medium mb-1">
-          🚗 Plataforma *
-        </label>
-        <select
-          value={formData.plataforma}
-          onChange={(e) => handleInputChange('plataforma', e.target.value)}
-          className={`w-full p-3 border rounded-lg text-sm ${errors.plataforma ? 'border-red-500' : 'border-gray-300'}`}
-        >
-          <option value="">-- Seleccionar Plataforma --</option>
-          {plataformasDisponibles.map(plataforma => (
-            <option key={plataforma} value={plataforma}>
-              {plataforma}
-            </option>
-          ))}
-        </select>
+        <PlatformSelector
+          selectedPlatform={formData.plataforma}
+          onPlatformSelect={(plataforma) => handleInputChange('plataforma', plataforma)}
+        />
         {errors.plataforma && <p className="text-red-500 text-xs mt-1">{errors.plataforma}</p>}
       </div>
 
-      {/* VEHÍCULO */}
+      {/* Selector de vehículo */}
       <div>
         <label className="block text-sm font-medium mb-1">
-          🚴 Vehículo *
+          Vehículo
         </label>
         <select
           value={formData.vehiculo}
@@ -199,7 +170,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
           className={`w-full p-3 border rounded-lg text-sm ${errors.vehiculo ? 'border-red-500' : 'border-gray-300'}`}
         >
           <option value="">-- Seleccionar Vehículo --</option>
-          {vehiculosDisponibles.map(vehiculo => (
+          {DELIVERY_VEHICLES.map(vehiculo => (
             <option key={vehiculo} value={vehiculo}>
               {vehiculo}
             </option>
@@ -223,11 +194,11 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
       </div>
 
       {/* Botones */}
-      <div className="flex space-x-2 pt-4">
+      <div className="flex space-x-3 pt-4">
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm"
+          className="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium"
           disabled={guardando}
         >
           Cancelar
@@ -235,7 +206,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
         <button
           type="submit"
           disabled={guardando}
-          className="flex-1 py-2 px-4 text-white rounded-lg hover:opacity-90 text-sm disabled:opacity-50"
+          className="flex-1 py-3 px-4 text-white rounded-lg hover:opacity-90 text-sm font-medium disabled:opacity-50"
           style={{ backgroundColor: coloresTemáticos?.base || '#3B82F6' }}
         >
           {guardando ? 'Guardando...' : (trabajo ? 'Actualizar' : 'Crear')}

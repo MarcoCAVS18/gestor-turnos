@@ -1,67 +1,51 @@
 // src/constants/delivery.js
 
-export const DELIVERY_PLATFORMS = [
+export const DELIVERY_PLATFORMS_AUSTRALIA = [
   {
     id: 'uber_eats',
     nombre: 'Uber Eats',
-    color: '#000000',
-    icono: '🚗',
-    categoria: 'comida'
+    color: '#000000'
+  },
+  {
+    id: 'menulog',
+    nombre: 'Menulog',
+    color: '#FF6B35'
+  },
+  {
+    id: 'deliveroo',
+    nombre: 'Deliveroo',
+    color: '#00CCBC'
   },
   {
     id: 'doordash',
     nombre: 'DoorDash',
-    color: '#FF3008',
-    icono: '🛵',
-    categoria: 'comida'
+    color: '#FF3008'
   },
   {
-    id: 'rappi',
-    nombre: 'Rappi',
-    color: '#FE6B42',
-    icono: '📦',
-    categoria: 'multi'
+    id: 'pedidos_ya',
+    nombre: 'Pedidos Ya',
+    color: '#000000'
   },
   {
-    id: 'pedidosya',
-    nombre: 'PedidosYa',
-    color: '#FF0080',
-    icono: '🏍️',
-    categoria: 'comida'
+    id: 'didi',
+    nombre: 'DiDi',
+    color: '#FF6B00'
   },
   {
-    id: 'uber',
-    nombre: 'Uber (Viajes)',
-    color: '#000000',
-    icono: '🚙',
-    categoria: 'transporte'
-  },
-  {
-    id: 'cabify',
-    nombre: 'Cabify',
-    color: '#6C4BF6',
-    icono: '🚕',
-    categoria: 'transporte'
-  },
-  {
-    id: 'glovo',
-    nombre: 'Glovo',
-    color: '#FFC244',
-    icono: '🛴',
-    categoria: 'multi'
+    id: 'amazon_flex',
+    nombre: 'Amazon Flex',
+    color: '#FF9900'
   },
   {
     id: 'otro',
     nombre: 'Otra plataforma',
-    color: '#6B7280',
-    icono: '📱',
-    categoria: 'otro'
+    color: '#6B7280'
   }
 ];
 
-export const DELIVERY_CATEGORIES = {
-  comida: 'Entrega de comida',
-  transporte: 'Transporte de personas',
-  multi: 'Entregas múltiples',
-  otro: 'Otro tipo'
-};
+export const DELIVERY_VEHICLES = [
+  'Bicicleta',
+  'Moto',
+  'Auto',
+  'A pie'
+];

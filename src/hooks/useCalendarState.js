@@ -5,7 +5,6 @@ import {
   crearFechaLocal, 
   fechaLocalAISO, 
   fechaEsHoy, 
-  verificarTurnosEnFecha, 
   obtenerTurnosDelDia 
 } from '../utils/calendarUtils';
 
@@ -43,24 +42,26 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => {
     // Días del mes anterior
     for (let i = diaInicio; i > 0; i--) {
       const fecha = crearFechaLocal(anioActual, mesActual, -i + 1);
+      const turnosDelDia = obtenerTurnosDelDia(fecha, turnos);
       dias.push({
         fecha,
         dia: fecha.getDate(),
         mesActual: false,
-        tieneTurnos: verificarTurnosEnFecha(fecha, turnos),
-        turnosDelDia: obtenerTurnosDelDia(fecha, turnos)
+        tieneTurnos: turnosDelDia.length > 0,
+        turnosDelDia
       });
     }
 
     // Días del mes actual
     for (let i = 1; i <= ultimoDia.getDate(); i++) {
       const fecha = crearFechaLocal(anioActual, mesActual, i);
+      const turnosDelDia = obtenerTurnosDelDia(fecha, turnos);
       dias.push({
         fecha,
         dia: i,
         mesActual: true,
-        tieneTurnos: verificarTurnosEnFecha(fecha, turnos),
-        turnosDelDia: obtenerTurnosDelDia(fecha, turnos),
+        tieneTurnos: turnosDelDia.length > 0,
+        turnosDelDia,
         esHoy: fechaEsHoy(fecha, fechaActual)
       });
     }
@@ -69,12 +70,13 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => {
     const diasRestantes = 42 - dias.length;
     for (let i = 1; i <= diasRestantes; i++) {
       const fecha = crearFechaLocal(anioActual, mesActual + 1, i);
+      const turnosDelDia = obtenerTurnosDelDia(fecha, turnos);
       dias.push({
         fecha,
         dia: i,
         mesActual: false,
-        tieneTurnos: verificarTurnosEnFecha(fecha, turnos),
-        turnosDelDia: obtenerTurnosDelDia(fecha, turnos)
+        tieneTurnos: turnosDelDia.length > 0,
+        turnosDelDia
       });
     }
 

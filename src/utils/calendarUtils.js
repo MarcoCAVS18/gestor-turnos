@@ -1,4 +1,5 @@
 // src/utils/calendarUtils.js
+
 export const crearFechaLocal = (year, month, day) => new Date(year, month, day);
 
 export const fechaLocalAISO = (fecha) => {
@@ -41,7 +42,14 @@ export const obtenerColoresTrabajos = (turnosDelDia, trabajos) => {
   
   turnosDelDia.forEach(turno => {
     const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-    if (trabajo) coloresUnicos.add(trabajo.color);
+    if (trabajo) {
+      // Para trabajos de delivery, usar un color específico o el color del trabajo
+      if (trabajo.tipo === 'delivery') {
+        coloresUnicos.add(trabajo.colorAvatar || trabajo.color || '#10B981');
+      } else {
+        coloresUnicos.add(trabajo.color);
+      }
+    }
   });
   
   return Array.from(coloresUnicos).slice(0, 3);

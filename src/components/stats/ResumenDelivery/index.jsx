@@ -15,13 +15,10 @@ const ResumenDelivery = ({ deliveryStats }) => {
     return () => clearTimeout(timer);
   }, [deliveryStats]);
 
-  // Debug: Ver qué datos llegan
-  console.log('deliveryStats en ResumenDelivery:', deliveryStats);
-
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('us-AU', {
+    return new Intl.NumberFormat('es-AR', {
       style: 'currency',
-      currency: 'AUD',
+      currency: 'ARS',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
@@ -45,13 +42,6 @@ const ResumenDelivery = ({ deliveryStats }) => {
 
   // Usar el que tenga valor
   const promedioPorPedido = promedioPorPedido2 || promedioPorPedido3 || promedioPorPedido1;
-
-  console.log('Cálculos promedio por pedido:', {
-    promedioPorPedido1,
-    promedioPorPedido2,
-    promedioPorPedido3,
-    final: promedioPorPedido
-  });
 
   if (deliveryStats.totalPedidos === 0) {
     return (
@@ -92,15 +82,11 @@ const ResumenDelivery = ({ deliveryStats }) => {
         </div>
 
         <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <div className="text-2xl mb-2">💰</div>
+          <DollarSign size={24} className="mx-auto mb-2" style={{ color: coloresTemáticos?.base }} />
           <p className="text-2xl font-bold" style={{ color: coloresTemáticos?.base }}>
             {formatCurrency(promedioPorPedido)}
           </p>
           <p className="text-sm text-gray-600">Por Pedido</p>
-          {/* Debug info */}
-          <p className="text-xs text-gray-400 mt-1">
-            Debug: {deliveryStats.totalGanado} / {deliveryStats.totalPedidos} = {promedioPorPedido.toFixed(2)}
-          </p>
         </div>
       </div>
     </Card>
