@@ -103,20 +103,27 @@ function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
 
   return (
     <div className="min-h-screen bg-gray-100 font-poppins">
-      <Header
+      ***REMOVED***/* Header solo en mobile */***REMOVED***
+      <div className="md:hidden">
+        <Header
+          vistaActual=***REMOVED***vistaActual***REMOVED***
+          setVistaActual=***REMOVED***setVistaActual***REMOVED***
+          abrirModalNuevoTrabajo=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
+          abrirModalNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED***
+        />
+      </div>
+
+      ***REMOVED***/* Contenido principal */***REMOVED***
+      <main className="max-w-md mx-auto px-4 pb-20 md:max-w-none md:ml-72 md:px-6 md:pb-6">
+        ***REMOVED***renderVista()***REMOVED***
+      </main>
+
+      ***REMOVED***/* Navegación */***REMOVED***
+      <Navegacion
         vistaActual=***REMOVED***vistaActual***REMOVED***
         setVistaActual=***REMOVED***setVistaActual***REMOVED***
         abrirModalNuevoTrabajo=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
         abrirModalNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED***
-      />
-
-      <main className="max-w-md mx-auto px-4 pb-20">
-        ***REMOVED***renderVista()***REMOVED***
-      </main>
-
-      <Navegacion
-        vistaActual=***REMOVED***vistaActual***REMOVED***
-        setVistaActual=***REMOVED***setVistaActual***REMOVED***
       />
 
       <ModalTrabajo
