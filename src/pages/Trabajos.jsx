@@ -14,6 +14,11 @@ const Trabajos = () => {
   const { trabajos, cargando, borrarTrabajo } = useApp();
   const deleteManager = useDeleteManager(borrarTrabajo);
   
+  // Log para depuración
+  React.useEffect(() => {
+    console.log('Trabajos actuales:', trabajos.map(t => ({ id: t.id, nombre: t.nombre, tipo: t.tipo })));
+  }, [trabajos]);
+  
   // Estado para modales
   const [modalAbierto, setModalAbierto] = React.useState(false);
   const [trabajoSeleccionado, setTrabajoSeleccionado] = React.useState(null);
@@ -70,6 +75,8 @@ const Trabajos = () => {
           }
         }}
         renderItem={(trabajo) => {
+          console.log('Renderizando trabajo:', trabajo.id, trabajo.nombre, trabajo.tipo);
+          
           // Renderizar tarjeta según tipo de trabajo
           if (trabajo.tipo === 'delivery') {
             return (

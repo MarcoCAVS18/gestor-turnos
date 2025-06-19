@@ -54,11 +54,6 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
     }
   };
 
-  // Calcular ganancia neta
-  const gananciaBase = Number(gananciaTotal) - Number(propinas || 0);
-  const gananciaNeta = Number(gananciaTotal) - Number(gastoCombustible || 0);
-  const promedioPorPedido = numeroPedidos > 0 ? gananciaBase / Number(numeroPedidos) : 0;
-
   const validarFormulario = () => {
     if (!fecha) {
       setError('La fecha es requerida');
@@ -72,8 +67,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
       setError('Debes seleccionar un trabajo de delivery');
       return false;
     }
-    if (!gananciaTotal || Number(gananciaTotal) <= 0) {
-      setError('La ganancia total debe ser mayor a 0');
+    // Removido: validación de ganancia > 0 - puede ser 0
+    if (gananciaTotal === '' || isNaN(Number(gananciaTotal))) {
+      setError('La ganancia total debe ser un número válido');
       return false;
     }
     return true;
@@ -95,7 +91,7 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
         trabajoId: trabajoSeleccionado,
         tipo: 'delivery',
         numeroPedidos: Number(numeroPedidos) || 0,
-        gananciaTotal: Number(gananciaTotal),
+        gananciaTotal: Number(gananciaTotal) || 0,
         propinas: Number(propinas) || 0,
         kilometros: Number(kilometros) || 0,
         gastoCombustible: Number(gastoCombustible) || 0,
@@ -107,15 +103,6 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
       setError(err.message || 'Error al guardar el turno');
       setGuardando(false);
     }
-  };
-
-  const formatearMoneda = (valor) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(valor);
   };
 
   return (
@@ -224,9 +211,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
         </div>
       </div>
 
-      {/* Información financiera */}
+      {/* Información financiera - SIN VALIDACIONES RESTRICTIVAS */}
       <div className="space-y-3">
-        <h3 className="text-sm font-medium text-gray-700">Ganancias en App.</h3>
+        <h3 className="text-sm font-medium text-gray-700">Ganancias</h3>
         
         <div className="grid grid-cols-2 gap-3">
           <div>
@@ -240,8 +227,7 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
               onChange={(e) => setGananciaTotal(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
               placeholder="0"
-              min="0"
-              step="50"
+              step="0.01"
               required
             />
           </div>
@@ -257,8 +243,7 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
               onChange={(e) => setPropinas(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
               placeholder="0"
-              min="0"
-              step="10"
+              step="0.01"
             />
           </div>
         </div>
@@ -273,34 +258,10 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
             onChange={(e) => setGastoCombustible(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
             placeholder="0"
-            min="0"
-            step="10"
+            step="0.01"
           />
         </div>
       </div>
-
-      {/* Resumen de cálculos */}
-      {(gananciaTotal > 0 || numeroPedidos > 0) && (
-        <div className="p-3 bg-gray-50 rounded-lg space-y-2">
-          <p className="text-sm font-medium text-gray-700">Resumen</p>
-          <div className="space-y-1 text-sm">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Ganancia base:</span>
-              <span className="font-medium">{formatearMoneda(gananciaBase)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Ganancia neta:</span>
-              <span className="font-medium text-green-600">{formatearMoneda(gananciaNeta)}</span>
-            </div>
-            {numeroPedidos > 0 && (
-              <div className="flex justify-between">
-                <span className="text-gray-600">Promedio por pedido:</span>
-                <span className="font-medium">{formatearMoneda(promedioPorPedido)}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Notas */}
       <div>
