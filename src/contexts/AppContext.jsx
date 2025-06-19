@@ -41,8 +41,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   const [metaHorasSemanales, setMetaHorasSemanales] = useState(null);
   const [deliveryEnabled, setDeliveryEnabled] = useState(false);
 
-
-
   // Estados para preferencias de personalización
   const [colorPrincipal, setColorPrincipal] = useState('#EC4899');
   const [emojiUsuario, setEmojiUsuario] = useState('😊');
@@ -145,7 +143,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
 
     let inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFn * 60 + minFn;
+    let finMinutos = horaFn * 60 + minFn; // Corregido: Usar minFn
 
     // Si el turno cruza medianoche
     if (finMinutos <= inicioMinutos) ***REMOVED***
@@ -179,7 +177,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     const [horaFn, minFn] = horaFin.split(':').map(n => parseInt(n));
 
     let inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFn * 60 + minFn;
+    let finMinutos = horaFn * 60 + minFn; // Corregido: Usar minFn
 
     // Si el turno cruza medianoche
     if (finMinutos <= inicioMinutos) ***REMOVED***
@@ -203,7 +201,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       // Sábado - toda la tarifa de sábado
       total = horas * trabajo.tarifas.sabado;
     ***REMOVED*** else ***REMOVED***
-      // Día de semana 
+      // Día de semana
       const rangos = rangosTurnos || ***REMOVED***
         diurnoInicio: 6, diurnoFin: 14,
         tardeInicio: 14, tardeFin: 20,
@@ -270,26 +268,60 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           setCargando(false);
           return;
         ***REMOVED***
-
-        // Configurar listener para trabajos
+        
         const trabajosQuery = query(
           subcollections.trabajosRef,
           orderBy('nombre', 'asc')
         );
 
-        unsubscribeTrabajos = onSnapshot(trabajosQuery, (snapshot) => ***REMOVED***
-          if (snapshot.empty) ***REMOVED***
-            setTrabajos([]);
-          ***REMOVED*** else ***REMOVED***
-            const trabajosData = [];
-            snapshot.forEach(doc => ***REMOVED***
-              trabajosData.push(***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***);
+        // *** CAMBIO CLAVE AQUÍ: Manejar cambios de tipo explicitamente ***
+        unsubscribeTrabajos = onSnapshot(
+          trabajosQuery, 
+          ***REMOVED*** includeMetadataChanges: true ***REMOVED***, // Mantener esto para saber si es de caché
+          (snapshot) => ***REMOVED***
+            // No ignorar si es de caché, solo úsalo como información.
+            // La lógica clave es procesar los `docChanges`.
+            
+            // Si el snapshot inicial está vacío, establecer trabajos a un array vacío.
+            if (snapshot.empty && !snapshot.docChanges().length) ***REMOVED***
+              setTrabajos([]);
+              console.log('Trabajos: Snapshot inicial vacío.');
+              return;
+            ***REMOVED***
+
+            setTrabajos(currentTrabajos => ***REMOVED***
+              let updatedTrabajos = [...currentTrabajos];
+
+              snapshot.docChanges().forEach(change => ***REMOVED***
+                const docData = ***REMOVED*** id: change.doc.id, ...change.doc.data() ***REMOVED***;
+                
+                if (change.type === 'added') ***REMOVED***
+                  // Solo añadir si no existe ya para evitar duplicados si se procesa múltiples veces
+                  if (!updatedTrabajos.some(t => t.id === docData.id)) ***REMOVED***
+                    updatedTrabajos.push(docData);
+                  ***REMOVED***
+                ***REMOVED*** else if (change.type === 'modified') ***REMOVED***
+                  updatedTrabajos = updatedTrabajos.map(t => 
+                    t.id === docData.id ? docData : t
+                  );
+                ***REMOVED*** else if (change.type === 'removed') ***REMOVED***
+                  updatedTrabajos = updatedTrabajos.filter(t => t.id !== change.doc.id);
+                  console.log(`Trabajo eliminado (tipo 'removed'): $***REMOVED***change.doc.id***REMOVED***`);
+                ***REMOVED***
+              ***REMOVED***);
+
+              // Asegurarse de que los trabajos estén ordenados después de los cambios
+              updatedTrabajos.sort((a, b) => a.nombre.localeCompare(b.nombre));
+              
+              console.log('Trabajos actualizados desde listener (total):', updatedTrabajos.length);
+              return updatedTrabajos;
             ***REMOVED***);
-            setTrabajos(trabajosData);
+          ***REMOVED***, 
+          (error) => ***REMOVED***
+            console.error('Error en listener de trabajos:', error);
+            setError('Error al cargar trabajos: ' + error.message);
           ***REMOVED***
-        ***REMOVED***, (error) => ***REMOVED***
-          setError('Error al cargar trabajos: ' + error.message);
-        ***REMOVED***);
+        );
 
         // Configurar listener para turnos
         const turnosQuery = query(
@@ -327,31 +359,33 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***;
   ***REMOVED***, [currentUser, getUserSubcollections, ensureUserDocument]);
 
-  // Funciones CRUD para trabajos
-  const agregarTrabajo = useCallback(async (nuevoTrabajo) => ***REMOVED***
-    try ***REMOVED***
-      if (!currentUser) throw new Error('Usuario no autenticado');
+const agregarTrabajo = useCallback(async (nuevoTrabajo) => ***REMOVED***
+  try ***REMOVED***
+    if (!currentUser) throw new Error('Usuario no autenticado');
 
-      const subcollections = getUserSubcollections();
-      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
+    const subcollections = getUserSubcollections();
+    if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
 
-      if (!nuevoTrabajo.nombre || !nuevoTrabajo.nombre.trim()) ***REMOVED***
-        throw new Error('El nombre del trabajo es requerido');
-      ***REMOVED***
-
-      const trabajoConMetadata = ***REMOVED***
-        ...nuevoTrabajo,
-        fechaCreacion: new Date(),
-        fechaActualizacion: new Date()
-      ***REMOVED***;
-
-      const docRef = await addDoc(subcollections.trabajosRef, trabajoConMetadata);
-      return ***REMOVED*** ...trabajoConMetadata, id: docRef.id ***REMOVED***;
-    ***REMOVED*** catch (err) ***REMOVED***
-      setError('Error al agregar trabajo: ' + err.message);
-      throw err;
+    if (!nuevoTrabajo.nombre || !nuevoTrabajo.nombre.trim()) ***REMOVED***
+      throw new Error('El nombre del trabajo es requerido');
     ***REMOVED***
-  ***REMOVED***, [currentUser, getUserSubcollections]);
+
+    const trabajoConMetadata = ***REMOVED***
+      ...nuevoTrabajo,
+      fechaCreacion: new Date(),
+      fechaActualizacion: new Date(),
+      activo: true // Campo para marcar trabajos activos
+    ***REMOVED***;
+
+    // Crear el documento
+    const docRef = await addDoc(subcollections.trabajosRef, trabajoConMetadata);
+    
+    return ***REMOVED*** ...trabajoConMetadata, id: docRef.id ***REMOVED***;
+  ***REMOVED*** catch (err) ***REMOVED***
+    setError('Error al agregar trabajo: ' + err.message);
+    throw err;
+  ***REMOVED***
+***REMOVED***, [currentUser, getUserSubcollections]);
 
   const editarTrabajo = useCallback(async (id, datosActualizados) => ***REMOVED***
     try ***REMOVED***
@@ -372,27 +406,63 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       throw err;
     ***REMOVED***
   ***REMOVED***, [currentUser, getUserSubcollections]);
-
+  
   const borrarTrabajo = useCallback(async (id) => ***REMOVED***
-    try ***REMOVED***
-      if (!currentUser) throw new Error('Usuario no autenticado');
+  try ***REMOVED***
+    if (!currentUser) throw new Error('Usuario no autenticado');
 
-      const subcollections = getUserSubcollections();
-      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
+    const subcollections = getUserSubcollections();
+    if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
 
-      await deleteDoc(doc(subcollections.trabajosRef, id));
-
-      const turnosAsociados = turnos.filter(turno => turno.trabajoId === id);
-      const promesasBorrado = turnosAsociados.map(turno =>
-        deleteDoc(doc(subcollections.turnosRef, turno.id))
-      );
-
-      await Promise.all(promesasBorrado);
-    ***REMOVED*** catch (err) ***REMOVED***
-      setError('Error al eliminar trabajo: ' + err.message);
-      throw err;
+    // 1. Obtener referencia del documento
+    const trabajoRef = doc(subcollections.trabajosRef, id);
+    
+    // 2. Verificar que existe antes de eliminar
+    const trabajoDoc = await getDoc(trabajoRef);
+    if (!trabajoDoc.exists()) ***REMOVED***
+      console.warn('El trabajo ya no existe en Firestore. Posiblemente ya fue eliminado por otra sesión o caché.');
+      // Si no existe en Firestore, simplemente filtramos el estado local si aún estuviera ahí.
+      setTrabajos(prev => prev.filter(t => t.id !== id));
+      return;
     ***REMOVED***
-  ***REMOVED***, [currentUser, getUserSubcollections, turnos]);
+
+    // 3. Eliminar turnos asociados del estado Y de Firestore ANTES de borrar el trabajo principal
+    // Esto asegura consistencia y permite que el listener de trabajos haga su trabajo.
+    const turnosAsociados = turnos.filter(turno => turno.trabajoId === id);
+    // Optimistic UI update para turnos
+    setTurnos(prev => prev.filter(turno => turno.trabajoId !== id));
+
+    const promesasBorradoTurnos = turnosAsociados.map(turno =>
+      deleteDoc(doc(subcollections.turnosRef, turno.id))
+    );
+    await Promise.all(promesasBorradoTurnos);
+    
+    // 4. Eliminar el trabajo de Firestore
+    // El listener de onSnapshot para 'trabajos' ahora debería capturar este cambio de 'removed'.
+    await deleteDoc(trabajoRef);
+    console.log(`Solicitud de eliminación de trabajo enviada para ID: $***REMOVED***id***REMOVED***`);
+
+
+    // La actualización del estado local de 'trabajos' se manejará principalmente por el listener de onSnapshot
+    // en el useEffect principal, el cual ahora procesa `change.type === 'removed'`.
+    // Por lo tanto, no necesitamos un setTrabajos optimista aquí para el trabajo en sí.
+    // setTrabajos(prev => prev.filter(t => t.id !== id)); // Este se vuelve redundante o menos crítico
+
+    // Eliminar la recarga de la página, el listener debe manejarlo.
+    // if ('caches' in window) ***REMOVED*** ... ***REMOVED***
+    // window.location.reload(); 
+
+  ***REMOVED*** catch (err) ***REMOVED***
+    console.error('Error al eliminar trabajo:', err);
+    setError('Error al eliminar trabajo: ' + err.message);
+    // En caso de error, podríamos considerar una estrategia de reintento o notificar al usuario
+    // para que recargue la página si el problema persiste.
+    throw err;
+  ***REMOVED***
+***REMOVED***, [currentUser, getUserSubcollections, turnos]);
+
+
+
 
   // Funciones CRUD para turnos
   const agregarTurno = useCallback(async (nuevoTurno) => ***REMOVED***
