@@ -103,20 +103,27 @@ function AppLayout({ currentView }) {
 
   return (
     <div className="min-h-screen bg-gray-100 font-poppins">
-      <Header
+      {/* Header solo en mobile */}
+      <div className="md:hidden">
+        <Header
+          vistaActual={vistaActual}
+          setVistaActual={setVistaActual}
+          abrirModalNuevoTrabajo={abrirModalNuevoTrabajo}
+          abrirModalNuevoTurno={abrirModalNuevoTurno}
+        />
+      </div>
+
+      {/* Contenido principal */}
+      <main className="max-w-md mx-auto px-4 pb-20 md:max-w-none md:ml-72 md:px-6 md:pb-6">
+        {renderVista()}
+      </main>
+
+      {/* Navegación */}
+      <Navegacion
         vistaActual={vistaActual}
         setVistaActual={setVistaActual}
         abrirModalNuevoTrabajo={abrirModalNuevoTrabajo}
         abrirModalNuevoTurno={abrirModalNuevoTurno}
-      />
-
-      <main className="max-w-md mx-auto px-4 pb-20">
-        {renderVista()}
-      </main>
-
-      <Navegacion
-        vistaActual={vistaActual}
-        setVistaActual={setVistaActual}
       />
 
       <ModalTrabajo

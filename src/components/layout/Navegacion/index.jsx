@@ -2,15 +2,17 @@
 
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Briefcase, Calendar, BarChart2, CalendarDays } from 'lucide-react';
+import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useApp } from '../../../contexts/AppContext';
+import { useAuth } from '../../../contexts/AuthContext';
 import './index.css';
 
-const Navegacion = ({ vistaActual, setVistaActual }) => {
+const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { coloresTemáticos } = useApp();
+  const { coloresTemáticos, emojiUsuario } = useApp();
+  const { currentUser } = useAuth();
   
   const getCurrentView = () => {
     const path = location.pathname;
@@ -35,6 +37,8 @@ const Navegacion = ({ vistaActual, setVistaActual }) => {
       'ajustes': '/ajustes'
     };
     
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     navigate(routes[view]);
     setVistaActual(view);
   };
@@ -44,6 +48,18 @@ const Navegacion = ({ vistaActual, setVistaActual }) => {
       ? { color: coloresTemáticos?.base || '#EC4899' } 
       : { color: '#6B7280' };
   };
+
+  const getActiveDesktopStyle = (vista) => {
+    return currentView === vista
+      ? {
+          backgroundColor: coloresTemáticos?.base || '#EC4899',
+          color: 'white'
+        }
+      : {
+          backgroundColor: 'transparent',
+          color: '#6B7280'
+        };
+  };
   
   const calendarButtonStyle = {
     backgroundColor: coloresTemáticos?.base || '#EC4899',
@@ -51,62 +67,199 @@ const Navegacion = ({ vistaActual, setVistaActual }) => {
       ? coloresTemáticos?.dark || '#BE185D'
       : 'white'
   };
+
+  const userName = currentUser?.displayName || 
+    (currentUser?.email ? currentUser.email.split('@')[0] : 'Usuario');
   
   return (
-    <nav className="navbar-container fixed bottom-0 left-0 right-0 bg-white px-4 py-6">
-      <div className="grid grid-cols-5 items-center max-w-md mx-auto">
-        <button
-          onClick={() => navigateToView('dashboard')}
-          className="flex flex-col items-center justify-center transition-colors duration-200"
-          style={getActiveTextStyle('dashboard')}
-        >
-          <Home size={20} />
-          <span className="text-xs mt-1">Inicio</span>
-        </button>
-
-        <button
-          onClick={() => navigateToView('trabajos')}
-          className="flex flex-col items-center justify-center transition-colors duration-200"
-          style={getActiveTextStyle('trabajos')}
-        >
-          <Briefcase size={20} />
-          <span className="text-xs mt-1">Trabajos</span>
-        </button>
-
-        <div className="flex justify-center items-start -mt-6">
-          <motion.button
-            onClick={() => navigateToView('calendario')}
-            className="text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-4 transition-all duration-200"
-            style={calendarButtonStyle}
-            whileTap={{ scale: 0.95 }}
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: `0 8px 25px ${coloresTemáticos?.transparent50 || 'rgba(236, 72, 153, 0.5)'}`
-            }}
+    <>
+      <nav className="navbar-container fixed bottom-0 left-0 right-0 bg-white px-4 py-6 md:hidden">
+        <div className="grid grid-cols-5 items-center max-w-md mx-auto">
+          <button
+            onClick={() => navigateToView('dashboard')}
+            className="flex flex-col items-center justify-center transition-colors duration-200"
+            style={getActiveTextStyle('dashboard')}
           >
-            <CalendarDays size={28} />
-          </motion.button>
+            <Home size={20} />
+            <span className="text-xs mt-1">Inicio</span>
+          </button>
+
+          <button
+            onClick={() => navigateToView('trabajos')}
+            className="flex flex-col items-center justify-center transition-colors duration-200"
+            style={getActiveTextStyle('trabajos')}
+          >
+            <Briefcase size={20} />
+            <span className="text-xs mt-1">Trabajos</span>
+          </button>
+
+          <div className="flex justify-center items-start -mt-6">
+            <motion.button
+              onClick={() => navigateToView('calendario')}
+              className="text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-4 transition-all duration-200"
+              style={calendarButtonStyle}
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: `0 8px 25px ${coloresTemáticos?.transparent50 || 'rgba(236, 72, 153, 0.5)'}`
+              }}
+            >
+              <CalendarDays size={28} />
+            </motion.button>
+          </div>
+
+          <button
+            onClick={() => navigateToView('turnos')}
+            className="flex flex-col items-center justify-center transition-colors duration-200"
+            style={getActiveTextStyle('turnos')}
+          >
+            <Calendar size={20} />
+            <span className="text-xs mt-1">Turnos</span>
+          </button>
+
+          <button
+            onClick={() => navigateToView('estadisticas')}
+            className="flex flex-col items-center justify-center transition-colors duration-200"
+            style={getActiveTextStyle('estadisticas')}
+          >
+            <BarChart2 size={20} />
+            <span className="text-xs mt-1">Estadísticas</span>
+          </button>
+        </div>
+      </nav>
+
+      <aside className="hidden md:flex md:flex-col w-72 bg-white border-r border-gray-200 shadow-sm h-screen fixed left-0 top-0 z-30">
+        <div className="p-6 border-b border-gray-100">
+          <div className="flex items-center space-x-3">
+            <div 
+              className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg"
+              style={{ backgroundColor: coloresTemáticos?.base }}
+            >
+              {emojiUsuario}
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">
+                Gestión de Turnos
+              </h1>
+              <p className="text-sm text-gray-500">
+                Hola {userName}
+              </p>
+            </div>
+          </div>
         </div>
 
-        <button
-          onClick={() => navigateToView('turnos')}
-          className="flex flex-col items-center justify-center transition-colors duration-200"
-          style={getActiveTextStyle('turnos')}
-        >
-          <Calendar size={20} />
-          <span className="text-xs mt-1">Turnos</span>
-        </button>
+        {/* Acciones Rápidas */}
+        {(abrirModalNuevoTurno || abrirModalNuevoTrabajo) && (
+          <div className="p-4 border-b border-gray-100">
+            <div className="space-y-2">
+              {abrirModalNuevoTurno && (
+                <button
+                  onClick={abrirModalNuevoTurno}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-white font-medium transition-all hover:shadow-lg transform hover:scale-105"
+                  style={{ backgroundColor: coloresTemáticos?.base }}
+                >
+                  <PlusCircle size={20} />
+                  Nuevo Turno
+                </button>
+              )}
+              {abrirModalNuevoTrabajo && (
+                <button
+                  onClick={abrirModalNuevoTrabajo}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 font-medium transition-all hover:shadow-md"
+                  style={{ 
+                    borderColor: coloresTemáticos?.base,
+                    color: coloresTemáticos?.base 
+                  }}
+                >
+                  <Briefcase size={20} />
+                  Nuevo Trabajo
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
-        <button
-          onClick={() => navigateToView('estadisticas')}
-          className="flex flex-col items-center justify-center transition-colors duration-200"
-          style={getActiveTextStyle('estadisticas')}
-        >
-          <BarChart2 size={20} />
-          <span className="text-xs mt-1">Estadísticas</span>
-        </button>
-      </div>
-    </nav>
+        {/* Navegación Principal */}
+        <nav className="flex-1 p-4">
+          <div className="space-y-2">
+            <motion.button
+              onClick={() => navigateToView('dashboard')}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
+              style={getActiveDesktopStyle('dashboard')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Home size={20} />
+              <span>Dashboard</span>
+            </motion.button>
+
+            <motion.button
+              onClick={() => navigateToView('trabajos')}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
+              style={getActiveDesktopStyle('trabajos')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Briefcase size={20} />
+              <span>Trabajos</span>
+            </motion.button>
+
+            <motion.button
+              onClick={() => navigateToView('calendario')}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
+              style={getActiveDesktopStyle('calendario')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <CalendarDays size={20} />
+              <span>Calendario</span>
+              <div 
+                className="w-2 h-2 rounded-full ml-auto"
+                style={{ 
+                  backgroundColor: currentView === 'calendario' ? 'white' : coloresTemáticos?.base 
+                }}
+              />
+            </motion.button>
+
+            <motion.button
+              onClick={() => navigateToView('turnos')}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
+              style={getActiveDesktopStyle('turnos')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Calendar size={20} />
+              <span>Turnos</span>
+            </motion.button>
+
+            <motion.button
+              onClick={() => navigateToView('estadisticas')}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
+              style={getActiveDesktopStyle('estadisticas')}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <BarChart2 size={20} />
+              <span>Estadísticas</span>
+            </motion.button>
+          </div>
+        </nav>
+
+        {/* Footer del Sidebar */}
+        <div className="p-4 border-t border-gray-100">
+          <motion.button
+            onClick={() => navigateToView('ajustes')}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
+            style={getActiveDesktopStyle('ajustes')}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Settings size={20} />
+            <span>Configuración</span>
+          </motion.button>
+        </div>
+      </aside>
+    </>
   );
 };
 
