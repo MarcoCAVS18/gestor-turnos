@@ -1,6 +1,5 @@
 // src/components/dashboard/TopWorkCard/index.jsx
 
-import React from 'react';
 import ***REMOVED*** Award ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';

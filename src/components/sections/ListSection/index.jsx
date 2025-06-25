@@ -8,7 +8,7 @@ const ListSection = (***REMOVED***
   title,
   subtitle,
   action,
-  items = [], // <--- ¡La clave está aquí! Asegura que 'items' siempre sea un array
+  items = [],
   emptyState,
   renderItem,
   className = ''
@@ -21,11 +21,8 @@ const ListSection = (***REMOVED***
         action=***REMOVED***action***REMOVED***
       />
 
-      ***REMOVED***/* Ahora, 'items.length' es seguro porque 'items' está garantizado como un array */***REMOVED***
       ***REMOVED***items.length > 0 ? (
         <div className="space-y-4">
-          ***REMOVED***/* Asegúrate de que renderItem devuelve un elemento con una 'key' única,
-              como 'item.id', para un rendimiento óptimo de React. */***REMOVED***
           ***REMOVED***items.map(renderItem)***REMOVED***
         </div>
       ) : (

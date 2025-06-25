@@ -1,4 +1,5 @@
 // src/components/cards/TarjetaTurno/index.jsx
+
 import React from 'react';
 import ***REMOVED*** Edit, Trash2 ***REMOVED*** from 'lucide-react';
 import Card from '../../ui/Card';
@@ -13,7 +14,7 @@ const TarjetaTurno = (***REMOVED***
   onEdit, 
   onDelete, 
   showActions = true,
-  variant = 'card' // 'card' | 'compact'
+  variant = 'card'
 ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** rangosTurnos ***REMOVED*** = useApp();
 
@@ -39,7 +40,6 @@ const TarjetaTurno = (***REMOVED***
     ***REMOVED*** icon: Trash2, label: 'Eliminar', onClick: () => onDelete?.(turno), variant: 'danger' ***REMOVED***
   ];
 
-  // Si es variant 'compact', no usar Card wrapper
   if (variant === 'compact') ***REMOVED***
     return (
       <div className=" rounded-lg transition-colors">
@@ -67,7 +67,6 @@ const TarjetaTurno = (***REMOVED***
     );
   ***REMOVED***
 
-  // Variante por defecto con Card
   return (
     <Card className="relative">
       <div className="flex items-start justify-between">

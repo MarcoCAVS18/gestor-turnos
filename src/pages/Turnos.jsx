@@ -1,3 +1,6 @@
+// src/pages/Turnos.jsx
+
+import React from 'react';
 import ***REMOVED*** Calendar, Plus, Briefcase, ArrowRight ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** useTurnManager ***REMOVED*** from '../hooks/useTurnManager';
@@ -8,7 +11,15 @@ import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 
 const Turnos = () => ***REMOVED***
-  const ***REMOVED*** turnosPorFecha, cargando, borrarTurno, trabajos, trabajosDelivery ***REMOVED*** = useApp();
+  const ***REMOVED*** 
+    turnosPorFecha, 
+    cargando, 
+    borrarTurno, 
+    trabajos, 
+    trabajosDelivery,
+    coloresTemáticos
+  ***REMOVED*** = useApp();
+  
   const deleteManager = useDeleteManager(borrarTurno);
   const ***REMOVED*** modalAbierto, turnoSeleccionado, abrirModalNuevo, abrirModalEditar, cerrarModal ***REMOVED*** = useTurnManager();
 
@@ -55,8 +66,14 @@ const Turnos = () => ***REMOVED***
     if (todosLosTrabajos.length === 0) ***REMOVED***
       return (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-          <div className="p-4 bg-orange-50 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-            <Briefcase className="w-10 h-10 text-orange-500" />
+          <div 
+            className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"
+            style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.transparent10 || 'rgba(255, 152, 0, 0.1)' ***REMOVED******REMOVED***
+          >
+            <Briefcase 
+              className="w-10 h-10" 
+              style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#FF9800' ***REMOVED******REMOVED***
+            />
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Primero necesitas crear un trabajo</h3>
           <p className="text-gray-500 mb-6 max-w-md mx-auto">
@@ -64,7 +81,16 @@ const Turnos = () => ***REMOVED***
           </p>
           <button
             onClick=***REMOVED***handleIrATrabajos***REMOVED***
-            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2"
+            className="text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2 hover:shadow-md"
+            style=***REMOVED******REMOVED*** 
+              backgroundColor: '#FF9800'
+            ***REMOVED******REMOVED***
+            onMouseEnter=***REMOVED***(e) => ***REMOVED***
+              e.target.style.backgroundColor = '#F57C00';
+            ***REMOVED******REMOVED***
+            onMouseLeave=***REMOVED***(e) => ***REMOVED***
+              e.target.style.backgroundColor = '#FF9800';
+            ***REMOVED******REMOVED***
           >
             <Briefcase className="w-4 h-4" />
             <span>Crear Trabajo</span>
@@ -76,8 +102,14 @@ const Turnos = () => ***REMOVED***
 
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-        <div className="p-4 bg-gray-50 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-          <Calendar className="w-10 h-10 text-gray-400" />
+        <div 
+          className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"
+          style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
+        >
+          <Calendar 
+            className="w-10 h-10" 
+            style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+          />
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay turnos registrados</h3>
         <p className="text-gray-500 mb-6 max-w-md mx-auto">
@@ -85,7 +117,18 @@ const Turnos = () => ***REMOVED***
         </p>
         <button
           onClick=***REMOVED***abrirModalNuevo***REMOVED***
-          className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2"
+          className="text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2 hover:shadow-md"
+          style=***REMOVED******REMOVED*** 
+            backgroundColor: coloresTemáticos?.base || '#EC4899'
+          ***REMOVED******REMOVED***
+          onMouseEnter=***REMOVED***(e) => ***REMOVED***
+            if (coloresTemáticos?.dark) ***REMOVED***
+              e.target.style.backgroundColor = coloresTemáticos.dark;
+            ***REMOVED***
+          ***REMOVED******REMOVED***
+          onMouseLeave=***REMOVED***(e) => ***REMOVED***
+            e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+          ***REMOVED******REMOVED***
         >
           <Plus className="w-4 h-4" />
           <span>Agregar Primer Turno</span>
@@ -101,7 +144,16 @@ const Turnos = () => ***REMOVED***
       return (
         <button
           onClick=***REMOVED***handleIrATrabajos***REMOVED***
-          className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 shadow-sm"
+          className="text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 shadow-sm hover:shadow-md"
+          style=***REMOVED******REMOVED*** 
+            backgroundColor: '#FF9800'
+          ***REMOVED******REMOVED***
+          onMouseEnter=***REMOVED***(e) => ***REMOVED***
+            e.target.style.backgroundColor = '#F57C00';
+          ***REMOVED******REMOVED***
+          onMouseLeave=***REMOVED***(e) => ***REMOVED***
+            e.target.style.backgroundColor = '#FF9800';
+          ***REMOVED******REMOVED***
         >
           <Briefcase className="w-4 h-4" />
           <span>Crear Trabajo Primero</span>
@@ -112,7 +164,18 @@ const Turnos = () => ***REMOVED***
     return (
       <button
         onClick=***REMOVED***abrirModalNuevo***REMOVED***
-        className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 shadow-sm"
+        className="text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 shadow-sm hover:shadow-md"
+        style=***REMOVED******REMOVED*** 
+          backgroundColor: coloresTemáticos?.base || '#EC4899'
+        ***REMOVED******REMOVED***
+        onMouseEnter=***REMOVED***(e) => ***REMOVED***
+          if (coloresTemáticos?.dark) ***REMOVED***
+            e.target.style.backgroundColor = coloresTemáticos.dark;
+          ***REMOVED***
+        ***REMOVED******REMOVED***
+        onMouseLeave=***REMOVED***(e) => ***REMOVED***
+          e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+        ***REMOVED******REMOVED***
       >
         <Plus className="w-4 h-4" />
         <span>Nuevo</span>
@@ -126,8 +189,14 @@ const Turnos = () => ***REMOVED***
         ***REMOVED***/* Header que cambia según si hay turnos */***REMOVED***
         <div className="flex justify-between items-center pt-4">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-pink-100 rounded-lg">
-              <Calendar className="w-6 h-6 text-pink-600" />
+            <div 
+              className="p-2 rounded-lg"
+              style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
+            >
+              <Calendar 
+                className="w-6 h-6" 
+                style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+              />
             </div>
             <div>
               <h1 className="text-xl font-semibold mb-4 pt-4">Mis Turnos</h1>
@@ -147,7 +216,7 @@ const Turnos = () => ***REMOVED***
                 key=***REMOVED***fecha***REMOVED***
                 fecha=***REMOVED***fecha***REMOVED***
                 turnos=***REMOVED***turnosDia***REMOVED***
-                trabajos=***REMOVED***trabajos***REMOVED***
+                trabajos=***REMOVED***todosLosTrabajos***REMOVED***
                 onEditTurno=***REMOVED***abrirModalEditar***REMOVED***
                 onDeleteTurno=***REMOVED***deleteManager.startDeletion***REMOVED***
               />

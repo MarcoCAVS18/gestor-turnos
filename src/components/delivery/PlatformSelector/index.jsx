@@ -22,7 +22,6 @@ const PlatformButton = (***REMOVED*** platform, isSelected, onClick ***REMOVED**
         backgroundColor: isSelected ? coloresTemáticos?.transparent10 : undefined
       ***REMOVED******REMOVED***
     >
-      ***REMOVED***/* Logo placeholder */***REMOVED***
       <div 
         className="w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2"
         style=***REMOVED******REMOVED*** backgroundColor: platform.color ***REMOVED******REMOVED***

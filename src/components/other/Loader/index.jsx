@@ -114,7 +114,6 @@ const Loader = (***REMOVED*** size = 40, fullScreen = false, onAnimationComplete
     ***REMOVED***;
   ***REMOVED***, [colorPrincipal, onAnimationComplete]);
 
-  // Tamaño del SVG aumentado para dar más espacio
   const svgSize = ***REMOVED***
     width: size * 3, 
     height: (size * 3 * 596) / 842 + 120 

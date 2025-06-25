@@ -172,7 +172,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     const allJobs = [...trabajos, ...trabajosDelivery];
     const trabajo = allJobs.find(t => t.id === turno.trabajoId);
 
-    if (!trabajo) return ***REMOVED*** total: 0, totalConDescuento: 0, horas: 0, propinas: 0, esDelivery: false ***REMOVED***; // Added esDelivery for consistency
+    if (!trabajo) return ***REMOVED*** total: 0, totalConDescuento: 0, horas: 0, propinas: 0, esDelivery: false ***REMOVED***;
 
     // Si es un turno de delivery, retornar directamente la ganancia
     if (turno.tipo === 'delivery') ***REMOVED***
@@ -256,7 +256,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       total,
       totalConDescuento,
       horas,
-      propinas: 0, // Traditional jobs don't have explicit tips in this calculation
+      propinas: 0, 
       esDelivery: false
     ***REMOVED***;
   ***REMOVED***, [trabajos, trabajosDelivery, rangosTurnos, descuentoDefault, calcularHoras]);
@@ -402,8 +402,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         return ***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***;
       ***REMOVED***);
       setTrabajosDelivery(loadedTrabajos);
-      console.log('Trabajos delivery cargados:', loadedTrabajos.length); // Mantén este para la cuenta total
-      // Aquí, si loadedTrabajos.length es 1, pero no lo ves, es un problema de la consola.
+      console.log('Trabajos delivery cargados:', loadedTrabajos.length); 
     ***REMOVED***, (error) => ***REMOVED***
       console.error("Error al cargar trabajos de delivery:", error);
       setError("Error al cargar trabajos de delivery: " + error.message);
@@ -423,7 +422,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       const datosConMetadata = ***REMOVED***
         ...datosActualizados,
         fechaActualizacion: new Date(),
-        // Recalcular campos derivados
+
         gananciaBase: (datosActualizados.gananciaTotal || 0) - (datosActualizados.propinas || 0),
         gananciaNeta: (datosActualizados.gananciaTotal || 0) - (datosActualizados.gastoCombustible || 0)
       ***REMOVED***;
@@ -456,12 +455,11 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***
   ***REMOVED***, [currentUser, getUserDeliveryCollections]);
 
-  // **NUEVA FUNCIÓN AÑADIDA PARA LA META DE HORAS SEMANALES**
   const actualizarMetaHorasSemanales = useCallback(async (nuevaMeta) => ***REMOVED***
     try ***REMOVED***
       if (!currentUser) throw new Error('Usuario no autenticado');
 
-      setMetaHorasSemanales(nuevaMeta); // Actualiza el estado local
+      setMetaHorasSemanales(nuevaMeta); 
 
       // Persistir en localStorage
       if (nuevaMeta) ***REMOVED***
@@ -557,7 +555,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           ***REMOVED***
         );
 
-        // MODIFICACIÓN CLAVE AQUÍ: Llama a la función cargandoTrabajosDelivery
+        // Llama a la función cargandoTrabajosDelivery
         unsubscribeTrabajosDelivery = cargandoTrabajosDelivery();
 
 
@@ -574,8 +572,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
             (snapshot) => ***REMOVED***
               const turnosDeliveryData = [];
               snapshot.forEach(doc => ***REMOVED***
-                // Si quieres logs detallados para los turnos de delivery, añádelos aquí también
-                // console.log(`Turno Delivery detectado en FireStore. ID: $***REMOVED***doc.id***REMOVED***, Ruta: $***REMOVED***doc.ref.path***REMOVED***, Datos:`, doc.data());
                 turnosDeliveryData.push(***REMOVED***
                   id: doc.id,
                   ...doc.data(),
@@ -641,7 +637,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   ***REMOVED***, []);
 
   const contextValue = ***REMOVED***
-    // Datos principales
     trabajos,
     turnos,
     turnosPorFecha: useMemo(() => ***REMOVED***
@@ -653,7 +648,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         acc[turno.fecha].push(turno);
         return acc;
       ***REMOVED***, ***REMOVED******REMOVED***);
-    ***REMOVED***, [turnos, turnosDelivery]), // Dependency for turnosPorFecha
+    ***REMOVED***, [turnos, turnosDelivery]),
     cargando,
     error,
 
@@ -813,9 +808,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           ***REMOVED***;
         ***REMOVED***
       ***REMOVED***, ***REMOVED*** horas: 0, total: 0 ***REMOVED***);
-    ***REMOVED***, [calcularPago]), // Dependency for calcularTotalDia
+    ***REMOVED***, [calcularPago]), 
     formatearFecha,
-    actualizarMetaHorasSemanales, // **FUNCIÓN AHORA INCLUIDA**
+    actualizarMetaHorasSemanales, 
 
 
     // Funciones de configuración
@@ -838,9 +833,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         if (nuevoDescuento !== undefined) setDescuentoDefault(nuevoDescuento);
         if (nuevosRangos !== undefined) setRangosTurnos(nuevosRangos);
         if (nuevoDelivery !== undefined) setDeliveryEnabled(nuevoDelivery);
-        // La meta de horas semanales se maneja con actualizarMetaHorasSemanales,
-        // pero si viene aquí como parte de un conjunto de preferencias,
-        // también se puede actualizar el estado y localStorage.
+
         if (nuevaMeta !== undefined) ***REMOVED***
           setMetaHorasSemanales(nuevaMeta);
           if (nuevaMeta) ***REMOVED***
@@ -850,8 +843,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           ***REMOVED***
         ***REMOVED***
 
-
-        // Persistir en localStorage directamente para las preferencias que no tienen su propia función `actualizar`
         if (nuevoColor !== undefined) localStorage.setItem('colorPrincipal', nuevoColor);
         if (nuevoEmoji !== undefined) localStorage.setItem('emojiUsuario', nuevoEmoji);
         if (nuevoDescuento !== undefined) localStorage.setItem('descuentoDefault', nuevoDescuento.toString());
@@ -873,7 +864,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         // Agregar fecha de actualización
         datosActualizados['fechaActualizacion'] = new Date();
 
-        if (Object.keys(datosActualizados).length > 1) ***REMOVED*** // Verifica si hay algo que actualizar más allá de la fecha
+        if (Object.keys(datosActualizados).length > 1) ***REMOVED*** 
           await updateDoc(userDocRef, datosActualizados);
         ***REMOVED***
 
@@ -901,7 +892,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     if (savedRangos) setRangosTurnos(JSON.parse(savedRangos));
     if (savedMeta) setMetaHorasSemanales(savedMeta === 'null' ? null : parseInt(savedMeta));
     if (savedDelivery !== null) setDeliveryEnabled(savedDelivery === 'true');
-  ***REMOVED***, []); // Empty dependency array means this runs once on mount.
+  ***REMOVED***, []); 
 
   return (
     <AppContext.Provider value=***REMOVED***contextValue***REMOVED***>

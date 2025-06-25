@@ -1,6 +1,5 @@
 // src/components/dashboard/QuickActionsCard/index.jsx
 
-import React from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Plus, Briefcase ***REMOVED*** from 'lucide-react';
 import Card from '../../ui/Card';

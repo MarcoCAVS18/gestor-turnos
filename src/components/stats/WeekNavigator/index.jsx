@@ -1,4 +1,5 @@
 // src/components/stats/WeekNavigator/index.jsx 
+
 import React from 'react';
 import ***REMOVED*** ChevronLeft, ChevronRight ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
