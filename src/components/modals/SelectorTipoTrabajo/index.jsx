@@ -1,4 +1,5 @@
-// src/components/selectors/SelectorTipoTrabajo.jsx
+// src/components/modals/SelectorTipoTrabajo/index.jsx
+
 import React from 'react';
 import { Briefcase, Truck } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
@@ -6,49 +7,92 @@ import { useApp } from '../../../contexts/AppContext';
 const SelectorTipoTrabajo = ({ onSelectTipo }) => {
   const { coloresTemáticos } = useApp();
 
+  const handleSelect = (tipo) => {
+    onSelectTipo(tipo);
+  };
+
   return (
     <div className="space-y-4">
-      <p className="text-sm font-medium text-gray-700">
-        ¿Qué tipo de trabajo quieres agregar?
-      </p>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="text-center mb-6">
+        <h3 className="text-lg font-semibold mb-2">¿Qué tipo de trabajo quieres agregar?</h3>
+        <p className="text-sm text-gray-600">
+          Selecciona el tipo que mejor describe tu trabajo
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 gap-4">
+        {/* Trabajo Tradicional */}
         <button
           type="button"
-          onClick={() => onSelectTipo('tradicional')}
-          className="p-4 border-2 rounded-lg hover:border-pink-500 transition-colors group"
+          onClick={() => handleSelect('tradicional')}
+          className="p-6 border-2 rounded-xl hover:border-pink-500 transition-all duration-200 group text-left"
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = coloresTemáticos?.base;
+            e.currentTarget.style.backgroundColor = coloresTemáticos?.transparent5;
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = '#e5e7eb';
+            e.currentTarget.style.backgroundColor = 'transparent';
           }}
           style={{ borderColor: '#e5e7eb' }}
         >
-          <Briefcase className="w-8 h-8 mx-auto mb-2 text-blue-500" />
-          <p className="font-medium">Trabajo por Horas</p>
-          <p className="text-xs text-gray-500 mt-1">
-            Con tarifa fija por hora
-          </p>
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0">
+              <Briefcase className="w-8 h-8 text-blue-500 group-hover:scale-110 transition-transform" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-semibold text-lg mb-1">Trabajo por Horas</h4>
+              <p className="text-sm text-gray-600 mb-2">
+                Para trabajos con tarifa fija por hora
+              </p>
+              <ul className="text-xs text-gray-500 space-y-1">
+                <li>• Tarifas por tipo de turno (diurno, tarde, noche)</li>
+                <li>• Tarifas especiales para fin de semana</li>
+                <li>• Cálculo automático con descuentos</li>
+              </ul>
+            </div>
+          </div>
         </button>
 
+        {/* Trabajo Delivery */}
         <button
           type="button"
-          onClick={() => onSelectTipo('delivery')}
-          className="p-4 border-2 rounded-lg hover:border-pink-500 transition-colors group"
+          onClick={() => handleSelect('delivery')}
+          className="p-6 border-2 rounded-xl hover:border-pink-500 transition-all duration-200 group text-left"
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = coloresTemáticos?.base;
+            e.currentTarget.style.backgroundColor = coloresTemáticos?.transparent5;
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = '#e5e7eb';
+            e.currentTarget.style.backgroundColor = 'transparent';
           }}
           style={{ borderColor: '#e5e7eb' }}
         >
-          <Truck className="w-8 h-8 mx-auto mb-2 text-green-500" />
-          <p className="font-medium">Delivery</p>
-          <p className="text-xs text-gray-500 mt-1">
-            Ganancias por pedido
-          </p>
+          <div className="flex items-start space-x-4">
+            <div className="flex-shrink-0">
+              <Truck className="w-8 h-8 text-green-500 group-hover:scale-110 transition-transform" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-semibold text-lg mb-1">Trabajo de Delivery</h4>
+              <p className="text-sm text-gray-600 mb-2">
+                Para trabajos de reparto con ganancias variables
+              </p>
+              <ul className="text-xs text-gray-500 space-y-1">
+                <li>• Registro de ganancias totales por turno</li>
+                <li>• Seguimiento de pedidos y kilómetros</li>
+                <li>• Control de propinas y gastos de combustible</li>
+              </ul>
+            </div>
+          </div>
         </button>
+      </div>
+
+      <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm text-blue-700">
+          <strong>💡 Consejo:</strong> Puedes tener trabajos de ambos tipos en tu perfil. 
+          Cada uno se adaptará a sus características específicas.
+        </p>
       </div>
     </div>
   );

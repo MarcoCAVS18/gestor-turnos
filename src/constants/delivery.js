@@ -43,9 +43,10 @@ export const DELIVERY_PLATFORMS_AUSTRALIA = [
   }
 ];
 
+// MODIFICADO: Ahora cada vehículo es un objeto con id, nombre y color
 export const DELIVERY_VEHICLES = [
-  'Bicicleta',
-  'Moto',
-  'Auto',
-  'A pie'
+  { id: 'bicicleta', nombre: 'Bicicleta', color: '#4CAF50' },
+  { id: 'moto', nombre: 'Moto', color: '#FF9800' },
+  { id: 'auto', nombre: 'Auto', color: '#2196F3' },
+  { id: 'a_pie', nombre: 'A pie', color: '#9E9E9E' }
 ];

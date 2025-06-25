@@ -1,5 +1,3 @@
-// src/contexts/AppContext.jsx
-
 import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import {
   doc,
@@ -11,7 +9,9 @@ import {
   deleteDoc,
   query,
   orderBy,
-  onSnapshot
+  onSnapshot,
+  getDocs,
+  where
 } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { useAuth } from './AuthContext';
@@ -36,6 +36,8 @@ export const AppProvider = ({ children }) => {
   // Estados para los datos principales
   const [trabajos, setTrabajos] = useState([]);
   const [turnos, setTurnos] = useState([]);
+  const [trabajosDelivery, setTrabajosDelivery] = useState([]);
+  const [turnosDelivery, setTurnosDelivery] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [metaHorasSemanales, setMetaHorasSemanales] = useState(null);
@@ -67,6 +69,17 @@ export const AppProvider = ({ children }) => {
     return {
       trabajosRef: collection(db, 'usuarios', currentUser.uid, 'trabajos'),
       turnosRef: collection(db, 'usuarios', currentUser.uid, 'turnos')
+    };
+  }, [currentUser]);
+
+  const getUserDeliveryCollections = useCallback(() => {
+    if (!currentUser) {
+      return null;
+    }
+
+    return {
+      trabajosDeliveryRef: collection(db, 'usuarios', currentUser.uid, 'trabajos-delivery'),
+      turnosDeliveryRef: collection(db, 'usuarios', currentUser.uid, 'turnos-delivery')
     };
   }, [currentUser]);
 
@@ -143,7 +156,7 @@ export const AppProvider = ({ children }) => {
     const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
 
     let inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFn * 60 + minFn; // Corregido: Usar minFn
+    let finMinutos = horaFn * 60 + minFn;
 
     // Si el turno cruza medianoche
     if (finMinutos <= inicioMinutos) {
@@ -155,8 +168,11 @@ export const AppProvider = ({ children }) => {
 
   // Función mejorada para calcular el pago considerando rangos horarios múltiples
   const calcularPago = useCallback((turno) => {
-    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-    if (!trabajo) return { total: 0, totalConDescuento: 0, horas: 0 };
+    // Combine both traditional and delivery jobs for lookup
+    const allJobs = [...trabajos, ...trabajosDelivery];
+    const trabajo = allJobs.find(t => t.id === turno.trabajoId);
+
+    if (!trabajo) return { total: 0, totalConDescuento: 0, horas: 0, propinas: 0, esDelivery: false }; // Added esDelivery for consistency
 
     // Si es un turno de delivery, retornar directamente la ganancia
     if (turno.tipo === 'delivery') {
@@ -177,7 +193,7 @@ export const AppProvider = ({ children }) => {
     const [horaFn, minFn] = horaFin.split(':').map(n => parseInt(n));
 
     let inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFn * 60 + minFn; // Corregido: Usar minFn
+    let finMinutos = horaFn * 60 + minFn;
 
     // Si el turno cruza medianoche
     if (finMinutos <= inicioMinutos) {
@@ -239,20 +255,248 @@ export const AppProvider = ({ children }) => {
     return {
       total,
       totalConDescuento,
-      horas
+      horas,
+      propinas: 0, // Traditional jobs don't have explicit tips in this calculation
+      esDelivery: false
     };
-  }, [trabajos, rangosTurnos, descuentoDefault, calcularHoras]);
+  }, [trabajos, trabajosDelivery, rangosTurnos, descuentoDefault, calcularHoras]);
+
+  // Funciones CRUD para trabajos delivery (definidas fuera del useEffect)
+  const agregarTrabajoDelivery = useCallback(async (nuevoTrabajo) => {
+    try {
+      if (!currentUser) throw new Error('Usuario no autenticado');
+
+      const deliveryCollections = getUserDeliveryCollections();
+      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
+
+      const trabajoDeliveryData = {
+        ...nuevoTrabajo,
+        tipo: 'delivery',
+        fechaCreacion: new Date(),
+        fechaActualizacion: new Date(),
+        // Campos específicos de delivery
+        plataforma: nuevoTrabajo.plataforma || '',
+        vehiculo: nuevoTrabajo.vehiculo || '',
+        colorAvatar: nuevoTrabajo.colorAvatar || '#10B981',
+        // Estadísticas iniciales
+        estadisticas: {
+          totalTurnos: 0,
+          totalPedidos: 0,
+          totalKilometros: 0,
+          totalGanancias: 0,
+          totalPropinas: 0,
+          totalGastosCombustible: 0
+        }
+      };
+
+      console.log("Intentando guardar trabajo delivery en la ruta:", deliveryCollections.trabajosDeliveryRef.path);
+
+      const docRef = await addDoc(deliveryCollections.trabajosDeliveryRef, trabajoDeliveryData);
+
+      return { ...trabajoDeliveryData, id: docRef.id };
+    } catch (err) {
+      console.error('Error al agregar trabajo delivery:', err);
+      setError('Error al agregar trabajo delivery: ' + err.message);
+      throw err;
+    }
+  }, [currentUser, getUserDeliveryCollections]);
+
+  const editarTrabajoDelivery = useCallback(async (id, datosActualizados) => {
+    try {
+      if (!currentUser) throw new Error('Usuario no autenticado');
+
+      const deliveryCollections = getUserDeliveryCollections();
+      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
+
+      const datosConMetadata = {
+        ...datosActualizados,
+        fechaActualizacion: new Date()
+      };
+
+      const docRef = doc(deliveryCollections.trabajosDeliveryRef, id);
+      await updateDoc(docRef, datosConMetadata);
+
+    } catch (err) {
+      console.error('Error al editar trabajo delivery:', err);
+      setError('Error al editar trabajo delivery: ' + err.message);
+      throw err;
+    }
+  }, [currentUser, getUserDeliveryCollections]);
+
+  const borrarTrabajoDelivery = useCallback(async (id) => {
+    try {
+      if (!currentUser) throw new Error('Usuario no autenticado');
+
+      const deliveryCollections = getUserDeliveryCollections();
+      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
+
+      // Primero, eliminar todos los turnos asociados
+      const turnosQuery = query(
+        deliveryCollections.turnosDeliveryRef,
+        where('trabajoId', '==', id)
+      );
+
+      const turnosSnapshot = await getDocs(turnosQuery);
+      const deletePromises = turnosSnapshot.docs.map(doc => deleteDoc(doc.ref));
+      await Promise.all(deletePromises);
+
+      // Luego eliminar el trabajo
+      await deleteDoc(doc(deliveryCollections.trabajosDeliveryRef, id));
+
+    } catch (err) {
+      console.error('Error al eliminar trabajo delivery:', err);
+      setError('Error al eliminar trabajo delivery: ' + err.message);
+      throw err;
+    }
+  }, [currentUser, getUserDeliveryCollections]);
+
+  // Funciones CRUD para turnos delivery
+  const agregarTurnoDelivery = useCallback(async (nuevoTurno) => {
+    try {
+      if (!currentUser) throw new Error('Usuario no autenticado');
+
+      const deliveryCollections = getUserDeliveryCollections();
+      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
+
+      const turnoDeliveryData = {
+        ...nuevoTurno,
+        tipo: 'delivery',
+        fechaCreacion: new Date(),
+        fechaActualizacion: new Date(),
+        // Campos específicos de delivery con valores por defecto
+        numeroPedidos: nuevoTurno.numeroPedidos || 0,
+        gananciaTotal: nuevoTurno.gananciaTotal || 0,
+        propinas: nuevoTurno.propinas || 0,
+        kilometros: nuevoTurno.kilometros || 0,
+        gastoCombustible: nuevoTurno.gastoCombustible || 0,
+        // Cálculos automáticos
+        gananciaBase: (nuevoTurno.gananciaTotal || 0) - (nuevoTurno.propinas || 0),
+        gananciaNeta: (nuevoTurno.gananciaTotal || 0) - (nuevoTurno.gastoCombustible || 0)
+      };
+
+      const docRef = await addDoc(deliveryCollections.turnosDeliveryRef, turnoDeliveryData);
+
+      return { ...turnoDeliveryData, id: docRef.id };
+    } catch (err) {
+      console.error('Error al agregar turno delivery:', err);
+      setError('Error al agregar turno delivery: ' + err.message);
+      throw err;
+    }
+  }, [currentUser, getUserDeliveryCollections]);
+
+
+  const cargandoTrabajosDelivery = useCallback(() => {
+    if (!currentUser) return () => { };
+    const deliveryCollections = getUserDeliveryCollections();
+    if (!deliveryCollections) return () => { };
+
+    const q = query(
+      deliveryCollections.trabajosDeliveryRef,
+      orderBy('fechaCreacion', 'desc')
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const loadedTrabajos = snapshot.docs.map(doc => {
+        // AÑADE ESTOS CONSOLE.LOGS TEMPORALMENTE
+        console.log(`Trabajo Delivery detectado en FireStore. ID: ${doc.id}, Ruta: ${doc.ref.path}, Datos:`, doc.data());
+        return { id: doc.id, ...doc.data() };
+      });
+      setTrabajosDelivery(loadedTrabajos);
+      console.log('Trabajos delivery cargados:', loadedTrabajos.length); // Mantén este para la cuenta total
+      // Aquí, si loadedTrabajos.length es 1, pero no lo ves, es un problema de la consola.
+    }, (error) => {
+      console.error("Error al cargar trabajos de delivery:", error);
+      setError("Error al cargar trabajos de delivery: " + error.message);
+    });
+
+    return unsubscribe;
+  }, [currentUser, getUserDeliveryCollections]);
+
+
+  const editarTurnoDelivery = useCallback(async (id, datosActualizados) => {
+    try {
+      if (!currentUser) throw new Error('Usuario no autenticado');
+
+      const deliveryCollections = getUserDeliveryCollections();
+      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
+
+      const datosConMetadata = {
+        ...datosActualizados,
+        fechaActualizacion: new Date(),
+        // Recalcular campos derivados
+        gananciaBase: (datosActualizados.gananciaTotal || 0) - (datosActualizados.propinas || 0),
+        gananciaNeta: (datosActualizados.gananciaTotal || 0) - (datosActualizados.gastoCombustible || 0)
+      };
+
+      const docRef = doc(deliveryCollections.turnosDeliveryRef, id);
+      await updateDoc(docRef, datosConMetadata);
+
+      console.log('Turno delivery actualizado:', id);
+    } catch (err) {
+      console.error('Error al editar turno delivery:', err);
+      setError('Error al editar turno delivery: ' + err.message);
+      throw err;
+    }
+  }, [currentUser, getUserDeliveryCollections]);
+
+  const borrarTurnoDelivery = useCallback(async (id) => {
+    try {
+      if (!currentUser) throw new Error('Usuario no autenticado');
+
+      const deliveryCollections = getUserDeliveryCollections();
+      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
+
+      await deleteDoc(doc(deliveryCollections.turnosDeliveryRef, id));
+
+      console.log('Turno delivery eliminado:', id);
+    } catch (err) {
+      console.error('Error al eliminar turno delivery:', err);
+      setError('Error al eliminar turno delivery: ' + err.message);
+      throw err;
+    }
+  }, [currentUser, getUserDeliveryCollections]);
+
+  // **NUEVA FUNCIÓN AÑADIDA PARA LA META DE HORAS SEMANALES**
+  const actualizarMetaHorasSemanales = useCallback(async (nuevaMeta) => {
+    try {
+      if (!currentUser) throw new Error('Usuario no autenticado');
+
+      setMetaHorasSemanales(nuevaMeta); // Actualiza el estado local
+
+      // Persistir en localStorage
+      if (nuevaMeta) {
+        localStorage.setItem('metaHorasSemanales', nuevaMeta.toString());
+      } else {
+        localStorage.removeItem('metaHorasSemanales');
+      }
+
+      // Persistir en Firestore
+      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      await updateDoc(userDocRef, {
+        'ajustes.metaHorasSemanales': nuevaMeta,
+        fechaActualizacion: new Date()
+      });
+      return true;
+    } catch (err) {
+      setError('Error al actualizar meta de horas semanales: ' + err.message);
+      throw err;
+    }
+  }, [currentUser]);
 
   // Cargar datos y preferencias del usuario
   useEffect(() => {
     let unsubscribeTrabajos = null;
     let unsubscribeTurnos = null;
+    let unsubscribeTrabajosDelivery = null;
+    let unsubscribeTurnosDelivery = null;
 
     const cargarDatosUsuario = async () => {
       if (!currentUser) {
         setCargando(false);
         setTrabajos([]);
         setTurnos([]);
+        setTrabajosDelivery([]);
+        setTurnosDelivery([]);
         setError(null);
         return;
       }
@@ -268,24 +512,19 @@ export const AppProvider = ({ children }) => {
           setCargando(false);
           return;
         }
-        
+
+        // Listener para trabajos tradicionales
         const trabajosQuery = query(
           subcollections.trabajosRef,
           orderBy('nombre', 'asc')
         );
 
-        // *** CAMBIO CLAVE AQUÍ: Manejar cambios de tipo explicitamente ***
         unsubscribeTrabajos = onSnapshot(
-          trabajosQuery, 
-          { includeMetadataChanges: true }, // Mantener esto para saber si es de caché
+          trabajosQuery,
+          { includeMetadataChanges: true },
           (snapshot) => {
-            // No ignorar si es de caché, solo úsalo como información.
-            // La lógica clave es procesar los `docChanges`.
-            
-            // Si el snapshot inicial está vacío, establecer trabajos a un array vacío.
             if (snapshot.empty && !snapshot.docChanges().length) {
               setTrabajos([]);
-              console.log('Trabajos: Snapshot inicial vacío.');
               return;
             }
 
@@ -294,36 +533,65 @@ export const AppProvider = ({ children }) => {
 
               snapshot.docChanges().forEach(change => {
                 const docData = { id: change.doc.id, ...change.doc.data() };
-                
+
                 if (change.type === 'added') {
-                  // Solo añadir si no existe ya para evitar duplicados si se procesa múltiples veces
                   if (!updatedTrabajos.some(t => t.id === docData.id)) {
                     updatedTrabajos.push(docData);
                   }
                 } else if (change.type === 'modified') {
-                  updatedTrabajos = updatedTrabajos.map(t => 
+                  updatedTrabajos = updatedTrabajos.map(t =>
                     t.id === docData.id ? docData : t
                   );
                 } else if (change.type === 'removed') {
                   updatedTrabajos = updatedTrabajos.filter(t => t.id !== change.doc.id);
-                  console.log(`Trabajo eliminado (tipo 'removed'): ${change.doc.id}`);
                 }
               });
 
-              // Asegurarse de que los trabajos estén ordenados después de los cambios
               updatedTrabajos.sort((a, b) => a.nombre.localeCompare(b.nombre));
-              
-              console.log('Trabajos actualizados desde listener (total):', updatedTrabajos.length);
               return updatedTrabajos;
             });
-          }, 
+          },
           (error) => {
             console.error('Error en listener de trabajos:', error);
             setError('Error al cargar trabajos: ' + error.message);
           }
         );
 
-        // Configurar listener para turnos
+        // MODIFICACIÓN CLAVE AQUÍ: Llama a la función cargandoTrabajosDelivery
+        unsubscribeTrabajosDelivery = cargandoTrabajosDelivery();
+
+
+        // Listener para turnos delivery
+        const deliveryCollections = getUserDeliveryCollections();
+        if (deliveryCollections) {
+          const turnosDeliveryQuery = query(
+            deliveryCollections.turnosDeliveryRef,
+            orderBy('fecha', 'desc')
+          );
+
+          unsubscribeTurnosDelivery = onSnapshot(
+            turnosDeliveryQuery,
+            (snapshot) => {
+              const turnosDeliveryData = [];
+              snapshot.forEach(doc => {
+                // Si quieres logs detallados para los turnos de delivery, añádelos aquí también
+                // console.log(`Turno Delivery detectado en FireStore. ID: ${doc.id}, Ruta: ${doc.ref.path}, Datos:`, doc.data());
+                turnosDeliveryData.push({
+                  id: doc.id,
+                  ...doc.data(),
+                  tipo: 'delivery'
+                });
+              });
+              setTurnosDelivery(turnosDeliveryData);
+              console.log('Turnos delivery cargados:', turnosDeliveryData.length);
+            },
+            (error) => {
+              console.error('Error al cargar turnos delivery:', error);
+            }
+          );
+        }
+
+        // Listener para turnos tradicionales
         const turnosQuery = query(
           subcollections.turnosRef,
           orderBy('fecha', 'desc')
@@ -356,231 +624,266 @@ export const AppProvider = ({ children }) => {
     return () => {
       if (unsubscribeTrabajos) unsubscribeTrabajos();
       if (unsubscribeTurnos) unsubscribeTurnos();
+      if (unsubscribeTrabajosDelivery) unsubscribeTrabajosDelivery();
+      if (unsubscribeTurnosDelivery) unsubscribeTurnosDelivery();
     };
-  }, [currentUser, getUserSubcollections, ensureUserDocument]);
+  }, [currentUser, getUserSubcollections, getUserDeliveryCollections, ensureUserDocument, cargandoTrabajosDelivery]);
 
-const agregarTrabajo = useCallback(async (nuevoTrabajo) => {
-  try {
-    if (!currentUser) throw new Error('Usuario no autenticado');
+  // Formatear fecha
+  const formatearFecha = useCallback((fechaStr) => {
+    const fecha = new Date(fechaStr + 'T00:00:00');
+    return fecha.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }, []);
 
-    const subcollections = getUserSubcollections();
-    if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-
-    if (!nuevoTrabajo.nombre || !nuevoTrabajo.nombre.trim()) {
-      throw new Error('El nombre del trabajo es requerido');
-    }
-
-    const trabajoConMetadata = {
-      ...nuevoTrabajo,
-      fechaCreacion: new Date(),
-      fechaActualizacion: new Date(),
-      activo: true // Campo para marcar trabajos activos
-    };
-
-    // Crear el documento
-    const docRef = await addDoc(subcollections.trabajosRef, trabajoConMetadata);
-    
-    return { ...trabajoConMetadata, id: docRef.id };
-  } catch (err) {
-    setError('Error al agregar trabajo: ' + err.message);
-    throw err;
-  }
-}, [currentUser, getUserSubcollections]);
-
-  const editarTrabajo = useCallback(async (id, datosActualizados) => {
-    try {
-      if (!currentUser) throw new Error('Usuario no autenticado');
-
-      const subcollections = getUserSubcollections();
-      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-
-      const datosConMetadata = {
-        ...datosActualizados,
-        fechaActualizacion: new Date()
-      };
-
-      const docRef = doc(subcollections.trabajosRef, id);
-      await updateDoc(docRef, datosConMetadata);
-    } catch (err) {
-      setError('Error al editar trabajo: ' + err.message);
-      throw err;
-    }
-  }, [currentUser, getUserSubcollections]);
-  
-  const borrarTrabajo = useCallback(async (id) => {
-  try {
-    if (!currentUser) throw new Error('Usuario no autenticado');
-
-    const subcollections = getUserSubcollections();
-    if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-
-    // 1. Obtener referencia del documento
-    const trabajoRef = doc(subcollections.trabajosRef, id);
-    
-    // 2. Verificar que existe antes de eliminar
-    const trabajoDoc = await getDoc(trabajoRef);
-    if (!trabajoDoc.exists()) {
-      console.warn('El trabajo ya no existe en Firestore. Posiblemente ya fue eliminado por otra sesión o caché.');
-      // Si no existe en Firestore, simplemente filtramos el estado local si aún estuviera ahí.
-      setTrabajos(prev => prev.filter(t => t.id !== id));
-      return;
-    }
-
-    // 3. Eliminar turnos asociados del estado Y de Firestore ANTES de borrar el trabajo principal
-    // Esto asegura consistencia y permite que el listener de trabajos haga su trabajo.
-    const turnosAsociados = turnos.filter(turno => turno.trabajoId === id);
-    // Optimistic UI update para turnos
-    setTurnos(prev => prev.filter(turno => turno.trabajoId !== id));
-
-    const promesasBorradoTurnos = turnosAsociados.map(turno =>
-      deleteDoc(doc(subcollections.turnosRef, turno.id))
-    );
-    await Promise.all(promesasBorradoTurnos);
-    
-    // 4. Eliminar el trabajo de Firestore
-    // El listener de onSnapshot para 'trabajos' ahora debería capturar este cambio de 'removed'.
-    await deleteDoc(trabajoRef);
-    console.log(`Solicitud de eliminación de trabajo enviada para ID: ${id}`);
-
-
-    // La actualización del estado local de 'trabajos' se manejará principalmente por el listener de onSnapshot
-    // en el useEffect principal, el cual ahora procesa `change.type === 'removed'`.
-    // Por lo tanto, no necesitamos un setTrabajos optimista aquí para el trabajo en sí.
-    // setTrabajos(prev => prev.filter(t => t.id !== id)); // Este se vuelve redundante o menos crítico
-
-    // Eliminar la recarga de la página, el listener debe manejarlo.
-    // if ('caches' in window) { ... }
-    // window.location.reload(); 
-
-  } catch (err) {
-    console.error('Error al eliminar trabajo:', err);
-    setError('Error al eliminar trabajo: ' + err.message);
-    // En caso de error, podríamos considerar una estrategia de reintento o notificar al usuario
-    // para que recargue la página si el problema persiste.
-    throw err;
-  }
-}, [currentUser, getUserSubcollections, turnos]);
-
-
-
-
-  // Funciones CRUD para turnos
-  const agregarTurno = useCallback(async (nuevoTurno) => {
-    try {
-      if (!currentUser) throw new Error('Usuario no autenticado');
-
-      const subcollections = getUserSubcollections();
-      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-
-      if (!nuevoTurno.trabajoId || !nuevoTurno.fecha || !nuevoTurno.horaInicio || !nuevoTurno.horaFin) {
-        throw new Error('Todos los campos del turno son requeridos');
-      }
-
-      const turnoConMetadata = {
-        ...nuevoTurno,
-        fechaCreacion: new Date(),
-        fechaActualizacion: new Date()
-      };
-
-      const docRef = await addDoc(subcollections.turnosRef, turnoConMetadata);
-      return { ...turnoConMetadata, id: docRef.id };
-    } catch (err) {
-      setError('Error al agregar turno: ' + err.message);
-      throw err;
-    }
-  }, [currentUser, getUserSubcollections]);
-
-  const editarTurno = useCallback(async (id, datosActualizados) => {
-    try {
-      if (!currentUser) throw new Error('Usuario no autenticado');
-
-      const subcollections = getUserSubcollections();
-      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-
-      const datosConMetadata = {
-        ...datosActualizados,
-        fechaActualizacion: new Date()
-      };
-
-      const docRef = doc(subcollections.turnosRef, id);
-      await updateDoc(docRef, datosConMetadata);
-    } catch (err) {
-      setError('Error al editar turno: ' + err.message);
-      throw err;
-    }
-  }, [currentUser, getUserSubcollections]);
-
-  const borrarTurno = useCallback(async (id) => {
-    try {
-      if (!currentUser) throw new Error('Usuario no autenticado');
-
-      const subcollections = getUserSubcollections();
-      if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-
-      await deleteDoc(doc(subcollections.turnosRef, id));
-    } catch (err) {
-      setError('Error al eliminar turno: ' + err.message);
-      throw err;
-    }
-  }, [currentUser, getUserSubcollections]);
-
-  // Función para guardar preferencias de usuario
-  const guardarPreferencias = useCallback(async (preferencias) => {
-    try {
-      if (!currentUser) throw new Error('Usuario no autenticado');
-
-      const {
-        colorPrincipal: nuevoColor,
-        emojiUsuario: nuevoEmoji,
-        descuentoDefault: nuevoDescuento,
-        rangosTurnos: nuevosRangos,
-        deliveryEnabled: nuevoDelivery,
-        metaHorasSemanales: nuevaMeta,
-      } = preferencias;
-
-      if (nuevoColor !== undefined) setColorPrincipal(nuevoColor);
-      if (nuevoEmoji !== undefined) setEmojiUsuario(nuevoEmoji);
-      if (nuevoDescuento !== undefined) setDescuentoDefault(nuevoDescuento);
-      if (nuevosRangos !== undefined) setRangosTurnos(nuevosRangos);
-      if (nuevoDelivery !== undefined) setDeliveryEnabled(nuevoDelivery);
-      if (nuevaMeta !== undefined) setMetaHorasSemanales(nuevaMeta);
-
-      if (nuevoColor !== undefined) localStorage.setItem('colorPrincipal', nuevoColor);
-      if (nuevoEmoji !== undefined) localStorage.setItem('emojiUsuario', nuevoEmoji);
-      if (nuevoDescuento !== undefined) localStorage.setItem('descuentoDefault', nuevoDescuento.toString());
-      if (nuevosRangos !== undefined) localStorage.setItem('rangosTurnos', JSON.stringify(nuevosRangos));
-      if (nuevoDelivery !== undefined) localStorage.setItem('deliveryEnabled', nuevoDelivery.toString());
-      if (nuevaMeta !== undefined) {
-        if (nuevaMeta) {
-          localStorage.setItem('metaHorasSemanales', nuevaMeta.toString());
-        } else {
-          localStorage.removeItem('metaHorasSemanales');
+  const contextValue = {
+    // Datos principales
+    trabajos,
+    turnos,
+    turnosPorFecha: useMemo(() => {
+      const allTurnos = [...turnos, ...turnosDelivery];
+      return allTurnos.reduce((acc, turno) => {
+        if (!acc[turno.fecha]) {
+          acc[turno.fecha] = [];
         }
+        acc[turno.fecha].push(turno);
+        return acc;
+      }, {});
+    }, [turnos, turnosDelivery]), // Dependency for turnosPorFecha
+    cargando,
+    error,
+
+    // Preferencias de usuario
+    colorPrincipal,
+    coloresTemáticos,
+    emojiUsuario,
+    descuentoDefault,
+    rangosTurnos,
+    metaHorasSemanales,
+    deliveryEnabled,
+
+    // Funciones CRUD para trabajos
+    agregarTrabajo: useCallback(async (nuevoTrabajo) => {
+      try {
+        if (!currentUser) throw new Error('Usuario no autenticado');
+        const subcollections = getUserSubcollections();
+        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
+        if (!nuevoTrabajo.nombre || !nuevoTrabajo.nombre.trim()) {
+          throw new Error('El nombre del trabajo es requerido');
+        }
+        const trabajoConMetadata = {
+          ...nuevoTrabajo,
+          fechaCreacion: new Date(),
+          fechaActualizacion: new Date(),
+          activo: true
+        };
+        const docRef = await addDoc(subcollections.trabajosRef, trabajoConMetadata);
+        return { ...trabajoConMetadata, id: docRef.id };
+      } catch (err) {
+        setError('Error al agregar trabajo: ' + err.message);
+        throw err;
       }
+    }, [currentUser, getUserSubcollections]),
 
-      const userDocRef = doc(db, 'usuarios', currentUser.uid);
-      const datosActualizados = {};
-
-      if (nuevoColor !== undefined) datosActualizados['ajustes.colorPrincipal'] = nuevoColor;
-      if (nuevoEmoji !== undefined) datosActualizados['ajustes.emojiUsuario'] = nuevoEmoji;
-      if (nuevoDescuento !== undefined) datosActualizados['ajustes.descuentoDefault'] = nuevoDescuento;
-      if (nuevosRangos !== undefined) datosActualizados['ajustes.rangosTurnos'] = nuevosRangos;
-      if (nuevoDelivery !== undefined) datosActualizados['ajustes.deliveryEnabled'] = nuevoDelivery;
-      if (nuevaMeta !== undefined) datosActualizados['ajustes.metaHorasSemanales'] = nuevaMeta;
-
-      // Agregar fecha de actualización
-      datosActualizados['fechaActualizacion'] = new Date();
-
-      if (Object.keys(datosActualizados).length > 1) {
-        await updateDoc(userDocRef, datosActualizados);
+    editarTrabajo: useCallback(async (id, datosActualizados) => {
+      try {
+        if (!currentUser) throw new Error('Usuario no autenticado');
+        const subcollections = getUserSubcollections();
+        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
+        const datosConMetadata = {
+          ...datosActualizados,
+          fechaActualizacion: new Date()
+        };
+        const docRef = doc(subcollections.trabajosRef, id);
+        await updateDoc(docRef, datosConMetadata);
+      } catch (err) {
+        setError('Error al editar trabajo: ' + err.message);
+        throw err;
       }
+    }, [currentUser, getUserSubcollections]),
 
-      return true;
-    } catch (err) {
-      setError('Error al guardar preferencias: ' + err.message);
-      throw err;
-    }
-  }, [currentUser]);
+    borrarTrabajo: useCallback(async (id) => {
+      try {
+        if (!currentUser) throw new Error('Usuario no autenticado');
+        const subcollections = getUserSubcollections();
+        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
+        const trabajoRef = doc(db, 'usuarios', currentUser.uid, 'trabajos', id);
+        const trabajoDoc = await getDoc(trabajoRef);
+        if (!trabajoDoc.exists()) {
+          setTrabajos(prev => prev.filter(t => t.id !== id));
+          return;
+        }
+        const turnosAsociados = turnos.filter(turno => turno.trabajoId === id);
+        setTurnos(prev => prev.filter(turno => turno.trabajoId !== id));
+        const promesasBorradoTurnos = turnosAsociados.map(turno =>
+          deleteDoc(doc(subcollections.turnosRef, turno.id))
+        );
+        await Promise.all(promesasBorradoTurnos);
+        await deleteDoc(trabajoRef);
+        console.log(`Trabajo eliminado: ${id}`);
+      } catch (err) {
+        console.error('Error al eliminar trabajo:', err);
+        setError('Error al eliminar trabajo: ' + err.message);
+        throw err;
+      }
+    }, [currentUser, getUserSubcollections, turnos]),
+
+    // Trabajos delivery
+    trabajosDelivery,
+    agregarTrabajoDelivery,
+    editarTrabajoDelivery,
+    borrarTrabajoDelivery,
+
+    // Funciones CRUD para turnos
+    turnosDelivery,
+    agregarTurno: useCallback(async (nuevoTurno) => {
+      try {
+        if (!currentUser) throw new Error('Usuario no autenticado');
+        const subcollections = getUserSubcollections();
+        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
+        if (!nuevoTurno.trabajoId || !nuevoTurno.fecha || !nuevoTurno.horaInicio || !nuevoTurno.horaFin) {
+          throw new Error('Todos los campos del turno son requeridos');
+        }
+        const turnoConMetadata = {
+          ...nuevoTurno,
+          fechaCreacion: new Date(),
+          fechaActualizacion: new Date()
+        };
+        const docRef = await addDoc(subcollections.turnosRef, turnoConMetadata);
+        return { ...turnoConMetadata, id: docRef.id };
+      } catch (err) {
+        setError('Error al agregar turno: ' + err.message);
+        throw err;
+      }
+    }, [currentUser, getUserSubcollections]),
+
+    editarTurno: useCallback(async (id, datosActualizados) => {
+      try {
+        if (!currentUser) throw new Error('Usuario no autenticado');
+        const subcollections = getUserSubcollections();
+        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
+        const datosConMetadata = {
+          ...datosActualizados,
+          fechaActualizacion: new Date()
+        };
+        const docRef = doc(subcollections.turnosRef, id);
+        await updateDoc(docRef, datosConMetadata);
+      } catch (err) {
+        setError('Error al editar turno: ' + err.message);
+        throw err;
+      }
+    }, [currentUser, getUserSubcollections]),
+
+    borrarTurno: useCallback(async (id) => {
+      try {
+        if (!currentUser) throw new Error('Usuario no autenticado');
+        const subcollections = getUserSubcollections();
+        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
+        await deleteDoc(doc(subcollections.turnosRef, id));
+      } catch (err) {
+        setError('Error al eliminar turno: ' + err.message);
+        throw err;
+      }
+    }, [currentUser, getUserSubcollections]),
+
+    agregarTurnoDelivery,
+    editarTurnoDelivery,
+    borrarTurnoDelivery,
+
+    // Funciones de cálculo
+    calcularHoras,
+    calcularPago,
+    calcularTotalDia: useCallback((turnosDia) => {
+      return turnosDia.reduce((total, turno) => {
+        if (turno.tipo === 'delivery') {
+          const gananciaNeta = (turno.gananciaTotal || 0) - (turno.gastoCombustible || 0);
+          return {
+            horas: total.horas,
+            total: total.total + gananciaNeta
+          };
+        } else {
+          const resultado = calcularPago(turno);
+          return {
+            horas: total.horas + resultado.horas,
+            total: total.total + resultado.total
+          };
+        }
+      }, { horas: 0, total: 0 });
+    }, [calcularPago]), // Dependency for calcularTotalDia
+    formatearFecha,
+    actualizarMetaHorasSemanales, // **FUNCIÓN AHORA INCLUIDA**
+
+
+    // Funciones de configuración
+    guardarPreferencias: useCallback(async (preferencias) => {
+      try {
+        if (!currentUser) throw new Error('Usuario no autenticado');
+
+        const {
+          colorPrincipal: nuevoColor,
+          emojiUsuario: nuevoEmoji,
+          descuentoDefault: nuevoDescuento,
+          rangosTurnos: nuevosRangos,
+          deliveryEnabled: nuevoDelivery,
+          metaHorasSemanales: nuevaMeta,
+        } = preferencias;
+
+        // Actualizar estados locales si los valores son proporcionados
+        if (nuevoColor !== undefined) setColorPrincipal(nuevoColor);
+        if (nuevoEmoji !== undefined) setEmojiUsuario(nuevoEmoji);
+        if (nuevoDescuento !== undefined) setDescuentoDefault(nuevoDescuento);
+        if (nuevosRangos !== undefined) setRangosTurnos(nuevosRangos);
+        if (nuevoDelivery !== undefined) setDeliveryEnabled(nuevoDelivery);
+        // La meta de horas semanales se maneja con actualizarMetaHorasSemanales,
+        // pero si viene aquí como parte de un conjunto de preferencias,
+        // también se puede actualizar el estado y localStorage.
+        if (nuevaMeta !== undefined) {
+          setMetaHorasSemanales(nuevaMeta);
+          if (nuevaMeta) {
+            localStorage.setItem('metaHorasSemanales', nuevaMeta.toString());
+          } else {
+            localStorage.removeItem('metaHorasSemanales');
+          }
+        }
+
+
+        // Persistir en localStorage directamente para las preferencias que no tienen su propia función `actualizar`
+        if (nuevoColor !== undefined) localStorage.setItem('colorPrincipal', nuevoColor);
+        if (nuevoEmoji !== undefined) localStorage.setItem('emojiUsuario', nuevoEmoji);
+        if (nuevoDescuento !== undefined) localStorage.setItem('descuentoDefault', nuevoDescuento.toString());
+        if (nuevosRangos !== undefined) localStorage.setItem('rangosTurnos', JSON.stringify(nuevosRangos));
+        if (nuevoDelivery !== undefined) localStorage.setItem('deliveryEnabled', nuevoDelivery.toString());
+
+
+        const userDocRef = doc(db, 'usuarios', currentUser.uid);
+        const datosActualizados = {};
+
+        if (nuevoColor !== undefined) datosActualizados['ajustes.colorPrincipal'] = nuevoColor;
+        if (nuevoEmoji !== undefined) datosActualizados['ajustes.emojiUsuario'] = nuevoEmoji;
+        if (nuevoDescuento !== undefined) datosActualizados['ajustes.descuentoDefault'] = nuevoDescuento;
+        if (nuevosRangos !== undefined) datosActualizados['ajustes.rangosTurnos'] = nuevosRangos;
+        if (nuevoDelivery !== undefined) datosActualizados['ajustes.deliveryEnabled'] = nuevoDelivery;
+        if (nuevaMeta !== undefined) datosActualizados['ajustes.metaHorasSemanales'] = nuevaMeta;
+
+
+        // Agregar fecha de actualización
+        datosActualizados['fechaActualizacion'] = new Date();
+
+        if (Object.keys(datosActualizados).length > 1) { // Verifica si hay algo que actualizar más allá de la fecha
+          await updateDoc(userDocRef, datosActualizados);
+        }
+
+        return true;
+      } catch (err) {
+        setError('Error al guardar preferencias: ' + err.message);
+        throw err;
+      }
+    }, [currentUser]),
+  };
 
   // Agrega un useEffect para cargar desde localStorage (después del useEffect principal)
   useEffect(() => {
@@ -598,117 +901,7 @@ const agregarTrabajo = useCallback(async (nuevoTrabajo) => {
     if (savedRangos) setRangosTurnos(JSON.parse(savedRangos));
     if (savedMeta) setMetaHorasSemanales(savedMeta === 'null' ? null : parseInt(savedMeta));
     if (savedDelivery !== null) setDeliveryEnabled(savedDelivery === 'true');
-  }, []);
-
-  const actualizarMetaHorasSemanales = useCallback(async (meta) => {
-    try {
-      if (!currentUser) throw new Error('Usuario no autenticado');
-
-      const metaValida = meta && !isNaN(meta) && meta > 0 ? Number(meta) : null;
-      setMetaHorasSemanales(metaValida);
-
-      // Guardar en localStorage
-      if (metaValida) {
-        localStorage.setItem('metaHorasSemanales', metaValida.toString());
-      } else {
-        localStorage.removeItem('metaHorasSemanales');
-      }
-
-      // Guardar en Firestore
-      const userDocRef = doc(db, 'usuarios', currentUser.uid);
-      await updateDoc(userDocRef, {
-        'ajustes.metaHorasSemanales': metaValida,
-        'fechaActualizacion': new Date()
-      });
-
-      return true;
-    } catch (err) {
-      setError('Error al actualizar meta de horas: ' + err.message);
-      throw err;
-    }
-  }, [currentUser]);
-
-  // Agrupar turnos por fecha
-  const turnosPorFecha = useMemo(() => {
-    return turnos.reduce((acc, turno) => {
-      if (!acc[turno.fecha]) {
-        acc[turno.fecha] = [];
-      }
-      acc[turno.fecha].push(turno);
-      return acc;
-    }, {});
-  }, [turnos]);
-
-  // Calcular total del día
-  const calcularTotalDia = (turnosDia) => {
-    return turnosDia.reduce((total, turno) => {
-      if (turno.tipo === 'delivery') {
-        // Para turnos de delivery, usar la ganancia neta (ganancia total - combustible)
-        const gananciaNeta = turno.gananciaTotal - (turno.gastoCombustible || 0);
-        return {
-          horas: total.horas, // No sumar horas para delivery
-          total: total.total + gananciaNeta
-        };
-      } else {
-        // Para turnos tradicionales, calcular según tarifa
-        const resultado = calcularPago(turno);
-        return {
-          horas: total.horas + resultado.horas,
-          total: total.total + resultado.total
-        };
-      }
-    }, { horas: 0, total: 0 });
-  };
-
-  // Formatear fecha
-  const formatearFecha = useCallback((fechaStr) => {
-    const fecha = new Date(fechaStr + 'T00:00:00');
-    return fecha.toLocaleDateString('es-ES', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  }, []);
-
-  const contextValue = {
-    // Datos principales
-    trabajos,
-    turnos,
-    turnosPorFecha,
-    cargando,
-    error,
-
-    // Preferencias de usuario
-    colorPrincipal,
-    coloresTemáticos,
-    emojiUsuario,
-    descuentoDefault,
-    rangosTurnos,
-    metaHorasSemanales,
-    deliveryEnabled,
-
-    // Funciones CRUD para trabajos
-    agregarTrabajo,
-    editarTrabajo,
-    borrarTrabajo,
-
-    // Funciones CRUD para turnos
-    agregarTurno,
-    editarTurno,
-    borrarTurno,
-
-    // Funciones de cálculo
-    calcularHoras,
-    calcularPago,
-    calcularTotalDia,
-    formatearFecha,
-    actualizarMetaHorasSemanales,
-
-
-    // Funciones de configuración
-    guardarPreferencias
-  };
+  }, []); // Empty dependency array means this runs once on mount.
 
   return (
     <AppContext.Provider value={contextValue}>
@@ -716,5 +909,3 @@ const agregarTrabajo = useCallback(async (nuevoTrabajo) => {
     </AppContext.Provider>
   );
 };
-
-export default AppContext;

@@ -1,27 +1,40 @@
 // src/components/modals/ModalTurno.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react'; // Added useMemo
 import { X } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import TurnoForm from '../../forms/TurnoForm';
 import TurnoDeliveryForm from '../../forms/TurnoDeliveryForm';
 
 const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
-  const { agregarTurno, editarTurno, trabajos } = useApp();
+  const {
+    agregarTurno,
+    editarTurno,
+    agregarTurnoDelivery,
+    editarTurnoDelivery,
+    trabajos,
+    trabajosDelivery
+  } = useApp();
+
   const [trabajoSeleccionadoId, setTrabajoSeleccionadoId] = useState(trabajoId || '');
   const [formularioTipo, setFormularioTipo] = useState('tradicional');
-  
+
+  // Combinar todos los trabajos para el selector usando useMemo
+  const todosLosTrabajos = useMemo(() => {
+    return [...trabajos, ...trabajosDelivery];
+  }, [trabajos, trabajosDelivery]); // Dependencies for useMemo
+
   // Determinar el tipo de formulario basado en el trabajo
   useEffect(() => {
     if (turno?.tipo === 'delivery') {
       setFormularioTipo('delivery');
     } else if (trabajoSeleccionadoId) {
-      const trabajo = trabajos.find(t => t.id === trabajoSeleccionadoId);
+      const trabajo = todosLosTrabajos.find(t => t.id === trabajoSeleccionadoId);
       setFormularioTipo(trabajo?.tipo === 'delivery' ? 'delivery' : 'tradicional');
     } else {
       setFormularioTipo('tradicional');
     }
-  }, [trabajoSeleccionadoId, trabajos, turno]);
+  }, [trabajoSeleccionadoId, todosLosTrabajos, turno]);
 
   // Reset cuando se abre/cierra el modal
   useEffect(() => {
@@ -36,12 +49,25 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
   }, [isOpen, turno, trabajoId]);
 
   const manejarGuardado = async (datosTurno) => {
-    if (turno) {
-      await editarTurno(turno.id, datosTurno);
-    } else {
-      await agregarTurno(datosTurno);
+    try {
+      if (formularioTipo === 'delivery') {
+        if (turno) {
+          await editarTurnoDelivery(turno.id, datosTurno);
+        } else {
+          await agregarTurnoDelivery(datosTurno);
+        }
+      } else {
+        if (turno) {
+          await editarTurno(turno.id, datosTurno);
+        } else {
+          await agregarTurno(datosTurno);
+        }
+      }
+      onClose();
+    } catch (error) {
+      console.error('Error al guardar turno:', error);
+      // Aquí podrías mostrar una notificación de error
     }
-    onClose();
   };
 
   const manejarCambioTrabajo = (nuevoTrabajoId) => {
@@ -71,6 +97,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
             <TurnoDeliveryForm
               turno={turno}
               trabajoId={trabajoSeleccionadoId}
+              trabajos={todosLosTrabajos.filter(t => t.tipo === 'delivery')}
               onSubmit={manejarGuardado}
               onCancel={onClose}
               onTrabajoChange={manejarCambioTrabajo}
@@ -79,6 +106,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
             <TurnoForm
               turno={turno}
               trabajoId={trabajoSeleccionadoId}
+              trabajos={todosLosTrabajos.filter(t => t.tipo !== 'delivery')}
               onSubmit={manejarGuardado}
               onCancel={onClose}
               onTrabajoChange={manejarCambioTrabajo}

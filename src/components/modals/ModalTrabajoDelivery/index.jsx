@@ -1,24 +1,25 @@
 // src/components/modals/ModalTrabajoDelivery/index.jsx
 
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react'; // Added useCallback, useEffect, useState explicitly
 import { X, Truck } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import PlatformSelector from '../../delivery/PlatformSelector';
-import { DELIVERY_VEHICLES } from '../../../constants/delivery';
+import VehicleSelector from '../../delivery/VehicleSelector';
+import { DELIVERY_PLATFORMS_AUSTRALIA } from '../../../constants/delivery';
 
 const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
-  const { agregarTrabajo, editarTrabajo, coloresTemáticos } = useApp();
+  const { agregarTrabajoDelivery, editarTrabajoDelivery, coloresTemáticos } = useApp();
 
   const manejarGuardado = async (datosDelivery) => {
     try {
       if (trabajo) {
-        await editarTrabajo(trabajo.id, datosDelivery);
+        await editarTrabajoDelivery(trabajo.id, datosDelivery);
       } else {
-        await agregarTrabajo(datosDelivery);
+        await agregarTrabajoDelivery(datosDelivery);
       }
       onClose();
     } catch (error) {
-      console.error('Error al guardar trabajo:', error);
+      console.error('Error al guardar trabajo delivery:', error);
     }
   };
 
@@ -54,32 +55,48 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
 };
 
 const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemáticos }) => {
-  const [formData, setFormData] = React.useState({
+  const [formData, setFormData] = useState({ // Changed React.useState to useState
     nombre: '',
-    tipo: 'delivery',
     plataforma: '',
     vehiculo: '',
-    descripcion: ''
+    descripcion: '',
+    colorAvatar: '#10B981',
+    configuracion: {
+      calculaPorKm: false,
+      tarifaPorKm: 0,
+      calculaPorPedido: true,
+      tarifaBasePedido: 0,
+      incluyePropinas: true,
+      rastreaCombustible: true
+    }
   });
 
-  const [errors, setErrors] = React.useState({});
-  const [guardando, setGuardando] = React.useState(false);
+  const [errors, setErrors] = useState({}); // Changed React.useState to useState
+  const [guardando, setGuardando] = useState(false); // Changed React.useState to useState
 
-  React.useEffect(() => {
+  useEffect(() => { // Changed React.useEffect to useEffect
     if (trabajo) {
       setFormData({
         nombre: trabajo.nombre || '',
-        tipo: trabajo.tipo || 'delivery',
         plataforma: trabajo.plataforma || '',
         vehiculo: trabajo.vehiculo || '',
-        descripcion: trabajo.descripcion || ''
+        descripcion: trabajo.descripcion || '',
+        colorAvatar: trabajo.colorAvatar || '#10B981',
+        configuracion: trabajo.configuracion || {
+          calculaPorKm: false,
+          tarifaPorKm: 0,
+          calculaPorPedido: true,
+          tarifaBasePedido: 0,
+          incluyePropinas: true,
+          rastreaCombustible: true
+        }
       });
     }
   }, [trabajo]);
 
   const validarFormulario = () => {
     const newErrors = {};
-    
+
     if (!formData.nombre.trim()) {
       newErrors.nombre = 'El nombre es requerido';
     }
@@ -96,7 +113,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validarFormulario()) {
       return;
     }
@@ -104,34 +121,48 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
     setGuardando(true);
 
     try {
-      const datosCompletos = {
-        ...formData,
-        id: trabajo?.id || Date.now().toString(),
-        createdAt: trabajo?.createdAt || new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      await onSubmit(datosCompletos);
+      await onSubmit(formData);
     } catch (error) {
       console.error('Error:', error);
-    } finally {
       setGuardando(false);
     }
   };
 
-  const handleInputChange = (field, value) => {
+  // Wrap handleInputChange in useCallback
+  const handleInputChange = useCallback((field, value) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
-    
+
     if (errors[field]) {
       setErrors(prev => ({
         ...prev,
         [field]: undefined
       }));
     }
+  }, [errors]); // `errors` is a dependency here because it's used inside the function.
+
+  const handleConfigChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      configuracion: {
+        ...prev.configuracion,
+        [field]: value
+      }
+    }));
   };
+
+  // Obtener el color de la plataforma seleccionada
+  const plataformaSeleccionada = DELIVERY_PLATFORMS_AUSTRALIA.find(
+    p => p.nombre === formData.plataforma
+  );
+
+  useEffect(() => { // Changed React.useEffect to useEffect
+    if (plataformaSeleccionada && !trabajo) {
+      handleInputChange('colorAvatar', plataformaSeleccionada.color);
+    }
+  }, [plataformaSeleccionada, trabajo, handleInputChange]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -161,22 +192,36 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
 
       {/* Selector de vehículo */}
       <div>
-        <label className="block text-sm font-medium mb-1">
-          Vehículo
-        </label>
-        <select
-          value={formData.vehiculo}
-          onChange={(e) => handleInputChange('vehiculo', e.target.value)}
-          className={`w-full p-3 border rounded-lg text-sm ${errors.vehiculo ? 'border-red-500' : 'border-gray-300'}`}
-        >
-          <option value="">-- Seleccionar Vehículo --</option>
-          {DELIVERY_VEHICLES.map(vehiculo => (
-            <option key={vehiculo} value={vehiculo}>
-              {vehiculo}
-            </option>
-          ))}
-        </select>
+        <VehicleSelector
+          selectedVehicle={formData.vehiculo}
+          onVehicleSelect={(vehiculo) => handleInputChange('vehiculo', vehiculo)}
+        />
         {errors.vehiculo && <p className="text-red-500 text-xs mt-1">{errors.vehiculo}</p>}
+      </div>
+
+      {/* Configuración de cálculos */}
+      <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
+        <h3 className="text-sm font-medium text-gray-700">Configuración de cálculos</h3>
+
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={formData.configuracion.incluyePropinas}
+            onChange={(e) => handleConfigChange('incluyePropinas', e.target.checked)}
+            className="rounded"
+          />
+          <span className="text-sm">Incluir propinas en el registro</span>
+        </label>
+
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked={formData.configuracion.rastreaCombustible}
+            onChange={(e) => handleConfigChange('rastreaCombustible', e.target.checked)}
+            className="rounded"
+          />
+          <span className="text-sm">Rastrear gastos de combustible</span>
+        </label>
       </div>
 
       {/* Descripción opcional */}

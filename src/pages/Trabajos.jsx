@@ -1,29 +1,34 @@
-// src/pages/Trabajos.jsx
-import React from 'react';
-import { PlusCircle, Briefcase } from 'lucide-react';
+import React, { useEffect, useMemo } from 'react';
+import { Briefcase, Plus } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
-import { useDeleteManager } from '../hooks/useDeleteManager';
+import { useAuth } from '../contexts/AuthContext';
 import TarjetaTrabajo from '../components/cards/TarjetaTrabajo';
 import TarjetaDelivery from '../components/cards/TarjetaTrabajoDelivery';
 import ModalTrabajo from '../components/modals/ModalTrabajo';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
-import ListSection from '../components/sections/ListSection';
 
 const Trabajos = () => {
-  const { trabajos, cargando, borrarTrabajo } = useApp();
-  const deleteManager = useDeleteManager(borrarTrabajo);
-  
-  // Log para depuración
-  React.useEffect(() => {
-    console.log('Trabajos actuales:', trabajos.map(t => ({ id: t.id, nombre: t.nombre, tipo: t.tipo })));
-  }, [trabajos]);
-  
-  // Estado para modales
+  const {
+    trabajos = [], 
+    trabajosDelivery = [], 
+    cargando,
+    borrarTrabajo,
+    borrarTrabajoDelivery
+  } = useApp();
+
+  const { currentUser } = useAuth();
+
+  const todosLosTrabajos = useMemo(() => {
+    return [...trabajos, ...trabajosDelivery];
+  }, [trabajos, trabajosDelivery]);
+
+  const [itemToDelete, setItemToDelete] = React.useState(null);
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
   const [modalAbierto, setModalAbierto] = React.useState(false);
   const [trabajoSeleccionado, setTrabajoSeleccionado] = React.useState(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
-  // Funciones para manejar modales
   const abrirModalNuevo = () => {
     setTrabajoSeleccionado(null);
     setModalAbierto(true);
@@ -39,84 +44,175 @@ const Trabajos = () => {
     setTrabajoSeleccionado(null);
   };
 
-  // Función para generar detalles del trabajo para eliminación
-  const generarDetallesTrabajo = (trabajo) => {
-    if (!trabajo) return [];
-    const detalles = [trabajo.nombre];
-    
-    if (trabajo.tipo === 'delivery') {
-      detalles.push('Trabajo de Delivery');
-      if (trabajo.plataforma) detalles.push(`Plataforma: ${trabajo.plataforma}`);
-    } else {
-      detalles.push('Trabajo por Horas');
+  const deleteHandler = async (id, tipo) => {
+    try {
+      if (tipo === 'delivery') {
+        await borrarTrabajoDelivery(id);
+      } else {
+        await borrarTrabajo(id);
+      }
+      return true;
+    } catch (error) {
+      console.error('Error en deleteHandler:', error);
+      return false;
     }
-    
-    return detalles;
   };
 
+  const handleCardDelete = (trabajo) => {
+    if (!trabajo || !trabajo.id) {
+      return;
+    }
+    
+    setItemToDelete(trabajo);
+    setShowDeleteModal(true);
+  };
+
+  const generarDetallesTrabajo = (trabajo) => {
+    if (!trabajo) {
+      return {};
+    }
+    
+    if (trabajo.tipo === 'delivery') {
+      return {
+        Título: trabajo.nombre,
+        Plataforma: trabajo.plataforma,
+        Vehículo: trabajo.vehiculo,
+      };
+    } else {
+      return {
+        Título: trabajo.nombre,
+        Tarifa: `$${trabajo.tarifaBase || 0}`,
+      };
+    }
+  };
+
+  const handleConfirmDeletion = async () => {
+    if (!itemToDelete) {
+      return;
+    }
+    
+    try {
+      setIsDeleting(true);
+      
+      const resultado = await deleteHandler(itemToDelete.id, itemToDelete.tipo);
+      
+      if (resultado) {
+        setShowDeleteModal(false);
+        setItemToDelete(null);
+      }
+    } catch (error) {
+      console.error('Error en confirmación:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleCancelDeletion = () => {
+    setShowDeleteModal(false);
+    setItemToDelete(null);
+  };
+
+  useEffect(() => {
+    if (!currentUser) return;
+    
+    console.log('🔑 Usuario autenticado:', currentUser.uid);
+    console.log('📊 Cargando trabajos...');
+  }, [currentUser]);
+
   return (
-    <LoadingWrapper loading={cargando}>
-      <ListSection
-        title="Mis Trabajos"
-        action={{
-          label: 'Nuevo Trabajo',
-          icon: PlusCircle,
-          onClick: abrirModalNuevo
-        }}
-        items={trabajos}
-        emptyState={{
-          icon: Briefcase,
-          title: 'No hay trabajos registrados',
-          description: 'Comienza agregando tu primer trabajo',
-          action: {
-            label: 'Agregar primer trabajo',
-            icon: PlusCircle,
-            onClick: abrirModalNuevo
-          }
-        }}
-        renderItem={(trabajo) => {
-          console.log('Renderizando trabajo:', trabajo.id, trabajo.nombre, trabajo.tipo);
-          
-          // Renderizar tarjeta según tipo de trabajo
-          if (trabajo.tipo === 'delivery') {
-            return (
-              <TarjetaDelivery
-                key={trabajo.id}
-                trabajo={trabajo}
-                onEdit={abrirModalEditar}
-                onDelete={deleteManager.startDeletion}
-                showActions={true}
-              />
-            );
-          }
-          
-          // Trabajo tradicional
-          return (
-            <TarjetaTrabajo
-              key={trabajo.id}
-              trabajo={trabajo}
-              onEdit={abrirModalEditar}
-              onDelete={deleteManager.startDeletion}
-              showActions={true}
-            />
-          );
-        }}
-        className="space-y-4"
+    <LoadingWrapper cargando={cargando}>
+      <div className="space-y-6">
+        {/* Header que cambia según si hay trabajos */}
+        <div className="flex justify-between items-center pt-4">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-pink-100 rounded-lg">
+              <Briefcase className="w-6 h-6 text-pink-600" />
+            </div>
+            <div>
+              <h1 className="text-xl font-semibold mb-4 pt-4">Mis Trabajos</h1>
+            </div>
+          </div>
+          {/* Solo mostrar botón en header si hay trabajos */}
+          {todosLosTrabajos.length > 0 && (
+            <button
+              onClick={abrirModalNuevo}
+              className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 shadow-sm"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Nuevo</span>
+            </button>
+          )}
+        </div>
+
+        {/* Lista de trabajos o estado vacío */}
+        {todosLosTrabajos.length === 0 ? (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+            <div className="p-4 bg-gray-50 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+              <Briefcase className="w-10 h-10 text-gray-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay trabajos aún</h3>
+            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+              Crea tu primer trabajo para empezar a registrar turnos y gestionar tus ingresos.
+            </p>
+            <button
+              onClick={abrirModalNuevo}
+              className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Crear Nuevo Trabajo</span>
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {todosLosTrabajos.map((trabajo) => {
+              const deleteFunction = (trabajoParam) => {
+                handleCardDelete(trabajoParam);
+              };
+
+              if (trabajo.tipo === 'delivery') {
+                return (
+                  <TarjetaDelivery
+                    key={trabajo.id}
+                    trabajo={trabajo}
+                    onEdit={abrirModalEditar}
+                    onDelete={deleteFunction}
+                    showActions={true}
+                  />
+                );
+              }
+
+              return (
+                <TarjetaTrabajo
+                  key={trabajo.id}
+                  trabajo={trabajo}
+                  onEdit={abrirModalEditar}
+                  onDelete={deleteFunction}
+                  showActions={true}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <ModalTrabajo
+        isOpen={modalAbierto}
+        onClose={cerrarModal}
+        trabajo={trabajoSeleccionado}
       />
 
-      <ModalTrabajo 
-        isOpen={modalAbierto} 
-        onClose={cerrarModal} 
-        trabajo={trabajoSeleccionado} 
-      />
-      
       <AlertaEliminacion
-        visible={deleteManager.showDeleteModal}
-        onCancel={deleteManager.cancelDeletion}
-        onConfirm={deleteManager.confirmDeletion}
-        eliminando={deleteManager.deleting}
+        visible={showDeleteModal}
+        onCancel={handleCancelDeletion}
+        onConfirm={handleConfirmDeletion}
+        eliminando={isDeleting}
         tipo="trabajo"
-        detalles={generarDetallesTrabajo(deleteManager.itemToDelete)}
+        detalles={generarDetallesTrabajo(itemToDelete)}
+        advertencia={
+          itemToDelete?.tipo === 'delivery'
+            ? "Se eliminarán también todos los turnos de delivery asociados a este trabajo."
+            : "Se eliminarán también todos los turnos asociados a este trabajo."
+        }
       />
     </LoadingWrapper>
   );

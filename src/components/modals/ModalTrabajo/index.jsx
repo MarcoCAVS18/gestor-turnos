@@ -1,4 +1,5 @@
-// src/components/modals/ModalTrabajo.jsx
+// src/components/modals/ModalTrabajo/index.jsx
+
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
@@ -10,14 +11,20 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
   const { agregarTrabajo, editarTrabajo, deliveryEnabled } = useApp();
   const [mostrarSelector, setMostrarSelector] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // Determinar si mostrar selector
   React.useEffect(() => {
     if (isOpen && !trabajo && deliveryEnabled) {
+      // Solo mostrar selector si delivery está habilitado y es un trabajo nuevo
       setMostrarSelector(true);
       setTipoSeleccionado(null);
     } else {
       setMostrarSelector(false);
+      // Si no hay delivery habilitado, ir directo al formulario tradicional
+      if (isOpen && !trabajo && !deliveryEnabled) {
+        setTipoSeleccionado('tradicional');
+      }
     }
   }, [isOpen, trabajo, deliveryEnabled]);
 
@@ -27,22 +34,41 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
   };
 
   const manejarGuardado = async (datosTrabajo) => {
-    if (trabajo) {
-      await editarTrabajo(trabajo.id, datosTrabajo);
-    } else {
-      await agregarTrabajo(datosTrabajo);
+    try {
+      setLoading(true);
+      
+      if (trabajo) {
+        await editarTrabajo(trabajo.id, datosTrabajo);
+      } else {
+        const resultado = await agregarTrabajo(datosTrabajo);
+      }
+      
+      // Resetear estados
+      setTipoSeleccionado(null);
+      setMostrarSelector(false);
+      onClose();
+    } catch (error) {
+      console.error('Error al guardar trabajo:', error);
+      // Aquí podrías mostrar un mensaje de error
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const manejarCerrar = () => {
+    setTipoSeleccionado(null);
+    setMostrarSelector(false);
     onClose();
   };
 
   if (!isOpen) return null;
 
-  // Si es un trabajo de delivery existente, usar el modal de delivery
+  // Si es un trabajo de delivery existente, usar el modal de delivery directamente
   if (trabajo && trabajo.tipo === 'delivery') {
     return (
       <ModalTrabajoDelivery
         isOpen={true}
-        onClose={onClose}
+        onClose={manejarCerrar}
         trabajo={trabajo}
       />
     );
@@ -53,7 +79,7 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
     return (
       <ModalTrabajoDelivery
         isOpen={true}
-        onClose={onClose}
+        onClose={manejarCerrar}
         trabajo={null}
       />
     );
@@ -67,8 +93,9 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
             {trabajo ? 'Editar Trabajo' : 'Nuevo Trabajo'}
           </h2>
           <button
-            onClick={onClose}
+            onClick={manejarCerrar}
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            disabled={loading}
           >
             <X size={20} />
           </button>
@@ -81,7 +108,8 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
             <TrabajoForm
               trabajo={trabajo}
               onSubmit={manejarGuardado}
-              onCancel={onClose}
+              onCancel={manejarCerrar}
+              loading={loading}
             />
           )}
         </div>

@@ -137,6 +137,7 @@ function AppLayout({ currentView }) {
         onClose={cerrarModalTurno}
         turno={turnoSeleccionado}
       />
+
     </div>
   );
 }

@@ -18,13 +18,6 @@ import EficienciaVehiculos from '../components/stats/EficienciaVehiculos';
 import ComparacionPlataformas from '../components/stats/ComparacionPlataformas';
 import SeguimientoCombustible from '../components/stats/SeguimientoCombustible';
 
-// Debug: Verificar que todos los componentes se importaron correctamente
-console.log('Componentes importados:', {
-  ResumenDelivery,
-  EficienciaVehiculos,
-  ComparacionPlataformas,
-  SeguimientoCombustible
-});
 
 const Estadisticas = () => {
   const { turnos, trabajos, cargando, metaHorasSemanales, deliveryEnabled } = useApp();
