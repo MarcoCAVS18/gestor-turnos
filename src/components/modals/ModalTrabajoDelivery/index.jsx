@@ -1,24 +1,25 @@
 // src/components/modals/ModalTrabajoDelivery/index.jsx
 
-import React from 'react';
+import React, ***REMOVED*** useCallback, useEffect, useState ***REMOVED*** from 'react'; // Added useCallback, useEffect, useState explicitly
 import ***REMOVED*** X, Truck ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import PlatformSelector from '../../delivery/PlatformSelector';
-import ***REMOVED*** DELIVERY_VEHICLES ***REMOVED*** from '../../../constants/delivery';
+import VehicleSelector from '../../delivery/VehicleSelector';
+import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../constants/delivery';
 
 const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** agregarTrabajo, editarTrabajo, coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** agregarTrabajoDelivery, editarTrabajoDelivery, coloresTemáticos ***REMOVED*** = useApp();
 
   const manejarGuardado = async (datosDelivery) => ***REMOVED***
     try ***REMOVED***
       if (trabajo) ***REMOVED***
-        await editarTrabajo(trabajo.id, datosDelivery);
+        await editarTrabajoDelivery(trabajo.id, datosDelivery);
       ***REMOVED*** else ***REMOVED***
-        await agregarTrabajo(datosDelivery);
+        await agregarTrabajoDelivery(datosDelivery);
       ***REMOVED***
       onClose();
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al guardar trabajo:', error);
+      console.error('Error al guardar trabajo delivery:', error);
     ***REMOVED***
   ***REMOVED***;
 
@@ -54,32 +55,48 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
 ***REMOVED***;
 
 const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, coloresTemáticos ***REMOVED***) => ***REMOVED***
-  const [formData, setFormData] = React.useState(***REMOVED***
+  const [formData, setFormData] = useState(***REMOVED*** // Changed React.useState to useState
     nombre: '',
-    tipo: 'delivery',
     plataforma: '',
     vehiculo: '',
-    descripcion: ''
+    descripcion: '',
+    colorAvatar: '#10B981',
+    configuracion: ***REMOVED***
+      calculaPorKm: false,
+      tarifaPorKm: 0,
+      calculaPorPedido: true,
+      tarifaBasePedido: 0,
+      incluyePropinas: true,
+      rastreaCombustible: true
+    ***REMOVED***
   ***REMOVED***);
 
-  const [errors, setErrors] = React.useState(***REMOVED******REMOVED***);
-  const [guardando, setGuardando] = React.useState(false);
+  const [errors, setErrors] = useState(***REMOVED******REMOVED***); // Changed React.useState to useState
+  const [guardando, setGuardando] = useState(false); // Changed React.useState to useState
 
-  React.useEffect(() => ***REMOVED***
+  useEffect(() => ***REMOVED*** // Changed React.useEffect to useEffect
     if (trabajo) ***REMOVED***
       setFormData(***REMOVED***
         nombre: trabajo.nombre || '',
-        tipo: trabajo.tipo || 'delivery',
         plataforma: trabajo.plataforma || '',
         vehiculo: trabajo.vehiculo || '',
-        descripcion: trabajo.descripcion || ''
+        descripcion: trabajo.descripcion || '',
+        colorAvatar: trabajo.colorAvatar || '#10B981',
+        configuracion: trabajo.configuracion || ***REMOVED***
+          calculaPorKm: false,
+          tarifaPorKm: 0,
+          calculaPorPedido: true,
+          tarifaBasePedido: 0,
+          incluyePropinas: true,
+          rastreaCombustible: true
+        ***REMOVED***
       ***REMOVED***);
     ***REMOVED***
   ***REMOVED***, [trabajo]);
 
   const validarFormulario = () => ***REMOVED***
     const newErrors = ***REMOVED******REMOVED***;
-    
+
     if (!formData.nombre.trim()) ***REMOVED***
       newErrors.nombre = 'El nombre es requerido';
     ***REMOVED***
@@ -96,7 +113,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
 
   const handleSubmit = async (e) => ***REMOVED***
     e.preventDefault();
-    
+
     if (!validarFormulario()) ***REMOVED***
       return;
     ***REMOVED***
@@ -104,34 +121,48 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
     setGuardando(true);
 
     try ***REMOVED***
-      const datosCompletos = ***REMOVED***
-        ...formData,
-        id: trabajo?.id || Date.now().toString(),
-        createdAt: trabajo?.createdAt || new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      ***REMOVED***;
-
-      await onSubmit(datosCompletos);
+      await onSubmit(formData);
     ***REMOVED*** catch (error) ***REMOVED***
       console.error('Error:', error);
-    ***REMOVED*** finally ***REMOVED***
       setGuardando(false);
     ***REMOVED***
   ***REMOVED***;
 
-  const handleInputChange = (field, value) => ***REMOVED***
+  // Wrap handleInputChange in useCallback
+  const handleInputChange = useCallback((field, value) => ***REMOVED***
     setFormData(prev => (***REMOVED***
       ...prev,
       [field]: value
     ***REMOVED***));
-    
+
     if (errors[field]) ***REMOVED***
       setErrors(prev => (***REMOVED***
         ...prev,
         [field]: undefined
       ***REMOVED***));
     ***REMOVED***
+  ***REMOVED***, [errors]); // `errors` is a dependency here because it's used inside the function.
+
+  const handleConfigChange = (field, value) => ***REMOVED***
+    setFormData(prev => (***REMOVED***
+      ...prev,
+      configuracion: ***REMOVED***
+        ...prev.configuracion,
+        [field]: value
+      ***REMOVED***
+    ***REMOVED***));
   ***REMOVED***;
+
+  // Obtener el color de la plataforma seleccionada
+  const plataformaSeleccionada = DELIVERY_PLATFORMS_AUSTRALIA.find(
+    p => p.nombre === formData.plataforma
+  );
+
+  useEffect(() => ***REMOVED*** // Changed React.useEffect to useEffect
+    if (plataformaSeleccionada && !trabajo) ***REMOVED***
+      handleInputChange('colorAvatar', plataformaSeleccionada.color);
+    ***REMOVED***
+  ***REMOVED***, [plataformaSeleccionada, trabajo, handleInputChange]);
 
   return (
     <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className="space-y-4">
@@ -161,22 +192,36 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
 
       ***REMOVED***/* Selector de vehículo */***REMOVED***
       <div>
-        <label className="block text-sm font-medium mb-1">
-          Vehículo
-        </label>
-        <select
-          value=***REMOVED***formData.vehiculo***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('vehiculo', e.target.value)***REMOVED***
-          className=***REMOVED***`w-full p-3 border rounded-lg text-sm $***REMOVED***errors.vehiculo ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
-        >
-          <option value="">-- Seleccionar Vehículo --</option>
-          ***REMOVED***DELIVERY_VEHICLES.map(vehiculo => (
-            <option key=***REMOVED***vehiculo***REMOVED*** value=***REMOVED***vehiculo***REMOVED***>
-              ***REMOVED***vehiculo***REMOVED***
-            </option>
-          ))***REMOVED***
-        </select>
+        <VehicleSelector
+          selectedVehicle=***REMOVED***formData.vehiculo***REMOVED***
+          onVehicleSelect=***REMOVED***(vehiculo) => handleInputChange('vehiculo', vehiculo)***REMOVED***
+        />
         ***REMOVED***errors.vehiculo && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.vehiculo***REMOVED***</p>***REMOVED***
+      </div>
+
+      ***REMOVED***/* Configuración de cálculos */***REMOVED***
+      <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
+        <h3 className="text-sm font-medium text-gray-700">Configuración de cálculos</h3>
+
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked=***REMOVED***formData.configuracion.incluyePropinas***REMOVED***
+            onChange=***REMOVED***(e) => handleConfigChange('incluyePropinas', e.target.checked)***REMOVED***
+            className="rounded"
+          />
+          <span className="text-sm">Incluir propinas en el registro</span>
+        </label>
+
+        <label className="flex items-center space-x-2">
+          <input
+            type="checkbox"
+            checked=***REMOVED***formData.configuracion.rastreaCombustible***REMOVED***
+            onChange=***REMOVED***(e) => handleConfigChange('rastreaCombustible', e.target.checked)***REMOVED***
+            className="rounded"
+          />
+          <span className="text-sm">Rastrear gastos de combustible</span>
+        </label>
       </div>
 
       ***REMOVED***/* Descripción opcional */***REMOVED***

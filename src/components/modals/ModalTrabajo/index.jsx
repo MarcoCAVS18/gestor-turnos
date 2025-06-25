@@ -1,4 +1,5 @@
-// src/components/modals/ModalTrabajo.jsx
+// src/components/modals/ModalTrabajo/index.jsx
+
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
@@ -10,14 +11,20 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
   const ***REMOVED*** agregarTrabajo, editarTrabajo, deliveryEnabled ***REMOVED*** = useApp();
   const [mostrarSelector, setMostrarSelector] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   // Determinar si mostrar selector
   React.useEffect(() => ***REMOVED***
     if (isOpen && !trabajo && deliveryEnabled) ***REMOVED***
+      // Solo mostrar selector si delivery está habilitado y es un trabajo nuevo
       setMostrarSelector(true);
       setTipoSeleccionado(null);
     ***REMOVED*** else ***REMOVED***
       setMostrarSelector(false);
+      // Si no hay delivery habilitado, ir directo al formulario tradicional
+      if (isOpen && !trabajo && !deliveryEnabled) ***REMOVED***
+        setTipoSeleccionado('tradicional');
+      ***REMOVED***
     ***REMOVED***
   ***REMOVED***, [isOpen, trabajo, deliveryEnabled]);
 
@@ -27,22 +34,41 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
   ***REMOVED***;
 
   const manejarGuardado = async (datosTrabajo) => ***REMOVED***
-    if (trabajo) ***REMOVED***
-      await editarTrabajo(trabajo.id, datosTrabajo);
-    ***REMOVED*** else ***REMOVED***
-      await agregarTrabajo(datosTrabajo);
+    try ***REMOVED***
+      setLoading(true);
+      
+      if (trabajo) ***REMOVED***
+        await editarTrabajo(trabajo.id, datosTrabajo);
+      ***REMOVED*** else ***REMOVED***
+        const resultado = await agregarTrabajo(datosTrabajo);
+      ***REMOVED***
+      
+      // Resetear estados
+      setTipoSeleccionado(null);
+      setMostrarSelector(false);
+      onClose();
+    ***REMOVED*** catch (error) ***REMOVED***
+      console.error('Error al guardar trabajo:', error);
+      // Aquí podrías mostrar un mensaje de error
+    ***REMOVED*** finally ***REMOVED***
+      setLoading(false);
     ***REMOVED***
+  ***REMOVED***;
+
+  const manejarCerrar = () => ***REMOVED***
+    setTipoSeleccionado(null);
+    setMostrarSelector(false);
     onClose();
   ***REMOVED***;
 
   if (!isOpen) return null;
 
-  // Si es un trabajo de delivery existente, usar el modal de delivery
+  // Si es un trabajo de delivery existente, usar el modal de delivery directamente
   if (trabajo && trabajo.tipo === 'delivery') ***REMOVED***
     return (
       <ModalTrabajoDelivery
         isOpen=***REMOVED***true***REMOVED***
-        onClose=***REMOVED***onClose***REMOVED***
+        onClose=***REMOVED***manejarCerrar***REMOVED***
         trabajo=***REMOVED***trabajo***REMOVED***
       />
     );
@@ -53,7 +79,7 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
     return (
       <ModalTrabajoDelivery
         isOpen=***REMOVED***true***REMOVED***
-        onClose=***REMOVED***onClose***REMOVED***
+        onClose=***REMOVED***manejarCerrar***REMOVED***
         trabajo=***REMOVED***null***REMOVED***
       />
     );
@@ -67,8 +93,9 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
             ***REMOVED***trabajo ? 'Editar Trabajo' : 'Nuevo Trabajo'***REMOVED***
           </h2>
           <button
-            onClick=***REMOVED***onClose***REMOVED***
+            onClick=***REMOVED***manejarCerrar***REMOVED***
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            disabled=***REMOVED***loading***REMOVED***
           >
             <X size=***REMOVED***20***REMOVED*** />
           </button>
@@ -81,7 +108,8 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
             <TrabajoForm
               trabajo=***REMOVED***trabajo***REMOVED***
               onSubmit=***REMOVED***manejarGuardado***REMOVED***
-              onCancel=***REMOVED***onClose***REMOVED***
+              onCancel=***REMOVED***manejarCerrar***REMOVED***
+              loading=***REMOVED***loading***REMOVED***
             />
           )***REMOVED***
         </div>
