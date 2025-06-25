@@ -44,6 +44,7 @@ const StatCard = ({
       onClick={onClick}
     >
       <div className={getSizeClasses()}>
+        
         {/* Header con título e ícono */}
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-gray-600">{title}</span>

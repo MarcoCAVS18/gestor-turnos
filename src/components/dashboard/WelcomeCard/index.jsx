@@ -1,6 +1,5 @@
 // src/components/dashboard/WelcomeCard/index.jsx
 
-import React from 'react';
 import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 

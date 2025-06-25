@@ -1,6 +1,5 @@
 // src/components/dashboard/ProjectionCard/index.jsx
 
-import React from 'react';
 import { BarChart3 } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';

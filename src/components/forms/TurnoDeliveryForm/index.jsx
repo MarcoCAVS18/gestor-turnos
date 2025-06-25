@@ -1,11 +1,11 @@
-// src/components/forms/TurnoDeliveryForm.jsx
+// src/components/forms/TurnoDeliveryForm/index.jsx
 
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Package, Car, DollarSign, TrendingUp } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 
-const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChange }) => {
-  const { coloresTemáticos, trabajos } = useApp();
+const TurnoDeliveryForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onTrabajoChange }) => {
+  const { coloresTemáticos } = useApp();
   
   // Estados del formulario
   const [fecha, setFecha] = useState('');
@@ -20,6 +20,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
   const [notas, setNotas] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState('');
+
+  // Filtrar solo trabajos de delivery
+  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
 
   // Cargar datos si es edición
   useEffect(() => {
@@ -67,7 +70,6 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
       setError('Debes seleccionar un trabajo de delivery');
       return false;
     }
-    // Removido: validación de ganancia > 0 - puede ser 0
     if (gananciaTotal === '' || isNaN(Number(gananciaTotal))) {
       setError('La ganancia total debe ser un número válido');
       return false;
@@ -110,22 +112,31 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
       {/* Trabajo de delivery */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
+          <Package size={16} className="inline mr-1" />
           Trabajo de delivery
         </label>
         <select
           value={trabajoSeleccionado}
           onChange={handleTrabajoChange}
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+          style={{ 
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+          }}
           required
           disabled={turno} // No permitir cambiar trabajo en edición
         >
           <option value="">Seleccionar trabajo</option>
-          {trabajos.map(trabajo => (
+          {trabajosDelivery.map(trabajo => (
             <option key={trabajo.id} value={trabajo.id}>
-              {trabajo.nombre} {trabajo.tipo === 'delivery' && '(Delivery)'}
+              {trabajo.nombre} - {trabajo.plataforma}
             </option>
           ))}
         </select>
+        {trabajosDelivery.length === 0 && (
+          <p className="text-sm text-gray-500 mt-1">
+            No hay trabajos de delivery registrados. Crea uno primero.
+          </p>
+        )}
       </div>
 
       {/* Fecha y horario */}
@@ -140,6 +151,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
             value={fecha}
             onChange={(e) => setFecha(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+            style={{ 
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+            }}
             required
           />
         </div>
@@ -154,6 +168,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
             value={horaInicio}
             onChange={(e) => setHoraInicio(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+            style={{ 
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+            }}
             required
           />
         </div>
@@ -168,6 +185,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
             value={horaFin}
             onChange={(e) => setHoraFin(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+            style={{ 
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+            }}
             required
           />
         </div>
@@ -188,6 +208,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
               value={numeroPedidos}
               onChange={(e) => setNumeroPedidos(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+              style={{ 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+              }}
               placeholder="0"
               min="0"
             />
@@ -203,6 +226,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
               value={kilometros}
               onChange={(e) => setKilometros(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+              style={{ 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+              }}
               placeholder="0"
               min="0"
               step="0.1"
@@ -211,7 +237,7 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
         </div>
       </div>
 
-      {/* Información financiera - SIN VALIDACIONES RESTRICTIVAS */}
+      {/* Información financiera */}
       <div className="space-y-3">
         <h3 className="text-sm font-medium text-gray-700">Ganancias</h3>
         
@@ -226,6 +252,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
               value={gananciaTotal}
               onChange={(e) => setGananciaTotal(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+              style={{ 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+              }}
               placeholder="0"
               step="0.01"
               required
@@ -242,6 +271,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
               value={propinas}
               onChange={(e) => setPropinas(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+              style={{ 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+              }}
               placeholder="0"
               step="0.01"
             />
@@ -257,6 +289,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
             value={gastoCombustible}
             onChange={(e) => setGastoCombustible(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+            style={{ 
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+            }}
             placeholder="0"
             step="0.01"
           />
@@ -272,6 +307,9 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
           value={notas}
           onChange={(e) => setNotas(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+          style={{ 
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+          }}
           rows="2"
           placeholder="ej: Día lluvioso, mucha demanda..."
         />
@@ -299,13 +337,17 @@ const TurnoDeliveryForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChan
           disabled={guardando}
           className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
           style={{ 
-            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base,
+            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base || '#EC4899',
           }}
           onMouseEnter={(e) => {
-            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.dark;
+            if (!guardando && coloresTemáticos?.dark) {
+              e.target.style.backgroundColor = coloresTemáticos.dark;
+            }
           }}
           onMouseLeave={(e) => {
-            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.base;
+            if (!guardando) {
+              e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+            }
           }}
         >
           {guardando ? 'Guardando...' : (turno ? 'Guardar Cambios' : 'Crear Turno')}

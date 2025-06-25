@@ -1,6 +1,6 @@
 // src/components/modals/ModalTrabajoDelivery/index.jsx
 
-import React, { useCallback, useEffect, useState } from 'react'; // Added useCallback, useEffect, useState explicitly
+import { useCallback, useEffect, useState } from 'react';
 import { X, Truck } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import PlatformSelector from '../../delivery/PlatformSelector';
@@ -55,7 +55,7 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
 };
 
 const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemáticos }) => {
-  const [formData, setFormData] = useState({ // Changed React.useState to useState
+  const [formData, setFormData] = useState({
     nombre: '',
     plataforma: '',
     vehiculo: '',
@@ -71,10 +71,10 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
     }
   });
 
-  const [errors, setErrors] = useState({}); // Changed React.useState to useState
-  const [guardando, setGuardando] = useState(false); // Changed React.useState to useState
+  const [errors, setErrors] = useState({}); 
+  const [guardando, setGuardando] = useState(false); 
 
-  useEffect(() => { // Changed React.useEffect to useEffect
+  useEffect(() => { 
     if (trabajo) {
       setFormData({
         nombre: trabajo.nombre || '',
@@ -128,7 +128,6 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
     }
   };
 
-  // Wrap handleInputChange in useCallback
   const handleInputChange = useCallback((field, value) => {
     setFormData(prev => ({
       ...prev,
@@ -141,7 +140,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
         [field]: undefined
       }));
     }
-  }, [errors]); // `errors` is a dependency here because it's used inside the function.
+  }, [errors]); 
 
   const handleConfigChange = (field, value) => {
     setFormData(prev => ({
@@ -158,7 +157,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
     p => p.nombre === formData.plataforma
   );
 
-  useEffect(() => { // Changed React.useEffect to useEffect
+  useEffect(() => { 
     if (plataformaSeleccionada && !trabajo) {
       handleInputChange('colorAvatar', plataformaSeleccionada.color);
     }

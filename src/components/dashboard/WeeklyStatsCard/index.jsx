@@ -1,6 +1,5 @@
 // src/components/dashboard/WeeklyStatsCard/index.jsx
 
-import React from 'react';
 import { Activity, TrendingUp, TrendingDown } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';

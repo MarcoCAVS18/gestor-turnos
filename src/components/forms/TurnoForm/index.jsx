@@ -1,11 +1,11 @@
-// src/components/forms/TurnoForm.jsx
+// src/components/forms/TurnoForm/index.jsx
 
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Briefcase } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 
-const TurnoForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChange }) => {
-  const { trabajos, coloresTemáticos } = useApp();
+const TurnoForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onTrabajoChange }) => {
+  const { coloresTemáticos } = useApp();
   
   // Estados del formulario
   const [fecha, setFecha] = useState('');
@@ -109,7 +109,7 @@ const TurnoForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChange }) =>
           onChange={handleTrabajoChange}
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
           style={{ 
-            '--tw-ring-color': coloresTemáticos?.transparent20,
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
           }}
           required
           disabled={turno} // No permitir cambiar trabajo en edición
@@ -117,7 +117,7 @@ const TurnoForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChange }) =>
           <option value="">Seleccionar trabajo</option>
           {trabajos.map(trabajo => (
             <option key={trabajo.id} value={trabajo.id}>
-              {trabajo.nombre} {trabajo.tipo === 'delivery' && '(Delivery)'}
+              {trabajo.nombre} {trabajo.tipo === 'delivery' ? '(Delivery)' : ''}
             </option>
           ))}
         </select>
@@ -140,7 +140,7 @@ const TurnoForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChange }) =>
           onChange={(e) => setFecha(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
           style={{ 
-            '--tw-ring-color': coloresTemáticos?.transparent20,
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
           }}
           required
         />
@@ -159,7 +159,7 @@ const TurnoForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChange }) =>
             onChange={(e) => setHoraInicio(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
             style={{ 
-              '--tw-ring-color': coloresTemáticos?.transparent20,
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
             }}
             required
           />
@@ -176,7 +176,7 @@ const TurnoForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChange }) =>
             onChange={(e) => setHoraFin(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
             style={{ 
-              '--tw-ring-color': coloresTemáticos?.transparent20,
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
             }}
             required
           />
@@ -193,7 +193,7 @@ const TurnoForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChange }) =>
           onChange={(e) => setNotas(e.target.value)}
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
           style={{ 
-            '--tw-ring-color': coloresTemáticos?.transparent20,
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
           }}
           rows="2"
           placeholder="Agregar notas sobre el turno..."
@@ -222,13 +222,17 @@ const TurnoForm = ({ turno, trabajoId, onSubmit, onCancel, onTrabajoChange }) =>
           disabled={guardando}
           className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
           style={{ 
-            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base,
+            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base || '#EC4899',
           }}
           onMouseEnter={(e) => {
-            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.dark;
+            if (!guardando && coloresTemáticos?.dark) {
+              e.target.style.backgroundColor = coloresTemáticos.dark;
+            }
           }}
           onMouseLeave={(e) => {
-            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.base;
+            if (!guardando) {
+              e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+            }
           }}
         >
           {guardando ? 'Guardando...' : (turno ? 'Guardar Cambios' : 'Crear Turno')}

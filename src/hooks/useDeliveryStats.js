@@ -33,7 +33,7 @@ export const useDeliveryStats = (periodo = 'mes') => {
         diasTrabajados: 0,
         turnosRealizados: 0,
         totalHoras: 0,
-        eficienciaCombustible: 0, // km por peso gastado
+        eficienciaCombustible: 0,
         costoPorKilometro: 0
       };
     }
@@ -56,7 +56,7 @@ export const useDeliveryStats = (periodo = 'mes') => {
         fechaInicio.setFullYear(hoy.getFullYear() - 1);
         break;
       default:
-        fechaInicio = new Date(0); // Todos los tiempos
+        fechaInicio = new Date(0); 
     }
     
     // Filtrar turnos por periodo
@@ -157,7 +157,7 @@ export const useDeliveryStats = (periodo = 'mes') => {
           totalGastos: 0,
           totalHoras: 0,
           turnos: 0,
-          eficiencia: 0 // km por peso gastado
+          eficiencia: 0 
         };
       }
       

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Check, Bike, Car, Truck, User } from 'lucide-react';
-import { DELIVERY_VEHICLES } from '../../../constants/delivery'; // Asegúrate de que esta ruta sea correcta
+import { DELIVERY_VEHICLES } from '../../../constants/delivery';
 import { useApp } from '../../../contexts/AppContext';
 
 const VehicleButton = ({ vehicle, isSelected, onClick }) => {
@@ -11,20 +11,19 @@ const VehicleButton = ({ vehicle, isSelected, onClick }) => {
   const getVehicleIcon = (vehicleId) => {
     const icons = {
       'bicicleta': Bike,
-      'moto': Truck, // Si 'moto' debe ser 'Truck' (camión), déjalo así. Si quieres una moto de verdad, busca otro icono o usa 'Bike'
+      'moto': Truck, 
       'auto': Car,
       'a_pie': User
     };
-    return icons[vehicleId] || Car; // Fallback a 'Car' si no encuentra el ID
+    return icons[vehicleId] || Car; 
   };
   
-  // vehicle.id ahora existe porque DELIVERY_VEHICLES son objetos
   const Icon = getVehicleIcon(vehicle.id); 
   
   return (
     <button
       type="button"
-      onClick={() => onClick(vehicle.nombre)} // Sigue pasando el nombre a onVehicleSelect
+      onClick={() => onClick(vehicle.nombre)} 
       className={`relative p-4 rounded-lg border-2 transition-all duration-200 ${
         isSelected 
           ? 'border-pink-500 bg-pink-50' 
@@ -37,7 +36,7 @@ const VehicleButton = ({ vehicle, isSelected, onClick }) => {
     >
       <div 
         className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2"
-        style={{ backgroundColor: vehicle.color + '20' }} // vehicle.color ahora existe
+        style={{ backgroundColor: vehicle.color + '20' }} 
       >
         <Icon size={24} style={{ color: vehicle.color }} />
       </div>
@@ -61,12 +60,11 @@ const VehicleSelector = ({ selectedVehicle, onVehicleSelect, title = "Selecciona
     <div className="space-y-3">
       <h3 className="text-sm font-medium text-gray-700">{title}</h3>
       <div className="grid grid-cols-2 gap-3">
-        {/* Aquí la clave ahora funciona correctamente */}
         {DELIVERY_VEHICLES.map(vehicle => (
           <VehicleButton
-            key={vehicle.id} // Ahora vehicle.id es un string único como 'bicicleta', 'moto', etc.
-            vehicle={vehicle} // Pasamos el objeto completo 'vehicle'
-            isSelected={selectedVehicle === vehicle.nombre} // Comparamos por el nombre seleccionado
+            key={vehicle.id} 
+            vehicle={vehicle} 
+            isSelected={selectedVehicle === vehicle.nombre}
             onClick={onVehicleSelect}
           />
         ))}

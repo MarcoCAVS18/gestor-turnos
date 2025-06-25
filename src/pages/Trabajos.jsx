@@ -1,3 +1,5 @@
+// src/pages/Trabajos.jsx
+
 import React, { useEffect, useMemo } from 'react';
 import { Briefcase, Plus } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
@@ -14,7 +16,8 @@ const Trabajos = () => {
     trabajosDelivery = [], 
     cargando,
     borrarTrabajo,
-    borrarTrabajoDelivery
+    borrarTrabajoDelivery,
+    coloresTemáticos
   } = useApp();
 
   const { currentUser } = useAuth();
@@ -125,8 +128,14 @@ const Trabajos = () => {
         {/* Header que cambia según si hay trabajos */}
         <div className="flex justify-between items-center pt-4">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-pink-100 rounded-lg">
-              <Briefcase className="w-6 h-6 text-pink-600" />
+            <div 
+              className="p-2 rounded-lg"
+              style={{ backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
+            >
+              <Briefcase 
+                className="w-6 h-6" 
+                style={{ color: coloresTemáticos?.base || '#EC4899' }}
+              />
             </div>
             <div>
               <h1 className="text-xl font-semibold mb-4 pt-4">Mis Trabajos</h1>
@@ -136,7 +145,18 @@ const Trabajos = () => {
           {todosLosTrabajos.length > 0 && (
             <button
               onClick={abrirModalNuevo}
-              className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 shadow-sm"
+              className="text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 shadow-sm hover:shadow-md"
+              style={{ 
+                backgroundColor: coloresTemáticos?.base || '#EC4899'
+              }}
+              onMouseEnter={(e) => {
+                if (coloresTemáticos?.dark) {
+                  e.target.style.backgroundColor = coloresTemáticos.dark;
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+              }}
             >
               <Plus className="w-4 h-4" />
               <span>Nuevo</span>
@@ -147,8 +167,14 @@ const Trabajos = () => {
         {/* Lista de trabajos o estado vacío */}
         {todosLosTrabajos.length === 0 ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <div className="p-4 bg-gray-50 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-              <Briefcase className="w-10 h-10 text-gray-400" />
+            <div 
+              className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"
+              style={{ backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
+            >
+              <Briefcase 
+                className="w-10 h-10" 
+                style={{ color: coloresTemáticos?.base || '#EC4899' }}
+              />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay trabajos aún</h3>
             <p className="text-gray-500 mb-6 max-w-md mx-auto">
@@ -156,7 +182,18 @@ const Trabajos = () => {
             </p>
             <button
               onClick={abrirModalNuevo}
-              className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2"
+              className="text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2 hover:shadow-md"
+              style={{ 
+                backgroundColor: coloresTemáticos?.base || '#EC4899'
+              }}
+              onMouseEnter={(e) => {
+                if (coloresTemáticos?.dark) {
+                  e.target.style.backgroundColor = coloresTemáticos.dark;
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+              }}
             >
               <Plus className="w-4 h-4" />
               <span>Crear Nuevo Trabajo</span>

@@ -20,7 +20,7 @@ const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => 
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-      {/* Encabezado del día - SIN HORAS NI VALORES */}
+      {/* Encabezado del día */}
       <div className="p-4 border-b border-gray-200" style={{ backgroundColor: coloresTemáticos?.transparent5 }}>
         <div className="flex items-center gap-2">
           <Calendar size={20} style={{ color: coloresTemáticos?.base }} />

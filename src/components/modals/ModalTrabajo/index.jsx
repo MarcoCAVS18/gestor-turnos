@@ -41,6 +41,7 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
         await editarTrabajo(trabajo.id, datosTrabajo);
       } else {
         const resultado = await agregarTrabajo(datosTrabajo);
+        console.log(resultado)
       }
       
       // Resetear estados
@@ -49,7 +50,6 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
       onClose();
     } catch (error) {
       console.error('Error al guardar trabajo:', error);
-      // Aquí podrías mostrar un mensaje de error
     } finally {
       setLoading(false);
     }

@@ -22,7 +22,6 @@ const PlatformButton = ({ platform, isSelected, onClick }) => {
         backgroundColor: isSelected ? coloresTemáticos?.transparent10 : undefined
       }}
     >
-      {/* Logo placeholder */}
       <div 
         className="w-8 h-8 rounded-lg flex items-center justify-center mx-auto mb-2"
         style={{ backgroundColor: platform.color }}

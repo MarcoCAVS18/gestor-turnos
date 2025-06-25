@@ -1,6 +1,5 @@
 // src/components/cards/TarjetaTrabajo/index.jsx
 
-import React from 'react';
 import { Edit, Trash2, Share2 } from 'lucide-react';
 import Card from '../../ui/Card';
 import WorkAvatar from '../../work/WorkAvatar';

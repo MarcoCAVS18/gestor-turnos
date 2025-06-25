@@ -1,7 +1,7 @@
 // src/components/cards/TarjetaTrabajoDelivery/index.jsx
 
 import React from 'react';
-import { MoreVertical, Edit2, Trash2, Package } from 'lucide-react';
+import { MoreVertical, Edit2, Trash2, Package, Bike, Car, Truck, User } from 'lucide-react';
 import WorkAvatar from '../../work/WorkAvatar';
 
 const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, showActions = true }) => {
@@ -18,11 +18,14 @@ const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, showActions = true 
     return () => document.removeEventListener('click', cerrarMenu);
   }, [menuAbierto]);
 
-  const iconoVehiculo = {
-    'Bicicleta': '🚴',
-    'Moto': '🏍️',
-    'Auto': '🚗',
-    'A pie': '🚶'
+  const getVehicleIcon = (vehiculo) => {
+    switch(vehiculo) {
+      case 'Bicicleta': return <Bike size={16} className="text-green-500" />;
+      case 'Moto': return <Truck size={16} className="text-orange-500" />;
+      case 'Auto': return <Car size={16} className="text-blue-500" />;
+      case 'A pie': return <User size={16} className="text-gray-500" />;
+      default: return <Package size={16} className="text-gray-400" />;
+    }
   };
 
   return (
@@ -48,7 +51,7 @@ const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, showActions = true 
             <div className="mt-2 space-y-1">              
               {trabajo.vehiculo && (
                 <p className="text-sm text-gray-600 flex items-center gap-1">
-                  <span className="text-base">{iconoVehiculo[trabajo.vehiculo] || '🚚'}</span>
+                  {getVehicleIcon(trabajo.vehiculo)}
                   Vehículo: <span className="font-medium">{trabajo.vehiculo}</span>
                 </p>
               )}

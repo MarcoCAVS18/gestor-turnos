@@ -193,7 +193,6 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  // Valores del contexto
   const value = {
     currentUser,
     loading,

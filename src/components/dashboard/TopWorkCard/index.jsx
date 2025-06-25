@@ -1,6 +1,5 @@
 // src/components/dashboard/TopWorkCard/index.jsx
 
-import React from 'react';
 import { Award } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';

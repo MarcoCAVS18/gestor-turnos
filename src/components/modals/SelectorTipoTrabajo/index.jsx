@@ -1,7 +1,7 @@
 // src/components/modals/SelectorTipoTrabajo/index.jsx
 
 import React from 'react';
-import { Briefcase, Truck } from 'lucide-react';
+import { Briefcase, Truck, Clock, DollarSign, Package, Navigation } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 
 const SelectorTipoTrabajo = ({ onSelectTipo }) => {
@@ -14,7 +14,7 @@ const SelectorTipoTrabajo = ({ onSelectTipo }) => {
   return (
     <div className="space-y-4">
       <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold mb-2">¿Qué tipo de trabajo quieres agregar?</h3>
+        <h3 className="text-lg font-semibold mb-2">Qué tipo de trabajo quieres agregar?</h3>
         <p className="text-sm text-gray-600">
           Selecciona el tipo que mejor describe tu trabajo
         </p>
@@ -46,9 +46,18 @@ const SelectorTipoTrabajo = ({ onSelectTipo }) => {
                 Para trabajos con tarifa fija por hora
               </p>
               <ul className="text-xs text-gray-500 space-y-1">
-                <li>• Tarifas por tipo de turno (diurno, tarde, noche)</li>
-                <li>• Tarifas especiales para fin de semana</li>
-                <li>• Cálculo automático con descuentos</li>
+                <li className="flex items-center">
+                  <Clock size={12} className="mr-1" />
+                  Tarifas por tipo de turno (diurno, tarde, noche)
+                </li>
+                <li className="flex items-center">
+                  <DollarSign size={12} className="mr-1" />
+                  Tarifas especiales para fin de semana
+                </li>
+                <li className="flex items-center">
+                  <Briefcase size={12} className="mr-1" />
+                  Cálculo automático con descuentos
+                </li>
               </ul>
             </div>
           </div>
@@ -79,9 +88,18 @@ const SelectorTipoTrabajo = ({ onSelectTipo }) => {
                 Para trabajos de reparto con ganancias variables
               </p>
               <ul className="text-xs text-gray-500 space-y-1">
-                <li>• Registro de ganancias totales por turno</li>
-                <li>• Seguimiento de pedidos y kilómetros</li>
-                <li>• Control de propinas y gastos de combustible</li>
+                <li className="flex items-center">
+                  <DollarSign size={12} className="mr-1" />
+                  Registro de ganancias totales por turno
+                </li>
+                <li className="flex items-center">
+                  <Package size={12} className="mr-1" />
+                  Seguimiento de pedidos y kilómetros
+                </li>
+                <li className="flex items-center">
+                  <Navigation size={12} className="mr-1" />
+                  Control de propinas y gastos de combustible
+                </li>
               </ul>
             </div>
           </div>

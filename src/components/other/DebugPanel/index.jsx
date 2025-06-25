@@ -13,7 +13,6 @@ const DebugPanel = () => {
   const debugEnabled = process.env.REACT_APP_DEBUG_MODE === 'true';
   const environment = process.env.REACT_APP_ENVIRONMENT || 'production';
   
-  // No renderizar si el debug no está habilitado
   if (!debugEnabled) {
     return null;
   }

@@ -1,6 +1,6 @@
 // src/hooks/useCalculations.js
 
-import { useMemo, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useApp } from '../contexts/AppContext';
 
 export const useCalculations = () => {

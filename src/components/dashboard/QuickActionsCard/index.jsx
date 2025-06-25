@@ -1,6 +1,5 @@
 // src/components/dashboard/QuickActionsCard/index.jsx
 
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Briefcase } from 'lucide-react';
 import Card from '../../ui/Card';

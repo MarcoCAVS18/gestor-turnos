@@ -172,7 +172,7 @@ export const AppProvider = ({ children }) => {
     const allJobs = [...trabajos, ...trabajosDelivery];
     const trabajo = allJobs.find(t => t.id === turno.trabajoId);
 
-    if (!trabajo) return { total: 0, totalConDescuento: 0, horas: 0, propinas: 0, esDelivery: false }; // Added esDelivery for consistency
+    if (!trabajo) return { total: 0, totalConDescuento: 0, horas: 0, propinas: 0, esDelivery: false };
 
     // Si es un turno de delivery, retornar directamente la ganancia
     if (turno.tipo === 'delivery') {
@@ -256,7 +256,7 @@ export const AppProvider = ({ children }) => {
       total,
       totalConDescuento,
       horas,
-      propinas: 0, // Traditional jobs don't have explicit tips in this calculation
+      propinas: 0, 
       esDelivery: false
     };
   }, [trabajos, trabajosDelivery, rangosTurnos, descuentoDefault, calcularHoras]);
@@ -402,8 +402,7 @@ export const AppProvider = ({ children }) => {
         return { id: doc.id, ...doc.data() };
       });
       setTrabajosDelivery(loadedTrabajos);
-      console.log('Trabajos delivery cargados:', loadedTrabajos.length); // Mantén este para la cuenta total
-      // Aquí, si loadedTrabajos.length es 1, pero no lo ves, es un problema de la consola.
+      console.log('Trabajos delivery cargados:', loadedTrabajos.length); 
     }, (error) => {
       console.error("Error al cargar trabajos de delivery:", error);
       setError("Error al cargar trabajos de delivery: " + error.message);
@@ -423,7 +422,7 @@ export const AppProvider = ({ children }) => {
       const datosConMetadata = {
         ...datosActualizados,
         fechaActualizacion: new Date(),
-        // Recalcular campos derivados
+
         gananciaBase: (datosActualizados.gananciaTotal || 0) - (datosActualizados.propinas || 0),
         gananciaNeta: (datosActualizados.gananciaTotal || 0) - (datosActualizados.gastoCombustible || 0)
       };
@@ -456,12 +455,11 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentUser, getUserDeliveryCollections]);
 
-  // **NUEVA FUNCIÓN AÑADIDA PARA LA META DE HORAS SEMANALES**
   const actualizarMetaHorasSemanales = useCallback(async (nuevaMeta) => {
     try {
       if (!currentUser) throw new Error('Usuario no autenticado');
 
-      setMetaHorasSemanales(nuevaMeta); // Actualiza el estado local
+      setMetaHorasSemanales(nuevaMeta); 
 
       // Persistir en localStorage
       if (nuevaMeta) {
@@ -557,7 +555,7 @@ export const AppProvider = ({ children }) => {
           }
         );
 
-        // MODIFICACIÓN CLAVE AQUÍ: Llama a la función cargandoTrabajosDelivery
+        // Llama a la función cargandoTrabajosDelivery
         unsubscribeTrabajosDelivery = cargandoTrabajosDelivery();
 
 
@@ -574,8 +572,6 @@ export const AppProvider = ({ children }) => {
             (snapshot) => {
               const turnosDeliveryData = [];
               snapshot.forEach(doc => {
-                // Si quieres logs detallados para los turnos de delivery, añádelos aquí también
-                // console.log(`Turno Delivery detectado en FireStore. ID: ${doc.id}, Ruta: ${doc.ref.path}, Datos:`, doc.data());
                 turnosDeliveryData.push({
                   id: doc.id,
                   ...doc.data(),
@@ -641,7 +637,6 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   const contextValue = {
-    // Datos principales
     trabajos,
     turnos,
     turnosPorFecha: useMemo(() => {
@@ -653,7 +648,7 @@ export const AppProvider = ({ children }) => {
         acc[turno.fecha].push(turno);
         return acc;
       }, {});
-    }, [turnos, turnosDelivery]), // Dependency for turnosPorFecha
+    }, [turnos, turnosDelivery]),
     cargando,
     error,
 
@@ -813,9 +808,9 @@ export const AppProvider = ({ children }) => {
           };
         }
       }, { horas: 0, total: 0 });
-    }, [calcularPago]), // Dependency for calcularTotalDia
+    }, [calcularPago]), 
     formatearFecha,
-    actualizarMetaHorasSemanales, // **FUNCIÓN AHORA INCLUIDA**
+    actualizarMetaHorasSemanales, 
 
 
     // Funciones de configuración
@@ -838,9 +833,7 @@ export const AppProvider = ({ children }) => {
         if (nuevoDescuento !== undefined) setDescuentoDefault(nuevoDescuento);
         if (nuevosRangos !== undefined) setRangosTurnos(nuevosRangos);
         if (nuevoDelivery !== undefined) setDeliveryEnabled(nuevoDelivery);
-        // La meta de horas semanales se maneja con actualizarMetaHorasSemanales,
-        // pero si viene aquí como parte de un conjunto de preferencias,
-        // también se puede actualizar el estado y localStorage.
+
         if (nuevaMeta !== undefined) {
           setMetaHorasSemanales(nuevaMeta);
           if (nuevaMeta) {
@@ -850,8 +843,6 @@ export const AppProvider = ({ children }) => {
           }
         }
 
-
-        // Persistir en localStorage directamente para las preferencias que no tienen su propia función `actualizar`
         if (nuevoColor !== undefined) localStorage.setItem('colorPrincipal', nuevoColor);
         if (nuevoEmoji !== undefined) localStorage.setItem('emojiUsuario', nuevoEmoji);
         if (nuevoDescuento !== undefined) localStorage.setItem('descuentoDefault', nuevoDescuento.toString());
@@ -873,7 +864,7 @@ export const AppProvider = ({ children }) => {
         // Agregar fecha de actualización
         datosActualizados['fechaActualizacion'] = new Date();
 
-        if (Object.keys(datosActualizados).length > 1) { // Verifica si hay algo que actualizar más allá de la fecha
+        if (Object.keys(datosActualizados).length > 1) { 
           await updateDoc(userDocRef, datosActualizados);
         }
 
@@ -901,7 +892,7 @@ export const AppProvider = ({ children }) => {
     if (savedRangos) setRangosTurnos(JSON.parse(savedRangos));
     if (savedMeta) setMetaHorasSemanales(savedMeta === 'null' ? null : parseInt(savedMeta));
     if (savedDelivery !== null) setDeliveryEnabled(savedDelivery === 'true');
-  }, []); // Empty dependency array means this runs once on mount.
+  }, []); 
 
   return (
     <AppContext.Provider value={contextValue}>

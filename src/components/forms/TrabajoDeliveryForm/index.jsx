@@ -177,8 +177,6 @@ const TrabajoDeliveryForm = ({ isOpen, onClose, onSubmit, trabajoId = null, init
                 Tiempo: {formatearHoras(horasTrabajadas)}
               </div>
             )}
-
-            {/* ========== LAS DOS SELECCIONES PRINCIPALES ========== */}
             
             {/* PLATAFORMA */}
             <div>
@@ -219,8 +217,6 @@ const TrabajoDeliveryForm = ({ isOpen, onClose, onSubmit, trabajoId = null, init
               </select>
               {errors.vehiculo && <p className="text-red-500 text-xs mt-1">{errors.vehiculo}</p>}
             </div>
-
-            {/* ========== CAMPOS ADICIONALES (COMPACTOS) ========== */}
             
             {/* Pedidos y Kilómetros */}
             <div className="grid grid-cols-2 gap-2">
