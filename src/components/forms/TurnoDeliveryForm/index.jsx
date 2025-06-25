@@ -1,11 +1,11 @@
-// src/components/forms/TurnoDeliveryForm.jsx
+// src/components/forms/TurnoDeliveryForm/index.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Calendar, Clock, Package, Car, DollarSign, TrendingUp ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
-const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, onTrabajoChange ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos, trabajos ***REMOVED*** = useApp();
+const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, trabajos, onSubmit, onCancel, onTrabajoChange ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
   
   // Estados del formulario
   const [fecha, setFecha] = useState('');
@@ -20,6 +20,9 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
   const [notas, setNotas] = useState('');
   const [guardando, setGuardando] = useState(false);
   const [error, setError] = useState('');
+
+  // Filtrar solo trabajos de delivery
+  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
 
   // Cargar datos si es edición
   useEffect(() => ***REMOVED***
@@ -67,7 +70,6 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
       setError('Debes seleccionar un trabajo de delivery');
       return false;
     ***REMOVED***
-    // Removido: validación de ganancia > 0 - puede ser 0
     if (gananciaTotal === '' || isNaN(Number(gananciaTotal))) ***REMOVED***
       setError('La ganancia total debe ser un número válido');
       return false;
@@ -110,22 +112,31 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
       ***REMOVED***/* Trabajo de delivery */***REMOVED***
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
+          <Package size=***REMOVED***16***REMOVED*** className="inline mr-1" />
           Trabajo de delivery
         </label>
         <select
           value=***REMOVED***trabajoSeleccionado***REMOVED***
           onChange=***REMOVED***handleTrabajoChange***REMOVED***
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+          style=***REMOVED******REMOVED*** 
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+          ***REMOVED******REMOVED***
           required
           disabled=***REMOVED***turno***REMOVED*** // No permitir cambiar trabajo en edición
         >
           <option value="">Seleccionar trabajo</option>
-          ***REMOVED***trabajos.map(trabajo => (
+          ***REMOVED***trabajosDelivery.map(trabajo => (
             <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
-              ***REMOVED***trabajo.nombre***REMOVED*** ***REMOVED***trabajo.tipo === 'delivery' && '(Delivery)'***REMOVED***
+              ***REMOVED***trabajo.nombre***REMOVED*** - ***REMOVED***trabajo.plataforma***REMOVED***
             </option>
           ))***REMOVED***
         </select>
+        ***REMOVED***trabajosDelivery.length === 0 && (
+          <p className="text-sm text-gray-500 mt-1">
+            No hay trabajos de delivery registrados. Crea uno primero.
+          </p>
+        )***REMOVED***
       </div>
 
       ***REMOVED***/* Fecha y horario */***REMOVED***
@@ -140,6 +151,9 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
             value=***REMOVED***fecha***REMOVED***
             onChange=***REMOVED***(e) => setFecha(e.target.value)***REMOVED***
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+            style=***REMOVED******REMOVED*** 
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+            ***REMOVED******REMOVED***
             required
           />
         </div>
@@ -154,6 +168,9 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
             value=***REMOVED***horaInicio***REMOVED***
             onChange=***REMOVED***(e) => setHoraInicio(e.target.value)***REMOVED***
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+            style=***REMOVED******REMOVED*** 
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+            ***REMOVED******REMOVED***
             required
           />
         </div>
@@ -168,6 +185,9 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
             value=***REMOVED***horaFin***REMOVED***
             onChange=***REMOVED***(e) => setHoraFin(e.target.value)***REMOVED***
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+            style=***REMOVED******REMOVED*** 
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+            ***REMOVED******REMOVED***
             required
           />
         </div>
@@ -188,6 +208,9 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
               value=***REMOVED***numeroPedidos***REMOVED***
               onChange=***REMOVED***(e) => setNumeroPedidos(e.target.value)***REMOVED***
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+              style=***REMOVED******REMOVED*** 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+              ***REMOVED******REMOVED***
               placeholder="0"
               min="0"
             />
@@ -203,6 +226,9 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
               value=***REMOVED***kilometros***REMOVED***
               onChange=***REMOVED***(e) => setKilometros(e.target.value)***REMOVED***
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+              style=***REMOVED******REMOVED*** 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+              ***REMOVED******REMOVED***
               placeholder="0"
               min="0"
               step="0.1"
@@ -211,7 +237,7 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
         </div>
       </div>
 
-      ***REMOVED***/* Información financiera - SIN VALIDACIONES RESTRICTIVAS */***REMOVED***
+      ***REMOVED***/* Información financiera */***REMOVED***
       <div className="space-y-3">
         <h3 className="text-sm font-medium text-gray-700">Ganancias</h3>
         
@@ -226,6 +252,9 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
               value=***REMOVED***gananciaTotal***REMOVED***
               onChange=***REMOVED***(e) => setGananciaTotal(e.target.value)***REMOVED***
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+              style=***REMOVED******REMOVED*** 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+              ***REMOVED******REMOVED***
               placeholder="0"
               step="0.01"
               required
@@ -242,6 +271,9 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
               value=***REMOVED***propinas***REMOVED***
               onChange=***REMOVED***(e) => setPropinas(e.target.value)***REMOVED***
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+              style=***REMOVED******REMOVED*** 
+                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+              ***REMOVED******REMOVED***
               placeholder="0"
               step="0.01"
             />
@@ -257,6 +289,9 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
             value=***REMOVED***gastoCombustible***REMOVED***
             onChange=***REMOVED***(e) => setGastoCombustible(e.target.value)***REMOVED***
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+            style=***REMOVED******REMOVED*** 
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+            ***REMOVED******REMOVED***
             placeholder="0"
             step="0.01"
           />
@@ -272,6 +307,9 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
           value=***REMOVED***notas***REMOVED***
           onChange=***REMOVED***(e) => setNotas(e.target.value)***REMOVED***
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+          style=***REMOVED******REMOVED*** 
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+          ***REMOVED******REMOVED***
           rows="2"
           placeholder="ej: Día lluvioso, mucha demanda..."
         />
@@ -299,13 +337,17 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, o
           disabled=***REMOVED***guardando***REMOVED***
           className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
           style=***REMOVED******REMOVED*** 
-            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base,
+            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base || '#EC4899',
           ***REMOVED******REMOVED***
           onMouseEnter=***REMOVED***(e) => ***REMOVED***
-            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.dark;
+            if (!guardando && coloresTemáticos?.dark) ***REMOVED***
+              e.target.style.backgroundColor = coloresTemáticos.dark;
+            ***REMOVED***
           ***REMOVED******REMOVED***
           onMouseLeave=***REMOVED***(e) => ***REMOVED***
-            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.base;
+            if (!guardando) ***REMOVED***
+              e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+            ***REMOVED***
           ***REMOVED******REMOVED***
         >
           ***REMOVED***guardando ? 'Guardando...' : (turno ? 'Guardar Cambios' : 'Crear Turno')***REMOVED***

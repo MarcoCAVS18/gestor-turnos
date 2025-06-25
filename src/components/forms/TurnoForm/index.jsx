@@ -1,11 +1,11 @@
-// src/components/forms/TurnoForm.jsx
+// src/components/forms/TurnoForm/index.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Calendar, Clock, Briefcase ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
-const TurnoForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, onTrabajoChange ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** trabajos, coloresTemáticos ***REMOVED*** = useApp();
+const TurnoForm = (***REMOVED*** turno, trabajoId, trabajos, onSubmit, onCancel, onTrabajoChange ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
   
   // Estados del formulario
   const [fecha, setFecha] = useState('');
@@ -109,7 +109,7 @@ const TurnoForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, onTrabajo
           onChange=***REMOVED***handleTrabajoChange***REMOVED***
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
           style=***REMOVED******REMOVED*** 
-            '--tw-ring-color': coloresTemáticos?.transparent20,
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
           ***REMOVED******REMOVED***
           required
           disabled=***REMOVED***turno***REMOVED*** // No permitir cambiar trabajo en edición
@@ -117,7 +117,7 @@ const TurnoForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, onTrabajo
           <option value="">Seleccionar trabajo</option>
           ***REMOVED***trabajos.map(trabajo => (
             <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
-              ***REMOVED***trabajo.nombre***REMOVED*** ***REMOVED***trabajo.tipo === 'delivery' && '(Delivery)'***REMOVED***
+              ***REMOVED***trabajo.nombre***REMOVED*** ***REMOVED***trabajo.tipo === 'delivery' ? '(Delivery)' : ''***REMOVED***
             </option>
           ))***REMOVED***
         </select>
@@ -140,7 +140,7 @@ const TurnoForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, onTrabajo
           onChange=***REMOVED***(e) => setFecha(e.target.value)***REMOVED***
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
           style=***REMOVED******REMOVED*** 
-            '--tw-ring-color': coloresTemáticos?.transparent20,
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
           ***REMOVED******REMOVED***
           required
         />
@@ -159,7 +159,7 @@ const TurnoForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, onTrabajo
             onChange=***REMOVED***(e) => setHoraInicio(e.target.value)***REMOVED***
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
             style=***REMOVED******REMOVED*** 
-              '--tw-ring-color': coloresTemáticos?.transparent20,
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
             ***REMOVED******REMOVED***
             required
           />
@@ -176,7 +176,7 @@ const TurnoForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, onTrabajo
             onChange=***REMOVED***(e) => setHoraFin(e.target.value)***REMOVED***
             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
             style=***REMOVED******REMOVED*** 
-              '--tw-ring-color': coloresTemáticos?.transparent20,
+              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
             ***REMOVED******REMOVED***
             required
           />
@@ -193,7 +193,7 @@ const TurnoForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, onTrabajo
           onChange=***REMOVED***(e) => setNotas(e.target.value)***REMOVED***
           className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
           style=***REMOVED******REMOVED*** 
-            '--tw-ring-color': coloresTemáticos?.transparent20,
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
           ***REMOVED******REMOVED***
           rows="2"
           placeholder="Agregar notas sobre el turno..."
@@ -222,13 +222,17 @@ const TurnoForm = (***REMOVED*** turno, trabajoId, onSubmit, onCancel, onTrabajo
           disabled=***REMOVED***guardando***REMOVED***
           className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
           style=***REMOVED******REMOVED*** 
-            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base,
+            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base || '#EC4899',
           ***REMOVED******REMOVED***
           onMouseEnter=***REMOVED***(e) => ***REMOVED***
-            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.dark;
+            if (!guardando && coloresTemáticos?.dark) ***REMOVED***
+              e.target.style.backgroundColor = coloresTemáticos.dark;
+            ***REMOVED***
           ***REMOVED******REMOVED***
           onMouseLeave=***REMOVED***(e) => ***REMOVED***
-            if (!guardando) e.target.style.backgroundColor = coloresTemáticos?.base;
+            if (!guardando) ***REMOVED***
+              e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+            ***REMOVED***
           ***REMOVED******REMOVED***
         >
           ***REMOVED***guardando ? 'Guardando...' : (turno ? 'Guardar Cambios' : 'Crear Turno')***REMOVED***

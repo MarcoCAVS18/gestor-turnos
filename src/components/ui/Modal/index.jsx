@@ -1,3 +1,5 @@
+// src/components/ui/Modal/index.jsx
+
 import React from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import Button from '../Button';

@@ -44,6 +44,7 @@ const StatCard = (***REMOVED***
       onClick=***REMOVED***onClick***REMOVED***
     >
       <div className=***REMOVED***getSizeClasses()***REMOVED***>
+        
         ***REMOVED***/* Header con título e ícono */***REMOVED***
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-gray-600">***REMOVED***title***REMOVED***</span>

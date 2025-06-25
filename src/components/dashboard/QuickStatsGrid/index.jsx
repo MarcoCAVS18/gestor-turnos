@@ -1,6 +1,5 @@
 // src/components/dashboard/QuickStatsGrid/index.jsx
 
-import React from 'react';
 import ***REMOVED*** Briefcase, Calendar, Clock, Target ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
@@ -21,13 +20,15 @@ const QuickStatCard = (***REMOVED*** icon: Icon, label, value, subtitle ***REMOV
 ***REMOVED***;
 
 const QuickStatsGrid = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** trabajos ***REMOVED*** = useApp();
+  const ***REMOVED*** trabajos, trabajosDelivery ***REMOVED*** = useApp();
+  
+  const totalTrabajos = trabajos.length + trabajosDelivery.length;
   
   const statsData = [
     ***REMOVED***
       icon: Briefcase,
       label: 'Trabajos',
-      value: trabajos.length,
+      value: totalTrabajos,
       subtitle: 'activos'
     ***REMOVED***,
     ***REMOVED***

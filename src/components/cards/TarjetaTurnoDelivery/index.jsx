@@ -1,4 +1,4 @@
-// src/components/cards/TarjetaTurnoDelivery.jsx
+// src/components/cards/TarjetaTurnoDelivery/index.jsx
 
 import React from 'react';
 import ***REMOVED*** Clock, Package, Car, TrendingUp, Edit2, Trash2, MoreVertical, Truck ***REMOVED*** from 'lucide-react';
@@ -38,13 +38,12 @@ const TarjetaTurnoDelivery = (***REMOVED*** turno, trabajo, onEdit, onDelete ***
     return `$***REMOVED***horas***REMOVED***h $***REMOVED***minutos***REMOVED***min`;
   ***REMOVED***;
 
-  // Cálculos
   const gananciaBase = turno.gananciaTotal - (turno.propinas || 0);
   const gananciaNeta = turno.gananciaTotal - (turno.gastoCombustible || 0);
   const promedioPorPedido = turno.numeroPedidos > 0 ? gananciaBase / turno.numeroPedidos : 0;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div className="bg-white rounded-lg p-4">
       <div className="flex justify-between items-start">
         <div className="flex-1">
           ***REMOVED***/* Encabezado con trabajo y tipo */***REMOVED***

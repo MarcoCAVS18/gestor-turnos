@@ -1,3 +1,5 @@
+// src/components/ui/Input/index.jsx
+
 import React from 'react';
 
 const Input = (***REMOVED***

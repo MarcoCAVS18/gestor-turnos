@@ -1,3 +1,5 @@
+// src/components/ui/Card/index.jsx
+
 import React from 'react';
 
 const Card = (***REMOVED***

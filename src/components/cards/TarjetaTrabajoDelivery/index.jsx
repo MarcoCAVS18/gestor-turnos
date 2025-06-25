@@ -1,7 +1,7 @@
 // src/components/cards/TarjetaTrabajoDelivery/index.jsx
 
 import React from 'react';
-import ***REMOVED*** MoreVertical, Edit2, Trash2, Package ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** MoreVertical, Edit2, Trash2, Package, Bike, Car, Truck, User ***REMOVED*** from 'lucide-react';
 import WorkAvatar from '../../work/WorkAvatar';
 
 const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, showActions = true ***REMOVED***) => ***REMOVED***
@@ -18,11 +18,14 @@ const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, showAct
     return () => document.removeEventListener('click', cerrarMenu);
   ***REMOVED***, [menuAbierto]);
 
-  const iconoVehiculo = ***REMOVED***
-    'Bicicleta': '🚴',
-    'Moto': '🏍️',
-    'Auto': '🚗',
-    'A pie': '🚶'
+  const getVehicleIcon = (vehiculo) => ***REMOVED***
+    switch(vehiculo) ***REMOVED***
+      case 'Bicicleta': return <Bike size=***REMOVED***16***REMOVED*** className="text-green-500" />;
+      case 'Moto': return <Truck size=***REMOVED***16***REMOVED*** className="text-orange-500" />;
+      case 'Auto': return <Car size=***REMOVED***16***REMOVED*** className="text-blue-500" />;
+      case 'A pie': return <User size=***REMOVED***16***REMOVED*** className="text-gray-500" />;
+      default: return <Package size=***REMOVED***16***REMOVED*** className="text-gray-400" />;
+    ***REMOVED***
   ***REMOVED***;
 
   return (
@@ -48,7 +51,7 @@ const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, showAct
             <div className="mt-2 space-y-1">              
               ***REMOVED***trabajo.vehiculo && (
                 <p className="text-sm text-gray-600 flex items-center gap-1">
-                  <span className="text-base">***REMOVED***iconoVehiculo[trabajo.vehiculo] || '🚚'***REMOVED***</span>
+                  ***REMOVED***getVehicleIcon(trabajo.vehiculo)***REMOVED***
                   Vehículo: <span className="font-medium">***REMOVED***trabajo.vehiculo***REMOVED***</span>
                 </p>
               )***REMOVED***

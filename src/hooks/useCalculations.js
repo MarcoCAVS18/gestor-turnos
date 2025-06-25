@@ -1,6 +1,6 @@
 // src/hooks/useCalculations.js
 
-import ***REMOVED*** useMemo, useCallback ***REMOVED*** from 'react';
+import ***REMOVED*** useCallback ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 export const useCalculations = () => ***REMOVED***

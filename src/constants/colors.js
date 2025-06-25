@@ -1,4 +1,5 @@
 // src/constants/colors.js
+
 export const PREDEFINED_COLORS = [
   ***REMOVED*** name: 'Rosa', value: '#EC4899', category: 'primary' ***REMOVED***,
   ***REMOVED*** name: 'Índigo', value: '#6366F1', category: 'primary' ***REMOVED***,

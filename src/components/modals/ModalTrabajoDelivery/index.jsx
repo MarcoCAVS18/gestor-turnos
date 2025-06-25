@@ -1,6 +1,6 @@
 // src/components/modals/ModalTrabajoDelivery/index.jsx
 
-import React, ***REMOVED*** useCallback, useEffect, useState ***REMOVED*** from 'react'; // Added useCallback, useEffect, useState explicitly
+import ***REMOVED*** useCallback, useEffect, useState ***REMOVED*** from 'react';
 import ***REMOVED*** X, Truck ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import PlatformSelector from '../../delivery/PlatformSelector';
@@ -55,7 +55,7 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
 ***REMOVED***;
 
 const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, coloresTemáticos ***REMOVED***) => ***REMOVED***
-  const [formData, setFormData] = useState(***REMOVED*** // Changed React.useState to useState
+  const [formData, setFormData] = useState(***REMOVED***
     nombre: '',
     plataforma: '',
     vehiculo: '',
@@ -71,10 +71,10 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
     ***REMOVED***
   ***REMOVED***);
 
-  const [errors, setErrors] = useState(***REMOVED******REMOVED***); // Changed React.useState to useState
-  const [guardando, setGuardando] = useState(false); // Changed React.useState to useState
+  const [errors, setErrors] = useState(***REMOVED******REMOVED***); 
+  const [guardando, setGuardando] = useState(false); 
 
-  useEffect(() => ***REMOVED*** // Changed React.useEffect to useEffect
+  useEffect(() => ***REMOVED*** 
     if (trabajo) ***REMOVED***
       setFormData(***REMOVED***
         nombre: trabajo.nombre || '',
@@ -128,7 +128,6 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
     ***REMOVED***
   ***REMOVED***;
 
-  // Wrap handleInputChange in useCallback
   const handleInputChange = useCallback((field, value) => ***REMOVED***
     setFormData(prev => (***REMOVED***
       ...prev,
@@ -141,7 +140,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
         [field]: undefined
       ***REMOVED***));
     ***REMOVED***
-  ***REMOVED***, [errors]); // `errors` is a dependency here because it's used inside the function.
+  ***REMOVED***, [errors]); 
 
   const handleConfigChange = (field, value) => ***REMOVED***
     setFormData(prev => (***REMOVED***
@@ -158,7 +157,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
     p => p.nombre === formData.plataforma
   );
 
-  useEffect(() => ***REMOVED*** // Changed React.useEffect to useEffect
+  useEffect(() => ***REMOVED*** 
     if (plataformaSeleccionada && !trabajo) ***REMOVED***
       handleInputChange('colorAvatar', plataformaSeleccionada.color);
     ***REMOVED***

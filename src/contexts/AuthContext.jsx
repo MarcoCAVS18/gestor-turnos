@@ -193,7 +193,6 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
     return unsubscribe;
   ***REMOVED***, []);
 
-  // Valores del contexto
   const value = ***REMOVED***
     currentUser,
     loading,
