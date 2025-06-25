@@ -137,6 +137,7 @@ function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
         onClose=***REMOVED***cerrarModalTurno***REMOVED***
         turno=***REMOVED***turnoSeleccionado***REMOVED***
       />
+
     </div>
   );
 ***REMOVED***

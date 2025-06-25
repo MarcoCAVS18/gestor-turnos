@@ -3,7 +3,6 @@
 import React from 'react';
 
 const Switch = (***REMOVED*** checked, onChange, disabled = false, size = 'md' ***REMOVED***) => ***REMOVED***
-  console.log('Switch - Props:', ***REMOVED*** checked, disabled ***REMOVED***);
   
   const getSizeClasses = () => ***REMOVED***
     const sizes = ***REMOVED***
@@ -17,12 +16,10 @@ const Switch = (***REMOVED*** checked, onChange, disabled = false, size = 'md' *
   const sizeClasses = getSizeClasses();
 
   const handleClick = () => ***REMOVED***
-    console.log('Switch - Click event, current checked:', checked);
     if (!disabled) ***REMOVED***
-      console.log('Switch - Calling onChange with:', !checked);
       onChange(!checked);
     ***REMOVED*** else ***REMOVED***
-      console.log('Switch - Click ignored, disabled:', disabled);
+      // Click ignored, switch is disabled
     ***REMOVED***
   ***REMOVED***;
 

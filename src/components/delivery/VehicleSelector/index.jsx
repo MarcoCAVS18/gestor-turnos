@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ***REMOVED*** Check, Bike, Car, Truck, User ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** DELIVERY_VEHICLES_AUSTRALIA ***REMOVED*** from '../../../constants/delivery';
+import ***REMOVED*** DELIVERY_VEHICLES ***REMOVED*** from '../../../constants/delivery'; // Asegúrate de que esta ruta sea correcta
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick ***REMOVED***) => ***REMOVED***
@@ -11,19 +11,20 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick ***REMOVED***)
   const getVehicleIcon = (vehicleId) => ***REMOVED***
     const icons = ***REMOVED***
       'bicicleta': Bike,
-      'moto': Truck,
+      'moto': Truck, // Si 'moto' debe ser 'Truck' (camión), déjalo así. Si quieres una moto de verdad, busca otro icono o usa 'Bike'
       'auto': Car,
       'a_pie': User
     ***REMOVED***;
-    return icons[vehicleId] || Car;
+    return icons[vehicleId] || Car; // Fallback a 'Car' si no encuentra el ID
   ***REMOVED***;
   
-  const Icon = getVehicleIcon(vehicle.id);
+  // vehicle.id ahora existe porque DELIVERY_VEHICLES son objetos
+  const Icon = getVehicleIcon(vehicle.id); 
   
   return (
     <button
       type="button"
-      onClick=***REMOVED***() => onClick(vehicle.nombre)***REMOVED***
+      onClick=***REMOVED***() => onClick(vehicle.nombre)***REMOVED*** // Sigue pasando el nombre a onVehicleSelect
       className=***REMOVED***`relative p-4 rounded-lg border-2 transition-all duration-200 $***REMOVED***
         isSelected 
           ? 'border-pink-500 bg-pink-50' 
@@ -36,7 +37,7 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick ***REMOVED***)
     >
       <div 
         className="w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-2"
-        style=***REMOVED******REMOVED*** backgroundColor: vehicle.color + '20' ***REMOVED******REMOVED***
+        style=***REMOVED******REMOVED*** backgroundColor: vehicle.color + '20' ***REMOVED******REMOVED*** // vehicle.color ahora existe
       >
         <Icon size=***REMOVED***24***REMOVED*** style=***REMOVED******REMOVED*** color: vehicle.color ***REMOVED******REMOVED*** />
       </div>
@@ -60,11 +61,12 @@ const VehicleSelector = (***REMOVED*** selectedVehicle, onVehicleSelect, title =
     <div className="space-y-3">
       <h3 className="text-sm font-medium text-gray-700">***REMOVED***title***REMOVED***</h3>
       <div className="grid grid-cols-2 gap-3">
-        ***REMOVED***DELIVERY_VEHICLES_AUSTRALIA.map(vehicle => (
+        ***REMOVED***/* Aquí la clave ahora funciona correctamente */***REMOVED***
+        ***REMOVED***DELIVERY_VEHICLES.map(vehicle => (
           <VehicleButton
-            key=***REMOVED***vehicle.id***REMOVED***
-            vehicle=***REMOVED***vehicle***REMOVED***
-            isSelected=***REMOVED***selectedVehicle === vehicle.nombre***REMOVED***
+            key=***REMOVED***vehicle.id***REMOVED*** // Ahora vehicle.id es un string único como 'bicicleta', 'moto', etc.
+            vehicle=***REMOVED***vehicle***REMOVED*** // Pasamos el objeto completo 'vehicle'
+            isSelected=***REMOVED***selectedVehicle === vehicle.nombre***REMOVED*** // Comparamos por el nombre seleccionado
             onClick=***REMOVED***onVehicleSelect***REMOVED***
           />
         ))***REMOVED***

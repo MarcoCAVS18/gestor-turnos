@@ -1,27 +1,40 @@
 // src/components/modals/ModalTurno.jsx
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
+import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react'; // Added useMemo
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import TurnoForm from '../../forms/TurnoForm';
 import TurnoDeliveryForm from '../../forms/TurnoDeliveryForm';
 
 const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** agregarTurno, editarTurno, trabajos ***REMOVED*** = useApp();
+  const ***REMOVED***
+    agregarTurno,
+    editarTurno,
+    agregarTurnoDelivery,
+    editarTurnoDelivery,
+    trabajos,
+    trabajosDelivery
+  ***REMOVED*** = useApp();
+
   const [trabajoSeleccionadoId, setTrabajoSeleccionadoId] = useState(trabajoId || '');
   const [formularioTipo, setFormularioTipo] = useState('tradicional');
-  
+
+  // Combinar todos los trabajos para el selector usando useMemo
+  const todosLosTrabajos = useMemo(() => ***REMOVED***
+    return [...trabajos, ...trabajosDelivery];
+  ***REMOVED***, [trabajos, trabajosDelivery]); // Dependencies for useMemo
+
   // Determinar el tipo de formulario basado en el trabajo
   useEffect(() => ***REMOVED***
     if (turno?.tipo === 'delivery') ***REMOVED***
       setFormularioTipo('delivery');
     ***REMOVED*** else if (trabajoSeleccionadoId) ***REMOVED***
-      const trabajo = trabajos.find(t => t.id === trabajoSeleccionadoId);
+      const trabajo = todosLosTrabajos.find(t => t.id === trabajoSeleccionadoId);
       setFormularioTipo(trabajo?.tipo === 'delivery' ? 'delivery' : 'tradicional');
     ***REMOVED*** else ***REMOVED***
       setFormularioTipo('tradicional');
     ***REMOVED***
-  ***REMOVED***, [trabajoSeleccionadoId, trabajos, turno]);
+  ***REMOVED***, [trabajoSeleccionadoId, todosLosTrabajos, turno]);
 
   // Reset cuando se abre/cierra el modal
   useEffect(() => ***REMOVED***
@@ -36,12 +49,25 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
   ***REMOVED***, [isOpen, turno, trabajoId]);
 
   const manejarGuardado = async (datosTurno) => ***REMOVED***
-    if (turno) ***REMOVED***
-      await editarTurno(turno.id, datosTurno);
-    ***REMOVED*** else ***REMOVED***
-      await agregarTurno(datosTurno);
+    try ***REMOVED***
+      if (formularioTipo === 'delivery') ***REMOVED***
+        if (turno) ***REMOVED***
+          await editarTurnoDelivery(turno.id, datosTurno);
+        ***REMOVED*** else ***REMOVED***
+          await agregarTurnoDelivery(datosTurno);
+        ***REMOVED***
+      ***REMOVED*** else ***REMOVED***
+        if (turno) ***REMOVED***
+          await editarTurno(turno.id, datosTurno);
+        ***REMOVED*** else ***REMOVED***
+          await agregarTurno(datosTurno);
+        ***REMOVED***
+      ***REMOVED***
+      onClose();
+    ***REMOVED*** catch (error) ***REMOVED***
+      console.error('Error al guardar turno:', error);
+      // Aquí podrías mostrar una notificación de error
     ***REMOVED***
-    onClose();
   ***REMOVED***;
 
   const manejarCambioTrabajo = (nuevoTrabajoId) => ***REMOVED***
@@ -71,6 +97,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
             <TurnoDeliveryForm
               turno=***REMOVED***turno***REMOVED***
               trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
+              trabajos=***REMOVED***todosLosTrabajos.filter(t => t.tipo === 'delivery')***REMOVED***
               onSubmit=***REMOVED***manejarGuardado***REMOVED***
               onCancel=***REMOVED***onClose***REMOVED***
               onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
@@ -79,6 +106,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
             <TurnoForm
               turno=***REMOVED***turno***REMOVED***
               trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
+              trabajos=***REMOVED***todosLosTrabajos.filter(t => t.tipo !== 'delivery')***REMOVED***
               onSubmit=***REMOVED***manejarGuardado***REMOVED***
               onCancel=***REMOVED***onClose***REMOVED***
               onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
