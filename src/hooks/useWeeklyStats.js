@@ -15,14 +15,6 @@ export const useWeeklyStats = (offsetSemanas = 0) => {
     // Usar todos los trabajos combinados del contexto
     const trabajosValidos = Array.isArray(todosLosTrabajos) ? todosLosTrabajos : [];
 
-    console.log('📈 Calculando estadísticas semanales:', {
-      turnosTradicionales: turnosTradicionales.length,
-      turnosDelivery: turnosDeliveryValidos.length,
-      totalTurnos: todosLosTurnos.length,
-      trabajosTotal: trabajosValidos.length,
-      offsetSemanas
-    });
-
     // Función para obtener fechas de una semana específica
     const obtenerFechasSemana = (offset) => {
       const hoy = new Date();
@@ -47,12 +39,6 @@ export const useWeeklyStats = (offsetSemanas = 0) => {
     // Filtrar turnos de la semana específica (incluyendo delivery)
     const turnosSemana = todosLosTurnos.filter(turno => {
       return turno.fecha >= fechaInicioISO && turno.fecha <= fechaFinISO;
-    });
-
-    console.log('📈 Turnos en semana filtrada:', {
-      total: turnosSemana.length,
-      tradicionales: turnosSemana.filter(t => t.tipo !== 'delivery').length,
-      delivery: turnosSemana.filter(t => t.tipo === 'delivery').length
     });
 
     // Si no hay datos, retornar estructura por defecto
@@ -112,25 +98,13 @@ export const useWeeklyStats = (offsetSemanas = 0) => {
         // Para turnos de delivery
         horas = calcularHoras ? calcularHoras(turno.horaInicio, turno.horaFin) : 0;
         ganancia = turno.gananciaTotal || 0; // Usar ganancia directa
-        
-        console.log('🚛 Procesando turno delivery:', {
-          id: turno.id,
-          fecha: turno.fecha,
-          horas,
-          ganancia
-        });
+
       } else {
         // Para turnos tradicionales
         horas = calcularHoras ? calcularHoras(turno.horaInicio, turno.horaFin) : 0;
         const resultadoPago = calcularPago ? calcularPago(turno) : { totalConDescuento: 0 };
         ganancia = resultadoPago.totalConDescuento || 0;
         
-        console.log('💼 Procesando turno tradicional:', {
-          id: turno.id,
-          fecha: turno.fecha,
-          horas,
-          ganancia
-        });
       }
 
       totalGanado += ganancia;
@@ -203,7 +177,6 @@ export const useWeeklyStats = (offsetSemanas = 0) => {
       diaMasProductivo
     };
 
-    console.log('📈 Estadísticas semanales finales:', resultado);
     return resultado;
   }, [todosLosTrabajos, turnos, turnosDelivery, offsetSemanas, calcularPago, calcularHoras]);
 };

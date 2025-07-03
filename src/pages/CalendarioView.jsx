@@ -20,25 +20,11 @@ const CalendarioView = () => {
     formatearFecha
   } = useCalendar();
   
-  console.log('📅 CalendarioView - Estado:', {
-    fechaSeleccionada,
-    turnosPorFecha: Object.keys(turnosPorFecha || {}).length,
-    todosLosTrabajos: todosLosTrabajos?.length || 0
-  });
+  // Validar que tenemos trabajos antes de mostrar funcionalidades
+  const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
   
   // Obtener los turnos para la fecha seleccionada
   const turnosSeleccionados = fechaSeleccionada ? turnosPorFecha[fechaSeleccionada] || [] : [];
-  
-  console.log('📅 Turnos para fecha seleccionada:', {
-    fecha: fechaSeleccionada,
-    cantidad: turnosSeleccionados.length,
-    turnos: turnosSeleccionados.map(t => ({
-      id: t.id,
-      tipo: t.tipo,
-      trabajoId: t.trabajoId,
-      gananciaTotal: t.gananciaTotal
-    }))
-  });
   
   // Animaciones
   const calendarVariants = {
@@ -61,6 +47,19 @@ const CalendarioView = () => {
       >
         Calendario de Turnos
       </motion.h2>
+      
+      {/* Mostrar mensaje si no hay trabajos */}
+      {!hayTrabajos && (
+        <motion.div
+          className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <p className="text-amber-800 text-sm">
+            Para usar el calendario, primero necesitas crear al menos un trabajo en la sección "Trabajos".
+          </p>
+        </motion.div>
+      )}
       
       <motion.div
         variants={calendarVariants}

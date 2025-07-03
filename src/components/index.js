@@ -56,6 +56,7 @@ export { default as CustomizationSection } from './settings/CustomizationSection
 export { default as TurnRangeSection } from './settings/TurnRangeSection';
 export { default as PreferencesSection } from './settings/PreferencesSection';
 export { default as SessionSection } from './settings/SessionSection';
+export { default as FooterSection } from './settings/FooterSection';
 
 // Stats Components
 export { default as WeekNavigator } from './stats/WeekNavigator';

@@ -30,21 +30,6 @@ const Estadisticas = () => {
   const deliveryStats = useDeliveryStats('mes');
   const tieneDelivery = deliveryEnabled && deliveryStats.totalPedidos > 0;
 
-  console.log('📊 Estado de estadísticas:', {
-    cargando,
-    deliveryEnabled,
-    tieneDelivery,
-    datosActuales: {
-      totalGanado: datosActuales.totalGanado,
-      totalTurnos: datosActuales.totalTurnos,
-      horasTrabajadas: datosActuales.horasTrabajadas
-    },
-    deliveryStats: {
-      totalPedidos: deliveryStats.totalPedidos,
-      totalGanado: deliveryStats.totalGanado
-    }
-  });
-
   return (
     <LoadingWrapper loading={cargando}>
       <div className="px-4 py-6 space-y-6">
@@ -102,23 +87,6 @@ const Estadisticas = () => {
             
             <ComparacionPlataformas deliveryStats={deliveryStats} />
           </>
-        )}
-
-        {/* Debug info para desarrollo */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-8 p-4 bg-gray-100 rounded-lg text-xs">
-            <h3 className="font-bold mb-2">🔧 Debug Info:</h3>
-            <pre className="whitespace-pre-wrap">
-              {JSON.stringify({
-                deliveryEnabled,
-                tieneDelivery,
-                totalTurnosActuales: datosActuales.totalTurnos,
-                totalGanadoActual: datosActuales.totalGanado,
-                deliveryPedidos: deliveryStats.totalPedidos,
-                deliveryGanado: deliveryStats.totalGanado
-              }, null, 2)}
-            </pre>
-          </div>
         )}
       </div>
     </LoadingWrapper>

@@ -1,4 +1,4 @@
-// src/components/calendar/CalendarDaySummary/index.jsx - Versión corregida
+// src/components/calendar/CalendarDaySummary/index.jsx
 
 import React from 'react';
 import { PlusCircle, Calendar } from 'lucide-react';
@@ -14,14 +14,8 @@ const CalendarDaySummary = ({
   formatearFecha, 
   onNuevoTurno 
 }) => {
-  const { todosLosTrabajos, calcularPago, coloresTemáticos } = useApp();
-
-  console.log('📅 CalendarDaySummary - Datos recibidos:', {
-    fechaSeleccionada,
-    turnosCount: turnos?.length || 0,
-    trabajosCount: todosLosTrabajos?.length || 0,
-    tieneCalcularPago: typeof calcularPago === 'function'
-  });
+  // Obtener TODOS los trabajos (tradicionales + delivery)
+  const { trabajos, trabajosDelivery, calcularPago, coloresTemáticos } = useApp();
 
   const calcularTotalDia = (turnosList) => {
     if (!Array.isArray(turnosList) || turnosList.length === 0) {
@@ -31,40 +25,32 @@ const CalendarDaySummary = ({
     return turnosList.reduce((total, turno) => {
       try {
         if (turno.tipo === 'delivery') {
-          // Para turnos de delivery, usar directamente la ganancia total
           const gananciaTotal = turno.gananciaTotal || 0;
-          console.log('📅 Turno delivery en calendario:', {
-            id: turno.id,
-            gananciaTotal,
-            propinas: turno.propinas || 0
-          });
           return total + gananciaTotal;
         } else {
-          // Para turnos tradicionales, usar calcularPago
           if (typeof calcularPago === 'function') {
             const { totalConDescuento } = calcularPago(turno);
-            console.log('📅 Turno tradicional en calendario:', {
-              id: turno.id,
-              totalConDescuento
-            });
             return total + totalConDescuento;
           } else {
-            console.warn('⚠️ calcularPago no es una función válida');
             return total;
           }
         }
       } catch (error) {
-        console.error('❌ Error calculando turno:', turno.id, error);
         return total;
       }
     }, 0);
   };
 
+  // Función para buscar trabajo en ambos tipos
   const obtenerTrabajo = (trabajoId) => {
-    const trabajo = todosLosTrabajos?.find(t => t.id === trabajoId);
+    // Primero buscar en trabajos tradicionales
+    let trabajo = trabajos?.find(t => t.id === trabajoId);
+    
+    // Si no se encuentra, buscar en trabajos de delivery
     if (!trabajo) {
-      console.warn('⚠️ Trabajo no encontrado en calendario:', trabajoId);
+      trabajo = trabajosDelivery?.find(t => t.id === trabajoId);
     }
+    
     return trabajo;
   };
 
@@ -107,15 +93,22 @@ const CalendarDaySummary = ({
             {turnosValidos.map(turno => {
               const trabajo = obtenerTrabajo(turno.trabajoId);
               if (!trabajo) {
-                // Mostrar un placeholder si no se encuentra el trabajo
                 return (
                   <div key={turno.id} className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-red-600 text-sm">
-                      ⚠️ Trabajo no encontrado (ID: {turno.trabajoId})
+                    <p className="text-red-600 text-sm font-medium">
+                      Trabajo no encontrado
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      ID: {turno.trabajoId}
                     </p>
                     <p className="text-xs text-gray-500">
                       {turno.fecha} • {turno.horaInicio} - {turno.horaFin}
                     </p>
+                    {turno.tipo === 'delivery' && (
+                      <p className="text-xs text-blue-600 mt-1">
+                        Turno de Delivery • Ganancia: ${turno.gananciaTotal || 0}
+                      </p>
+                    )}
                   </div>
                 );
               }

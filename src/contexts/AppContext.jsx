@@ -483,7 +483,6 @@ export const AppProvider = ({ children }) => {
         unsubscribeTrabajosDelivery = onSnapshot(
           trabajosDeliveryQuery,
           (snapshot) => {
-            // console.log('📦 Cargando trabajos delivery, docs encontrados:', snapshot.docs.length);
             const loadedTrabajosDelivery = snapshot.docs.map(doc => {
               return { id: doc.id, ...doc.data() };
             });

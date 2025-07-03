@@ -1,4 +1,4 @@
-// src/components/calendar/Calendario/index.jsx - Versión corregida
+// src/components/calendar/Calendario/index.jsx
 
 import React from 'react';
 import { useApp } from '../../../contexts/AppContext';
@@ -12,11 +12,6 @@ import CalendarGrid from '../CalendarGrid';
 const Calendario = ({ onDiaSeleccionado }) => {
   const { turnosPorFecha, todosLosTrabajos, coloresTemáticos } = useApp();
   
-  console.log('📅 Calendario - Datos del contexto:', {
-    turnosPorFecha: Object.keys(turnosPorFecha || {}).length,
-    todosLosTrabajos: todosLosTrabajos?.length || 0
-  });
-  
   // Obtener todos los turnos combinados del contexto
   const todosLosTurnos = React.useMemo(() => {
     if (!turnosPorFecha) return [];
@@ -26,12 +21,6 @@ const Calendario = ({ onDiaSeleccionado }) => {
       if (Array.isArray(turnosDia)) {
         turnos.push(...turnosDia);
       }
-    });
-    
-    console.log('📅 Turnos extraídos para calendario:', {
-      total: turnos.length,
-      tradicionales: turnos.filter(t => t.tipo !== 'delivery').length,
-      delivery: turnos.filter(t => t.tipo === 'delivery').length
     });
     
     return turnos;
@@ -50,13 +39,6 @@ const Calendario = ({ onDiaSeleccionado }) => {
 
   const turnosMes = obtenerTurnosMes(todosLosTurnos, anioActual, mesActual);
   const dias = obtenerDiasDelMes();
-
-  console.log('📅 Calendario renderizado:', {
-    mesActual,
-    anioActual,
-    turnosMes: turnosMes.length,
-    diasConTurnos: dias.filter(d => d.tieneTurnos).length
-  });
 
   return (
     <Card className="overflow-hidden">

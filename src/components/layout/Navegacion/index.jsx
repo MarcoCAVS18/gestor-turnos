@@ -106,6 +106,7 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
   
   return (
     <>
+      {/* NAVEGACIÓN MÓVIL */}
       <nav className="navbar-container fixed bottom-0 left-0 right-0 bg-white px-4 py-6 md:hidden">
         <div className="grid grid-cols-5 items-center max-w-md mx-auto">
           <button
@@ -161,14 +162,23 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
         </div>
       </nav>
 
+      {/* SIDEBAR DESKTOP */}
       <aside className="hidden md:flex md:flex-col w-72 bg-white border-r border-gray-200 shadow-sm h-screen fixed left-0 top-0 z-30">
+        
+        {/* HEADER DEL SIDEBAR */}
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center space-x-3">
             <div 
-              className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg"
-              style={{ backgroundColor: coloresTemáticos?.base }}
+              className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg user-emoji"
+              style={{ backgroundColor: coloresTemáticos?.base || '#EC4899' }}
             >
-              {emojiUsuario}
+              <span style={{ 
+                fontSize: '1.5rem',
+                lineHeight: '1',
+                color: '#ffffff'
+              }}>
+                {emojiUsuario || '😊'}
+              </span>
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">
@@ -181,38 +191,60 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
           </div>
         </div>
 
-        {/* Acciones Rápidas */}
+        {/* ACCIONES RÁPIDAS */}
         {(abrirModalNuevoTurno || abrirModalNuevoTrabajo) && (
           <div className="p-4 border-b border-gray-100">
             <div className="space-y-2">
               {abrirModalNuevoTurno && hayTrabajos && (
                 <button
                   onClick={abrirModalNuevoTurno}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-white font-medium transition-all hover:shadow-lg transform hover:scale-105"
-                  style={{ backgroundColor: coloresTemáticos?.base }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg transform hover:scale-105 btn-primary"
+                  style={{ 
+                    backgroundColor: coloresTemáticos?.base || '#EC4899',
+                    color: '#ffffff'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = coloresTemáticos?.dark || '#BE185D';
+                    e.target.style.color = '#ffffff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+                    e.target.style.color = '#ffffff';
+                  }}
                 >
-                  <PlusCircle size={20} />
-                  Nuevo Turno
+                  <PlusCircle size={20} style={{ color: '#ffffff' }} />
+                  <span style={{ color: '#ffffff' }}>Nuevo Turno</span>
                 </button>
               )}
               {abrirModalNuevoTrabajo && (
                 <button
                   onClick={abrirModalNuevoTrabajo}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 font-medium transition-all hover:shadow-md"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
                   style={{ 
-                    borderColor: coloresTemáticos?.base,
-                    color: coloresTemáticos?.base 
+                    borderWidth: '2px',
+                    borderStyle: 'solid',
+                    borderColor: coloresTemáticos?.base || '#EC4899',
+                    color: coloresTemáticos?.base || '#EC4899',
+                    backgroundColor: '#ffffff'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+                    e.target.style.color = coloresTemáticos?.base || '#EC4899';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = '#ffffff';
+                    e.target.style.color = coloresTemáticos?.base || '#EC4899';
                   }}
                 >
-                  <Briefcase size={20} />
-                  Nuevo Trabajo
+                  <Briefcase size={20} style={{ color: coloresTemáticos?.base || '#EC4899' }} />
+                  <span style={{ color: coloresTemáticos?.base || '#EC4899' }}>Nuevo Trabajo</span>
                 </button>
               )}
             </div>
           </div>
         )}
 
-        {/* Navegación Principal */}
+        {/* NAVEGACIÓN PRINCIPAL */}
         <nav className="flex-1 p-4">
           <div className="space-y-2">
             <motion.button
@@ -298,17 +330,20 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
           </div>
         </nav>
 
-        {/* Footer del Sidebar */}
+        {/* FOOTER DEL SIDEBAR */}
         <div className="p-4 border-t border-gray-100">
           <motion.button
             onClick={() => navigateToView('ajustes')}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
-            style={getActiveDesktopStyle('ajustes')}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:bg-gray-50"
+            style={{
+              backgroundColor: 'transparent',
+              color: '#6B7280'
+            }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <Settings size={20} />
-            <span>Configuración</span>
+            <Settings size={20} style={{ color: '#6B7280' }} />
+            <span style={{ color: '#6B7280' }}>Configuración</span>
           </motion.button>
         </div>
       </aside>

@@ -7,7 +7,7 @@ export const useDeliveryStats = (periodo = 'mes') => {
   const { trabajosDelivery, turnosDelivery } = useApp();
   
   return useMemo(() => {
-    console.log('📊 Calculando estadísticas delivery:', {
+    console.log('Calculando delivery:', {
       trabajosDelivery: trabajosDelivery?.length || 0,
       turnosDelivery: turnosDelivery?.length || 0,
       periodo
@@ -19,7 +19,6 @@ export const useDeliveryStats = (periodo = 'mes') => {
     
     // Si no hay datos, retornar estructura vacía
     if (turnosDeliveryValidos.length === 0) {
-      console.log('📊 No hay turnos de delivery para calcular estadísticas');
       return {
         totalGanado: 0,
         totalPropinas: 0,
@@ -71,9 +70,7 @@ export const useDeliveryStats = (periodo = 'mes') => {
       const fechaTurno = new Date(turno.fecha);
       return fechaTurno >= fechaInicio;
     });
-    
-    console.log('📊 Turnos en período filtrado:', turnosPeriodo.length);
-    
+        
     // Calcular estadísticas básicas
     let totalGanado = 0;
     let totalPropinas = 0;
@@ -112,17 +109,6 @@ export const useDeliveryStats = (periodo = 'mes') => {
       let horas = (horaFin + minFin/60) - (horaIni + minIni/60);
       if (horas < 0) horas += 24;
       totalHoras += horas;
-      
-      console.log('📊 Procesando turno delivery:', {
-        id: turno.id,
-        fecha: turno.fecha,
-        gananciaBase,
-        propinas,
-        pedidos,
-        kilometros,
-        gastos,
-        horas
-      });
       
       // Estadísticas por día
       if (!estadisticasPorDia[turno.fecha]) {
@@ -281,7 +267,6 @@ export const useDeliveryStats = (periodo = 'mes') => {
       turnosRealizados: turnosPeriodo.length
     };
 
-    console.log('📊 Estadísticas delivery finales:', resultado);
     return resultado;
   }, [trabajosDelivery, turnosDelivery, periodo]);
 };

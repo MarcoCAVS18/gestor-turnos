@@ -22,22 +22,11 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
 
   // Combinar todos los trabajos para el selector usando useMemo
   const todosLosTrabajos = useMemo(() => {
-    console.log('Combinando trabajos:', {
-      tradicionales: trabajos.length,
-      delivery: trabajosDelivery.length,
-      total: trabajos.length + trabajosDelivery.length
-    });
     return [...trabajos, ...trabajosDelivery];
   }, [trabajos, trabajosDelivery]);
 
   // Determinar el tipo de formulario basado en el trabajo
   useEffect(() => {
-    console.log('Determinando tipo de formulario:', {
-      turno_tipo: turno?.tipo,
-      trabajoSeleccionadoId,
-      todos_trabajos_count: todosLosTrabajos.length
-    });
-
     if (turno?.tipo === 'delivery') {
       setFormularioTipo('delivery');
     } else if (trabajoSeleccionadoId) {
@@ -83,7 +72,6 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
   };
 
   const manejarCambioTrabajo = (nuevoTrabajoId) => {
-    console.log('Cambio de trabajo:', nuevoTrabajoId);
     setTrabajoSeleccionadoId(nuevoTrabajoId);
   };
 
