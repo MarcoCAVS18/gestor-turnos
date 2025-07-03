@@ -30,21 +30,6 @@ const Estadisticas = () => ***REMOVED***
   const deliveryStats = useDeliveryStats('mes');
   const tieneDelivery = deliveryEnabled && deliveryStats.totalPedidos > 0;
 
-  console.log('📊 Estado de estadísticas:', ***REMOVED***
-    cargando,
-    deliveryEnabled,
-    tieneDelivery,
-    datosActuales: ***REMOVED***
-      totalGanado: datosActuales.totalGanado,
-      totalTurnos: datosActuales.totalTurnos,
-      horasTrabajadas: datosActuales.horasTrabajadas
-    ***REMOVED***,
-    deliveryStats: ***REMOVED***
-      totalPedidos: deliveryStats.totalPedidos,
-      totalGanado: deliveryStats.totalGanado
-    ***REMOVED***
-  ***REMOVED***);
-
   return (
     <LoadingWrapper loading=***REMOVED***cargando***REMOVED***>
       <div className="px-4 py-6 space-y-6">
@@ -102,23 +87,6 @@ const Estadisticas = () => ***REMOVED***
             
             <ComparacionPlataformas deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
           </>
-        )***REMOVED***
-
-        ***REMOVED***/* Debug info para desarrollo */***REMOVED***
-        ***REMOVED***process.env.NODE_ENV === 'development' && (
-          <div className="mt-8 p-4 bg-gray-100 rounded-lg text-xs">
-            <h3 className="font-bold mb-2">🔧 Debug Info:</h3>
-            <pre className="whitespace-pre-wrap">
-              ***REMOVED***JSON.stringify(***REMOVED***
-                deliveryEnabled,
-                tieneDelivery,
-                totalTurnosActuales: datosActuales.totalTurnos,
-                totalGanadoActual: datosActuales.totalGanado,
-                deliveryPedidos: deliveryStats.totalPedidos,
-                deliveryGanado: deliveryStats.totalGanado
-              ***REMOVED***, null, 2)***REMOVED***
-            </pre>
-          </div>
         )***REMOVED***
       </div>
     </LoadingWrapper>

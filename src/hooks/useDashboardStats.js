@@ -11,14 +11,7 @@ export const useDashboardStats = () => ***REMOVED***
     const turnosTradicionales = Array.isArray(turnos) ? turnos : [];
     const turnosDeliveryValidos = Array.isArray(turnosDelivery) ? turnosDelivery : [];
     const todosLosTurnos = [...turnosTradicionales, ...turnosDeliveryValidos];
-    
-    console.log('📊 Dashboard Stats - Datos disponibles:', ***REMOVED***
-      trabajosTradicionales: todosLosTrabajos?.filter(t => t.tipo !== 'delivery').length || 0,
-      trabajosDelivery: todosLosTrabajos?.filter(t => t.tipo === 'delivery').length || 0,
-      turnosTradicionales: turnosTradicionales.length,
-      turnosDelivery: turnosDeliveryValidos.length,
-      totalTurnos: todosLosTurnos.length
-    ***REMOVED***);
+  
 
     if (todosLosTurnos.length === 0) ***REMOVED***
       return ***REMOVED***
@@ -146,7 +139,6 @@ export const useDashboardStats = () => ***REMOVED***
       diasTrabajados: fechasUnicas.size
     ***REMOVED***;
 
-    console.log('📊 Dashboard Stats calculados:', resultado);
     return resultado;
   ***REMOVED***, [turnos, turnosDelivery, todosLosTrabajos, calcularPago]);
 

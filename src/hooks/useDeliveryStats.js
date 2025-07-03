@@ -7,7 +7,7 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
   const ***REMOVED*** trabajosDelivery, turnosDelivery ***REMOVED*** = useApp();
   
   return useMemo(() => ***REMOVED***
-    console.log('📊 Calculando estadísticas delivery:', ***REMOVED***
+    console.log('Calculando delivery:', ***REMOVED***
       trabajosDelivery: trabajosDelivery?.length || 0,
       turnosDelivery: turnosDelivery?.length || 0,
       periodo
@@ -19,7 +19,6 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
     
     // Si no hay datos, retornar estructura vacía
     if (turnosDeliveryValidos.length === 0) ***REMOVED***
-      console.log('📊 No hay turnos de delivery para calcular estadísticas');
       return ***REMOVED***
         totalGanado: 0,
         totalPropinas: 0,
@@ -71,9 +70,7 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
       const fechaTurno = new Date(turno.fecha);
       return fechaTurno >= fechaInicio;
     ***REMOVED***);
-    
-    console.log('📊 Turnos en período filtrado:', turnosPeriodo.length);
-    
+        
     // Calcular estadísticas básicas
     let totalGanado = 0;
     let totalPropinas = 0;
@@ -112,17 +109,6 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
       let horas = (horaFin + minFin/60) - (horaIni + minIni/60);
       if (horas < 0) horas += 24;
       totalHoras += horas;
-      
-      console.log('📊 Procesando turno delivery:', ***REMOVED***
-        id: turno.id,
-        fecha: turno.fecha,
-        gananciaBase,
-        propinas,
-        pedidos,
-        kilometros,
-        gastos,
-        horas
-      ***REMOVED***);
       
       // Estadísticas por día
       if (!estadisticasPorDia[turno.fecha]) ***REMOVED***
@@ -281,7 +267,6 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
       turnosRealizados: turnosPeriodo.length
     ***REMOVED***;
 
-    console.log('📊 Estadísticas delivery finales:', resultado);
     return resultado;
   ***REMOVED***, [trabajosDelivery, turnosDelivery, periodo]);
 ***REMOVED***;

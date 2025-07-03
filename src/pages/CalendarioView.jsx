@@ -20,25 +20,11 @@ const CalendarioView = () => ***REMOVED***
     formatearFecha
   ***REMOVED*** = useCalendar();
   
-  console.log('📅 CalendarioView - Estado:', ***REMOVED***
-    fechaSeleccionada,
-    turnosPorFecha: Object.keys(turnosPorFecha || ***REMOVED******REMOVED***).length,
-    todosLosTrabajos: todosLosTrabajos?.length || 0
-  ***REMOVED***);
+  // Validar que tenemos trabajos antes de mostrar funcionalidades
+  const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
   
   // Obtener los turnos para la fecha seleccionada
   const turnosSeleccionados = fechaSeleccionada ? turnosPorFecha[fechaSeleccionada] || [] : [];
-  
-  console.log('📅 Turnos para fecha seleccionada:', ***REMOVED***
-    fecha: fechaSeleccionada,
-    cantidad: turnosSeleccionados.length,
-    turnos: turnosSeleccionados.map(t => (***REMOVED***
-      id: t.id,
-      tipo: t.tipo,
-      trabajoId: t.trabajoId,
-      gananciaTotal: t.gananciaTotal
-    ***REMOVED***))
-  ***REMOVED***);
   
   // Animaciones
   const calendarVariants = ***REMOVED***
@@ -61,6 +47,19 @@ const CalendarioView = () => ***REMOVED***
       >
         Calendario de Turnos
       </motion.h2>
+      
+      ***REMOVED***/* Mostrar mensaje si no hay trabajos */***REMOVED***
+      ***REMOVED***!hayTrabajos && (
+        <motion.div
+          className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg"
+          initial=***REMOVED******REMOVED*** opacity: 0 ***REMOVED******REMOVED***
+          animate=***REMOVED******REMOVED*** opacity: 1 ***REMOVED******REMOVED***
+        >
+          <p className="text-amber-800 text-sm">
+            Para usar el calendario, primero necesitas crear al menos un trabajo en la sección "Trabajos".
+          </p>
+        </motion.div>
+      )***REMOVED***
       
       <motion.div
         variants=***REMOVED***calendarVariants***REMOVED***

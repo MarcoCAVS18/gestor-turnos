@@ -22,22 +22,11 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
 
   // Combinar todos los trabajos para el selector usando useMemo
   const todosLosTrabajos = useMemo(() => ***REMOVED***
-    console.log('Combinando trabajos:', ***REMOVED***
-      tradicionales: trabajos.length,
-      delivery: trabajosDelivery.length,
-      total: trabajos.length + trabajosDelivery.length
-    ***REMOVED***);
     return [...trabajos, ...trabajosDelivery];
   ***REMOVED***, [trabajos, trabajosDelivery]);
 
   // Determinar el tipo de formulario basado en el trabajo
   useEffect(() => ***REMOVED***
-    console.log('Determinando tipo de formulario:', ***REMOVED***
-      turno_tipo: turno?.tipo,
-      trabajoSeleccionadoId,
-      todos_trabajos_count: todosLosTrabajos.length
-    ***REMOVED***);
-
     if (turno?.tipo === 'delivery') ***REMOVED***
       setFormularioTipo('delivery');
     ***REMOVED*** else if (trabajoSeleccionadoId) ***REMOVED***
@@ -83,7 +72,6 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
   ***REMOVED***;
 
   const manejarCambioTrabajo = (nuevoTrabajoId) => ***REMOVED***
-    console.log('Cambio de trabajo:', nuevoTrabajoId);
     setTrabajoSeleccionadoId(nuevoTrabajoId);
   ***REMOVED***;
 

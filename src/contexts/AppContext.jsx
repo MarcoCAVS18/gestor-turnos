@@ -483,7 +483,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         unsubscribeTrabajosDelivery = onSnapshot(
           trabajosDeliveryQuery,
           (snapshot) => ***REMOVED***
-            // console.log('📦 Cargando trabajos delivery, docs encontrados:', snapshot.docs.length);
             const loadedTrabajosDelivery = snapshot.docs.map(doc => ***REMOVED***
               return ***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***;
             ***REMOVED***);

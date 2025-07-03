@@ -1,4 +1,4 @@
-// src/pages/Ajustes.jsx
+// src/pages/Ajustes.jsx 
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ProfileSection from '../components/settings/ProfileSection';
@@ -7,6 +7,7 @@ import TurnRangeSection from '../components/settings/TurnRangeSection';
 import GoalsSection from '../components/settings/GoalsSection';
 import PreferencesSection from '../components/settings/PreferencesSection';
 import SessionSection from '../components/settings/SessionSection';
+import FooterSection from '../components/settings/FooterSection'; 
 import NotificationBanner from '../components/ui/NotificationBanner';
 import DeliverySection from '../components/settings/DeliverySection';
 
@@ -71,6 +72,8 @@ const Ajustes = () => ***REMOVED***
       <SessionSection 
         onError=***REMOVED***handleError***REMOVED*** 
       />
+
+      <FooterSection />
     </div>
   );
 ***REMOVED***;
