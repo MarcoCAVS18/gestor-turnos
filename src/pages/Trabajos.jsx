@@ -118,8 +118,6 @@ const Trabajos = () => {
   useEffect(() => {
     if (!currentUser) return;
     
-    console.log('🔑 Usuario autenticado:', currentUser.uid);
-    console.log('📊 Cargando trabajos...');
   }, [currentUser]);
 
   return (

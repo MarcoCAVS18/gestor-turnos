@@ -289,7 +289,6 @@ export const AppProvider = ({ children }) => {
         }
       };
 
-      console.log("Intentando guardar trabajo delivery en la ruta:", deliveryCollections.trabajosDeliveryRef.path);
 
       const docRef = await addDoc(deliveryCollections.trabajosDeliveryRef, trabajoDeliveryData);
 
@@ -397,12 +396,9 @@ export const AppProvider = ({ children }) => {
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const loadedTrabajos = snapshot.docs.map(doc => {
-        // AÑADE ESTOS CONSOLE.LOGS TEMPORALMENTE
-        console.log(`Trabajo Delivery detectado en FireStore. ID: ${doc.id}, Ruta: ${doc.ref.path}, Datos:`, doc.data());
         return { id: doc.id, ...doc.data() };
       });
       setTrabajosDelivery(loadedTrabajos);
-      console.log('Trabajos delivery cargados:', loadedTrabajos.length); 
     }, (error) => {
       console.error("Error al cargar trabajos de delivery:", error);
       setError("Error al cargar trabajos de delivery: " + error.message);
@@ -430,9 +426,7 @@ export const AppProvider = ({ children }) => {
       const docRef = doc(deliveryCollections.turnosDeliveryRef, id);
       await updateDoc(docRef, datosConMetadata);
 
-      console.log('Turno delivery actualizado:', id);
     } catch (err) {
-      console.error('Error al editar turno delivery:', err);
       setError('Error al editar turno delivery: ' + err.message);
       throw err;
     }
@@ -447,7 +441,6 @@ export const AppProvider = ({ children }) => {
 
       await deleteDoc(doc(deliveryCollections.turnosDeliveryRef, id));
 
-      console.log('Turno delivery eliminado:', id);
     } catch (err) {
       console.error('Error al eliminar turno delivery:', err);
       setError('Error al eliminar turno delivery: ' + err.message);
@@ -579,7 +572,6 @@ export const AppProvider = ({ children }) => {
                 });
               });
               setTurnosDelivery(turnosDeliveryData);
-              console.log('Turnos delivery cargados:', turnosDeliveryData.length);
             },
             (error) => {
               console.error('Error al cargar turnos delivery:', error);
@@ -719,7 +711,6 @@ export const AppProvider = ({ children }) => {
         );
         await Promise.all(promesasBorradoTurnos);
         await deleteDoc(trabajoRef);
-        console.log(`Trabajo eliminado: ${id}`);
       } catch (err) {
         console.error('Error al eliminar trabajo:', err);
         setError('Error al eliminar trabajo: ' + err.message);
