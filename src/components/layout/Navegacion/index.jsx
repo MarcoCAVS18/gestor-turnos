@@ -1,6 +1,6 @@
 // src/components/layout/Navegacion/index.jsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -11,8 +11,11 @@ import './index.css';
 const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { coloresTemáticos, emojiUsuario } = useApp();
+  const { coloresTemáticos, emojiUsuario, trabajos, trabajosDelivery } = useApp();
   const { currentUser } = useAuth();
+  
+  // Estado para el tooltip
+  const [showTooltip, setShowTooltip] = useState(false);
   
   const getCurrentView = () => {
     const path = location.pathname;
@@ -27,7 +30,16 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
   
   const currentView = getCurrentView();
   
+  // Verificar si hay trabajos creados
+  const totalTrabajos = (trabajos?.length || 0) + (trabajosDelivery?.length || 0);
+  const hayTrabajos = totalTrabajos > 0;
+  
   const navigateToView = (view) => {
+    // Si intenta ir a turnos pero no hay trabajos, no hacer nada en desktop
+    if (view === 'turnos' && !hayTrabajos) {
+      return;
+    }
+    
     const routes = {
       'dashboard': '/dashboard',
       'trabajos': '/trabajos',
@@ -50,6 +62,16 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
   };
 
   const getActiveDesktopStyle = (vista) => {
+    // Estilo especial para turnos cuando no hay trabajos
+    if (vista === 'turnos' && !hayTrabajos) {
+      return {
+        backgroundColor: 'transparent',
+        color: '#9CA3AF',
+        cursor: 'not-allowed',
+        opacity: 0.5
+      };
+    }
+
     return currentView === vista
       ? {
           backgroundColor: coloresTemáticos?.base || '#EC4899',
@@ -70,6 +92,17 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
 
   const userName = currentUser?.displayName || 
     (currentUser?.email ? currentUser.email.split('@')[0] : 'Usuario');
+
+  // Manejar hover del botón de turnos
+  const handleTurnosMouseEnter = () => {
+    if (!hayTrabajos) {
+      setShowTooltip(true);
+    }
+  };
+
+  const handleTurnosMouseLeave = () => {
+    setShowTooltip(false);
+  };
   
   return (
     <>
@@ -152,7 +185,7 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
         {(abrirModalNuevoTurno || abrirModalNuevoTrabajo) && (
           <div className="p-4 border-b border-gray-100">
             <div className="space-y-2">
-              {abrirModalNuevoTurno && (
+              {abrirModalNuevoTurno && hayTrabajos && (
                 <button
                   onClick={abrirModalNuevoTurno}
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-white font-medium transition-all hover:shadow-lg transform hover:scale-105"
@@ -221,16 +254,36 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
               />
             </motion.button>
 
-            <motion.button
-              onClick={() => navigateToView('turnos')}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
-              style={getActiveDesktopStyle('turnos')}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Calendar size={20} />
-              <span>Turnos</span>
-            </motion.button>
+            {/* Botón de Turnos con validación y tooltip */}
+            <div className="relative">
+              <motion.button
+                onClick={() => navigateToView('turnos')}
+                onMouseEnter={handleTurnosMouseEnter}
+                onMouseLeave={handleTurnosMouseLeave}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all"
+                style={getActiveDesktopStyle('turnos')}
+                whileHover={hayTrabajos ? { scale: 1.02 } : {}}
+                whileTap={hayTrabajos ? { scale: 0.98 } : {}}
+              >
+                <Calendar size={20} />
+                <span>Turnos</span>
+                {!hayTrabajos && (
+                  <div className="ml-auto">
+                    <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                  </div>
+                )}
+              </motion.button>
+
+              {/* Tooltip para cuando no hay trabajos */}
+              {showTooltip && !hayTrabajos && (
+                <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 z-50">
+                  <div className="bg-gray-800 text-white text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
+                    Primero crea un trabajo para agregar turnos
+                    <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800"></div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             <motion.button
               onClick={() => navigateToView('estadisticas')}

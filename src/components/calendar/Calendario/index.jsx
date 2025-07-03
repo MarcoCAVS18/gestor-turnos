@@ -1,4 +1,4 @@
-// src/components/calendar/Calendario/index.jsx
+// src/components/calendar/Calendario/index.jsx - Versión corregida
 
 import React from 'react';
 import { useApp } from '../../../contexts/AppContext';
@@ -10,7 +10,32 @@ import CalendarSummary from '../CalendarSummary';
 import CalendarGrid from '../CalendarGrid';
 
 const Calendario = ({ onDiaSeleccionado }) => {
-  const { turnos, trabajos, coloresTemáticos } = useApp();
+  const { turnosPorFecha, todosLosTrabajos, coloresTemáticos } = useApp();
+  
+  console.log('📅 Calendario - Datos del contexto:', {
+    turnosPorFecha: Object.keys(turnosPorFecha || {}).length,
+    todosLosTrabajos: todosLosTrabajos?.length || 0
+  });
+  
+  // Obtener todos los turnos combinados del contexto
+  const todosLosTurnos = React.useMemo(() => {
+    if (!turnosPorFecha) return [];
+    
+    const turnos = [];
+    Object.entries(turnosPorFecha).forEach(([fecha, turnosDia]) => {
+      if (Array.isArray(turnosDia)) {
+        turnos.push(...turnosDia);
+      }
+    });
+    
+    console.log('📅 Turnos extraídos para calendario:', {
+      total: turnos.length,
+      tradicionales: turnos.filter(t => t.tipo !== 'delivery').length,
+      delivery: turnos.filter(t => t.tipo === 'delivery').length
+    });
+    
+    return turnos;
+  }, [turnosPorFecha]);
   
   const {
     fechaActual,
@@ -21,10 +46,17 @@ const Calendario = ({ onDiaSeleccionado }) => {
     cambiarMes,
     irAHoy,
     irADia
-  } = useCalendarState(turnos, onDiaSeleccionado);
+  } = useCalendarState(todosLosTurnos, onDiaSeleccionado);
 
-  const turnosMes = obtenerTurnosMes(turnos, anioActual, mesActual);
+  const turnosMes = obtenerTurnosMes(todosLosTurnos, anioActual, mesActual);
   const dias = obtenerDiasDelMes();
+
+  console.log('📅 Calendario renderizado:', {
+    mesActual,
+    anioActual,
+    turnosMes: turnosMes.length,
+    diasConTurnos: dias.filter(d => d.tieneTurnos).length
+  });
 
   return (
     <Card className="overflow-hidden">
@@ -45,7 +77,7 @@ const Calendario = ({ onDiaSeleccionado }) => {
         dias={dias}
         fechaActual={fechaActual}
         diaSeleccionadoActual={diaSeleccionadoActual}
-        trabajos={trabajos}
+        trabajos={todosLosTrabajos || []}
         coloresTemáticos={coloresTemáticos}
         onDiaClick={irADia}
       />

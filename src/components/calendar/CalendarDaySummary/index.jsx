@@ -1,9 +1,10 @@
-// src/components/calendar/CalendarDaySummary/index.jsx
+// src/components/calendar/CalendarDaySummary/index.jsx - Versión corregida
 
 import React from 'react';
 import { PlusCircle, Calendar } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import TarjetaTurno from '../../cards/TarjetaTurno';
+import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
 import Button from '../../ui/Button';
 import Card from '../../ui/Card';
 
@@ -13,20 +14,64 @@ const CalendarDaySummary = ({
   formatearFecha, 
   onNuevoTurno 
 }) => {
-  const { trabajos, calcularPago, coloresTemáticos } = useApp();
+  const { todosLosTrabajos, calcularPago, coloresTemáticos } = useApp();
+
+  console.log('📅 CalendarDaySummary - Datos recibidos:', {
+    fechaSeleccionada,
+    turnosCount: turnos?.length || 0,
+    trabajosCount: todosLosTrabajos?.length || 0,
+    tieneCalcularPago: typeof calcularPago === 'function'
+  });
 
   const calcularTotalDia = (turnosList) => {
+    if (!Array.isArray(turnosList) || turnosList.length === 0) {
+      return 0;
+    }
+
     return turnosList.reduce((total, turno) => {
-      const { totalConDescuento } = calcularPago(turno);
-      return total + totalConDescuento;
+      try {
+        if (turno.tipo === 'delivery') {
+          // Para turnos de delivery, usar directamente la ganancia total
+          const gananciaTotal = turno.gananciaTotal || 0;
+          console.log('📅 Turno delivery en calendario:', {
+            id: turno.id,
+            gananciaTotal,
+            propinas: turno.propinas || 0
+          });
+          return total + gananciaTotal;
+        } else {
+          // Para turnos tradicionales, usar calcularPago
+          if (typeof calcularPago === 'function') {
+            const { totalConDescuento } = calcularPago(turno);
+            console.log('📅 Turno tradicional en calendario:', {
+              id: turno.id,
+              totalConDescuento
+            });
+            return total + totalConDescuento;
+          } else {
+            console.warn('⚠️ calcularPago no es una función válida');
+            return total;
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error calculando turno:', turno.id, error);
+        return total;
+      }
     }, 0);
   };
 
   const obtenerTrabajo = (trabajoId) => {
-    return trabajos.find(t => t.id === trabajoId);
+    const trabajo = todosLosTrabajos?.find(t => t.id === trabajoId);
+    if (!trabajo) {
+      console.warn('⚠️ Trabajo no encontrado en calendario:', trabajoId);
+    }
+    return trabajo;
   };
 
   if (!fechaSeleccionada) return null;
+
+  const turnosValidos = Array.isArray(turnos) ? turnos : [];
+  const totalDia = calcularTotalDia(turnosValidos);
 
   return (
     <div className="mt-6">
@@ -44,7 +89,7 @@ const CalendarDaySummary = ({
         </Button>
       </div>
       
-      {turnos.length > 0 ? (
+      {turnosValidos.length > 0 ? (
         <Card className="overflow-hidden" padding="none">
           {/* Header del día */}
           <div 
@@ -59,9 +104,34 @@ const CalendarDaySummary = ({
           
           {/* Lista de turnos */}
           <div className="p-4 space-y-3">
-            {turnos.map(turno => {
+            {turnosValidos.map(turno => {
               const trabajo = obtenerTrabajo(turno.trabajoId);
-              if (!trabajo) return null;
+              if (!trabajo) {
+                // Mostrar un placeholder si no se encuentra el trabajo
+                return (
+                  <div key={turno.id} className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-600 text-sm">
+                      ⚠️ Trabajo no encontrado (ID: {turno.trabajoId})
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {turno.fecha} • {turno.horaInicio} - {turno.horaFin}
+                    </p>
+                  </div>
+                );
+              }
+
+              // Renderizar según el tipo de turno
+              if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') {
+                return (
+                  <TarjetaTurnoDelivery
+                    key={turno.id}
+                    turno={turno}
+                    trabajo={trabajo}
+                    onEdit={() => {}} 
+                    onDelete={() => {}} 
+                  />
+                );
+              }
               
               return (
                 <TarjetaTurno
@@ -84,7 +154,7 @@ const CalendarDaySummary = ({
                 className="font-semibold"
                 style={{ color: coloresTemáticos?.base || '#EC4899' }}
               >
-                ${calcularTotalDia(turnos).toFixed(2)}
+                ${totalDia.toFixed(2)}
               </span>
             </div>
           </div>

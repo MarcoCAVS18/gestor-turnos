@@ -1,14 +1,27 @@
-// src/hooks/useWeeklyStats.js
+// src/hooks/useWeeklyStats.js - Versión corregida
 
 import { useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
 
-export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) => {
-  const { calcularPago, calcularHoras } = useApp();
+export const useWeeklyStats = (offsetSemanas = 0) => {
+  const { calcularPago, calcularHoras, todosLosTrabajos, turnos, turnosDelivery } = useApp();
 
   return useMemo(() => {
-    const turnosValidos = Array.isArray(turnos) ? turnos : [];
-    const trabajosValidos = Array.isArray(trabajos) ? trabajos : [];
+    // Combinar todos los turnos (tradicionales + delivery)
+    const turnosTradicionales = Array.isArray(turnos) ? turnos : [];
+    const turnosDeliveryValidos = Array.isArray(turnosDelivery) ? turnosDelivery : [];
+    const todosLosTurnos = [...turnosTradicionales, ...turnosDeliveryValidos];
+    
+    // Usar todos los trabajos combinados del contexto
+    const trabajosValidos = Array.isArray(todosLosTrabajos) ? todosLosTrabajos : [];
+
+    console.log('📈 Calculando estadísticas semanales:', {
+      turnosTradicionales: turnosTradicionales.length,
+      turnosDelivery: turnosDeliveryValidos.length,
+      totalTurnos: todosLosTurnos.length,
+      trabajosTotal: trabajosValidos.length,
+      offsetSemanas
+    });
 
     // Función para obtener fechas de una semana específica
     const obtenerFechasSemana = (offset) => {
@@ -31,9 +44,15 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
     const fechaInicioISO = fechaInicio.toISOString().split('T')[0];
     const fechaFinISO = fechaFin.toISOString().split('T')[0];
 
-    // Filtrar turnos de la semana específica
-    const turnosSemana = turnosValidos.filter(turno => {
+    // Filtrar turnos de la semana específica (incluyendo delivery)
+    const turnosSemana = todosLosTurnos.filter(turno => {
       return turno.fecha >= fechaInicioISO && turno.fecha <= fechaFinISO;
+    });
+
+    console.log('📈 Turnos en semana filtrada:', {
+      total: turnosSemana.length,
+      tradicionales: turnosSemana.filter(t => t.tipo !== 'delivery').length,
+      delivery: turnosSemana.filter(t => t.tipo === 'delivery').length
     });
 
     // Si no hay datos, retornar estructura por defecto
@@ -80,11 +99,39 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
 
     turnosSemana.forEach(turno => {
       const trabajo = trabajosValidos.find(t => t.id === turno.trabajoId);
-      if (!trabajo) return;
+      if (!trabajo) {
+        console.warn('⚠️ Trabajo no encontrado para turno:', turno.id, 'trabajoId:', turno.trabajoId);
+        return;
+      }
 
-      const horas = calcularHoras ? calcularHoras(turno.horaInicio, turno.horaFin) : 0;
-      const resultadoPago = calcularPago ? calcularPago(turno) : { totalConDescuento: 0, horas: 0 };
-      const ganancia = resultadoPago.totalConDescuento || 0;
+      let horas = 0;
+      let ganancia = 0;
+
+      // Calcular horas y ganancia según el tipo de turno
+      if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') {
+        // Para turnos de delivery
+        horas = calcularHoras ? calcularHoras(turno.horaInicio, turno.horaFin) : 0;
+        ganancia = turno.gananciaTotal || 0; // Usar ganancia directa
+        
+        console.log('🚛 Procesando turno delivery:', {
+          id: turno.id,
+          fecha: turno.fecha,
+          horas,
+          ganancia
+        });
+      } else {
+        // Para turnos tradicionales
+        horas = calcularHoras ? calcularHoras(turno.horaInicio, turno.horaFin) : 0;
+        const resultadoPago = calcularPago ? calcularPago(turno) : { totalConDescuento: 0 };
+        ganancia = resultadoPago.totalConDescuento || 0;
+        
+        console.log('💼 Procesando turno tradicional:', {
+          id: turno.id,
+          fecha: turno.fecha,
+          horas,
+          ganancia
+        });
+      }
 
       totalGanado += ganancia;
       horasTrabajadas += horas;
@@ -102,11 +149,13 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
       // Estadísticas por trabajo
       if (!gananciaPorTrabajo[trabajo.id]) {
         gananciaPorTrabajo[trabajo.id] = {
+          id: trabajo.id,
           nombre: trabajo.nombre,
-          color: trabajo.color,
+          color: trabajo.color || trabajo.colorAvatar || '#EC4899',
           ganancia: 0,
           horas: 0,
-          turnos: 0
+          turnos: 0,
+          tipo: trabajo.tipo || 'tradicional'
         };
       }
       gananciaPorTrabajo[trabajo.id].ganancia += ganancia;
@@ -114,7 +163,13 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
       gananciaPorTrabajo[trabajo.id].turnos += 1;
 
       // Estadísticas por tipo de turno
-      const tipo = obtenerTipoTurno(turno.horaInicio) || 'mixto';
+      let tipo;
+      if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') {
+        tipo = 'delivery';
+      } else {
+        tipo = obtenerTipoTurno(turno.horaInicio) || 'mixto';
+      }
+      
       if (!tiposDeTurno[tipo]) {
         tiposDeTurno[tipo] = { turnos: 0, horas: 0, ganancia: 0 };
       }
@@ -133,7 +188,7 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
       return datos.ganancia > max.ganancia ? { dia, ...datos } : max;
     }, { dia: 'Ninguno', ganancia: 0, horas: 0, turnos: 0 });
 
-    return {
+    const resultado = {
       fechaInicio,
       fechaFin,
       totalGanado,
@@ -147,7 +202,10 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
       promedioPorHora,
       diaMasProductivo
     };
-  }, [turnos, trabajos, offsetSemanas, calcularPago, calcularHoras]);
+
+    console.log('📈 Estadísticas semanales finales:', resultado);
+    return resultado;
+  }, [todosLosTrabajos, turnos, turnosDelivery, offsetSemanas, calcularPago, calcularHoras]);
 };
 
 // Función auxiliar para tipo de turno (mantenemos esta)

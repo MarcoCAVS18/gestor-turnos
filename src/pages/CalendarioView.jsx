@@ -9,7 +9,7 @@ import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ModalTurno from '../components/modals/ModalTurno';
 
 const CalendarioView = () => {
-  const { turnosPorFecha } = useApp();
+  const { turnosPorFecha, todosLosTrabajos } = useApp();
   const {
     fechaSeleccionada,
     modalAbierto,
@@ -20,8 +20,25 @@ const CalendarioView = () => {
     formatearFecha
   } = useCalendar();
   
+  console.log('📅 CalendarioView - Estado:', {
+    fechaSeleccionada,
+    turnosPorFecha: Object.keys(turnosPorFecha || {}).length,
+    todosLosTrabajos: todosLosTrabajos?.length || 0
+  });
+  
   // Obtener los turnos para la fecha seleccionada
   const turnosSeleccionados = fechaSeleccionada ? turnosPorFecha[fechaSeleccionada] || [] : [];
+  
+  console.log('📅 Turnos para fecha seleccionada:', {
+    fecha: fechaSeleccionada,
+    cantidad: turnosSeleccionados.length,
+    turnos: turnosSeleccionados.map(t => ({
+      id: t.id,
+      tipo: t.tipo,
+      trabajoId: t.trabajoId,
+      gananciaTotal: t.gananciaTotal
+    }))
+  });
   
   // Animaciones
   const calendarVariants = {

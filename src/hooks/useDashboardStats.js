@@ -4,10 +4,23 @@ import { useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
 
 export const useDashboardStats = () => {
-  const { trabajos, turnos, calcularPago } = useApp();
+  const { todosLosTrabajos, turnos, turnosDelivery, calcularPago } = useApp();
 
   const stats = useMemo(() => {
-    if (turnos.length === 0) {
+    // Combinar todos los turnos
+    const turnosTradicionales = Array.isArray(turnos) ? turnos : [];
+    const turnosDeliveryValidos = Array.isArray(turnosDelivery) ? turnosDelivery : [];
+    const todosLosTurnos = [...turnosTradicionales, ...turnosDeliveryValidos];
+    
+    console.log('📊 Dashboard Stats - Datos disponibles:', {
+      trabajosTradicionales: todosLosTrabajos?.filter(t => t.tipo !== 'delivery').length || 0,
+      trabajosDelivery: todosLosTrabajos?.filter(t => t.tipo === 'delivery').length || 0,
+      turnosTradicionales: turnosTradicionales.length,
+      turnosDelivery: turnosDeliveryValidos.length,
+      totalTurnos: todosLosTurnos.length
+    });
+
+    if (todosLosTurnos.length === 0) {
       return {
         totalGanado: 0,
         horasTrabajadas: 0,
@@ -42,12 +55,27 @@ export const useDashboardStats = () => {
     let gananciasEstaSemana = 0;
     let gananciasSemanaAnterior = 0;
 
-    turnos.forEach(turno => {
-      const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-      if (!trabajo) return;
+    todosLosTurnos.forEach(turno => {
+      const trabajo = todosLosTrabajos?.find(t => t.id === turno.trabajoId);
+      if (!trabajo) {
+        console.warn('⚠️ Dashboard: Trabajo no encontrado para turno:', turno.id);
+        return;
+      }
 
-      const { totalConDescuento, horas } = calcularPago(turno);
-      totalGanado += totalConDescuento;
+      let ganancia = 0;
+      let horas = 0;
+
+      // Calcular ganancia según el tipo
+      if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') {
+        ganancia = turno.gananciaTotal || 0;
+        horas = calcularHoras(turno.horaInicio, turno.horaFin);
+      } else {
+        const resultado = calcularPago(turno);
+        ganancia = resultado.totalConDescuento || 0;
+        horas = resultado.horas || 0;
+      }
+
+      totalGanado += ganancia;
       horasTrabajadas += horas;
       fechasUnicas.add(turno.fecha);
 
@@ -60,7 +88,7 @@ export const useDashboardStats = () => {
           turnos: 0
         };
       }
-      gananciaPorTrabajo[trabajo.id].ganancia += totalConDescuento;
+      gananciaPorTrabajo[trabajo.id].ganancia += ganancia;
       gananciaPorTrabajo[trabajo.id].horas += horas;
       gananciaPorTrabajo[trabajo.id].turnos += 1;
 
@@ -68,9 +96,9 @@ export const useDashboardStats = () => {
       const fechaTurno = new Date(turno.fecha + 'T00:00:00');
       if (fechaTurno >= inicioSemana) {
         turnosEstaSemana++;
-        gananciasEstaSemana += totalConDescuento;
+        gananciasEstaSemana += ganancia;
       } else if (fechaTurno >= inicioSemanaAnterior && fechaTurno < inicioSemana) {
-        gananciasSemanaAnterior += totalConDescuento;
+        gananciasSemanaAnterior += ganancia;
       }
     });
 
@@ -85,7 +113,7 @@ export const useDashboardStats = () => {
 
     // Encontrar próximo turno
     const hoyStr = hoy.toISOString().split('T')[0];
-    const turnosFuturos = turnos.filter(turno => turno.fecha >= hoyStr)
+    const turnosFuturos = todosLosTurnos.filter(turno => turno.fecha >= hoyStr)
       .sort((a, b) => {
         if (a.fecha === b.fecha) {
           return a.horaInicio.localeCompare(b.horaInicio);
@@ -103,11 +131,11 @@ export const useDashboardStats = () => {
     // Proyección mensual
     const proyeccionMensual = gananciasEstaSemana * 4.33;
 
-    return {
+    const resultado = {
       totalGanado,
       horasTrabajadas,
       promedioPorHora: horasTrabajadas > 0 ? totalGanado / horasTrabajadas : 0,
-      turnosTotal: turnos.length,
+      turnosTotal: todosLosTurnos.length,
       trabajoMasRentable,
       proximoTurno,
       turnosEstaSemana,
@@ -117,7 +145,25 @@ export const useDashboardStats = () => {
       proyeccionMensual,
       diasTrabajados: fechasUnicas.size
     };
-  }, [turnos, trabajos, calcularPago]);
+
+    console.log('📊 Dashboard Stats calculados:', resultado);
+    return resultado;
+  }, [turnos, turnosDelivery, todosLosTrabajos, calcularPago]);
+
+  // Función para calcular horas
+  const calcularHoras = (inicio, fin) => {
+    const [horaIni, minIni] = inicio.split(':').map(n => parseInt(n));
+    const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
+
+    let inicioMinutos = horaIni * 60 + minIni;
+    let finMinutos = horaFn * 60 + minFn;
+
+    if (finMinutos <= inicioMinutos) {
+      finMinutos += 24 * 60;
+    }
+
+    return (finMinutos - inicioMinutos) / 60;
+  };
 
   // Función para formatear fecha
   const formatearFecha = (fechaStr) => {

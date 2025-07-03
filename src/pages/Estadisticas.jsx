@@ -1,4 +1,4 @@
-// src/pages/Estadisticas.jsx - Versión con debug de imports
+// src/pages/Estadisticas.jsx
 
 import React, { useState } from 'react';
 import { useApp } from '../contexts/AppContext';
@@ -12,23 +12,38 @@ import WeeklyComparison from '../components/stats/WeeklyComparison';
 import DailyDistribution from '../components/stats/DailyDistribution';
 import ShiftTypeStats from '../components/stats/ShiftTypeStats';
 
-// Componentes de delivery - verificando imports uno por uno
+// Componentes de delivery
 import ResumenDelivery from '../components/stats/ResumenDelivery';
 import EficienciaVehiculos from '../components/stats/EficienciaVehiculos';
 import ComparacionPlataformas from '../components/stats/ComparacionPlataformas';
 import SeguimientoCombustible from '../components/stats/SeguimientoCombustible';
 
-
 const Estadisticas = () => {
-  const { turnos, trabajos, cargando, metaHorasSemanales, deliveryEnabled } = useApp();
+  const { cargando, metaHorasSemanales, deliveryEnabled } = useApp();
   const [offsetSemana, setOffsetSemana] = useState(0);
   
-  const datosActuales = useWeeklyStats(turnos, trabajos, offsetSemana);
-  const datosAnteriores = useWeeklyStats(turnos, trabajos, offsetSemana - 1);
+  // Usar el hook corregido sin pasar parámetros innecesarios
+  const datosActuales = useWeeklyStats(offsetSemana);
+  const datosAnteriores = useWeeklyStats(offsetSemana - 1);
   
   // Obtener estadísticas de delivery si está habilitado
   const deliveryStats = useDeliveryStats('mes');
   const tieneDelivery = deliveryEnabled && deliveryStats.totalPedidos > 0;
+
+  console.log('📊 Estado de estadísticas:', {
+    cargando,
+    deliveryEnabled,
+    tieneDelivery,
+    datosActuales: {
+      totalGanado: datosActuales.totalGanado,
+      totalTurnos: datosActuales.totalTurnos,
+      horasTrabajadas: datosActuales.horasTrabajadas
+    },
+    deliveryStats: {
+      totalPedidos: deliveryStats.totalPedidos,
+      totalGanado: deliveryStats.totalGanado
+    }
+  });
 
   return (
     <LoadingWrapper loading={cargando}>
@@ -71,16 +86,39 @@ const Estadisticas = () => {
         {/* Sección de estadísticas de delivery - solo visible si está habilitado */}
         {tieneDelivery && (
           <>
-            {ResumenDelivery && <ResumenDelivery deliveryStats={deliveryStats} />}
+            <div className="pt-4">
+              <h2 className="text-xl font-semibold mb-4 text-center">
+                📦 Estadísticas de Delivery
+              </h2>
+            </div>
+            
+            <ResumenDelivery deliveryStats={deliveryStats} />
             
             {/* Tarjetas horizontales una debajo de la otra */}
             <div className="space-y-6">
-              {EficienciaVehiculos && <EficienciaVehiculos deliveryStats={deliveryStats} />}
-              {SeguimientoCombustible && <SeguimientoCombustible deliveryStats={deliveryStats} />}
+              <EficienciaVehiculos deliveryStats={deliveryStats} />
+              <SeguimientoCombustible deliveryStats={deliveryStats} />
             </div>
             
-            {ComparacionPlataformas && <ComparacionPlataformas deliveryStats={deliveryStats} />}
+            <ComparacionPlataformas deliveryStats={deliveryStats} />
           </>
+        )}
+
+        {/* Debug info para desarrollo */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-8 p-4 bg-gray-100 rounded-lg text-xs">
+            <h3 className="font-bold mb-2">🔧 Debug Info:</h3>
+            <pre className="whitespace-pre-wrap">
+              {JSON.stringify({
+                deliveryEnabled,
+                tieneDelivery,
+                totalTurnosActuales: datosActuales.totalTurnos,
+                totalGanadoActual: datosActuales.totalGanado,
+                deliveryPedidos: deliveryStats.totalPedidos,
+                deliveryGanado: deliveryStats.totalGanado
+              }, null, 2)}
+            </pre>
+          </div>
         )}
       </div>
     </LoadingWrapper>
