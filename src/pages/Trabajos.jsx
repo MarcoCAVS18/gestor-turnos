@@ -118,8 +118,6 @@ const Trabajos = () => ***REMOVED***
   useEffect(() => ***REMOVED***
     if (!currentUser) return;
     
-    console.log('🔑 Usuario autenticado:', currentUser.uid);
-    console.log('📊 Cargando trabajos...');
   ***REMOVED***, [currentUser]);
 
   return (
