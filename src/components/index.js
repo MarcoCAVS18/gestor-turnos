@@ -56,6 +56,7 @@ export ***REMOVED*** default as CustomizationSection ***REMOVED*** from './setti
 export ***REMOVED*** default as TurnRangeSection ***REMOVED*** from './settings/TurnRangeSection';
 export ***REMOVED*** default as PreferencesSection ***REMOVED*** from './settings/PreferencesSection';
 export ***REMOVED*** default as SessionSection ***REMOVED*** from './settings/SessionSection';
+export ***REMOVED*** default as FooterSection ***REMOVED*** from './settings/FooterSection';
 
 // Stats Components
 export ***REMOVED*** default as WeekNavigator ***REMOVED*** from './stats/WeekNavigator';

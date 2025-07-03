@@ -106,6 +106,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
   
   return (
     <>
+      ***REMOVED***/* NAVEGACIÓN MÓVIL */***REMOVED***
       <nav className="navbar-container fixed bottom-0 left-0 right-0 bg-white px-4 py-6 md:hidden">
         <div className="grid grid-cols-5 items-center max-w-md mx-auto">
           <button
@@ -161,14 +162,23 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
         </div>
       </nav>
 
+      ***REMOVED***/* SIDEBAR DESKTOP */***REMOVED***
       <aside className="hidden md:flex md:flex-col w-72 bg-white border-r border-gray-200 shadow-sm h-screen fixed left-0 top-0 z-30">
+        
+        ***REMOVED***/* HEADER DEL SIDEBAR */***REMOVED***
         <div className="p-6 border-b border-gray-100">
           <div className="flex items-center space-x-3">
             <div 
-              className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg"
-              style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base ***REMOVED******REMOVED***
+              className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg user-emoji"
+              style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
             >
-              ***REMOVED***emojiUsuario***REMOVED***
+              <span style=***REMOVED******REMOVED*** 
+                fontSize: '1.5rem',
+                lineHeight: '1',
+                color: '#ffffff'
+              ***REMOVED******REMOVED***>
+                ***REMOVED***emojiUsuario || '😊'***REMOVED***
+              </span>
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">
@@ -181,38 +191,60 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
           </div>
         </div>
 
-        ***REMOVED***/* Acciones Rápidas */***REMOVED***
+        ***REMOVED***/* ACCIONES RÁPIDAS */***REMOVED***
         ***REMOVED***(abrirModalNuevoTurno || abrirModalNuevoTrabajo) && (
           <div className="p-4 border-b border-gray-100">
             <div className="space-y-2">
               ***REMOVED***abrirModalNuevoTurno && hayTrabajos && (
                 <button
                   onClick=***REMOVED***abrirModalNuevoTurno***REMOVED***
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-white font-medium transition-all hover:shadow-lg transform hover:scale-105"
-                  style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base ***REMOVED******REMOVED***
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg transform hover:scale-105 btn-primary"
+                  style=***REMOVED******REMOVED*** 
+                    backgroundColor: coloresTemáticos?.base || '#EC4899',
+                    color: '#ffffff'
+                  ***REMOVED******REMOVED***
+                  onMouseEnter=***REMOVED***(e) => ***REMOVED***
+                    e.target.style.backgroundColor = coloresTemáticos?.dark || '#BE185D';
+                    e.target.style.color = '#ffffff';
+                  ***REMOVED******REMOVED***
+                  onMouseLeave=***REMOVED***(e) => ***REMOVED***
+                    e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+                    e.target.style.color = '#ffffff';
+                  ***REMOVED******REMOVED***
                 >
-                  <PlusCircle size=***REMOVED***20***REMOVED*** />
-                  Nuevo Turno
+                  <PlusCircle size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: '#ffffff' ***REMOVED******REMOVED*** />
+                  <span style=***REMOVED******REMOVED*** color: '#ffffff' ***REMOVED******REMOVED***>Nuevo Turno</span>
                 </button>
               )***REMOVED***
               ***REMOVED***abrirModalNuevoTrabajo && (
                 <button
                   onClick=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 font-medium transition-all hover:shadow-md"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
                   style=***REMOVED******REMOVED*** 
-                    borderColor: coloresTemáticos?.base,
-                    color: coloresTemáticos?.base 
+                    borderWidth: '2px',
+                    borderStyle: 'solid',
+                    borderColor: coloresTemáticos?.base || '#EC4899',
+                    color: coloresTemáticos?.base || '#EC4899',
+                    backgroundColor: '#ffffff'
+                  ***REMOVED******REMOVED***
+                  onMouseEnter=***REMOVED***(e) => ***REMOVED***
+                    e.target.style.backgroundColor = coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+                    e.target.style.color = coloresTemáticos?.base || '#EC4899';
+                  ***REMOVED******REMOVED***
+                  onMouseLeave=***REMOVED***(e) => ***REMOVED***
+                    e.target.style.backgroundColor = '#ffffff';
+                    e.target.style.color = coloresTemáticos?.base || '#EC4899';
                   ***REMOVED******REMOVED***
                 >
-                  <Briefcase size=***REMOVED***20***REMOVED*** />
-                  Nuevo Trabajo
+                  <Briefcase size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** />
+                  <span style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>Nuevo Trabajo</span>
                 </button>
               )***REMOVED***
             </div>
           </div>
         )***REMOVED***
 
-        ***REMOVED***/* Navegación Principal */***REMOVED***
+        ***REMOVED***/* NAVEGACIÓN PRINCIPAL */***REMOVED***
         <nav className="flex-1 p-4">
           <div className="space-y-2">
             <motion.button
@@ -298,17 +330,20 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
           </div>
         </nav>
 
-        ***REMOVED***/* Footer del Sidebar */***REMOVED***
+        ***REMOVED***/* FOOTER DEL SIDEBAR */***REMOVED***
         <div className="p-4 border-t border-gray-100">
           <motion.button
             onClick=***REMOVED***() => navigateToView('ajustes')***REMOVED***
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
-            style=***REMOVED***getActiveDesktopStyle('ajustes')***REMOVED***
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:bg-gray-50"
+            style=***REMOVED******REMOVED***
+              backgroundColor: 'transparent',
+              color: '#6B7280'
+            ***REMOVED******REMOVED***
             whileHover=***REMOVED******REMOVED*** scale: 1.02 ***REMOVED******REMOVED***
             whileTap=***REMOVED******REMOVED*** scale: 0.98 ***REMOVED******REMOVED***
           >
-            <Settings size=***REMOVED***20***REMOVED*** />
-            <span>Configuración</span>
+            <Settings size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: '#6B7280' ***REMOVED******REMOVED*** />
+            <span style=***REMOVED******REMOVED*** color: '#6B7280' ***REMOVED******REMOVED***>Configuración</span>
           </motion.button>
         </div>
       </aside>

@@ -15,14 +15,6 @@ export const useWeeklyStats = (offsetSemanas = 0) => ***REMOVED***
     // Usar todos los trabajos combinados del contexto
     const trabajosValidos = Array.isArray(todosLosTrabajos) ? todosLosTrabajos : [];
 
-    console.log('📈 Calculando estadísticas semanales:', ***REMOVED***
-      turnosTradicionales: turnosTradicionales.length,
-      turnosDelivery: turnosDeliveryValidos.length,
-      totalTurnos: todosLosTurnos.length,
-      trabajosTotal: trabajosValidos.length,
-      offsetSemanas
-    ***REMOVED***);
-
     // Función para obtener fechas de una semana específica
     const obtenerFechasSemana = (offset) => ***REMOVED***
       const hoy = new Date();
@@ -47,12 +39,6 @@ export const useWeeklyStats = (offsetSemanas = 0) => ***REMOVED***
     // Filtrar turnos de la semana específica (incluyendo delivery)
     const turnosSemana = todosLosTurnos.filter(turno => ***REMOVED***
       return turno.fecha >= fechaInicioISO && turno.fecha <= fechaFinISO;
-    ***REMOVED***);
-
-    console.log('📈 Turnos en semana filtrada:', ***REMOVED***
-      total: turnosSemana.length,
-      tradicionales: turnosSemana.filter(t => t.tipo !== 'delivery').length,
-      delivery: turnosSemana.filter(t => t.tipo === 'delivery').length
     ***REMOVED***);
 
     // Si no hay datos, retornar estructura por defecto
@@ -112,25 +98,13 @@ export const useWeeklyStats = (offsetSemanas = 0) => ***REMOVED***
         // Para turnos de delivery
         horas = calcularHoras ? calcularHoras(turno.horaInicio, turno.horaFin) : 0;
         ganancia = turno.gananciaTotal || 0; // Usar ganancia directa
-        
-        console.log('🚛 Procesando turno delivery:', ***REMOVED***
-          id: turno.id,
-          fecha: turno.fecha,
-          horas,
-          ganancia
-        ***REMOVED***);
+
       ***REMOVED*** else ***REMOVED***
         // Para turnos tradicionales
         horas = calcularHoras ? calcularHoras(turno.horaInicio, turno.horaFin) : 0;
         const resultadoPago = calcularPago ? calcularPago(turno) : ***REMOVED*** totalConDescuento: 0 ***REMOVED***;
         ganancia = resultadoPago.totalConDescuento || 0;
         
-        console.log('💼 Procesando turno tradicional:', ***REMOVED***
-          id: turno.id,
-          fecha: turno.fecha,
-          horas,
-          ganancia
-        ***REMOVED***);
       ***REMOVED***
 
       totalGanado += ganancia;
@@ -203,7 +177,6 @@ export const useWeeklyStats = (offsetSemanas = 0) => ***REMOVED***
       diaMasProductivo
     ***REMOVED***;
 
-    console.log('📈 Estadísticas semanales finales:', resultado);
     return resultado;
   ***REMOVED***, [todosLosTrabajos, turnos, turnosDelivery, offsetSemanas, calcularPago, calcularHoras]);
 ***REMOVED***;
