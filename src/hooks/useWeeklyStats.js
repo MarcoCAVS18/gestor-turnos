@@ -1,14 +1,27 @@
-// src/hooks/useWeeklyStats.js
+// src/hooks/useWeeklyStats.js - Versión corregida
 
 import ***REMOVED*** useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
-export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) => ***REMOVED***
-  const ***REMOVED*** calcularPago, calcularHoras ***REMOVED*** = useApp();
+export const useWeeklyStats = (offsetSemanas = 0) => ***REMOVED***
+  const ***REMOVED*** calcularPago, calcularHoras, todosLosTrabajos, turnos, turnosDelivery ***REMOVED*** = useApp();
 
   return useMemo(() => ***REMOVED***
-    const turnosValidos = Array.isArray(turnos) ? turnos : [];
-    const trabajosValidos = Array.isArray(trabajos) ? trabajos : [];
+    // Combinar todos los turnos (tradicionales + delivery)
+    const turnosTradicionales = Array.isArray(turnos) ? turnos : [];
+    const turnosDeliveryValidos = Array.isArray(turnosDelivery) ? turnosDelivery : [];
+    const todosLosTurnos = [...turnosTradicionales, ...turnosDeliveryValidos];
+    
+    // Usar todos los trabajos combinados del contexto
+    const trabajosValidos = Array.isArray(todosLosTrabajos) ? todosLosTrabajos : [];
+
+    console.log('📈 Calculando estadísticas semanales:', ***REMOVED***
+      turnosTradicionales: turnosTradicionales.length,
+      turnosDelivery: turnosDeliveryValidos.length,
+      totalTurnos: todosLosTurnos.length,
+      trabajosTotal: trabajosValidos.length,
+      offsetSemanas
+    ***REMOVED***);
 
     // Función para obtener fechas de una semana específica
     const obtenerFechasSemana = (offset) => ***REMOVED***
@@ -31,9 +44,15 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
     const fechaInicioISO = fechaInicio.toISOString().split('T')[0];
     const fechaFinISO = fechaFin.toISOString().split('T')[0];
 
-    // Filtrar turnos de la semana específica
-    const turnosSemana = turnosValidos.filter(turno => ***REMOVED***
+    // Filtrar turnos de la semana específica (incluyendo delivery)
+    const turnosSemana = todosLosTurnos.filter(turno => ***REMOVED***
       return turno.fecha >= fechaInicioISO && turno.fecha <= fechaFinISO;
+    ***REMOVED***);
+
+    console.log('📈 Turnos en semana filtrada:', ***REMOVED***
+      total: turnosSemana.length,
+      tradicionales: turnosSemana.filter(t => t.tipo !== 'delivery').length,
+      delivery: turnosSemana.filter(t => t.tipo === 'delivery').length
     ***REMOVED***);
 
     // Si no hay datos, retornar estructura por defecto
@@ -80,11 +99,39 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
 
     turnosSemana.forEach(turno => ***REMOVED***
       const trabajo = trabajosValidos.find(t => t.id === turno.trabajoId);
-      if (!trabajo) return;
+      if (!trabajo) ***REMOVED***
+        console.warn('⚠️ Trabajo no encontrado para turno:', turno.id, 'trabajoId:', turno.trabajoId);
+        return;
+      ***REMOVED***
 
-      const horas = calcularHoras ? calcularHoras(turno.horaInicio, turno.horaFin) : 0;
-      const resultadoPago = calcularPago ? calcularPago(turno) : ***REMOVED*** totalConDescuento: 0, horas: 0 ***REMOVED***;
-      const ganancia = resultadoPago.totalConDescuento || 0;
+      let horas = 0;
+      let ganancia = 0;
+
+      // Calcular horas y ganancia según el tipo de turno
+      if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') ***REMOVED***
+        // Para turnos de delivery
+        horas = calcularHoras ? calcularHoras(turno.horaInicio, turno.horaFin) : 0;
+        ganancia = turno.gananciaTotal || 0; // Usar ganancia directa
+        
+        console.log('🚛 Procesando turno delivery:', ***REMOVED***
+          id: turno.id,
+          fecha: turno.fecha,
+          horas,
+          ganancia
+        ***REMOVED***);
+      ***REMOVED*** else ***REMOVED***
+        // Para turnos tradicionales
+        horas = calcularHoras ? calcularHoras(turno.horaInicio, turno.horaFin) : 0;
+        const resultadoPago = calcularPago ? calcularPago(turno) : ***REMOVED*** totalConDescuento: 0 ***REMOVED***;
+        ganancia = resultadoPago.totalConDescuento || 0;
+        
+        console.log('💼 Procesando turno tradicional:', ***REMOVED***
+          id: turno.id,
+          fecha: turno.fecha,
+          horas,
+          ganancia
+        ***REMOVED***);
+      ***REMOVED***
 
       totalGanado += ganancia;
       horasTrabajadas += horas;
@@ -102,11 +149,13 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
       // Estadísticas por trabajo
       if (!gananciaPorTrabajo[trabajo.id]) ***REMOVED***
         gananciaPorTrabajo[trabajo.id] = ***REMOVED***
+          id: trabajo.id,
           nombre: trabajo.nombre,
-          color: trabajo.color,
+          color: trabajo.color || trabajo.colorAvatar || '#EC4899',
           ganancia: 0,
           horas: 0,
-          turnos: 0
+          turnos: 0,
+          tipo: trabajo.tipo || 'tradicional'
         ***REMOVED***;
       ***REMOVED***
       gananciaPorTrabajo[trabajo.id].ganancia += ganancia;
@@ -114,7 +163,13 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
       gananciaPorTrabajo[trabajo.id].turnos += 1;
 
       // Estadísticas por tipo de turno
-      const tipo = obtenerTipoTurno(turno.horaInicio) || 'mixto';
+      let tipo;
+      if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') ***REMOVED***
+        tipo = 'delivery';
+      ***REMOVED*** else ***REMOVED***
+        tipo = obtenerTipoTurno(turno.horaInicio) || 'mixto';
+      ***REMOVED***
+      
       if (!tiposDeTurno[tipo]) ***REMOVED***
         tiposDeTurno[tipo] = ***REMOVED*** turnos: 0, horas: 0, ganancia: 0 ***REMOVED***;
       ***REMOVED***
@@ -133,7 +188,7 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
       return datos.ganancia > max.ganancia ? ***REMOVED*** dia, ...datos ***REMOVED*** : max;
     ***REMOVED***, ***REMOVED*** dia: 'Ninguno', ganancia: 0, horas: 0, turnos: 0 ***REMOVED***);
 
-    return ***REMOVED***
+    const resultado = ***REMOVED***
       fechaInicio,
       fechaFin,
       totalGanado,
@@ -147,7 +202,10 @@ export const useWeeklyStats = (turnos = [], trabajos = [], offsetSemanas = 0) =>
       promedioPorHora,
       diaMasProductivo
     ***REMOVED***;
-  ***REMOVED***, [turnos, trabajos, offsetSemanas, calcularPago, calcularHoras]);
+
+    console.log('📈 Estadísticas semanales finales:', resultado);
+    return resultado;
+  ***REMOVED***, [todosLosTrabajos, turnos, turnosDelivery, offsetSemanas, calcularPago, calcularHoras]);
 ***REMOVED***;
 
 // Función auxiliar para tipo de turno (mantenemos esta)
