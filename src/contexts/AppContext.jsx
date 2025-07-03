@@ -17,72 +17,64 @@ import ***REMOVED*** db ***REMOVED*** from '../services/firebase';
 import ***REMOVED*** useAuth ***REMOVED*** from './AuthContext';
 import ***REMOVED*** generateColorVariations ***REMOVED*** from '../utils/colorUtils';
 
-// Crear el contexto
+// Create the context
 export const AppContext = createContext();
 
-// Hook personalizado para usar el contexto
+// Custom hook to use the context
 export const useApp = () => ***REMOVED***
   const context = useContext(AppContext);
   if (!context) ***REMOVED***
-    throw new Error('useApp debe usarse dentro de un AppProvider');
+    throw new Error('useApp must be used within an AppProvider');
   ***REMOVED***
   return context;
 ***REMOVED***;
 
-// Proveedor del contexto
+// Context Provider
 export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
 
-  // Estados para los datos principales
+  // Main data states
   const [trabajos, setTrabajos] = useState([]);
   const [turnos, setTurnos] = useState([]);
   const [trabajosDelivery, setTrabajosDelivery] = useState([]);
   const [turnosDelivery, setTurnosDelivery] = useState([]);
-  const [cargando, setCargando] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [metaHorasSemanales, setMetaHorasSemanales] = useState(null);
+  const [weeklyHoursGoal, setWeeklyHoursGoal] = useState(null);
   const [deliveryEnabled, setDeliveryEnabled] = useState(false);
 
-  // Estados para preferencias de personalización
-  const [colorPrincipal, setColorPrincipal] = useState('#EC4899');
-  const [emojiUsuario, setEmojiUsuario] = useState('😊');
-  const [descuentoDefault, setDescuentoDefault] = useState(15);
-  const [rangosTurnos, setRangosTurnos] = useState(***REMOVED***
-    diurnoInicio: 6,
-    diurnoFin: 14,
-    tardeInicio: 14,
-    tardeFin: 20,
-    nocheInicio: 20
+  // Customization preferences states
+  const [primaryColor, setPrimaryColor] = useState('#EC4899');
+  const [userEmoji, setUserEmoji] = useState('😊');
+  const [defaultDiscount, setDefaultDiscount] = useState(15);
+  const [shiftRanges, setShiftRanges] = useState(***REMOVED***
+    dayStart: 6,
+    dayEnd: 14,
+    afternoonStart: 14,
+    afternoonEnd: 20,
+    nightStart: 20
   ***REMOVED***);
 
-  // Generar variaciones de color basadas en el color principal
-  const coloresTemáticos = useMemo(() => ***REMOVED***
-    return generateColorVariations(colorPrincipal);
-  ***REMOVED***, [colorPrincipal]);
+  // Generate color variations based on the primary color
+  const thematicColors = useMemo(() => ***REMOVED***
+    return generateColorVariations(primaryColor);
+  ***REMOVED***, [primaryColor]);
 
-  // Función para obtener las referencias de las subcolecciones del usuario
+  // Function to get user subcollection references
   const getUserSubcollections = useCallback(() => ***REMOVED***
     if (!currentUser) ***REMOVED***
       return null;
     ***REMOVED***
-
+    const userUid = currentUser.uid;
     return ***REMOVED***
-      trabajosRef: collection(db, 'usuarios', currentUser.uid, 'trabajos'),
-      turnosRef: collection(db, 'usuarios', currentUser.uid, 'turnos')
+      trabajosRef: collection(db, 'usuarios', userUid, 'trabajos'),
+      turnosRef: collection(db, 'usuarios', userUid, 'turnos'),
+      trabajosDeliveryRef: collection(db, 'usuarios', userUid, 'trabajos-delivery'),
+      turnosDeliveryRef: collection(db, 'usuarios', userUid, 'turnos-delivery')
     ***REMOVED***;
   ***REMOVED***, [currentUser]);
 
-  const getUserDeliveryCollections = useCallback(() => ***REMOVED***
-    if (!currentUser) ***REMOVED***
-      return null;
-    ***REMOVED***
-
-    return ***REMOVED***
-      trabajosDeliveryRef: collection(db, 'usuarios', currentUser.uid, 'trabajos-delivery'),
-      turnosDeliveryRef: collection(db, 'usuarios', currentUser.uid, 'turnos-delivery')
-    ***REMOVED***;
-  ***REMOVED***, [currentUser]);
-
+  // Ensures the user document exists and loads settings
   const ensureUserDocument = useCallback(async () => ***REMOVED***
     if (!currentUser) ***REMOVED***
       return;
@@ -92,379 +84,313 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       const userDocRef = doc(db, 'usuarios', currentUser.uid);
       const userDocSnapshot = await getDoc(userDocRef);
 
-      if (userDocSnapshot.exists()) ***REMOVED***
-        const userData = userDocSnapshot.data();
-
-        if (userData.ajustes) ***REMOVED***
-          setColorPrincipal(userData.ajustes.colorPrincipal || '#EC4899');
-          setEmojiUsuario(userData.ajustes.emojiUsuario || '😊');
-          setDescuentoDefault(userData.ajustes.descuentoDefault || 15);
-          setMetaHorasSemanales(userData.ajustes.metaHorasSemanales || null);
-          setDeliveryEnabled(userData.ajustes.deliveryEnabled || false);
-          setRangosTurnos(userData.ajustes.rangosTurnos || ***REMOVED***
-            diurnoInicio: 6,
-            diurnoFin: 14,
-            tardeInicio: 14,
-            tardeFin: 20,
-            nocheInicio: 20
-          ***REMOVED***);
-        ***REMOVED***
-      ***REMOVED*** else ***REMOVED***
-        const defaultUserData = ***REMOVED***
-          email: currentUser.email,
-          displayName: currentUser.displayName || 'Usuario',
-          fechaCreacion: new Date(),
-          ajustes: ***REMOVED***
-            colorPrincipal: '#EC4899',
-            emojiUsuario: '😊',
-            descuentoDefault: 15,
-            metaHorasSemanales: null,
-            deliveryEnabled: false,
-            rangosTurnos: ***REMOVED***
-              diurnoInicio: 6,
-              diurnoFin: 14,
-              tardeInicio: 14,
-              tardeFin: 20,
-              nocheInicio: 20
-            ***REMOVED***
-          ***REMOVED***
-        ***REMOVED***;
-
-        await setDoc(userDocRef, defaultUserData);
-
-        setColorPrincipal('#EC4899');
-        setEmojiUsuario('😊');
-        setDescuentoDefault(15);
-        setMetaHorasSemanales(null);
-        setDeliveryEnabled(false);
-        setRangosTurnos(***REMOVED***
+      const defaultSettings = ***REMOVED***
+        colorPrincipal: '#EC4899',
+        emojiUsuario: '😊',
+        descuentoDefault: 15,
+        metaHorasSemanales: null,
+        deliveryEnabled: false,
+        rangosTurnos: ***REMOVED***
           diurnoInicio: 6,
           diurnoFin: 14,
           tardeInicio: 14,
           tardeFin: 20,
           nocheInicio: 20
-        ***REMOVED***);
+        ***REMOVED***
+      ***REMOVED***;
+
+      if (userDocSnapshot.exists()) ***REMOVED***
+        const userData = userDocSnapshot.data();
+        const settings = userData.ajustes || defaultSettings;
+
+        setPrimaryColor(settings.colorPrincipal);
+        setUserEmoji(settings.emojiUsuario);
+        setDefaultDiscount(settings.descuentoDefault);
+        setWeeklyHoursGoal(settings.metaHorasSemanales);
+        setDeliveryEnabled(settings.deliveryEnabled);
+        setShiftRanges(settings.rangosTurnos);
+      ***REMOVED*** else ***REMOVED***
+        const defaultUserData = ***REMOVED***
+          email: currentUser.email,
+          displayName: currentUser.displayName || 'Usuario',
+          fechaCreacion: new Date(),
+          ajustes: defaultSettings
+        ***REMOVED***;
+        await setDoc(userDocRef, defaultUserData);
+
+        setPrimaryColor(defaultSettings.colorPrincipal);
+        setUserEmoji(defaultSettings.emojiUsuario);
+        setDefaultDiscount(defaultSettings.descuentoDefault);
+        setWeeklyHoursGoal(defaultSettings.metaHorasSemanales);
+        setDeliveryEnabled(defaultSettings.deliveryEnabled);
+        setShiftRanges(defaultSettings.rangosTurnos);
       ***REMOVED***
-    ***REMOVED*** catch (error) ***REMOVED***
-      setError('Error al configurar usuario: ' + error.message);
+    ***REMOVED*** catch (err) ***REMOVED***
+      console.error('Error configuring user document:', err);
+      setError('Error al configurar usuario: ' + err.message);
     ***REMOVED***
   ***REMOVED***, [currentUser]);
 
-  // Función mejorada para calcular horas trabajadas
-  const calcularHoras = useCallback((inicio, fin) => ***REMOVED***
-    const [horaIni, minIni] = inicio.split(':').map(n => parseInt(n));
-    const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
+  // Function to calculate hours worked
+  const calculateHours = useCallback((start, end) => ***REMOVED***
+    const [startHour, startMin] = start.split(':').map(n => parseInt(n));
+    const [endHour, endMin] = end.split(':').map(n => parseInt(n));
 
-    let inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFn * 60 + minFn;
+    let startMinutes = startHour * 60 + startMin;
+    let endMinutes = endHour * 60 + endMin;
 
-    // Si el turno cruza medianoche
-    if (finMinutos <= inicioMinutos) ***REMOVED***
-      finMinutos += 24 * 60;
+    // If the shift crosses midnight
+    if (endMinutes <= startMinutes) ***REMOVED***
+      endMinutes += 24 * 60;
     ***REMOVED***
 
-    return (finMinutos - inicioMinutos) / 60;
+    return (endMinutes - startMinutes) / 60;
   ***REMOVED***, []);
 
-  // Función mejorada para calcular el pago considerando rangos horarios múltiples
-  const calcularPago = useCallback((turno) => ***REMOVED***
-    // Combine both traditional and delivery jobs for lookup
+  // Function to calculate payment considering multiple time ranges
+  const calculatePayment = useCallback((shift) => ***REMOVED***
     const allJobs = [...trabajos, ...trabajosDelivery];
-    const trabajo = allJobs.find(t => t.id === turno.trabajoId);
+    const job = allJobs.find(j => j.id === shift.trabajoId);
 
-    if (!trabajo) return ***REMOVED*** total: 0, totalConDescuento: 0, horas: 0, propinas: 0, esDelivery: false ***REMOVED***;
+    if (!job) return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false ***REMOVED***;
 
-    // Si es un turno de delivery, retornar directamente la ganancia
-    if (turno.tipo === 'delivery') ***REMOVED***
-      const horas = calcularHoras(turno.horaInicio, turno.horaFin);
+    // If it's a delivery shift, return the total earnings directly
+    if (shift.type === 'delivery') ***REMOVED***
+      const hours = calculateHours(shift.horaInicio, shift.horaFin);
       return ***REMOVED***
-        total: turno.gananciaTotal || 0,
-        totalConDescuento: turno.gananciaTotal || 0,
-        horas,
-        propinas: turno.propinas || 0,
-        esDelivery: true
+        total: shift.gananciaTotal || 0,
+        totalWithDiscount: shift.gananciaTotal || 0,
+        hours,
+        tips: shift.propinas || 0,
+        isDelivery: true
       ***REMOVED***;
     ***REMOVED***
 
-    const ***REMOVED*** horaInicio, horaFin ***REMOVED*** = turno;
+    const ***REMOVED*** horaInicio, horaFin, fecha ***REMOVED*** = shift;
 
-    // Convertir horas a minutos
-    const [horaIni, minIni] = horaInicio.split(':').map(n => parseInt(n));
-    const [horaFn, minFn] = horaFin.split(':').map(n => parseInt(n));
+    const [startHour, startMin] = horaInicio.split(':').map(n => parseInt(n));
+    const [endHour, endMin] = horaFin.split(':').map(n => parseInt(n));
 
-    let inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFn * 60 + minFn;
+    let startMinutes = startHour * 60 + startMin;
+    let endMinutes = endHour * 60 + endMin;
 
-    // Si el turno cruza medianoche
-    if (finMinutos <= inicioMinutos) ***REMOVED***
-      finMinutos += 24 * 60;
+    if (endMinutes <= startMinutes) ***REMOVED***
+      endMinutes += 24 * 60;
     ***REMOVED***
 
-    const totalMinutos = finMinutos - inicioMinutos;
-    const horas = totalMinutos / 60;
+    const totalMinutes = endMinutes - startMinutes;
+    const hours = totalMinutes / 60;
 
-    // Verificar si es fin de semana
-    const [year, month, day] = turno.fecha.split('-');
-    const fecha = new Date(year, month - 1, day);
-    const diaSemana = fecha.getDay();
+    const [year, month, day] = fecha.split('-');
+    const date = new Date(year, month - 1, day);
+    const dayOfWeek = date.getDay(); // 0 for Sunday, 6 for Saturday
 
     let total = 0;
 
-    if (diaSemana === 0) ***REMOVED***
-      // Domingo - toda la tarifa de domingo
-      total = horas * trabajo.tarifas.domingo;
-    ***REMOVED*** else if (diaSemana === 6) ***REMOVED***
-      // Sábado - toda la tarifa de sábado
-      total = horas * trabajo.tarifas.sabado;
-    ***REMOVED*** else ***REMOVED***
-      // Día de semana
-      const rangos = rangosTurnos || ***REMOVED***
-        diurnoInicio: 6, diurnoFin: 14,
-        tardeInicio: 14, tardeFin: 20,
-        nocheInicio: 20
+    if (dayOfWeek === 0) ***REMOVED*** // Sunday
+      total = hours * job.tarifas.domingo;
+    ***REMOVED*** else if (dayOfWeek === 6) ***REMOVED*** // Saturday
+      total = hours * job.tarifas.sabado;
+    ***REMOVED*** else ***REMOVED*** // Weekday
+      const ranges = shiftRanges || ***REMOVED***
+        dayStart: 6, dayEnd: 14,
+        afternoonStart: 14, afternoonEnd: 20,
+        nightStart: 20
       ***REMOVED***;
 
-      // Convertir rangos a minutos
-      const diurnoInicioMin = rangos.diurnoInicio * 60;
-      const diurnoFinMin = rangos.diurnoFin * 60;
-      const tardeInicioMin = rangos.tardeInicio * 60;
-      const tardeFinMin = rangos.tardeFin * 60;
+      const dayStartMin = ranges.dayStart * 60;
+      const dayEndMin = ranges.dayEnd * 60;
+      const afternoonStartMin = ranges.afternoonStart * 60;
+      const afternoonEndMin = ranges.afternoonEnd * 60;
 
-      // Calcular minuto por minuto para manejar cambios de tarifa
-      for (let minuto = inicioMinutos; minuto < finMinutos; minuto++) ***REMOVED***
-        const horaActual = minuto % (24 * 60); // Manejar cruce de medianoche
-        let tarifa = trabajo.tarifaBase;
+      for (let minute = startMinutes; minute < endMinutes; minute++) ***REMOVED***
+        const currentHourInMinutes = minute % (24 * 60);
+        let rate = job.tarifaBase;
 
-        // Determinar tarifa según la hora ACTUAL del minuto
-        if (horaActual >= diurnoInicioMin && horaActual < diurnoFinMin) ***REMOVED***
-          tarifa = trabajo.tarifas.diurno;
-        ***REMOVED*** else if (horaActual >= tardeInicioMin && horaActual < tardeFinMin) ***REMOVED***
-          tarifa = trabajo.tarifas.tarde;
+        if (currentHourInMinutes >= dayStartMin && currentHourInMinutes < dayEndMin) ***REMOVED***
+          rate = job.tarifas.diurno;
+        ***REMOVED*** else if (currentHourInMinutes >= afternoonStartMin && currentHourInMinutes < afternoonEndMin) ***REMOVED***
+          rate = job.tarifas.tarde;
         ***REMOVED*** else ***REMOVED***
-          // Todo lo que no sea diurno o tarde es nocturno
-          tarifa = trabajo.tarifas.noche;
+          rate = job.tarifas.noche;
         ***REMOVED***
-
-        // Agregar pago por este minuto (tarifa / 60 para convertir a minuto)
-        total += tarifa / 60;
+        total += rate / 60;
       ***REMOVED***
     ***REMOVED***
 
-    const totalConDescuento = total * (1 - descuentoDefault / 100);
+    const totalWithDiscount = total * (1 - defaultDiscount / 100);
 
     return ***REMOVED***
       total,
-      totalConDescuento,
-      horas,
-      propinas: 0, 
-      esDelivery: false
+      totalWithDiscount,
+      hours,
+      tips: 0,
+      isDelivery: false
     ***REMOVED***;
-  ***REMOVED***, [trabajos, trabajosDelivery, rangosTurnos, descuentoDefault, calcularHoras]);
+  ***REMOVED***, [trabajos, trabajosDelivery, shiftRanges, defaultDiscount, calculateHours]);
 
-  // Funciones CRUD para trabajos delivery (definidas fuera del useEffect)
-  const agregarTrabajoDelivery = useCallback(async (nuevoTrabajo) => ***REMOVED***
+  // CRUD Functions for Delivery Jobs
+  const addDeliveryJob = useCallback(async (newJob) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('Usuario no autenticado');
+      if (!currentUser) throw new Error('User not authenticated');
+      const subcollections = getUserSubcollections();
+      if (!subcollections || !subcollections.trabajosDeliveryRef) throw new Error('Could not get collection references');
 
-      const deliveryCollections = getUserDeliveryCollections();
-      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
-
-      const trabajoDeliveryData = ***REMOVED***
-        ...nuevoTrabajo,
-        tipo: 'delivery',
+      const jobData = ***REMOVED***
+        ...newJob,
+        type: 'delivery',
         fechaCreacion: new Date(),
         fechaActualizacion: new Date(),
-        // Campos específicos de delivery
-        plataforma: nuevoTrabajo.plataforma || '',
-        vehiculo: nuevoTrabajo.vehiculo || '',
-        colorAvatar: nuevoTrabajo.colorAvatar || '#10B981',
-        // Estadísticas iniciales
-        estadisticas: ***REMOVED***
-          totalTurnos: 0,
-          totalPedidos: 0,
-          totalKilometros: 0,
-          totalGanancias: 0,
-          totalPropinas: 0,
-          totalGastosCombustible: 0
+        platform: newJob.platform || '',
+        vehicle: newJob.vehicle || '',
+        avatarColor: newJob.avatarColor || '#10B981',
+        statistics: ***REMOVED***
+          totalShifts: 0,
+          totalOrders: 0,
+          totalKilometers: 0,
+          totalEarnings: 0,
+          totalTips: 0,
+          totalFuelExpenses: 0
         ***REMOVED***
       ***REMOVED***;
 
-
-      const docRef = await addDoc(deliveryCollections.trabajosDeliveryRef, trabajoDeliveryData);
-
-      return ***REMOVED*** ...trabajoDeliveryData, id: docRef.id ***REMOVED***;
+      const docRef = await addDoc(subcollections.trabajosDeliveryRef, jobData);
+      return ***REMOVED*** ...jobData, id: docRef.id ***REMOVED***;
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error al agregar trabajo delivery:', err);
+      console.error('Error adding delivery job:', err);
       setError('Error al agregar trabajo delivery: ' + err.message);
       throw err;
     ***REMOVED***
-  ***REMOVED***, [currentUser, getUserDeliveryCollections]);
+  ***REMOVED***, [currentUser, getUserSubcollections]);
 
-  const editarTrabajoDelivery = useCallback(async (id, datosActualizados) => ***REMOVED***
+  const editDeliveryJob = useCallback(async (id, updatedData) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('Usuario no autenticado');
+      if (!currentUser) throw new Error('User not authenticated');
+      const subcollections = getUserSubcollections();
+      if (!subcollections || !subcollections.trabajosDeliveryRef) throw new Error('Could not get collection references');
 
-      const deliveryCollections = getUserDeliveryCollections();
-      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
-
-      const datosConMetadata = ***REMOVED***
-        ...datosActualizados,
+      const dataWithMetadata = ***REMOVED***
+        ...updatedData,
         fechaActualizacion: new Date()
       ***REMOVED***;
 
-      const docRef = doc(deliveryCollections.trabajosDeliveryRef, id);
-      await updateDoc(docRef, datosConMetadata);
-
+      const docRef = doc(subcollections.trabajosDeliveryRef, id);
+      await updateDoc(docRef, dataWithMetadata);
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error al editar trabajo delivery:', err);
+      console.error('Error editing delivery job:', err);
       setError('Error al editar trabajo delivery: ' + err.message);
       throw err;
     ***REMOVED***
-  ***REMOVED***, [currentUser, getUserDeliveryCollections]);
+  ***REMOVED***, [currentUser, getUserSubcollections]);
 
-  const borrarTrabajoDelivery = useCallback(async (id) => ***REMOVED***
+  const deleteDeliveryJob = useCallback(async (id) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('Usuario no autenticado');
+      if (!currentUser) throw new Error('User not authenticated');
+      const subcollections = getUserSubcollections();
+      if (!subcollections || !subcollections.trabajosDeliveryRef || !subcollections.turnosDeliveryRef) ***REMOVED***
+        throw new Error('Could not get collection references');
+      ***REMOVED***
 
-      const deliveryCollections = getUserDeliveryCollections();
-      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
-
-      // Primero, eliminar todos los turnos asociados
-      const turnosQuery = query(
-        deliveryCollections.turnosDeliveryRef,
+      // First, delete all associated delivery shifts
+      const shiftsQuery = query(
+        subcollections.turnosDeliveryRef,
         where('trabajoId', '==', id)
       );
 
-      const turnosSnapshot = await getDocs(turnosQuery);
-      const deletePromises = turnosSnapshot.docs.map(doc => deleteDoc(doc.ref));
+      const shiftsSnapshot = await getDocs(shiftsQuery);
+      const deletePromises = shiftsSnapshot.docs.map(d => deleteDoc(d.ref));
       await Promise.all(deletePromises);
 
-      // Luego eliminar el trabajo
-      await deleteDoc(doc(deliveryCollections.trabajosDeliveryRef, id));
-
+      // Then delete the delivery job
+      await deleteDoc(doc(subcollections.trabajosDeliveryRef, id));
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error al eliminar trabajo delivery:', err);
+      console.error('Error deleting delivery job:', err);
       setError('Error al eliminar trabajo delivery: ' + err.message);
       throw err;
     ***REMOVED***
-  ***REMOVED***, [currentUser, getUserDeliveryCollections]);
+  ***REMOVED***, [currentUser, getUserSubcollections]);
 
-  // Funciones CRUD para turnos delivery
-  const agregarTurnoDelivery = useCallback(async (nuevoTurno) => ***REMOVED***
+  // CRUD Functions for Delivery Shifts
+  const addDeliveryShift = useCallback(async (newShift) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('Usuario no autenticado');
+      if (!currentUser) throw new Error('User not authenticated');
+      const subcollections = getUserSubcollections();
+      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('Could not get collection references');
 
-      const deliveryCollections = getUserDeliveryCollections();
-      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
-
-      const turnoDeliveryData = ***REMOVED***
-        ...nuevoTurno,
-        tipo: 'delivery',
+      const shiftData = ***REMOVED***
+        ...newShift,
+        type: 'delivery',
         fechaCreacion: new Date(),
         fechaActualizacion: new Date(),
-        // Campos específicos de delivery con valores por defecto
-        numeroPedidos: nuevoTurno.numeroPedidos || 0,
-        gananciaTotal: nuevoTurno.gananciaTotal || 0,
-        propinas: nuevoTurno.propinas || 0,
-        kilometros: nuevoTurno.kilometros || 0,
-        gastoCombustible: nuevoTurno.gastoCombustible || 0,
-        // Cálculos automáticos
-        gananciaBase: (nuevoTurno.gananciaTotal || 0) - (nuevoTurno.propinas || 0),
-        gananciaNeta: (nuevoTurno.gananciaTotal || 0) - (nuevoTurno.gastoCombustible || 0)
+        numeroPedidos: newShift.numeroPedidos || 0,
+        gananciaTotal: newShift.gananciaTotal || 0,
+        propinas: newShift.propinas || 0,
+        kilometros: newShift.kilometros || 0,
+        gastoCombustible: newShift.gastoCombustible || 0,
+        gananciaBase: (newShift.gananciaTotal || 0) - (newShift.propinas || 0),
+        gananciaNeta: (newShift.gananciaTotal || 0) - (newShift.gastoCombustible || 0)
       ***REMOVED***;
 
-      const docRef = await addDoc(deliveryCollections.turnosDeliveryRef, turnoDeliveryData);
-
-      return ***REMOVED*** ...turnoDeliveryData, id: docRef.id ***REMOVED***;
+      const docRef = await addDoc(subcollections.turnosDeliveryRef, shiftData);
+      return ***REMOVED*** ...shiftData, id: docRef.id ***REMOVED***;
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error al agregar turno delivery:', err);
+      console.error('Error adding delivery shift:', err);
       setError('Error al agregar turno delivery: ' + err.message);
       throw err;
     ***REMOVED***
-  ***REMOVED***, [currentUser, getUserDeliveryCollections]);
+  ***REMOVED***, [currentUser, getUserSubcollections]);
 
-
-  const cargandoTrabajosDelivery = useCallback(() => ***REMOVED***
-    if (!currentUser) return () => ***REMOVED*** ***REMOVED***;
-    const deliveryCollections = getUserDeliveryCollections();
-    if (!deliveryCollections) return () => ***REMOVED*** ***REMOVED***;
-
-    const q = query(
-      deliveryCollections.trabajosDeliveryRef,
-      orderBy('fechaCreacion', 'desc')
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => ***REMOVED***
-      const loadedTrabajos = snapshot.docs.map(doc => ***REMOVED***
-        return ***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***;
-      ***REMOVED***);
-      setTrabajosDelivery(loadedTrabajos);
-    ***REMOVED***, (error) => ***REMOVED***
-      console.error("Error al cargar trabajos de delivery:", error);
-      setError("Error al cargar trabajos de delivery: " + error.message);
-    ***REMOVED***);
-
-    return unsubscribe;
-  ***REMOVED***, [currentUser, getUserDeliveryCollections]);
-
-
-  const editarTurnoDelivery = useCallback(async (id, datosActualizados) => ***REMOVED***
+  const editDeliveryShift = useCallback(async (id, updatedData) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('Usuario no autenticado');
+      if (!currentUser) throw new Error('User not authenticated');
+      const subcollections = getUserSubcollections();
+      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('Could not get collection references');
 
-      const deliveryCollections = getUserDeliveryCollections();
-      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
-
-      const datosConMetadata = ***REMOVED***
-        ...datosActualizados,
+      const dataWithMetadata = ***REMOVED***
+        ...updatedData,
         fechaActualizacion: new Date(),
-
-        gananciaBase: (datosActualizados.gananciaTotal || 0) - (datosActualizados.propinas || 0),
-        gananciaNeta: (datosActualizados.gananciaTotal || 0) - (datosActualizados.gastoCombustible || 0)
+        gananciaBase: (updatedData.gananciaTotal || 0) - (updatedData.propinas || 0),
+        gananciaNeta: (updatedData.gananciaTotal || 0) - (updatedData.gastoCombustible || 0)
       ***REMOVED***;
 
-      const docRef = doc(deliveryCollections.turnosDeliveryRef, id);
-      await updateDoc(docRef, datosConMetadata);
-
+      const docRef = doc(subcollections.turnosDeliveryRef, id);
+      await updateDoc(docRef, dataWithMetadata);
     ***REMOVED*** catch (err) ***REMOVED***
+      console.error('Error editing delivery shift:', err);
       setError('Error al editar turno delivery: ' + err.message);
       throw err;
     ***REMOVED***
-  ***REMOVED***, [currentUser, getUserDeliveryCollections]);
+  ***REMOVED***, [currentUser, getUserSubcollections]);
 
-  const borrarTurnoDelivery = useCallback(async (id) => ***REMOVED***
+  const deleteDeliveryShift = useCallback(async (id) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('Usuario no autenticado');
+      if (!currentUser) throw new Error('User not authenticated');
+      const subcollections = getUserSubcollections();
+      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('Could not get collection references');
 
-      const deliveryCollections = getUserDeliveryCollections();
-      if (!deliveryCollections) throw new Error('No se pudieron obtener las referencias');
-
-      await deleteDoc(doc(deliveryCollections.turnosDeliveryRef, id));
-
+      await deleteDoc(doc(subcollections.turnosDeliveryRef, id));
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error al eliminar turno delivery:', err);
+      console.error('Error deleting delivery shift:', err);
       setError('Error al eliminar turno delivery: ' + err.message);
       throw err;
     ***REMOVED***
-  ***REMOVED***, [currentUser, getUserDeliveryCollections]);
+  ***REMOVED***, [currentUser, getUserSubcollections]);
 
-  const actualizarMetaHorasSemanales = useCallback(async (nuevaMeta) => ***REMOVED***
+  const updateWeeklyHoursGoal = useCallback(async (newGoal) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('Usuario no autenticado');
+      if (!currentUser) throw new Error('User not authenticated');
 
-      setMetaHorasSemanales(nuevaMeta); 
+      setWeeklyHoursGoal(newGoal);
 
-      // Persistir en localStorage
-      if (nuevaMeta) ***REMOVED***
-        localStorage.setItem('metaHorasSemanales', nuevaMeta.toString());
+      if (newGoal) ***REMOVED***
+        localStorage.setItem('weeklyHoursGoal', newGoal.toString());
       ***REMOVED*** else ***REMOVED***
-        localStorage.removeItem('metaHorasSemanales');
+        localStorage.removeItem('weeklyHoursGoal');
       ***REMOVED***
 
-      // Persistir en Firestore
       const userDocRef = doc(db, 'usuarios', currentUser.uid);
       await updateDoc(userDocRef, ***REMOVED***
-        'ajustes.metaHorasSemanales': nuevaMeta,
+        'ajustes.metaHorasSemanales': newGoal,
         fechaActualizacion: new Date()
       ***REMOVED***);
       return true;
@@ -474,16 +400,16 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***
   ***REMOVED***, [currentUser]);
 
-  // Cargar datos y preferencias del usuario
+  // Load user data and preferences
   useEffect(() => ***REMOVED***
     let unsubscribeTrabajos = null;
     let unsubscribeTurnos = null;
     let unsubscribeTrabajosDelivery = null;
     let unsubscribeTurnosDelivery = null;
 
-    const cargarDatosUsuario = async () => ***REMOVED***
+    const loadUserData = async () => ***REMOVED***
       if (!currentUser) ***REMOVED***
-        setCargando(false);
+        setLoading(false);
         setTrabajos([]);
         setTurnos([]);
         setTrabajosDelivery([]);
@@ -493,18 +419,18 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       ***REMOVED***
 
       try ***REMOVED***
-        setCargando(true);
+        setLoading(true);
         setError(null);
 
         await ensureUserDocument();
 
         const subcollections = getUserSubcollections();
         if (!subcollections) ***REMOVED***
-          setCargando(false);
+          setLoading(false);
           return;
         ***REMOVED***
 
-        // Listener para trabajos tradicionales
+        // Listener for traditional jobs
         const trabajosQuery = query(
           subcollections.trabajosRef,
           orderBy('nombre', 'asc')
@@ -542,85 +468,99 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
               return updatedTrabajos;
             ***REMOVED***);
           ***REMOVED***,
-          (error) => ***REMOVED***
-            console.error('Error en listener de trabajos:', error);
-            setError('Error al cargar trabajos: ' + error.message);
+          (err) => ***REMOVED***
+            console.error('Error in traditional jobs listener:', err);
+            setError('Error al cargar trabajos: ' + err.message);
           ***REMOVED***
         );
 
-        // Llama a la función cargandoTrabajosDelivery
-        unsubscribeTrabajosDelivery = cargandoTrabajosDelivery();
+        // Listener for delivery jobs (incorporated your fix)
+        const trabajosDeliveryQuery = query(
+          subcollections.trabajosDeliveryRef,
+          orderBy('fechaCreacion', 'desc')
+        );
 
+        unsubscribeTrabajosDelivery = onSnapshot(
+          trabajosDeliveryQuery,
+          (snapshot) => ***REMOVED***
+            // console.log('📦 Cargando trabajos delivery, docs encontrados:', snapshot.docs.length);
+            const loadedTrabajosDelivery = snapshot.docs.map(doc => ***REMOVED***
+              return ***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***;
+            ***REMOVED***);
+            setTrabajosDelivery(loadedTrabajosDelivery);
+          ***REMOVED***,
+          (err) => ***REMOVED***
+            console.error("Error al cargar trabajos de delivery:", err);
+            setError("Error al cargar trabajos de delivery: " + err.message);
+          ***REMOVED***
+        );
 
-        // Listener para turnos delivery
-        const deliveryCollections = getUserDeliveryCollections();
-        if (deliveryCollections) ***REMOVED***
-          const turnosDeliveryQuery = query(
-            deliveryCollections.turnosDeliveryRef,
-            orderBy('fecha', 'desc')
-          );
+        // Listener for delivery shifts
+        const turnosDeliveryQuery = query(
+          subcollections.turnosDeliveryRef,
+          orderBy('fecha', 'desc')
+        );
 
-          unsubscribeTurnosDelivery = onSnapshot(
-            turnosDeliveryQuery,
-            (snapshot) => ***REMOVED***
-              const turnosDeliveryData = [];
-              snapshot.forEach(doc => ***REMOVED***
-                turnosDeliveryData.push(***REMOVED***
-                  id: doc.id,
-                  ...doc.data(),
-                  tipo: 'delivery'
-                ***REMOVED***);
+        unsubscribeTurnosDelivery = onSnapshot(
+          turnosDeliveryQuery,
+          (snapshot) => ***REMOVED***
+            const turnosDeliveryData = [];
+            snapshot.forEach(doc => ***REMOVED***
+              turnosDeliveryData.push(***REMOVED***
+                id: doc.id,
+                ...doc.data(),
+                type: 'delivery' // Ensure type is set
               ***REMOVED***);
-              setTurnosDelivery(turnosDeliveryData);
-            ***REMOVED***,
-            (error) => ***REMOVED***
-              console.error('Error al cargar turnos delivery:', error);
-            ***REMOVED***
-          );
-        ***REMOVED***
+            ***REMOVED***);
+            setTurnosDelivery(turnosDeliveryData);
+          ***REMOVED***,
+          (err) => ***REMOVED***
+            console.error('Error loading delivery shifts:', err);
+            setError('Error al cargar turnos delivery: ' + err.message);
+          ***REMOVED***
+        );
 
-        // Listener para turnos tradicionales
+        // Listener for traditional shifts
         const turnosQuery = query(
           subcollections.turnosRef,
           orderBy('fecha', 'desc')
         );
 
         unsubscribeTurnos = onSnapshot(turnosQuery, (snapshot) => ***REMOVED***
-          if (snapshot.empty) ***REMOVED***
-            setTurnos([]);
-          ***REMOVED*** else ***REMOVED***
-            const turnosData = [];
-            snapshot.forEach(doc => ***REMOVED***
-              turnosData.push(***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***);
-            ***REMOVED***);
-            setTurnos(turnosData);
-          ***REMOVED***
-          setCargando(false);
-        ***REMOVED***, (error) => ***REMOVED***
-          setError('Error al cargar turnos: ' + error.message);
-          setCargando(false);
+          const turnosData = [];
+          snapshot.forEach(doc => ***REMOVED***
+            turnosData.push(***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***);
+          ***REMOVED***);
+          setTurnos(turnosData);
+          setLoading(false);
+        ***REMOVED***, (err) => ***REMOVED***
+          console.error('Error loading traditional shifts:', err);
+          setError('Error al cargar turnos: ' + err.message);
+          setLoading(false);
         ***REMOVED***);
 
-      ***REMOVED*** catch (error) ***REMOVED***
-        setError('Error crítico al cargar datos: ' + error.message);
-        setCargando(false);
+      ***REMOVED*** catch (err) ***REMOVED***
+        console.error('Critical error loading data:', err);
+        setError('Error crítico al cargar datos: ' + err.message);
+        setLoading(false);
       ***REMOVED***
     ***REMOVED***;
 
-    cargarDatosUsuario();
+    loadUserData();
 
+    // Cleanup function
     return () => ***REMOVED***
       if (unsubscribeTrabajos) unsubscribeTrabajos();
       if (unsubscribeTurnos) unsubscribeTurnos();
       if (unsubscribeTrabajosDelivery) unsubscribeTrabajosDelivery();
       if (unsubscribeTurnosDelivery) unsubscribeTurnosDelivery();
     ***REMOVED***;
-  ***REMOVED***, [currentUser, getUserSubcollections, getUserDeliveryCollections, ensureUserDocument, cargandoTrabajosDelivery]);
+  ***REMOVED***, [currentUser, getUserSubcollections, ensureUserDocument]);
 
-  // Formatear fecha
-  const formatearFecha = useCallback((fechaStr) => ***REMOVED***
-    const fecha = new Date(fechaStr + 'T00:00:00');
-    return fecha.toLocaleDateString('es-ES', ***REMOVED***
+  // Format date
+  const formatDate = useCallback((dateStr) => ***REMOVED***
+    const date = new Date(dateStr + 'T00:00:00');
+    return date.toLocaleDateString('es-ES', ***REMOVED***
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -641,134 +581,135 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         return acc;
       ***REMOVED***, ***REMOVED******REMOVED***);
     ***REMOVED***, [turnos, turnosDelivery]),
-    cargando,
+    loading,
     error,
 
-    // Preferencias de usuario
-    colorPrincipal,
-    coloresTemáticos,
-    emojiUsuario,
-    descuentoDefault,
-    rangosTurnos,
-    metaHorasSemanales,
+    // User preferences
+    primaryColor,
+    thematicColors,
+    userEmoji,
+    defaultDiscount,
+    shiftRanges,
+    weeklyHoursGoal,
     deliveryEnabled,
 
-    // Funciones CRUD para trabajos
-    agregarTrabajo: useCallback(async (nuevoTrabajo) => ***REMOVED***
+    // CRUD functions for traditional jobs
+    addJob: useCallback(async (newJob) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('Usuario no autenticado');
+        if (!currentUser) throw new Error('User not authenticated');
         const subcollections = getUserSubcollections();
-        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-        if (!nuevoTrabajo.nombre || !nuevoTrabajo.nombre.trim()) ***REMOVED***
-          throw new Error('El nombre del trabajo es requerido');
+        if (!subcollections || !subcollections.trabajosRef) throw new Error('Could not get subcollection references');
+        if (!newJob.nombre || !newJob.nombre.trim()) ***REMOVED***
+          throw new Error('Job name is required');
         ***REMOVED***
-        const trabajoConMetadata = ***REMOVED***
-          ...nuevoTrabajo,
+        const jobWithMetadata = ***REMOVED***
+          ...newJob,
           fechaCreacion: new Date(),
           fechaActualizacion: new Date(),
           activo: true
         ***REMOVED***;
-        const docRef = await addDoc(subcollections.trabajosRef, trabajoConMetadata);
-        return ***REMOVED*** ...trabajoConMetadata, id: docRef.id ***REMOVED***;
+        const docRef = await addDoc(subcollections.trabajosRef, jobWithMetadata);
+        return ***REMOVED*** ...jobWithMetadata, id: docRef.id ***REMOVED***;
       ***REMOVED*** catch (err) ***REMOVED***
         setError('Error al agregar trabajo: ' + err.message);
         throw err;
       ***REMOVED***
     ***REMOVED***, [currentUser, getUserSubcollections]),
 
-    editarTrabajo: useCallback(async (id, datosActualizados) => ***REMOVED***
+    editJob: useCallback(async (id, updatedData) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('Usuario no autenticado');
+        if (!currentUser) throw new Error('User not authenticated');
         const subcollections = getUserSubcollections();
-        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-        const datosConMetadata = ***REMOVED***
-          ...datosActualizados,
+        if (!subcollections || !subcollections.trabajosRef) throw new Error('Could not get subcollection references');
+        const dataWithMetadata = ***REMOVED***
+          ...updatedData,
           fechaActualizacion: new Date()
         ***REMOVED***;
         const docRef = doc(subcollections.trabajosRef, id);
-        await updateDoc(docRef, datosConMetadata);
+        await updateDoc(docRef, dataWithMetadata);
       ***REMOVED*** catch (err) ***REMOVED***
         setError('Error al editar trabajo: ' + err.message);
         throw err;
       ***REMOVED***
     ***REMOVED***, [currentUser, getUserSubcollections]),
 
-    borrarTrabajo: useCallback(async (id) => ***REMOVED***
+    deleteJob: useCallback(async (id) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('Usuario no autenticado');
+        if (!currentUser) throw new Error('User not authenticated');
         const subcollections = getUserSubcollections();
-        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-        const trabajoRef = doc(db, 'usuarios', currentUser.uid, 'trabajos', id);
-        const trabajoDoc = await getDoc(trabajoRef);
-        if (!trabajoDoc.exists()) ***REMOVED***
+        if (!subcollections || !subcollections.trabajosRef || !subcollections.turnosRef) ***REMOVED***
+          throw new Error('Could not get subcollection references');
+        ***REMOVED***
+        const jobRef = doc(db, 'usuarios', currentUser.uid, 'trabajos', id);
+        const jobDoc = await getDoc(jobRef);
+        if (!jobDoc.exists()) ***REMOVED***
           setTrabajos(prev => prev.filter(t => t.id !== id));
           return;
         ***REMOVED***
-        const turnosAsociados = turnos.filter(turno => turno.trabajoId === id);
-        setTurnos(prev => prev.filter(turno => turno.trabajoId !== id));
-        const promesasBorradoTurnos = turnosAsociados.map(turno =>
-          deleteDoc(doc(subcollections.turnosRef, turno.id))
+        const associatedShifts = turnos.filter(shift => shift.trabajoId === id);
+        setTurnos(prev => prev.filter(shift => shift.trabajoId !== id)); // Optimistic UI update
+        const deleteShiftPromises = associatedShifts.map(shift =>
+          deleteDoc(doc(subcollections.turnosRef, shift.id))
         );
-        await Promise.all(promesasBorradoTurnos);
-        await deleteDoc(trabajoRef);
+        await Promise.all(deleteShiftPromises);
+        await deleteDoc(jobRef);
       ***REMOVED*** catch (err) ***REMOVED***
-        console.error('Error al eliminar trabajo:', err);
+        console.error('Error deleting job:', err);
         setError('Error al eliminar trabajo: ' + err.message);
         throw err;
       ***REMOVED***
     ***REMOVED***, [currentUser, getUserSubcollections, turnos]),
 
-    // Trabajos delivery
+    // Delivery jobs
     trabajosDelivery,
-    agregarTrabajoDelivery,
-    editarTrabajoDelivery,
-    borrarTrabajoDelivery,
+    addDeliveryJob,
+    editDeliveryJob,
+    deleteDeliveryJob,
 
-    // Funciones CRUD para turnos
-    turnosDelivery,
-    agregarTurno: useCallback(async (nuevoTurno) => ***REMOVED***
+    // CRUD functions for traditional shifts
+    addShift: useCallback(async (newShift) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('Usuario no autenticado');
+        if (!currentUser) throw new Error('User not authenticated');
         const subcollections = getUserSubcollections();
-        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-        if (!nuevoTurno.trabajoId || !nuevoTurno.fecha || !nuevoTurno.horaInicio || !nuevoTurno.horaFin) ***REMOVED***
-          throw new Error('Todos los campos del turno son requeridos');
+        if (!subcollections || !subcollections.turnosRef) throw new Error('Could not get subcollection references');
+        if (!newShift.trabajoId || !newShift.fecha || !newShift.horaInicio || !newShift.horaFin) ***REMOVED***
+          throw new Error('All shift fields are required');
         ***REMOVED***
-        const turnoConMetadata = ***REMOVED***
-          ...nuevoTurno,
+        const shiftWithMetadata = ***REMOVED***
+          ...newShift,
           fechaCreacion: new Date(),
           fechaActualizacion: new Date()
         ***REMOVED***;
-        const docRef = await addDoc(subcollections.turnosRef, turnoConMetadata);
-        return ***REMOVED*** ...turnoConMetadata, id: docRef.id ***REMOVED***;
+        const docRef = await addDoc(subcollections.turnosRef, shiftWithMetadata);
+        return ***REMOVED*** ...shiftWithMetadata, id: docRef.id ***REMOVED***;
       ***REMOVED*** catch (err) ***REMOVED***
         setError('Error al agregar turno: ' + err.message);
         throw err;
       ***REMOVED***
     ***REMOVED***, [currentUser, getUserSubcollections]),
 
-    editarTurno: useCallback(async (id, datosActualizados) => ***REMOVED***
+    editShift: useCallback(async (id, updatedData) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('Usuario no autenticado');
+        if (!currentUser) throw new Error('User not authenticated');
         const subcollections = getUserSubcollections();
-        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
-        const datosConMetadata = ***REMOVED***
-          ...datosActualizados,
+        if (!subcollections || !subcollections.turnosRef) throw new Error('Could not get subcollection references');
+        const dataWithMetadata = ***REMOVED***
+          ...updatedData,
           fechaActualizacion: new Date()
         ***REMOVED***;
         const docRef = doc(subcollections.turnosRef, id);
-        await updateDoc(docRef, datosConMetadata);
+        await updateDoc(docRef, dataWithMetadata);
       ***REMOVED*** catch (err) ***REMOVED***
         setError('Error al editar turno: ' + err.message);
         throw err;
       ***REMOVED***
     ***REMOVED***, [currentUser, getUserSubcollections]),
 
-    borrarTurno: useCallback(async (id) => ***REMOVED***
+    deleteShift: useCallback(async (id) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('Usuario no autenticado');
+        if (!currentUser) throw new Error('User not authenticated');
         const subcollections = getUserSubcollections();
-        if (!subcollections) throw new Error('No se pudieron obtener las referencias de las subcolecciones');
+        if (!subcollections || !subcollections.turnosRef) throw new Error('Could not get subcollection references');
         await deleteDoc(doc(subcollections.turnosRef, id));
       ***REMOVED*** catch (err) ***REMOVED***
         setError('Error al eliminar turno: ' + err.message);
@@ -776,87 +717,79 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       ***REMOVED***
     ***REMOVED***, [currentUser, getUserSubcollections]),
 
-    agregarTurnoDelivery,
-    editarTurnoDelivery,
-    borrarTurnoDelivery,
+    // Delivery shifts
+    turnosDelivery,
+    addDeliveryShift,
+    editDeliveryShift,
+    deleteDeliveryShift,
 
-    // Funciones de cálculo
-    calcularHoras,
-    calcularPago,
-    calcularTotalDia: useCallback((turnosDia) => ***REMOVED***
-      return turnosDia.reduce((total, turno) => ***REMOVED***
-        if (turno.tipo === 'delivery') ***REMOVED***
-          const gananciaNeta = (turno.gananciaTotal || 0) - (turno.gastoCombustible || 0);
+    // Calculation functions
+    calculateHours,
+    calculatePayment,
+    calculateDailyTotal: useCallback((dailyShifts) => ***REMOVED***
+      return dailyShifts.reduce((total, shift) => ***REMOVED***
+        if (shift.type === 'delivery') ***REMOVED***
+          const netEarnings = (shift.gananciaTotal || 0) - (shift.gastoCombustible || 0);
           return ***REMOVED***
-            horas: total.horas,
-            total: total.total + gananciaNeta
+            hours: total.hours,
+            total: total.total + netEarnings
           ***REMOVED***;
         ***REMOVED*** else ***REMOVED***
-          const resultado = calcularPago(turno);
+          const result = calculatePayment(shift);
           return ***REMOVED***
-            horas: total.horas + resultado.horas,
-            total: total.total + resultado.total
+            hours: total.hours + result.hours,
+            total: total.total + result.total
           ***REMOVED***;
         ***REMOVED***
-      ***REMOVED***, ***REMOVED*** horas: 0, total: 0 ***REMOVED***);
-    ***REMOVED***, [calcularPago]), 
-    formatearFecha,
-    actualizarMetaHorasSemanales, 
+      ***REMOVED***, ***REMOVED*** hours: 0, total: 0 ***REMOVED***);
+    ***REMOVED***, [calculatePayment]),
+    formatDate,
+    updateWeeklyHoursGoal,
 
-
-    // Funciones de configuración
-    guardarPreferencias: useCallback(async (preferencias) => ***REMOVED***
+    // Configuration functions
+    savePreferences: useCallback(async (preferences) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('Usuario no autenticado');
+        if (!currentUser) throw new Error('User not authenticated');
 
         const ***REMOVED***
-          colorPrincipal: nuevoColor,
-          emojiUsuario: nuevoEmoji,
-          descuentoDefault: nuevoDescuento,
-          rangosTurnos: nuevosRangos,
-          deliveryEnabled: nuevoDelivery,
-          metaHorasSemanales: nuevaMeta,
-        ***REMOVED*** = preferencias;
+          colorPrincipal: newColor,
+          emojiUsuario: newEmoji,
+          descuentoDefault: newDiscount,
+          rangosTurnos: newRanges,
+          deliveryEnabled: newDelivery,
+          metaHorasSemanales: newGoal,
+        ***REMOVED*** = preferences;
 
-        // Actualizar estados locales si los valores son proporcionados
-        if (nuevoColor !== undefined) setColorPrincipal(nuevoColor);
-        if (nuevoEmoji !== undefined) setEmojiUsuario(nuevoEmoji);
-        if (nuevoDescuento !== undefined) setDescuentoDefault(nuevoDescuento);
-        if (nuevosRangos !== undefined) setRangosTurnos(nuevosRangos);
-        if (nuevoDelivery !== undefined) setDeliveryEnabled(nuevoDelivery);
+        // Update local states if values are provided
+        if (newColor !== undefined) setPrimaryColor(newColor);
+        if (newEmoji !== undefined) setUserEmoji(newEmoji);
+        if (newDiscount !== undefined) setDefaultDiscount(newDiscount);
+        if (newRanges !== undefined) setShiftRanges(newRanges);
+        if (newDelivery !== undefined) setDeliveryEnabled(newDelivery);
+        if (newGoal !== undefined) setWeeklyHoursGoal(newGoal);
 
-        if (nuevaMeta !== undefined) ***REMOVED***
-          setMetaHorasSemanales(nuevaMeta);
-          if (nuevaMeta) ***REMOVED***
-            localStorage.setItem('metaHorasSemanales', nuevaMeta.toString());
-          ***REMOVED*** else ***REMOVED***
-            localStorage.removeItem('metaHorasSemanales');
-          ***REMOVED***
-        ***REMOVED***
-
-        if (nuevoColor !== undefined) localStorage.setItem('colorPrincipal', nuevoColor);
-        if (nuevoEmoji !== undefined) localStorage.setItem('emojiUsuario', nuevoEmoji);
-        if (nuevoDescuento !== undefined) localStorage.setItem('descuentoDefault', nuevoDescuento.toString());
-        if (nuevosRangos !== undefined) localStorage.setItem('rangosTurnos', JSON.stringify(nuevosRangos));
-        if (nuevoDelivery !== undefined) localStorage.setItem('deliveryEnabled', nuevoDelivery.toString());
-
+        // Persist to localStorage
+        if (newColor !== undefined) localStorage.setItem('primaryColor', newColor);
+        if (newEmoji !== undefined) localStorage.setItem('userEmoji', newEmoji);
+        if (newDiscount !== undefined) localStorage.setItem('defaultDiscount', newDiscount.toString());
+        if (newRanges !== undefined) localStorage.setItem('shiftRanges', JSON.stringify(newRanges));
+        if (newDelivery !== undefined) localStorage.setItem('deliveryEnabled', newDelivery.toString());
+        if (newGoal !== undefined) localStorage.setItem('weeklyHoursGoal', newGoal === null ? 'null' : newGoal.toString());
 
         const userDocRef = doc(db, 'usuarios', currentUser.uid);
-        const datosActualizados = ***REMOVED******REMOVED***;
+        const updatedData = ***REMOVED******REMOVED***;
 
-        if (nuevoColor !== undefined) datosActualizados['ajustes.colorPrincipal'] = nuevoColor;
-        if (nuevoEmoji !== undefined) datosActualizados['ajustes.emojiUsuario'] = nuevoEmoji;
-        if (nuevoDescuento !== undefined) datosActualizados['ajustes.descuentoDefault'] = nuevoDescuento;
-        if (nuevosRangos !== undefined) datosActualizados['ajustes.rangosTurnos'] = nuevosRangos;
-        if (nuevoDelivery !== undefined) datosActualizados['ajustes.deliveryEnabled'] = nuevoDelivery;
-        if (nuevaMeta !== undefined) datosActualizados['ajustes.metaHorasSemanales'] = nuevaMeta;
+        if (newColor !== undefined) updatedData['ajustes.colorPrincipal'] = newColor;
+        if (newEmoji !== undefined) updatedData['ajustes.emojiUsuario'] = newEmoji;
+        if (newDiscount !== undefined) updatedData['ajustes.descuentoDefault'] = newDiscount;
+        if (newRanges !== undefined) updatedData['ajustes.rangosTurnos'] = newRanges;
+        if (newDelivery !== undefined) updatedData['ajustes.deliveryEnabled'] = newDelivery;
+        if (newGoal !== undefined) updatedData['ajustes.metaHorasSemanales'] = newGoal;
 
+        updatedData['fechaActualizacion'] = new Date();
 
-        // Agregar fecha de actualización
-        datosActualizados['fechaActualizacion'] = new Date();
-
-        if (Object.keys(datosActualizados).length > 1) ***REMOVED*** 
-          await updateDoc(userDocRef, datosActualizados);
+        if (Object.keys(updatedData).length > 1) ***REMOVED*** // Check if there's actual data to update beyond the timestamp
+          await updateDoc(userDocRef, updatedData);
         ***REMOVED***
 
         return true;
@@ -867,23 +800,22 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***, [currentUser]),
   ***REMOVED***;
 
-  // Agrega un useEffect para cargar desde localStorage (después del useEffect principal)
+  // Load preferences from localStorage on initial render
   useEffect(() => ***REMOVED***
-    // Cargar preferencias de localStorage al iniciar
-    const savedColor = localStorage.getItem('colorPrincipal');
-    const savedEmoji = localStorage.getItem('emojiUsuario');
-    const savedDescuento = localStorage.getItem('descuentoDefault');
-    const savedRangos = localStorage.getItem('rangosTurnos');
-    const savedMeta = localStorage.getItem('metaHorasSemanales');
+    const savedColor = localStorage.getItem('primaryColor');
+    const savedEmoji = localStorage.getItem('userEmoji');
+    const savedDescuento = localStorage.getItem('defaultDiscount');
+    const savedRangos = localStorage.getItem('shiftRanges');
+    const savedMeta = localStorage.getItem('weeklyHoursGoal');
     const savedDelivery = localStorage.getItem('deliveryEnabled');
 
-    if (savedColor) setColorPrincipal(savedColor);
-    if (savedEmoji) setEmojiUsuario(savedEmoji);
-    if (savedDescuento) setDescuentoDefault(parseInt(savedDescuento));
-    if (savedRangos) setRangosTurnos(JSON.parse(savedRangos));
-    if (savedMeta) setMetaHorasSemanales(savedMeta === 'null' ? null : parseInt(savedMeta));
+    if (savedColor) setPrimaryColor(savedColor);
+    if (savedEmoji) setUserEmoji(savedEmoji);
+    if (savedDescuento) setDefaultDiscount(parseInt(savedDescuento));
+    if (savedRangos) setShiftRanges(JSON.parse(savedRangos));
+    if (savedMeta) setWeeklyHoursGoal(savedMeta === 'null' ? null : parseInt(savedMeta));
     if (savedDelivery !== null) setDeliveryEnabled(savedDelivery === 'true');
-  ***REMOVED***, []); 
+  ***REMOVED***, []);
 
   return (
     <AppContext.Provider value=***REMOVED***contextValue***REMOVED***>

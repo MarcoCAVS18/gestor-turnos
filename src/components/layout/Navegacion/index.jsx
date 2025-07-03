@@ -1,6 +1,6 @@
 // src/components/layout/Navegacion/index.jsx
 
-import React from 'react';
+import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
@@ -11,8 +11,11 @@ import './index.css';
 const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno ***REMOVED***) => ***REMOVED***
   const navigate = useNavigate();
   const location = useLocation();
-  const ***REMOVED*** coloresTemáticos, emojiUsuario ***REMOVED*** = useApp();
+  const ***REMOVED*** coloresTemáticos, emojiUsuario, trabajos, trabajosDelivery ***REMOVED*** = useApp();
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
+  
+  // Estado para el tooltip
+  const [showTooltip, setShowTooltip] = useState(false);
   
   const getCurrentView = () => ***REMOVED***
     const path = location.pathname;
@@ -27,7 +30,16 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
   
   const currentView = getCurrentView();
   
+  // Verificar si hay trabajos creados
+  const totalTrabajos = (trabajos?.length || 0) + (trabajosDelivery?.length || 0);
+  const hayTrabajos = totalTrabajos > 0;
+  
   const navigateToView = (view) => ***REMOVED***
+    // Si intenta ir a turnos pero no hay trabajos, no hacer nada en desktop
+    if (view === 'turnos' && !hayTrabajos) ***REMOVED***
+      return;
+    ***REMOVED***
+    
     const routes = ***REMOVED***
       'dashboard': '/dashboard',
       'trabajos': '/trabajos',
@@ -50,6 +62,16 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
   ***REMOVED***;
 
   const getActiveDesktopStyle = (vista) => ***REMOVED***
+    // Estilo especial para turnos cuando no hay trabajos
+    if (vista === 'turnos' && !hayTrabajos) ***REMOVED***
+      return ***REMOVED***
+        backgroundColor: 'transparent',
+        color: '#9CA3AF',
+        cursor: 'not-allowed',
+        opacity: 0.5
+      ***REMOVED***;
+    ***REMOVED***
+
     return currentView === vista
       ? ***REMOVED***
           backgroundColor: coloresTemáticos?.base || '#EC4899',
@@ -70,6 +92,17 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
 
   const userName = currentUser?.displayName || 
     (currentUser?.email ? currentUser.email.split('@')[0] : 'Usuario');
+
+  // Manejar hover del botón de turnos
+  const handleTurnosMouseEnter = () => ***REMOVED***
+    if (!hayTrabajos) ***REMOVED***
+      setShowTooltip(true);
+    ***REMOVED***
+  ***REMOVED***;
+
+  const handleTurnosMouseLeave = () => ***REMOVED***
+    setShowTooltip(false);
+  ***REMOVED***;
   
   return (
     <>
@@ -152,7 +185,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
         ***REMOVED***(abrirModalNuevoTurno || abrirModalNuevoTrabajo) && (
           <div className="p-4 border-b border-gray-100">
             <div className="space-y-2">
-              ***REMOVED***abrirModalNuevoTurno && (
+              ***REMOVED***abrirModalNuevoTurno && hayTrabajos && (
                 <button
                   onClick=***REMOVED***abrirModalNuevoTurno***REMOVED***
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-white font-medium transition-all hover:shadow-lg transform hover:scale-105"
@@ -221,16 +254,36 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
               />
             </motion.button>
 
-            <motion.button
-              onClick=***REMOVED***() => navigateToView('turnos')***REMOVED***
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
-              style=***REMOVED***getActiveDesktopStyle('turnos')***REMOVED***
-              whileHover=***REMOVED******REMOVED*** scale: 1.02 ***REMOVED******REMOVED***
-              whileTap=***REMOVED******REMOVED*** scale: 0.98 ***REMOVED******REMOVED***
-            >
-              <Calendar size=***REMOVED***20***REMOVED*** />
-              <span>Turnos</span>
-            </motion.button>
+            ***REMOVED***/* Botón de Turnos con validación y tooltip */***REMOVED***
+            <div className="relative">
+              <motion.button
+                onClick=***REMOVED***() => navigateToView('turnos')***REMOVED***
+                onMouseEnter=***REMOVED***handleTurnosMouseEnter***REMOVED***
+                onMouseLeave=***REMOVED***handleTurnosMouseLeave***REMOVED***
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all"
+                style=***REMOVED***getActiveDesktopStyle('turnos')***REMOVED***
+                whileHover=***REMOVED***hayTrabajos ? ***REMOVED*** scale: 1.02 ***REMOVED*** : ***REMOVED******REMOVED******REMOVED***
+                whileTap=***REMOVED***hayTrabajos ? ***REMOVED*** scale: 0.98 ***REMOVED*** : ***REMOVED******REMOVED******REMOVED***
+              >
+                <Calendar size=***REMOVED***20***REMOVED*** />
+                <span>Turnos</span>
+                ***REMOVED***!hayTrabajos && (
+                  <div className="ml-auto">
+                    <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                  </div>
+                )***REMOVED***
+              </motion.button>
+
+              ***REMOVED***/* Tooltip para cuando no hay trabajos */***REMOVED***
+              ***REMOVED***showTooltip && !hayTrabajos && (
+                <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 z-50">
+                  <div className="bg-gray-800 text-white text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
+                    Primero crea un trabajo para agregar turnos
+                    <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800"></div>
+                  </div>
+                </div>
+              )***REMOVED***
+            </div>
 
             <motion.button
               onClick=***REMOVED***() => navigateToView('estadisticas')***REMOVED***

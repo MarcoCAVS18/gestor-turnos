@@ -9,7 +9,7 @@ import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ModalTurno from '../components/modals/ModalTurno';
 
 const CalendarioView = () => ***REMOVED***
-  const ***REMOVED*** turnosPorFecha ***REMOVED*** = useApp();
+  const ***REMOVED*** turnosPorFecha, todosLosTrabajos ***REMOVED*** = useApp();
   const ***REMOVED***
     fechaSeleccionada,
     modalAbierto,
@@ -20,8 +20,25 @@ const CalendarioView = () => ***REMOVED***
     formatearFecha
   ***REMOVED*** = useCalendar();
   
+  console.log('📅 CalendarioView - Estado:', ***REMOVED***
+    fechaSeleccionada,
+    turnosPorFecha: Object.keys(turnosPorFecha || ***REMOVED******REMOVED***).length,
+    todosLosTrabajos: todosLosTrabajos?.length || 0
+  ***REMOVED***);
+  
   // Obtener los turnos para la fecha seleccionada
   const turnosSeleccionados = fechaSeleccionada ? turnosPorFecha[fechaSeleccionada] || [] : [];
+  
+  console.log('📅 Turnos para fecha seleccionada:', ***REMOVED***
+    fecha: fechaSeleccionada,
+    cantidad: turnosSeleccionados.length,
+    turnos: turnosSeleccionados.map(t => (***REMOVED***
+      id: t.id,
+      tipo: t.tipo,
+      trabajoId: t.trabajoId,
+      gananciaTotal: t.gananciaTotal
+    ***REMOVED***))
+  ***REMOVED***);
   
   // Animaciones
   const calendarVariants = ***REMOVED***

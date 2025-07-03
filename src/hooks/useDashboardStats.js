@@ -4,10 +4,23 @@ import ***REMOVED*** useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 export const useDashboardStats = () => ***REMOVED***
-  const ***REMOVED*** trabajos, turnos, calcularPago ***REMOVED*** = useApp();
+  const ***REMOVED*** todosLosTrabajos, turnos, turnosDelivery, calcularPago ***REMOVED*** = useApp();
 
   const stats = useMemo(() => ***REMOVED***
-    if (turnos.length === 0) ***REMOVED***
+    // Combinar todos los turnos
+    const turnosTradicionales = Array.isArray(turnos) ? turnos : [];
+    const turnosDeliveryValidos = Array.isArray(turnosDelivery) ? turnosDelivery : [];
+    const todosLosTurnos = [...turnosTradicionales, ...turnosDeliveryValidos];
+    
+    console.log('📊 Dashboard Stats - Datos disponibles:', ***REMOVED***
+      trabajosTradicionales: todosLosTrabajos?.filter(t => t.tipo !== 'delivery').length || 0,
+      trabajosDelivery: todosLosTrabajos?.filter(t => t.tipo === 'delivery').length || 0,
+      turnosTradicionales: turnosTradicionales.length,
+      turnosDelivery: turnosDeliveryValidos.length,
+      totalTurnos: todosLosTurnos.length
+    ***REMOVED***);
+
+    if (todosLosTurnos.length === 0) ***REMOVED***
       return ***REMOVED***
         totalGanado: 0,
         horasTrabajadas: 0,
@@ -42,12 +55,27 @@ export const useDashboardStats = () => ***REMOVED***
     let gananciasEstaSemana = 0;
     let gananciasSemanaAnterior = 0;
 
-    turnos.forEach(turno => ***REMOVED***
-      const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-      if (!trabajo) return;
+    todosLosTurnos.forEach(turno => ***REMOVED***
+      const trabajo = todosLosTrabajos?.find(t => t.id === turno.trabajoId);
+      if (!trabajo) ***REMOVED***
+        console.warn('⚠️ Dashboard: Trabajo no encontrado para turno:', turno.id);
+        return;
+      ***REMOVED***
 
-      const ***REMOVED*** totalConDescuento, horas ***REMOVED*** = calcularPago(turno);
-      totalGanado += totalConDescuento;
+      let ganancia = 0;
+      let horas = 0;
+
+      // Calcular ganancia según el tipo
+      if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') ***REMOVED***
+        ganancia = turno.gananciaTotal || 0;
+        horas = calcularHoras(turno.horaInicio, turno.horaFin);
+      ***REMOVED*** else ***REMOVED***
+        const resultado = calcularPago(turno);
+        ganancia = resultado.totalConDescuento || 0;
+        horas = resultado.horas || 0;
+      ***REMOVED***
+
+      totalGanado += ganancia;
       horasTrabajadas += horas;
       fechasUnicas.add(turno.fecha);
 
@@ -60,7 +88,7 @@ export const useDashboardStats = () => ***REMOVED***
           turnos: 0
         ***REMOVED***;
       ***REMOVED***
-      gananciaPorTrabajo[trabajo.id].ganancia += totalConDescuento;
+      gananciaPorTrabajo[trabajo.id].ganancia += ganancia;
       gananciaPorTrabajo[trabajo.id].horas += horas;
       gananciaPorTrabajo[trabajo.id].turnos += 1;
 
@@ -68,9 +96,9 @@ export const useDashboardStats = () => ***REMOVED***
       const fechaTurno = new Date(turno.fecha + 'T00:00:00');
       if (fechaTurno >= inicioSemana) ***REMOVED***
         turnosEstaSemana++;
-        gananciasEstaSemana += totalConDescuento;
+        gananciasEstaSemana += ganancia;
       ***REMOVED*** else if (fechaTurno >= inicioSemanaAnterior && fechaTurno < inicioSemana) ***REMOVED***
-        gananciasSemanaAnterior += totalConDescuento;
+        gananciasSemanaAnterior += ganancia;
       ***REMOVED***
     ***REMOVED***);
 
@@ -85,7 +113,7 @@ export const useDashboardStats = () => ***REMOVED***
 
     // Encontrar próximo turno
     const hoyStr = hoy.toISOString().split('T')[0];
-    const turnosFuturos = turnos.filter(turno => turno.fecha >= hoyStr)
+    const turnosFuturos = todosLosTurnos.filter(turno => turno.fecha >= hoyStr)
       .sort((a, b) => ***REMOVED***
         if (a.fecha === b.fecha) ***REMOVED***
           return a.horaInicio.localeCompare(b.horaInicio);
@@ -103,11 +131,11 @@ export const useDashboardStats = () => ***REMOVED***
     // Proyección mensual
     const proyeccionMensual = gananciasEstaSemana * 4.33;
 
-    return ***REMOVED***
+    const resultado = ***REMOVED***
       totalGanado,
       horasTrabajadas,
       promedioPorHora: horasTrabajadas > 0 ? totalGanado / horasTrabajadas : 0,
-      turnosTotal: turnos.length,
+      turnosTotal: todosLosTurnos.length,
       trabajoMasRentable,
       proximoTurno,
       turnosEstaSemana,
@@ -117,7 +145,25 @@ export const useDashboardStats = () => ***REMOVED***
       proyeccionMensual,
       diasTrabajados: fechasUnicas.size
     ***REMOVED***;
-  ***REMOVED***, [turnos, trabajos, calcularPago]);
+
+    console.log('📊 Dashboard Stats calculados:', resultado);
+    return resultado;
+  ***REMOVED***, [turnos, turnosDelivery, todosLosTrabajos, calcularPago]);
+
+  // Función para calcular horas
+  const calcularHoras = (inicio, fin) => ***REMOVED***
+    const [horaIni, minIni] = inicio.split(':').map(n => parseInt(n));
+    const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
+
+    let inicioMinutos = horaIni * 60 + minIni;
+    let finMinutos = horaFn * 60 + minFn;
+
+    if (finMinutos <= inicioMinutos) ***REMOVED***
+      finMinutos += 24 * 60;
+    ***REMOVED***
+
+    return (finMinutos - inicioMinutos) / 60;
+  ***REMOVED***;
 
   // Función para formatear fecha
   const formatearFecha = (fechaStr) => ***REMOVED***
