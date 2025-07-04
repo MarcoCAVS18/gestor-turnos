@@ -9,6 +9,32 @@ import { DELIVERY_PLATFORMS_AUSTRALIA } from '../../../constants/delivery';
 
 const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
   const { agregarTrabajoDelivery, editarTrabajoDelivery, coloresTemáticos } = useApp();
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar móvil
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Prevenir scroll del body cuando está abierto
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   const manejarGuardado = async (datosDelivery) => {
     try {
@@ -26,35 +52,97 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-          <h2 className="text-lg font-semibold flex items-center">
-            <Truck size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
-            {trabajo ? 'Editar' : 'Nuevo'} Trabajo Delivery
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+      style={{ zIndex: 9999 }}
+    >
+      <div 
+        className={`
+          bg-white shadow-2xl w-full relative
+          ${isMobile 
+            ? 'h-full max-w-none rounded-none' 
+            : 'max-w-md max-h-[90vh] rounded-lg'
+          }
+          ${isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'}
+        `}
+      >
+        {/* Header fijo con z-index correcto */}
+        <div 
+          className={`
+            sticky top-0 bg-white border-b flex justify-between items-center
+            ${isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'}
+          `}
+          style={{ 
+            zIndex: 10,
+            borderBottomColor: coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+          }}
+        >
+          <h2 
+            className={`font-semibold flex items-center ${isMobile ? 'text-lg' : 'text-xl'}`}
+          >
+            <Truck 
+              size={20} 
+              style={{ color: coloresTemáticos?.base }} 
+              className="mr-2" 
+            />
+            <span style={{ color: coloresTemáticos?.base }}>
+              {trabajo ? 'Editar' : 'Nuevo'} Trabajo Delivery
+            </span>
           </h2>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 rounded-lg transition-colors flex-shrink-0"
+            style={{
+              backgroundColor: 'transparent',
+              color: coloresTemáticos?.base || '#EC4899'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.backgroundColor = coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.backgroundColor = 'transparent';
+            }}
           >
-            <X size={20} />
+            <X size={isMobile ? 24 : 20} />
           </button>
         </div>
 
-        <div className="p-4">
+        {/* Content scrolleable */}
+        <div className={`
+          ${isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'}
+        `}>
           <TrabajoDeliveryFormContent
             trabajo={trabajo}
             onSubmit={manejarGuardado}
             onCancel={onClose}
             coloresTemáticos={coloresTemáticos}
+            isMobile={isMobile}
           />
         </div>
+
+        {/* Footer indicador en móvil */}
+        {isMobile && (
+          <div 
+            className="sticky bottom-0 bg-white border-t p-2"
+            style={{ 
+              borderTopColor: coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)',
+              zIndex: 10
+            }}
+          >
+            <div className="flex justify-center">
+              <div 
+                className="w-10 h-1 rounded-full"
+                style={{ backgroundColor: coloresTemáticos?.transparent50 || 'rgba(236, 72, 153, 0.5)' }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemáticos }) => {
+const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemáticos, isMobile }) => {
   const [formData, setFormData] = useState({
     nombre: '',
     plataforma: '',
@@ -164,17 +252,25 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
   }, [plataformaSeleccionada, trabajo, handleInputChange]);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className={`space-y-4 ${isMobile ? 'mobile-form' : ''}`}>
       {/* Nombre del trabajo */}
       <div>
-        <label className="block text-sm font-medium mb-1">
+        <label className="block text-sm font-medium mb-2">
           Nombre del trabajo
         </label>
         <input
           type="text"
           value={formData.nombre}
           onChange={(e) => handleInputChange('nombre', e.target.value)}
-          className={`w-full p-3 border rounded-lg text-sm ${errors.nombre ? 'border-red-500' : 'border-gray-300'}`}
+          className={`
+            w-full border rounded-lg text-sm transition-colors
+            ${isMobile ? 'p-3 text-base' : 'p-3'}
+            ${errors.nombre ? 'border-red-500' : 'border-gray-300'}
+          `}
+          style={{
+            '--tw-ring-color': coloresTemáticos?.base,
+            borderColor: errors.nombre ? '#EF4444' : undefined
+          }}
           placeholder="ej: Delivery Zona Norte"
         />
         {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre}</p>}
@@ -199,7 +295,10 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
       </div>
 
       {/* Configuración de cálculos */}
-      <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
+      <div 
+        className="space-y-3 p-3 rounded-lg"
+        style={{ backgroundColor: coloresTemáticos?.transparent5 || 'rgba(0,0,0,0.05)' }}
+      >
         <h3 className="text-sm font-medium text-gray-700">Configuración de cálculos</h3>
 
         <label className="flex items-center space-x-2">
@@ -208,6 +307,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
             checked={formData.configuracion.incluyePropinas}
             onChange={(e) => handleConfigChange('incluyePropinas', e.target.checked)}
             className="rounded"
+            style={{ accentColor: coloresTemáticos?.base }}
           />
           <span className="text-sm">Incluir propinas en el registro</span>
         </label>
@@ -218,6 +318,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
             checked={formData.configuracion.rastreaCombustible}
             onChange={(e) => handleConfigChange('rastreaCombustible', e.target.checked)}
             className="rounded"
+            style={{ accentColor: coloresTemáticos?.base }}
           />
           <span className="text-sm">Rastrear gastos de combustible</span>
         </label>
@@ -225,24 +326,32 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
 
       {/* Descripción opcional */}
       <div>
-        <label className="block text-sm font-medium mb-1">
+        <label className="block text-sm font-medium mb-2">
           Descripción (opcional)
         </label>
         <textarea
           value={formData.descripcion}
           onChange={(e) => handleInputChange('descripcion', e.target.value)}
-          className="w-full p-2 border rounded-lg text-sm border-gray-300"
-          rows="2"
+          className={`
+            w-full border rounded-lg text-sm border-gray-300
+            ${isMobile ? 'p-3 text-base' : 'p-2'}
+          `}
+          style={{ '--tw-ring-color': coloresTemáticos?.base }}
+          rows={isMobile ? "3" : "2"}
           placeholder="ej: Trabajo de delivery en zona céntrica..."
         />
       </div>
 
       {/* Botones */}
-      <div className="flex space-x-3 pt-4">
+      <div className={`flex pt-4 ${isMobile ? 'flex-col space-y-3' : 'space-x-3'}`}>
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium"
+          className={`
+            border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 
+            text-sm font-medium rounded-lg transition-colors
+            ${isMobile ? 'py-3 px-4 w-full' : 'flex-1 py-3 px-4'}
+          `}
           disabled={guardando}
         >
           Cancelar
@@ -250,10 +359,33 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, coloresTemát
         <button
           type="submit"
           disabled={guardando}
-          className="flex-1 py-3 px-4 text-white rounded-lg hover:opacity-90 text-sm font-medium disabled:opacity-50"
+          className={`
+            text-white rounded-lg hover:opacity-90 text-sm font-medium 
+            disabled:opacity-50 transition-colors
+            ${isMobile ? 'py-3 px-4 w-full' : 'flex-1 py-3 px-4'}
+          `}
           style={{ backgroundColor: coloresTemáticos?.base || '#3B82F6' }}
+          onMouseEnter={(e) => {
+            if (!guardando && coloresTemáticos?.dark) {
+              e.target.style.backgroundColor = coloresTemáticos.dark;
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!guardando) {
+              e.target.style.backgroundColor = coloresTemáticos?.base || '#3B82F6';
+            }
+          }}
         >
-          {guardando ? 'Guardando...' : (trabajo ? 'Actualizar' : 'Crear')}
+          {guardando ? (
+            <div className="flex items-center justify-center space-x-2">
+              <div 
+                className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"
+              />
+              <span>Guardando...</span>
+            </div>
+          ) : (
+            trabajo ? 'Actualizar' : 'Crear'
+          )}
         </button>
       </div>
     </form>

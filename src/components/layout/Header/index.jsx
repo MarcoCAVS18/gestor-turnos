@@ -8,7 +8,7 @@ import { useApp } from '../../../contexts/AppContext';
 
 const Header = ({ setVistaActual }) => {
   const { currentUser } = useAuth();
-  const { coloresTemáticos, emojiUsuario } = useApp();
+  const { thematicColors, userEmoji } = useApp();
   const navigate = useNavigate();
   
   const [userName, setUserName] = useState('Usuario');
@@ -30,14 +30,14 @@ const Header = ({ setVistaActual }) => {
   return (
     <header 
       className="flex justify-between items-center px-4 py-3 text-white shadow-md"
-      style={{ backgroundColor: coloresTemáticos?.base || '#EC4899' }}
+      style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
     >
       <div className="flex flex-col">
         <h1 className="text-xl font-semibold leading-tight p-2">
           Mi Gestión de Turnos
         </h1>
         <p className="text-sm opacity-90 leading-tight pl-2">
-          {userName} {emojiUsuario || '😊'}
+          {userName} {userEmoji || '😊'}
         </p>
       </div>
       
@@ -46,7 +46,7 @@ const Header = ({ setVistaActual }) => {
           onClick={handleSettingsClick}
           className="text-white rounded-lg p-3 transition-all duration-200"
           onMouseEnter={(e) => {
-            const baseColor = coloresTemáticos?.base || '#EC4899';
+            const baseColor = thematicColors?.base || '#EC4899';
             const hex = baseColor.replace('#', '');
             const r = parseInt(hex.substr(0, 2), 16);
             const g = parseInt(hex.substr(2, 2), 16);

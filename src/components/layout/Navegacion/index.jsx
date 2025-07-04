@@ -11,7 +11,7 @@ import './index.css';
 const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { coloresTemáticos, emojiUsuario, trabajos, trabajosDelivery } = useApp();
+  const { thematicColors, userEmoji, trabajos, trabajosDelivery } = useApp();
   const { currentUser } = useAuth();
   
   // Estado para el tooltip
@@ -57,7 +57,7 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
   
   const getActiveTextStyle = (vista) => {
     return currentView === vista 
-      ? { color: coloresTemáticos?.base || '#EC4899' } 
+      ? { color: thematicColors?.base || '#EC4899' } 
       : { color: '#6B7280' };
   };
 
@@ -74,7 +74,7 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
 
     return currentView === vista
       ? {
-          backgroundColor: coloresTemáticos?.base || '#EC4899',
+          backgroundColor: thematicColors?.base || '#EC4899',
           color: 'white'
         }
       : {
@@ -84,9 +84,9 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
   };
   
   const calendarButtonStyle = {
-    backgroundColor: coloresTemáticos?.base || '#EC4899',
+    backgroundColor: thematicColors?.base || '#EC4899',
     borderColor: currentView === 'calendario' 
-      ? coloresTemáticos?.dark || '#BE185D'
+      ? thematicColors?.dark || '#BE185D'
       : 'white'
   };
 
@@ -135,7 +135,7 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
               whileTap={{ scale: 0.95 }}
               whileHover={{ 
                 scale: 1.05,
-                boxShadow: `0 8px 25px ${coloresTemáticos?.transparent50 || 'rgba(236, 72, 153, 0.5)'}`
+                boxShadow: `0 8px 25px ${thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)'}`
               }}
             >
               <CalendarDays size={28} />
@@ -170,14 +170,14 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
           <div className="flex items-center space-x-3">
             <div 
               className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg user-emoji"
-              style={{ backgroundColor: coloresTemáticos?.base || '#EC4899' }}
+              style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
             >
               <span style={{ 
                 fontSize: '1.5rem',
                 lineHeight: '1',
                 color: '#ffffff'
               }}>
-                {emojiUsuario || '😊'}
+                {userEmoji || '😊'}
               </span>
             </div>
             <div>
@@ -200,15 +200,15 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
                   onClick={abrirModalNuevoTurno}
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg transform hover:scale-105 btn-primary"
                   style={{ 
-                    backgroundColor: coloresTemáticos?.base || '#EC4899',
+                    backgroundColor: thematicColors?.base || '#EC4899',
                     color: '#ffffff'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = coloresTemáticos?.dark || '#BE185D';
+                    e.target.style.backgroundColor = thematicColors?.dark || '#BE185D';
                     e.target.style.color = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+                    e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
                     e.target.style.color = '#ffffff';
                   }}
                 >
@@ -223,21 +223,21 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
                   style={{ 
                     borderWidth: '2px',
                     borderStyle: 'solid',
-                    borderColor: coloresTemáticos?.base || '#EC4899',
-                    color: coloresTemáticos?.base || '#EC4899',
+                    borderColor: thematicColors?.base || '#EC4899',
+                    color: thematicColors?.base || '#EC4899',
                     backgroundColor: '#ffffff'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)';
-                    e.target.style.color = coloresTemáticos?.base || '#EC4899';
+                    e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+                    e.target.style.color = thematicColors?.base || '#EC4899';
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.backgroundColor = '#ffffff';
-                    e.target.style.color = coloresTemáticos?.base || '#EC4899';
+                    e.target.style.color = thematicColors?.base || '#EC4899';
                   }}
                 >
-                  <Briefcase size={20} style={{ color: coloresTemáticos?.base || '#EC4899' }} />
-                  <span style={{ color: coloresTemáticos?.base || '#EC4899' }}>Nuevo Trabajo</span>
+                  <Briefcase size={20} style={{ color: thematicColors?.base || '#EC4899' }} />
+                  <span style={{ color: thematicColors?.base || '#EC4899' }}>Nuevo Trabajo</span>
                 </button>
               )}
             </div>
@@ -281,7 +281,7 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
               <div 
                 className="w-2 h-2 rounded-full ml-auto"
                 style={{ 
-                  backgroundColor: currentView === 'calendario' ? 'white' : coloresTemáticos?.base 
+                  backgroundColor: currentView === 'calendario' ? 'white' : thematicColors?.base 
                 }}
               />
             </motion.button>

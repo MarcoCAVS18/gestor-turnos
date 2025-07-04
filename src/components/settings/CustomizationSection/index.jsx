@@ -1,5 +1,3 @@
-// src/components/settings/CustomizationSection/index.jsx
-
 import React, { useState, useEffect } from 'react';
 import { Settings, Smile } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
@@ -18,10 +16,10 @@ const EMOJIS_COMUNES = ['😊', '😎', '🚀', '💼', '⭐', '🔥', '💻', '
 
 const CustomizationSection = () => {
   const { 
-    colorPrincipal: appColor, 
-    emojiUsuario: appEmoji, 
-    guardarPreferencias,
-    coloresTemáticos
+    primaryColor: appColor, 
+    userEmoji: appEmoji, 
+    savePreferences,
+    thematicColors
   } = useApp();
   
   const [emojiInput, setEmojiInput] = useState(appEmoji);
@@ -31,12 +29,12 @@ const CustomizationSection = () => {
   }, [appEmoji]);
 
   const cambiarColor = (nuevoColor) => {
-    guardarPreferencias({ colorPrincipal: nuevoColor });
+    savePreferences({ colorPrincipal: nuevoColor });
   };
 
   const cambiarEmoji = (nuevoEmoji) => {
     setEmojiInput(nuevoEmoji);
-    guardarPreferencias({ emojiUsuario: nuevoEmoji });
+    savePreferences({ emojiUsuario: nuevoEmoji });
   };
 
   const handleEmojiChange = (e) => {
@@ -44,9 +42,9 @@ const CustomizationSection = () => {
     setEmojiInput(valor);
     
     if (valor.trim() === '') {
-      guardarPreferencias({ emojiUsuario: '😊' });
+      savePreferences({ emojiUsuario: '😊' });
     } else {
-      guardarPreferencias({ emojiUsuario: valor });
+      savePreferences({ emojiUsuario: valor });
     }
   };
 
@@ -64,7 +62,7 @@ const CustomizationSection = () => {
               value={emojiInput}
               onChange={handleEmojiChange}
               className="w-16 h-10 border border-gray-300 rounded-md shadow-sm px-3 focus:outline-none focus:ring-2 text-xl"
-              style={{ '--tw-ring-color': coloresTemáticos?.base || appColor }}
+              style={{ '--tw-ring-color': thematicColors?.base || appColor }}
             />
             <p className="ml-3 text-sm text-gray-500">
               <Smile className="inline h-4 w-4 mb-1 mr-1" />
