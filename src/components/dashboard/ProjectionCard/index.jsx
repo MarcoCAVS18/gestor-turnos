@@ -5,14 +5,14 @@ import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 
 const ProjectionCard = ({ proyeccionMensual, horasTrabajadas }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
 
   if (proyeccionMensual <= 0) return null;
 
   return (
     <Card>
       <h3 className="text-lg font-semibold mb-3 flex items-center">
-        <BarChart3 size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
+        <BarChart3 size={20} style={{ color: thematicColors?.base }} className="mr-2" />
         Proyección mensual
       </h3>
       <div className="text-center">
@@ -21,7 +21,7 @@ const ProjectionCard = ({ proyeccionMensual, horasTrabajadas }) => {
         </p>
         <p 
           className="text-3xl font-bold" 
-          style={{ color: coloresTemáticos?.base }}
+          style={{ color: thematicColors?.base }}
         >
           ${proyeccionMensual.toFixed(2)}
         </p>

@@ -5,7 +5,7 @@ import { Target, Save, X } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 
 const GoalsSection = () => {
-  const { metaHorasSemanales, actualizarMetaHorasSemanales, coloresTemáticos } = useApp();
+  const { metaHorasSemanales, actualizarMetaHorasSemanales, thematicColors } = useApp();
   const [editando, setEditando] = useState(false);
   const [nuevaMeta, setNuevaMeta] = useState(metaHorasSemanales || '');
 
@@ -31,7 +31,7 @@ const GoalsSection = () => {
   return (
     <div className="bg-white rounded-xl shadow-md p-6 mb-6">
       <div className="flex items-center mb-4">
-        <Target size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
+        <Target size={20} style={{ color: thematicColors?.base }} className="mr-2" />
         <h3 className="text-lg font-semibold">Metas Semanales</h3>
       </div>
 
@@ -46,7 +46,7 @@ const GoalsSection = () => {
               <div>
                 {metaHorasSemanales ? (
                   <>
-                    <span className="text-lg font-semibold" style={{ color: coloresTemáticos?.base }}>
+                    <span className="text-lg font-semibold" style={{ color: thematicColors?.base }}>
                       {metaHorasSemanales} horas
                     </span>
                     <p className="text-sm text-gray-500">
@@ -61,8 +61,8 @@ const GoalsSection = () => {
                 onClick={() => setEditando(true)}
                 className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 style={{
-                  backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-                  color: coloresTemáticos?.base || '#EC4899'
+                  backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
+                  color: thematicColors?.base || '#EC4899'
                 }}
               >
                 {metaHorasSemanales ? 'Editar' : 'Configurar'}
@@ -80,7 +80,7 @@ const GoalsSection = () => {
                   max="168"
                   step="0.5"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-                  style={{ '--tw-ring-color': coloresTemáticos?.base || '#EC4899' }}
+                  style={{ '--tw-ring-color': thematicColors?.base || '#EC4899' }}
                 />
                 <span className="text-sm text-gray-500">horas</span>
               </div>
@@ -90,7 +90,7 @@ const GoalsSection = () => {
                   onClick={handleGuardar}
                   disabled={!nuevaMeta || parseFloat(nuevaMeta) <= 0}
                   className="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
-                  style={{ backgroundColor: coloresTemáticos?.base || '#EC4899' }}
+                  style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
                 >
                   <Save size={16} className="mr-1" />
                   Guardar
@@ -100,8 +100,8 @@ const GoalsSection = () => {
                   onClick={handleCancelar}
                   className="flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors"
                   style={{
-                    backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-                    color: coloresTemáticos?.base || '#EC4899'
+                    backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
+                    color: thematicColors?.base || '#EC4899'
                   }}
                 >
                   <X size={16} className="mr-1" />

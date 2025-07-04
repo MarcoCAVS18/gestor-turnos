@@ -5,7 +5,7 @@ import { Zap } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 
 const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
 
   // Verificar que tiposDeTurno sea válido
   const tiposValidos = tiposDeTurno && typeof tiposDeTurno === 'object' && !Array.isArray(tiposDeTurno) ? tiposDeTurno : {};
@@ -23,7 +23,7 @@ const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
     return (
       <div className="bg-white rounded-xl shadow-md p-4">
         <div className="flex items-center mb-4">
-          <Zap size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
+          <Zap size={18} style={{ color: thematicColors?.base || '#EC4899' }} className="mr-2" />
           <h3 className="font-semibold">Tipos de turno</h3>
         </div>
         <div className="text-center py-8 text-gray-500">
@@ -37,7 +37,7 @@ const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-4">
       <div className="flex items-center mb-4">
-        <Zap size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
+        <Zap size={18} style={{ color: thematicColors?.base || '#EC4899' }} className="mr-2" />
         <h3 className="font-semibold">Tipos de turno</h3>
       </div>
 

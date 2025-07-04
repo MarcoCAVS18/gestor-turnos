@@ -4,11 +4,11 @@ import React from 'react';
 import { Briefcase, Truck, Clock, DollarSign, Package, Navigation } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 
-const SelectorTipoTrabajo = ({ onSelectTipo, coloresTemáticos, isMobile }) => {
-  const { coloresTemáticos: contextColors } = useApp();
+const SelectorTipoTrabajo = ({ onSelectTipo, thematicColors, isMobile }) => {
+  const { thematicColors: contextColors } = useApp();
   
   // Usar colores del contexto si no se pasan como prop
-  const colors = coloresTemáticos || contextColors;
+  const colors = thematicColors || contextColors;
 
   const handleSelect = (tipo) => {
     onSelectTipo(tipo);

@@ -7,7 +7,7 @@ import TarjetaTurno from '../../cards/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
 
 const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
 
   // Formatear fecha
   const fechaObj = new Date(fecha + 'T00:00:00');
@@ -21,9 +21,9 @@ const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       {/* Encabezado del día */}
-      <div className="p-4 border-b border-gray-200" style={{ backgroundColor: coloresTemáticos?.transparent5 }}>
+      <div className="p-4 border-b border-gray-200" style={{ backgroundColor: thematicColors?.transparent5 }}>
         <div className="flex items-center gap-2">
-          <Calendar size={20} style={{ color: coloresTemáticos?.base }} />
+          <Calendar size={20} style={{ color: thematicColors?.base }} />
           <h3 className="font-semibold text-gray-900 capitalize">
             {diaSemana}, {fechaFormateada}
           </h3>

@@ -17,7 +17,7 @@ const Turnos = () => {
     borrarTurno, 
     trabajos, 
     trabajosDelivery,
-    coloresTemáticos
+    thematicColors
   } = useApp();
   
   const deleteManager = useDeleteManager(borrarTurno);
@@ -68,11 +68,11 @@ const Turnos = () => {
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
           <div 
             className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"
-            style={{ backgroundColor: coloresTemáticos?.transparent10 || 'rgba(255, 152, 0, 0.1)' }}
+            style={{ backgroundColor: thematicColors?.transparent10 || 'rgba(255, 152, 0, 0.1)' }}
           >
             <Briefcase 
               className="w-10 h-10" 
-              style={{ color: coloresTemáticos?.base || '#FF9800' }}
+              style={{ color: thematicColors?.base || '#FF9800' }}
             />
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Primero necesitas crear un trabajo</h3>
@@ -104,11 +104,11 @@ const Turnos = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
         <div 
           className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"
-          style={{ backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
+          style={{ backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
         >
           <Calendar 
             className="w-10 h-10" 
-            style={{ color: coloresTemáticos?.base || '#EC4899' }}
+            style={{ color: thematicColors?.base || '#EC4899' }}
           />
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay turnos registrados</h3>
@@ -119,15 +119,15 @@ const Turnos = () => {
           onClick={abrirModalNuevo}
           className="text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2 hover:shadow-md"
           style={{ 
-            backgroundColor: coloresTemáticos?.base || '#EC4899'
+            backgroundColor: thematicColors?.base || '#EC4899'
           }}
           onMouseEnter={(e) => {
-            if (coloresTemáticos?.dark) {
-              e.target.style.backgroundColor = coloresTemáticos.dark;
+            if (thematicColors?.dark) {
+              e.target.style.backgroundColor = thematicColors.dark;
             }
           }}
           onMouseLeave={(e) => {
-            e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+            e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
           }}
         >
           <Plus className="w-4 h-4" />
@@ -166,15 +166,15 @@ const Turnos = () => {
         onClick={abrirModalNuevo}
         className="text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 shadow-sm hover:shadow-md"
         style={{ 
-          backgroundColor: coloresTemáticos?.base || '#EC4899'
+          backgroundColor: thematicColors?.base || '#EC4899'
         }}
         onMouseEnter={(e) => {
-          if (coloresTemáticos?.dark) {
-            e.target.style.backgroundColor = coloresTemáticos.dark;
+          if (thematicColors?.dark) {
+            e.target.style.backgroundColor = thematicColors.dark;
           }
         }}
         onMouseLeave={(e) => {
-          e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+          e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
         }}
       >
         <Plus className="w-4 h-4" />
@@ -191,11 +191,11 @@ const Turnos = () => {
           <div className="flex items-center space-x-3">
             <div 
               className="p-2 rounded-lg"
-              style={{ backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
+              style={{ backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
             >
               <Calendar 
                 className="w-6 h-6" 
-                style={{ color: coloresTemáticos?.base || '#EC4899' }}
+                style={{ color: thematicColors?.base || '#EC4899' }}
               />
             </div>
             <div>

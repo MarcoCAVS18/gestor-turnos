@@ -5,7 +5,7 @@ import { useApp } from '../../../contexts/AppContext';
 import { Truck, Clock } from 'lucide-react';
 
 const TrabajoDeliveryForm = ({ isOpen, onClose, onSubmit, trabajoId = null, initialData = null }) => {
-  const { coloresTemáticos, vehiculos = [], plataformasDelivery = [] } = useApp();
+  const { thematicColors, vehiculos = [], plataformasDelivery = [] } = useApp();
   
   const [formData, setFormData] = useState({
     fecha: new Date().toISOString().split('T')[0],
@@ -123,7 +123,7 @@ const TrabajoDeliveryForm = ({ isOpen, onClose, onSubmit, trabajoId = null, init
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-bold flex items-center">
-              <Truck size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
+              <Truck size={20} style={{ color: thematicColors?.base }} className="mr-2" />
               {trabajoId ? 'Editar' : 'Nuevo'} Turno
             </h2>
             <button
@@ -298,7 +298,7 @@ const TrabajoDeliveryForm = ({ isOpen, onClose, onSubmit, trabajoId = null, init
               <button
                 type="submit"
                 className="flex-1 py-2 px-4 text-white rounded-lg hover:opacity-90 text-sm"
-                style={{ backgroundColor: coloresTemáticos?.base || '#3B82F6' }}
+                style={{ backgroundColor: thematicColors?.base || '#3B82F6' }}
               >
                 {trabajoId ? 'Actualizar' : 'Guardar'}
               </button>

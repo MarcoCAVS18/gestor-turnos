@@ -3,53 +3,81 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Package, Car, DollarSign, TrendingUp } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import ThemeInput from '../../ui/ThemeInput';
+import Button from '../../ui/Button';
 
-const TurnoDeliveryForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onTrabajoChange }) => {
-  const { coloresTemáticos } = useApp();
+const TurnoDeliveryForm = ({ 
+  turno, 
+  trabajoId, 
+  trabajos, 
+  onSubmit, 
+  onCancel, 
+  onTrabajoChange,
+  thematicColors,
+  isMobile,
+  loading 
+}) => {
+  const { thematicColors: contextColors } = useApp();
+  const coloresTemáticos = thematicColors || contextColors;
   
   // Estados del formulario
-  const [fecha, setFecha] = useState('');
-  const [horaInicio, setHoraInicio] = useState('');
-  const [horaFin, setHoraFin] = useState('');
-  const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(trabajoId || '');
-  const [numeroPedidos, setNumeroPedidos] = useState('');
-  const [gananciaTotal, setGananciaTotal] = useState('');
-  const [propinas, setPropinas] = useState('');
-  const [kilometros, setKilometros] = useState('');
-  const [gastoCombustible, setGastoCombustible] = useState('');
-  const [notas, setNotas] = useState('');
-  const [guardando, setGuardando] = useState(false);
+  const [formData, setFormData] = useState({
+    fecha: '',
+    horaInicio: '',
+    horaFin: '',
+    trabajoSeleccionado: trabajoId || '',
+    numeroPedidos: '',
+    gananciaTotal: '',
+    propinas: '',
+    kilometros: '',
+    gastoCombustible: '',
+    notas: ''
+  });
+  
   const [error, setError] = useState('');
 
   // Filtrar solo trabajos de delivery
-  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
+  const trabajosDelivery = trabajos.filter(t => t.type === 'delivery');
 
   // Cargar datos si es edición
   useEffect(() => {
     if (turno) {
-      setFecha(turno.fecha || '');
-      setHoraInicio(turno.horaInicio || '');
-      setHoraFin(turno.horaFin || '');
-      setTrabajoSeleccionado(turno.trabajoId || '');
-      setNumeroPedidos(turno.numeroPedidos || '');
-      setGananciaTotal(turno.gananciaTotal || '');
-      setPropinas(turno.propinas || '');
-      setKilometros(turno.kilometros || '');
-      setGastoCombustible(turno.gastoCombustible || '');
-      setNotas(turno.notas || '');
+      setFormData({
+        fecha: turno.fecha || '',
+        horaInicio: turno.horaInicio || '',
+        horaFin: turno.horaFin || '',
+        trabajoSeleccionado: turno.trabajoId || '',
+        numeroPedidos: turno.numeroPedidos?.toString() || '',
+        gananciaTotal: turno.gananciaTotal?.toString() || '',
+        propinas: turno.propinas?.toString() || '',
+        kilometros: turno.kilometros?.toString() || '',
+        gastoCombustible: turno.gastoCombustible?.toString() || '',
+        notas: turno.notas || ''
+      });
     }
   }, [turno]);
 
   // Actualizar trabajo seleccionado si cambia el prop
   useEffect(() => {
-    if (trabajoId && trabajoId !== trabajoSeleccionado) {
-      setTrabajoSeleccionado(trabajoId);
+    if (trabajoId && trabajoId !== formData.trabajoSeleccionado) {
+      setFormData(prev => ({
+        ...prev,
+        trabajoSeleccionado: trabajoId
+      }));
     }
-  }, [trabajoId, trabajoSeleccionado]);
+  }, [trabajoId, formData.trabajoSeleccionado]);
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    setError(''); // Limpiar error al cambiar datos
+  };
 
   const handleTrabajoChange = (e) => {
     const nuevoTrabajoId = e.target.value;
-    setTrabajoSeleccionado(nuevoTrabajoId);
+    handleInputChange('trabajoSeleccionado', nuevoTrabajoId);
     
     // Notificar al modal sobre el cambio
     if (onTrabajoChange) {
@@ -58,22 +86,34 @@ const TurnoDeliveryForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onT
   };
 
   const validarFormulario = () => {
-    if (!fecha) {
+    if (!formData.fecha) {
       setError('La fecha es requerida');
       return false;
     }
-    if (!horaInicio || !horaFin) {
+    if (!formData.horaInicio || !formData.horaFin) {
       setError('Las horas de inicio y fin son requeridas');
       return false;
     }
-    if (!trabajoSeleccionado) {
+    if (!formData.trabajoSeleccionado) {
       setError('Debes seleccionar un trabajo de delivery');
       return false;
     }
-    if (gananciaTotal === '' || isNaN(Number(gananciaTotal))) {
+    if (!formData.gananciaTotal || isNaN(Number(formData.gananciaTotal))) {
       setError('La ganancia total debe ser un número válido');
       return false;
     }
+    
+    // Validar que la hora de fin sea mayor que la de inicio
+    const [horaI, minI] = formData.horaInicio.split(':').map(Number);
+    const [horaF, minF] = formData.horaFin.split(':').map(Number);
+    const minutosInicio = horaI * 60 + minI;
+    const minutosFin = horaF * 60 + minF;
+    
+    if (minutosFin <= minutosInicio) {
+      setError('La hora de fin debe ser posterior a la hora de inicio');
+      return false;
+    }
+    
     return true;
   };
 
@@ -82,53 +122,52 @@ const TurnoDeliveryForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onT
     
     if (!validarFormulario()) return;
 
-    setGuardando(true);
-    setError('');
+    const datosTurno = {
+      fecha: formData.fecha,
+      horaInicio: formData.horaInicio,
+      horaFin: formData.horaFin,
+      trabajoId: formData.trabajoSeleccionado,
+      type: 'delivery',
+      numeroPedidos: Number(formData.numeroPedidos) || 0,
+      gananciaTotal: Number(formData.gananciaTotal) || 0,
+      propinas: Number(formData.propinas) || 0,
+      kilometros: Number(formData.kilometros) || 0,
+      gastoCombustible: Number(formData.gastoCombustible) || 0,
+      notas: formData.notas.trim()
+    };
 
-    try {
-      const datosTurno = {
-        fecha,
-        horaInicio,
-        horaFin,
-        trabajoId: trabajoSeleccionado,
-        tipo: 'delivery',
-        numeroPedidos: Number(numeroPedidos) || 0,
-        gananciaTotal: Number(gananciaTotal) || 0,
-        propinas: Number(propinas) || 0,
-        kilometros: Number(kilometros) || 0,
-        gastoCombustible: Number(gastoCombustible) || 0,
-        notas: notas.trim()
-      };
-
-      await onSubmit(datosTurno);
-    } catch (err) {
-      setError(err.message || 'Error al guardar el turno');
-      setGuardando(false);
-    }
+    await onSubmit(datosTurno);
   };
 
   return (
-    <form onSubmit={manejarSubmit} className="space-y-4">
+    <form 
+      onSubmit={manejarSubmit} 
+      className={`space-y-6 ${isMobile ? 'mobile-form' : ''}`}
+    >
       {/* Trabajo de delivery */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          <Package size={16} className="inline mr-1" />
-          Trabajo de delivery
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          <Package size={16} className="inline mr-2" />
+          Trabajo de delivery *
         </label>
         <select
-          value={trabajoSeleccionado}
+          value={formData.trabajoSeleccionado}
           onChange={handleTrabajoChange}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+          className={`
+            w-full border rounded-lg transition-colors
+            ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+            ${error && !formData.trabajoSeleccionado ? 'border-red-500' : 'border-gray-300'}
+          `}
           style={{ 
             '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
           }}
           required
-          disabled={turno} // No permitir cambiar trabajo en edición
+          disabled={turno || loading} // No permitir cambiar trabajo en edición
         >
           <option value="">Seleccionar trabajo</option>
           {trabajosDelivery.map(trabajo => (
             <option key={trabajo.id} value={trabajo.id}>
-              {trabajo.nombre} - {trabajo.plataforma}
+              {trabajo.nombre} - {trabajo.platform || trabajo.plataforma}
             </option>
           ))}
         </select>
@@ -140,178 +179,190 @@ const TurnoDeliveryForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onT
       </div>
 
       {/* Fecha y horario */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-3'}`}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Calendar size={16} className="inline mr-1" />
-            Fecha
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Calendar size={16} className="inline mr-2" />
+            Fecha *
           </label>
-          <input
+          <ThemeInput
             type="date"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-            style={{ 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-            }}
+            value={formData.fecha}
+            onChange={(e) => handleInputChange('fecha', e.target.value)}
+            className={`
+              w-full border rounded-lg transition-colors
+              ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+            `}
             required
+            themeColor={coloresTemáticos?.base}
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Clock size={16} className="inline mr-1" />
-            Inicio
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Clock size={16} className="inline mr-2" />
+            Inicio *
           </label>
-          <input
+          <ThemeInput
             type="time"
-            value={horaInicio}
-            onChange={(e) => setHoraInicio(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-            style={{ 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-            }}
+            value={formData.horaInicio}
+            onChange={(e) => handleInputChange('horaInicio', e.target.value)}
+            className={`
+              w-full border rounded-lg transition-colors
+              ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+            `}
             required
+            themeColor={coloresTemáticos?.base}
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Clock size={16} className="inline mr-1" />
-            Fin
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Clock size={16} className="inline mr-2" />
+            Fin *
           </label>
-          <input
+          <ThemeInput
             type="time"
-            value={horaFin}
-            onChange={(e) => setHoraFin(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-            style={{ 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-            }}
+            value={formData.horaFin}
+            onChange={(e) => handleInputChange('horaFin', e.target.value)}
+            className={`
+              w-full border rounded-lg transition-colors
+              ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+            `}
             required
+            themeColor={coloresTemáticos?.base}
           />
         </div>
       </div>
 
       {/* Información de pedidos */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <h3 className="text-sm font-medium text-gray-700">Información del turno</h3>
         
-        <div className="grid grid-cols-2 gap-3">
+        <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-4'}`}>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              <Package size={14} className="inline mr-1" />
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Package size={16} className="inline mr-2" />
               Número de pedidos
             </label>
-            <input
+            <ThemeInput
               type="number"
-              value={numeroPedidos}
-              onChange={(e) => setNumeroPedidos(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-              style={{ 
-                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-              }}
+              value={formData.numeroPedidos}
+              onChange={(e) => handleInputChange('numeroPedidos', e.target.value)}
+              className={`
+                w-full border rounded-lg transition-colors
+                ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+              `}
               placeholder="0"
               min="0"
+              themeColor={coloresTemáticos?.base}
             />
           </div>
           
           <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              <Car size={14} className="inline mr-1" />
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Car size={16} className="inline mr-2" />
               Kilómetros recorridos
             </label>
-            <input
+            <ThemeInput
               type="number"
-              value={kilometros}
-              onChange={(e) => setKilometros(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-              style={{ 
-                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-              }}
+              value={formData.kilometros}
+              onChange={(e) => handleInputChange('kilometros', e.target.value)}
+              className={`
+                w-full border rounded-lg transition-colors
+                ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+              `}
               placeholder="0"
               min="0"
               step="0.1"
+              themeColor={coloresTemáticos?.base}
             />
           </div>
         </div>
       </div>
 
       {/* Información financiera */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-gray-700">Ganancias</h3>
+      <div className="space-y-4">
+        <h3 className="text-sm font-medium text-gray-700">Ganancias *</h3>
         
-        <div className="grid grid-cols-2 gap-3">
+        <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-4'}`}>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              <DollarSign size={14} className="inline mr-1" />
-              Ganancia total
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <DollarSign size={16} className="inline mr-2" />
+              Ganancia total *
             </label>
-            <input
+            <ThemeInput
               type="number"
-              value={gananciaTotal}
-              onChange={(e) => setGananciaTotal(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-              style={{ 
-                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-              }}
-              placeholder="0"
+              value={formData.gananciaTotal}
+              onChange={(e) => handleInputChange('gananciaTotal', e.target.value)}
+              className={`
+                w-full border rounded-lg transition-colors
+                ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+                ${error && !formData.gananciaTotal ? 'border-red-500' : 'border-gray-300'}
+              `}
+              placeholder="0.00"
               step="0.01"
               required
+              themeColor={coloresTemáticos?.base}
             />
           </div>
           
           <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              <TrendingUp size={14} className="inline mr-1" />
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <TrendingUp size={16} className="inline mr-2" />
               Propinas
             </label>
-            <input
+            <ThemeInput
               type="number"
-              value={propinas}
-              onChange={(e) => setPropinas(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-              style={{ 
-                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-              }}
-              placeholder="0"
+              value={formData.propinas}
+              onChange={(e) => handleInputChange('propinas', e.target.value)}
+              className={`
+                w-full border rounded-lg transition-colors
+                ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+              `}
+              placeholder="0.00"
               step="0.01"
+              themeColor={coloresTemáticos?.base}
             />
           </div>
         </div>
         
         <div>
-          <label className="block text-sm text-gray-600 mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Gasto en combustible
           </label>
-          <input
+          <ThemeInput
             type="number"
-            value={gastoCombustible}
-            onChange={(e) => setGastoCombustible(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-            style={{ 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-            }}
-            placeholder="0"
+            value={formData.gastoCombustible}
+            onChange={(e) => handleInputChange('gastoCombustible', e.target.value)}
+            className={`
+              w-full border rounded-lg transition-colors
+              ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+            `}
+            placeholder="0.00"
             step="0.01"
+            themeColor={coloresTemáticos?.base}
           />
         </div>
       </div>
 
       {/* Notas */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Notas (opcional)
         </label>
         <textarea
-          value={notas}
-          onChange={(e) => setNotas(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-          style={{ 
-            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-          }}
-          rows="2"
+          value={formData.notas}
+          onChange={(e) => handleInputChange('notas', e.target.value)}
           placeholder="ej: Día lluvioso, mucha demanda..."
+          rows={isMobile ? 4 : 3}
+          className={`
+            w-full border border-gray-300 rounded-lg transition-colors resize-none
+            ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+          `}
+          style={{
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+          }}
         />
       </div>
 
@@ -323,36 +374,58 @@ const TurnoDeliveryForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onT
       )}
 
       {/* Botones */}
-      <div className="flex gap-3 pt-2">
-        <button
+      <div className={`flex pt-4 ${isMobile ? 'flex-col space-y-3' : 'gap-3'}`}>
+        <Button
           type="button"
           onClick={onCancel}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          disabled={guardando}
+          variant="outline"
+          className={isMobile ? 'w-full py-3' : 'flex-1'}
+          disabled={loading}
+          themeColor={coloresTemáticos?.base}
         >
           Cancelar
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
-          disabled={guardando}
-          className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+          className={isMobile ? 'w-full py-3' : 'flex-1'}
+          loading={loading}
+          themeColor={coloresTemáticos?.base}
+        >
+          {turno ? 'Guardar Cambios' : 'Crear Turno'}
+        </Button>
+      </div>
+
+      {/* Vista previa de ganancias */}
+      {formData.gananciaTotal && (
+        <div 
+          className={`rounded-lg p-4 border-l-4 ${isMobile ? 'mt-4' : 'mt-2'}`}
           style={{ 
-            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base || '#EC4899',
-          }}
-          onMouseEnter={(e) => {
-            if (!guardando && coloresTemáticos?.dark) {
-              e.target.style.backgroundColor = coloresTemáticos.dark;
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!guardando) {
-              e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
-            }
+            borderLeftColor: coloresTemáticos?.base || '#EC4899',
+            backgroundColor: `${coloresTemáticos?.base || '#EC4899'}10`
           }}
         >
-          {guardando ? 'Guardando...' : (turno ? 'Guardar Cambios' : 'Crear Turno')}
-        </button>
-      </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">Ganancia bruta:</span>
+              <span className="font-medium">${formData.gananciaTotal}</span>
+            </div>
+            {formData.gastoCombustible && (
+              <>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Gasto combustible:</span>
+                  <span className="text-red-600">-${formData.gastoCombustible}</span>
+                </div>
+                <div className="flex items-center justify-between text-sm font-medium border-t pt-2">
+                  <span>Ganancia neta:</span>
+                  <span style={{ color: thematicColors?.base || '#EC4899' }}>
+                    ${(Number(formData.gananciaTotal) - Number(formData.gastoCombustible || 0)).toFixed(2)}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </form>
   );
 };

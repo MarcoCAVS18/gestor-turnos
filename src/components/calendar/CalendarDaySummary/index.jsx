@@ -15,7 +15,7 @@ const CalendarDaySummary = ({
   onNuevoTurno 
 }) => {
   // Obtener TODOS los trabajos (tradicionales + delivery)
-  const { trabajos, trabajosDelivery, calcularPago, coloresTemáticos } = useApp();
+  const { trabajos, trabajosDelivery, calcularPago, thematicColors } = useApp();
 
   const calcularTotalDia = (turnosList) => {
     if (!Array.isArray(turnosList) || turnosList.length === 0) {
@@ -80,10 +80,10 @@ const CalendarDaySummary = ({
           {/* Header del día */}
           <div 
             className="px-4 py-3 border-b rounded-t-xl"
-            style={{ backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
+            style={{ backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
           >
             <div className="flex items-center">
-              <Calendar size={18} style={{ color: coloresTemáticos?.base || '#EC4899' }} className="mr-2" />
+              <Calendar size={18} style={{ color: thematicColors?.base || '#EC4899' }} className="mr-2" />
               <h3 className="font-semibold">{formatearFecha(fechaSeleccionada)}</h3>
             </div>
           </div>
@@ -140,12 +140,12 @@ const CalendarDaySummary = ({
             {/* Total del día */}
             <div 
               className="flex justify-between px-4 py-3 rounded-lg mt-4"
-              style={{ backgroundColor: coloresTemáticos?.transparent5 || 'rgba(0,0,0,0.05)' }}
+              style={{ backgroundColor: thematicColors?.transparent5 || 'rgba(0,0,0,0.05)' }}
             >
               <span className="font-semibold">Total del día:</span>
               <span 
                 className="font-semibold"
-                style={{ color: coloresTemáticos?.base || '#EC4899' }}
+                style={{ color: thematicColors?.base || '#EC4899' }}
               >
                 ${totalDia.toFixed(2)}
               </span>

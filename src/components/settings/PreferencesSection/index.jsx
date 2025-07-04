@@ -11,7 +11,7 @@ const PreferencesSection = ({ onError, onSuccess }) => {
   const { 
     descuentoDefault: appDescuento, 
     guardarPreferencias,
-    coloresTemáticos 
+    thematicColors 
   } = useApp();
   
   const [descuentoDefault, setDescuentoDefault] = useState(appDescuento);
@@ -54,7 +54,7 @@ const PreferencesSection = ({ onError, onSuccess }) => {
             value={descuentoDefault}
             onChange={(e) => setDescuentoDefault(Number(e.target.value))}
             className="flex-1 px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2"
-            style={{ '--tw-ring-color': coloresTemáticos?.base || '#EC4899' }}
+            style={{ '--tw-ring-color': thematicColors?.base || '#EC4899' }}
             placeholder="15"
           />
           <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">

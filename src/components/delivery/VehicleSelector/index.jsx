@@ -6,7 +6,7 @@ import { DELIVERY_VEHICLES } from '../../../constants/delivery';
 import { useApp } from '../../../contexts/AppContext';
 
 const VehicleButton = ({ vehicle, isSelected, onClick }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   
   const getVehicleIcon = (vehicleId) => {
     const icons = {
@@ -30,8 +30,8 @@ const VehicleButton = ({ vehicle, isSelected, onClick }) => {
           : 'border-gray-200 hover:border-gray-300 bg-white'
       }`}
       style={{
-        borderColor: isSelected ? coloresTemáticos?.base : undefined,
-        backgroundColor: isSelected ? coloresTemáticos?.transparent10 : undefined
+        borderColor: isSelected ? thematicColors?.base : undefined,
+        backgroundColor: isSelected ? thematicColors?.transparent10 : undefined
       }}
     >
       <div 
@@ -46,7 +46,7 @@ const VehicleButton = ({ vehicle, isSelected, onClick }) => {
       {isSelected && (
         <div 
           className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: coloresTemáticos?.base }}
+          style={{ backgroundColor: thematicColors?.base }}
         >
           <Check size={14} className="text-white" />
         </div>

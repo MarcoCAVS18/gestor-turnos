@@ -6,7 +6,7 @@ import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 
 const EficienciaVehiculos = ({ deliveryStats }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
   React.useEffect(() => {
@@ -70,7 +70,7 @@ const EficienciaVehiculos = ({ deliveryStats }) => {
     <Card>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center">
-          <Car size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
+          <Car size={20} style={{ color: thematicColors?.base }} className="mr-2" />
           Eficiencia por Vehículo
         </h3>
       </div>
@@ -155,13 +155,13 @@ const EficienciaVehiculos = ({ deliveryStats }) => {
         <div className="grid grid-cols-2 gap-4 text-sm text-center">
           <div>
             <p className="text-gray-600">Total recorrido</p>
-            <p className="font-semibold" style={{ color: coloresTemáticos?.base }}>
+            <p className="font-semibold" style={{ color: thematicColors?.base }}>
               {deliveryStats.totalKilometros.toFixed(1)} km
             </p>
           </div>
           <div>
             <p className="text-gray-600">Eficiencia promedio</p>
-            <p className="font-semibold" style={{ color: coloresTemáticos?.base }}>
+            <p className="font-semibold" style={{ color: thematicColors?.base }}>
               {deliveryStats.eficienciaCombustible.toFixed(1)} km/peso
             </p>
           </div>

@@ -8,7 +8,7 @@ const CalendarHeader = ({
   anioActual, 
   onCambiarMes, 
   onIrAHoy, 
-  coloresTemáticos 
+  thematicColors 
 }) => {
   const getNombreMes = () => {
     return new Date(anioActual, mesActual, 1).toLocaleDateString('es-ES', { month: 'long' });
@@ -17,7 +17,7 @@ const CalendarHeader = ({
   return (
     <div
       className="p-4 text-white flex justify-between items-center"
-      style={{ backgroundColor: coloresTemáticos?.base || '#EC4899' }}
+      style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
     >
       <button
         onClick={() => onCambiarMes(-1)}

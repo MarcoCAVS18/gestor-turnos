@@ -8,7 +8,7 @@ import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
 const NextShiftCard = ({ proximoTurno, formatearFecha }) => {
-  const { trabajos, coloresTemáticos } = useApp();
+  const { trabajos, thematicColors } = useApp();
   const navigate = useNavigate();
 
   if (!proximoTurno) return null;
@@ -19,7 +19,7 @@ const NextShiftCard = ({ proximoTurno, formatearFecha }) => {
   return (
     <Card>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
-        <Star size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
+        <Star size={20} style={{ color: thematicColors?.base }} className="mr-2" />
         Próximo turno
       </h3>
       <div className="flex items-center justify-between">

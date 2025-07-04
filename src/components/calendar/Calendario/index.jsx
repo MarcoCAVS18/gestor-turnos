@@ -10,7 +10,7 @@ import CalendarSummary from '../CalendarSummary';
 import CalendarGrid from '../CalendarGrid';
 
 const Calendario = ({ onDiaSeleccionado }) => {
-  const { turnosPorFecha, todosLosTrabajos, coloresTemáticos } = useApp();
+  const { turnosPorFecha, todosLosTrabajos, thematicColors } = useApp();
   
   // Obtener todos los turnos combinados del contexto
   const todosLosTurnos = React.useMemo(() => {
@@ -47,12 +47,12 @@ const Calendario = ({ onDiaSeleccionado }) => {
         anioActual={anioActual}
         onCambiarMes={cambiarMes}
         onIrAHoy={irAHoy}
-        coloresTemáticos={coloresTemáticos}
+        thematicColors={thematicColors}
       />
 
       <CalendarSummary
         totalTurnos={turnosMes.length}
-        coloresTemáticos={coloresTemáticos}
+        thematicColors={thematicColors}
       />
 
       <CalendarGrid
@@ -60,7 +60,7 @@ const Calendario = ({ onDiaSeleccionado }) => {
         fechaActual={fechaActual}
         diaSeleccionadoActual={diaSeleccionadoActual}
         trabajos={todosLosTrabajos || []}
-        coloresTemáticos={coloresTemáticos}
+        thematicColors={thematicColors}
         onDiaClick={irADia}
       />
     </Card>

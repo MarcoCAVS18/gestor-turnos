@@ -9,7 +9,7 @@ import Button from '../../ui/Button';
 
 const ProfileSection = ({ onError, onSuccess }) => {
   const { currentUser, updateUserName } = useAuth();
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
   const [editingName, setEditingName] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -44,7 +44,7 @@ const ProfileSection = ({ onError, onSuccess }) => {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
-                style={{ '--tw-ring-color': coloresTemáticos?.base || '#EC4899' }}
+                style={{ '--tw-ring-color': thematicColors?.base || '#EC4899' }}
               />
               <Button
                 onClick={handleSaveName}
@@ -60,7 +60,7 @@ const ProfileSection = ({ onError, onSuccess }) => {
               <button
                 onClick={() => setEditingName(true)}
                 className="ml-2 transition-colors"
-                style={{ color: coloresTemáticos?.base || '#EC4899' }}
+                style={{ color: thematicColors?.base || '#EC4899' }}
               >
                 <Edit2 className="h-4 w-4" />
               </button>

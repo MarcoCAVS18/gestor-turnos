@@ -6,7 +6,7 @@ const CalendarDayCell = ({
   esHoy,
   esSeleccionado,
   coloresTrabajos,
-  coloresTemáticos,
+  thematicColors,
   onClick
 }) => {
   return (
@@ -20,7 +20,7 @@ const CalendarDayCell = ({
       `}
       style={{
         backgroundColor: esSeleccionado
-          ? coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)'
+          ? thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)'
           : 'transparent'
       }}
     >
@@ -29,7 +29,7 @@ const CalendarDayCell = ({
         <div
           className="absolute inset-0 m-auto rounded-full w-10 h-10 animate-pulse"
           style={{
-            border: `2px solid ${coloresTemáticos?.base || '#EC4899'}`
+            border: `2px solid ${thematicColors?.base || '#EC4899'}`
           }}
         />
       )}
@@ -39,17 +39,17 @@ const CalendarDayCell = ({
         className="rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200"
         style={{
           backgroundColor: esHoy
-            ? coloresTemáticos?.base || '#EC4899'
+            ? thematicColors?.base || '#EC4899'
             : (esSeleccionado && !esHoy)
-              ? coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+              ? thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
               : 'transparent',
           color: esHoy
-            ? coloresTemáticos?.textContrast || '#ffffff'
+            ? thematicColors?.textContrast || '#ffffff'
             : 'inherit',
           fontWeight: esHoy ? 'bold' : 'normal',
           transform: esHoy ? 'scale(1.1)' : 'scale(1)',
           boxShadow: esHoy
-            ? `0 4px 12px ${coloresTemáticos?.transparent50 || 'rgba(236, 72, 153, 0.5)'}`
+            ? `0 4px 12px ${thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)'}`
             : 'none'
         }}
       >

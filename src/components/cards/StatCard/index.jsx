@@ -15,7 +15,7 @@ const StatCard = ({
   className = '',
   onClick 
 }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   
   const getSizeClasses = () => {
     const sizes = {
@@ -51,7 +51,7 @@ const StatCard = ({
           {Icon && (
             <Icon 
               size={size === 'sm' ? 16 : size === 'lg' ? 24 : 20} 
-              style={{ color: coloresTemáticos?.base || '#EC4899' }} 
+              style={{ color: thematicColors?.base || '#EC4899' }} 
             />
           )}
         </div>
@@ -59,7 +59,7 @@ const StatCard = ({
         {/* Valor principal */}
         <p 
           className={`${getValueSize()} font-bold mb-1`}
-          style={{ color: coloresTemáticos?.base || '#EC4899' }}
+          style={{ color: thematicColors?.base || '#EC4899' }}
         >
           {value}
         </p>

@@ -4,7 +4,7 @@ import React from 'react';
 import { useApp } from '../../../contexts/AppContext';
 
 const Switch = ({ checked, onChange, disabled = false, size = 'md' }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   
   const getSizeClasses = () => {
     const sizes = {
@@ -27,7 +27,7 @@ const Switch = ({ checked, onChange, disabled = false, size = 'md' }) => {
   };
 
   // Usar colores temáticos si estan disponibles
-  const activeColor = coloresTemáticos?.base || '#EC4899';
+  const activeColor = thematicColors?.base || '#EC4899';
 
   return (
     <button

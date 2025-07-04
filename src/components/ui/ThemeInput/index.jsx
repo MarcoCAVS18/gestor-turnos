@@ -5,11 +5,11 @@ import { useApp } from '../../../contexts/AppContext';
 import Input from '../Input';
 
 const ThemeInput = ({ ...props }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   
   return (
     <Input 
-      focusColor={coloresTemáticos?.base || '#EC4899'}
+      focusColor={thematicColors?.base || '#EC4899'}
       {...props} 
     />
   );

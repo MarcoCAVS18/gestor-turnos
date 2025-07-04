@@ -8,7 +8,7 @@ import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
 const FavoriteWorksCard = ({ trabajosFavoritos }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   const navigate = useNavigate();
 
   if (trabajosFavoritos.length === 0) return null;
@@ -17,7 +17,7 @@ const FavoriteWorksCard = ({ trabajosFavoritos }) => {
     <Card>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center">
-          <BarChart3 size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
+          <BarChart3 size={20} style={{ color: thematicColors?.base }} className="mr-2" />
           Trabajos favoritos
         </h3>
         <Button
@@ -49,7 +49,7 @@ const FavoriteWorksCard = ({ trabajosFavoritos }) => {
             </div>
             <p 
               className="text-sm font-semibold" 
-              style={{ color: coloresTemáticos?.base }}
+              style={{ color: thematicColors?.base }}
             >
               ${trabajoInfo.ganancia.toFixed(0)}
             </p>

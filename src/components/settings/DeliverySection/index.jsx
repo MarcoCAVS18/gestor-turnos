@@ -7,7 +7,7 @@ import SettingsSection from '../SettingsSection';
 import Switch from '../../ui/Switch';
 
 const DeliverySection = ({ onError, onSuccess }) => {
-  const { deliveryEnabled, savePreferences, coloresTemáticos } = useApp();
+  const { deliveryEnabled, savePreferences, thematicColors } = useApp();
   
   const handleToggle = async (newValue) => {
     try {
@@ -44,12 +44,12 @@ const DeliverySection = ({ onError, onSuccess }) => {
           <div 
             className="p-4 rounded-lg border"
             style={{ 
-              backgroundColor: coloresTemáticos?.transparent5 || 'rgba(236, 72, 153, 0.05)',
-              borderColor: coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+              backgroundColor: thematicColors?.transparent5 || 'rgba(236, 72, 153, 0.05)',
+              borderColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
             }}
           >
             <div className="flex items-start">
-              <Info size={16} className="mt-0.5 mr-2 flex-shrink-0" style={{ color: coloresTemáticos?.base }} />
+              <Info size={16} className="mt-0.5 mr-2 flex-shrink-0" style={{ color: thematicColors?.base }} />
               <div className="text-sm space-y-1">
                 <p className="font-medium">¿Cómo funciona?</p>
                 <ul className="space-y-1 text-gray-600">

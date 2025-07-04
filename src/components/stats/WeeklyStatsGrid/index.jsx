@@ -5,7 +5,7 @@ import { DollarSign, Clock, Target, Activity } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 
 const WeeklyStatsGrid = ({ datos = {} }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
 
   const datosSeguro = {
     totalGanado: (datos && typeof datos.totalGanado === 'number' && !isNaN(datos.totalGanado)) ? datos.totalGanado : 0,
@@ -19,25 +19,25 @@ const WeeklyStatsGrid = ({ datos = {} }) => {
       icon: DollarSign,
       label: 'Total ganado',
       value: `${datosSeguro.totalGanado.toFixed(2)}`,
-      color: coloresTemáticos?.base || '#EC4899'
+      color: thematicColors?.base || '#EC4899'
     },
     {
       icon: Clock,
       label: 'Horas trabajadas',
       value: `${datosSeguro.horasTrabajadas.toFixed(1)}h`,
-      color: coloresTemáticos?.base || '#EC4899'
+      color: thematicColors?.base || '#EC4899'
     },
     {
       icon: Target,
       label: 'Total turnos',
       value: datosSeguro.totalTurnos,
-      color: coloresTemáticos?.base || '#EC4899'
+      color: thematicColors?.base || '#EC4899'
     },
     {
       icon: Activity,
       label: 'Días trabajados',
       value: `${datosSeguro.diasTrabajados}/7`,
-      color: coloresTemáticos?.base || '#EC4899'
+      color: thematicColors?.base || '#EC4899'
     }
   ];
 

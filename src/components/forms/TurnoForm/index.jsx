@@ -3,40 +3,71 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Briefcase } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import ThemeInput from '../../ui/ThemeInput';
+import Button from '../../ui/Button';
 
-const TurnoForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onTrabajoChange }) => {
-  const { coloresTemáticos } = useApp();
+const TurnoForm = ({ 
+  turno, 
+  trabajoId, 
+  trabajos, 
+  onSubmit, 
+  onCancel, 
+  onTrabajoChange,
+  thematicColors,
+  isMobile,
+  loading 
+}) => {
+  const { thematicColors: contextColors } = useApp();
+  const coloresTemáticos = thematicColors || contextColors;
   
   // Estados del formulario
-  const [fecha, setFecha] = useState('');
-  const [horaInicio, setHoraInicio] = useState('');
-  const [horaFin, setHoraFin] = useState('');
-  const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(trabajoId || '');
-  const [notas, setNotas] = useState('');
-  const [guardando, setGuardando] = useState(false);
+  const [formData, setFormData] = useState({
+    fecha: '',
+    horaInicio: '',
+    horaFin: '',
+    trabajoSeleccionado: trabajoId || '',
+    notas: ''
+  });
+  
   const [error, setError] = useState('');
+
+  // Filtrar trabajos tradicionales (no delivery)
+  const trabajosTradicionales = trabajos.filter(t => t.type !== 'delivery');
 
   // Cargar datos si es edición
   useEffect(() => {
     if (turno) {
-      setFecha(turno.fecha || '');
-      setHoraInicio(turno.horaInicio || '');
-      setHoraFin(turno.horaFin || '');
-      setTrabajoSeleccionado(turno.trabajoId || '');
-      setNotas(turno.notas || '');
+      setFormData({
+        fecha: turno.fecha || '',
+        horaInicio: turno.horaInicio || '',
+        horaFin: turno.horaFin || '',
+        trabajoSeleccionado: turno.trabajoId || '',
+        notas: turno.notas || ''
+      });
     }
   }, [turno]);
 
   // Actualizar trabajo seleccionado si cambia el prop
   useEffect(() => {
-    if (trabajoId && trabajoId !== trabajoSeleccionado) {
-      setTrabajoSeleccionado(trabajoId);
+    if (trabajoId && trabajoId !== formData.trabajoSeleccionado) {
+      setFormData(prev => ({
+        ...prev,
+        trabajoSeleccionado: trabajoId
+      }));
     }
-  }, [trabajoId, trabajoSeleccionado]);
+  }, [trabajoId, formData.trabajoSeleccionado]);
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    setError(''); // Limpiar error al cambiar datos
+  };
 
   const handleTrabajoChange = (e) => {
     const nuevoTrabajoId = e.target.value;
-    setTrabajoSeleccionado(nuevoTrabajoId);
+    handleInputChange('trabajoSeleccionado', nuevoTrabajoId);
     
     // Notificar al modal si el trabajo seleccionado es de delivery
     if (onTrabajoChange) {
@@ -45,22 +76,22 @@ const TurnoForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onTrabajoCh
   };
 
   const validarFormulario = () => {
-    if (!fecha) {
+    if (!formData.fecha) {
       setError('La fecha es requerida');
       return false;
     }
-    if (!horaInicio || !horaFin) {
+    if (!formData.horaInicio || !formData.horaFin) {
       setError('Las horas de inicio y fin son requeridas');
       return false;
     }
-    if (!trabajoSeleccionado) {
+    if (!formData.trabajoSeleccionado) {
       setError('Debes seleccionar un trabajo');
       return false;
     }
     
     // Validar que la hora de fin sea mayor que la de inicio
-    const [horaI, minI] = horaInicio.split(':').map(Number);
-    const [horaF, minF] = horaFin.split(':').map(Number);
+    const [horaI, minI] = formData.horaInicio.split(':').map(Number);
+    const [horaF, minF] = formData.horaFin.split(':').map(Number);
     const minutosInicio = horaI * 60 + minI;
     const minutosFin = horaF * 60 + minF;
     
@@ -72,56 +103,74 @@ const TurnoForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onTrabajoCh
     return true;
   };
 
+  const calcularHoras = () => {
+    if (!formData.horaInicio || !formData.horaFin) return 0;
+    
+    const [horaI, minI] = formData.horaInicio.split(':').map(Number);
+    const [horaF, minF] = formData.horaFin.split(':').map(Number);
+    const minutosInicio = horaI * 60 + minI;
+    let minutosFin = horaF * 60 + minF;
+    
+    // Si el turno cruza medianoche
+    if (minutosFin <= minutosInicio) {
+      minutosFin += 24 * 60;
+    }
+    
+    return ((minutosFin - minutosInicio) / 60).toFixed(1);
+  };
+
   const manejarSubmit = async (e) => {
     e.preventDefault();
     
     if (!validarFormulario()) return;
 
-    setGuardando(true);
-    setError('');
+    const datosTurno = {
+      fecha: formData.fecha,
+      horaInicio: formData.horaInicio,
+      horaFin: formData.horaFin,
+      trabajoId: formData.trabajoSeleccionado,
+      notas: formData.notas.trim()
+    };
 
-    try {
-      const datosTurno = {
-        fecha,
-        horaInicio,
-        horaFin,
-        trabajoId: trabajoSeleccionado,
-        notas: notas.trim()
-      };
-
-      await onSubmit(datosTurno);
-    } catch (err) {
-      setError(err.message || 'Error al guardar el turno');
-      setGuardando(false);
-    }
+    await onSubmit(datosTurno);
   };
 
+  const trabajoSeleccionadoInfo = trabajosTradicionales.find(t => t.id === formData.trabajoSeleccionado);
+  const horasTrabajadas = calcularHoras();
+
   return (
-    <form onSubmit={manejarSubmit} className="space-y-4">
+    <form 
+      onSubmit={manejarSubmit} 
+      className={`space-y-6 ${isMobile ? 'mobile-form' : ''}`}
+    >
       {/* Selector de trabajo */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          <Briefcase size={16} className="inline mr-1" />
-          Trabajo
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          <Briefcase size={16} className="inline mr-2" />
+          Trabajo *
         </label>
         <select
-          value={trabajoSeleccionado}
+          value={formData.trabajoSeleccionado}
           onChange={handleTrabajoChange}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+          className={`
+            w-full border rounded-lg transition-colors
+            ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+            ${error && !formData.trabajoSeleccionado ? 'border-red-500' : 'border-gray-300'}
+          `}
           style={{ 
             '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
           }}
           required
-          disabled={turno} // No permitir cambiar trabajo en edición
+          disabled={turno || loading} // No permitir cambiar trabajo en edición
         >
           <option value="">Seleccionar trabajo</option>
-          {trabajos.map(trabajo => (
+          {trabajosTradicionales.map(trabajo => (
             <option key={trabajo.id} value={trabajo.id}>
-              {trabajo.nombre} {trabajo.tipo === 'delivery' ? '(Delivery)' : ''}
+              {trabajo.nombre}
             </option>
           ))}
         </select>
-        {trabajos.length === 0 && (
+        {trabajosTradicionales.length === 0 && (
           <p className="text-sm text-gray-500 mt-1">
             No hay trabajos registrados. Crea uno primero.
           </p>
@@ -130,73 +179,79 @@ const TurnoForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onTrabajoCh
 
       {/* Fecha */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          <Calendar size={16} className="inline mr-1" />
-          Fecha
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          <Calendar size={16} className="inline mr-2" />
+          Fecha *
         </label>
-        <input
+        <ThemeInput
           type="date"
-          value={fecha}
-          onChange={(e) => setFecha(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-          style={{ 
-            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-          }}
+          value={formData.fecha}
+          onChange={(e) => handleInputChange('fecha', e.target.value)}
+          className={`
+            w-full border rounded-lg transition-colors
+            ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+          `}
           required
+          themeColor={coloresTemáticos?.base}
         />
       </div>
 
       {/* Horario */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-4'}`}>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Clock size={16} className="inline mr-1" />
-            Hora inicio
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Clock size={16} className="inline mr-2" />
+            Hora inicio *
           </label>
-          <input
+          <ThemeInput
             type="time"
-            value={horaInicio}
-            onChange={(e) => setHoraInicio(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-            style={{ 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-            }}
+            value={formData.horaInicio}
+            onChange={(e) => handleInputChange('horaInicio', e.target.value)}
+            className={`
+              w-full border rounded-lg transition-colors
+              ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+            `}
             required
+            themeColor={coloresTemáticos?.base}
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Clock size={16} className="inline mr-1" />
-            Hora fin
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Clock size={16} className="inline mr-2" />
+            Hora fin *
           </label>
-          <input
+          <ThemeInput
             type="time"
-            value={horaFin}
-            onChange={(e) => setHoraFin(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-            style={{ 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-            }}
+            value={formData.horaFin}
+            onChange={(e) => handleInputChange('horaFin', e.target.value)}
+            className={`
+              w-full border rounded-lg transition-colors
+              ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+            `}
             required
+            themeColor={coloresTemáticos?.base}
           />
         </div>
       </div>
 
       {/* Notas */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Notas (opcional)
         </label>
         <textarea
-          value={notas}
-          onChange={(e) => setNotas(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-          style={{ 
-            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-          }}
-          rows="2"
+          value={formData.notas}
+          onChange={(e) => handleInputChange('notas', e.target.value)}
           placeholder="Agregar notas sobre el turno..."
+          rows={isMobile ? 4 : 3}
+          className={`
+            w-full border border-gray-300 rounded-lg transition-colors resize-none
+            ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
+          `}
+          style={{
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+          }}
         />
       </div>
 
@@ -208,36 +263,61 @@ const TurnoForm = ({ turno, trabajoId, trabajos, onSubmit, onCancel, onTrabajoCh
       )}
 
       {/* Botones */}
-      <div className="flex gap-3 pt-2">
-        <button
+      <div className={`flex pt-4 ${isMobile ? 'flex-col space-y-3' : 'gap-3'}`}>
+        <Button
           type="button"
           onClick={onCancel}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          disabled={guardando}
+          variant="outline"
+          className={isMobile ? 'w-full py-3' : 'flex-1'}
+          disabled={loading}
+          themeColor={coloresTemáticos?.base}
         >
           Cancelar
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
-          disabled={guardando}
-          className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+          className={isMobile ? 'w-full py-3' : 'flex-1'}
+          loading={loading}
+          themeColor={coloresTemáticos?.base}
+        >
+          {turno ? 'Guardar Cambios' : 'Crear Turno'}
+        </Button>
+      </div>
+
+      {/* Vista previa del turno */}
+      {formData.horaInicio && formData.horaFin && trabajoSeleccionadoInfo && (
+        <div 
+          className={`rounded-lg p-4 border-l-4 ${isMobile ? 'mt-4' : 'mt-2'}`}
           style={{ 
-            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base || '#EC4899',
-          }}
-          onMouseEnter={(e) => {
-            if (!guardando && coloresTemáticos?.dark) {
-              e.target.style.backgroundColor = coloresTemáticos.dark;
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!guardando) {
-              e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
-            }
+            borderLeftColor: trabajoSeleccionadoInfo.color || coloresTemáticos?.base || '#EC4899',
+            backgroundColor: `${trabajoSeleccionadoInfo.color || coloresTemáticos?.base || '#EC4899'}10`
           }}
         >
-          {guardando ? 'Guardando...' : (turno ? 'Guardar Cambios' : 'Crear Turno')}
-        </button>
-      </div>
+          <div className="space-y-2">
+            <div className="flex items-center space-x-3">
+              <div 
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: trabajoSeleccionadoInfo.color || coloresTemáticos?.base || '#EC4899' }}
+              />
+              <span className="text-sm font-medium text-gray-700">
+                {trabajoSeleccionadoInfo.nombre}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">Duración:</span>
+              <span className="font-medium">{horasTrabajadas} horas</span>
+            </div>
+            {trabajoSeleccionadoInfo.tarifaBase && (
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-600">Ganancia estimada:</span>
+                <span style={{ color: trabajoSeleccionadoInfo.color || coloresTemáticos?.base || '#EC4899' }}>
+                  ${(Number(horasTrabajadas) * trabajoSeleccionadoInfo.tarifaBase).toFixed(2)}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </form>
   );
 };

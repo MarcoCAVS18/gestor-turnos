@@ -11,7 +11,7 @@ const StatsProgressBar = ({
   gananciaTotal = 0,
   className = '' 
 }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   
   // Calcular porcentaje de progreso
   const porcentaje = metaHoras > 0 ? (horasSemanales / metaHoras) * 100 : 0;
@@ -19,7 +19,7 @@ const StatsProgressBar = ({
   
   const getColorProgreso = () => {
     if (porcentaje >= 100) return '#10B981';
-    if (porcentaje >= 75) return coloresTemáticos?.base || '#EC4899'; 
+    if (porcentaje >= 75) return thematicColors?.base || '#EC4899'; 
     if (porcentaje >= 50) return '#F59E0B'; 
     return '#EF4444';
   };
@@ -30,7 +30,7 @@ const StatsProgressBar = ({
         {/* Header */}
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-gray-800 flex items-center">
-            <Target size={18} className="mr-2" style={{ color: coloresTemáticos?.base }} />
+            <Target size={18} className="mr-2" style={{ color: thematicColors?.base }} />
             Progreso Semanal
           </h3>
           <span className="text-sm text-gray-500">

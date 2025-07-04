@@ -10,7 +10,7 @@ const InfoTooltip = ({
   size = 'sm',
   className = '' 
 }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const timeoutRef = useRef(null);
@@ -93,8 +93,8 @@ const InfoTooltip = ({
         type="button"
         className={`${getSizeClasses()} rounded-full flex items-center justify-center transition-colors hover:bg-opacity-20`}
         style={{ 
-          backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-          color: coloresTemáticos?.base || '#EC4899'
+          backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
+          color: thematicColors?.base || '#EC4899'
         }}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}

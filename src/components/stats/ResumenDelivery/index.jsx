@@ -6,7 +6,7 @@ import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 
 const ResumenDelivery = ({ deliveryStats }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
   React.useEffect(() => {
@@ -58,7 +58,7 @@ const ResumenDelivery = ({ deliveryStats }) => {
   return (
     <Card className='bg-white shadow-md p-6'>
       <h3 className="text-lg font-semibold flex items-center mb-4">
-        <Truck size={20} style={{ color: coloresTemáticos?.base }} className="mr-2" />
+        <Truck size={20} style={{ color: thematicColors?.base }} className="mr-2" />
         Resumen Delivery
       </h3>
 
@@ -82,8 +82,8 @@ const ResumenDelivery = ({ deliveryStats }) => {
         </div>
 
         <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <DollarSign size={24} className="mx-auto mb-2" style={{ color: coloresTemáticos?.base }} />
-          <p className="text-2xl font-bold" style={{ color: coloresTemáticos?.base }}>
+          <DollarSign size={24} className="mx-auto mb-2" style={{ color: thematicColors?.base }} />
+          <p className="text-2xl font-bold" style={{ color: thematicColors?.base }}>
             {formatCurrency(promedioPorPedido)}
           </p>
           <p className="text-sm text-gray-600">Por Pedido</p>

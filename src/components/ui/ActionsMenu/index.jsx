@@ -5,7 +5,7 @@ import { MoreVertical } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 
 const ActionsMenu = ({ actions = [] }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   const [isOpen, setIsOpen] = useState(false);
 
   if (actions.length === 0) return null;
@@ -19,8 +19,8 @@ const ActionsMenu = ({ actions = [] }) => {
         }}
         className="p-2 rounded-lg transition-colors flex-shrink-0"
         style={{ 
-          backgroundColor: isOpen ? coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' : 'transparent',
-          color: isOpen ? coloresTemáticos?.base || '#EC4899' : '#6B7280'
+          backgroundColor: isOpen ? thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' : 'transparent',
+          color: isOpen ? thematicColors?.base || '#EC4899' : '#6B7280'
         }}
       >
         <MoreVertical size={16} />

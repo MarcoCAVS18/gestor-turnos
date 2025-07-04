@@ -6,8 +6,8 @@ import { gsap } from 'gsap';
 import './index.css';
 
 const Loader = ({ size = 40, fullScreen = false, onAnimationComplete }) => {
-  const { coloresTemáticos } = useApp();
-  const colorPrincipal = coloresTemáticos?.base || '#EC4899';
+  const { thematicColors } = useApp();
+  const colorPrincipal = thematicColors?.base || '#EC4899';
   const svgRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
 

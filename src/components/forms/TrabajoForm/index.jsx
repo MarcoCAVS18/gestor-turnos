@@ -13,7 +13,7 @@ const TrabajoForm = ({
   onSubmit, 
   onCancel, 
   loading, 
-  coloresTemáticos, 
+  thematicColors, 
   isMobile 
 }) => {
   const [formData, setFormData] = useState({
@@ -47,7 +47,7 @@ const TrabajoForm = ({
       setFormData({
         nombre: trabajo.nombre || '',
         descripcion: trabajo.descripcion || '',
-        color: trabajo.color || coloresTemáticos?.base || '#EC4899',
+        color: trabajo.color || thematicColors?.base || '#EC4899',
         tarifaBase: trabajo.tarifaBase?.toString() || '',
         tarifas: {
           diurno: trabajo.tarifas?.diurno?.toString() || '',
@@ -61,10 +61,10 @@ const TrabajoForm = ({
       // Para nuevos trabajos, usar el color temático por defecto
       setFormData(prev => ({
         ...prev,
-        color: coloresTemáticos?.base || '#EC4899'
+        color: thematicColors?.base || '#EC4899'
       }));
     }
-  }, [trabajo, coloresTemáticos]);
+  }, [trabajo, thematicColors]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -135,11 +135,11 @@ const TrabajoForm = ({
             ${errors.nombre ? 'border-red-500' : 'border-gray-300'}
           `}
           style={{
-            '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+            '--tw-ring-color': thematicColors?.base || '#EC4899'
           }}
           placeholder="Ej: Tech Company Inc."
           required
-          themeColor={coloresTemáticos?.base}
+          themeColor={thematicColors?.base}
         />
         {errors.nombre && (
           <p className="mt-1 text-sm text-red-600">{errors.nombre}</p>
@@ -200,13 +200,13 @@ const TrabajoForm = ({
             ${errors.tarifaBase ? 'border-red-500' : 'border-gray-300'}
           `}
           style={{
-            '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+            '--tw-ring-color': thematicColors?.base || '#EC4899'
           }}
           placeholder="15.00"
           step="0.01"
           min="0"
           required
-          themeColor={coloresTemáticos?.base}
+          themeColor={thematicColors?.base}
         />
         {errors.tarifaBase && (
           <p className="mt-1 text-sm text-red-600">{errors.tarifaBase}</p>
@@ -240,13 +240,13 @@ const TrabajoForm = ({
                   ${errors[`tarifas.${tipo}`] ? 'border-red-500' : 'border-gray-300'}
                 `}
                 style={{
-                  '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+                  '--tw-ring-color': thematicColors?.base || '#EC4899'
                 }}
                 placeholder="0.00"
                 step="0.01"
                 min="0"
                 required
-                themeColor={coloresTemáticos?.base}
+                themeColor={thematicColors?.base}
               />
               {errors[`tarifas.${tipo}`] && (
                 <p className="mt-1 text-xs text-red-600">{errors[`tarifas.${tipo}`]}</p>
@@ -272,7 +272,7 @@ const TrabajoForm = ({
             ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
           `}
           style={{
-            '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+            '--tw-ring-color': thematicColors?.base || '#EC4899'
           }}
         />
       </div>
@@ -285,7 +285,7 @@ const TrabajoForm = ({
           variant="outline"
           className={isMobile ? 'w-full py-3' : 'flex-1'}
           disabled={loading}
-          themeColor={coloresTemáticos?.base}
+          themeColor={thematicColors?.base}
         >
           Cancelar
         </Button>
@@ -293,7 +293,7 @@ const TrabajoForm = ({
           type="submit"
           className={isMobile ? 'w-full py-3' : 'flex-1'}
           loading={loading}
-          themeColor={coloresTemáticos?.base}
+          themeColor={thematicColors?.base}
         >
           {trabajo ? 'Guardar Cambios' : 'Crear Trabajo'}
         </Button>

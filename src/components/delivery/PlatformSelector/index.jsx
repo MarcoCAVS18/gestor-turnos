@@ -6,7 +6,7 @@ import { DELIVERY_PLATFORMS_AUSTRALIA } from '../../../constants/delivery';
 import { useApp } from '../../../contexts/AppContext';
 
 const PlatformButton = ({ platform, isSelected, onClick }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   
   return (
     <button
@@ -18,8 +18,8 @@ const PlatformButton = ({ platform, isSelected, onClick }) => {
           : 'border-gray-200 hover:border-gray-300 bg-white'
       }`}
       style={{
-        borderColor: isSelected ? coloresTemáticos?.base : undefined,
-        backgroundColor: isSelected ? coloresTemáticos?.transparent10 : undefined
+        borderColor: isSelected ? thematicColors?.base : undefined,
+        backgroundColor: isSelected ? thematicColors?.transparent10 : undefined
       }}
     >
       <div 
@@ -36,7 +36,7 @@ const PlatformButton = ({ platform, isSelected, onClick }) => {
       {isSelected && (
         <div 
           className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: coloresTemáticos?.base }}
+          style={{ backgroundColor: thematicColors?.base }}
         >
           <Check size={12} className="text-white" />
         </div>

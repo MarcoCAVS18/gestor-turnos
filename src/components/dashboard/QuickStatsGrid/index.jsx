@@ -5,12 +5,12 @@ import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 
 const QuickStatCard = ({ icon: Icon, label, value, subtitle }) => {
-  const { coloresTemáticos } = useApp();
+  const { thematicColors } = useApp();
   
   return (
     <Card>
       <div className="flex items-center mb-2">
-        <Icon size={18} style={{ color: coloresTemáticos?.base }} className="mr-2" />
+        <Icon size={18} style={{ color: thematicColors?.base }} className="mr-2" />
         <span className="text-sm text-gray-600">{label}</span>
       </div>
       <p className="text-2xl font-bold text-gray-800">{value}</p>
