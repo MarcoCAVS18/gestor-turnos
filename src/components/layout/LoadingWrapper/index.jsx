@@ -10,7 +10,20 @@ const LoadingWrapper = ({
   className = '' 
 }) => {
   const [showLoading, setShowLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   
+  // Detectar si estamos en móvil
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   useEffect(() => {
     let timer;
     
@@ -29,8 +42,12 @@ const LoadingWrapper = ({
 
   if (showLoading) {
     return (
-      <div className={`flex justify-center items-center h-screen ${className}`}>
-        <Loader />
+      <div className={`
+        flex justify-center items-center 
+        ${isMobile ? 'h-screen pb-24 pt-16' : 'h-screen'} 
+        ${className}
+      `}>
+        <Loader fullScreen={false} />
       </div>
     );
   }

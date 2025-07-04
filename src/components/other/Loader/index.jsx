@@ -1,26 +1,47 @@
 // src/components/other/Loader/index.jsx
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useApp } from '../../../contexts/AppContext';
 import { gsap } from 'gsap';
-import './index.css'; // Importar los estilos CSS
+import './index.css';
 
 const Loader = ({ size = 40, fullScreen = false, onAnimationComplete }) => {
   const { coloresTemáticos } = useApp();
   const colorPrincipal = coloresTemáticos?.base || '#EC4899';
   const svgRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Usar las clases CSS definidas en el archivo index.css
-  const containerClass = fullScreen 
-    ? 'loader-container-fullscreen'
-    : 'loader-container-normal';
+  // Detectar si estamos en móvil
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Determinar las clases CSS apropiadas
+  const getContainerClass = () => {
+    if (fullScreen) {
+      return 'loader-container-fullscreen';
+    } else {
+      const baseClass = 'loader-container-normal';
+      return isMobile ? `${baseClass} loader-with-mobile-nav` : baseClass;
+    }
+  };
 
   useEffect(() => {
     const svg = svgRef.current;
+    if (!svg) return;
 
     // Seleccionar los elementos para animar
     const mainPath = svg.querySelector('.main-path');
     const circles = svg.querySelectorAll('.circle');
+
+    if (!mainPath || circles.length === 0) return;
 
     // Configurar el estado inicial
     gsap.set(mainPath, {
@@ -104,7 +125,7 @@ const Loader = ({ size = 40, fullScreen = false, onAnimationComplete }) => {
   };
 
   return (
-    <div className={containerClass}>
+    <div className={getContainerClass()}>
       <svg
         ref={svgRef}
         xmlns="http://www.w3.org/2000/svg"

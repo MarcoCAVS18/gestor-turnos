@@ -14,9 +14,9 @@ const Trabajos = () => {
   const {
     trabajos = [], 
     trabajosDelivery = [], 
-    cargando,
-    borrarTrabajo,
-    borrarTrabajoDelivery,
+    loading, // Cambiado de 'cargando' a 'loading'
+    deleteJob, // Nombre correcto de la función
+    deleteDeliveryJob, // Nombre correcto de la función
     coloresTemáticos
   } = useApp();
 
@@ -49,11 +49,17 @@ const Trabajos = () => {
 
   const deleteHandler = async (id, tipo) => {
     try {
+      console.log('Intentando eliminar trabajo:', { id, tipo });
+      
       if (tipo === 'delivery') {
-        await borrarTrabajoDelivery(id);
+        console.log('Eliminando trabajo delivery...');
+        await deleteDeliveryJob(id);
       } else {
-        await borrarTrabajo(id);
+        console.log('Eliminando trabajo tradicional...');
+        await deleteJob(id);
       }
+      
+      console.log('Trabajo eliminado exitosamente');
       return true;
     } catch (error) {
       console.error('Error en deleteHandler:', error);
@@ -63,45 +69,50 @@ const Trabajos = () => {
 
   const handleCardDelete = (trabajo) => {
     if (!trabajo || !trabajo.id) {
+      console.error('Trabajo inválido para eliminar:', trabajo);
       return;
     }
     
+    console.log('Preparando eliminación de trabajo:', trabajo);
     setItemToDelete(trabajo);
     setShowDeleteModal(true);
   };
 
   const generarDetallesTrabajo = (trabajo) => {
     if (!trabajo) {
-      return {};
+      return [];
     }
     
+    const detalles = [trabajo.nombre];
+    
     if (trabajo.tipo === 'delivery') {
-      return {
-        Título: trabajo.nombre,
-        Plataforma: trabajo.plataforma,
-        Vehículo: trabajo.vehiculo,
-      };
+      if (trabajo.plataforma) detalles.push(`Plataforma: ${trabajo.plataforma}`);
+      if (trabajo.vehiculo) detalles.push(`Vehículo: ${trabajo.vehiculo}`);
     } else {
-      return {
-        Título: trabajo.nombre,
-        Tarifa: `$${trabajo.tarifaBase || 0}`,
-      };
+      if (trabajo.tarifaBase) detalles.push(`Tarifa: $${trabajo.tarifaBase}`);
     }
+    
+    return detalles;
   };
 
   const handleConfirmDeletion = async () => {
     if (!itemToDelete) {
+      console.error('No hay trabajo para eliminar');
       return;
     }
     
     try {
       setIsDeleting(true);
+      console.log('Confirmando eliminación de:', itemToDelete);
       
       const resultado = await deleteHandler(itemToDelete.id, itemToDelete.tipo);
       
       if (resultado) {
+        console.log('Eliminación exitosa');
         setShowDeleteModal(false);
         setItemToDelete(null);
+      } else {
+        console.error('La eliminación falló');
       }
     } catch (error) {
       console.error('Error en confirmación:', error);
@@ -117,11 +128,13 @@ const Trabajos = () => {
 
   useEffect(() => {
     if (!currentUser) return;
-    
-  }, [currentUser]);
+    console.log('Usuario logueado:', currentUser.uid);
+    console.log('Trabajos tradicionales:', trabajos.length);
+    console.log('Trabajos delivery:', trabajosDelivery.length);
+  }, [currentUser, trabajos, trabajosDelivery]);
 
   return (
-    <LoadingWrapper cargando={cargando}>
+    <LoadingWrapper loading={loading}>
       <div className="space-y-6">
         {/* Header que cambia según si hay trabajos */}
         <div className="flex justify-between items-center pt-4">

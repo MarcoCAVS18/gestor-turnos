@@ -23,26 +23,54 @@
   min-height: 200px;
 }
 
-/* Ajustes para móvil */
+/* Ajustes específicos para móvil considerando la navegación */
 @media (max-width: 767px) {
   .loader-container-fullscreen {
-    transform: translateY(-50px);
+    bottom: 100px; 
+    transform: translateY(-25px); 
   }
   
   .loader-container-normal {
-    min-height: calc(100vh - 180px);
-    padding-bottom: 120px;
+    min-height: calc(100vh - 240px);
+    padding-bottom: 140px;
+    padding-top: 80px; 
   }
 }
 
-/* Para tablets y desktop */
+/* Para tablets y desktop - sin navegación inferior */
 @media (min-width: 768px) {
   .loader-container-fullscreen {
     transform: translateY(0);
+    bottom: 0; 
   }
   
   .loader-container-normal {
     min-height: 200px;
     padding-bottom: 60px;
+    padding-top: 60px;
+  }
+}
+
+/* Clase adicional para cuando está visible la navegación móvil */
+.loader-with-mobile-nav {
+  padding-bottom: 120px !important;
+}
+
+/* Animación suave para el loader */
+.loader-container-fullscreen,
+.loader-container-normal {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Para dispositivos con muescas (notch) como iPhone */
+@supports (padding: max(0px)) {
+  @media (max-width: 767px) {
+    .loader-container-fullscreen {
+      bottom: max(100px, env(safe-area-inset-bottom, 0px) + 80px);
+    }
+    
+    .loader-container-normal {
+      padding-bottom: max(140px, env(safe-area-inset-bottom, 0px) + 120px);
+    }
   }
 }
