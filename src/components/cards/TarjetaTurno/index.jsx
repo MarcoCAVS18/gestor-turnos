@@ -16,16 +16,22 @@ const TarjetaTurno = (***REMOVED***
   showActions = true,
   variant = 'card'
 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** rangosTurnos ***REMOVED*** = useApp();
+  const ***REMOVED*** shiftRanges ***REMOVED*** = useApp(); 
 
   const obtenerTipoTurno = (hora) => ***REMOVED***
     const horaNum = parseInt(hora.split(':')[0]);
     
-    const rangos = rangosTurnos
+    const rangos = shiftRanges || ***REMOVED***
+      dayStart: 6,
+      dayEnd: 14,
+      afternoonStart: 14,
+      afternoonEnd: 20,
+      nightStart: 20
+    ***REMOVED***;
 
-    if (horaNum >= rangos.diurnoInicio && horaNum < rangos.diurnoFin) ***REMOVED***
+    if (horaNum >= rangos.dayStart && horaNum < rangos.dayEnd) ***REMOVED***
       return 'diurno';
-    ***REMOVED*** else if (horaNum >= rangos.tardeInicio && horaNum < rangos.tardeFin) ***REMOVED***
+    ***REMOVED*** else if (horaNum >= rangos.afternoonStart && horaNum < rangos.afternoonEnd) ***REMOVED***
       return 'tarde';
     ***REMOVED*** else ***REMOVED***
       return 'noche';

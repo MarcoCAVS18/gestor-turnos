@@ -49,17 +49,13 @@ const Trabajos = () => ***REMOVED***
 
   const deleteHandler = async (id, tipo) => ***REMOVED***
     try ***REMOVED***
-      console.log('Intentando eliminar trabajo:', ***REMOVED*** id, tipo ***REMOVED***);
       
       if (tipo === 'delivery') ***REMOVED***
-        console.log('Eliminando trabajo delivery...');
         await deleteDeliveryJob(id);
       ***REMOVED*** else ***REMOVED***
-        console.log('Eliminando trabajo tradicional...');
         await deleteJob(id);
       ***REMOVED***
       
-      console.log('Trabajo eliminado exitosamente');
       return true;
     ***REMOVED*** catch (error) ***REMOVED***
       console.error('Error en deleteHandler:', error);
@@ -73,7 +69,6 @@ const Trabajos = () => ***REMOVED***
       return;
     ***REMOVED***
     
-    console.log('Preparando eliminación de trabajo:', trabajo);
     setItemToDelete(trabajo);
     setShowDeleteModal(true);
   ***REMOVED***;
@@ -103,12 +98,10 @@ const Trabajos = () => ***REMOVED***
     
     try ***REMOVED***
       setIsDeleting(true);
-      console.log('Confirmando eliminación de:', itemToDelete);
       
       const resultado = await deleteHandler(itemToDelete.id, itemToDelete.tipo);
       
       if (resultado) ***REMOVED***
-        console.log('Eliminación exitosa');
         setShowDeleteModal(false);
         setItemToDelete(null);
       ***REMOVED*** else ***REMOVED***
@@ -128,9 +121,6 @@ const Trabajos = () => ***REMOVED***
 
   useEffect(() => ***REMOVED***
     if (!currentUser) return;
-    console.log('Usuario logueado:', currentUser.uid);
-    console.log('Trabajos tradicionales:', trabajos.length);
-    console.log('Trabajos delivery:', trabajosDelivery.length);
   ***REMOVED***, [currentUser, trabajos, trabajosDelivery]);
 
   return (

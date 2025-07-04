@@ -1,7 +1,7 @@
 // src/pages/Turnos.jsx
 
-import React from 'react';
-import ***REMOVED*** Calendar, Plus, Briefcase, ArrowRight ***REMOVED*** from 'lucide-react';
+import React, ***REMOVED*** useState, useMemo ***REMOVED*** from 'react';
+import ***REMOVED*** Calendar, Plus, Briefcase, ArrowRight, Eye ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** useTurnManager ***REMOVED*** from '../hooks/useTurnManager';
 import ***REMOVED*** useDeleteManager ***REMOVED*** from '../hooks/useDeleteManager';
@@ -9,33 +9,73 @@ import DaySection from '../components/sections/DaySection';
 import ModalTurno from '../components/modals/ModalTurno';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
+import GlassButton from '../components/ui/GlassButton';
+
+const DIAS_POR_PAGINA = 6; // Mostrar 6 días con turnos inicialmente
 
 const Turnos = () => ***REMOVED***
   const ***REMOVED*** 
     turnosPorFecha, 
-    cargando, 
-    borrarTurno, 
+    loading, 
+    deleteShift,
+    deleteDeliveryShift,
     trabajos, 
     trabajosDelivery,
     thematicColors
   ***REMOVED*** = useApp();
   
-  const deleteManager = useDeleteManager(borrarTurno);
+  const deleteManager = useDeleteManager(async (turno) => ***REMOVED***
+    if (turno.tipo === 'delivery') ***REMOVED***
+      await deleteDeliveryShift(turno.id);
+    ***REMOVED*** else ***REMOVED***
+      await deleteShift(turno.id);
+    ***REMOVED***
+  ***REMOVED***);
+  
   const ***REMOVED*** modalAbierto, turnoSeleccionado, abrirModalNuevo, abrirModalEditar, cerrarModal ***REMOVED*** = useTurnManager();
+  
+  // Estado para controlar cuántos días mostrar
+  const [diasMostrados, setDiasMostrados] = useState(DIAS_POR_PAGINA);
+  const [expandiendo, setExpandiendo] = useState(false);
 
   // Combinar todos los trabajos
   const todosLosTrabajos = [...trabajos, ...trabajosDelivery];
   
-  // Ordenar fechas y crear componentes de día
-  const diasOrdenados = Object.entries(turnosPorFecha)
-    .sort(([fechaA], [fechaB]) => new Date(fechaB) - new Date(fechaA));
+  // Ordenar fechas y crear array de días con turnos
+  const diasOrdenados = useMemo(() => ***REMOVED***
+    return Object.entries(turnosPorFecha)
+      .sort(([fechaA], [fechaB]) => new Date(fechaB) - new Date(fechaA));
+  ***REMOVED***, [turnosPorFecha]);
+
+  // Días a mostrar según el estado actual
+  const diasParaMostrar = diasOrdenados.slice(0, diasMostrados);
+  const hayMasDias = diasOrdenados.length > diasMostrados;
+  const diasRestantes = diasOrdenados.length - diasMostrados;
 
   const hayTurnos = diasOrdenados.length > 0;
+
+  // Función para mostrar más días
+  const mostrarMasDias = async () => ***REMOVED***
+    setExpandiendo(true);
+    
+    // Simular un pequeño delay para mejor UX
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    setDiasMostrados(prev => Math.min(prev + DIAS_POR_PAGINA, diasOrdenados.length));
+    setExpandiendo(false);
+  ***REMOVED***;
+
+  // Función para colapsar de vuelta a los primeros días
+  const mostrarMenos = () => ***REMOVED***
+    setDiasMostrados(DIAS_POR_PAGINA);
+    // Scroll suave hacia arriba
+    window.scrollTo(***REMOVED*** top: 0, behavior: 'smooth' ***REMOVED***);
+  ***REMOVED***;
 
   const generarDetallesTurno = (turno) => ***REMOVED***
     if (!turno) return [];
     
-    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
+    const trabajo = todosLosTrabajos.find(t => t.id === turno.trabajoId);
     const fecha = new Date(turno.fecha + 'T00:00:00');
     const detalles = [
       trabajo?.nombre || 'Trabajo no encontrado',
@@ -184,7 +224,7 @@ const Turnos = () => ***REMOVED***
   ***REMOVED***;
 
   return (
-    <LoadingWrapper cargando=***REMOVED***cargando***REMOVED***>
+    <LoadingWrapper loading=***REMOVED***loading***REMOVED***>
       <div className="space-y-6">
         ***REMOVED***/* Header que cambia según si hay turnos */***REMOVED***
         <div className="flex justify-between items-center pt-4">
@@ -200,9 +240,14 @@ const Turnos = () => ***REMOVED***
             </div>
             <div>
               <h1 className="text-xl font-semibold mb-4 pt-4">Mis Turnos</h1>
+              ***REMOVED***/* Contador de turnos cuando hay más de 6 días */***REMOVED***
+              ***REMOVED***hayTurnos && diasOrdenados.length > DIAS_POR_PAGINA && (
+                <p className="text-sm text-gray-500 -mt-2">
+                  Mostrando ***REMOVED***Math.min(diasMostrados, diasOrdenados.length)***REMOVED*** de ***REMOVED***diasOrdenados.length***REMOVED*** días con turnos
+                </p>
+              )***REMOVED***
             </div>
           </div>
-          ***REMOVED***/* Solo mostrar botón en header si hay turnos */***REMOVED***
           ***REMOVED***getHeaderButton()***REMOVED***
         </div>
 
@@ -211,7 +256,8 @@ const Turnos = () => ***REMOVED***
           renderEmptyState()
         ) : (
           <div className="space-y-6">
-            ***REMOVED***diasOrdenados.map(([fecha, turnosDia]) => (
+            ***REMOVED***/* Días con turnos */***REMOVED***
+            ***REMOVED***diasParaMostrar.map(([fecha, turnosDia]) => (
               <DaySection
                 key=***REMOVED***fecha***REMOVED***
                 fecha=***REMOVED***fecha***REMOVED***
@@ -221,6 +267,36 @@ const Turnos = () => ***REMOVED***
                 onDeleteTurno=***REMOVED***deleteManager.startDeletion***REMOVED***
               />
             ))***REMOVED***
+            
+            ***REMOVED***/* Botón Ver Más con GlassButton */***REMOVED***
+            ***REMOVED***hayMasDias && (
+              <div className="flex justify-center py-8">
+                <GlassButton
+                  onClick=***REMOVED***mostrarMasDias***REMOVED***
+                  loading=***REMOVED***expandiendo***REMOVED***
+                  variant="primary"
+                  size="lg"
+                  icon=***REMOVED***Eye***REMOVED***
+                  className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 backdrop-blur-xl"
+                >
+                  Ver ***REMOVED***Math.min(DIAS_POR_PAGINA, diasRestantes)***REMOVED*** días más
+                </GlassButton>
+              </div>
+            )***REMOVED***
+            
+            ***REMOVED***/* Botón Mostrar Menos (solo cuando se han expandido los resultados) */***REMOVED***
+            ***REMOVED***!hayMasDias && diasMostrados > DIAS_POR_PAGINA && (
+              <div className="flex justify-center py-4">
+                <GlassButton
+                  onClick=***REMOVED***mostrarMenos***REMOVED***
+                  variant="secondary"
+                  size="md"
+                  className="bg-gradient-to-r from-gray-500/20 to-blue-500/20 backdrop-blur-xl"
+                >
+                  Mostrar menos
+                </GlassButton>
+              </div>
+            )***REMOVED***
           </div>
         )***REMOVED***
       </div>

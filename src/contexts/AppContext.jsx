@@ -594,6 +594,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     userEmoji,
     defaultDiscount,
     shiftRanges,
+    rangosTurnos: shiftRanges,
     weeklyHoursGoal,
     deliveryEnabled,
 
@@ -763,7 +764,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           metaHorasSemanales: newGoal,
         ***REMOVED*** = preferences;
 
-        console.log('Guardando preferencias:', preferences);
 
         // Actualizar estados locales si se proporcionan valores
         if (newColor !== undefined) setPrimaryColor(newColor);
@@ -771,7 +771,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         if (newDiscount !== undefined) setDefaultDiscount(newDiscount);
         if (newRanges !== undefined) setShiftRanges(newRanges);
         if (newDelivery !== undefined) ***REMOVED***
-          console.log('Actualizando deliveryEnabled a:', newDelivery);
           setDeliveryEnabled(newDelivery);
         ***REMOVED***
         if (newGoal !== undefined) setWeeklyHoursGoal(newGoal);
@@ -782,7 +781,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         if (newDiscount !== undefined) localStorage.setItem('defaultDiscount', newDiscount.toString());
         if (newRanges !== undefined) localStorage.setItem('shiftRanges', JSON.stringify(newRanges));
         if (newDelivery !== undefined) ***REMOVED***
-          console.log('Guardando en localStorage deliveryEnabled:', newDelivery);
           localStorage.setItem('deliveryEnabled', newDelivery.toString());
         ***REMOVED***
         if (newGoal !== undefined) localStorage.setItem('weeklyHoursGoal', newGoal === null ? 'null' : newGoal.toString());
@@ -796,7 +794,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         if (newDiscount !== undefined) updatedData['ajustes.descuentoDefault'] = newDiscount;
         if (newRanges !== undefined) updatedData['ajustes.rangosTurnos'] = newRanges;
         if (newDelivery !== undefined) ***REMOVED***
-          console.log('Guardando en Firestore deliveryEnabled:', newDelivery);
           updatedData['ajustes.deliveryEnabled'] = newDelivery;
         ***REMOVED***
         if (newGoal !== undefined) updatedData['ajustes.metaHorasSemanales'] = newGoal;
@@ -805,7 +802,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
         if (Object.keys(updatedData).length > 1) ***REMOVED*** // Verificar si hay datos reales para actualizar mas alla de la marca de tiempo
           await updateDoc(userDocRef, updatedData);
-          console.log('Datos guardados en Firestore:', updatedData);
         ***REMOVED***
 
         return true;

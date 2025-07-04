@@ -90,7 +90,6 @@ const TurnoDeliveryForm = (***REMOVED***
 
   const handleTrabajoChange = (e) => ***REMOVED***
     const nuevoTrabajoId = e.target.value;
-    console.log('🔄 TurnoDeliveryForm: Cambiando trabajo a:', nuevoTrabajoId);
     handleInputChange('trabajoSeleccionado', nuevoTrabajoId);
     
     // Notificar al modal sobre el cambio

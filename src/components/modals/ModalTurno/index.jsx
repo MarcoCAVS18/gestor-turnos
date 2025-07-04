@@ -27,10 +27,10 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
     const checkMobile = () => ***REMOVED***
       setIsMobile(window.innerWidth < 768);
     ***REMOVED***;
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   ***REMOVED***, []);
 
@@ -39,25 +39,15 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
     return [...trabajos, ...trabajosDelivery];
   ***REMOVED***, [trabajos, trabajosDelivery]);
 
-  // CORRECCIÓN: Determinar el tipo de formulario basado en el trabajo
+  // Determinar el tipo de formulario basado en el trabajo
   useEffect(() => ***REMOVED***
     if (turno?.tipo === 'delivery') ***REMOVED***
       setFormularioTipo('delivery');
     ***REMOVED*** else if (trabajoSeleccionadoId) ***REMOVED***
       const trabajo = todosLosTrabajos.find(t => t.id === trabajoSeleccionadoId);
-      // CAMBIO AQUÍ: Verificar tanto 'tipo' como 'type' para compatibilidad
       const esDelivery = trabajo?.tipo === 'delivery' || trabajo?.type === 'delivery';
       setFormularioTipo(esDelivery ? 'delivery' : 'tradicional');
-      
-      // Debug log para verificar
-      console.log('🔄 Trabajo seleccionado:', ***REMOVED***
-        id: trabajo?.id,
-        nombre: trabajo?.nombre,
-        tipo: trabajo?.tipo,
-        type: trabajo?.type,
-        esDelivery,
-        formularioTipo: esDelivery ? 'delivery' : 'tradicional'
-      ***REMOVED***);
+
     ***REMOVED*** else ***REMOVED***
       setFormularioTipo('tradicional');
     ***REMOVED***
@@ -83,7 +73,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
     ***REMOVED*** else ***REMOVED***
       document.body.style.overflow = 'unset';
     ***REMOVED***
-    
+
     return () => ***REMOVED***
       document.body.style.overflow = 'unset';
     ***REMOVED***;
@@ -92,7 +82,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
   const manejarGuardado = async (datosTurno) => ***REMOVED***
     try ***REMOVED***
       setLoading(true);
-      
+
       if (formularioTipo === 'delivery') ***REMOVED***
         if (turno) ***REMOVED***
           await editDeliveryShift(turno.id, datosTurno);
@@ -106,7 +96,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
           await addShift(datosTurno);
         ***REMOVED***
       ***REMOVED***
-      
+
       setLoading(false);
       onClose();
     ***REMOVED*** catch (error) ***REMOVED***
@@ -116,7 +106,6 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
   ***REMOVED***;
 
   const manejarCambioTrabajo = (nuevoTrabajoId) => ***REMOVED***
-    console.log('🔄 Cambiando trabajo a:', nuevoTrabajoId);
     setTrabajoSeleccionadoId(nuevoTrabajoId);
   ***REMOVED***;
 
@@ -137,33 +126,33 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
   ***REMOVED***;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
       style=***REMOVED******REMOVED*** zIndex: modalConfig.zIndex ***REMOVED******REMOVED***
     >
-      <div 
+      <div
         className=***REMOVED***`
           bg-white shadow-2xl w-full relative
-          $***REMOVED***isMobile 
-            ? 'h-full max-w-none rounded-none' 
+          $***REMOVED***isMobile
+            ? 'h-full max-w-none rounded-none'
             : 'max-w-lg max-h-[90vh] rounded-xl'
           ***REMOVED***
           $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'***REMOVED***
         `***REMOVED***
       >
-        
+
         ***REMOVED***/* Header optimizado con thematicColors */***REMOVED***
-        <div 
+        <div
           className=***REMOVED***`
             sticky top-0 bg-white border-b flex justify-between items-center z-10
             $***REMOVED***isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'***REMOVED***
           `***REMOVED***
-          style=***REMOVED******REMOVED*** 
+          style=***REMOVED******REMOVED***
             borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
           ***REMOVED******REMOVED***
         >
           <div className="flex-1 pr-4">
-            <h2 
+            <h2
               className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
               style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
             >
@@ -202,7 +191,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
             <TurnoDeliveryForm
               turno=***REMOVED***turno***REMOVED***
               trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
-              trabajos=***REMOVED***todosLosTrabajos***REMOVED*** 
+              trabajos=***REMOVED***todosLosTrabajos***REMOVED***
               onSubmit=***REMOVED***manejarGuardado***REMOVED***
               onCancel=***REMOVED***manejarCerrar***REMOVED***
               onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
@@ -214,7 +203,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
             <TurnoForm
               turno=***REMOVED***turno***REMOVED***
               trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
-              trabajos=***REMOVED***todosLosTrabajos***REMOVED*** 
+              trabajos=***REMOVED***todosLosTrabajos***REMOVED***
               onSubmit=***REMOVED***manejarGuardado***REMOVED***
               onCancel=***REMOVED***manejarCerrar***REMOVED***
               onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
@@ -227,9 +216,9 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
 
         ***REMOVED***/* Footer fijo en móvil si es necesario */***REMOVED***
         ***REMOVED***isMobile && !loading && (
-          <div 
+          <div
             className="sticky bottom-0 bg-white border-t p-4"
-            style=***REMOVED******REMOVED*** 
+            style=***REMOVED******REMOVED***
               borderTopColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
             ***REMOVED******REMOVED***
           >
@@ -241,22 +230,22 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
 
         ***REMOVED***/* Indicador de carga */***REMOVED***
         ***REMOVED***loading && (
-          <div 
+          <div
             className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center"
             style=***REMOVED******REMOVED*** zIndex: modalConfig.zIndex + 1 ***REMOVED******REMOVED***
           >
-            <div 
+            <div
               className="bg-white rounded-lg p-4 flex items-center space-x-3"
-              style=***REMOVED******REMOVED*** 
+              style=***REMOVED******REMOVED***
                 borderColor: thematicColors?.base || '#EC4899',
                 borderWidth: '2px'
               ***REMOVED******REMOVED***
             >
-              <div 
+              <div
                 className="animate-spin rounded-full h-6 w-6 border-b-2"
                 style=***REMOVED******REMOVED*** borderColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
               />
-              <span 
+              <span
                 className="font-medium"
                 style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
               >

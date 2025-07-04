@@ -55,7 +55,6 @@ export const useDashboardStats = () => ***REMOVED***
     ***REMOVED***;
 
     if (todosLosTurnos.length === 0) ***REMOVED***
-      console.log('No hay turnos disponibles para estadísticas');
       return defaultStats;
     ***REMOVED***
 
@@ -179,7 +178,6 @@ export const useDashboardStats = () => ***REMOVED***
         diasTrabajados: fechasUnicas.size
       ***REMOVED***;
 
-      console.log('Dashboard stats calculadas:', resultado);
       return resultado;
     ***REMOVED*** catch (error) ***REMOVED***
       console.error('Error crítico calculando estadísticas del dashboard:', error);
