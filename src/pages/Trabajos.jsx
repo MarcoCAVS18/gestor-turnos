@@ -49,17 +49,13 @@ const Trabajos = () => {
 
   const deleteHandler = async (id, tipo) => {
     try {
-      console.log('Intentando eliminar trabajo:', { id, tipo });
       
       if (tipo === 'delivery') {
-        console.log('Eliminando trabajo delivery...');
         await deleteDeliveryJob(id);
       } else {
-        console.log('Eliminando trabajo tradicional...');
         await deleteJob(id);
       }
       
-      console.log('Trabajo eliminado exitosamente');
       return true;
     } catch (error) {
       console.error('Error en deleteHandler:', error);
@@ -73,7 +69,6 @@ const Trabajos = () => {
       return;
     }
     
-    console.log('Preparando eliminación de trabajo:', trabajo);
     setItemToDelete(trabajo);
     setShowDeleteModal(true);
   };
@@ -103,12 +98,10 @@ const Trabajos = () => {
     
     try {
       setIsDeleting(true);
-      console.log('Confirmando eliminación de:', itemToDelete);
       
       const resultado = await deleteHandler(itemToDelete.id, itemToDelete.tipo);
       
       if (resultado) {
-        console.log('Eliminación exitosa');
         setShowDeleteModal(false);
         setItemToDelete(null);
       } else {
@@ -128,9 +121,6 @@ const Trabajos = () => {
 
   useEffect(() => {
     if (!currentUser) return;
-    console.log('Usuario logueado:', currentUser.uid);
-    console.log('Trabajos tradicionales:', trabajos.length);
-    console.log('Trabajos delivery:', trabajosDelivery.length);
   }, [currentUser, trabajos, trabajosDelivery]);
 
   return (

@@ -27,10 +27,10 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -39,25 +39,15 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
     return [...trabajos, ...trabajosDelivery];
   }, [trabajos, trabajosDelivery]);
 
-  // CORRECCIÓN: Determinar el tipo de formulario basado en el trabajo
+  // Determinar el tipo de formulario basado en el trabajo
   useEffect(() => {
     if (turno?.tipo === 'delivery') {
       setFormularioTipo('delivery');
     } else if (trabajoSeleccionadoId) {
       const trabajo = todosLosTrabajos.find(t => t.id === trabajoSeleccionadoId);
-      // CAMBIO AQUÍ: Verificar tanto 'tipo' como 'type' para compatibilidad
       const esDelivery = trabajo?.tipo === 'delivery' || trabajo?.type === 'delivery';
       setFormularioTipo(esDelivery ? 'delivery' : 'tradicional');
-      
-      // Debug log para verificar
-      console.log('🔄 Trabajo seleccionado:', {
-        id: trabajo?.id,
-        nombre: trabajo?.nombre,
-        tipo: trabajo?.tipo,
-        type: trabajo?.type,
-        esDelivery,
-        formularioTipo: esDelivery ? 'delivery' : 'tradicional'
-      });
+
     } else {
       setFormularioTipo('tradicional');
     }
@@ -83,7 +73,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
     } else {
       document.body.style.overflow = 'unset';
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset';
     };
@@ -92,7 +82,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
   const manejarGuardado = async (datosTurno) => {
     try {
       setLoading(true);
-      
+
       if (formularioTipo === 'delivery') {
         if (turno) {
           await editDeliveryShift(turno.id, datosTurno);
@@ -106,7 +96,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
           await addShift(datosTurno);
         }
       }
-      
+
       setLoading(false);
       onClose();
     } catch (error) {
@@ -116,7 +106,6 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
   };
 
   const manejarCambioTrabajo = (nuevoTrabajoId) => {
-    console.log('🔄 Cambiando trabajo a:', nuevoTrabajoId);
     setTrabajoSeleccionadoId(nuevoTrabajoId);
   };
 
@@ -137,33 +126,33 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
       style={{ zIndex: modalConfig.zIndex }}
     >
-      <div 
+      <div
         className={`
           bg-white shadow-2xl w-full relative
-          ${isMobile 
-            ? 'h-full max-w-none rounded-none' 
+          ${isMobile
+            ? 'h-full max-w-none rounded-none'
             : 'max-w-lg max-h-[90vh] rounded-xl'
           }
           ${isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'}
         `}
       >
-        
+
         {/* Header optimizado con thematicColors */}
-        <div 
+        <div
           className={`
             sticky top-0 bg-white border-b flex justify-between items-center z-10
             ${isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'}
           `}
-          style={{ 
+          style={{
             borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
           }}
         >
           <div className="flex-1 pr-4">
-            <h2 
+            <h2
               className={`font-semibold ${isMobile ? 'text-lg' : 'text-xl'}`}
               style={{ color: thematicColors?.base || '#EC4899' }}
             >
@@ -202,7 +191,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
             <TurnoDeliveryForm
               turno={turno}
               trabajoId={trabajoSeleccionadoId}
-              trabajos={todosLosTrabajos} 
+              trabajos={todosLosTrabajos}
               onSubmit={manejarGuardado}
               onCancel={manejarCerrar}
               onTrabajoChange={manejarCambioTrabajo}
@@ -214,7 +203,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
             <TurnoForm
               turno={turno}
               trabajoId={trabajoSeleccionadoId}
-              trabajos={todosLosTrabajos} 
+              trabajos={todosLosTrabajos}
               onSubmit={manejarGuardado}
               onCancel={manejarCerrar}
               onTrabajoChange={manejarCambioTrabajo}
@@ -227,9 +216,9 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
 
         {/* Footer fijo en móvil si es necesario */}
         {isMobile && !loading && (
-          <div 
+          <div
             className="sticky bottom-0 bg-white border-t p-4"
-            style={{ 
+            style={{
               borderTopColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
             }}
           >
@@ -241,22 +230,22 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
 
         {/* Indicador de carga */}
         {loading && (
-          <div 
+          <div
             className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center"
             style={{ zIndex: modalConfig.zIndex + 1 }}
           >
-            <div 
+            <div
               className="bg-white rounded-lg p-4 flex items-center space-x-3"
-              style={{ 
+              style={{
                 borderColor: thematicColors?.base || '#EC4899',
                 borderWidth: '2px'
               }}
             >
-              <div 
+              <div
                 className="animate-spin rounded-full h-6 w-6 border-b-2"
                 style={{ borderColor: thematicColors?.base || '#EC4899' }}
               />
-              <span 
+              <span
                 className="font-medium"
                 style={{ color: thematicColors?.base || '#EC4899' }}
               >

@@ -1,7 +1,7 @@
 // src/pages/Turnos.jsx
 
-import React from 'react';
-import { Calendar, Plus, Briefcase, ArrowRight } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { Calendar, Plus, Briefcase, ArrowRight, Eye } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useTurnManager } from '../hooks/useTurnManager';
 import { useDeleteManager } from '../hooks/useDeleteManager';
@@ -9,33 +9,73 @@ import DaySection from '../components/sections/DaySection';
 import ModalTurno from '../components/modals/ModalTurno';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
+import GlassButton from '../components/ui/GlassButton';
+
+const DIAS_POR_PAGINA = 6; // Mostrar 6 días con turnos inicialmente
 
 const Turnos = () => {
   const { 
     turnosPorFecha, 
-    cargando, 
-    borrarTurno, 
+    loading, 
+    deleteShift,
+    deleteDeliveryShift,
     trabajos, 
     trabajosDelivery,
     thematicColors
   } = useApp();
   
-  const deleteManager = useDeleteManager(borrarTurno);
+  const deleteManager = useDeleteManager(async (turno) => {
+    if (turno.tipo === 'delivery') {
+      await deleteDeliveryShift(turno.id);
+    } else {
+      await deleteShift(turno.id);
+    }
+  });
+  
   const { modalAbierto, turnoSeleccionado, abrirModalNuevo, abrirModalEditar, cerrarModal } = useTurnManager();
+  
+  // Estado para controlar cuántos días mostrar
+  const [diasMostrados, setDiasMostrados] = useState(DIAS_POR_PAGINA);
+  const [expandiendo, setExpandiendo] = useState(false);
 
   // Combinar todos los trabajos
   const todosLosTrabajos = [...trabajos, ...trabajosDelivery];
   
-  // Ordenar fechas y crear componentes de día
-  const diasOrdenados = Object.entries(turnosPorFecha)
-    .sort(([fechaA], [fechaB]) => new Date(fechaB) - new Date(fechaA));
+  // Ordenar fechas y crear array de días con turnos
+  const diasOrdenados = useMemo(() => {
+    return Object.entries(turnosPorFecha)
+      .sort(([fechaA], [fechaB]) => new Date(fechaB) - new Date(fechaA));
+  }, [turnosPorFecha]);
+
+  // Días a mostrar según el estado actual
+  const diasParaMostrar = diasOrdenados.slice(0, diasMostrados);
+  const hayMasDias = diasOrdenados.length > diasMostrados;
+  const diasRestantes = diasOrdenados.length - diasMostrados;
 
   const hayTurnos = diasOrdenados.length > 0;
+
+  // Función para mostrar más días
+  const mostrarMasDias = async () => {
+    setExpandiendo(true);
+    
+    // Simular un pequeño delay para mejor UX
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    setDiasMostrados(prev => Math.min(prev + DIAS_POR_PAGINA, diasOrdenados.length));
+    setExpandiendo(false);
+  };
+
+  // Función para colapsar de vuelta a los primeros días
+  const mostrarMenos = () => {
+    setDiasMostrados(DIAS_POR_PAGINA);
+    // Scroll suave hacia arriba
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const generarDetallesTurno = (turno) => {
     if (!turno) return [];
     
-    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
+    const trabajo = todosLosTrabajos.find(t => t.id === turno.trabajoId);
     const fecha = new Date(turno.fecha + 'T00:00:00');
     const detalles = [
       trabajo?.nombre || 'Trabajo no encontrado',
@@ -184,7 +224,7 @@ const Turnos = () => {
   };
 
   return (
-    <LoadingWrapper cargando={cargando}>
+    <LoadingWrapper loading={loading}>
       <div className="space-y-6">
         {/* Header que cambia según si hay turnos */}
         <div className="flex justify-between items-center pt-4">
@@ -200,9 +240,14 @@ const Turnos = () => {
             </div>
             <div>
               <h1 className="text-xl font-semibold mb-4 pt-4">Mis Turnos</h1>
+              {/* Contador de turnos cuando hay más de 6 días */}
+              {hayTurnos && diasOrdenados.length > DIAS_POR_PAGINA && (
+                <p className="text-sm text-gray-500 -mt-2">
+                  Mostrando {Math.min(diasMostrados, diasOrdenados.length)} de {diasOrdenados.length} días con turnos
+                </p>
+              )}
             </div>
           </div>
-          {/* Solo mostrar botón en header si hay turnos */}
           {getHeaderButton()}
         </div>
 
@@ -211,7 +256,8 @@ const Turnos = () => {
           renderEmptyState()
         ) : (
           <div className="space-y-6">
-            {diasOrdenados.map(([fecha, turnosDia]) => (
+            {/* Días con turnos */}
+            {diasParaMostrar.map(([fecha, turnosDia]) => (
               <DaySection
                 key={fecha}
                 fecha={fecha}
@@ -221,6 +267,36 @@ const Turnos = () => {
                 onDeleteTurno={deleteManager.startDeletion}
               />
             ))}
+            
+            {/* Botón Ver Más con GlassButton */}
+            {hayMasDias && (
+              <div className="flex justify-center py-8">
+                <GlassButton
+                  onClick={mostrarMasDias}
+                  loading={expandiendo}
+                  variant="primary"
+                  size="lg"
+                  icon={Eye}
+                  className="bg-gradient-to-r from-pink-500/20 to-purple-500/20 backdrop-blur-xl"
+                >
+                  Ver {Math.min(DIAS_POR_PAGINA, diasRestantes)} días más
+                </GlassButton>
+              </div>
+            )}
+            
+            {/* Botón Mostrar Menos (solo cuando se han expandido los resultados) */}
+            {!hayMasDias && diasMostrados > DIAS_POR_PAGINA && (
+              <div className="flex justify-center py-4">
+                <GlassButton
+                  onClick={mostrarMenos}
+                  variant="secondary"
+                  size="md"
+                  className="bg-gradient-to-r from-gray-500/20 to-blue-500/20 backdrop-blur-xl"
+                >
+                  Mostrar menos
+                </GlassButton>
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -5,8 +5,8 @@ import { Clock, DollarSign, Timer } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 
 const ShiftDetails = ({ turno, trabajo, badges }) => {
-  const { calcularPago } = useApp();
-  const { totalConDescuento, horas } = calcularPago(turno);
+  const { calculatePayment } = useApp();
+  const { totalWithDiscount, hours  } = calculatePayment(turno);
 
   return (
     <div className="space-y-1">
@@ -21,14 +21,14 @@ const ShiftDetails = ({ turno, trabajo, badges }) => {
       {/* Duración */}
       <div className="flex items-center">
         <Timer size={14} className="text-green-500 mr-1" />
-        <span className="text-sm text-gray-600">{horas.toFixed(1)} horas</span>
+        <span className="text-sm text-gray-600">{hours.toFixed(1)} horas</span>
       </div>
       
       {/* Ganancia y Badges en la misma línea */}
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <DollarSign size={14} className="text-yellow-500 mr-1" />
-          <span className="text-sm font-medium">${totalConDescuento.toFixed(2)}</span>
+          <span className="text-sm font-medium">${totalWithDiscount.toFixed(2)}</span>
           <span className="text-xs text-gray-500 ml-1">total</span>
         </div>
         
