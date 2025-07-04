@@ -5,12 +5,12 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 
 const QuickStatCard = (***REMOVED*** icon: Icon, label, value, subtitle ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
   return (
     <Card>
       <div className="flex items-center mb-2">
-        <Icon size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
+        <Icon size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
         <span className="text-sm text-gray-600">***REMOVED***label***REMOVED***</span>
       </div>
       <p className="text-2xl font-bold text-gray-800">***REMOVED***value***REMOVED***</p>

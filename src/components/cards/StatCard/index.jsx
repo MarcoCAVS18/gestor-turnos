@@ -15,7 +15,7 @@ const StatCard = (***REMOVED***
   className = '',
   onClick 
 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
   const getSizeClasses = () => ***REMOVED***
     const sizes = ***REMOVED***
@@ -51,7 +51,7 @@ const StatCard = (***REMOVED***
           ***REMOVED***Icon && (
             <Icon 
               size=***REMOVED***size === 'sm' ? 16 : size === 'lg' ? 24 : 20***REMOVED*** 
-              style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** 
+              style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** 
             />
           )***REMOVED***
         </div>
@@ -59,7 +59,7 @@ const StatCard = (***REMOVED***
         ***REMOVED***/* Valor principal */***REMOVED***
         <p 
           className=***REMOVED***`$***REMOVED***getValueSize()***REMOVED*** font-bold mb-1`***REMOVED***
-          style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
         >
           ***REMOVED***value***REMOVED***
         </p>

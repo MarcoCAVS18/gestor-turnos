@@ -11,7 +11,7 @@ const StatsProgressBar = (***REMOVED***
   gananciaTotal = 0,
   className = '' 
 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
   // Calcular porcentaje de progreso
   const porcentaje = metaHoras > 0 ? (horasSemanales / metaHoras) * 100 : 0;
@@ -19,7 +19,7 @@ const StatsProgressBar = (***REMOVED***
   
   const getColorProgreso = () => ***REMOVED***
     if (porcentaje >= 100) return '#10B981';
-    if (porcentaje >= 75) return coloresTemáticos?.base || '#EC4899'; 
+    if (porcentaje >= 75) return thematicColors?.base || '#EC4899'; 
     if (porcentaje >= 50) return '#F59E0B'; 
     return '#EF4444';
   ***REMOVED***;
@@ -30,7 +30,7 @@ const StatsProgressBar = (***REMOVED***
         ***REMOVED***/* Header */***REMOVED***
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-gray-800 flex items-center">
-            <Target size=***REMOVED***18***REMOVED*** className="mr-2" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** />
+            <Target size=***REMOVED***18***REMOVED*** className="mr-2" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** />
             Progreso Semanal
           </h3>
           <span className="text-sm text-gray-500">

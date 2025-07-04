@@ -5,7 +5,7 @@ import ***REMOVED*** TrendingUp ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const MonthlyProjection = (***REMOVED*** totalGanado = 0, horasTrabajadas = 0 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
 
   // Verificar que los datos sean válidos
   const totalSeguro = typeof totalGanado === 'number' && !isNaN(totalGanado) ? totalGanado : 0;
@@ -17,7 +17,7 @@ const MonthlyProjection = (***REMOVED*** totalGanado = 0, horasTrabajadas = 0 **
   return (
     <div className="bg-white rounded-xl shadow-md p-4">
       <div className="flex items-center mb-3">
-        <TrendingUp size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+        <TrendingUp size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
         <h3 className="font-semibold">Proyección mensual</h3>
       </div>
       
@@ -25,7 +25,7 @@ const MonthlyProjection = (***REMOVED*** totalGanado = 0, horasTrabajadas = 0 **
         <p className="text-sm text-gray-600 mb-2">
           Si mantienes este ritmo durante todo el mes
         </p>
-        <p className="text-3xl font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>
+        <p className="text-3xl font-bold" style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***>
           $***REMOVED***gananciaProyectada.toFixed(2)***REMOVED***
         </p>
         <p className="text-sm text-gray-500">

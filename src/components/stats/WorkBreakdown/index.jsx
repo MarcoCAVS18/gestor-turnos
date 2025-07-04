@@ -5,7 +5,7 @@ import ***REMOVED*** BarChart2 ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const WorkBreakdown = (***REMOVED*** gananciaPorTrabajo = [], totalGanado = 0 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
 
   // Verificar datos
   const trabajosValidos = Array.isArray(gananciaPorTrabajo) ? gananciaPorTrabajo : [];
@@ -15,7 +15,7 @@ const WorkBreakdown = (***REMOVED*** gananciaPorTrabajo = [], totalGanado = 0 **
     return (
       <div className="bg-white rounded-xl shadow-md p-4">
         <div className="flex items-center mb-4">
-          <BarChart2 size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+          <BarChart2 size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
           <h3 className="font-semibold">Por trabajo</h3>
         </div>
         <div className="text-center py-8 text-gray-500">
@@ -67,7 +67,7 @@ const WorkBreakdown = (***REMOVED*** gananciaPorTrabajo = [], totalGanado = 0 **
   return (
     <div className="bg-white rounded-xl shadow-md p-4">
       <div className="flex items-center mb-4">
-        <BarChart2 size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+        <BarChart2 size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
         <h3 className="font-semibold">Por trabajo</h3>
       </div>
 

@@ -9,7 +9,7 @@ const CalendarGrid = (***REMOVED***
   fechaActual, 
   diaSeleccionadoActual, 
   trabajos, 
-  coloresTemáticos, 
+  thematicColors, 
   onDiaClick 
 ***REMOVED***) => ***REMOVED***
   const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
@@ -41,7 +41,7 @@ const CalendarGrid = (***REMOVED***
               esHoy=***REMOVED***esHoy***REMOVED***
               esSeleccionado=***REMOVED***esSeleccionado***REMOVED***
               coloresTrabajos=***REMOVED***coloresTrabajos***REMOVED***
-              coloresTemáticos=***REMOVED***coloresTemáticos***REMOVED***
+              thematicColors=***REMOVED***thematicColors***REMOVED***
               onClick=***REMOVED***() => onDiaClick(dia.fecha)***REMOVED***
             />
           );

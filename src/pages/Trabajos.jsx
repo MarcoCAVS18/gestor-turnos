@@ -17,7 +17,7 @@ const Trabajos = () => ***REMOVED***
     loading, // Cambiado de 'cargando' a 'loading'
     deleteJob, // Nombre correcto de la función
     deleteDeliveryJob, // Nombre correcto de la función
-    coloresTemáticos
+    thematicColors
   ***REMOVED*** = useApp();
 
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
@@ -141,11 +141,11 @@ const Trabajos = () => ***REMOVED***
           <div className="flex items-center space-x-3">
             <div 
               className="p-2 rounded-lg"
-              style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
             >
               <Briefcase 
                 className="w-6 h-6" 
-                style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
               />
             </div>
             <div>
@@ -158,15 +158,15 @@ const Trabajos = () => ***REMOVED***
               onClick=***REMOVED***abrirModalNuevo***REMOVED***
               className="text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 shadow-sm hover:shadow-md"
               style=***REMOVED******REMOVED*** 
-                backgroundColor: coloresTemáticos?.base || '#EC4899'
+                backgroundColor: thematicColors?.base || '#EC4899'
               ***REMOVED******REMOVED***
               onMouseEnter=***REMOVED***(e) => ***REMOVED***
-                if (coloresTemáticos?.dark) ***REMOVED***
-                  e.target.style.backgroundColor = coloresTemáticos.dark;
+                if (thematicColors?.dark) ***REMOVED***
+                  e.target.style.backgroundColor = thematicColors.dark;
                 ***REMOVED***
               ***REMOVED******REMOVED***
               onMouseLeave=***REMOVED***(e) => ***REMOVED***
-                e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+                e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
               ***REMOVED******REMOVED***
             >
               <Plus className="w-4 h-4" />
@@ -180,11 +180,11 @@ const Trabajos = () => ***REMOVED***
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <div 
               className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"
-              style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
             >
               <Briefcase 
                 className="w-10 h-10" 
-                style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
               />
             </div>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay trabajos aún</h3>
@@ -195,15 +195,15 @@ const Trabajos = () => ***REMOVED***
               onClick=***REMOVED***abrirModalNuevo***REMOVED***
               className="text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2 hover:shadow-md"
               style=***REMOVED******REMOVED*** 
-                backgroundColor: coloresTemáticos?.base || '#EC4899'
+                backgroundColor: thematicColors?.base || '#EC4899'
               ***REMOVED******REMOVED***
               onMouseEnter=***REMOVED***(e) => ***REMOVED***
-                if (coloresTemáticos?.dark) ***REMOVED***
-                  e.target.style.backgroundColor = coloresTemáticos.dark;
+                if (thematicColors?.dark) ***REMOVED***
+                  e.target.style.backgroundColor = thematicColors.dark;
                 ***REMOVED***
               ***REMOVED******REMOVED***
               onMouseLeave=***REMOVED***(e) => ***REMOVED***
-                e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+                e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
               ***REMOVED******REMOVED***
             >
               <Plus className="w-4 h-4" />

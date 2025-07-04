@@ -5,7 +5,7 @@ import ***REMOVED*** Calendar, Clock, Award, DollarSign ***REMOVED*** from 'luci
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
   React.useEffect(() => ***REMOVED***
@@ -73,7 +73,7 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
       ***REMOVED***diaMasProductivo.ganancia > 0 && (
         <div className="bg-white rounded-xl shadow-md p-4">
           <div className="flex items-center mb-3">
-            <Award size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+            <Award size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
             <h3 className="font-semibold">Día más productivo</h3>
           </div>
           <div className="flex items-center justify-between">
@@ -84,7 +84,7 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xl font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>
+              <p className="text-xl font-bold" style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***>
                 $***REMOVED***diaMasProductivo.ganancia.toFixed(2)***REMOVED***
               </p>
             </div>
@@ -94,7 +94,7 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
 
       <div className="bg-white rounded-xl shadow-md p-4">
         <div className="flex items-center mb-4">
-          <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+          <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
           <h3 className="font-semibold">Distribución semanal</h3>
         </div>
 
@@ -122,8 +122,8 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
                   <span className="text-sm font-medium text-gray-700">***REMOVED***dia || 'Día'***REMOVED***</span>
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center">
-                      <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** />
-                      <span className="text-sm font-bold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>
+                      <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1" style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** />
+                      <span className="text-sm font-bold" style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***>
                         $***REMOVED***datosSeguro.ganancia.toFixed(2)***REMOVED***
                       </span>
                     </div>

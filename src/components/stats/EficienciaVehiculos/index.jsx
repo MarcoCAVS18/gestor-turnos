@@ -6,7 +6,7 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 
 const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
   React.useEffect(() => ***REMOVED***
@@ -70,7 +70,7 @@ const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***RE
     <Card>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center">
-          <Car size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
+          <Car size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
           Eficiencia por Vehículo
         </h3>
       </div>
@@ -155,13 +155,13 @@ const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***RE
         <div className="grid grid-cols-2 gap-4 text-sm text-center">
           <div>
             <p className="text-gray-600">Total recorrido</p>
-            <p className="font-semibold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED***>
+            <p className="font-semibold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
               ***REMOVED***deliveryStats.totalKilometros.toFixed(1)***REMOVED*** km
             </p>
           </div>
           <div>
             <p className="text-gray-600">Eficiencia promedio</p>
-            <p className="font-semibold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED***>
+            <p className="font-semibold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
               ***REMOVED***deliveryStats.eficienciaCombustible.toFixed(1)***REMOVED*** km/peso
             </p>
           </div>

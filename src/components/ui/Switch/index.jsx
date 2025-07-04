@@ -4,7 +4,7 @@ import React from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const Switch = (***REMOVED*** checked, onChange, disabled = false, size = 'md' ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
   const getSizeClasses = () => ***REMOVED***
     const sizes = ***REMOVED***
@@ -27,7 +27,7 @@ const Switch = (***REMOVED*** checked, onChange, disabled = false, size = 'md' *
   ***REMOVED***;
 
   // Usar colores temáticos si estan disponibles
-  const activeColor = coloresTemáticos?.base || '#EC4899';
+  const activeColor = thematicColors?.base || '#EC4899';
 
   return (
     <button

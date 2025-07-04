@@ -6,7 +6,7 @@ import ***REMOVED*** DELIVERY_VEHICLES ***REMOVED*** from '../../../constants/de
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
   const getVehicleIcon = (vehicleId) => ***REMOVED***
     const icons = ***REMOVED***
@@ -30,8 +30,8 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick ***REMOVED***)
           : 'border-gray-200 hover:border-gray-300 bg-white'
       ***REMOVED***`***REMOVED***
       style=***REMOVED******REMOVED***
-        borderColor: isSelected ? coloresTemáticos?.base : undefined,
-        backgroundColor: isSelected ? coloresTemáticos?.transparent10 : undefined
+        borderColor: isSelected ? thematicColors?.base : undefined,
+        backgroundColor: isSelected ? thematicColors?.transparent10 : undefined
       ***REMOVED******REMOVED***
     >
       <div 
@@ -46,7 +46,7 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick ***REMOVED***)
       ***REMOVED***isSelected && (
         <div 
           className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center"
-          style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base ***REMOVED******REMOVED***
         >
           <Check size=***REMOVED***14***REMOVED*** className="text-white" />
         </div>

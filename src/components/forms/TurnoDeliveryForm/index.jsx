@@ -3,53 +3,81 @@
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Calendar, Clock, Package, Car, DollarSign, TrendingUp ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ThemeInput from '../../ui/ThemeInput';
+import Button from '../../ui/Button';
 
-const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, trabajos, onSubmit, onCancel, onTrabajoChange ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+const TurnoDeliveryForm = (***REMOVED*** 
+  turno, 
+  trabajoId, 
+  trabajos, 
+  onSubmit, 
+  onCancel, 
+  onTrabajoChange,
+  thematicColors,
+  isMobile,
+  loading 
+***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** thematicColors: contextColors ***REMOVED*** = useApp();
+  const coloresTemáticos = thematicColors || contextColors;
   
   // Estados del formulario
-  const [fecha, setFecha] = useState('');
-  const [horaInicio, setHoraInicio] = useState('');
-  const [horaFin, setHoraFin] = useState('');
-  const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(trabajoId || '');
-  const [numeroPedidos, setNumeroPedidos] = useState('');
-  const [gananciaTotal, setGananciaTotal] = useState('');
-  const [propinas, setPropinas] = useState('');
-  const [kilometros, setKilometros] = useState('');
-  const [gastoCombustible, setGastoCombustible] = useState('');
-  const [notas, setNotas] = useState('');
-  const [guardando, setGuardando] = useState(false);
+  const [formData, setFormData] = useState(***REMOVED***
+    fecha: '',
+    horaInicio: '',
+    horaFin: '',
+    trabajoSeleccionado: trabajoId || '',
+    numeroPedidos: '',
+    gananciaTotal: '',
+    propinas: '',
+    kilometros: '',
+    gastoCombustible: '',
+    notas: ''
+  ***REMOVED***);
+  
   const [error, setError] = useState('');
 
   // Filtrar solo trabajos de delivery
-  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
+  const trabajosDelivery = trabajos.filter(t => t.type === 'delivery');
 
   // Cargar datos si es edición
   useEffect(() => ***REMOVED***
     if (turno) ***REMOVED***
-      setFecha(turno.fecha || '');
-      setHoraInicio(turno.horaInicio || '');
-      setHoraFin(turno.horaFin || '');
-      setTrabajoSeleccionado(turno.trabajoId || '');
-      setNumeroPedidos(turno.numeroPedidos || '');
-      setGananciaTotal(turno.gananciaTotal || '');
-      setPropinas(turno.propinas || '');
-      setKilometros(turno.kilometros || '');
-      setGastoCombustible(turno.gastoCombustible || '');
-      setNotas(turno.notas || '');
+      setFormData(***REMOVED***
+        fecha: turno.fecha || '',
+        horaInicio: turno.horaInicio || '',
+        horaFin: turno.horaFin || '',
+        trabajoSeleccionado: turno.trabajoId || '',
+        numeroPedidos: turno.numeroPedidos?.toString() || '',
+        gananciaTotal: turno.gananciaTotal?.toString() || '',
+        propinas: turno.propinas?.toString() || '',
+        kilometros: turno.kilometros?.toString() || '',
+        gastoCombustible: turno.gastoCombustible?.toString() || '',
+        notas: turno.notas || ''
+      ***REMOVED***);
     ***REMOVED***
   ***REMOVED***, [turno]);
 
   // Actualizar trabajo seleccionado si cambia el prop
   useEffect(() => ***REMOVED***
-    if (trabajoId && trabajoId !== trabajoSeleccionado) ***REMOVED***
-      setTrabajoSeleccionado(trabajoId);
+    if (trabajoId && trabajoId !== formData.trabajoSeleccionado) ***REMOVED***
+      setFormData(prev => (***REMOVED***
+        ...prev,
+        trabajoSeleccionado: trabajoId
+      ***REMOVED***));
     ***REMOVED***
-  ***REMOVED***, [trabajoId, trabajoSeleccionado]);
+  ***REMOVED***, [trabajoId, formData.trabajoSeleccionado]);
+
+  const handleInputChange = (field, value) => ***REMOVED***
+    setFormData(prev => (***REMOVED***
+      ...prev,
+      [field]: value
+    ***REMOVED***));
+    setError(''); // Limpiar error al cambiar datos
+  ***REMOVED***;
 
   const handleTrabajoChange = (e) => ***REMOVED***
     const nuevoTrabajoId = e.target.value;
-    setTrabajoSeleccionado(nuevoTrabajoId);
+    handleInputChange('trabajoSeleccionado', nuevoTrabajoId);
     
     // Notificar al modal sobre el cambio
     if (onTrabajoChange) ***REMOVED***
@@ -58,22 +86,34 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, trabajos, onSubmit, o
   ***REMOVED***;
 
   const validarFormulario = () => ***REMOVED***
-    if (!fecha) ***REMOVED***
+    if (!formData.fecha) ***REMOVED***
       setError('La fecha es requerida');
       return false;
     ***REMOVED***
-    if (!horaInicio || !horaFin) ***REMOVED***
+    if (!formData.horaInicio || !formData.horaFin) ***REMOVED***
       setError('Las horas de inicio y fin son requeridas');
       return false;
     ***REMOVED***
-    if (!trabajoSeleccionado) ***REMOVED***
+    if (!formData.trabajoSeleccionado) ***REMOVED***
       setError('Debes seleccionar un trabajo de delivery');
       return false;
     ***REMOVED***
-    if (gananciaTotal === '' || isNaN(Number(gananciaTotal))) ***REMOVED***
+    if (!formData.gananciaTotal || isNaN(Number(formData.gananciaTotal))) ***REMOVED***
       setError('La ganancia total debe ser un número válido');
       return false;
     ***REMOVED***
+    
+    // Validar que la hora de fin sea mayor que la de inicio
+    const [horaI, minI] = formData.horaInicio.split(':').map(Number);
+    const [horaF, minF] = formData.horaFin.split(':').map(Number);
+    const minutosInicio = horaI * 60 + minI;
+    const minutosFin = horaF * 60 + minF;
+    
+    if (minutosFin <= minutosInicio) ***REMOVED***
+      setError('La hora de fin debe ser posterior a la hora de inicio');
+      return false;
+    ***REMOVED***
+    
     return true;
   ***REMOVED***;
 
@@ -82,53 +122,52 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, trabajos, onSubmit, o
     
     if (!validarFormulario()) return;
 
-    setGuardando(true);
-    setError('');
+    const datosTurno = ***REMOVED***
+      fecha: formData.fecha,
+      horaInicio: formData.horaInicio,
+      horaFin: formData.horaFin,
+      trabajoId: formData.trabajoSeleccionado,
+      type: 'delivery',
+      numeroPedidos: Number(formData.numeroPedidos) || 0,
+      gananciaTotal: Number(formData.gananciaTotal) || 0,
+      propinas: Number(formData.propinas) || 0,
+      kilometros: Number(formData.kilometros) || 0,
+      gastoCombustible: Number(formData.gastoCombustible) || 0,
+      notas: formData.notas.trim()
+    ***REMOVED***;
 
-    try ***REMOVED***
-      const datosTurno = ***REMOVED***
-        fecha,
-        horaInicio,
-        horaFin,
-        trabajoId: trabajoSeleccionado,
-        tipo: 'delivery',
-        numeroPedidos: Number(numeroPedidos) || 0,
-        gananciaTotal: Number(gananciaTotal) || 0,
-        propinas: Number(propinas) || 0,
-        kilometros: Number(kilometros) || 0,
-        gastoCombustible: Number(gastoCombustible) || 0,
-        notas: notas.trim()
-      ***REMOVED***;
-
-      await onSubmit(datosTurno);
-    ***REMOVED*** catch (err) ***REMOVED***
-      setError(err.message || 'Error al guardar el turno');
-      setGuardando(false);
-    ***REMOVED***
+    await onSubmit(datosTurno);
   ***REMOVED***;
 
   return (
-    <form onSubmit=***REMOVED***manejarSubmit***REMOVED*** className="space-y-4">
+    <form 
+      onSubmit=***REMOVED***manejarSubmit***REMOVED*** 
+      className=***REMOVED***`space-y-6 $***REMOVED***isMobile ? 'mobile-form' : ''***REMOVED***`***REMOVED***
+    >
       ***REMOVED***/* Trabajo de delivery */***REMOVED***
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          <Package size=***REMOVED***16***REMOVED*** className="inline mr-1" />
-          Trabajo de delivery
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          <Package size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+          Trabajo de delivery *
         </label>
         <select
-          value=***REMOVED***trabajoSeleccionado***REMOVED***
+          value=***REMOVED***formData.trabajoSeleccionado***REMOVED***
           onChange=***REMOVED***handleTrabajoChange***REMOVED***
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+          className=***REMOVED***`
+            w-full border rounded-lg transition-colors
+            $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
+            $***REMOVED***error && !formData.trabajoSeleccionado ? 'border-red-500' : 'border-gray-300'***REMOVED***
+          `***REMOVED***
           style=***REMOVED******REMOVED*** 
             '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
           ***REMOVED******REMOVED***
           required
-          disabled=***REMOVED***turno***REMOVED*** // No permitir cambiar trabajo en edición
+          disabled=***REMOVED***turno || loading***REMOVED*** // No permitir cambiar trabajo en edición
         >
           <option value="">Seleccionar trabajo</option>
           ***REMOVED***trabajosDelivery.map(trabajo => (
             <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
-              ***REMOVED***trabajo.nombre***REMOVED*** - ***REMOVED***trabajo.plataforma***REMOVED***
+              ***REMOVED***trabajo.nombre***REMOVED*** - ***REMOVED***trabajo.platform || trabajo.plataforma***REMOVED***
             </option>
           ))***REMOVED***
         </select>
@@ -140,178 +179,190 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, trabajos, onSubmit, o
       </div>
 
       ***REMOVED***/* Fecha y horario */***REMOVED***
-      <div className="grid grid-cols-3 gap-3">
+      <div className=***REMOVED***`grid $***REMOVED***isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-3'***REMOVED***`***REMOVED***>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Calendar size=***REMOVED***16***REMOVED*** className="inline mr-1" />
-            Fecha
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Calendar size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+            Fecha *
           </label>
-          <input
+          <ThemeInput
             type="date"
-            value=***REMOVED***fecha***REMOVED***
-            onChange=***REMOVED***(e) => setFecha(e.target.value)***REMOVED***
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-            style=***REMOVED******REMOVED*** 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-            ***REMOVED******REMOVED***
+            value=***REMOVED***formData.fecha***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('fecha', e.target.value)***REMOVED***
+            className=***REMOVED***`
+              w-full border rounded-lg transition-colors
+              $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
+            `***REMOVED***
             required
+            themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Clock size=***REMOVED***16***REMOVED*** className="inline mr-1" />
-            Inicio
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Clock size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+            Inicio *
           </label>
-          <input
+          <ThemeInput
             type="time"
-            value=***REMOVED***horaInicio***REMOVED***
-            onChange=***REMOVED***(e) => setHoraInicio(e.target.value)***REMOVED***
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-            style=***REMOVED******REMOVED*** 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-            ***REMOVED******REMOVED***
+            value=***REMOVED***formData.horaInicio***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('horaInicio', e.target.value)***REMOVED***
+            className=***REMOVED***`
+              w-full border rounded-lg transition-colors
+              $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
+            `***REMOVED***
             required
+            themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            <Clock size=***REMOVED***16***REMOVED*** className="inline mr-1" />
-            Fin
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Clock size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+            Fin *
           </label>
-          <input
+          <ThemeInput
             type="time"
-            value=***REMOVED***horaFin***REMOVED***
-            onChange=***REMOVED***(e) => setHoraFin(e.target.value)***REMOVED***
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-            style=***REMOVED******REMOVED*** 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-            ***REMOVED******REMOVED***
+            value=***REMOVED***formData.horaFin***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('horaFin', e.target.value)***REMOVED***
+            className=***REMOVED***`
+              w-full border rounded-lg transition-colors
+              $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
+            `***REMOVED***
             required
+            themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
           />
         </div>
       </div>
 
       ***REMOVED***/* Información de pedidos */***REMOVED***
-      <div className="space-y-3">
+      <div className="space-y-4">
         <h3 className="text-sm font-medium text-gray-700">Información del turno</h3>
         
-        <div className="grid grid-cols-2 gap-3">
+        <div className=***REMOVED***`grid $***REMOVED***isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-4'***REMOVED***`***REMOVED***>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              <Package size=***REMOVED***14***REMOVED*** className="inline mr-1" />
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Package size=***REMOVED***16***REMOVED*** className="inline mr-2" />
               Número de pedidos
             </label>
-            <input
+            <ThemeInput
               type="number"
-              value=***REMOVED***numeroPedidos***REMOVED***
-              onChange=***REMOVED***(e) => setNumeroPedidos(e.target.value)***REMOVED***
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-              style=***REMOVED******REMOVED*** 
-                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-              ***REMOVED******REMOVED***
+              value=***REMOVED***formData.numeroPedidos***REMOVED***
+              onChange=***REMOVED***(e) => handleInputChange('numeroPedidos', e.target.value)***REMOVED***
+              className=***REMOVED***`
+                w-full border rounded-lg transition-colors
+                $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
+              `***REMOVED***
               placeholder="0"
               min="0"
+              themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
             />
           </div>
           
           <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              <Car size=***REMOVED***14***REMOVED*** className="inline mr-1" />
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Car size=***REMOVED***16***REMOVED*** className="inline mr-2" />
               Kilómetros recorridos
             </label>
-            <input
+            <ThemeInput
               type="number"
-              value=***REMOVED***kilometros***REMOVED***
-              onChange=***REMOVED***(e) => setKilometros(e.target.value)***REMOVED***
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-              style=***REMOVED******REMOVED*** 
-                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-              ***REMOVED******REMOVED***
+              value=***REMOVED***formData.kilometros***REMOVED***
+              onChange=***REMOVED***(e) => handleInputChange('kilometros', e.target.value)***REMOVED***
+              className=***REMOVED***`
+                w-full border rounded-lg transition-colors
+                $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
+              `***REMOVED***
               placeholder="0"
               min="0"
               step="0.1"
+              themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
             />
           </div>
         </div>
       </div>
 
       ***REMOVED***/* Información financiera */***REMOVED***
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-gray-700">Ganancias</h3>
+      <div className="space-y-4">
+        <h3 className="text-sm font-medium text-gray-700">Ganancias *</h3>
         
-        <div className="grid grid-cols-2 gap-3">
+        <div className=***REMOVED***`grid $***REMOVED***isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-4'***REMOVED***`***REMOVED***>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              <DollarSign size=***REMOVED***14***REMOVED*** className="inline mr-1" />
-              Ganancia total
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <DollarSign size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+              Ganancia total *
             </label>
-            <input
+            <ThemeInput
               type="number"
-              value=***REMOVED***gananciaTotal***REMOVED***
-              onChange=***REMOVED***(e) => setGananciaTotal(e.target.value)***REMOVED***
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-              style=***REMOVED******REMOVED*** 
-                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-              ***REMOVED******REMOVED***
-              placeholder="0"
+              value=***REMOVED***formData.gananciaTotal***REMOVED***
+              onChange=***REMOVED***(e) => handleInputChange('gananciaTotal', e.target.value)***REMOVED***
+              className=***REMOVED***`
+                w-full border rounded-lg transition-colors
+                $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
+                $***REMOVED***error && !formData.gananciaTotal ? 'border-red-500' : 'border-gray-300'***REMOVED***
+              `***REMOVED***
+              placeholder="0.00"
               step="0.01"
               required
+              themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
             />
           </div>
           
           <div>
-            <label className="block text-sm text-gray-600 mb-1">
-              <TrendingUp size=***REMOVED***14***REMOVED*** className="inline mr-1" />
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <TrendingUp size=***REMOVED***16***REMOVED*** className="inline mr-2" />
               Propinas
             </label>
-            <input
+            <ThemeInput
               type="number"
-              value=***REMOVED***propinas***REMOVED***
-              onChange=***REMOVED***(e) => setPropinas(e.target.value)***REMOVED***
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-              style=***REMOVED******REMOVED*** 
-                '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-              ***REMOVED******REMOVED***
-              placeholder="0"
+              value=***REMOVED***formData.propinas***REMOVED***
+              onChange=***REMOVED***(e) => handleInputChange('propinas', e.target.value)***REMOVED***
+              className=***REMOVED***`
+                w-full border rounded-lg transition-colors
+                $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
+              `***REMOVED***
+              placeholder="0.00"
               step="0.01"
+              themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
             />
           </div>
         </div>
         
         <div>
-          <label className="block text-sm text-gray-600 mb-1">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
             Gasto en combustible
           </label>
-          <input
+          <ThemeInput
             type="number"
-            value=***REMOVED***gastoCombustible***REMOVED***
-            onChange=***REMOVED***(e) => setGastoCombustible(e.target.value)***REMOVED***
-            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-            style=***REMOVED******REMOVED*** 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-            ***REMOVED******REMOVED***
-            placeholder="0"
+            value=***REMOVED***formData.gastoCombustible***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('gastoCombustible', e.target.value)***REMOVED***
+            className=***REMOVED***`
+              w-full border rounded-lg transition-colors
+              $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
+            `***REMOVED***
+            placeholder="0.00"
             step="0.01"
+            themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
           />
         </div>
       </div>
 
       ***REMOVED***/* Notas */***REMOVED***
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Notas (opcional)
         </label>
         <textarea
-          value=***REMOVED***notas***REMOVED***
-          onChange=***REMOVED***(e) => setNotas(e.target.value)***REMOVED***
-          className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-          style=***REMOVED******REMOVED*** 
-            '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
-          ***REMOVED******REMOVED***
-          rows="2"
+          value=***REMOVED***formData.notas***REMOVED***
+          onChange=***REMOVED***(e) => handleInputChange('notas', e.target.value)***REMOVED***
           placeholder="ej: Día lluvioso, mucha demanda..."
+          rows=***REMOVED***isMobile ? 4 : 3***REMOVED***
+          className=***REMOVED***`
+            w-full border border-gray-300 rounded-lg transition-colors resize-none
+            $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
+          `***REMOVED***
+          style=***REMOVED******REMOVED***
+            '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+          ***REMOVED******REMOVED***
         />
       </div>
 
@@ -323,36 +374,58 @@ const TurnoDeliveryForm = (***REMOVED*** turno, trabajoId, trabajos, onSubmit, o
       )***REMOVED***
 
       ***REMOVED***/* Botones */***REMOVED***
-      <div className="flex gap-3 pt-2">
-        <button
+      <div className=***REMOVED***`flex pt-4 $***REMOVED***isMobile ? 'flex-col space-y-3' : 'gap-3'***REMOVED***`***REMOVED***>
+        <Button
           type="button"
           onClick=***REMOVED***onCancel***REMOVED***
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-          disabled=***REMOVED***guardando***REMOVED***
+          variant="outline"
+          className=***REMOVED***isMobile ? 'w-full py-3' : 'flex-1'***REMOVED***
+          disabled=***REMOVED***loading***REMOVED***
+          themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
         >
           Cancelar
-        </button>
-        <button
+        </Button>
+        <Button
           type="submit"
-          disabled=***REMOVED***guardando***REMOVED***
-          className="flex-1 px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+          className=***REMOVED***isMobile ? 'w-full py-3' : 'flex-1'***REMOVED***
+          loading=***REMOVED***loading***REMOVED***
+          themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
+        >
+          ***REMOVED***turno ? 'Guardar Cambios' : 'Crear Turno'***REMOVED***
+        </Button>
+      </div>
+
+      ***REMOVED***/* Vista previa de ganancias */***REMOVED***
+      ***REMOVED***formData.gananciaTotal && (
+        <div 
+          className=***REMOVED***`rounded-lg p-4 border-l-4 $***REMOVED***isMobile ? 'mt-4' : 'mt-2'***REMOVED***`***REMOVED***
           style=***REMOVED******REMOVED*** 
-            backgroundColor: guardando ? '#9CA3AF' : coloresTemáticos?.base || '#EC4899',
-          ***REMOVED******REMOVED***
-          onMouseEnter=***REMOVED***(e) => ***REMOVED***
-            if (!guardando && coloresTemáticos?.dark) ***REMOVED***
-              e.target.style.backgroundColor = coloresTemáticos.dark;
-            ***REMOVED***
-          ***REMOVED******REMOVED***
-          onMouseLeave=***REMOVED***(e) => ***REMOVED***
-            if (!guardando) ***REMOVED***
-              e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
-            ***REMOVED***
+            borderLeftColor: coloresTemáticos?.base || '#EC4899',
+            backgroundColor: `$***REMOVED***coloresTemáticos?.base || '#EC4899'***REMOVED***10`
           ***REMOVED******REMOVED***
         >
-          ***REMOVED***guardando ? 'Guardando...' : (turno ? 'Guardar Cambios' : 'Crear Turno')***REMOVED***
-        </button>
-      </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-600">Ganancia bruta:</span>
+              <span className="font-medium">$***REMOVED***formData.gananciaTotal***REMOVED***</span>
+            </div>
+            ***REMOVED***formData.gastoCombustible && (
+              <>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-600">Gasto combustible:</span>
+                  <span className="text-red-600">-$***REMOVED***formData.gastoCombustible***REMOVED***</span>
+                </div>
+                <div className="flex items-center justify-between text-sm font-medium border-t pt-2">
+                  <span>Ganancia neta:</span>
+                  <span style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***>
+                    $***REMOVED***(Number(formData.gananciaTotal) - Number(formData.gastoCombustible || 0)).toFixed(2)***REMOVED***
+                  </span>
+                </div>
+              </>
+            )***REMOVED***
+          </div>
+        </div>
+      )***REMOVED***
     </form>
   );
 ***REMOVED***;

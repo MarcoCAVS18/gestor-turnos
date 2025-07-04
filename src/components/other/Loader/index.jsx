@@ -6,8 +6,8 @@ import ***REMOVED*** gsap ***REMOVED*** from 'gsap';
 import './index.css';
 
 const Loader = (***REMOVED*** size = 40, fullScreen = false, onAnimationComplete ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
-  const colorPrincipal = coloresTemáticos?.base || '#EC4899';
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colorPrincipal = thematicColors?.base || '#EC4899';
   const svgRef = useRef(null);
   const [isMobile, setIsMobile] = useState(false);
 

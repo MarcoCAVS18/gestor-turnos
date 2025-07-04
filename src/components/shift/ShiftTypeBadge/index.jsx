@@ -5,7 +5,7 @@ import ***REMOVED*** Sun, Sunset, Moon ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const ShiftTypeBadge = (***REMOVED*** tipoTurno ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
   const tipos = ***REMOVED***
     diurno: ***REMOVED***
@@ -23,8 +23,8 @@ const ShiftTypeBadge = (***REMOVED*** tipoTurno ***REMOVED***) => ***REMOVED***
     noche: ***REMOVED***
       icon: Moon,
       label: 'Noche',
-      color: coloresTemáticos?.base || '#6366F1',
-      bgColor: coloresTemáticos?.transparent10 || '#E0E7FF'
+      color: thematicColors?.base || '#6366F1',
+      bgColor: thematicColors?.transparent10 || '#E0E7FF'
     ***REMOVED***
   ***REMOVED***;
 

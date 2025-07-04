@@ -5,7 +5,7 @@ import ***REMOVED*** MoreVertical ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const ActionsMenu = (***REMOVED*** actions = [] ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   const [isOpen, setIsOpen] = useState(false);
 
   if (actions.length === 0) return null;
@@ -19,8 +19,8 @@ const ActionsMenu = (***REMOVED*** actions = [] ***REMOVED***) => ***REMOVED***
         ***REMOVED******REMOVED***
         className="p-2 rounded-lg transition-colors flex-shrink-0"
         style=***REMOVED******REMOVED*** 
-          backgroundColor: isOpen ? coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' : 'transparent',
-          color: isOpen ? coloresTemáticos?.base || '#EC4899' : '#6B7280'
+          backgroundColor: isOpen ? thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' : 'transparent',
+          color: isOpen ? thematicColors?.base || '#EC4899' : '#6B7280'
         ***REMOVED******REMOVED***
       >
         <MoreVertical size=***REMOVED***16***REMOVED*** />

@@ -5,7 +5,7 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** Truck, Clock ***REMOVED*** from 'lucide-react';
 
 const TrabajoDeliveryForm = (***REMOVED*** isOpen, onClose, onSubmit, trabajoId = null, initialData = null ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos, vehiculos = [], plataformasDelivery = [] ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors, vehiculos = [], plataformasDelivery = [] ***REMOVED*** = useApp();
   
   const [formData, setFormData] = useState(***REMOVED***
     fecha: new Date().toISOString().split('T')[0],
@@ -123,7 +123,7 @@ const TrabajoDeliveryForm = (***REMOVED*** isOpen, onClose, onSubmit, trabajoId 
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-bold flex items-center">
-              <Truck size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
+              <Truck size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
               ***REMOVED***trabajoId ? 'Editar' : 'Nuevo'***REMOVED*** Turno
             </h2>
             <button
@@ -298,7 +298,7 @@ const TrabajoDeliveryForm = (***REMOVED*** isOpen, onClose, onSubmit, trabajoId 
               <button
                 type="submit"
                 className="flex-1 py-2 px-4 text-white rounded-lg hover:opacity-90 text-sm"
-                style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base || '#3B82F6' ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#3B82F6' ***REMOVED******REMOVED***
               >
                 ***REMOVED***trabajoId ? 'Actualizar' : 'Guardar'***REMOVED***
               </button>

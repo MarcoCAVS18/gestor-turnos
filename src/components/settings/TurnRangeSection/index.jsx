@@ -7,7 +7,7 @@ import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
 const TimeSelect = (***REMOVED*** label, value, onChange, icon: Icon, iconColor ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
   return (
     <div>
@@ -20,7 +20,7 @@ const TimeSelect = (***REMOVED*** label, value, onChange, icon: Icon, iconColor 
         onChange=***REMOVED***(e) => onChange(parseInt(e.target.value))***REMOVED***
         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
         style=***REMOVED******REMOVED*** 
-          '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+          '--tw-ring-color': thematicColors?.base || '#EC4899'
         ***REMOVED******REMOVED***
       >
         ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (

@@ -6,7 +6,7 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 
 const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   const [sortBy, setSortBy] = useState('totalGanado');
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
@@ -78,7 +78,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
     <Card>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center">
-          <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
+          <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
           Plataformas
         </h3>
       </div>
@@ -93,7 +93,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
                 : 'text-gray-600 bg-gray-100'
             ***REMOVED***`***REMOVED***
             style=***REMOVED******REMOVED*** 
-              backgroundColor: sortBy === 'totalGanado' ? coloresTemáticos?.base : undefined
+              backgroundColor: sortBy === 'totalGanado' ? thematicColors?.base : undefined
             ***REMOVED******REMOVED***
           >
             Ganancias
@@ -106,7 +106,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
                 : 'text-gray-600 bg-gray-100'
             ***REMOVED***`***REMOVED***
             style=***REMOVED******REMOVED*** 
-              backgroundColor: sortBy === 'totalPedidos' ? coloresTemáticos?.base : undefined
+              backgroundColor: sortBy === 'totalPedidos' ? thematicColors?.base : undefined
             ***REMOVED******REMOVED***
           >
             Pedidos
@@ -119,7 +119,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
                 : 'text-gray-600 bg-gray-100'
             ***REMOVED***`***REMOVED***
             style=***REMOVED******REMOVED*** 
-              backgroundColor: sortBy === 'promedioPorHora' ? coloresTemáticos?.base : undefined
+              backgroundColor: sortBy === 'promedioPorHora' ? thematicColors?.base : undefined
             ***REMOVED******REMOVED***
           >
             Por hora
@@ -150,7 +150,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-bold" style=***REMOVED******REMOVED*** color: plataforma.color || coloresTemáticos?.base ***REMOVED******REMOVED***>
+                  <p className="text-lg font-bold" style=***REMOVED******REMOVED*** color: plataforma.color || thematicColors?.base ***REMOVED******REMOVED***>
                     ***REMOVED***formatCurrency(plataforma.totalGanado)***REMOVED***
                   </p>
                   <p className="text-sm text-gray-500">***REMOVED***porcentajeGanancias.toFixed(1)***REMOVED***%</p>
@@ -163,7 +163,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
                     className=***REMOVED***`h-2 rounded-full transition-all duration-500 $***REMOVED***animacionActiva ? 'animate-pulse' : ''***REMOVED***`***REMOVED***
                     style=***REMOVED******REMOVED*** 
                       width: `$***REMOVED***porcentajeGanancias***REMOVED***%`,
-                      backgroundColor: plataforma.color || coloresTemáticos?.base
+                      backgroundColor: plataforma.color || thematicColors?.base
                     ***REMOVED******REMOVED***
                   />
                 </div>
@@ -211,13 +211,13 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
         <div className="grid grid-cols-2 gap-4 text-sm text-center">
           <div>
             <p className="text-gray-600">Más rentable</p>
-            <p className="font-semibold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED***>
+            <p className="font-semibold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
               ***REMOVED***plataformasOrdenadas[0]?.nombre***REMOVED***
             </p>
           </div>
           <div>
             <p className="text-gray-600">Promedio general</p>
-            <p className="font-semibold" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED***>
+            <p className="font-semibold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
               ***REMOVED***formatCurrency(totalGeneral / plataformas.length)***REMOVED***
             </p>
           </div>

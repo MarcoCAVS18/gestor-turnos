@@ -8,7 +8,7 @@ const CalendarHeader = (***REMOVED***
   anioActual, 
   onCambiarMes, 
   onIrAHoy, 
-  coloresTemáticos 
+  thematicColors 
 ***REMOVED***) => ***REMOVED***
   const getNombreMes = () => ***REMOVED***
     return new Date(anioActual, mesActual, 1).toLocaleDateString('es-ES', ***REMOVED*** month: 'long' ***REMOVED***);
@@ -17,7 +17,7 @@ const CalendarHeader = (***REMOVED***
   return (
     <div
       className="p-4 text-white flex justify-between items-center"
-      style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+      style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
     >
       <button
         onClick=***REMOVED***() => onCambiarMes(-1)***REMOVED***
