@@ -14,9 +14,9 @@ const Trabajos = () => ***REMOVED***
   const ***REMOVED***
     trabajos = [], 
     trabajosDelivery = [], 
-    cargando,
-    borrarTrabajo,
-    borrarTrabajoDelivery,
+    loading, // Cambiado de 'cargando' a 'loading'
+    deleteJob, // Nombre correcto de la función
+    deleteDeliveryJob, // Nombre correcto de la función
     coloresTemáticos
   ***REMOVED*** = useApp();
 
@@ -49,11 +49,17 @@ const Trabajos = () => ***REMOVED***
 
   const deleteHandler = async (id, tipo) => ***REMOVED***
     try ***REMOVED***
+      console.log('Intentando eliminar trabajo:', ***REMOVED*** id, tipo ***REMOVED***);
+      
       if (tipo === 'delivery') ***REMOVED***
-        await borrarTrabajoDelivery(id);
+        console.log('Eliminando trabajo delivery...');
+        await deleteDeliveryJob(id);
       ***REMOVED*** else ***REMOVED***
-        await borrarTrabajo(id);
+        console.log('Eliminando trabajo tradicional...');
+        await deleteJob(id);
       ***REMOVED***
+      
+      console.log('Trabajo eliminado exitosamente');
       return true;
     ***REMOVED*** catch (error) ***REMOVED***
       console.error('Error en deleteHandler:', error);
@@ -63,45 +69,50 @@ const Trabajos = () => ***REMOVED***
 
   const handleCardDelete = (trabajo) => ***REMOVED***
     if (!trabajo || !trabajo.id) ***REMOVED***
+      console.error('Trabajo inválido para eliminar:', trabajo);
       return;
     ***REMOVED***
     
+    console.log('Preparando eliminación de trabajo:', trabajo);
     setItemToDelete(trabajo);
     setShowDeleteModal(true);
   ***REMOVED***;
 
   const generarDetallesTrabajo = (trabajo) => ***REMOVED***
     if (!trabajo) ***REMOVED***
-      return ***REMOVED******REMOVED***;
+      return [];
     ***REMOVED***
     
+    const detalles = [trabajo.nombre];
+    
     if (trabajo.tipo === 'delivery') ***REMOVED***
-      return ***REMOVED***
-        Título: trabajo.nombre,
-        Plataforma: trabajo.plataforma,
-        Vehículo: trabajo.vehiculo,
-      ***REMOVED***;
+      if (trabajo.plataforma) detalles.push(`Plataforma: $***REMOVED***trabajo.plataforma***REMOVED***`);
+      if (trabajo.vehiculo) detalles.push(`Vehículo: $***REMOVED***trabajo.vehiculo***REMOVED***`);
     ***REMOVED*** else ***REMOVED***
-      return ***REMOVED***
-        Título: trabajo.nombre,
-        Tarifa: `$$***REMOVED***trabajo.tarifaBase || 0***REMOVED***`,
-      ***REMOVED***;
+      if (trabajo.tarifaBase) detalles.push(`Tarifa: $$***REMOVED***trabajo.tarifaBase***REMOVED***`);
     ***REMOVED***
+    
+    return detalles;
   ***REMOVED***;
 
   const handleConfirmDeletion = async () => ***REMOVED***
     if (!itemToDelete) ***REMOVED***
+      console.error('No hay trabajo para eliminar');
       return;
     ***REMOVED***
     
     try ***REMOVED***
       setIsDeleting(true);
+      console.log('Confirmando eliminación de:', itemToDelete);
       
       const resultado = await deleteHandler(itemToDelete.id, itemToDelete.tipo);
       
       if (resultado) ***REMOVED***
+        console.log('Eliminación exitosa');
         setShowDeleteModal(false);
         setItemToDelete(null);
+      ***REMOVED*** else ***REMOVED***
+        console.error('La eliminación falló');
       ***REMOVED***
     ***REMOVED*** catch (error) ***REMOVED***
       console.error('Error en confirmación:', error);
@@ -117,11 +128,13 @@ const Trabajos = () => ***REMOVED***
 
   useEffect(() => ***REMOVED***
     if (!currentUser) return;
-    
-  ***REMOVED***, [currentUser]);
+    console.log('Usuario logueado:', currentUser.uid);
+    console.log('Trabajos tradicionales:', trabajos.length);
+    console.log('Trabajos delivery:', trabajosDelivery.length);
+  ***REMOVED***, [currentUser, trabajos, trabajosDelivery]);
 
   return (
-    <LoadingWrapper cargando=***REMOVED***cargando***REMOVED***>
+    <LoadingWrapper loading=***REMOVED***loading***REMOVED***>
       <div className="space-y-6">
         ***REMOVED***/* Header que cambia según si hay trabajos */***REMOVED***
         <div className="flex justify-between items-center pt-4">

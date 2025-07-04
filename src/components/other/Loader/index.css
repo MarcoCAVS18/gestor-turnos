@@ -23,26 +23,54 @@
   min-height: 200px;
 ***REMOVED***
 
-/* Ajustes para móvil */
+/* Ajustes específicos para móvil considerando la navegación */
 @media (max-width: 767px) ***REMOVED***
   .loader-container-fullscreen ***REMOVED***
-    transform: translateY(-50px);
+    bottom: 100px; 
+    transform: translateY(-25px); 
   ***REMOVED***
   
   .loader-container-normal ***REMOVED***
-    min-height: calc(100vh - 180px);
-    padding-bottom: 120px;
+    min-height: calc(100vh - 240px);
+    padding-bottom: 140px;
+    padding-top: 80px; 
   ***REMOVED***
 ***REMOVED***
 
-/* Para tablets y desktop */
+/* Para tablets y desktop - sin navegación inferior */
 @media (min-width: 768px) ***REMOVED***
   .loader-container-fullscreen ***REMOVED***
     transform: translateY(0);
+    bottom: 0; 
   ***REMOVED***
   
   .loader-container-normal ***REMOVED***
     min-height: 200px;
     padding-bottom: 60px;
+    padding-top: 60px;
+  ***REMOVED***
+***REMOVED***
+
+/* Clase adicional para cuando está visible la navegación móvil */
+.loader-with-mobile-nav ***REMOVED***
+  padding-bottom: 120px !important;
+***REMOVED***
+
+/* Animación suave para el loader */
+.loader-container-fullscreen,
+.loader-container-normal ***REMOVED***
+  transition: all 0.3s ease-in-out;
+***REMOVED***
+
+/* Para dispositivos con muescas (notch) como iPhone */
+@supports (padding: max(0px)) ***REMOVED***
+  @media (max-width: 767px) ***REMOVED***
+    .loader-container-fullscreen ***REMOVED***
+      bottom: max(100px, env(safe-area-inset-bottom, 0px) + 80px);
+    ***REMOVED***
+    
+    .loader-container-normal ***REMOVED***
+      padding-bottom: max(140px, env(safe-area-inset-bottom, 0px) + 120px);
+    ***REMOVED***
   ***REMOVED***
 ***REMOVED***
