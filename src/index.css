@@ -21,3 +21,150 @@ body ***REMOVED***
   ***REMOVED***
 ***REMOVED***
 
+
+/* Optimizaciones para formularios móviles */
+@media (max-width: 767px) ***REMOVED***
+  /* Inputs más grandes en móvil */
+  .mobile-form input,
+  .mobile-form select,
+  .mobile-form textarea ***REMOVED***
+    min-height: 44px; /* Apple recomienda mínimo 44px para touch targets */
+    font-size: 16px; /* Previene zoom automático en iOS */
+    padding: 12px 16px;
+  ***REMOVED***
+
+  /* Labels más legibles */
+  .mobile-form label ***REMOVED***
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+  ***REMOVED***
+
+  /* Botones más grandes y accesibles */
+  .mobile-form button ***REMOVED***
+    min-height: 48px;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 24px;
+  ***REMOVED***
+
+  /* Espaciado entre campos */
+  .mobile-form .form-group,
+  .mobile-form > div ***REMOVED***
+    margin-bottom: 20px;
+  ***REMOVED***
+
+  /* Grid de campos más amigable */
+  .mobile-form .grid ***REMOVED***
+    gap: 16px;
+  ***REMOVED***
+
+  .mobile-form .grid-cols-2 ***REMOVED***
+    grid-template-columns: 1fr;
+  ***REMOVED***
+
+  .mobile-form .grid-cols-3 ***REMOVED***
+    grid-template-columns: 1fr;
+  ***REMOVED***
+
+  /* Selectores de color más grandes */
+  .mobile-form .color-selector button ***REMOVED***
+    min-width: 48px;
+    min-height: 48px;
+  ***REMOVED***
+
+  /* Mejor contraste para texto de ayuda */
+  .mobile-form .help-text,
+  .mobile-form .text-xs ***REMOVED***
+    font-size: 13px;
+    line-height: 1.4;
+  ***REMOVED***
+***REMOVED***
+
+/* Modal específicos para móvil */
+@media (max-width: 767px) ***REMOVED***
+  .mobile-modal ***REMOVED***
+    border-radius: 0 !important;
+    height: 100vh !important;
+    max-height: none !important;
+    margin: 0 !important;
+  ***REMOVED***
+
+  .mobile-modal .modal-header ***REMOVED***
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  ***REMOVED***
+
+  .mobile-modal .modal-content ***REMOVED***
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+  ***REMOVED***
+
+  .mobile-modal .modal-footer ***REMOVED***
+    padding: 16px 20px;
+    border-top: 1px solid #e5e7eb;
+    background: white;
+    position: sticky;
+    bottom: 0;
+  ***REMOVED***
+
+  /* Footer de botones en móvil */
+  .mobile-modal .button-group ***REMOVED***
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+  ***REMOVED***
+
+  .mobile-modal .button-group button ***REMOVED***
+    width: 100%;
+    justify-content: center;
+  ***REMOVED***
+***REMOVED***
+
+/* Mejoras para seleccionadores específicos */
+@media (max-width: 767px) ***REMOVED***
+  /* Selector de tipo de trabajo */
+  .trabajo-type-selector button ***REMOVED***
+    padding: 20px;
+    min-height: 120px;
+    text-align: left;
+  ***REMOVED***
+
+  /* Selector de plataforma delivery */
+  .platform-selector ***REMOVED***
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  ***REMOVED***
+
+  .platform-selector button ***REMOVED***
+    min-height: 80px;
+    padding: 12px;
+  ***REMOVED***
+
+  /* Selector de vehículo */
+  .vehicle-selector ***REMOVED***
+    grid-template-columns: 1fr;
+    gap: 12px;
+  ***REMOVED***
+
+  .vehicle-selector button ***REMOVED***
+    min-height: 70px;
+    padding: 16px;
+  ***REMOVED***
+***REMOVED***
+
+/* Safe area para dispositivos con notch */
+@supports (padding: max(0px)) ***REMOVED***
+  @media (max-width: 767px) ***REMOVED***
+    .mobile-modal ***REMOVED***
+      padding-top: max(0px, env(safe-area-inset-top));
+      padding-bottom: max(0px, env(safe-area-inset-bottom));
+    ***REMOVED***
+  ***REMOVED***
+***REMOVED***
