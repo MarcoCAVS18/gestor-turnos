@@ -1,26 +1,47 @@
 // src/components/other/Loader/index.jsx
 
-import React, ***REMOVED*** useEffect, useRef ***REMOVED*** from 'react';
+import React, ***REMOVED*** useEffect, useRef, useState ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** gsap ***REMOVED*** from 'gsap';
-import './index.css'; // Importar los estilos CSS
+import './index.css';
 
 const Loader = (***REMOVED*** size = 40, fullScreen = false, onAnimationComplete ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
   const colorPrincipal = coloresTemáticos?.base || '#EC4899';
   const svgRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Usar las clases CSS definidas en el archivo index.css
-  const containerClass = fullScreen 
-    ? 'loader-container-fullscreen'
-    : 'loader-container-normal';
+  // Detectar si estamos en móvil
+  useEffect(() => ***REMOVED***
+    const checkMobile = () => ***REMOVED***
+      setIsMobile(window.innerWidth < 768);
+    ***REMOVED***;
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  ***REMOVED***, []);
+
+  // Determinar las clases CSS apropiadas
+  const getContainerClass = () => ***REMOVED***
+    if (fullScreen) ***REMOVED***
+      return 'loader-container-fullscreen';
+    ***REMOVED*** else ***REMOVED***
+      const baseClass = 'loader-container-normal';
+      return isMobile ? `$***REMOVED***baseClass***REMOVED*** loader-with-mobile-nav` : baseClass;
+    ***REMOVED***
+  ***REMOVED***;
 
   useEffect(() => ***REMOVED***
     const svg = svgRef.current;
+    if (!svg) return;
 
     // Seleccionar los elementos para animar
     const mainPath = svg.querySelector('.main-path');
     const circles = svg.querySelectorAll('.circle');
+
+    if (!mainPath || circles.length === 0) return;
 
     // Configurar el estado inicial
     gsap.set(mainPath, ***REMOVED***
@@ -104,7 +125,7 @@ const Loader = (***REMOVED*** size = 40, fullScreen = false, onAnimationComplete
   ***REMOVED***;
 
   return (
-    <div className=***REMOVED***containerClass***REMOVED***>
+    <div className=***REMOVED***getContainerClass()***REMOVED***>
       <svg
         ref=***REMOVED***svgRef***REMOVED***
         xmlns="http://www.w3.org/2000/svg"
