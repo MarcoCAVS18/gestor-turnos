@@ -38,7 +38,7 @@ export const DELIVERY_PLATFORMS_AUSTRALIA = [
   },
   {
     id: 'otro',
-    nombre: 'Otra plataforma',
+    nombre: 'Otra',
     color: '#6B7280'
   }
 ];

@@ -21,3 +21,150 @@ body {
   }
 }
 
+
+/* Optimizaciones para formularios móviles */
+@media (max-width: 767px) {
+  /* Inputs más grandes en móvil */
+  .mobile-form input,
+  .mobile-form select,
+  .mobile-form textarea {
+    min-height: 44px; /* Apple recomienda mínimo 44px para touch targets */
+    font-size: 16px; /* Previene zoom automático en iOS */
+    padding: 12px 16px;
+  }
+
+  /* Labels más legibles */
+  .mobile-form label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* Botones más grandes y accesibles */
+  .mobile-form button {
+    min-height: 48px;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 24px;
+  }
+
+  /* Espaciado entre campos */
+  .mobile-form .form-group,
+  .mobile-form > div {
+    margin-bottom: 20px;
+  }
+
+  /* Grid de campos más amigable */
+  .mobile-form .grid {
+    gap: 16px;
+  }
+
+  .mobile-form .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .mobile-form .grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Selectores de color más grandes */
+  .mobile-form .color-selector button {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  /* Mejor contraste para texto de ayuda */
+  .mobile-form .help-text,
+  .mobile-form .text-xs {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+}
+
+/* Modal específicos para móvil */
+@media (max-width: 767px) {
+  .mobile-modal {
+    border-radius: 0 !important;
+    height: 100vh !important;
+    max-height: none !important;
+    margin: 0 !important;
+  }
+
+  .mobile-modal .modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .mobile-modal .modal-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .mobile-modal .modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #e5e7eb;
+    background: white;
+    position: sticky;
+    bottom: 0;
+  }
+
+  /* Footer de botones en móvil */
+  .mobile-modal .button-group {
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+  }
+
+  .mobile-modal .button-group button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Mejoras para seleccionadores específicos */
+@media (max-width: 767px) {
+  /* Selector de tipo de trabajo */
+  .trabajo-type-selector button {
+    padding: 20px;
+    min-height: 120px;
+    text-align: left;
+  }
+
+  /* Selector de plataforma delivery */
+  .platform-selector {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .platform-selector button {
+    min-height: 80px;
+    padding: 12px;
+  }
+
+  /* Selector de vehículo */
+  .vehicle-selector {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .vehicle-selector button {
+    min-height: 70px;
+    padding: 16px;
+  }
+}
+
+/* Safe area para dispositivos con notch */
+@supports (padding: max(0px)) {
+  @media (max-width: 767px) {
+    .mobile-modal {
+      padding-top: max(0px, env(safe-area-inset-top));
+      padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+  }
+}
