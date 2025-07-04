@@ -7,13 +7,17 @@ import SettingsSection from '../SettingsSection';
 import Switch from '../../ui/Switch';
 
 const DeliverySection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** deliveryEnabled, guardarPreferencias, coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** deliveryEnabled, savePreferences, coloresTemáticos ***REMOVED*** = useApp();
   
-  const handleToggle = async (checked) => ***REMOVED***
+  const handleToggle = async (newValue) => ***REMOVED***
     try ***REMOVED***
-      await guardarPreferencias(***REMOVED*** deliveryEnabled: checked ***REMOVED***);
-      onSuccess?.(`Modo delivery $***REMOVED***checked ? 'activado' : 'desactivado'***REMOVED***`);
+      console.log('Cambiando delivery enabled de', deliveryEnabled, 'a', newValue);
+      
+      await savePreferences(***REMOVED*** deliveryEnabled: newValue ***REMOVED***);
+      
+      onSuccess?.(`Modo delivery $***REMOVED***newValue ? 'activado' : 'desactivado'***REMOVED***`);
     ***REMOVED*** catch (error) ***REMOVED***
+      console.error('Error al cambiar configuración de delivery:', error);
       onError?.('Error al cambiar configuración de delivery');
     ***REMOVED***
   ***REMOVED***;
@@ -53,7 +57,7 @@ const DeliverySection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***R
                   <li>• Registra tus ganancias totales por cada turno</li>
                   <li>• Incluye propinas y cantidad de pedidos realizados</li>
                   <li>• Opcionalmente agrega kilómetros y gastos de combustible</li>
-                  <li>• Soporta múltiples plataformas (Uber Eats, Rappi, PedidosYa, etc.)</li>
+                  <li>• Soporta múltiples plataformas (Uber Eats, Doordash, Didi, etc.)</li>
                 </ul>
               </div>
             </div>

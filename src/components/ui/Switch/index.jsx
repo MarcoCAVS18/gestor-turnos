@@ -1,8 +1,10 @@
 // src/components/ui/Switch/index.jsx
 
 import React from 'react';
+import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const Switch = (***REMOVED*** checked, onChange, disabled = false, size = 'md' ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
   
   const getSizeClasses = () => ***REMOVED***
     const sizes = ***REMOVED***
@@ -15,27 +17,40 @@ const Switch = (***REMOVED*** checked, onChange, disabled = false, size = 'md' *
 
   const sizeClasses = getSizeClasses();
 
-  const handleClick = () => ***REMOVED***
-    if (!disabled) ***REMOVED***
+  const handleClick = (e) => ***REMOVED***
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!disabled && onChange) ***REMOVED***
       onChange(!checked);
-    ***REMOVED*** else ***REMOVED***
-      // Click ignored, switch is disabled
     ***REMOVED***
   ***REMOVED***;
+
+  // Usar colores temáticos si estan disponibles
+  const activeColor = coloresTemáticos?.base || '#EC4899';
 
   return (
     <button
       type="button"
+      role="switch"
+      aria-checked=***REMOVED***checked***REMOVED***
       onClick=***REMOVED***handleClick***REMOVED***
-      className=***REMOVED***`relative inline-flex $***REMOVED***sizeClasses.container***REMOVED*** items-center rounded-full transition-colors $***REMOVED***
+      className=***REMOVED***`relative inline-flex $***REMOVED***sizeClasses.container***REMOVED*** items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 $***REMOVED***
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-      ***REMOVED*** $***REMOVED***checked ? 'bg-pink-600' : 'bg-gray-200'***REMOVED***`***REMOVED***
+      ***REMOVED***`***REMOVED***
+      style=***REMOVED******REMOVED***
+        backgroundColor: checked ? activeColor : '#D1D5DB',
+        '--tw-ring-color': activeColor
+      ***REMOVED******REMOVED***
       disabled=***REMOVED***disabled***REMOVED***
     >
       <span
-        className=***REMOVED***`inline-block $***REMOVED***sizeClasses.toggle***REMOVED*** transform rounded-full bg-white transition-transform $***REMOVED***
+        className=***REMOVED***`inline-block $***REMOVED***sizeClasses.toggle***REMOVED*** transform rounded-full bg-white shadow-lg transition-transform duration-200 $***REMOVED***
           checked ? sizeClasses.translate : 'translate-x-1'
         ***REMOVED***`***REMOVED***
+        style=***REMOVED******REMOVED***
+          boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)'
+        ***REMOVED******REMOVED***
       />
     </button>
   );

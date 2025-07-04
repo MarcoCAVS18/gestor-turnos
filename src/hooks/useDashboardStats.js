@@ -4,14 +4,29 @@ import ***REMOVED*** useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 export const useDashboardStats = () => ***REMOVED***
-  const ***REMOVED*** todosLosTrabajos, turnos, turnosDelivery, calcularPago ***REMOVED*** = useApp();
+  const ***REMOVED*** trabajos, trabajosDelivery, turnos, turnosDelivery, calcularPago ***REMOVED*** = useApp();
+
+  // Función para calcular horas - definida fuera del useMemo
+  const calcularHoras = (inicio, fin) => ***REMOVED***
+    const [horaIni, minIni] = inicio.split(':').map(n => parseInt(n));
+    const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
+
+    let inicioMinutos = horaIni * 60 + minIni;
+    let finMinutos = horaFn * 60 + minFn;
+
+    if (finMinutos <= inicioMinutos) ***REMOVED***
+      finMinutos += 24 * 60;
+    ***REMOVED***
+
+    return (finMinutos - inicioMinutos) / 60;
+  ***REMOVED***;
 
   const stats = useMemo(() => ***REMOVED***
-    // Combinar todos los turnos
+    // Combinar todos los trabajos y turnos
+    const todosLosTrabajos = [...(trabajos || []), ...(trabajosDelivery || [])];
     const turnosTradicionales = Array.isArray(turnos) ? turnos : [];
     const turnosDeliveryValidos = Array.isArray(turnosDelivery) ? turnosDelivery : [];
     const todosLosTurnos = [...turnosTradicionales, ...turnosDeliveryValidos];
-  
 
     if (todosLosTurnos.length === 0) ***REMOVED***
       return ***REMOVED***
@@ -140,22 +155,7 @@ export const useDashboardStats = () => ***REMOVED***
     ***REMOVED***;
 
     return resultado;
-  ***REMOVED***, [turnos, turnosDelivery, todosLosTrabajos, calcularPago]);
-
-  // Función para calcular horas
-  const calcularHoras = (inicio, fin) => ***REMOVED***
-    const [horaIni, minIni] = inicio.split(':').map(n => parseInt(n));
-    const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
-
-    let inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFn * 60 + minFn;
-
-    if (finMinutos <= inicioMinutos) ***REMOVED***
-      finMinutos += 24 * 60;
-    ***REMOVED***
-
-    return (finMinutos - inicioMinutos) / 60;
-  ***REMOVED***;
+  ***REMOVED***, [trabajos, trabajosDelivery, turnos, turnosDelivery, calcularPago]);
 
   // Función para formatear fecha
   const formatearFecha = (fechaStr) => ***REMOVED***
