@@ -11,7 +11,7 @@ import './index.css';
 const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno ***REMOVED***) => ***REMOVED***
   const navigate = useNavigate();
   const location = useLocation();
-  const ***REMOVED*** coloresTemáticos, emojiUsuario, trabajos, trabajosDelivery ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors, userEmoji, trabajos, trabajosDelivery ***REMOVED*** = useApp();
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
   
   // Estado para el tooltip
@@ -57,7 +57,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
   
   const getActiveTextStyle = (vista) => ***REMOVED***
     return currentView === vista 
-      ? ***REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED*** 
+      ? ***REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED*** 
       : ***REMOVED*** color: '#6B7280' ***REMOVED***;
   ***REMOVED***;
 
@@ -74,7 +74,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
 
     return currentView === vista
       ? ***REMOVED***
-          backgroundColor: coloresTemáticos?.base || '#EC4899',
+          backgroundColor: thematicColors?.base || '#EC4899',
           color: 'white'
         ***REMOVED***
       : ***REMOVED***
@@ -84,9 +84,9 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
   ***REMOVED***;
   
   const calendarButtonStyle = ***REMOVED***
-    backgroundColor: coloresTemáticos?.base || '#EC4899',
+    backgroundColor: thematicColors?.base || '#EC4899',
     borderColor: currentView === 'calendario' 
-      ? coloresTemáticos?.dark || '#BE185D'
+      ? thematicColors?.dark || '#BE185D'
       : 'white'
   ***REMOVED***;
 
@@ -135,7 +135,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
               whileTap=***REMOVED******REMOVED*** scale: 0.95 ***REMOVED******REMOVED***
               whileHover=***REMOVED******REMOVED*** 
                 scale: 1.05,
-                boxShadow: `0 8px 25px $***REMOVED***coloresTemáticos?.transparent50 || 'rgba(236, 72, 153, 0.5)'***REMOVED***`
+                boxShadow: `0 8px 25px $***REMOVED***thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)'***REMOVED***`
               ***REMOVED******REMOVED***
             >
               <CalendarDays size=***REMOVED***28***REMOVED*** />
@@ -170,14 +170,14 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
           <div className="flex items-center space-x-3">
             <div 
               className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg user-emoji"
-              style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
             >
               <span style=***REMOVED******REMOVED*** 
                 fontSize: '1.5rem',
                 lineHeight: '1',
                 color: '#ffffff'
               ***REMOVED******REMOVED***>
-                ***REMOVED***emojiUsuario || '😊'***REMOVED***
+                ***REMOVED***userEmoji || '😊'***REMOVED***
               </span>
             </div>
             <div>
@@ -200,15 +200,15 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
                   onClick=***REMOVED***abrirModalNuevoTurno***REMOVED***
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg transform hover:scale-105 btn-primary"
                   style=***REMOVED******REMOVED*** 
-                    backgroundColor: coloresTemáticos?.base || '#EC4899',
+                    backgroundColor: thematicColors?.base || '#EC4899',
                     color: '#ffffff'
                   ***REMOVED******REMOVED***
                   onMouseEnter=***REMOVED***(e) => ***REMOVED***
-                    e.target.style.backgroundColor = coloresTemáticos?.dark || '#BE185D';
+                    e.target.style.backgroundColor = thematicColors?.dark || '#BE185D';
                     e.target.style.color = '#ffffff';
                   ***REMOVED******REMOVED***
                   onMouseLeave=***REMOVED***(e) => ***REMOVED***
-                    e.target.style.backgroundColor = coloresTemáticos?.base || '#EC4899';
+                    e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
                     e.target.style.color = '#ffffff';
                   ***REMOVED******REMOVED***
                 >
@@ -223,21 +223,21 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
                   style=***REMOVED******REMOVED*** 
                     borderWidth: '2px',
                     borderStyle: 'solid',
-                    borderColor: coloresTemáticos?.base || '#EC4899',
-                    color: coloresTemáticos?.base || '#EC4899',
+                    borderColor: thematicColors?.base || '#EC4899',
+                    color: thematicColors?.base || '#EC4899',
                     backgroundColor: '#ffffff'
                   ***REMOVED******REMOVED***
                   onMouseEnter=***REMOVED***(e) => ***REMOVED***
-                    e.target.style.backgroundColor = coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)';
-                    e.target.style.color = coloresTemáticos?.base || '#EC4899';
+                    e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+                    e.target.style.color = thematicColors?.base || '#EC4899';
                   ***REMOVED******REMOVED***
                   onMouseLeave=***REMOVED***(e) => ***REMOVED***
                     e.target.style.backgroundColor = '#ffffff';
-                    e.target.style.color = coloresTemáticos?.base || '#EC4899';
+                    e.target.style.color = thematicColors?.base || '#EC4899';
                   ***REMOVED******REMOVED***
                 >
-                  <Briefcase size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** />
-                  <span style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>Nuevo Trabajo</span>
+                  <Briefcase size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** />
+                  <span style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***>Nuevo Trabajo</span>
                 </button>
               )***REMOVED***
             </div>
@@ -281,7 +281,7 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
               <div 
                 className="w-2 h-2 rounded-full ml-auto"
                 style=***REMOVED******REMOVED*** 
-                  backgroundColor: currentView === 'calendario' ? 'white' : coloresTemáticos?.base 
+                  backgroundColor: currentView === 'calendario' ? 'white' : thematicColors?.base 
                 ***REMOVED******REMOVED***
               />
             </motion.button>

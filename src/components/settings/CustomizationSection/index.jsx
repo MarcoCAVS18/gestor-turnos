@@ -1,5 +1,3 @@
-// src/components/settings/CustomizationSection/index.jsx
-
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Settings, Smile ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
@@ -18,10 +16,10 @@ const EMOJIS_COMUNES = ['😊', '😎', '🚀', '💼', '⭐', '🔥', '💻', '
 
 const CustomizationSection = () => ***REMOVED***
   const ***REMOVED*** 
-    colorPrincipal: appColor, 
-    emojiUsuario: appEmoji, 
-    guardarPreferencias,
-    coloresTemáticos
+    primaryColor: appColor, 
+    userEmoji: appEmoji, 
+    savePreferences,
+    thematicColors
   ***REMOVED*** = useApp();
   
   const [emojiInput, setEmojiInput] = useState(appEmoji);
@@ -31,12 +29,12 @@ const CustomizationSection = () => ***REMOVED***
   ***REMOVED***, [appEmoji]);
 
   const cambiarColor = (nuevoColor) => ***REMOVED***
-    guardarPreferencias(***REMOVED*** colorPrincipal: nuevoColor ***REMOVED***);
+    savePreferences(***REMOVED*** colorPrincipal: nuevoColor ***REMOVED***);
   ***REMOVED***;
 
   const cambiarEmoji = (nuevoEmoji) => ***REMOVED***
     setEmojiInput(nuevoEmoji);
-    guardarPreferencias(***REMOVED*** emojiUsuario: nuevoEmoji ***REMOVED***);
+    savePreferences(***REMOVED*** emojiUsuario: nuevoEmoji ***REMOVED***);
   ***REMOVED***;
 
   const handleEmojiChange = (e) => ***REMOVED***
@@ -44,9 +42,9 @@ const CustomizationSection = () => ***REMOVED***
     setEmojiInput(valor);
     
     if (valor.trim() === '') ***REMOVED***
-      guardarPreferencias(***REMOVED*** emojiUsuario: '😊' ***REMOVED***);
+      savePreferences(***REMOVED*** emojiUsuario: '😊' ***REMOVED***);
     ***REMOVED*** else ***REMOVED***
-      guardarPreferencias(***REMOVED*** emojiUsuario: valor ***REMOVED***);
+      savePreferences(***REMOVED*** emojiUsuario: valor ***REMOVED***);
     ***REMOVED***
   ***REMOVED***;
 
@@ -64,7 +62,7 @@ const CustomizationSection = () => ***REMOVED***
               value=***REMOVED***emojiInput***REMOVED***
               onChange=***REMOVED***handleEmojiChange***REMOVED***
               className="w-16 h-10 border border-gray-300 rounded-md shadow-sm px-3 focus:outline-none focus:ring-2 text-xl"
-              style=***REMOVED******REMOVED*** '--tw-ring-color': coloresTemáticos?.base || appColor ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** '--tw-ring-color': thematicColors?.base || appColor ***REMOVED******REMOVED***
             />
             <p className="ml-3 text-sm text-gray-500">
               <Smile className="inline h-4 w-4 mb-1 mr-1" />

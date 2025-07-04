@@ -9,6 +9,32 @@ import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../c
 
 const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** agregarTrabajoDelivery, editarTrabajoDelivery, coloresTemáticos ***REMOVED*** = useApp();
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar móvil
+  useEffect(() => ***REMOVED***
+    const checkMobile = () => ***REMOVED***
+      setIsMobile(window.innerWidth < 768);
+    ***REMOVED***;
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  ***REMOVED***, []);
+
+  // Prevenir scroll del body cuando está abierto
+  useEffect(() => ***REMOVED***
+    if (isOpen) ***REMOVED***
+      document.body.style.overflow = 'hidden';
+    ***REMOVED*** else ***REMOVED***
+      document.body.style.overflow = 'unset';
+    ***REMOVED***
+    
+    return () => ***REMOVED***
+      document.body.style.overflow = 'unset';
+    ***REMOVED***;
+  ***REMOVED***, [isOpen]);
 
   const manejarGuardado = async (datosDelivery) => ***REMOVED***
     try ***REMOVED***
@@ -26,35 +52,97 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-white rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-          <h2 className="text-lg font-semibold flex items-center">
-            <Truck size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
-            ***REMOVED***trabajo ? 'Editar' : 'Nuevo'***REMOVED*** Trabajo Delivery
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+      style=***REMOVED******REMOVED*** zIndex: 9999 ***REMOVED******REMOVED***
+    >
+      <div 
+        className=***REMOVED***`
+          bg-white shadow-2xl w-full relative
+          $***REMOVED***isMobile 
+            ? 'h-full max-w-none rounded-none' 
+            : 'max-w-md max-h-[90vh] rounded-lg'
+          ***REMOVED***
+          $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'***REMOVED***
+        `***REMOVED***
+      >
+        ***REMOVED***/* Header fijo con z-index correcto */***REMOVED***
+        <div 
+          className=***REMOVED***`
+            sticky top-0 bg-white border-b flex justify-between items-center
+            $***REMOVED***isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'***REMOVED***
+          `***REMOVED***
+          style=***REMOVED******REMOVED*** 
+            zIndex: 10,
+            borderBottomColor: coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+          ***REMOVED******REMOVED***
+        >
+          <h2 
+            className=***REMOVED***`font-semibold flex items-center $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
+          >
+            <Truck 
+              size=***REMOVED***20***REMOVED*** 
+              style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** 
+              className="mr-2" 
+            />
+            <span style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED***>
+              ***REMOVED***trabajo ? 'Editar' : 'Nuevo'***REMOVED*** Trabajo Delivery
+            </span>
           </h2>
           <button
             onClick=***REMOVED***onClose***REMOVED***
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 rounded-lg transition-colors flex-shrink-0"
+            style=***REMOVED******REMOVED***
+              backgroundColor: 'transparent',
+              color: coloresTemáticos?.base || '#EC4899'
+            ***REMOVED******REMOVED***
+            onMouseEnter=***REMOVED***(e) => ***REMOVED***
+              e.target.style.backgroundColor = coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+            ***REMOVED******REMOVED***
+            onMouseLeave=***REMOVED***(e) => ***REMOVED***
+              e.target.style.backgroundColor = 'transparent';
+            ***REMOVED******REMOVED***
           >
-            <X size=***REMOVED***20***REMOVED*** />
+            <X size=***REMOVED***isMobile ? 24 : 20***REMOVED*** />
           </button>
         </div>
 
-        <div className="p-4">
+        ***REMOVED***/* Content scrolleable */***REMOVED***
+        <div className=***REMOVED***`
+          $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'***REMOVED***
+        `***REMOVED***>
           <TrabajoDeliveryFormContent
             trabajo=***REMOVED***trabajo***REMOVED***
             onSubmit=***REMOVED***manejarGuardado***REMOVED***
             onCancel=***REMOVED***onClose***REMOVED***
             coloresTemáticos=***REMOVED***coloresTemáticos***REMOVED***
+            isMobile=***REMOVED***isMobile***REMOVED***
           />
         </div>
+
+        ***REMOVED***/* Footer indicador en móvil */***REMOVED***
+        ***REMOVED***isMobile && (
+          <div 
+            className="sticky bottom-0 bg-white border-t p-2"
+            style=***REMOVED******REMOVED*** 
+              borderTopColor: coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)',
+              zIndex: 10
+            ***REMOVED******REMOVED***
+          >
+            <div className="flex justify-center">
+              <div 
+                className="w-10 h-1 rounded-full"
+                style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.transparent50 || 'rgba(236, 72, 153, 0.5)' ***REMOVED******REMOVED***
+              />
+            </div>
+          </div>
+        )***REMOVED***
       </div>
     </div>
   );
 ***REMOVED***;
 
-const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, coloresTemáticos ***REMOVED***) => ***REMOVED***
+const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, coloresTemáticos, isMobile ***REMOVED***) => ***REMOVED***
   const [formData, setFormData] = useState(***REMOVED***
     nombre: '',
     plataforma: '',
@@ -164,17 +252,25 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
   ***REMOVED***, [plataformaSeleccionada, trabajo, handleInputChange]);
 
   return (
-    <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className="space-y-4">
+    <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className=***REMOVED***`space-y-4 $***REMOVED***isMobile ? 'mobile-form' : ''***REMOVED***`***REMOVED***>
       ***REMOVED***/* Nombre del trabajo */***REMOVED***
       <div>
-        <label className="block text-sm font-medium mb-1">
+        <label className="block text-sm font-medium mb-2">
           Nombre del trabajo
         </label>
         <input
           type="text"
           value=***REMOVED***formData.nombre***REMOVED***
           onChange=***REMOVED***(e) => handleInputChange('nombre', e.target.value)***REMOVED***
-          className=***REMOVED***`w-full p-3 border rounded-lg text-sm $***REMOVED***errors.nombre ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
+          className=***REMOVED***`
+            w-full border rounded-lg text-sm transition-colors
+            $***REMOVED***isMobile ? 'p-3 text-base' : 'p-3'***REMOVED***
+            $***REMOVED***errors.nombre ? 'border-red-500' : 'border-gray-300'***REMOVED***
+          `***REMOVED***
+          style=***REMOVED******REMOVED***
+            '--tw-ring-color': coloresTemáticos?.base,
+            borderColor: errors.nombre ? '#EF4444' : undefined
+          ***REMOVED******REMOVED***
           placeholder="ej: Delivery Zona Norte"
         />
         ***REMOVED***errors.nombre && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.nombre***REMOVED***</p>***REMOVED***
@@ -199,7 +295,10 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
       </div>
 
       ***REMOVED***/* Configuración de cálculos */***REMOVED***
-      <div className="space-y-3 p-3 bg-gray-50 rounded-lg">
+      <div 
+        className="space-y-3 p-3 rounded-lg"
+        style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.transparent5 || 'rgba(0,0,0,0.05)' ***REMOVED******REMOVED***
+      >
         <h3 className="text-sm font-medium text-gray-700">Configuración de cálculos</h3>
 
         <label className="flex items-center space-x-2">
@@ -208,6 +307,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
             checked=***REMOVED***formData.configuracion.incluyePropinas***REMOVED***
             onChange=***REMOVED***(e) => handleConfigChange('incluyePropinas', e.target.checked)***REMOVED***
             className="rounded"
+            style=***REMOVED******REMOVED*** accentColor: coloresTemáticos?.base ***REMOVED******REMOVED***
           />
           <span className="text-sm">Incluir propinas en el registro</span>
         </label>
@@ -218,6 +318,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
             checked=***REMOVED***formData.configuracion.rastreaCombustible***REMOVED***
             onChange=***REMOVED***(e) => handleConfigChange('rastreaCombustible', e.target.checked)***REMOVED***
             className="rounded"
+            style=***REMOVED******REMOVED*** accentColor: coloresTemáticos?.base ***REMOVED******REMOVED***
           />
           <span className="text-sm">Rastrear gastos de combustible</span>
         </label>
@@ -225,24 +326,32 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
 
       ***REMOVED***/* Descripción opcional */***REMOVED***
       <div>
-        <label className="block text-sm font-medium mb-1">
+        <label className="block text-sm font-medium mb-2">
           Descripción (opcional)
         </label>
         <textarea
           value=***REMOVED***formData.descripcion***REMOVED***
           onChange=***REMOVED***(e) => handleInputChange('descripcion', e.target.value)***REMOVED***
-          className="w-full p-2 border rounded-lg text-sm border-gray-300"
-          rows="2"
+          className=***REMOVED***`
+            w-full border rounded-lg text-sm border-gray-300
+            $***REMOVED***isMobile ? 'p-3 text-base' : 'p-2'***REMOVED***
+          `***REMOVED***
+          style=***REMOVED******REMOVED*** '--tw-ring-color': coloresTemáticos?.base ***REMOVED******REMOVED***
+          rows=***REMOVED***isMobile ? "3" : "2"***REMOVED***
           placeholder="ej: Trabajo de delivery en zona céntrica..."
         />
       </div>
 
       ***REMOVED***/* Botones */***REMOVED***
-      <div className="flex space-x-3 pt-4">
+      <div className=***REMOVED***`flex pt-4 $***REMOVED***isMobile ? 'flex-col space-y-3' : 'space-x-3'***REMOVED***`***REMOVED***>
         <button
           type="button"
           onClick=***REMOVED***onCancel***REMOVED***
-          className="flex-1 py-3 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm font-medium"
+          className=***REMOVED***`
+            border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 
+            text-sm font-medium rounded-lg transition-colors
+            $***REMOVED***isMobile ? 'py-3 px-4 w-full' : 'flex-1 py-3 px-4'***REMOVED***
+          `***REMOVED***
           disabled=***REMOVED***guardando***REMOVED***
         >
           Cancelar
@@ -250,10 +359,33 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, c
         <button
           type="submit"
           disabled=***REMOVED***guardando***REMOVED***
-          className="flex-1 py-3 px-4 text-white rounded-lg hover:opacity-90 text-sm font-medium disabled:opacity-50"
+          className=***REMOVED***`
+            text-white rounded-lg hover:opacity-90 text-sm font-medium 
+            disabled:opacity-50 transition-colors
+            $***REMOVED***isMobile ? 'py-3 px-4 w-full' : 'flex-1 py-3 px-4'***REMOVED***
+          `***REMOVED***
           style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base || '#3B82F6' ***REMOVED******REMOVED***
+          onMouseEnter=***REMOVED***(e) => ***REMOVED***
+            if (!guardando && coloresTemáticos?.dark) ***REMOVED***
+              e.target.style.backgroundColor = coloresTemáticos.dark;
+            ***REMOVED***
+          ***REMOVED******REMOVED***
+          onMouseLeave=***REMOVED***(e) => ***REMOVED***
+            if (!guardando) ***REMOVED***
+              e.target.style.backgroundColor = coloresTemáticos?.base || '#3B82F6';
+            ***REMOVED***
+          ***REMOVED******REMOVED***
         >
-          ***REMOVED***guardando ? 'Guardando...' : (trabajo ? 'Actualizar' : 'Crear')***REMOVED***
+          ***REMOVED***guardando ? (
+            <div className="flex items-center justify-center space-x-2">
+              <div 
+                className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"
+              />
+              <span>Guardando...</span>
+            </div>
+          ) : (
+            trabajo ? 'Actualizar' : 'Crear'
+          )***REMOVED***
         </button>
       </div>
     </form>
