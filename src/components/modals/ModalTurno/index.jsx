@@ -39,13 +39,25 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
     return [...trabajos, ...trabajosDelivery];
   ***REMOVED***, [trabajos, trabajosDelivery]);
 
-  // Determinar el tipo de formulario basado en el trabajo
+  // CORRECCIÓN: Determinar el tipo de formulario basado en el trabajo
   useEffect(() => ***REMOVED***
-    if (turno?.type === 'delivery') ***REMOVED***
+    if (turno?.tipo === 'delivery') ***REMOVED***
       setFormularioTipo('delivery');
     ***REMOVED*** else if (trabajoSeleccionadoId) ***REMOVED***
       const trabajo = todosLosTrabajos.find(t => t.id === trabajoSeleccionadoId);
-      setFormularioTipo(trabajo?.type === 'delivery' ? 'delivery' : 'tradicional');
+      // CAMBIO AQUÍ: Verificar tanto 'tipo' como 'type' para compatibilidad
+      const esDelivery = trabajo?.tipo === 'delivery' || trabajo?.type === 'delivery';
+      setFormularioTipo(esDelivery ? 'delivery' : 'tradicional');
+      
+      // Debug log para verificar
+      console.log('🔄 Trabajo seleccionado:', ***REMOVED***
+        id: trabajo?.id,
+        nombre: trabajo?.nombre,
+        tipo: trabajo?.tipo,
+        type: trabajo?.type,
+        esDelivery,
+        formularioTipo: esDelivery ? 'delivery' : 'tradicional'
+      ***REMOVED***);
     ***REMOVED*** else ***REMOVED***
       setFormularioTipo('tradicional');
     ***REMOVED***
@@ -104,6 +116,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
   ***REMOVED***;
 
   const manejarCambioTrabajo = (nuevoTrabajoId) => ***REMOVED***
+    console.log('🔄 Cambiando trabajo a:', nuevoTrabajoId);
     setTrabajoSeleccionadoId(nuevoTrabajoId);
   ***REMOVED***;
 

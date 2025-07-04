@@ -5,7 +5,6 @@ import ***REMOVED*** X, Truck ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import PlatformSelector from '../../delivery/PlatformSelector';
 import VehicleSelector from '../../delivery/VehicleSelector';
-import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../constants/delivery';
 
 const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** agregarTrabajoDelivery, editarTrabajoDelivery, thematicColors ***REMOVED*** = useApp();
@@ -16,10 +15,10 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
     const checkMobile = () => ***REMOVED***
       setIsMobile(window.innerWidth < 768);
     ***REMOVED***;
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   ***REMOVED***, []);
 
@@ -30,7 +29,7 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
     ***REMOVED*** else ***REMOVED***
       document.body.style.overflow = 'unset';
     ***REMOVED***
-    
+
     return () => ***REMOVED***
       document.body.style.overflow = 'unset';
     ***REMOVED***;
@@ -52,38 +51,38 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
       style=***REMOVED******REMOVED*** zIndex: 9999 ***REMOVED******REMOVED***
     >
-      <div 
+      <div
         className=***REMOVED***`
           bg-white shadow-2xl w-full relative
-          $***REMOVED***isMobile 
-            ? 'h-full max-w-none rounded-none' 
+          $***REMOVED***isMobile
+            ? 'h-full max-w-none rounded-none'
             : 'max-w-md max-h-[90vh] rounded-lg'
           ***REMOVED***
           $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'***REMOVED***
         `***REMOVED***
       >
         ***REMOVED***/* Header fijo con z-index correcto */***REMOVED***
-        <div 
+        <div
           className=***REMOVED***`
             sticky top-0 bg-white border-b flex justify-between items-center
             $***REMOVED***isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'***REMOVED***
           `***REMOVED***
-          style=***REMOVED******REMOVED*** 
+          style=***REMOVED******REMOVED***
             zIndex: 10,
             borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
           ***REMOVED******REMOVED***
         >
-          <h2 
+          <h2
             className=***REMOVED***`font-semibold flex items-center $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
           >
-            <Truck 
-              size=***REMOVED***20***REMOVED*** 
-              style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** 
-              className="mr-2" 
+            <Truck
+              size=***REMOVED***20***REMOVED***
+              style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***
+              className="mr-2"
             />
             <span style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
               ***REMOVED***trabajo ? 'Editar' : 'Nuevo'***REMOVED*** Trabajo Delivery
@@ -111,26 +110,28 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
         <div className=***REMOVED***`
           $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'***REMOVED***
         `***REMOVED***>
-          <TrabajoDeliveryFormContent
-            trabajo=***REMOVED***trabajo***REMOVED***
-            onSubmit=***REMOVED***manejarGuardado***REMOVED***
-            onCancel=***REMOVED***onClose***REMOVED***
-            thematicColors=***REMOVED***thematicColors***REMOVED***
-            isMobile=***REMOVED***isMobile***REMOVED***
-          />
+          <div className="max-w-[420px] mx-auto w-full">
+            <TrabajoDeliveryFormContent
+              trabajo=***REMOVED***trabajo***REMOVED***
+              onSubmit=***REMOVED***manejarGuardado***REMOVED***
+              onCancel=***REMOVED***onClose***REMOVED***
+              thematicColors=***REMOVED***thematicColors***REMOVED***
+              isMobile=***REMOVED***isMobile***REMOVED***
+            />
+          </div>
         </div>
 
         ***REMOVED***/* Footer indicador en móvil */***REMOVED***
         ***REMOVED***isMobile && (
-          <div 
+          <div
             className="sticky bottom-0 bg-white border-t p-2"
-            style=***REMOVED******REMOVED*** 
+            style=***REMOVED******REMOVED***
               borderTopColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)',
               zIndex: 10
             ***REMOVED******REMOVED***
           >
             <div className="flex justify-center">
-              <div 
+              <div
                 className="w-10 h-1 rounded-full"
                 style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)' ***REMOVED******REMOVED***
               />
@@ -159,10 +160,10 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
     ***REMOVED***
   ***REMOVED***);
 
-  const [errors, setErrors] = useState(***REMOVED******REMOVED***); 
-  const [guardando, setGuardando] = useState(false); 
+  const [errors, setErrors] = useState(***REMOVED******REMOVED***);
+  const [guardando, setGuardando] = useState(false);
 
-  useEffect(() => ***REMOVED*** 
+  useEffect(() => ***REMOVED***
     if (trabajo) ***REMOVED***
       setFormData(***REMOVED***
         nombre: trabajo.nombre || '',
@@ -228,7 +229,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
         [field]: undefined
       ***REMOVED***));
     ***REMOVED***
-  ***REMOVED***, [errors]); 
+  ***REMOVED***, [errors]);
 
   const handleConfigChange = (field, value) => ***REMOVED***
     setFormData(prev => (***REMOVED***
@@ -240,19 +241,8 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
     ***REMOVED***));
   ***REMOVED***;
 
-  // Obtener el color de la plataforma seleccionada
-  const plataformaSeleccionada = DELIVERY_PLATFORMS_AUSTRALIA.find(
-    p => p.nombre === formData.plataforma
-  );
-
-  useEffect(() => ***REMOVED*** 
-    if (plataformaSeleccionada && !trabajo) ***REMOVED***
-      handleInputChange('colorAvatar', plataformaSeleccionada.color);
-    ***REMOVED***
-  ***REMOVED***, [plataformaSeleccionada, trabajo, handleInputChange]);
-
   return (
-    <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className=***REMOVED***`space-y-4 $***REMOVED***isMobile ? 'mobile-form' : ''***REMOVED***`***REMOVED***>
+    <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className=***REMOVED***`space-y-6 $***REMOVED***isMobile ? 'mobile-form' : ''***REMOVED***`***REMOVED***>
       ***REMOVED***/* Nombre del trabajo */***REMOVED***
       <div>
         <label className="block text-sm font-medium mb-2">
@@ -295,29 +285,29 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
       </div>
 
       ***REMOVED***/* Configuración de cálculos */***REMOVED***
-      <div 
-        className="space-y-3 p-3 rounded-lg"
+      <div
+        className="space-y-3 p-4 rounded-lg"
         style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent5 || 'rgba(0,0,0,0.05)' ***REMOVED******REMOVED***
       >
         <h3 className="text-sm font-medium text-gray-700">Configuración de cálculos</h3>
 
-        <label className="flex items-center space-x-2">
+        <label className="flex items-center space-x-3">
           <input
             type="checkbox"
             checked=***REMOVED***formData.configuracion.incluyePropinas***REMOVED***
             onChange=***REMOVED***(e) => handleConfigChange('incluyePropinas', e.target.checked)***REMOVED***
-            className="rounded"
+            className="rounded w-4 h-4"
             style=***REMOVED******REMOVED*** accentColor: thematicColors?.base ***REMOVED******REMOVED***
           />
           <span className="text-sm">Incluir propinas en el registro</span>
         </label>
 
-        <label className="flex items-center space-x-2">
+        <label className="flex items-center space-x-3">
           <input
             type="checkbox"
             checked=***REMOVED***formData.configuracion.rastreaCombustible***REMOVED***
             onChange=***REMOVED***(e) => handleConfigChange('rastreaCombustible', e.target.checked)***REMOVED***
-            className="rounded"
+            className="rounded w-4 h-4"
             style=***REMOVED******REMOVED*** accentColor: thematicColors?.base ***REMOVED******REMOVED***
           />
           <span className="text-sm">Rastrear gastos de combustible</span>
@@ -333,7 +323,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
           value=***REMOVED***formData.descripcion***REMOVED***
           onChange=***REMOVED***(e) => handleInputChange('descripcion', e.target.value)***REMOVED***
           className=***REMOVED***`
-            w-full border rounded-lg text-sm border-gray-300
+            w-full border rounded-lg text-sm border-gray-300 resize-none
             $***REMOVED***isMobile ? 'p-3 text-base' : 'p-2'***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED*** '--tw-ring-color': thematicColors?.base ***REMOVED******REMOVED***
@@ -378,7 +368,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
         >
           ***REMOVED***guardando ? (
             <div className="flex items-center justify-center space-x-2">
-              <div 
+              <div
                 className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"
               />
               <span>Guardando...</span>

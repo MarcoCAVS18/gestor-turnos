@@ -53,7 +53,7 @@
 
 /* Clase adicional para cuando está visible la navegación móvil */
 .loader-with-mobile-nav ***REMOVED***
-  padding-bottom: 120px !important;
+  transform: translateY(-60px) !important;
 ***REMOVED***
 
 /* Animación suave para el loader */

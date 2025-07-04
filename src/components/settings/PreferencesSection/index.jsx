@@ -9,22 +9,22 @@ import InfoTooltip from '../../ui/InfoTooltip';
 
 const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
-    descuentoDefault: appDescuento, 
-    guardarPreferencias,
+    defaultDiscount,
+    savePreferences,
     thematicColors 
   ***REMOVED*** = useApp();
   
-  const [descuentoDefault, setDescuentoDefault] = useState(appDescuento);
+  const [descuentoDefault, setDescuentoDefault] = useState(defaultDiscount);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => ***REMOVED***
-    setDescuentoDefault(appDescuento);
-  ***REMOVED***, [appDescuento]);
+    setDescuentoDefault(defaultDiscount);
+  ***REMOVED***, [defaultDiscount]);
 
   const handleSave = async () => ***REMOVED***
     try ***REMOVED***
       setLoading(true);
-      await guardarPreferencias(***REMOVED*** descuentoDefault ***REMOVED***);
+      await savePreferences(***REMOVED*** descuentoDefault ***REMOVED***);
       onSuccess?.('Configuración guardada correctamente');
     ***REMOVED*** catch (error) ***REMOVED***
       onError?.('Error al guardar ajustes: ' + error.message);
@@ -53,7 +53,7 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => *
             max="100"
             value=***REMOVED***descuentoDefault***REMOVED***
             onChange=***REMOVED***(e) => setDescuentoDefault(Number(e.target.value))***REMOVED***
-            className="flex-1 px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2"
+            className="flex-1 px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 transition-colors"
             style=***REMOVED******REMOVED*** '--tw-ring-color': thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
             placeholder="15"
           />
@@ -70,6 +70,7 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => *
           disabled=***REMOVED***loading***REMOVED***
           loading=***REMOVED***loading***REMOVED***
           className="w-full mt-4"
+          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         >
           Guardar cambios
         </Button>

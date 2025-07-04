@@ -36,8 +36,21 @@ const TurnoDeliveryForm = (***REMOVED***
   
   const [error, setError] = useState('');
 
-  // Filtrar solo trabajos de delivery
-  const trabajosDelivery = trabajos.filter(t => t.type === 'delivery');
+  // CORRECCIÓN: Filtrar trabajos de delivery correctamente
+  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery' || t.type === 'delivery');
+  
+  // NUEVO: También incluir el trabajo seleccionado si no es de delivery pero ya está seleccionado
+  const trabajosParaSelector = React.useMemo(() => ***REMOVED***
+    // Si hay un trabajo seleccionado que no es de delivery, incluirlo
+    const trabajoSeleccionadoActual = trabajos.find(t => t.id === formData.trabajoSeleccionado);
+    
+    if (trabajoSeleccionadoActual && trabajoSeleccionadoActual.tipo !== 'delivery' && trabajoSeleccionadoActual.type !== 'delivery') ***REMOVED***
+      // Incluir el trabajo seleccionado aunque no sea de delivery
+      return [...trabajosDelivery, trabajoSeleccionadoActual];
+    ***REMOVED***
+    
+    return trabajosDelivery;
+  ***REMOVED***, [trabajosDelivery, trabajos, formData.trabajoSeleccionado]);
 
   // Cargar datos si es edición
   useEffect(() => ***REMOVED***
@@ -57,15 +70,15 @@ const TurnoDeliveryForm = (***REMOVED***
     ***REMOVED***
   ***REMOVED***, [turno]);
 
-  // Actualizar trabajo seleccionado si cambia el prop
+  // CORRECCIÓN: Mantener el trabajoId cuando se pasa como prop
   useEffect(() => ***REMOVED***
-    if (trabajoId && trabajoId !== formData.trabajoSeleccionado) ***REMOVED***
+    if (trabajoId && trabajoId) ***REMOVED***
       setFormData(prev => (***REMOVED***
         ...prev,
         trabajoSeleccionado: trabajoId
       ***REMOVED***));
     ***REMOVED***
-  ***REMOVED***, [trabajoId, formData.trabajoSeleccionado]);
+  ***REMOVED***, [trabajoId]);
 
   const handleInputChange = (field, value) => ***REMOVED***
     setFormData(prev => (***REMOVED***
@@ -77,6 +90,7 @@ const TurnoDeliveryForm = (***REMOVED***
 
   const handleTrabajoChange = (e) => ***REMOVED***
     const nuevoTrabajoId = e.target.value;
+    console.log('🔄 TurnoDeliveryForm: Cambiando trabajo a:', nuevoTrabajoId);
     handleInputChange('trabajoSeleccionado', nuevoTrabajoId);
     
     // Notificar al modal sobre el cambio
@@ -95,7 +109,7 @@ const TurnoDeliveryForm = (***REMOVED***
       return false;
     ***REMOVED***
     if (!formData.trabajoSeleccionado) ***REMOVED***
-      setError('Debes seleccionar un trabajo de delivery');
+      setError('Debes seleccionar un trabajo');
       return false;
     ***REMOVED***
     if (!formData.gananciaTotal || isNaN(Number(formData.gananciaTotal))) ***REMOVED***
@@ -127,7 +141,7 @@ const TurnoDeliveryForm = (***REMOVED***
       horaInicio: formData.horaInicio,
       horaFin: formData.horaFin,
       trabajoId: formData.trabajoSeleccionado,
-      type: 'delivery',
+      tipo: 'delivery', // Asegurar que se marque como delivery
       numeroPedidos: Number(formData.numeroPedidos) || 0,
       gananciaTotal: Number(formData.gananciaTotal) || 0,
       propinas: Number(formData.propinas) || 0,
@@ -139,16 +153,22 @@ const TurnoDeliveryForm = (***REMOVED***
     await onSubmit(datosTurno);
   ***REMOVED***;
 
+  // NUEVO: Función para determinar si mostrar advertencia
+  const trabajoSeleccionadoInfo = trabajosParaSelector.find(t => t.id === formData.trabajoSeleccionado);
+  const esTrabajoNoDelivery = trabajoSeleccionadoInfo && 
+    trabajoSeleccionadoInfo.tipo !== 'delivery' && 
+    trabajoSeleccionadoInfo.type !== 'delivery';
+
   return (
     <form 
       onSubmit=***REMOVED***manejarSubmit***REMOVED*** 
       className=***REMOVED***`space-y-6 $***REMOVED***isMobile ? 'mobile-form' : ''***REMOVED***`***REMOVED***
     >
-      ***REMOVED***/* Trabajo de delivery */***REMOVED***
+      ***REMOVED***/* Trabajo seleccionado */***REMOVED***
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           <Package size=***REMOVED***16***REMOVED*** className="inline mr-2" />
-          Trabajo de delivery *
+          Trabajo *
         </label>
         <select
           value=***REMOVED***formData.trabajoSeleccionado***REMOVED***
@@ -162,18 +182,31 @@ const TurnoDeliveryForm = (***REMOVED***
             '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
           ***REMOVED******REMOVED***
           required
-          disabled=***REMOVED***turno || loading***REMOVED*** // No permitir cambiar trabajo en edición
         >
           <option value="">Seleccionar trabajo</option>
-          ***REMOVED***trabajosDelivery.map(trabajo => (
+          ***REMOVED***trabajosParaSelector.map(trabajo => (
             <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
-              ***REMOVED***trabajo.nombre***REMOVED*** - ***REMOVED***trabajo.platform || trabajo.plataforma***REMOVED***
+              ***REMOVED***trabajo.nombre***REMOVED***
+              ***REMOVED***trabajo.tipo === 'delivery' || trabajo.type === 'delivery' 
+                ? ' (Delivery)' 
+                : ' (Tradicional)'***REMOVED***
             </option>
           ))***REMOVED***
         </select>
-        ***REMOVED***trabajosDelivery.length === 0 && (
+        
+        ***REMOVED***/* Advertencia si se selecciona un trabajo no-delivery */***REMOVED***
+        ***REMOVED***esTrabajoNoDelivery && (
+          <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-yellow-800">
+              ⚠️ <strong>Nota:</strong> Has seleccionado un trabajo tradicional. 
+              Este turno se guardará como delivery con ganancias manuales.
+            </p>
+          </div>
+        )***REMOVED***
+        
+        ***REMOVED***trabajosParaSelector.length === 0 && (
           <p className="text-sm text-gray-500 mt-1">
-            No hay trabajos de delivery registrados. Crea uno primero.
+            No hay trabajos disponibles. Crea uno primero.
           </p>
         )***REMOVED***
       </div>
@@ -417,7 +450,7 @@ const TurnoDeliveryForm = (***REMOVED***
                 </div>
                 <div className="flex items-center justify-between text-sm font-medium border-t pt-2">
                   <span>Ganancia neta:</span>
-                  <span style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***>
+                  <span style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>
                     $***REMOVED***(Number(formData.gananciaTotal) - Number(formData.gastoCombustible || 0)).toFixed(2)***REMOVED***
                   </span>
                 </div>
