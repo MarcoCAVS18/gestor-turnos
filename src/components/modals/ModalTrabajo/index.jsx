@@ -107,34 +107,58 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
     );
   ***REMOVED***
 
-  // Configuración específica para móvil vs desktop
+  // Configuración del modal usando modalConfig y coloresTemáticos
   const modalConfig = ***REMOVED***
-    mobileFullScreen: isMobile && !mostrarSelector, // Pantalla completa solo para formularios en móvil
-    size: isMobile ? 'full' : 'lg'
+    mobileFullScreen: isMobile,
+    size: isMobile ? 'full' : 'lg',
+    zIndex: 9999
   ***REMOVED***;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className=***REMOVED***`
-        bg-white shadow-2xl w-full
-        $***REMOVED***isMobile 
-          ? 'h-full max-w-none rounded-none' // Móvil: pantalla completa
-          : 'max-w-lg max-h-[90vh] rounded-lg' // Desktop: modal normal
-        ***REMOVED***
-        $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'***REMOVED***
-      `***REMOVED***>
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+      style=***REMOVED******REMOVED*** zIndex: modalConfig.zIndex ***REMOVED******REMOVED***
+    >
+      <div 
+        className=***REMOVED***`
+          bg-white shadow-2xl w-full relative
+          $***REMOVED***isMobile 
+            ? 'h-full max-w-none rounded-none' 
+            : 'max-w-lg max-h-[90vh] rounded-xl'
+          ***REMOVED***
+          $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'***REMOVED***
+        `***REMOVED***
+      >
         
-        ***REMOVED***/* Header optimizado para móvil */***REMOVED***
-        <div className=***REMOVED***`
-          sticky top-0 bg-white border-b border-gray-200 flex justify-between items-center z-10
-          $***REMOVED***isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'***REMOVED***
-        `***REMOVED***>
-          <h2 className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***>
+        ***REMOVED***/* Header optimizado con coloresTemáticos */***REMOVED***
+        <div 
+          className=***REMOVED***`
+            sticky top-0 bg-white border-b flex justify-between items-center z-10
+            $***REMOVED***isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'***REMOVED***
+          `***REMOVED***
+          style=***REMOVED******REMOVED*** 
+            borderBottomColor: coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+          ***REMOVED******REMOVED***
+        >
+          <h2 
+            className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
+            style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+          >
             ***REMOVED***trabajo ? 'Editar Trabajo' : 'Nuevo Trabajo'***REMOVED***
           </h2>
           <button
             onClick=***REMOVED***manejarCerrar***REMOVED***
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 rounded-lg transition-colors"
+            style=***REMOVED******REMOVED***
+              backgroundColor: 'transparent',
+              color: coloresTemáticos?.base || '#EC4899'
+            ***REMOVED******REMOVED***
+            onMouseEnter=***REMOVED***(e) => ***REMOVED***
+              e.target.style.backgroundColor = coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+            ***REMOVED******REMOVED***
+            onMouseLeave=***REMOVED***(e) => ***REMOVED***
+              e.target.style.backgroundColor = 'transparent';
+            ***REMOVED******REMOVED***
             disabled=***REMOVED***loading***REMOVED***
           >
             <X size=***REMOVED***isMobile ? 24 : 20***REMOVED*** />
@@ -146,22 +170,60 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
           $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'***REMOVED***
         `***REMOVED***>
           ***REMOVED***mostrarSelector ? (
-            <SelectorTipoTrabajo onSelectTipo=***REMOVED***manejarSeleccionTipo***REMOVED*** />
+            <SelectorTipoTrabajo 
+              onSelectTipo=***REMOVED***manejarSeleccionTipo***REMOVED***
+              coloresTemáticos=***REMOVED***coloresTemáticos***REMOVED***
+              isMobile=***REMOVED***isMobile***REMOVED***
+            />
           ) : (
             <TrabajoForm
               trabajo=***REMOVED***trabajo***REMOVED***
               onSubmit=***REMOVED***manejarGuardado***REMOVED***
               onCancel=***REMOVED***manejarCerrar***REMOVED***
               loading=***REMOVED***loading***REMOVED***
+              coloresTemáticos=***REMOVED***coloresTemáticos***REMOVED***
+              isMobile=***REMOVED***isMobile***REMOVED***
             />
           )***REMOVED***
         </div>
 
         ***REMOVED***/* Footer fijo en móvil si es necesario */***REMOVED***
-        ***REMOVED***isMobile && !mostrarSelector && (
-          <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4">
+        ***REMOVED***isMobile && !mostrarSelector && !loading && (
+          <div 
+            className="sticky bottom-0 bg-white border-t p-4"
+            style=***REMOVED******REMOVED*** 
+              borderTopColor: coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+            ***REMOVED******REMOVED***
+          >
             <div className="text-xs text-gray-500 text-center">
               Desliza hacia abajo para cerrar
+            </div>
+          </div>
+        )***REMOVED***
+
+        ***REMOVED***/* Indicador de carga */***REMOVED***
+        ***REMOVED***loading && (
+          <div 
+            className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center"
+            style=***REMOVED******REMOVED*** zIndex: modalConfig.zIndex + 1 ***REMOVED******REMOVED***
+          >
+            <div 
+              className="bg-white rounded-lg p-4 flex items-center space-x-3"
+              style=***REMOVED******REMOVED*** 
+                borderColor: coloresTemáticos?.base || '#EC4899',
+                borderWidth: '2px'
+              ***REMOVED******REMOVED***
+            >
+              <div 
+                className="animate-spin rounded-full h-6 w-6 border-b-2"
+                style=***REMOVED******REMOVED*** borderColor: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+              />
+              <span 
+                className="font-medium"
+                style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+              >
+                Guardando...
+              </span>
             </div>
           </div>
         )***REMOVED***
