@@ -8,7 +8,7 @@ import SelectorTipoTrabajo from '../SelectorTipoTrabajo';
 import ModalTrabajoDelivery from '../ModalTrabajoDelivery';
 
 const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
-  const { agregarTrabajo, editarTrabajo, deliveryEnabled } = useApp();
+  const { addJob, editJob, deliveryEnabled } = useApp();
   const [mostrarSelector, setMostrarSelector] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -38,22 +38,19 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
       setLoading(true);
       
       if (trabajo) {
-        await editarTrabajo(trabajo.id, datosTrabajo);
+        // Editando trabajo existente
+        await editJob(trabajo.id, datosTrabajo);
       } else {
-        const resultado = await agregarTrabajo(datosTrabajo);
-        
-        if (resultado) {
-          // El trabajo se creó exitosamente
-        }
+        // Creando trabajo nuevo
+        await addJob(datosTrabajo);
       }
       
-      // Resetear estados
+      // Resetear estados y cerrar modal
       setTipoSeleccionado(null);
       setMostrarSelector(false);
+      setLoading(false);
       onClose();
     } catch (error) {
-      setLoading(false);
-    } finally {
       setLoading(false);
     }
   };
@@ -61,6 +58,7 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
   const manejarCerrar = () => {
     setTipoSeleccionado(null);
     setMostrarSelector(false);
+    setLoading(false);
     onClose();
   };
 

@@ -583,6 +583,11 @@ export const AppProvider = ({ children }) => {
     loading,
     error,
 
+    // Combinar todos los trabajos
+    todosLosTrabajos: useMemo(() => {
+      return [...trabajos, ...trabajosDelivery];
+    }, [trabajos, trabajosDelivery]),
+
     // User preferences
     primaryColor,
     thematicColors,
@@ -745,7 +750,6 @@ export const AppProvider = ({ children }) => {
     formatDate,
     updateWeeklyHoursGoal,
 
-    // Configuration functions
     savePreferences: useCallback(async (preferences) => {
       try {
         if (!currentUser) throw new Error('User not authenticated');
@@ -759,12 +763,17 @@ export const AppProvider = ({ children }) => {
           metaHorasSemanales: newGoal,
         } = preferences;
 
+        console.log('Guardando preferencias:', preferences);
+
         // Update local states if values are provided
         if (newColor !== undefined) setPrimaryColor(newColor);
         if (newEmoji !== undefined) setUserEmoji(newEmoji);
         if (newDiscount !== undefined) setDefaultDiscount(newDiscount);
         if (newRanges !== undefined) setShiftRanges(newRanges);
-        if (newDelivery !== undefined) setDeliveryEnabled(newDelivery);
+        if (newDelivery !== undefined) {
+          console.log('Actualizando deliveryEnabled a:', newDelivery);
+          setDeliveryEnabled(newDelivery);
+        }
         if (newGoal !== undefined) setWeeklyHoursGoal(newGoal);
 
         // Persist to localStorage
@@ -772,9 +781,13 @@ export const AppProvider = ({ children }) => {
         if (newEmoji !== undefined) localStorage.setItem('userEmoji', newEmoji);
         if (newDiscount !== undefined) localStorage.setItem('defaultDiscount', newDiscount.toString());
         if (newRanges !== undefined) localStorage.setItem('shiftRanges', JSON.stringify(newRanges));
-        if (newDelivery !== undefined) localStorage.setItem('deliveryEnabled', newDelivery.toString());
+        if (newDelivery !== undefined) {
+          console.log('Guardando en localStorage deliveryEnabled:', newDelivery);
+          localStorage.setItem('deliveryEnabled', newDelivery.toString());
+        }
         if (newGoal !== undefined) localStorage.setItem('weeklyHoursGoal', newGoal === null ? 'null' : newGoal.toString());
 
+        // Update Firestore
         const userDocRef = doc(db, 'usuarios', currentUser.uid);
         const updatedData = {};
 
@@ -782,17 +795,22 @@ export const AppProvider = ({ children }) => {
         if (newEmoji !== undefined) updatedData['ajustes.emojiUsuario'] = newEmoji;
         if (newDiscount !== undefined) updatedData['ajustes.descuentoDefault'] = newDiscount;
         if (newRanges !== undefined) updatedData['ajustes.rangosTurnos'] = newRanges;
-        if (newDelivery !== undefined) updatedData['ajustes.deliveryEnabled'] = newDelivery;
+        if (newDelivery !== undefined) {
+          console.log('Guardando en Firestore deliveryEnabled:', newDelivery);
+          updatedData['ajustes.deliveryEnabled'] = newDelivery;
+        }
         if (newGoal !== undefined) updatedData['ajustes.metaHorasSemanales'] = newGoal;
 
         updatedData['fechaActualizacion'] = new Date();
 
         if (Object.keys(updatedData).length > 1) { // Check if there's actual data to update beyond the timestamp
           await updateDoc(userDocRef, updatedData);
+          console.log('Datos guardados en Firestore:', updatedData);
         }
 
         return true;
       } catch (err) {
+        console.error('Error en savePreferences:', err);
         setError('Error al guardar preferencias: ' + err.message);
         throw err;
       }

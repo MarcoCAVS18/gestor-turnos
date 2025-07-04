@@ -10,7 +10,6 @@ import NextShiftCard from '../components/dashboard/NextShiftCard';
 import TopWorkCard from '../components/dashboard/TopWorkCard';
 import FavoriteWorksCard from '../components/dashboard/FavoriteWorksCard';
 import ProjectionCard from '../components/dashboard/ProjectionCard';
-import QuickActionsCard from '../components/dashboard/QuickActionsCard';
 import { useApp } from '../contexts/AppContext';
 
 const Dashboard = () => {
@@ -57,8 +56,6 @@ const Dashboard = () => {
         proyeccionMensual={stats.proyeccionMensual}
         horasTrabajadas={stats.horasTrabajadas}
       />
-
-      <QuickActionsCard />
     </div>
   );
 };

@@ -4,14 +4,29 @@ import { useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
 
 export const useDashboardStats = () => {
-  const { todosLosTrabajos, turnos, turnosDelivery, calcularPago } = useApp();
+  const { trabajos, trabajosDelivery, turnos, turnosDelivery, calcularPago } = useApp();
+
+  // Función para calcular horas - definida fuera del useMemo
+  const calcularHoras = (inicio, fin) => {
+    const [horaIni, minIni] = inicio.split(':').map(n => parseInt(n));
+    const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
+
+    let inicioMinutos = horaIni * 60 + minIni;
+    let finMinutos = horaFn * 60 + minFn;
+
+    if (finMinutos <= inicioMinutos) {
+      finMinutos += 24 * 60;
+    }
+
+    return (finMinutos - inicioMinutos) / 60;
+  };
 
   const stats = useMemo(() => {
-    // Combinar todos los turnos
+    // Combinar todos los trabajos y turnos
+    const todosLosTrabajos = [...(trabajos || []), ...(trabajosDelivery || [])];
     const turnosTradicionales = Array.isArray(turnos) ? turnos : [];
     const turnosDeliveryValidos = Array.isArray(turnosDelivery) ? turnosDelivery : [];
     const todosLosTurnos = [...turnosTradicionales, ...turnosDeliveryValidos];
-  
 
     if (todosLosTurnos.length === 0) {
       return {
@@ -140,22 +155,7 @@ export const useDashboardStats = () => {
     };
 
     return resultado;
-  }, [turnos, turnosDelivery, todosLosTrabajos, calcularPago]);
-
-  // Función para calcular horas
-  const calcularHoras = (inicio, fin) => {
-    const [horaIni, minIni] = inicio.split(':').map(n => parseInt(n));
-    const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
-
-    let inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFn * 60 + minFn;
-
-    if (finMinutos <= inicioMinutos) {
-      finMinutos += 24 * 60;
-    }
-
-    return (finMinutos - inicioMinutos) / 60;
-  };
+  }, [trabajos, trabajosDelivery, turnos, turnosDelivery, calcularPago]);
 
   // Función para formatear fecha
   const formatearFecha = (fechaStr) => {

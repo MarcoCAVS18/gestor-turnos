@@ -1,8 +1,10 @@
 // src/components/ui/Switch/index.jsx
 
 import React from 'react';
+import { useApp } from '../../../contexts/AppContext';
 
 const Switch = ({ checked, onChange, disabled = false, size = 'md' }) => {
+  const { coloresTemáticos } = useApp();
   
   const getSizeClasses = () => {
     const sizes = {
@@ -15,27 +17,40 @@ const Switch = ({ checked, onChange, disabled = false, size = 'md' }) => {
 
   const sizeClasses = getSizeClasses();
 
-  const handleClick = () => {
-    if (!disabled) {
+  const handleClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!disabled && onChange) {
       onChange(!checked);
-    } else {
-      // Click ignored, switch is disabled
     }
   };
+
+  // Usar colores temáticos si estan disponibles
+  const activeColor = coloresTemáticos?.base || '#EC4899';
 
   return (
     <button
       type="button"
+      role="switch"
+      aria-checked={checked}
       onClick={handleClick}
-      className={`relative inline-flex ${sizeClasses.container} items-center rounded-full transition-colors ${
+      className={`relative inline-flex ${sizeClasses.container} items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-      } ${checked ? 'bg-pink-600' : 'bg-gray-200'}`}
+      }`}
+      style={{
+        backgroundColor: checked ? activeColor : '#D1D5DB',
+        '--tw-ring-color': activeColor
+      }}
       disabled={disabled}
     >
       <span
-        className={`inline-block ${sizeClasses.toggle} transform rounded-full bg-white transition-transform ${
+        className={`inline-block ${sizeClasses.toggle} transform rounded-full bg-white shadow-lg transition-transform duration-200 ${
           checked ? sizeClasses.translate : 'translate-x-1'
         }`}
+        style={{
+          boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)'
+        }}
       />
     </button>
   );

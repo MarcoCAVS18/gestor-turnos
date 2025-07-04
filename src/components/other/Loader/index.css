@@ -1,0 +1,48 @@
+/* src/components/other/Loader/index.css */
+
+.loader-container-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 9999;
+}
+
+.loader-container-normal {
+  display: flex;    
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  padding-top: 60px;
+  padding-bottom: 60px;
+  min-height: 200px;
+}
+
+/* Ajustes para móvil */
+@media (max-width: 767px) {
+  .loader-container-fullscreen {
+    transform: translateY(-50px);
+  }
+  
+  .loader-container-normal {
+    min-height: calc(100vh - 180px);
+    padding-bottom: 120px;
+  }
+}
+
+/* Para tablets y desktop */
+@media (min-width: 768px) {
+  .loader-container-fullscreen {
+    transform: translateY(0);
+  }
+  
+  .loader-container-normal {
+    min-height: 200px;
+    padding-bottom: 60px;
+  }
+}
