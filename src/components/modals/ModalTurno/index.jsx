@@ -39,13 +39,25 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
     return [...trabajos, ...trabajosDelivery];
   }, [trabajos, trabajosDelivery]);
 
-  // Determinar el tipo de formulario basado en el trabajo
+  // CORRECCIÓN: Determinar el tipo de formulario basado en el trabajo
   useEffect(() => {
-    if (turno?.type === 'delivery') {
+    if (turno?.tipo === 'delivery') {
       setFormularioTipo('delivery');
     } else if (trabajoSeleccionadoId) {
       const trabajo = todosLosTrabajos.find(t => t.id === trabajoSeleccionadoId);
-      setFormularioTipo(trabajo?.type === 'delivery' ? 'delivery' : 'tradicional');
+      // CAMBIO AQUÍ: Verificar tanto 'tipo' como 'type' para compatibilidad
+      const esDelivery = trabajo?.tipo === 'delivery' || trabajo?.type === 'delivery';
+      setFormularioTipo(esDelivery ? 'delivery' : 'tradicional');
+      
+      // Debug log para verificar
+      console.log('🔄 Trabajo seleccionado:', {
+        id: trabajo?.id,
+        nombre: trabajo?.nombre,
+        tipo: trabajo?.tipo,
+        type: trabajo?.type,
+        esDelivery,
+        formularioTipo: esDelivery ? 'delivery' : 'tradicional'
+      });
     } else {
       setFormularioTipo('tradicional');
     }
@@ -104,6 +116,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
   };
 
   const manejarCambioTrabajo = (nuevoTrabajoId) => {
+    console.log('🔄 Cambiando trabajo a:', nuevoTrabajoId);
     setTrabajoSeleccionadoId(nuevoTrabajoId);
   };
 

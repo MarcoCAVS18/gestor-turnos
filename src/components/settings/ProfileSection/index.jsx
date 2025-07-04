@@ -43,15 +43,17 @@ const ProfileSection = ({ onError, onSuccess }) => {
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 transition-colors"
                 style={{ '--tw-ring-color': thematicColors?.base || '#EC4899' }}
               />
               <Button
                 onClick={handleSaveName}
                 disabled={loading}
+                loading={loading}
                 size="sm"
                 className="!p-2"
                 icon={Save}
+                themeColor={thematicColors?.base}
               />
             </div>
           ) : (
@@ -59,7 +61,7 @@ const ProfileSection = ({ onError, onSuccess }) => {
               <div className="text-gray-900">{displayName}</div>
               <button
                 onClick={() => setEditingName(true)}
-                className="ml-2 transition-colors"
+                className="ml-2 transition-colors p-1 rounded hover:bg-gray-100"
                 style={{ color: thematicColors?.base || '#EC4899' }}
               >
                 <Edit2 className="h-4 w-4" />

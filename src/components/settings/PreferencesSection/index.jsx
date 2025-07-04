@@ -9,22 +9,22 @@ import InfoTooltip from '../../ui/InfoTooltip';
 
 const PreferencesSection = ({ onError, onSuccess }) => {
   const { 
-    descuentoDefault: appDescuento, 
-    guardarPreferencias,
+    defaultDiscount,
+    savePreferences,
     thematicColors 
   } = useApp();
   
-  const [descuentoDefault, setDescuentoDefault] = useState(appDescuento);
+  const [descuentoDefault, setDescuentoDefault] = useState(defaultDiscount);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setDescuentoDefault(appDescuento);
-  }, [appDescuento]);
+    setDescuentoDefault(defaultDiscount);
+  }, [defaultDiscount]);
 
   const handleSave = async () => {
     try {
       setLoading(true);
-      await guardarPreferencias({ descuentoDefault });
+      await savePreferences({ descuentoDefault });
       onSuccess?.('Configuración guardada correctamente');
     } catch (error) {
       onError?.('Error al guardar ajustes: ' + error.message);
@@ -53,7 +53,7 @@ const PreferencesSection = ({ onError, onSuccess }) => {
             max="100"
             value={descuentoDefault}
             onChange={(e) => setDescuentoDefault(Number(e.target.value))}
-            className="flex-1 px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2"
+            className="flex-1 px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 transition-colors"
             style={{ '--tw-ring-color': thematicColors?.base || '#EC4899' }}
             placeholder="15"
           />
@@ -70,6 +70,7 @@ const PreferencesSection = ({ onError, onSuccess }) => {
           disabled={loading}
           loading={loading}
           className="w-full mt-4"
+          themeColor={thematicColors?.base}
         >
           Guardar cambios
         </Button>

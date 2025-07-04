@@ -51,7 +51,7 @@ const DeliverySection = ({ onError, onSuccess }) => {
             <div className="flex items-start">
               <Info size={16} className="mt-0.5 mr-2 flex-shrink-0" style={{ color: thematicColors?.base }} />
               <div className="text-sm space-y-1">
-                <p className="font-medium">¿Cómo funciona?</p>
+                <p className="font-medium" style={{ color: thematicColors?.base }}>¿Cómo funciona?</p>
                 <ul className="space-y-1 text-gray-600">
                   <li>• Los trabajos de delivery no requieren tarifa por hora</li>
                   <li>• Registra tus ganancias totales por cada turno</li>

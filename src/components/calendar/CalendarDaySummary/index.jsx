@@ -70,6 +70,7 @@ const CalendarDaySummary = ({
           size="sm"
           className="flex items-center gap-1"
           icon={PlusCircle}
+          themeColor={thematicColors?.base}
         >
           Nuevo
         </Button>
@@ -160,6 +161,7 @@ const CalendarDaySummary = ({
             onClick={() => onNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))}
             className="flex items-center gap-2"
             icon={PlusCircle}
+            themeColor={thematicColors?.base}
           >
             Agregar turno
           </Button>

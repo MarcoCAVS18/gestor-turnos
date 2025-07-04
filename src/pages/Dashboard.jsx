@@ -1,6 +1,6 @@
-// src/pages/Dashboard.jsx
+// src/pages/Dashboard.jsx - Versión Corregida
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useDashboardStats } from '../hooks/useDashboardStats';
 import Loader from '../components/other/Loader';
 import WelcomeCard from '../components/dashboard/WelcomeCard';
@@ -13,21 +13,10 @@ import ProjectionCard from '../components/dashboard/ProjectionCard';
 import { useApp } from '../contexts/AppContext';
 
 const Dashboard = () => {
-  const { cargando } = useApp();
+  const { loading } = useApp(); 
   const stats = useDashboardStats();
-  const [showLoading, setShowLoading] = useState(true);
   
-  useEffect(() => {
-    let timer;
-    if (cargando) {
-      setShowLoading(true);
-    } else {
-      timer = setTimeout(() => setShowLoading(false), 3000);
-    }
-    return () => timer && clearTimeout(timer);
-  }, [cargando]);
-
-  if (showLoading) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader />

@@ -5,7 +5,6 @@ import { X, Truck } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import PlatformSelector from '../../delivery/PlatformSelector';
 import VehicleSelector from '../../delivery/VehicleSelector';
-import { DELIVERY_PLATFORMS_AUSTRALIA } from '../../../constants/delivery';
 
 const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
   const { agregarTrabajoDelivery, editarTrabajoDelivery, thematicColors } = useApp();
@@ -16,10 +15,10 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -30,7 +29,7 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
     } else {
       document.body.style.overflow = 'unset';
     }
-    
+
     return () => {
       document.body.style.overflow = 'unset';
     };
@@ -52,38 +51,38 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
       style={{ zIndex: 9999 }}
     >
-      <div 
+      <div
         className={`
           bg-white shadow-2xl w-full relative
-          ${isMobile 
-            ? 'h-full max-w-none rounded-none' 
+          ${isMobile
+            ? 'h-full max-w-none rounded-none'
             : 'max-w-md max-h-[90vh] rounded-lg'
           }
           ${isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'}
         `}
       >
         {/* Header fijo con z-index correcto */}
-        <div 
+        <div
           className={`
             sticky top-0 bg-white border-b flex justify-between items-center
             ${isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'}
           `}
-          style={{ 
+          style={{
             zIndex: 10,
             borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
           }}
         >
-          <h2 
+          <h2
             className={`font-semibold flex items-center ${isMobile ? 'text-lg' : 'text-xl'}`}
           >
-            <Truck 
-              size={20} 
-              style={{ color: thematicColors?.base }} 
-              className="mr-2" 
+            <Truck
+              size={20}
+              style={{ color: thematicColors?.base }}
+              className="mr-2"
             />
             <span style={{ color: thematicColors?.base }}>
               {trabajo ? 'Editar' : 'Nuevo'} Trabajo Delivery
@@ -111,26 +110,28 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
         <div className={`
           ${isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'}
         `}>
-          <TrabajoDeliveryFormContent
-            trabajo={trabajo}
-            onSubmit={manejarGuardado}
-            onCancel={onClose}
-            thematicColors={thematicColors}
-            isMobile={isMobile}
-          />
+          <div className="max-w-[420px] mx-auto w-full">
+            <TrabajoDeliveryFormContent
+              trabajo={trabajo}
+              onSubmit={manejarGuardado}
+              onCancel={onClose}
+              thematicColors={thematicColors}
+              isMobile={isMobile}
+            />
+          </div>
         </div>
 
         {/* Footer indicador en móvil */}
         {isMobile && (
-          <div 
+          <div
             className="sticky bottom-0 bg-white border-t p-2"
-            style={{ 
+            style={{
               borderTopColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)',
               zIndex: 10
             }}
           >
             <div className="flex justify-center">
-              <div 
+              <div
                 className="w-10 h-1 rounded-full"
                 style={{ backgroundColor: thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)' }}
               />
@@ -159,10 +160,10 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
     }
   });
 
-  const [errors, setErrors] = useState({}); 
-  const [guardando, setGuardando] = useState(false); 
+  const [errors, setErrors] = useState({});
+  const [guardando, setGuardando] = useState(false);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (trabajo) {
       setFormData({
         nombre: trabajo.nombre || '',
@@ -228,7 +229,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
         [field]: undefined
       }));
     }
-  }, [errors]); 
+  }, [errors]);
 
   const handleConfigChange = (field, value) => {
     setFormData(prev => ({
@@ -240,19 +241,8 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
     }));
   };
 
-  // Obtener el color de la plataforma seleccionada
-  const plataformaSeleccionada = DELIVERY_PLATFORMS_AUSTRALIA.find(
-    p => p.nombre === formData.plataforma
-  );
-
-  useEffect(() => { 
-    if (plataformaSeleccionada && !trabajo) {
-      handleInputChange('colorAvatar', plataformaSeleccionada.color);
-    }
-  }, [plataformaSeleccionada, trabajo, handleInputChange]);
-
   return (
-    <form onSubmit={handleSubmit} className={`space-y-4 ${isMobile ? 'mobile-form' : ''}`}>
+    <form onSubmit={handleSubmit} className={`space-y-6 ${isMobile ? 'mobile-form' : ''}`}>
       {/* Nombre del trabajo */}
       <div>
         <label className="block text-sm font-medium mb-2">
@@ -295,29 +285,29 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
       </div>
 
       {/* Configuración de cálculos */}
-      <div 
-        className="space-y-3 p-3 rounded-lg"
+      <div
+        className="space-y-3 p-4 rounded-lg"
         style={{ backgroundColor: thematicColors?.transparent5 || 'rgba(0,0,0,0.05)' }}
       >
         <h3 className="text-sm font-medium text-gray-700">Configuración de cálculos</h3>
 
-        <label className="flex items-center space-x-2">
+        <label className="flex items-center space-x-3">
           <input
             type="checkbox"
             checked={formData.configuracion.incluyePropinas}
             onChange={(e) => handleConfigChange('incluyePropinas', e.target.checked)}
-            className="rounded"
+            className="rounded w-4 h-4"
             style={{ accentColor: thematicColors?.base }}
           />
           <span className="text-sm">Incluir propinas en el registro</span>
         </label>
 
-        <label className="flex items-center space-x-2">
+        <label className="flex items-center space-x-3">
           <input
             type="checkbox"
             checked={formData.configuracion.rastreaCombustible}
             onChange={(e) => handleConfigChange('rastreaCombustible', e.target.checked)}
-            className="rounded"
+            className="rounded w-4 h-4"
             style={{ accentColor: thematicColors?.base }}
           />
           <span className="text-sm">Rastrear gastos de combustible</span>
@@ -333,7 +323,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
           value={formData.descripcion}
           onChange={(e) => handleInputChange('descripcion', e.target.value)}
           className={`
-            w-full border rounded-lg text-sm border-gray-300
+            w-full border rounded-lg text-sm border-gray-300 resize-none
             ${isMobile ? 'p-3 text-base' : 'p-2'}
           `}
           style={{ '--tw-ring-color': thematicColors?.base }}
@@ -378,7 +368,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
         >
           {guardando ? (
             <div className="flex items-center justify-center space-x-2">
-              <div 
+              <div
                 className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"
               />
               <span>Guardando...</span>

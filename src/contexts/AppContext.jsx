@@ -17,23 +17,23 @@ import { db } from '../services/firebase';
 import { useAuth } from './AuthContext';
 import { generateColorVariations } from '../utils/colorUtils';
 
-// Create the context
+// Crea el contexto
 export const AppContext = createContext();
 
-// Custom hook to use the context
+// Hook personalizado para usar el contexto
 export const useApp = () => {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error('useApp must be used within an AppProvider');
+    throw new Error('useApp debe ser usado dentro de un AppProvider');
   }
   return context;
 };
 
-// Context Provider
+// Proveedor de contexto
 export const AppProvider = ({ children }) => {
   const { currentUser } = useAuth();
 
-  // Main data states
+  // Estados de datos principales
   const [trabajos, setTrabajos] = useState([]);
   const [turnos, setTurnos] = useState([]);
   const [trabajosDelivery, setTrabajosDelivery] = useState([]);
@@ -43,7 +43,7 @@ export const AppProvider = ({ children }) => {
   const [weeklyHoursGoal, setWeeklyHoursGoal] = useState(null);
   const [deliveryEnabled, setDeliveryEnabled] = useState(false);
 
-  // Customization preferences states
+  // Estados de preferencias de personalizacion
   const [primaryColor, setPrimaryColor] = useState('#EC4899');
   const [userEmoji, setUserEmoji] = useState('😊');
   const [defaultDiscount, setDefaultDiscount] = useState(15);
@@ -55,12 +55,12 @@ export const AppProvider = ({ children }) => {
     nightStart: 20
   });
 
-  // Generate color variations based on the primary color
+  // Genera variaciones de color basadas en el color principal
   const thematicColors = useMemo(() => {
     return generateColorVariations(primaryColor);
   }, [primaryColor]);
 
-  // Function to get user subcollection references
+  // Funcion para obtener referencias de subcolecciones de usuario
   const getUserSubcollections = useCallback(() => {
     if (!currentUser) {
       return null;
@@ -74,7 +74,7 @@ export const AppProvider = ({ children }) => {
     };
   }, [currentUser]);
 
-  // Ensures the user document exists and loads settings
+  // Asegura que el documento del usuario exista y carga la configuracion
   const ensureUserDocument = useCallback(async () => {
     if (!currentUser) {
       return;
@@ -126,12 +126,12 @@ export const AppProvider = ({ children }) => {
         setShiftRanges(defaultSettings.rangosTurnos);
       }
     } catch (err) {
-      console.error('Error configuring user document:', err);
+      console.error('Error al configurar documento de usuario:', err);
       setError('Error al configurar usuario: ' + err.message);
     }
   }, [currentUser]);
 
-  // Function to calculate hours worked
+  // Funcion para calcular horas trabajadas
   const calculateHours = useCallback((start, end) => {
     const [startHour, startMin] = start.split(':').map(n => parseInt(n));
     const [endHour, endMin] = end.split(':').map(n => parseInt(n));
@@ -139,7 +139,7 @@ export const AppProvider = ({ children }) => {
     let startMinutes = startHour * 60 + startMin;
     let endMinutes = endHour * 60 + endMin;
 
-    // If the shift crosses midnight
+    // Si el turno cruza la medianoche
     if (endMinutes <= startMinutes) {
       endMinutes += 24 * 60;
     }
@@ -147,14 +147,14 @@ export const AppProvider = ({ children }) => {
     return (endMinutes - startMinutes) / 60;
   }, []);
 
-  // Function to calculate payment considering multiple time ranges
+  // Funcion para calcular el pago considerando multiples rangos de tiempo
   const calculatePayment = useCallback((shift) => {
     const allJobs = [...trabajos, ...trabajosDelivery];
     const job = allJobs.find(j => j.id === shift.trabajoId);
 
     if (!job) return { total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false };
 
-    // If it's a delivery shift, return the total earnings directly
+    // Si es un turno de delivery, devuelve las ganancias totales directamente
     if (shift.type === 'delivery') {
       const hours = calculateHours(shift.horaInicio, shift.horaFin);
       return {
@@ -183,15 +183,15 @@ export const AppProvider = ({ children }) => {
 
     const [year, month, day] = fecha.split('-');
     const date = new Date(year, month - 1, day);
-    const dayOfWeek = date.getDay(); // 0 for Sunday, 6 for Saturday
+    const dayOfWeek = date.getDay(); // 0 para domingo, 6 para sabado
 
     let total = 0;
 
-    if (dayOfWeek === 0) { // Sunday
+    if (dayOfWeek === 0) { // Domingo
       total = hours * job.tarifas.domingo;
-    } else if (dayOfWeek === 6) { // Saturday
+    } else if (dayOfWeek === 6) { // Sabado
       total = hours * job.tarifas.sabado;
-    } else { // Weekday
+    } else { // Dia de semana
       const ranges = shiftRanges || {
         dayStart: 6, dayEnd: 14,
         afternoonStart: 14, afternoonEnd: 20,
@@ -229,12 +229,12 @@ export const AppProvider = ({ children }) => {
     };
   }, [trabajos, trabajosDelivery, shiftRanges, defaultDiscount, calculateHours]);
 
-  // CRUD Functions for Delivery Jobs
+  // Funciones CRUD para trabajos de delivery
   const addDeliveryJob = useCallback(async (newJob) => {
     try {
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.trabajosDeliveryRef) throw new Error('Could not get collection references');
+      if (!subcollections || !subcollections.trabajosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
       const jobData = {
         ...newJob,
@@ -257,7 +257,7 @@ export const AppProvider = ({ children }) => {
       const docRef = await addDoc(subcollections.trabajosDeliveryRef, jobData);
       return { ...jobData, id: docRef.id };
     } catch (err) {
-      console.error('Error adding delivery job:', err);
+      console.error('Error al agregar trabajo de delivery:', err);
       setError('Error al agregar trabajo delivery: ' + err.message);
       throw err;
     }
@@ -265,9 +265,9 @@ export const AppProvider = ({ children }) => {
 
   const editDeliveryJob = useCallback(async (id, updatedData) => {
     try {
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.trabajosDeliveryRef) throw new Error('Could not get collection references');
+      if (!subcollections || !subcollections.trabajosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
       const dataWithMetadata = {
         ...updatedData,
@@ -277,7 +277,7 @@ export const AppProvider = ({ children }) => {
       const docRef = doc(subcollections.trabajosDeliveryRef, id);
       await updateDoc(docRef, dataWithMetadata);
     } catch (err) {
-      console.error('Error editing delivery job:', err);
+      console.error('Error al editar trabajo de delivery:', err);
       setError('Error al editar trabajo delivery: ' + err.message);
       throw err;
     }
@@ -285,13 +285,13 @@ export const AppProvider = ({ children }) => {
 
   const deleteDeliveryJob = useCallback(async (id) => {
     try {
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
       if (!subcollections || !subcollections.trabajosDeliveryRef || !subcollections.turnosDeliveryRef) {
-        throw new Error('Could not get collection references');
+        throw new Error('No se pudieron obtener las referencias de la coleccion');
       }
 
-      // First, delete all associated delivery shifts
+      // Primero, elimina todos los turnos de delivery asociados
       const shiftsQuery = query(
         subcollections.turnosDeliveryRef,
         where('trabajoId', '==', id)
@@ -301,21 +301,21 @@ export const AppProvider = ({ children }) => {
       const deletePromises = shiftsSnapshot.docs.map(d => deleteDoc(d.ref));
       await Promise.all(deletePromises);
 
-      // Then delete the delivery job
+      // Luego elimina el trabajo de delivery
       await deleteDoc(doc(subcollections.trabajosDeliveryRef, id));
     } catch (err) {
-      console.error('Error deleting delivery job:', err);
+      console.error('Error al eliminar trabajo de delivery:', err);
       setError('Error al eliminar trabajo delivery: ' + err.message);
       throw err;
     }
   }, [currentUser, getUserSubcollections]);
 
-  // CRUD Functions for Delivery Shifts
+  // Funciones CRUD para turnos de delivery
   const addDeliveryShift = useCallback(async (newShift) => {
     try {
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('Could not get collection references');
+      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
       const shiftData = {
         ...newShift,
@@ -334,7 +334,7 @@ export const AppProvider = ({ children }) => {
       const docRef = await addDoc(subcollections.turnosDeliveryRef, shiftData);
       return { ...shiftData, id: docRef.id };
     } catch (err) {
-      console.error('Error adding delivery shift:', err);
+      console.error('Error al agregar turno de delivery:', err);
       setError('Error al agregar turno delivery: ' + err.message);
       throw err;
     }
@@ -342,9 +342,9 @@ export const AppProvider = ({ children }) => {
 
   const editDeliveryShift = useCallback(async (id, updatedData) => {
     try {
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('Could not get collection references');
+      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
       const dataWithMetadata = {
         ...updatedData,
@@ -356,7 +356,7 @@ export const AppProvider = ({ children }) => {
       const docRef = doc(subcollections.turnosDeliveryRef, id);
       await updateDoc(docRef, dataWithMetadata);
     } catch (err) {
-      console.error('Error editing delivery shift:', err);
+      console.error('Error al editar turno de delivery:', err);
       setError('Error al editar turno delivery: ' + err.message);
       throw err;
     }
@@ -364,13 +364,13 @@ export const AppProvider = ({ children }) => {
 
   const deleteDeliveryShift = useCallback(async (id) => {
     try {
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('Could not get collection references');
+      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
       await deleteDoc(doc(subcollections.turnosDeliveryRef, id));
     } catch (err) {
-      console.error('Error deleting delivery shift:', err);
+      console.error('Error al eliminar turno de delivery:', err);
       setError('Error al eliminar turno delivery: ' + err.message);
       throw err;
     }
@@ -378,7 +378,7 @@ export const AppProvider = ({ children }) => {
 
   const updateWeeklyHoursGoal = useCallback(async (newGoal) => {
     try {
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
 
       setWeeklyHoursGoal(newGoal);
 
@@ -400,7 +400,7 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentUser]);
 
-  // Load user data and preferences
+  // Cargar datos de usuario y preferencias
   useEffect(() => {
     let unsubscribeTrabajos = null;
     let unsubscribeTurnos = null;
@@ -430,7 +430,7 @@ export const AppProvider = ({ children }) => {
           return;
         }
 
-        // Listener for traditional jobs
+        // Listener para trabajos tradicionales
         const trabajosQuery = query(
           subcollections.trabajosRef,
           orderBy('nombre', 'asc')
@@ -469,12 +469,12 @@ export const AppProvider = ({ children }) => {
             });
           },
           (err) => {
-            console.error('Error in traditional jobs listener:', err);
+            console.error('Error en el listener de trabajos tradicionales:', err);
             setError('Error al cargar trabajos: ' + err.message);
           }
         );
 
-        // Listener for delivery jobs (incorporated your fix)
+        // Listener para trabajos de delivery (se incorporo tu arreglo)
         const trabajosDeliveryQuery = query(
           subcollections.trabajosDeliveryRef,
           orderBy('fechaCreacion', 'desc')
@@ -494,7 +494,7 @@ export const AppProvider = ({ children }) => {
           }
         );
 
-        // Listener for delivery shifts
+        // Listener para turnos de delivery
         const turnosDeliveryQuery = query(
           subcollections.turnosDeliveryRef,
           orderBy('fecha', 'desc')
@@ -508,18 +508,18 @@ export const AppProvider = ({ children }) => {
               turnosDeliveryData.push({
                 id: doc.id,
                 ...doc.data(),
-                type: 'delivery' // Ensure type is set
+                type: 'delivery' // Asegura que el tipo este configurado
               });
             });
             setTurnosDelivery(turnosDeliveryData);
           },
           (err) => {
-            console.error('Error loading delivery shifts:', err);
+            console.error('Error al cargar turnos de delivery:', err);
             setError('Error al cargar turnos delivery: ' + err.message);
           }
         );
 
-        // Listener for traditional shifts
+        // Listener para turnos tradicionales
         const turnosQuery = query(
           subcollections.turnosRef,
           orderBy('fecha', 'desc')
@@ -533,21 +533,21 @@ export const AppProvider = ({ children }) => {
           setTurnos(turnosData);
           setLoading(false);
         }, (err) => {
-          console.error('Error loading traditional shifts:', err);
+          console.error('Error al cargar turnos tradicionales:', err);
           setError('Error al cargar turnos: ' + err.message);
           setLoading(false);
         });
 
       } catch (err) {
-        console.error('Critical error loading data:', err);
-        setError('Error crítico al cargar datos: ' + err.message);
+        console.error('Error critico al cargar datos:', err);
+        setError('Error critico al cargar datos: ' + err.message);
         setLoading(false);
       }
     };
 
     loadUserData();
 
-    // Cleanup function
+    // Funcion de limpieza
     return () => {
       if (unsubscribeTrabajos) unsubscribeTrabajos();
       if (unsubscribeTurnos) unsubscribeTurnos();
@@ -556,7 +556,7 @@ export const AppProvider = ({ children }) => {
     };
   }, [currentUser, getUserSubcollections, ensureUserDocument]);
 
-  // Format date
+  // Formato de fecha
   const formatDate = useCallback((dateStr) => {
     const date = new Date(dateStr + 'T00:00:00');
     return date.toLocaleDateString('es-ES', {
@@ -588,7 +588,7 @@ export const AppProvider = ({ children }) => {
       return [...trabajos, ...trabajosDelivery];
     }, [trabajos, trabajosDelivery]),
 
-    // User preferences
+    // Preferencias de usuario
     primaryColor,
     thematicColors,
     userEmoji,
@@ -597,14 +597,14 @@ export const AppProvider = ({ children }) => {
     weeklyHoursGoal,
     deliveryEnabled,
 
-    // CRUD functions for traditional jobs
+    // Funciones CRUD para trabajos tradicionales
     addJob: useCallback(async (newJob) => {
       try {
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.trabajosRef) throw new Error('Could not get subcollection references');
+        if (!subcollections || !subcollections.trabajosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         if (!newJob.nombre || !newJob.nombre.trim()) {
-          throw new Error('Job name is required');
+          throw new Error('El nombre del trabajo es requerido');
         }
         const jobWithMetadata = {
           ...newJob,
@@ -622,9 +622,9 @@ export const AppProvider = ({ children }) => {
 
     editJob: useCallback(async (id, updatedData) => {
       try {
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.trabajosRef) throw new Error('Could not get subcollection references');
+        if (!subcollections || !subcollections.trabajosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         const dataWithMetadata = {
           ...updatedData,
           fechaActualizacion: new Date()
@@ -639,10 +639,10 @@ export const AppProvider = ({ children }) => {
 
     deleteJob: useCallback(async (id) => {
       try {
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
         if (!subcollections || !subcollections.trabajosRef || !subcollections.turnosRef) {
-          throw new Error('Could not get subcollection references');
+          throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         }
         const jobRef = doc(db, 'usuarios', currentUser.uid, 'trabajos', id);
         const jobDoc = await getDoc(jobRef);
@@ -651,33 +651,33 @@ export const AppProvider = ({ children }) => {
           return;
         }
         const associatedShifts = turnos.filter(shift => shift.trabajoId === id);
-        setTurnos(prev => prev.filter(shift => shift.trabajoId !== id)); // Optimistic UI update
+        setTurnos(prev => prev.filter(shift => shift.trabajoId !== id)); // Actualizacion optimista de la UI
         const deleteShiftPromises = associatedShifts.map(shift =>
           deleteDoc(doc(subcollections.turnosRef, shift.id))
         );
         await Promise.all(deleteShiftPromises);
         await deleteDoc(jobRef);
       } catch (err) {
-        console.error('Error deleting job:', err);
+        console.error('Error al eliminar trabajo:', err);
         setError('Error al eliminar trabajo: ' + err.message);
         throw err;
       }
     }, [currentUser, getUserSubcollections, turnos]),
 
-    // Delivery jobs
+    // Trabajos de delivery
     trabajosDelivery,
     addDeliveryJob,
     editDeliveryJob,
     deleteDeliveryJob,
 
-    // CRUD functions for traditional shifts
+    // Funciones CRUD para turnos tradicionales
     addShift: useCallback(async (newShift) => {
       try {
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.turnosRef) throw new Error('Could not get subcollection references');
+        if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         if (!newShift.trabajoId || !newShift.fecha || !newShift.horaInicio || !newShift.horaFin) {
-          throw new Error('All shift fields are required');
+          throw new Error('Todos los campos del turno son requeridos');
         }
         const shiftWithMetadata = {
           ...newShift,
@@ -694,9 +694,9 @@ export const AppProvider = ({ children }) => {
 
     editShift: useCallback(async (id, updatedData) => {
       try {
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.turnosRef) throw new Error('Could not get subcollection references');
+        if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         const dataWithMetadata = {
           ...updatedData,
           fechaActualizacion: new Date()
@@ -711,9 +711,9 @@ export const AppProvider = ({ children }) => {
 
     deleteShift: useCallback(async (id) => {
       try {
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.turnosRef) throw new Error('Could not get subcollection references');
+        if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         await deleteDoc(doc(subcollections.turnosRef, id));
       } catch (err) {
         setError('Error al eliminar turno: ' + err.message);
@@ -721,13 +721,13 @@ export const AppProvider = ({ children }) => {
       }
     }, [currentUser, getUserSubcollections]),
 
-    // Delivery shifts
+    // Turnos de delivery
     turnosDelivery,
     addDeliveryShift,
     editDeliveryShift,
     deleteDeliveryShift,
 
-    // Calculation functions
+    // Funciones de calculo
     calculateHours,
     calculatePayment,
     calculateDailyTotal: useCallback((dailyShifts) => {
@@ -752,7 +752,7 @@ export const AppProvider = ({ children }) => {
 
     savePreferences: useCallback(async (preferences) => {
       try {
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
 
         const {
           colorPrincipal: newColor,
@@ -765,7 +765,7 @@ export const AppProvider = ({ children }) => {
 
         console.log('Guardando preferencias:', preferences);
 
-        // Update local states if values are provided
+        // Actualizar estados locales si se proporcionan valores
         if (newColor !== undefined) setPrimaryColor(newColor);
         if (newEmoji !== undefined) setUserEmoji(newEmoji);
         if (newDiscount !== undefined) setDefaultDiscount(newDiscount);
@@ -776,7 +776,7 @@ export const AppProvider = ({ children }) => {
         }
         if (newGoal !== undefined) setWeeklyHoursGoal(newGoal);
 
-        // Persist to localStorage
+        // Persistir en localStorage
         if (newColor !== undefined) localStorage.setItem('primaryColor', newColor);
         if (newEmoji !== undefined) localStorage.setItem('userEmoji', newEmoji);
         if (newDiscount !== undefined) localStorage.setItem('defaultDiscount', newDiscount.toString());
@@ -787,7 +787,7 @@ export const AppProvider = ({ children }) => {
         }
         if (newGoal !== undefined) localStorage.setItem('weeklyHoursGoal', newGoal === null ? 'null' : newGoal.toString());
 
-        // Update Firestore
+        // Actualizar Firestore
         const userDocRef = doc(db, 'usuarios', currentUser.uid);
         const updatedData = {};
 
@@ -803,7 +803,7 @@ export const AppProvider = ({ children }) => {
 
         updatedData['fechaActualizacion'] = new Date();
 
-        if (Object.keys(updatedData).length > 1) { // Check if there's actual data to update beyond the timestamp
+        if (Object.keys(updatedData).length > 1) { // Verificar si hay datos reales para actualizar mas alla de la marca de tiempo
           await updateDoc(userDocRef, updatedData);
           console.log('Datos guardados en Firestore:', updatedData);
         }
@@ -817,7 +817,7 @@ export const AppProvider = ({ children }) => {
     }, [currentUser]),
   };
 
-  // Load preferences from localStorage on initial render
+  // Cargar preferencias de localStorage en el renderizado inicial
   useEffect(() => {
     const savedColor = localStorage.getItem('primaryColor');
     const savedEmoji = localStorage.getItem('userEmoji');

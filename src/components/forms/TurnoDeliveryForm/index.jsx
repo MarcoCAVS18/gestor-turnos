@@ -36,8 +36,21 @@ const TurnoDeliveryForm = ({
   
   const [error, setError] = useState('');
 
-  // Filtrar solo trabajos de delivery
-  const trabajosDelivery = trabajos.filter(t => t.type === 'delivery');
+  // CORRECCIÓN: Filtrar trabajos de delivery correctamente
+  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery' || t.type === 'delivery');
+  
+  // NUEVO: También incluir el trabajo seleccionado si no es de delivery pero ya está seleccionado
+  const trabajosParaSelector = React.useMemo(() => {
+    // Si hay un trabajo seleccionado que no es de delivery, incluirlo
+    const trabajoSeleccionadoActual = trabajos.find(t => t.id === formData.trabajoSeleccionado);
+    
+    if (trabajoSeleccionadoActual && trabajoSeleccionadoActual.tipo !== 'delivery' && trabajoSeleccionadoActual.type !== 'delivery') {
+      // Incluir el trabajo seleccionado aunque no sea de delivery
+      return [...trabajosDelivery, trabajoSeleccionadoActual];
+    }
+    
+    return trabajosDelivery;
+  }, [trabajosDelivery, trabajos, formData.trabajoSeleccionado]);
 
   // Cargar datos si es edición
   useEffect(() => {
@@ -57,15 +70,15 @@ const TurnoDeliveryForm = ({
     }
   }, [turno]);
 
-  // Actualizar trabajo seleccionado si cambia el prop
+  // CORRECCIÓN: Mantener el trabajoId cuando se pasa como prop
   useEffect(() => {
-    if (trabajoId && trabajoId !== formData.trabajoSeleccionado) {
+    if (trabajoId && trabajoId) {
       setFormData(prev => ({
         ...prev,
         trabajoSeleccionado: trabajoId
       }));
     }
-  }, [trabajoId, formData.trabajoSeleccionado]);
+  }, [trabajoId]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -77,6 +90,7 @@ const TurnoDeliveryForm = ({
 
   const handleTrabajoChange = (e) => {
     const nuevoTrabajoId = e.target.value;
+    console.log('🔄 TurnoDeliveryForm: Cambiando trabajo a:', nuevoTrabajoId);
     handleInputChange('trabajoSeleccionado', nuevoTrabajoId);
     
     // Notificar al modal sobre el cambio
@@ -95,7 +109,7 @@ const TurnoDeliveryForm = ({
       return false;
     }
     if (!formData.trabajoSeleccionado) {
-      setError('Debes seleccionar un trabajo de delivery');
+      setError('Debes seleccionar un trabajo');
       return false;
     }
     if (!formData.gananciaTotal || isNaN(Number(formData.gananciaTotal))) {
@@ -127,7 +141,7 @@ const TurnoDeliveryForm = ({
       horaInicio: formData.horaInicio,
       horaFin: formData.horaFin,
       trabajoId: formData.trabajoSeleccionado,
-      type: 'delivery',
+      tipo: 'delivery', // Asegurar que se marque como delivery
       numeroPedidos: Number(formData.numeroPedidos) || 0,
       gananciaTotal: Number(formData.gananciaTotal) || 0,
       propinas: Number(formData.propinas) || 0,
@@ -139,16 +153,22 @@ const TurnoDeliveryForm = ({
     await onSubmit(datosTurno);
   };
 
+  // NUEVO: Función para determinar si mostrar advertencia
+  const trabajoSeleccionadoInfo = trabajosParaSelector.find(t => t.id === formData.trabajoSeleccionado);
+  const esTrabajoNoDelivery = trabajoSeleccionadoInfo && 
+    trabajoSeleccionadoInfo.tipo !== 'delivery' && 
+    trabajoSeleccionadoInfo.type !== 'delivery';
+
   return (
     <form 
       onSubmit={manejarSubmit} 
       className={`space-y-6 ${isMobile ? 'mobile-form' : ''}`}
     >
-      {/* Trabajo de delivery */}
+      {/* Trabajo seleccionado */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           <Package size={16} className="inline mr-2" />
-          Trabajo de delivery *
+          Trabajo *
         </label>
         <select
           value={formData.trabajoSeleccionado}
@@ -162,18 +182,31 @@ const TurnoDeliveryForm = ({
             '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
           }}
           required
-          disabled={turno || loading} // No permitir cambiar trabajo en edición
         >
           <option value="">Seleccionar trabajo</option>
-          {trabajosDelivery.map(trabajo => (
+          {trabajosParaSelector.map(trabajo => (
             <option key={trabajo.id} value={trabajo.id}>
-              {trabajo.nombre} - {trabajo.platform || trabajo.plataforma}
+              {trabajo.nombre}
+              {trabajo.tipo === 'delivery' || trabajo.type === 'delivery' 
+                ? ' (Delivery)' 
+                : ' (Tradicional)'}
             </option>
           ))}
         </select>
-        {trabajosDelivery.length === 0 && (
+        
+        {/* Advertencia si se selecciona un trabajo no-delivery */}
+        {esTrabajoNoDelivery && (
+          <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-yellow-800">
+              ⚠️ <strong>Nota:</strong> Has seleccionado un trabajo tradicional. 
+              Este turno se guardará como delivery con ganancias manuales.
+            </p>
+          </div>
+        )}
+        
+        {trabajosParaSelector.length === 0 && (
           <p className="text-sm text-gray-500 mt-1">
-            No hay trabajos de delivery registrados. Crea uno primero.
+            No hay trabajos disponibles. Crea uno primero.
           </p>
         )}
       </div>
@@ -417,7 +450,7 @@ const TurnoDeliveryForm = ({
                 </div>
                 <div className="flex items-center justify-between text-sm font-medium border-t pt-2">
                   <span>Ganancia neta:</span>
-                  <span style={{ color: thematicColors?.base || '#EC4899' }}>
+                  <span style={{ color: coloresTemáticos?.base || '#EC4899' }}>
                     ${(Number(formData.gananciaTotal) - Number(formData.gastoCombustible || 0)).toFixed(2)}
                   </span>
                 </div>
