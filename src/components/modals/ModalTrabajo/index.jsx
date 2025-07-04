@@ -8,7 +8,7 @@ import SelectorTipoTrabajo from '../SelectorTipoTrabajo';
 import ModalTrabajoDelivery from '../ModalTrabajoDelivery';
 
 const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** agregarTrabajo, editarTrabajo, deliveryEnabled ***REMOVED*** = useApp();
+  const ***REMOVED*** addJob, editJob, deliveryEnabled ***REMOVED*** = useApp();
   const [mostrarSelector, setMostrarSelector] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -38,22 +38,19 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
       setLoading(true);
       
       if (trabajo) ***REMOVED***
-        await editarTrabajo(trabajo.id, datosTrabajo);
+        // Editando trabajo existente
+        await editJob(trabajo.id, datosTrabajo);
       ***REMOVED*** else ***REMOVED***
-        const resultado = await agregarTrabajo(datosTrabajo);
-        
-        if (resultado) ***REMOVED***
-          // El trabajo se creó exitosamente
-        ***REMOVED***
+        // Creando trabajo nuevo
+        await addJob(datosTrabajo);
       ***REMOVED***
       
-      // Resetear estados
+      // Resetear estados y cerrar modal
       setTipoSeleccionado(null);
       setMostrarSelector(false);
+      setLoading(false);
       onClose();
     ***REMOVED*** catch (error) ***REMOVED***
-      setLoading(false);
-    ***REMOVED*** finally ***REMOVED***
       setLoading(false);
     ***REMOVED***
   ***REMOVED***;
@@ -61,6 +58,7 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
   const manejarCerrar = () => ***REMOVED***
     setTipoSeleccionado(null);
     setMostrarSelector(false);
+    setLoading(false);
     onClose();
   ***REMOVED***;
 

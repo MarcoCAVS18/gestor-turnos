@@ -3,33 +3,17 @@
 import React, ***REMOVED*** useEffect, useRef ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** gsap ***REMOVED*** from 'gsap';
+import './index.css'; // Importar los estilos CSS
 
 const Loader = (***REMOVED*** size = 40, fullScreen = false, onAnimationComplete ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
   const colorPrincipal = coloresTemáticos?.base || '#EC4899';
   const svgRef = useRef(null);
 
-  const containerStyle = fullScreen ? ***REMOVED***
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: '15%',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    zIndex: 9999
-  ***REMOVED*** : ***REMOVED***
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '40px', 
-    paddingTop: '60px',
-    paddingBottom: '60px',
-    minHeight: '200px'
-  ***REMOVED***;
+  // Usar las clases CSS definidas en el archivo index.css
+  const containerClass = fullScreen 
+    ? 'loader-container-fullscreen'
+    : 'loader-container-normal';
 
   useEffect(() => ***REMOVED***
     const svg = svgRef.current;
@@ -120,7 +104,7 @@ const Loader = (***REMOVED*** size = 40, fullScreen = false, onAnimationComplete
   ***REMOVED***;
 
   return (
-    <div style=***REMOVED***containerStyle***REMOVED***>
+    <div className=***REMOVED***containerClass***REMOVED***>
       <svg
         ref=***REMOVED***svgRef***REMOVED***
         xmlns="http://www.w3.org/2000/svg"
