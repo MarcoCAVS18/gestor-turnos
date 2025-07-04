@@ -7,7 +7,7 @@ import SettingsSection from '../SettingsSection';
 import Switch from '../../ui/Switch';
 
 const DeliverySection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** deliveryEnabled, savePreferences, coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** deliveryEnabled, savePreferences, thematicColors ***REMOVED*** = useApp();
   
   const handleToggle = async (newValue) => ***REMOVED***
     try ***REMOVED***
@@ -44,12 +44,12 @@ const DeliverySection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***R
           <div 
             className="p-4 rounded-lg border"
             style=***REMOVED******REMOVED*** 
-              backgroundColor: coloresTemáticos?.transparent5 || 'rgba(236, 72, 153, 0.05)',
-              borderColor: coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+              backgroundColor: thematicColors?.transparent5 || 'rgba(236, 72, 153, 0.05)',
+              borderColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
             ***REMOVED******REMOVED***
           >
             <div className="flex items-start">
-              <Info size=***REMOVED***16***REMOVED*** className="mt-0.5 mr-2 flex-shrink-0" style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** />
+              <Info size=***REMOVED***16***REMOVED*** className="mt-0.5 mr-2 flex-shrink-0" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** />
               <div className="text-sm space-y-1">
                 <p className="font-medium">¿Cómo funciona?</p>
                 <ul className="space-y-1 text-gray-600">

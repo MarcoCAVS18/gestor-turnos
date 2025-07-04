@@ -5,13 +5,13 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 
 const WeeklyStatsCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
 
   return (
     <Card>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center">
-          <Activity size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
+          <Activity size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
           Esta semana
         </h3>
         ***REMOVED***stats.tendenciaSemanal !== 0 && (
@@ -37,7 +37,7 @@ const WeeklyStatsCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
           <p className="text-sm text-gray-600">Ganancias</p>
           <p 
             className="text-xl font-bold" 
-            style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED***
+            style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***
           >
             $***REMOVED***stats.gananciasEstaSemana.toFixed(2)***REMOVED***
           </p>

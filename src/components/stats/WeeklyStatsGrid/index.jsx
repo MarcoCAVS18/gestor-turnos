@@ -5,7 +5,7 @@ import ***REMOVED*** DollarSign, Clock, Target, Activity ***REMOVED*** from 'luc
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const WeeklyStatsGrid = (***REMOVED*** datos = ***REMOVED******REMOVED*** ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
 
   const datosSeguro = ***REMOVED***
     totalGanado: (datos && typeof datos.totalGanado === 'number' && !isNaN(datos.totalGanado)) ? datos.totalGanado : 0,
@@ -19,25 +19,25 @@ const WeeklyStatsGrid = (***REMOVED*** datos = ***REMOVED******REMOVED*** ***REM
       icon: DollarSign,
       label: 'Total ganado',
       value: `$***REMOVED***datosSeguro.totalGanado.toFixed(2)***REMOVED***`,
-      color: coloresTemáticos?.base || '#EC4899'
+      color: thematicColors?.base || '#EC4899'
     ***REMOVED***,
     ***REMOVED***
       icon: Clock,
       label: 'Horas trabajadas',
       value: `$***REMOVED***datosSeguro.horasTrabajadas.toFixed(1)***REMOVED***h`,
-      color: coloresTemáticos?.base || '#EC4899'
+      color: thematicColors?.base || '#EC4899'
     ***REMOVED***,
     ***REMOVED***
       icon: Target,
       label: 'Total turnos',
       value: datosSeguro.totalTurnos,
-      color: coloresTemáticos?.base || '#EC4899'
+      color: thematicColors?.base || '#EC4899'
     ***REMOVED***,
     ***REMOVED***
       icon: Activity,
       label: 'Días trabajados',
       value: `$***REMOVED***datosSeguro.diasTrabajados***REMOVED***/7`,
-      color: coloresTemáticos?.base || '#EC4899'
+      color: thematicColors?.base || '#EC4899'
     ***REMOVED***
   ];
 

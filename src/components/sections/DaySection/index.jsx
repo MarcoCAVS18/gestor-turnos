@@ -7,7 +7,7 @@ import TarjetaTurno from '../../cards/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
 
 const DaySection = (***REMOVED*** fecha, turnos, trabajos, onEditTurno, onDeleteTurno ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
 
   // Formatear fecha
   const fechaObj = new Date(fecha + 'T00:00:00');
@@ -21,9 +21,9 @@ const DaySection = (***REMOVED*** fecha, turnos, trabajos, onEditTurno, onDelete
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       ***REMOVED***/* Encabezado del día */***REMOVED***
-      <div className="p-4 border-b border-gray-200" style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.transparent5 ***REMOVED******REMOVED***>
+      <div className="p-4 border-b border-gray-200" style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent5 ***REMOVED******REMOVED***>
         <div className="flex items-center gap-2">
-          <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** />
+          <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** />
           <h3 className="font-semibold text-gray-900 capitalize">
             ***REMOVED***diaSemana***REMOVED***, ***REMOVED***fechaFormateada***REMOVED***
           </h3>

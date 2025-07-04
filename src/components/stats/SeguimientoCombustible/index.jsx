@@ -6,7 +6,7 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 
 const SeguimientoCombustible = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
 
   const formatCurrency = (amount) => ***REMOVED***
     return new Intl.NumberFormat('es-AR', ***REMOVED***
@@ -38,7 +38,7 @@ const SeguimientoCombustible = (***REMOVED*** deliveryStats ***REMOVED***) => **
   return (
     <Card>
       <h3 className="text-lg font-semibold flex items-center mb-4">
-        <Fuel size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
+        <Fuel size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
         Combustible
       </h3>
 

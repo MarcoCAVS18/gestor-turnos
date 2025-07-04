@@ -13,7 +13,7 @@ const TrabajoForm = (***REMOVED***
   onSubmit, 
   onCancel, 
   loading, 
-  coloresTemáticos, 
+  thematicColors, 
   isMobile 
 ***REMOVED***) => ***REMOVED***
   const [formData, setFormData] = useState(***REMOVED***
@@ -47,7 +47,7 @@ const TrabajoForm = (***REMOVED***
       setFormData(***REMOVED***
         nombre: trabajo.nombre || '',
         descripcion: trabajo.descripcion || '',
-        color: trabajo.color || coloresTemáticos?.base || '#EC4899',
+        color: trabajo.color || thematicColors?.base || '#EC4899',
         tarifaBase: trabajo.tarifaBase?.toString() || '',
         tarifas: ***REMOVED***
           diurno: trabajo.tarifas?.diurno?.toString() || '',
@@ -61,10 +61,10 @@ const TrabajoForm = (***REMOVED***
       // Para nuevos trabajos, usar el color temático por defecto
       setFormData(prev => (***REMOVED***
         ...prev,
-        color: coloresTemáticos?.base || '#EC4899'
+        color: thematicColors?.base || '#EC4899'
       ***REMOVED***));
     ***REMOVED***
-  ***REMOVED***, [trabajo, coloresTemáticos]);
+  ***REMOVED***, [trabajo, thematicColors]);
 
   const handleInputChange = (field, value) => ***REMOVED***
     setFormData(prev => (***REMOVED***
@@ -135,11 +135,11 @@ const TrabajoForm = (***REMOVED***
             $***REMOVED***errors.nombre ? 'border-red-500' : 'border-gray-300'***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED***
-            '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+            '--tw-ring-color': thematicColors?.base || '#EC4899'
           ***REMOVED******REMOVED***
           placeholder="Ej: Tech Company Inc."
           required
-          themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
+          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         />
         ***REMOVED***errors.nombre && (
           <p className="mt-1 text-sm text-red-600">***REMOVED***errors.nombre***REMOVED***</p>
@@ -200,13 +200,13 @@ const TrabajoForm = (***REMOVED***
             $***REMOVED***errors.tarifaBase ? 'border-red-500' : 'border-gray-300'***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED***
-            '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+            '--tw-ring-color': thematicColors?.base || '#EC4899'
           ***REMOVED******REMOVED***
           placeholder="15.00"
           step="0.01"
           min="0"
           required
-          themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
+          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         />
         ***REMOVED***errors.tarifaBase && (
           <p className="mt-1 text-sm text-red-600">***REMOVED***errors.tarifaBase***REMOVED***</p>
@@ -240,13 +240,13 @@ const TrabajoForm = (***REMOVED***
                   $***REMOVED***errors[`tarifas.$***REMOVED***tipo***REMOVED***`] ? 'border-red-500' : 'border-gray-300'***REMOVED***
                 `***REMOVED***
                 style=***REMOVED******REMOVED***
-                  '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+                  '--tw-ring-color': thematicColors?.base || '#EC4899'
                 ***REMOVED******REMOVED***
                 placeholder="0.00"
                 step="0.01"
                 min="0"
                 required
-                themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
+                themeColor=***REMOVED***thematicColors?.base***REMOVED***
               />
               ***REMOVED***errors[`tarifas.$***REMOVED***tipo***REMOVED***`] && (
                 <p className="mt-1 text-xs text-red-600">***REMOVED***errors[`tarifas.$***REMOVED***tipo***REMOVED***`]***REMOVED***</p>
@@ -272,7 +272,7 @@ const TrabajoForm = (***REMOVED***
             $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED***
-            '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+            '--tw-ring-color': thematicColors?.base || '#EC4899'
           ***REMOVED******REMOVED***
         />
       </div>
@@ -285,7 +285,7 @@ const TrabajoForm = (***REMOVED***
           variant="outline"
           className=***REMOVED***isMobile ? 'w-full py-3' : 'flex-1'***REMOVED***
           disabled=***REMOVED***loading***REMOVED***
-          themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
+          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         >
           Cancelar
         </Button>
@@ -293,7 +293,7 @@ const TrabajoForm = (***REMOVED***
           type="submit"
           className=***REMOVED***isMobile ? 'w-full py-3' : 'flex-1'***REMOVED***
           loading=***REMOVED***loading***REMOVED***
-          themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
+          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         >
           ***REMOVED***trabajo ? 'Guardar Cambios' : 'Crear Trabajo'***REMOVED***
         </Button>

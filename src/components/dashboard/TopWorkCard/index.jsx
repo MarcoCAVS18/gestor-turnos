@@ -5,14 +5,14 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 
 const TopWorkCard = (***REMOVED*** trabajoMasRentable ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
 
   if (!trabajoMasRentable) return null;
 
   return (
     <Card>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
-        <Award size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
+        <Award size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
         Trabajo más rentable
       </h3>
       <div className="flex items-center justify-between">
@@ -32,7 +32,7 @@ const TopWorkCard = (***REMOVED*** trabajoMasRentable ***REMOVED***) => ***REMOV
         </div>
         <p 
           className="text-xl font-bold" 
-          style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***
         >
           $***REMOVED***trabajoMasRentable.ganancia.toFixed(2)***REMOVED***
         </p>

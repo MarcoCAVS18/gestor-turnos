@@ -6,7 +6,7 @@ const CalendarDayCell = (***REMOVED***
   esHoy,
   esSeleccionado,
   coloresTrabajos,
-  coloresTemáticos,
+  thematicColors,
   onClick
 ***REMOVED***) => ***REMOVED***
   return (
@@ -20,7 +20,7 @@ const CalendarDayCell = (***REMOVED***
       `***REMOVED***
       style=***REMOVED******REMOVED***
         backgroundColor: esSeleccionado
-          ? coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)'
+          ? thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)'
           : 'transparent'
       ***REMOVED******REMOVED***
     >
@@ -29,7 +29,7 @@ const CalendarDayCell = (***REMOVED***
         <div
           className="absolute inset-0 m-auto rounded-full w-10 h-10 animate-pulse"
           style=***REMOVED******REMOVED***
-            border: `2px solid $***REMOVED***coloresTemáticos?.base || '#EC4899'***REMOVED***`
+            border: `2px solid $***REMOVED***thematicColors?.base || '#EC4899'***REMOVED***`
           ***REMOVED******REMOVED***
         />
       )***REMOVED***
@@ -39,17 +39,17 @@ const CalendarDayCell = (***REMOVED***
         className="rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200"
         style=***REMOVED******REMOVED***
           backgroundColor: esHoy
-            ? coloresTemáticos?.base || '#EC4899'
+            ? thematicColors?.base || '#EC4899'
             : (esSeleccionado && !esHoy)
-              ? coloresTemáticos?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+              ? thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
               : 'transparent',
           color: esHoy
-            ? coloresTemáticos?.textContrast || '#ffffff'
+            ? thematicColors?.textContrast || '#ffffff'
             : 'inherit',
           fontWeight: esHoy ? 'bold' : 'normal',
           transform: esHoy ? 'scale(1.1)' : 'scale(1)',
           boxShadow: esHoy
-            ? `0 4px 12px $***REMOVED***coloresTemáticos?.transparent50 || 'rgba(236, 72, 153, 0.5)'***REMOVED***`
+            ? `0 4px 12px $***REMOVED***thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)'***REMOVED***`
             : 'none'
         ***REMOVED******REMOVED***
       >

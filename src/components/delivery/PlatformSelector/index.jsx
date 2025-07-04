@@ -6,7 +6,7 @@ import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../c
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const PlatformButton = (***REMOVED*** platform, isSelected, onClick ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
   return (
     <button
@@ -18,8 +18,8 @@ const PlatformButton = (***REMOVED*** platform, isSelected, onClick ***REMOVED**
           : 'border-gray-200 hover:border-gray-300 bg-white'
       ***REMOVED***`***REMOVED***
       style=***REMOVED******REMOVED***
-        borderColor: isSelected ? coloresTemáticos?.base : undefined,
-        backgroundColor: isSelected ? coloresTemáticos?.transparent10 : undefined
+        borderColor: isSelected ? thematicColors?.base : undefined,
+        backgroundColor: isSelected ? thematicColors?.transparent10 : undefined
       ***REMOVED******REMOVED***
     >
       <div 
@@ -36,7 +36,7 @@ const PlatformButton = (***REMOVED*** platform, isSelected, onClick ***REMOVED**
       ***REMOVED***isSelected && (
         <div 
           className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
-          style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.base ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base ***REMOVED******REMOVED***
         >
           <Check size=***REMOVED***12***REMOVED*** className="text-white" />
         </div>

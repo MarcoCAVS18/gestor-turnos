@@ -15,7 +15,7 @@ const CalendarDaySummary = (***REMOVED***
   onNuevoTurno 
 ***REMOVED***) => ***REMOVED***
   // Obtener TODOS los trabajos (tradicionales + delivery)
-  const ***REMOVED*** trabajos, trabajosDelivery, calcularPago, coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** trabajos, trabajosDelivery, calcularPago, thematicColors ***REMOVED*** = useApp();
 
   const calcularTotalDia = (turnosList) => ***REMOVED***
     if (!Array.isArray(turnosList) || turnosList.length === 0) ***REMOVED***
@@ -80,10 +80,10 @@ const CalendarDaySummary = (***REMOVED***
           ***REMOVED***/* Header del día */***REMOVED***
           <div 
             className="px-4 py-3 border-b rounded-t-xl"
-            style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
+            style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
           >
             <div className="flex items-center">
-              <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+              <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
               <h3 className="font-semibold">***REMOVED***formatearFecha(fechaSeleccionada)***REMOVED***</h3>
             </div>
           </div>
@@ -140,12 +140,12 @@ const CalendarDaySummary = (***REMOVED***
             ***REMOVED***/* Total del día */***REMOVED***
             <div 
               className="flex justify-between px-4 py-3 rounded-lg mt-4"
-              style=***REMOVED******REMOVED*** backgroundColor: coloresTemáticos?.transparent5 || 'rgba(0,0,0,0.05)' ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent5 || 'rgba(0,0,0,0.05)' ***REMOVED******REMOVED***
             >
               <span className="font-semibold">Total del día:</span>
               <span 
                 className="font-semibold"
-                style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
               >
                 $***REMOVED***totalDia.toFixed(2)***REMOVED***
               </span>

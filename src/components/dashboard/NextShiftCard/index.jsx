@@ -8,7 +8,7 @@ import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
 const NextShiftCard = (***REMOVED*** proximoTurno, formatearFecha ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** trabajos, coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** trabajos, thematicColors ***REMOVED*** = useApp();
   const navigate = useNavigate();
 
   if (!proximoTurno) return null;
@@ -19,7 +19,7 @@ const NextShiftCard = (***REMOVED*** proximoTurno, formatearFecha ***REMOVED***)
   return (
     <Card>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
-        <Star size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: coloresTemáticos?.base ***REMOVED******REMOVED*** className="mr-2" />
+        <Star size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
         Próximo turno
       </h3>
       <div className="flex items-center justify-between">

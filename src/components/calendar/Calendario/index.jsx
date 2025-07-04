@@ -10,7 +10,7 @@ import CalendarSummary from '../CalendarSummary';
 import CalendarGrid from '../CalendarGrid';
 
 const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** turnosPorFecha, todosLosTrabajos, coloresTemáticos ***REMOVED*** = useApp();
+  const ***REMOVED*** turnosPorFecha, todosLosTrabajos, thematicColors ***REMOVED*** = useApp();
   
   // Obtener todos los turnos combinados del contexto
   const todosLosTurnos = React.useMemo(() => ***REMOVED***
@@ -47,12 +47,12 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
         anioActual=***REMOVED***anioActual***REMOVED***
         onCambiarMes=***REMOVED***cambiarMes***REMOVED***
         onIrAHoy=***REMOVED***irAHoy***REMOVED***
-        coloresTemáticos=***REMOVED***coloresTemáticos***REMOVED***
+        thematicColors=***REMOVED***thematicColors***REMOVED***
       />
 
       <CalendarSummary
         totalTurnos=***REMOVED***turnosMes.length***REMOVED***
-        coloresTemáticos=***REMOVED***coloresTemáticos***REMOVED***
+        thematicColors=***REMOVED***thematicColors***REMOVED***
       />
 
       <CalendarGrid
@@ -60,7 +60,7 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
         fechaActual=***REMOVED***fechaActual***REMOVED***
         diaSeleccionadoActual=***REMOVED***diaSeleccionadoActual***REMOVED***
         trabajos=***REMOVED***todosLosTrabajos || []***REMOVED***
-        coloresTemáticos=***REMOVED***coloresTemáticos***REMOVED***
+        thematicColors=***REMOVED***thematicColors***REMOVED***
         onDiaClick=***REMOVED***irADia***REMOVED***
       />
     </Card>
