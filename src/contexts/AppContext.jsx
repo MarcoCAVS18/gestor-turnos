@@ -17,23 +17,23 @@ import ***REMOVED*** db ***REMOVED*** from '../services/firebase';
 import ***REMOVED*** useAuth ***REMOVED*** from './AuthContext';
 import ***REMOVED*** generateColorVariations ***REMOVED*** from '../utils/colorUtils';
 
-// Create the context
+// Crea el contexto
 export const AppContext = createContext();
 
-// Custom hook to use the context
+// Hook personalizado para usar el contexto
 export const useApp = () => ***REMOVED***
   const context = useContext(AppContext);
   if (!context) ***REMOVED***
-    throw new Error('useApp must be used within an AppProvider');
+    throw new Error('useApp debe ser usado dentro de un AppProvider');
   ***REMOVED***
   return context;
 ***REMOVED***;
 
-// Context Provider
+// Proveedor de contexto
 export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
 
-  // Main data states
+  // Estados de datos principales
   const [trabajos, setTrabajos] = useState([]);
   const [turnos, setTurnos] = useState([]);
   const [trabajosDelivery, setTrabajosDelivery] = useState([]);
@@ -43,7 +43,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   const [weeklyHoursGoal, setWeeklyHoursGoal] = useState(null);
   const [deliveryEnabled, setDeliveryEnabled] = useState(false);
 
-  // Customization preferences states
+  // Estados de preferencias de personalizacion
   const [primaryColor, setPrimaryColor] = useState('#EC4899');
   const [userEmoji, setUserEmoji] = useState('😊');
   const [defaultDiscount, setDefaultDiscount] = useState(15);
@@ -55,12 +55,12 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     nightStart: 20
   ***REMOVED***);
 
-  // Generate color variations based on the primary color
+  // Genera variaciones de color basadas en el color principal
   const thematicColors = useMemo(() => ***REMOVED***
     return generateColorVariations(primaryColor);
   ***REMOVED***, [primaryColor]);
 
-  // Function to get user subcollection references
+  // Funcion para obtener referencias de subcolecciones de usuario
   const getUserSubcollections = useCallback(() => ***REMOVED***
     if (!currentUser) ***REMOVED***
       return null;
@@ -74,7 +74,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***;
   ***REMOVED***, [currentUser]);
 
-  // Ensures the user document exists and loads settings
+  // Asegura que el documento del usuario exista y carga la configuracion
   const ensureUserDocument = useCallback(async () => ***REMOVED***
     if (!currentUser) ***REMOVED***
       return;
@@ -126,12 +126,12 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         setShiftRanges(defaultSettings.rangosTurnos);
       ***REMOVED***
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error configuring user document:', err);
+      console.error('Error al configurar documento de usuario:', err);
       setError('Error al configurar usuario: ' + err.message);
     ***REMOVED***
   ***REMOVED***, [currentUser]);
 
-  // Function to calculate hours worked
+  // Funcion para calcular horas trabajadas
   const calculateHours = useCallback((start, end) => ***REMOVED***
     const [startHour, startMin] = start.split(':').map(n => parseInt(n));
     const [endHour, endMin] = end.split(':').map(n => parseInt(n));
@@ -139,7 +139,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     let startMinutes = startHour * 60 + startMin;
     let endMinutes = endHour * 60 + endMin;
 
-    // If the shift crosses midnight
+    // Si el turno cruza la medianoche
     if (endMinutes <= startMinutes) ***REMOVED***
       endMinutes += 24 * 60;
     ***REMOVED***
@@ -147,14 +147,14 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     return (endMinutes - startMinutes) / 60;
   ***REMOVED***, []);
 
-  // Function to calculate payment considering multiple time ranges
+  // Funcion para calcular el pago considerando multiples rangos de tiempo
   const calculatePayment = useCallback((shift) => ***REMOVED***
     const allJobs = [...trabajos, ...trabajosDelivery];
     const job = allJobs.find(j => j.id === shift.trabajoId);
 
     if (!job) return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false ***REMOVED***;
 
-    // If it's a delivery shift, return the total earnings directly
+    // Si es un turno de delivery, devuelve las ganancias totales directamente
     if (shift.type === 'delivery') ***REMOVED***
       const hours = calculateHours(shift.horaInicio, shift.horaFin);
       return ***REMOVED***
@@ -183,15 +183,15 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
     const [year, month, day] = fecha.split('-');
     const date = new Date(year, month - 1, day);
-    const dayOfWeek = date.getDay(); // 0 for Sunday, 6 for Saturday
+    const dayOfWeek = date.getDay(); // 0 para domingo, 6 para sabado
 
     let total = 0;
 
-    if (dayOfWeek === 0) ***REMOVED*** // Sunday
+    if (dayOfWeek === 0) ***REMOVED*** // Domingo
       total = hours * job.tarifas.domingo;
-    ***REMOVED*** else if (dayOfWeek === 6) ***REMOVED*** // Saturday
+    ***REMOVED*** else if (dayOfWeek === 6) ***REMOVED*** // Sabado
       total = hours * job.tarifas.sabado;
-    ***REMOVED*** else ***REMOVED*** // Weekday
+    ***REMOVED*** else ***REMOVED*** // Dia de semana
       const ranges = shiftRanges || ***REMOVED***
         dayStart: 6, dayEnd: 14,
         afternoonStart: 14, afternoonEnd: 20,
@@ -229,12 +229,12 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***;
   ***REMOVED***, [trabajos, trabajosDelivery, shiftRanges, defaultDiscount, calculateHours]);
 
-  // CRUD Functions for Delivery Jobs
+  // Funciones CRUD para trabajos de delivery
   const addDeliveryJob = useCallback(async (newJob) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.trabajosDeliveryRef) throw new Error('Could not get collection references');
+      if (!subcollections || !subcollections.trabajosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
       const jobData = ***REMOVED***
         ...newJob,
@@ -257,7 +257,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       const docRef = await addDoc(subcollections.trabajosDeliveryRef, jobData);
       return ***REMOVED*** ...jobData, id: docRef.id ***REMOVED***;
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error adding delivery job:', err);
+      console.error('Error al agregar trabajo de delivery:', err);
       setError('Error al agregar trabajo delivery: ' + err.message);
       throw err;
     ***REMOVED***
@@ -265,9 +265,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
   const editDeliveryJob = useCallback(async (id, updatedData) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.trabajosDeliveryRef) throw new Error('Could not get collection references');
+      if (!subcollections || !subcollections.trabajosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
       const dataWithMetadata = ***REMOVED***
         ...updatedData,
@@ -277,7 +277,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       const docRef = doc(subcollections.trabajosDeliveryRef, id);
       await updateDoc(docRef, dataWithMetadata);
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error editing delivery job:', err);
+      console.error('Error al editar trabajo de delivery:', err);
       setError('Error al editar trabajo delivery: ' + err.message);
       throw err;
     ***REMOVED***
@@ -285,13 +285,13 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
   const deleteDeliveryJob = useCallback(async (id) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
       if (!subcollections || !subcollections.trabajosDeliveryRef || !subcollections.turnosDeliveryRef) ***REMOVED***
-        throw new Error('Could not get collection references');
+        throw new Error('No se pudieron obtener las referencias de la coleccion');
       ***REMOVED***
 
-      // First, delete all associated delivery shifts
+      // Primero, elimina todos los turnos de delivery asociados
       const shiftsQuery = query(
         subcollections.turnosDeliveryRef,
         where('trabajoId', '==', id)
@@ -301,21 +301,21 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       const deletePromises = shiftsSnapshot.docs.map(d => deleteDoc(d.ref));
       await Promise.all(deletePromises);
 
-      // Then delete the delivery job
+      // Luego elimina el trabajo de delivery
       await deleteDoc(doc(subcollections.trabajosDeliveryRef, id));
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error deleting delivery job:', err);
+      console.error('Error al eliminar trabajo de delivery:', err);
       setError('Error al eliminar trabajo delivery: ' + err.message);
       throw err;
     ***REMOVED***
   ***REMOVED***, [currentUser, getUserSubcollections]);
 
-  // CRUD Functions for Delivery Shifts
+  // Funciones CRUD para turnos de delivery
   const addDeliveryShift = useCallback(async (newShift) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('Could not get collection references');
+      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
       const shiftData = ***REMOVED***
         ...newShift,
@@ -334,7 +334,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       const docRef = await addDoc(subcollections.turnosDeliveryRef, shiftData);
       return ***REMOVED*** ...shiftData, id: docRef.id ***REMOVED***;
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error adding delivery shift:', err);
+      console.error('Error al agregar turno de delivery:', err);
       setError('Error al agregar turno delivery: ' + err.message);
       throw err;
     ***REMOVED***
@@ -342,9 +342,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
   const editDeliveryShift = useCallback(async (id, updatedData) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('Could not get collection references');
+      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
       const dataWithMetadata = ***REMOVED***
         ...updatedData,
@@ -356,7 +356,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       const docRef = doc(subcollections.turnosDeliveryRef, id);
       await updateDoc(docRef, dataWithMetadata);
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error editing delivery shift:', err);
+      console.error('Error al editar turno de delivery:', err);
       setError('Error al editar turno delivery: ' + err.message);
       throw err;
     ***REMOVED***
@@ -364,13 +364,13 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
   const deleteDeliveryShift = useCallback(async (id) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('Could not get collection references');
+      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
       await deleteDoc(doc(subcollections.turnosDeliveryRef, id));
     ***REMOVED*** catch (err) ***REMOVED***
-      console.error('Error deleting delivery shift:', err);
+      console.error('Error al eliminar turno de delivery:', err);
       setError('Error al eliminar turno delivery: ' + err.message);
       throw err;
     ***REMOVED***
@@ -378,7 +378,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
   const updateWeeklyHoursGoal = useCallback(async (newGoal) => ***REMOVED***
     try ***REMOVED***
-      if (!currentUser) throw new Error('User not authenticated');
+      if (!currentUser) throw new Error('Usuario no autenticado');
 
       setWeeklyHoursGoal(newGoal);
 
@@ -400,7 +400,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***
   ***REMOVED***, [currentUser]);
 
-  // Load user data and preferences
+  // Cargar datos de usuario y preferencias
   useEffect(() => ***REMOVED***
     let unsubscribeTrabajos = null;
     let unsubscribeTurnos = null;
@@ -430,7 +430,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           return;
         ***REMOVED***
 
-        // Listener for traditional jobs
+        // Listener para trabajos tradicionales
         const trabajosQuery = query(
           subcollections.trabajosRef,
           orderBy('nombre', 'asc')
@@ -469,12 +469,12 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
             ***REMOVED***);
           ***REMOVED***,
           (err) => ***REMOVED***
-            console.error('Error in traditional jobs listener:', err);
+            console.error('Error en el listener de trabajos tradicionales:', err);
             setError('Error al cargar trabajos: ' + err.message);
           ***REMOVED***
         );
 
-        // Listener for delivery jobs (incorporated your fix)
+        // Listener para trabajos de delivery (se incorporo tu arreglo)
         const trabajosDeliveryQuery = query(
           subcollections.trabajosDeliveryRef,
           orderBy('fechaCreacion', 'desc')
@@ -494,7 +494,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           ***REMOVED***
         );
 
-        // Listener for delivery shifts
+        // Listener para turnos de delivery
         const turnosDeliveryQuery = query(
           subcollections.turnosDeliveryRef,
           orderBy('fecha', 'desc')
@@ -508,18 +508,18 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
               turnosDeliveryData.push(***REMOVED***
                 id: doc.id,
                 ...doc.data(),
-                type: 'delivery' // Ensure type is set
+                type: 'delivery' // Asegura que el tipo este configurado
               ***REMOVED***);
             ***REMOVED***);
             setTurnosDelivery(turnosDeliveryData);
           ***REMOVED***,
           (err) => ***REMOVED***
-            console.error('Error loading delivery shifts:', err);
+            console.error('Error al cargar turnos de delivery:', err);
             setError('Error al cargar turnos delivery: ' + err.message);
           ***REMOVED***
         );
 
-        // Listener for traditional shifts
+        // Listener para turnos tradicionales
         const turnosQuery = query(
           subcollections.turnosRef,
           orderBy('fecha', 'desc')
@@ -533,21 +533,21 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           setTurnos(turnosData);
           setLoading(false);
         ***REMOVED***, (err) => ***REMOVED***
-          console.error('Error loading traditional shifts:', err);
+          console.error('Error al cargar turnos tradicionales:', err);
           setError('Error al cargar turnos: ' + err.message);
           setLoading(false);
         ***REMOVED***);
 
       ***REMOVED*** catch (err) ***REMOVED***
-        console.error('Critical error loading data:', err);
-        setError('Error crítico al cargar datos: ' + err.message);
+        console.error('Error critico al cargar datos:', err);
+        setError('Error critico al cargar datos: ' + err.message);
         setLoading(false);
       ***REMOVED***
     ***REMOVED***;
 
     loadUserData();
 
-    // Cleanup function
+    // Funcion de limpieza
     return () => ***REMOVED***
       if (unsubscribeTrabajos) unsubscribeTrabajos();
       if (unsubscribeTurnos) unsubscribeTurnos();
@@ -556,7 +556,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***;
   ***REMOVED***, [currentUser, getUserSubcollections, ensureUserDocument]);
 
-  // Format date
+  // Formato de fecha
   const formatDate = useCallback((dateStr) => ***REMOVED***
     const date = new Date(dateStr + 'T00:00:00');
     return date.toLocaleDateString('es-ES', ***REMOVED***
@@ -588,7 +588,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       return [...trabajos, ...trabajosDelivery];
     ***REMOVED***, [trabajos, trabajosDelivery]),
 
-    // User preferences
+    // Preferencias de usuario
     primaryColor,
     thematicColors,
     userEmoji,
@@ -597,14 +597,14 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     weeklyHoursGoal,
     deliveryEnabled,
 
-    // CRUD functions for traditional jobs
+    // Funciones CRUD para trabajos tradicionales
     addJob: useCallback(async (newJob) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.trabajosRef) throw new Error('Could not get subcollection references');
+        if (!subcollections || !subcollections.trabajosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         if (!newJob.nombre || !newJob.nombre.trim()) ***REMOVED***
-          throw new Error('Job name is required');
+          throw new Error('El nombre del trabajo es requerido');
         ***REMOVED***
         const jobWithMetadata = ***REMOVED***
           ...newJob,
@@ -622,9 +622,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
     editJob: useCallback(async (id, updatedData) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.trabajosRef) throw new Error('Could not get subcollection references');
+        if (!subcollections || !subcollections.trabajosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         const dataWithMetadata = ***REMOVED***
           ...updatedData,
           fechaActualizacion: new Date()
@@ -639,10 +639,10 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
     deleteJob: useCallback(async (id) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
         if (!subcollections || !subcollections.trabajosRef || !subcollections.turnosRef) ***REMOVED***
-          throw new Error('Could not get subcollection references');
+          throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         ***REMOVED***
         const jobRef = doc(db, 'usuarios', currentUser.uid, 'trabajos', id);
         const jobDoc = await getDoc(jobRef);
@@ -651,33 +651,33 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           return;
         ***REMOVED***
         const associatedShifts = turnos.filter(shift => shift.trabajoId === id);
-        setTurnos(prev => prev.filter(shift => shift.trabajoId !== id)); // Optimistic UI update
+        setTurnos(prev => prev.filter(shift => shift.trabajoId !== id)); // Actualizacion optimista de la UI
         const deleteShiftPromises = associatedShifts.map(shift =>
           deleteDoc(doc(subcollections.turnosRef, shift.id))
         );
         await Promise.all(deleteShiftPromises);
         await deleteDoc(jobRef);
       ***REMOVED*** catch (err) ***REMOVED***
-        console.error('Error deleting job:', err);
+        console.error('Error al eliminar trabajo:', err);
         setError('Error al eliminar trabajo: ' + err.message);
         throw err;
       ***REMOVED***
     ***REMOVED***, [currentUser, getUserSubcollections, turnos]),
 
-    // Delivery jobs
+    // Trabajos de delivery
     trabajosDelivery,
     addDeliveryJob,
     editDeliveryJob,
     deleteDeliveryJob,
 
-    // CRUD functions for traditional shifts
+    // Funciones CRUD para turnos tradicionales
     addShift: useCallback(async (newShift) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.turnosRef) throw new Error('Could not get subcollection references');
+        if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         if (!newShift.trabajoId || !newShift.fecha || !newShift.horaInicio || !newShift.horaFin) ***REMOVED***
-          throw new Error('All shift fields are required');
+          throw new Error('Todos los campos del turno son requeridos');
         ***REMOVED***
         const shiftWithMetadata = ***REMOVED***
           ...newShift,
@@ -694,9 +694,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
     editShift: useCallback(async (id, updatedData) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.turnosRef) throw new Error('Could not get subcollection references');
+        if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         const dataWithMetadata = ***REMOVED***
           ...updatedData,
           fechaActualizacion: new Date()
@@ -711,9 +711,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
     deleteShift: useCallback(async (id) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.turnosRef) throw new Error('Could not get subcollection references');
+        if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
         await deleteDoc(doc(subcollections.turnosRef, id));
       ***REMOVED*** catch (err) ***REMOVED***
         setError('Error al eliminar turno: ' + err.message);
@@ -721,13 +721,13 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       ***REMOVED***
     ***REMOVED***, [currentUser, getUserSubcollections]),
 
-    // Delivery shifts
+    // Turnos de delivery
     turnosDelivery,
     addDeliveryShift,
     editDeliveryShift,
     deleteDeliveryShift,
 
-    // Calculation functions
+    // Funciones de calculo
     calculateHours,
     calculatePayment,
     calculateDailyTotal: useCallback((dailyShifts) => ***REMOVED***
@@ -752,7 +752,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
     savePreferences: useCallback(async (preferences) => ***REMOVED***
       try ***REMOVED***
-        if (!currentUser) throw new Error('User not authenticated');
+        if (!currentUser) throw new Error('Usuario no autenticado');
 
         const ***REMOVED***
           colorPrincipal: newColor,
@@ -765,7 +765,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
         console.log('Guardando preferencias:', preferences);
 
-        // Update local states if values are provided
+        // Actualizar estados locales si se proporcionan valores
         if (newColor !== undefined) setPrimaryColor(newColor);
         if (newEmoji !== undefined) setUserEmoji(newEmoji);
         if (newDiscount !== undefined) setDefaultDiscount(newDiscount);
@@ -776,7 +776,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         ***REMOVED***
         if (newGoal !== undefined) setWeeklyHoursGoal(newGoal);
 
-        // Persist to localStorage
+        // Persistir en localStorage
         if (newColor !== undefined) localStorage.setItem('primaryColor', newColor);
         if (newEmoji !== undefined) localStorage.setItem('userEmoji', newEmoji);
         if (newDiscount !== undefined) localStorage.setItem('defaultDiscount', newDiscount.toString());
@@ -787,7 +787,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         ***REMOVED***
         if (newGoal !== undefined) localStorage.setItem('weeklyHoursGoal', newGoal === null ? 'null' : newGoal.toString());
 
-        // Update Firestore
+        // Actualizar Firestore
         const userDocRef = doc(db, 'usuarios', currentUser.uid);
         const updatedData = ***REMOVED******REMOVED***;
 
@@ -803,7 +803,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
         updatedData['fechaActualizacion'] = new Date();
 
-        if (Object.keys(updatedData).length > 1) ***REMOVED*** // Check if there's actual data to update beyond the timestamp
+        if (Object.keys(updatedData).length > 1) ***REMOVED*** // Verificar si hay datos reales para actualizar mas alla de la marca de tiempo
           await updateDoc(userDocRef, updatedData);
           console.log('Datos guardados en Firestore:', updatedData);
         ***REMOVED***
@@ -817,7 +817,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***, [currentUser]),
   ***REMOVED***;
 
-  // Load preferences from localStorage on initial render
+  // Cargar preferencias de localStorage en el renderizado inicial
   useEffect(() => ***REMOVED***
     const savedColor = localStorage.getItem('primaryColor');
     const savedEmoji = localStorage.getItem('userEmoji');

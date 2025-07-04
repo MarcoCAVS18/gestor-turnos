@@ -1,6 +1,6 @@
-// src/pages/Dashboard.jsx
+// src/pages/Dashboard.jsx - Versión Corregida
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
+import React from 'react';
 import ***REMOVED*** useDashboardStats ***REMOVED*** from '../hooks/useDashboardStats';
 import Loader from '../components/other/Loader';
 import WelcomeCard from '../components/dashboard/WelcomeCard';
@@ -13,21 +13,10 @@ import ProjectionCard from '../components/dashboard/ProjectionCard';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 const Dashboard = () => ***REMOVED***
-  const ***REMOVED*** cargando ***REMOVED*** = useApp();
+  const ***REMOVED*** loading ***REMOVED*** = useApp(); 
   const stats = useDashboardStats();
-  const [showLoading, setShowLoading] = useState(true);
   
-  useEffect(() => ***REMOVED***
-    let timer;
-    if (cargando) ***REMOVED***
-      setShowLoading(true);
-    ***REMOVED*** else ***REMOVED***
-      timer = setTimeout(() => setShowLoading(false), 3000);
-    ***REMOVED***
-    return () => timer && clearTimeout(timer);
-  ***REMOVED***, [cargando]);
-
-  if (showLoading) ***REMOVED***
+  if (loading) ***REMOVED***
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader />

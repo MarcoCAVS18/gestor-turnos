@@ -9,7 +9,7 @@ import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ModalTurno from '../components/modals/ModalTurno';
 
 const CalendarioView = () => ***REMOVED***
-  const ***REMOVED*** turnosPorFecha, todosLosTrabajos ***REMOVED*** = useApp();
+  const ***REMOVED*** turnosPorFecha, todosLosTrabajos, thematicColors ***REMOVED*** = useApp();
   const ***REMOVED***
     fechaSeleccionada,
     modalAbierto,
@@ -51,11 +51,15 @@ const CalendarioView = () => ***REMOVED***
       ***REMOVED***/* Mostrar mensaje si no hay trabajos */***REMOVED***
       ***REMOVED***!hayTrabajos && (
         <motion.div
-          className="mb-4 p-4 bg-amber-50 border border-amber-200 rounded-lg"
+          className="mb-4 p-4 rounded-lg border"
+          style=***REMOVED******REMOVED***
+            backgroundColor: thematicColors?.transparent10 || 'rgba(255, 193, 7, 0.1)',
+            borderColor: thematicColors?.transparent20 || 'rgba(255, 193, 7, 0.2)'
+          ***REMOVED******REMOVED***
           initial=***REMOVED******REMOVED*** opacity: 0 ***REMOVED******REMOVED***
           animate=***REMOVED******REMOVED*** opacity: 1 ***REMOVED******REMOVED***
         >
-          <p className="text-amber-800 text-sm">
+          <p style=***REMOVED******REMOVED*** color: thematicColors?.base || '#FFC107' ***REMOVED******REMOVED*** className="text-sm font-medium">
             Para usar el calendario, primero necesitas crear al menos un trabajo en la sección "Trabajos".
           </p>
         </motion.div>

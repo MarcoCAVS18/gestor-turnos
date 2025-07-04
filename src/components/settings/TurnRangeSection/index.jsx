@@ -6,9 +6,7 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
-const TimeSelect = (***REMOVED*** label, value, onChange, icon: Icon, iconColor ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
-  
+const TimeSelect = (***REMOVED*** label, value, onChange, icon: Icon, iconColor, thematicColors ***REMOVED***) => ***REMOVED***
   return (
     <div>
       <label className="block text-sm text-gray-600 mb-1 flex items-center">
@@ -18,7 +16,7 @@ const TimeSelect = (***REMOVED*** label, value, onChange, icon: Icon, iconColor 
       <select
         value=***REMOVED***value***REMOVED***
         onChange=***REMOVED***(e) => onChange(parseInt(e.target.value))***REMOVED***
-        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2"
+        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 transition-colors"
         style=***REMOVED******REMOVED*** 
           '--tw-ring-color': thematicColors?.base || '#EC4899'
         ***REMOVED******REMOVED***
@@ -31,9 +29,12 @@ const TimeSelect = (***REMOVED*** label, value, onChange, icon: Icon, iconColor 
   );
 ***REMOVED***;
 
-const TurnRange = (***REMOVED*** title, icon: Icon, iconColor, children ***REMOVED***) => ***REMOVED***
+const TurnRange = (***REMOVED*** title, icon: Icon, iconColor, children, thematicColors ***REMOVED***) => ***REMOVED***
   return (
-    <div className="border border-gray-200 rounded-lg p-4">
+    <div 
+      className="border rounded-lg p-4"
+      style=***REMOVED******REMOVED*** borderColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)' ***REMOVED******REMOVED***
+    >
       <div className="flex items-center mb-3">
         <Icon className="h-5 w-5 mr-2" style=***REMOVED******REMOVED*** color: iconColor ***REMOVED******REMOVED*** />
         <h3 className="font-medium">***REMOVED***title***REMOVED***</h3>
@@ -45,36 +46,37 @@ const TurnRange = (***REMOVED*** title, icon: Icon, iconColor, children ***REMOV
 
 const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
-    rangosTurnos: appRangos, 
-    guardarPreferencias 
+    shiftRanges,
+    savePreferences,
+    thematicColors
   ***REMOVED*** = useApp();
   
-  const [rangosTurnos, setRangosTurnos] = useState(appRangos || ***REMOVED***
-    diurnoInicio: 6,
-    diurnoFin: 14,
-    tardeInicio: 14,
-    tardeFin: 20,
-    nocheInicio: 20
+  const [rangosTurnos, setRangosTurnos] = useState(shiftRanges || ***REMOVED***
+    dayStart: 6,
+    dayEnd: 14,
+    afternoonStart: 14,
+    afternoonEnd: 20,
+    nightStart: 20
   ***REMOVED***);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => ***REMOVED***
-    if (appRangos) ***REMOVED***
-      setRangosTurnos(appRangos);
+    if (shiftRanges) ***REMOVED***
+      setRangosTurnos(shiftRanges);
     ***REMOVED***
-  ***REMOVED***, [appRangos]);
+  ***REMOVED***, [shiftRanges]);
 
   const validarRangos = (rangos) => ***REMOVED***
-    if (rangos.diurnoInicio >= rangos.diurnoFin) ***REMOVED***
+    if (rangos.dayStart >= rangos.dayEnd) ***REMOVED***
       return 'La hora de inicio del turno diurno debe ser menor a la hora de fin';
     ***REMOVED***
-    if (rangos.tardeInicio >= rangos.tardeFin) ***REMOVED***
+    if (rangos.afternoonStart >= rangos.afternoonEnd) ***REMOVED***
       return 'La hora de inicio del turno de tarde debe ser menor a la hora de fin';
     ***REMOVED***
-    if (rangos.diurnoFin > rangos.tardeInicio) ***REMOVED***
+    if (rangos.dayEnd > rangos.afternoonStart) ***REMOVED***
       return 'El turno de tarde debe comenzar después o al mismo tiempo que termina el diurno';
     ***REMOVED***
-    if (rangos.tardeFin > rangos.nocheInicio) ***REMOVED***
+    if (rangos.afternoonEnd > rangos.nightStart) ***REMOVED***
       return 'El turno de noche debe comenzar después o al mismo tiempo que termina la tarde';
     ***REMOVED***
     return null;
@@ -90,7 +92,7 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
         return;
       ***REMOVED***
       
-      await guardarPreferencias(***REMOVED*** rangosTurnos ***REMOVED***);
+      await savePreferences(***REMOVED*** rangosTurnos ***REMOVED***);
       onSuccess?.('Rangos de turnos guardados correctamente');
     ***REMOVED*** catch (error) ***REMOVED***
       onError?.('Error al guardar rangos: ' + error.message);
@@ -107,58 +109,63 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
       
       <div className="space-y-4 mb-6">
         ***REMOVED***/* Turno Diurno */***REMOVED***
-        <TurnRange title="Turno Diurno" icon=***REMOVED***Sun***REMOVED*** iconColor="#F59E0B">
+        <TurnRange title="Turno Diurno" icon=***REMOVED***Sun***REMOVED*** iconColor="#F59E0B" thematicColors=***REMOVED***thematicColors***REMOVED***>
           <div className="grid grid-cols-2 gap-4">
             <TimeSelect
               label="Hora de inicio"
-              value=***REMOVED***rangosTurnos.diurnoInicio***REMOVED***
+              value=***REMOVED***rangosTurnos.dayStart***REMOVED***
               onChange=***REMOVED***(value) => setRangosTurnos(***REMOVED***
                 ...rangosTurnos,
-                diurnoInicio: value
+                dayStart: value
               ***REMOVED***)***REMOVED***
+              thematicColors=***REMOVED***thematicColors***REMOVED***
             />
             <TimeSelect
               label="Hora de fin"
-              value=***REMOVED***rangosTurnos.diurnoFin***REMOVED***
+              value=***REMOVED***rangosTurnos.dayEnd***REMOVED***
               onChange=***REMOVED***(value) => setRangosTurnos(***REMOVED***
                 ...rangosTurnos,
-                diurnoFin: value
+                dayEnd: value
               ***REMOVED***)***REMOVED***
+              thematicColors=***REMOVED***thematicColors***REMOVED***
             />
           </div>
         </TurnRange>
         
         ***REMOVED***/* Turno Tarde */***REMOVED***
-        <TurnRange title="Turno Tarde" icon=***REMOVED***Sunset***REMOVED*** iconColor="#F97316">
+        <TurnRange title="Turno Tarde" icon=***REMOVED***Sunset***REMOVED*** iconColor="#F97316" thematicColors=***REMOVED***thematicColors***REMOVED***>
           <div className="grid grid-cols-2 gap-4">
             <TimeSelect
               label="Hora de inicio"
-              value=***REMOVED***rangosTurnos.tardeInicio***REMOVED***
+              value=***REMOVED***rangosTurnos.afternoonStart***REMOVED***
               onChange=***REMOVED***(value) => setRangosTurnos(***REMOVED***
                 ...rangosTurnos,
-                tardeInicio: value
+                afternoonStart: value
               ***REMOVED***)***REMOVED***
+              thematicColors=***REMOVED***thematicColors***REMOVED***
             />
             <TimeSelect
               label="Hora de fin"
-              value=***REMOVED***rangosTurnos.tardeFin***REMOVED***
+              value=***REMOVED***rangosTurnos.afternoonEnd***REMOVED***
               onChange=***REMOVED***(value) => setRangosTurnos(***REMOVED***
                 ...rangosTurnos,
-                tardeFin: value
+                afternoonEnd: value
               ***REMOVED***)***REMOVED***
+              thematicColors=***REMOVED***thematicColors***REMOVED***
             />
           </div>
         </TurnRange>
         
         ***REMOVED***/* Turno Noche */***REMOVED***
-        <TurnRange title="Turno Noche" icon=***REMOVED***Moon***REMOVED*** iconColor="#6366F1">
+        <TurnRange title="Turno Noche" icon=***REMOVED***Moon***REMOVED*** iconColor="#6366F1" thematicColors=***REMOVED***thematicColors***REMOVED***>
           <TimeSelect
             label="Hora de inicio"
-            value=***REMOVED***rangosTurnos.nocheInicio***REMOVED***
+            value=***REMOVED***rangosTurnos.nightStart***REMOVED***
             onChange=***REMOVED***(value) => setRangosTurnos(***REMOVED***
               ...rangosTurnos,
-              nocheInicio: value
+              nightStart: value
             ***REMOVED***)***REMOVED***
+            thematicColors=***REMOVED***thematicColors***REMOVED***
           />
           <p className="text-xs text-gray-500 mt-1">
             El turno de noche se extiende hasta el final del día
@@ -171,6 +178,7 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
         disabled=***REMOVED***loading***REMOVED***
         loading=***REMOVED***loading***REMOVED***
         className="w-full"
+        themeColor=***REMOVED***thematicColors?.base***REMOVED***
       >
         Guardar rangos de turnos
       </Button>

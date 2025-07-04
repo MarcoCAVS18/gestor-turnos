@@ -70,6 +70,7 @@ const CalendarDaySummary = (***REMOVED***
           size="sm"
           className="flex items-center gap-1"
           icon=***REMOVED***PlusCircle***REMOVED***
+          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         >
           Nuevo
         </Button>
@@ -160,6 +161,7 @@ const CalendarDaySummary = (***REMOVED***
             onClick=***REMOVED***() => onNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
             className="flex items-center gap-2"
             icon=***REMOVED***PlusCircle***REMOVED***
+            themeColor=***REMOVED***thematicColors?.base***REMOVED***
           >
             Agregar turno
           </Button>

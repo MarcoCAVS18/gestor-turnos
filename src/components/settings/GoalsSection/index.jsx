@@ -3,38 +3,43 @@
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Target, Save, X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import SettingsSection from '../SettingsSection';
 
 const GoalsSection = () => ***REMOVED***
-  const ***REMOVED*** metaHorasSemanales, actualizarMetaHorasSemanales, thematicColors ***REMOVED*** = useApp();
+  // Usar el nombre correcto de la variable y función del contexto
+  const ***REMOVED*** weeklyHoursGoal, updateWeeklyHoursGoal, thematicColors ***REMOVED*** = useApp();
   const [editando, setEditando] = useState(false);
-  const [nuevaMeta, setNuevaMeta] = useState(metaHorasSemanales || '');
+  const [nuevaMeta, setNuevaMeta] = useState(weeklyHoursGoal || '');
 
-  const handleGuardar = () => ***REMOVED***
-    const meta = parseFloat(nuevaMeta);
-    if (meta > 0 && meta <= 168) ***REMOVED***
-      actualizarMetaHorasSemanales(meta);
-      setEditando(false);
+  const handleGuardar = async () => ***REMOVED***
+    try ***REMOVED***
+      const meta = parseFloat(nuevaMeta);
+      if (meta > 0 && meta <= 168) ***REMOVED***
+        await updateWeeklyHoursGoal(meta);
+        setEditando(false);
+      ***REMOVED***
+    ***REMOVED*** catch (error) ***REMOVED***
+      console.error('Error al guardar meta:', error);
     ***REMOVED***
   ***REMOVED***;
 
   const handleCancelar = () => ***REMOVED***
-    setNuevaMeta(metaHorasSemanales || '');
+    setNuevaMeta(weeklyHoursGoal || '');
     setEditando(false);
   ***REMOVED***;
 
-  const handleEliminar = () => ***REMOVED***
-    actualizarMetaHorasSemanales(null);
-    setNuevaMeta('');
-    setEditando(false);
+  const handleEliminar = async () => ***REMOVED***
+    try ***REMOVED***
+      await updateWeeklyHoursGoal(null);
+      setNuevaMeta('');
+      setEditando(false);
+    ***REMOVED*** catch (error) ***REMOVED***
+      console.error('Error al eliminar meta:', error);
+    ***REMOVED***
   ***REMOVED***;
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-      <div className="flex items-center mb-4">
-        <Target size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
-        <h3 className="text-lg font-semibold">Metas Semanales</h3>
-      </div>
-
+    <SettingsSection icon=***REMOVED***Target***REMOVED*** title="Metas Semanales">
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -44,13 +49,13 @@ const GoalsSection = () => ***REMOVED***
           ***REMOVED***!editando ? (
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div>
-                ***REMOVED***metaHorasSemanales ? (
+                ***REMOVED***weeklyHoursGoal ? (
                   <>
                     <span className="text-lg font-semibold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
-                      ***REMOVED***metaHorasSemanales***REMOVED*** horas
+                      ***REMOVED***weeklyHoursGoal***REMOVED*** horas
                     </span>
                     <p className="text-sm text-gray-500">
-                      ~***REMOVED***(metaHorasSemanales / 7).toFixed(1)***REMOVED*** horas por día
+                      ~***REMOVED***(weeklyHoursGoal / 7).toFixed(1)***REMOVED*** horas por día
                     </p>
                   </>
                 ) : (
@@ -64,8 +69,14 @@ const GoalsSection = () => ***REMOVED***
                   backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
                   color: thematicColors?.base || '#EC4899'
                 ***REMOVED******REMOVED***
+                onMouseEnter=***REMOVED***(e) => ***REMOVED***
+                  e.target.style.backgroundColor = thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)';
+                ***REMOVED******REMOVED***
+                onMouseLeave=***REMOVED***(e) => ***REMOVED***
+                  e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+                ***REMOVED******REMOVED***
               >
-                ***REMOVED***metaHorasSemanales ? 'Editar' : 'Configurar'***REMOVED***
+                ***REMOVED***weeklyHoursGoal ? 'Editar' : 'Configurar'***REMOVED***
               </button>
             </div>
           ) : (
@@ -79,7 +90,7 @@ const GoalsSection = () => ***REMOVED***
                   min="1"
                   max="168"
                   step="0.5"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
                   style=***REMOVED******REMOVED*** '--tw-ring-color': thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
                 />
                 <span className="text-sm text-gray-500">horas</span>
@@ -91,6 +102,16 @@ const GoalsSection = () => ***REMOVED***
                   disabled=***REMOVED***!nuevaMeta || parseFloat(nuevaMeta) <= 0***REMOVED***
                   className="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
                   style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+                  onMouseEnter=***REMOVED***(e) => ***REMOVED***
+                    if (!e.target.disabled && thematicColors?.dark) ***REMOVED***
+                      e.target.style.backgroundColor = thematicColors.dark;
+                    ***REMOVED***
+                  ***REMOVED******REMOVED***
+                  onMouseLeave=***REMOVED***(e) => ***REMOVED***
+                    if (!e.target.disabled) ***REMOVED***
+                      e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
+                    ***REMOVED***
+                  ***REMOVED******REMOVED***
                 >
                   <Save size=***REMOVED***16***REMOVED*** className="mr-1" />
                   Guardar
@@ -103,15 +124,21 @@ const GoalsSection = () => ***REMOVED***
                     backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
                     color: thematicColors?.base || '#EC4899'
                   ***REMOVED******REMOVED***
+                  onMouseEnter=***REMOVED***(e) => ***REMOVED***
+                    e.target.style.backgroundColor = thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)';
+                  ***REMOVED******REMOVED***
+                  onMouseLeave=***REMOVED***(e) => ***REMOVED***
+                    e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+                  ***REMOVED******REMOVED***
                 >
                   <X size=***REMOVED***16***REMOVED*** className="mr-1" />
                   Cancelar
                 </button>
 
-                ***REMOVED***metaHorasSemanales && (
+                ***REMOVED***weeklyHoursGoal && (
                   <button
                     onClick=***REMOVED***handleEliminar***REMOVED***
-                    className="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-red-600 bg-red-50 transition-colors"
+                    className="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-red-600 bg-red-50 transition-colors hover:bg-red-100"
                   >
                     <X size=***REMOVED***16***REMOVED*** className="mr-1" />
                     Eliminar
@@ -122,14 +149,17 @@ const GoalsSection = () => ***REMOVED***
           )***REMOVED***
         </div>
 
-        <div className="p-3 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-700">
+        <div 
+          className="p-3 rounded-lg"
+          style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent5 || 'rgba(59, 130, 246, 0.05)' ***REMOVED******REMOVED***
+        >
+          <p className="text-sm" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
             <strong>Consejo:</strong> Configura una meta realista para ver tu progreso semanal 
             en la barra de progreso de Estadísticas.
           </p>
         </div>
       </div>
-    </div>
+    </SettingsSection>
   );
 ***REMOVED***;
 
