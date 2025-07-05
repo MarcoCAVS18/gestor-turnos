@@ -176,10 +176,9 @@ export const AppProvider = ({ children }) => {
 
     const { horaInicio, horaFin, fechaInicio, cruzaMedianoche = false } = shift;
 
-      if (!horaInicio || !horaFin || !fechaInicio) {
-    return { total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false };
-  }
-
+    if (!horaInicio || !horaFin || !fechaInicio) {
+      return { total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false };
+    }
 
     const [startHour, startMin] = horaInicio.split(':').map(n => parseInt(n));
     const [endHour, endMin] = horaFin.split(':').map(n => parseInt(n));
@@ -198,9 +197,10 @@ export const AppProvider = ({ children }) => {
     const totalMinutes = endMinutes - startMinutes;
     const hours = totalMinutes / 60;
 
+    // Determinar si es fin de semana
     const date = new Date(fechaInicio + 'T00:00:00');
     const dayOfWeek = date.getDay();
-    
+
     let total = 0;
     let breakdown = { diurno: 0, tarde: 0, noche: 0, sabado: 0, domingo: 0 };
 
@@ -210,17 +210,32 @@ export const AppProvider = ({ children }) => {
     } else if (dayOfWeek === 6) { // Sábado
       total = hours * job.tarifas.sabado;
       breakdown.sabado = total;
-    } else { // Día de semana - calcular por rangos horarios
+    } else {
+      // Día de semana - calcular por rangos horarios minuto a minuto
       const ranges = shiftRanges || {
         dayStart: 6, dayEnd: 14,
         afternoonStart: 14, afternoonEnd: 20,
         nightStart: 20
       };
 
-      const dayStartMin = ranges.dayStart * 60;
-      const dayEndMin = ranges.dayEnd * 60;
-      const afternoonStartMin = ranges.afternoonStart * 60;
-      const afternoonEndMin = ranges.afternoonEnd * 60;
+      const dayStartMin = ranges.dayStart * 60;        // ej: 6*60 = 360 (06:00)
+      const dayEndMin = ranges.dayEnd * 60;            // ej: 14*60 = 840 (14:00)
+      const afternoonStartMin = ranges.afternoonStart * 60; // ej: 14*60 = 840 (14:00)
+      const afternoonEndMin = ranges.afternoonEnd * 60;     // ej: 20*60 = 1200 (20:00)
+
+      console.log('🕐 Calculando pago para turno:', {
+        horaInicio,
+        horaFin,
+        startMinutes,
+        endMinutes,
+        totalMinutes,
+        cruzaMedianoche,
+        ranges: {
+          diurno: `${ranges.dayStart}:00 - ${ranges.dayEnd}:00`,
+          tarde: `${ranges.afternoonStart}:00 - ${ranges.afternoonEnd}:00`,
+          noche: `${ranges.nightStart}:00 - 06:00 (next day)`
+        }
+      });
 
       // Calcular minuto por minuto para manejar correctamente los rangos
       for (let minute = startMinutes; minute < endMinutes; minute++) {
@@ -244,6 +259,14 @@ export const AppProvider = ({ children }) => {
         total += ratePerMinute;
         breakdown[rateType] += ratePerMinute;
       }
+
+      // Log del breakdown para debugging
+      console.log('💰 Breakdown de pago:', {
+        diurno: `${(breakdown.diurno / total * 100).toFixed(1)}% = $${breakdown.diurno.toFixed(2)}`,
+        tarde: `${(breakdown.tarde / total * 100).toFixed(1)}% = $${breakdown.tarde.toFixed(2)}`,
+        noche: `${(breakdown.noche / total * 100).toFixed(1)}% = $${breakdown.noche.toFixed(2)}`,
+        total: `$${total.toFixed(2)}`
+      });
     }
 
     const totalWithDiscount = total * (1 - defaultDiscount / 100);
@@ -611,7 +634,7 @@ export const AppProvider = ({ children }) => {
     turnosPorFecha: useMemo(() => {
       const allTurnos = [...turnos, ...turnosDelivery];
       return allTurnos.reduce((acc, turno) => {
-        const fechaClave = turno.fechaInicio || turno.fecha; 
+        const fechaClave = turno.fechaInicio || turno.fecha;
         if (!fechaClave) return acc;
         if (!acc[fechaClave]) acc[fechaClave] = [];
         acc[fechaClave].push(turno);
