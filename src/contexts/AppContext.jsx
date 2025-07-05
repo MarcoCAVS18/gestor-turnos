@@ -152,21 +152,34 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     const allJobs = [...trabajos, ...trabajosDelivery];
     const job = allJobs.find(j => j.id === shift.trabajoId);
 
-    if (!job) return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false ***REMOVED***;
+    if (!job) return ***REMOVED***
+      total: 0,
+      totalWithDiscount: 0,
+      hours: 0,
+      tips: 0,
+      isDelivery: false,
+      breakdown: ***REMOVED*** diurno: 0, tarde: 0, noche: 0, sabado: 0, domingo: 0 ***REMOVED***
+    ***REMOVED***;
 
     // Si es un turno de delivery, devuelve las ganancias totales directamente
-    if (shift.type === 'delivery') ***REMOVED***
+    if (shift.type === 'delivery' || shift.tipo === 'delivery') ***REMOVED***
       const hours = calculateHours(shift.horaInicio, shift.horaFin);
       return ***REMOVED***
         total: shift.gananciaTotal || 0,
         totalWithDiscount: shift.gananciaTotal || 0,
         hours,
         tips: shift.propinas || 0,
-        isDelivery: true
+        isDelivery: true,
+        breakdown: ***REMOVED*** delivery: shift.gananciaTotal || 0 ***REMOVED***
       ***REMOVED***;
     ***REMOVED***
 
-    const ***REMOVED*** horaInicio, horaFin, fecha ***REMOVED*** = shift;
+    const ***REMOVED*** horaInicio, horaFin, fechaInicio, cruzaMedianoche = false ***REMOVED*** = shift;
+
+      if (!horaInicio || !horaFin || !fechaInicio) ***REMOVED***
+    return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false ***REMOVED***;
+  ***REMOVED***
+
 
     const [startHour, startMin] = horaInicio.split(':').map(n => parseInt(n));
     const [endHour, endMin] = horaFin.split(':').map(n => parseInt(n));
@@ -174,24 +187,30 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     let startMinutes = startHour * 60 + startMin;
     let endMinutes = endHour * 60 + endMin;
 
-    if (endMinutes <= startMinutes) ***REMOVED***
+    // Si cruza medianoche, agregar 24 horas al final
+    if (cruzaMedianoche) ***REMOVED***
+      endMinutes += 24 * 60;
+    ***REMOVED*** else if (endMinutes <= startMinutes) ***REMOVED***
+      // Fallback para turnos antiguos sin la propiedad cruzaMedianoche
       endMinutes += 24 * 60;
     ***REMOVED***
 
     const totalMinutes = endMinutes - startMinutes;
     const hours = totalMinutes / 60;
 
-    const [year, month, day] = fecha.split('-');
-    const date = new Date(year, month - 1, day);
-    const dayOfWeek = date.getDay(); // 0 para domingo, 6 para sabado
-
+    const date = new Date(fechaInicio + 'T00:00:00');
+    const dayOfWeek = date.getDay();
+    
     let total = 0;
+    let breakdown = ***REMOVED*** diurno: 0, tarde: 0, noche: 0, sabado: 0, domingo: 0 ***REMOVED***;
 
     if (dayOfWeek === 0) ***REMOVED*** // Domingo
       total = hours * job.tarifas.domingo;
-    ***REMOVED*** else if (dayOfWeek === 6) ***REMOVED*** // Sabado
+      breakdown.domingo = total;
+    ***REMOVED*** else if (dayOfWeek === 6) ***REMOVED*** // Sábado
       total = hours * job.tarifas.sabado;
-    ***REMOVED*** else ***REMOVED*** // Dia de semana
+      breakdown.sabado = total;
+    ***REMOVED*** else ***REMOVED*** // Día de semana - calcular por rangos horarios
       const ranges = shiftRanges || ***REMOVED***
         dayStart: 6, dayEnd: 14,
         afternoonStart: 14, afternoonEnd: 20,
@@ -203,18 +222,27 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       const afternoonStartMin = ranges.afternoonStart * 60;
       const afternoonEndMin = ranges.afternoonEnd * 60;
 
+      // Calcular minuto por minuto para manejar correctamente los rangos
       for (let minute = startMinutes; minute < endMinutes; minute++) ***REMOVED***
-        const currentHourInMinutes = minute % (24 * 60);
+        // Normalizar los minutos para el ciclo de 24 horas
+        const currentMinuteInDay = minute % (24 * 60);
         let rate = job.tarifaBase;
+        let rateType = 'noche'; // Por defecto nocturno
 
-        if (currentHourInMinutes >= dayStartMin && currentHourInMinutes < dayEndMin) ***REMOVED***
+        if (currentMinuteInDay >= dayStartMin && currentMinuteInDay < dayEndMin) ***REMOVED***
           rate = job.tarifas.diurno;
-        ***REMOVED*** else if (currentHourInMinutes >= afternoonStartMin && currentHourInMinutes < afternoonEndMin) ***REMOVED***
+          rateType = 'diurno';
+        ***REMOVED*** else if (currentMinuteInDay >= afternoonStartMin && currentMinuteInDay < afternoonEndMin) ***REMOVED***
           rate = job.tarifas.tarde;
+          rateType = 'tarde';
         ***REMOVED*** else ***REMOVED***
           rate = job.tarifas.noche;
+          rateType = 'noche';
         ***REMOVED***
-        total += rate / 60;
+
+        const ratePerMinute = rate / 60;
+        total += ratePerMinute;
+        breakdown[rateType] += ratePerMinute;
       ***REMOVED***
     ***REMOVED***
 
@@ -225,7 +253,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       totalWithDiscount,
       hours,
       tips: 0,
-      isDelivery: false
+      isDelivery: false,
+      breakdown,
+      isNightShift: cruzaMedianoche || false
     ***REMOVED***;
   ***REMOVED***, [trabajos, trabajosDelivery, shiftRanges, defaultDiscount, calculateHours]);
 
@@ -522,7 +552,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         // Listener para turnos tradicionales
         const turnosQuery = query(
           subcollections.turnosRef,
-          orderBy('fecha', 'desc')
+          orderBy('fechaCreacion', 'desc')
         );
 
         unsubscribeTurnos = onSnapshot(turnosQuery, (snapshot) => ***REMOVED***
@@ -530,6 +560,14 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           snapshot.forEach(doc => ***REMOVED***
             turnosData.push(***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***);
           ***REMOVED***);
+
+          turnosData.sort((a, b) => ***REMOVED***
+            const fechaA = new Date(a.fechaInicio || a.fecha);
+            const fechaB = new Date(b.fechaInicio || b.fecha);
+            return fechaB - fechaA;
+          ***REMOVED***);
+
+
           setTurnos(turnosData);
           setLoading(false);
         ***REMOVED***, (err) => ***REMOVED***
@@ -573,10 +611,10 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     turnosPorFecha: useMemo(() => ***REMOVED***
       const allTurnos = [...turnos, ...turnosDelivery];
       return allTurnos.reduce((acc, turno) => ***REMOVED***
-        if (!acc[turno.fecha]) ***REMOVED***
-          acc[turno.fecha] = [];
-        ***REMOVED***
-        acc[turno.fecha].push(turno);
+        const fechaClave = turno.fechaInicio || turno.fecha; 
+        if (!fechaClave) return acc;
+        if (!acc[fechaClave]) acc[fechaClave] = [];
+        acc[fechaClave].push(turno);
         return acc;
       ***REMOVED***, ***REMOVED******REMOVED***);
     ***REMOVED***, [turnos, turnosDelivery]),
@@ -676,19 +714,15 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       try ***REMOVED***
         if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
-        if (!newShift.trabajoId || !newShift.fecha || !newShift.horaInicio || !newShift.horaFin) ***REMOVED***
+        if (!newShift.trabajoId || !newShift.fechaInicio || !newShift.horaInicio || !newShift.horaFin) ***REMOVED***
           throw new Error('Todos los campos del turno son requeridos');
         ***REMOVED***
-        const shiftWithMetadata = ***REMOVED***
-          ...newShift,
-          fechaCreacion: new Date(),
-          fechaActualizacion: new Date()
-        ***REMOVED***;
+        const shiftWithMetadata = ***REMOVED*** ...newShift, fechaCreacion: new Date(), fechaActualizacion: new Date() ***REMOVED***;
         const docRef = await addDoc(subcollections.turnosRef, shiftWithMetadata);
         return ***REMOVED*** ...shiftWithMetadata, id: docRef.id ***REMOVED***;
       ***REMOVED*** catch (err) ***REMOVED***
-        setError('Error al agregar turno: ' + err.message);
+        console.error("Error al guardar turno:", err);
+        setError('Error al guardar turno: ' + err.message);
         throw err;
       ***REMOVED***
     ***REMOVED***, [currentUser, getUserSubcollections]),

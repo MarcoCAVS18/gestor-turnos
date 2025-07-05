@@ -1,15 +1,12 @@
-// src/components/sections/DaySection.jsx
-
-import React from 'react';
+import React, ***REMOVED*** forwardRef ***REMOVED*** from 'react';
 import ***REMOVED*** Calendar ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import TarjetaTurno from '../../cards/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
 
-const DaySection = (***REMOVED*** fecha, turnos, trabajos, onEditTurno, onDeleteTurno ***REMOVED***) => ***REMOVED***
+const DaySection = forwardRef((***REMOVED*** fecha, turnos, trabajos, onEditTurno, onDeleteTurno ***REMOVED***, ref) => ***REMOVED***
   const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
 
-  // Formatear fecha
   const fechaObj = new Date(fecha + 'T00:00:00');
   const diaSemana = fechaObj.toLocaleDateString('es-ES', ***REMOVED*** weekday: 'long' ***REMOVED***);
   const fechaFormateada = fechaObj.toLocaleDateString('es-ES', ***REMOVED*** 
@@ -19,8 +16,7 @@ const DaySection = (***REMOVED*** fecha, turnos, trabajos, onEditTurno, onDelete
   ***REMOVED***);
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-      ***REMOVED***/* Encabezado del día */***REMOVED***
+    <div ref=***REMOVED***ref***REMOVED*** className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       <div className="p-4 border-b border-gray-200" style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent5 ***REMOVED******REMOVED***>
         <div className="flex items-center gap-2">
           <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** />
@@ -30,7 +26,6 @@ const DaySection = (***REMOVED*** fecha, turnos, trabajos, onEditTurno, onDelete
         </div>
       </div>
 
-      ***REMOVED***/* Lista de turnos */***REMOVED***
       <div className="p-4 space-y-3">
         ***REMOVED***turnos.map(turno => ***REMOVED***
           const trabajo = trabajos.find(t => t.id === turno.trabajoId);
@@ -60,6 +55,6 @@ const DaySection = (***REMOVED*** fecha, turnos, trabajos, onEditTurno, onDelete
       </div>
     </div>
   );
-***REMOVED***;
+***REMOVED***);
 
 export default DaySection;

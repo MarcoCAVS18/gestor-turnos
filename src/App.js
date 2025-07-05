@@ -4,6 +4,7 @@ import React from 'react';
 import ***REMOVED*** BrowserRouter as Router, Routes, Route, Navigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from './contexts/AuthContext';
 import ***REMOVED*** AppProvider ***REMOVED*** from './contexts/AppContext';
+import './styles/animation.css';
 
 // Componentes de autenticación
 import Login from './pages/auth/Login';

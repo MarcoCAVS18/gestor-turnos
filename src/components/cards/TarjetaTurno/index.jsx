@@ -1,5 +1,3 @@
-// src/components/cards/TarjetaTurno/index.jsx
-
 import React from 'react';
 import ***REMOVED*** Edit, Trash2 ***REMOVED*** from 'lucide-react';
 import Card from '../../ui/Card';
@@ -7,6 +5,7 @@ import ActionsMenu from '../../ui/ActionsMenu';
 import ShiftDetails from '../../shift/ShiftDetails';
 import ShiftTypeBadge from '../../shift/ShiftTypeBadge';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** getTagForShift ***REMOVED*** from '../../../utils/shiftUtils';
 
 const TarjetaTurno = (***REMOVED*** 
   turno, 
@@ -18,83 +17,43 @@ const TarjetaTurno = (***REMOVED***
 ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** shiftRanges ***REMOVED*** = useApp(); 
 
-  const obtenerTipoTurno = (hora) => ***REMOVED***
-    const horaNum = parseInt(hora.split(':')[0]);
-    
-    const rangos = shiftRanges || ***REMOVED***
-      dayStart: 6,
-      dayEnd: 14,
-      afternoonStart: 14,
-      afternoonEnd: 20,
-      nightStart: 20
-    ***REMOVED***;
 
-    if (horaNum >= rangos.dayStart && horaNum < rangos.dayEnd) ***REMOVED***
-      return 'diurno';
-    ***REMOVED*** else if (horaNum >= rangos.afternoonStart && horaNum < rangos.afternoonEnd) ***REMOVED***
-      return 'tarde';
-    ***REMOVED*** else ***REMOVED***
-      return 'noche';
-    ***REMOVED***
-  ***REMOVED***;
-
-  const tipoInicio = obtenerTipoTurno(turno.horaInicio);
-  const tipoFin = obtenerTipoTurno(turno.horaFin);
+  const tipoTurno = getTagForShift(turno.horaInicio, shiftRanges);
 
   const actions = [
     ***REMOVED*** icon: Edit, label: 'Editar', onClick: () => onEdit?.(turno) ***REMOVED***,
     ***REMOVED*** icon: Trash2, label: 'Eliminar', onClick: () => onDelete?.(turno), variant: 'danger' ***REMOVED***
   ];
+  
+  const cardContent = (
+    <div className="flex items-start justify-between">
+      <div className="flex-1">
+        <h3 className="font-semibold text-gray-800 mb-2">***REMOVED***trabajo.nombre***REMOVED***</h3>
+        
+        <ShiftDetails 
+          turno=***REMOVED***turno***REMOVED*** 
+          trabajo=***REMOVED***trabajo***REMOVED***
+          badges=***REMOVED***
+            <ShiftTypeBadge tipoTurno=***REMOVED***tipoTurno.toLowerCase()***REMOVED*** />
+          ***REMOVED***
+        />
+      </div>
+
+      ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
+    </div>
+  );
 
   if (variant === 'compact') ***REMOVED***
     return (
-      <div className=" rounded-lg transition-colors">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <h3 className="font-semibold text-gray-800 mb-2">***REMOVED***trabajo.nombre***REMOVED***</h3>
-            
-            <ShiftDetails 
-              turno=***REMOVED***turno***REMOVED*** 
-              trabajo=***REMOVED***trabajo***REMOVED***
-              badges=***REMOVED***
-                <div className="flex items-center gap-1">
-                  <ShiftTypeBadge tipoTurno=***REMOVED***tipoInicio***REMOVED*** />
-                  ***REMOVED***tipoInicio !== tipoFin && (
-                    <ShiftTypeBadge tipoTurno=***REMOVED***tipoFin***REMOVED*** />
-                  )***REMOVED***
-                </div>
-              ***REMOVED***
-            />
-          </div>
-
-          ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
-        </div>
+      <div className="rounded-lg transition-colors">
+        ***REMOVED***cardContent***REMOVED***
       </div>
     );
   ***REMOVED***
 
   return (
     <Card className="relative">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <h3 className="font-semibold text-gray-800 mb-2">***REMOVED***trabajo.nombre***REMOVED***</h3>
-          
-          <ShiftDetails 
-            turno=***REMOVED***turno***REMOVED*** 
-            trabajo=***REMOVED***trabajo***REMOVED***
-            badges=***REMOVED***
-              <div className="flex items-center gap-1">
-                <ShiftTypeBadge tipoTurno=***REMOVED***tipoInicio***REMOVED*** />
-                ***REMOVED***tipoInicio !== tipoFin && (
-                  <ShiftTypeBadge tipoTurno=***REMOVED***tipoFin***REMOVED*** />
-                )***REMOVED***
-              </div>
-            ***REMOVED***
-          />
-        </div>
-
-        ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
-      </div>
+      ***REMOVED***cardContent***REMOVED***
     </Card>
   );
 ***REMOVED***;
