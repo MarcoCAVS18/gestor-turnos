@@ -7,6 +7,23 @@ import { useApp } from '../../../contexts/AppContext';
 const ShiftTypeBadge = ({ tipoTurno, turno, size = 'sm' }) => {
   const { thematicColors, shiftRanges } = useApp();
   
+  // Función para determinar tipo de turno por rangos
+  const getTipoTurnoByHour = (hora) => {
+    const ranges = shiftRanges || {
+      dayStart: 6, dayEnd: 14,
+      afternoonStart: 14, afternoonEnd: 20,
+      nightStart: 20
+    };
+
+    if (hora >= ranges.dayStart && hora < ranges.dayEnd) {
+      return 'diurno';
+    } else if (hora >= ranges.afternoonStart && hora < ranges.afternoonEnd) {
+      return 'tarde';
+    } else {
+      return 'noche';
+    }
+  };
+
   // Si se pasa el turno completo, determinar el tipo automáticamente
   const determinarTipoTurno = (turnoData) => {
     if (!turnoData) return 'noche';
@@ -14,11 +31,6 @@ const ShiftTypeBadge = ({ tipoTurno, turno, size = 'sm' }) => {
     // Si es delivery, retornar delivery
     if (turnoData.tipo === 'delivery' || turnoData.type === 'delivery') {
       return 'delivery';
-    }
-    
-    // Si cruza medianoche, es nocturno
-    if (turnoData.cruzaMedianoche) {
-      return 'noche';
     }
     
     // Determinar por fecha (fin de semana)
@@ -31,22 +43,35 @@ const ShiftTypeBadge = ({ tipoTurno, turno, size = 'sm' }) => {
       if (dayOfWeek === 6) return 'sabado';
     }
     
-    // Determinar por hora de inicio
-    if (turnoData.horaInicio) {
-      const [hora] = turnoData.horaInicio.split(':').map(Number);
-      const ranges = shiftRanges || {
-        dayStart: 6, dayEnd: 14,
-        afternoonStart: 14, afternoonEnd: 20,
-        nightStart: 20
-      };
+    // Determinar por hora de inicio y fin para detectar turnos mixtos
+    if (turnoData.horaInicio && turnoData.horaFin) {
+      const [horaInicio, minutoInicio] = turnoData.horaInicio.split(':').map(Number);
+      const [horaFin, minutoFin] = turnoData.horaFin.split(':').map(Number);
       
-      if (hora >= ranges.dayStart && hora < ranges.dayEnd) {
-        return 'diurno';
-      } else if (hora >= ranges.afternoonStart && hora < ranges.afternoonEnd) {
-        return 'tarde';
-      } else {
-        return 'noche';
+      const inicioMinutos = horaInicio * 60 + minutoInicio;
+      let finMinutos = horaFin * 60 + minutoFin;
+      
+      // Si cruza medianoche
+      if (finMinutos <= inicioMinutos) {
+        finMinutos += 24 * 60;
       }
+      
+      const tiposEncontrados = new Set();
+      
+      // Revisar cada hora del turno para ver si cambia de tipo
+      for (let minutos = inicioMinutos; minutos < finMinutos; minutos += 60) {
+        const horaActual = Math.floor((minutos % (24 * 60)) / 60);
+        const tipo = getTipoTurnoByHour(horaActual);
+        tiposEncontrados.add(tipo);
+      }
+      
+      // Si hay más de un tipo, es mixto
+      if (tiposEncontrados.size > 1) {
+        return 'mixto';
+      }
+      
+      // Si solo hay un tipo, retornar ese tipo
+      return Array.from(tiposEncontrados)[0] || 'noche';
     }
     
     return 'noche';
@@ -102,7 +127,7 @@ const ShiftTypeBadge = ({ tipoTurno, turno, size = 'sm' }) => {
       label: 'Mixto',
       color: '#6B7280',
       bgColor: '#F3F4F6',
-      description: 'Turno mixto (múltiples tipos)'
+      description: 'Turno mixto (múltiples tipos de horario)'
     }
   };
 
@@ -138,6 +163,11 @@ const ShiftTypeBadge = ({ tipoTurno, turno, size = 'sm' }) => {
       {/* Indicador especial para turnos nocturnos */}
       {turno?.cruzaMedianoche && tipo === 'noche' && (
         <span className="ml-1 text-xs opacity-75">🌙</span>
+      )}
+      
+      {/* Indicador especial para turnos mixtos */}
+      {tipo === 'mixto' && (
+        <span className="ml-1 text-xs opacity-75">🔄</span>
       )}
     </div>
   );

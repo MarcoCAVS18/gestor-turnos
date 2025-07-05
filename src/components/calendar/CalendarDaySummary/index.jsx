@@ -14,8 +14,8 @@ const CalendarDaySummary = ({
   formatearFecha, 
   onNuevoTurno 
 }) => {
-  // Obtener TODOS los trabajos (tradicionales + delivery)
-  const { trabajos, trabajosDelivery, calcularPago, thematicColors } = useApp();
+  // Obtener TODOS los trabajos (tradicionales + delivery) y la función de cálculo
+  const { trabajos, trabajosDelivery, calculatePayment, thematicColors } = useApp();
 
   const calcularTotalDia = (turnosList) => {
     if (!Array.isArray(turnosList) || turnosList.length === 0) {
@@ -25,17 +25,22 @@ const CalendarDaySummary = ({
     return turnosList.reduce((total, turno) => {
       try {
         if (turno.tipo === 'delivery') {
+          // Para turnos de delivery, usar gananciaTotal directamente
           const gananciaTotal = turno.gananciaTotal || 0;
           return total + gananciaTotal;
         } else {
-          if (typeof calcularPago === 'function') {
-            const { totalConDescuento } = calcularPago(turno);
-            return total + totalConDescuento;
+          // Para turnos tradicionales, usar calculatePayment
+          if (typeof calculatePayment === 'function') {
+            const resultado = calculatePayment(turno);
+            const ganancia = resultado.totalWithDiscount || resultado.totalConDescuento || 0;
+            return total + ganancia;
           } else {
+            console.warn('calculatePayment no está disponible');
             return total;
           }
         }
       } catch (error) {
+        console.error('Error calculando pago para turno:', turno.id, error);
         return total;
       }
     }, 0);

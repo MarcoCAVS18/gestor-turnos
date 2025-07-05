@@ -3,7 +3,6 @@ import { Edit, Trash2 } from 'lucide-react';
 import Card from '../../ui/Card';
 import ActionsMenu from '../../ui/ActionsMenu';
 import ShiftDetails from '../../shift/ShiftDetails';
-import ShiftTypeBadge from '../../shift/ShiftTypeBadge';
 import { useApp } from '../../../contexts/AppContext';
 import { getTagForShift } from '../../../utils/shiftUtils';
 
@@ -20,6 +19,8 @@ const TarjetaTurno = ({
 
   const tipoTurno = getTagForShift(turno.horaInicio, shiftRanges);
 
+  console.log(tipoTurno)
+
   const actions = [
     { icon: Edit, label: 'Editar', onClick: () => onEdit?.(turno) },
     { icon: Trash2, label: 'Eliminar', onClick: () => onDelete?.(turno), variant: 'danger' }
@@ -33,9 +34,6 @@ const TarjetaTurno = ({
         <ShiftDetails 
           turno={turno} 
           trabajo={trabajo}
-          badges={
-            <ShiftTypeBadge tipoTurno={tipoTurno.toLowerCase()} />
-          }
         />
       </div>
 
