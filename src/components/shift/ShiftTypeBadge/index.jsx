@@ -7,6 +7,23 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 const ShiftTypeBadge = (***REMOVED*** tipoTurno, turno, size = 'sm' ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** thematicColors, shiftRanges ***REMOVED*** = useApp();
   
+  // Función para determinar tipo de turno por rangos
+  const getTipoTurnoByHour = (hora) => ***REMOVED***
+    const ranges = shiftRanges || ***REMOVED***
+      dayStart: 6, dayEnd: 14,
+      afternoonStart: 14, afternoonEnd: 20,
+      nightStart: 20
+    ***REMOVED***;
+
+    if (hora >= ranges.dayStart && hora < ranges.dayEnd) ***REMOVED***
+      return 'diurno';
+    ***REMOVED*** else if (hora >= ranges.afternoonStart && hora < ranges.afternoonEnd) ***REMOVED***
+      return 'tarde';
+    ***REMOVED*** else ***REMOVED***
+      return 'noche';
+    ***REMOVED***
+  ***REMOVED***;
+
   // Si se pasa el turno completo, determinar el tipo automáticamente
   const determinarTipoTurno = (turnoData) => ***REMOVED***
     if (!turnoData) return 'noche';
@@ -14,11 +31,6 @@ const ShiftTypeBadge = (***REMOVED*** tipoTurno, turno, size = 'sm' ***REMOVED**
     // Si es delivery, retornar delivery
     if (turnoData.tipo === 'delivery' || turnoData.type === 'delivery') ***REMOVED***
       return 'delivery';
-    ***REMOVED***
-    
-    // Si cruza medianoche, es nocturno
-    if (turnoData.cruzaMedianoche) ***REMOVED***
-      return 'noche';
     ***REMOVED***
     
     // Determinar por fecha (fin de semana)
@@ -31,22 +43,35 @@ const ShiftTypeBadge = (***REMOVED*** tipoTurno, turno, size = 'sm' ***REMOVED**
       if (dayOfWeek === 6) return 'sabado';
     ***REMOVED***
     
-    // Determinar por hora de inicio
-    if (turnoData.horaInicio) ***REMOVED***
-      const [hora] = turnoData.horaInicio.split(':').map(Number);
-      const ranges = shiftRanges || ***REMOVED***
-        dayStart: 6, dayEnd: 14,
-        afternoonStart: 14, afternoonEnd: 20,
-        nightStart: 20
-      ***REMOVED***;
+    // Determinar por hora de inicio y fin para detectar turnos mixtos
+    if (turnoData.horaInicio && turnoData.horaFin) ***REMOVED***
+      const [horaInicio, minutoInicio] = turnoData.horaInicio.split(':').map(Number);
+      const [horaFin, minutoFin] = turnoData.horaFin.split(':').map(Number);
       
-      if (hora >= ranges.dayStart && hora < ranges.dayEnd) ***REMOVED***
-        return 'diurno';
-      ***REMOVED*** else if (hora >= ranges.afternoonStart && hora < ranges.afternoonEnd) ***REMOVED***
-        return 'tarde';
-      ***REMOVED*** else ***REMOVED***
-        return 'noche';
+      const inicioMinutos = horaInicio * 60 + minutoInicio;
+      let finMinutos = horaFin * 60 + minutoFin;
+      
+      // Si cruza medianoche
+      if (finMinutos <= inicioMinutos) ***REMOVED***
+        finMinutos += 24 * 60;
       ***REMOVED***
+      
+      const tiposEncontrados = new Set();
+      
+      // Revisar cada hora del turno para ver si cambia de tipo
+      for (let minutos = inicioMinutos; minutos < finMinutos; minutos += 60) ***REMOVED***
+        const horaActual = Math.floor((minutos % (24 * 60)) / 60);
+        const tipo = getTipoTurnoByHour(horaActual);
+        tiposEncontrados.add(tipo);
+      ***REMOVED***
+      
+      // Si hay más de un tipo, es mixto
+      if (tiposEncontrados.size > 1) ***REMOVED***
+        return 'mixto';
+      ***REMOVED***
+      
+      // Si solo hay un tipo, retornar ese tipo
+      return Array.from(tiposEncontrados)[0] || 'noche';
     ***REMOVED***
     
     return 'noche';
@@ -102,7 +127,7 @@ const ShiftTypeBadge = (***REMOVED*** tipoTurno, turno, size = 'sm' ***REMOVED**
       label: 'Mixto',
       color: '#6B7280',
       bgColor: '#F3F4F6',
-      description: 'Turno mixto (múltiples tipos)'
+      description: 'Turno mixto (múltiples tipos de horario)'
     ***REMOVED***
   ***REMOVED***;
 
@@ -138,6 +163,11 @@ const ShiftTypeBadge = (***REMOVED*** tipoTurno, turno, size = 'sm' ***REMOVED**
       ***REMOVED***/* Indicador especial para turnos nocturnos */***REMOVED***
       ***REMOVED***turno?.cruzaMedianoche && tipo === 'noche' && (
         <span className="ml-1 text-xs opacity-75">🌙</span>
+      )***REMOVED***
+      
+      ***REMOVED***/* Indicador especial para turnos mixtos */***REMOVED***
+      ***REMOVED***tipo === 'mixto' && (
+        <span className="ml-1 text-xs opacity-75">🔄</span>
       )***REMOVED***
     </div>
   );
