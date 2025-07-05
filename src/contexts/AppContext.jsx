@@ -176,10 +176,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
     const ***REMOVED*** horaInicio, horaFin, fechaInicio, cruzaMedianoche = false ***REMOVED*** = shift;
 
-      if (!horaInicio || !horaFin || !fechaInicio) ***REMOVED***
-    return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false ***REMOVED***;
-  ***REMOVED***
-
+    if (!horaInicio || !horaFin || !fechaInicio) ***REMOVED***
+      return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false ***REMOVED***;
+    ***REMOVED***
 
     const [startHour, startMin] = horaInicio.split(':').map(n => parseInt(n));
     const [endHour, endMin] = horaFin.split(':').map(n => parseInt(n));
@@ -198,9 +197,10 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     const totalMinutes = endMinutes - startMinutes;
     const hours = totalMinutes / 60;
 
+    // Determinar si es fin de semana
     const date = new Date(fechaInicio + 'T00:00:00');
     const dayOfWeek = date.getDay();
-    
+
     let total = 0;
     let breakdown = ***REMOVED*** diurno: 0, tarde: 0, noche: 0, sabado: 0, domingo: 0 ***REMOVED***;
 
@@ -210,17 +210,32 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED*** else if (dayOfWeek === 6) ***REMOVED*** // Sábado
       total = hours * job.tarifas.sabado;
       breakdown.sabado = total;
-    ***REMOVED*** else ***REMOVED*** // Día de semana - calcular por rangos horarios
+    ***REMOVED*** else ***REMOVED***
+      // Día de semana - calcular por rangos horarios minuto a minuto
       const ranges = shiftRanges || ***REMOVED***
         dayStart: 6, dayEnd: 14,
         afternoonStart: 14, afternoonEnd: 20,
         nightStart: 20
       ***REMOVED***;
 
-      const dayStartMin = ranges.dayStart * 60;
-      const dayEndMin = ranges.dayEnd * 60;
-      const afternoonStartMin = ranges.afternoonStart * 60;
-      const afternoonEndMin = ranges.afternoonEnd * 60;
+      const dayStartMin = ranges.dayStart * 60;        // ej: 6*60 = 360 (06:00)
+      const dayEndMin = ranges.dayEnd * 60;            // ej: 14*60 = 840 (14:00)
+      const afternoonStartMin = ranges.afternoonStart * 60; // ej: 14*60 = 840 (14:00)
+      const afternoonEndMin = ranges.afternoonEnd * 60;     // ej: 20*60 = 1200 (20:00)
+
+      console.log('🕐 Calculando pago para turno:', ***REMOVED***
+        horaInicio,
+        horaFin,
+        startMinutes,
+        endMinutes,
+        totalMinutes,
+        cruzaMedianoche,
+        ranges: ***REMOVED***
+          diurno: `$***REMOVED***ranges.dayStart***REMOVED***:00 - $***REMOVED***ranges.dayEnd***REMOVED***:00`,
+          tarde: `$***REMOVED***ranges.afternoonStart***REMOVED***:00 - $***REMOVED***ranges.afternoonEnd***REMOVED***:00`,
+          noche: `$***REMOVED***ranges.nightStart***REMOVED***:00 - 06:00 (next day)`
+        ***REMOVED***
+      ***REMOVED***);
 
       // Calcular minuto por minuto para manejar correctamente los rangos
       for (let minute = startMinutes; minute < endMinutes; minute++) ***REMOVED***
@@ -244,6 +259,14 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         total += ratePerMinute;
         breakdown[rateType] += ratePerMinute;
       ***REMOVED***
+
+      // Log del breakdown para debugging
+      console.log('💰 Breakdown de pago:', ***REMOVED***
+        diurno: `$***REMOVED***(breakdown.diurno / total * 100).toFixed(1)***REMOVED***% = $$***REMOVED***breakdown.diurno.toFixed(2)***REMOVED***`,
+        tarde: `$***REMOVED***(breakdown.tarde / total * 100).toFixed(1)***REMOVED***% = $$***REMOVED***breakdown.tarde.toFixed(2)***REMOVED***`,
+        noche: `$***REMOVED***(breakdown.noche / total * 100).toFixed(1)***REMOVED***% = $$***REMOVED***breakdown.noche.toFixed(2)***REMOVED***`,
+        total: `$$***REMOVED***total.toFixed(2)***REMOVED***`
+      ***REMOVED***);
     ***REMOVED***
 
     const totalWithDiscount = total * (1 - defaultDiscount / 100);
@@ -611,7 +634,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     turnosPorFecha: useMemo(() => ***REMOVED***
       const allTurnos = [...turnos, ...turnosDelivery];
       return allTurnos.reduce((acc, turno) => ***REMOVED***
-        const fechaClave = turno.fechaInicio || turno.fecha; 
+        const fechaClave = turno.fechaInicio || turno.fecha;
         if (!fechaClave) return acc;
         if (!acc[fechaClave]) acc[fechaClave] = [];
         acc[fechaClave].push(turno);
