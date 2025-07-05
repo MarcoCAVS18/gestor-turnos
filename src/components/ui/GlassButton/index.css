@@ -1,66 +1,73 @@
-/* src/components/ui/GlassButton/index.css */
+/* =================================================================
+   GlassButton Styles
+   ================================================================= */
 
+/* --- Base Styles & 3D Setup --- */
 .glass-button ***REMOVED***
-  /* Base glassmorphism styles */
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+  transform-style: preserve-d;
+  transform: perspective(800px) rotateY(var(--rotate-y, 0deg)) rotateX(var(--rotate-x, 0deg));
   
-  /* Button properties */
+  /* Themed styles are applied via CSS variables from the component */
+  background: linear-gradient(135deg, var(--btn-bgStart), var(--btn-bgEnd));
+  border-image: linear-gradient(135deg, var(--btn-borderStart), var(--btn-borderEnd)) 1;
+  box-shadow: 0 8px 32px var(--btn-shadowColor);
+  
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  
   position: relative;
   overflow: hidden;
+  border-radius: 16px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Typography */
+  color: white;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  
-  /* Remove default button styles */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s linear, box-shadow 0.3s ease, background 0.3s ease;
+
+  /* Style reset */
   outline: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 ***REMOVED***
 
-/* Glass reflection effects */
-.glass-button::before ***REMOVED***
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.8),
-    transparent
-  );
+/* --- Interaction States --- */
+.glass-button:hover:not(.glass-button-disabled):not(.glass-button-loading) ***REMOVED***
+  background: linear-gradient(135deg, var(--btn-bgHoverStart), var(--btn-bgHoverEnd));
+  box-shadow: 0 12px 40px var(--btn-shadowColor);
 ***REMOVED***
 
-.glass-button::after ***REMOVED***
+.glass-button:active:not(.glass-button-disabled):not(.glass-button-loading) ***REMOVED***
+  transform: perspective(800px) rotateY(0deg) rotateX(0deg) scale(0.98);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+***REMOVED***
+
+.glass-button:focus-visible ***REMOVED***
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+***REMOVED***
+
+/* --- Internal Elements --- */
+.glass-button .glass-button-shine ***REMOVED***
   content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 1px;
+  width: 100%;
   height: 100%;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.8),
-    transparent,
-    rgba(255, 255, 255, 0.3)
-  );
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.5), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
 ***REMOVED***
 
-/* Button content container */
+.glass-button:hover:not(.glass-button-disabled):not(.glass-button-loading) .glass-button-shine ***REMOVED***
+  opacity: 1;
+***REMOVED***
+
 .glass-button-content ***REMOVED***
   position: relative;
   z-index: 2;
@@ -68,57 +75,14 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: transform 0.2s ease;
+  transform: translateZ(20px);
+  transition: transform 0.3s ease;
 ***REMOVED***
 
-/* Hover effects */
-.glass-button:hover:not(.glass-button-disabled):not(.glass-button-loading) ***REMOVED***
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
-  box-shadow: 
-    0 12px 40px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+.glass-button:hover:not(.glass-button-disabled):not(.glass-button-loading) .glass-button-content ***REMOVED***
+  transform: translateZ(30px) scale(1.02);
 ***REMOVED***
 
-.glass-button:hover .glass-button-content ***REMOVED***
-  transform: scale(1.02);
-***REMOVED***
-
-/* Active/pressed state */
-.glass-button:active:not(.glass-button-disabled):not(.glass-button-loading) ***REMOVED***
-  transform: translateY(0);
-  box-shadow: 
-    0 4px 16px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
-***REMOVED***
-
-/* Focus styles for accessibility */
-.glass-button:focus-visible ***REMOVED***
-  outline: 2px solid rgba(255, 255, 255, 0.6);
-  outline-offset: 2px;
-***REMOVED***
-
-/* Disabled state */
-.glass-button-disabled ***REMOVED***
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.4);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: 
-    0 2px 8px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-***REMOVED***
-
-/* Loading state */
-.glass-button-loading ***REMOVED***
-  cursor: wait;
-***REMOVED***
-
-/* Icons */
 .glass-button-icon,
 .glass-button-arrow ***REMOVED***
   width: 20px;
@@ -127,117 +91,39 @@
 ***REMOVED***
 
 .glass-button:hover .glass-button-arrow ***REMOVED***
-  transform: translateX(2px);
+  transform: translateX(3px);
 ***REMOVED***
 
-/* Loading spinner */
+/* --- Special States --- */
+.glass-button-disabled ***REMOVED***
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.4);
+  cursor: not-allowed;
+  transform: none !important; /* Override 3D effect */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+***REMOVED***
+
+.glass-button-loading ***REMOVED***
+  cursor: wait;
+***REMOVED***
+
 .glass-button-spinner ***REMOVED***
   width: 20px;
   height: 20px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid rgba(255, 255, 255, 0.9);
+  border-top: 2px solid white;
   border-radius: 50%;
   animation: glass-spin 1s linear infinite;
 ***REMOVED***
 
 @keyframes glass-spin ***REMOVED***
-  0% ***REMOVED*** transform: rotate(0deg); ***REMOVED***
-  100% ***REMOVED*** transform: rotate(360deg); ***REMOVED***
-***REMOVED***
-
-/* Variant styles */
-.glass-button-primary ***REMOVED***
-  background: rgba(236, 72, 153, 0.2);
-  border-color: rgba(236, 72, 153, 0.4);
-  color: rgba(255, 255, 255, 0.95);
-***REMOVED***
-
-.glass-button-primary:hover:not(.glass-button-disabled):not(.glass-button-loading) ***REMOVED***
-  background: rgba(236, 72, 153, 0.3);
-  border-color: rgba(236, 72, 153, 0.6);
-  box-shadow: 
-    0 12px 40px rgba(236, 72, 153, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.2);
-***REMOVED***
-
-.glass-button-secondary ***REMOVED***
-  background: rgba(99, 102, 241, 0.2);
-  border-color: rgba(99, 102, 241, 0.4);
-***REMOVED***
-
-.glass-button-secondary:hover:not(.glass-button-disabled):not(.glass-button-loading) ***REMOVED***
-  background: rgba(99, 102, 241, 0.3);
-  border-color: rgba(99, 102, 241, 0.6);
-  box-shadow: 
-    0 12px 40px rgba(99, 102, 241, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.2);
-***REMOVED***
-
-.glass-button-success ***REMOVED***
-  background: rgba(16, 185, 129, 0.2);
-  border-color: rgba(16, 185, 129, 0.4);
-***REMOVED***
-
-.glass-button-success:hover:not(.glass-button-disabled):not(.glass-button-loading) ***REMOVED***
-  background: rgba(16, 185, 129, 0.3);
-  border-color: rgba(16, 185, 129, 0.6);
-  box-shadow: 
-    0 12px 40px rgba(16, 185, 129, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.2);
-***REMOVED***
-
-.glass-button-danger ***REMOVED***
-  background: rgba(239, 68, 68, 0.2);
-  border-color: rgba(239, 68, 68, 0.4);
-***REMOVED***
-
-.glass-button-danger:hover:not(.glass-button-disabled):not(.glass-button-loading) ***REMOVED***
-  background: rgba(239, 68, 68, 0.3);
-  border-color: rgba(239, 68, 68, 0.6);
-  box-shadow: 
-    0 12px 40px rgba(239, 68, 68, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.2);
-***REMOVED***
-
-/* Responsive adjustments */
-@media (max-width: 768px) ***REMOVED***
-  .glass-button ***REMOVED***
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-  ***REMOVED***
-  
-  .glass-button:hover:not(.glass-button-disabled):not(.glass-button-loading) ***REMOVED***
-    transform: translateY(-1px);
+  to ***REMOVED*** 
+    transform: rotate(360deg); 
   ***REMOVED***
 ***REMOVED***
 
-/* Dark theme support */
-@media (prefers-color-scheme: dark) ***REMOVED***
-  .glass-button ***REMOVED***
-    background: rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.2);
-  ***REMOVED***
-  
-  .glass-button:hover:not(.glass-button-disabled):not(.glass-button-loading) ***REMOVED***
-    background: rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.3);
-  ***REMOVED***
-***REMOVED***
-
-/* High contrast mode support */
-@media (prefers-contrast: high) ***REMOVED***
-  .glass-button ***REMOVED***
-    border-width: 2px;
-    background: rgba(255, 255, 255, 0.9);
-    color: #000;
-  ***REMOVED***
-***REMOVED***
-
-/* Reduced motion support */
+/* --- Accessibility --- */
 @media (prefers-reduced-motion: reduce) ***REMOVED***
   .glass-button,
   .glass-button-content,
@@ -246,11 +132,8 @@
     transition: none;
   ***REMOVED***
   
-  .glass-button:hover .glass-button-content ***REMOVED***
-    transform: none;
-  ***REMOVED***
-  
-  .glass-button:hover .glass-button-arrow ***REMOVED***
+  .glass-button:hover,
+  .glass-button:active ***REMOVED***
     transform: none;
   ***REMOVED***
 ***REMOVED***

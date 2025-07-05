@@ -11,7 +11,6 @@ const DeliverySection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***R
   
   const handleToggle = async (newValue) => ***REMOVED***
     try ***REMOVED***
-      console.log('Cambiando delivery enabled de', deliveryEnabled, 'a', newValue);
       
       await savePreferences(***REMOVED*** deliveryEnabled: newValue ***REMOVED***);
       
