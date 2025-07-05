@@ -14,8 +14,8 @@ const CalendarDaySummary = (***REMOVED***
   formatearFecha, 
   onNuevoTurno 
 ***REMOVED***) => ***REMOVED***
-  // Obtener TODOS los trabajos (tradicionales + delivery)
-  const ***REMOVED*** trabajos, trabajosDelivery, calcularPago, thematicColors ***REMOVED*** = useApp();
+  // Obtener TODOS los trabajos (tradicionales + delivery) y la función de cálculo
+  const ***REMOVED*** trabajos, trabajosDelivery, calculatePayment, thematicColors ***REMOVED*** = useApp();
 
   const calcularTotalDia = (turnosList) => ***REMOVED***
     if (!Array.isArray(turnosList) || turnosList.length === 0) ***REMOVED***
@@ -25,17 +25,22 @@ const CalendarDaySummary = (***REMOVED***
     return turnosList.reduce((total, turno) => ***REMOVED***
       try ***REMOVED***
         if (turno.tipo === 'delivery') ***REMOVED***
+          // Para turnos de delivery, usar gananciaTotal directamente
           const gananciaTotal = turno.gananciaTotal || 0;
           return total + gananciaTotal;
         ***REMOVED*** else ***REMOVED***
-          if (typeof calcularPago === 'function') ***REMOVED***
-            const ***REMOVED*** totalConDescuento ***REMOVED*** = calcularPago(turno);
-            return total + totalConDescuento;
+          // Para turnos tradicionales, usar calculatePayment
+          if (typeof calculatePayment === 'function') ***REMOVED***
+            const resultado = calculatePayment(turno);
+            const ganancia = resultado.totalWithDiscount || resultado.totalConDescuento || 0;
+            return total + ganancia;
           ***REMOVED*** else ***REMOVED***
+            console.warn('calculatePayment no está disponible');
             return total;
           ***REMOVED***
         ***REMOVED***
       ***REMOVED*** catch (error) ***REMOVED***
+        console.error('Error calculando pago para turno:', turno.id, error);
         return total;
       ***REMOVED***
     ***REMOVED***, 0);
