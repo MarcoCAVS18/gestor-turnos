@@ -152,21 +152,34 @@ export const AppProvider = ({ children }) => {
     const allJobs = [...trabajos, ...trabajosDelivery];
     const job = allJobs.find(j => j.id === shift.trabajoId);
 
-    if (!job) return { total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false };
+    if (!job) return {
+      total: 0,
+      totalWithDiscount: 0,
+      hours: 0,
+      tips: 0,
+      isDelivery: false,
+      breakdown: { diurno: 0, tarde: 0, noche: 0, sabado: 0, domingo: 0 }
+    };
 
     // Si es un turno de delivery, devuelve las ganancias totales directamente
-    if (shift.type === 'delivery') {
+    if (shift.type === 'delivery' || shift.tipo === 'delivery') {
       const hours = calculateHours(shift.horaInicio, shift.horaFin);
       return {
         total: shift.gananciaTotal || 0,
         totalWithDiscount: shift.gananciaTotal || 0,
         hours,
         tips: shift.propinas || 0,
-        isDelivery: true
+        isDelivery: true,
+        breakdown: { delivery: shift.gananciaTotal || 0 }
       };
     }
 
-    const { horaInicio, horaFin, fecha } = shift;
+    const { horaInicio, horaFin, fechaInicio, cruzaMedianoche = false } = shift;
+
+      if (!horaInicio || !horaFin || !fechaInicio) {
+    return { total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false };
+  }
+
 
     const [startHour, startMin] = horaInicio.split(':').map(n => parseInt(n));
     const [endHour, endMin] = horaFin.split(':').map(n => parseInt(n));
@@ -174,24 +187,30 @@ export const AppProvider = ({ children }) => {
     let startMinutes = startHour * 60 + startMin;
     let endMinutes = endHour * 60 + endMin;
 
-    if (endMinutes <= startMinutes) {
+    // Si cruza medianoche, agregar 24 horas al final
+    if (cruzaMedianoche) {
+      endMinutes += 24 * 60;
+    } else if (endMinutes <= startMinutes) {
+      // Fallback para turnos antiguos sin la propiedad cruzaMedianoche
       endMinutes += 24 * 60;
     }
 
     const totalMinutes = endMinutes - startMinutes;
     const hours = totalMinutes / 60;
 
-    const [year, month, day] = fecha.split('-');
-    const date = new Date(year, month - 1, day);
-    const dayOfWeek = date.getDay(); // 0 para domingo, 6 para sabado
-
+    const date = new Date(fechaInicio + 'T00:00:00');
+    const dayOfWeek = date.getDay();
+    
     let total = 0;
+    let breakdown = { diurno: 0, tarde: 0, noche: 0, sabado: 0, domingo: 0 };
 
     if (dayOfWeek === 0) { // Domingo
       total = hours * job.tarifas.domingo;
-    } else if (dayOfWeek === 6) { // Sabado
+      breakdown.domingo = total;
+    } else if (dayOfWeek === 6) { // Sábado
       total = hours * job.tarifas.sabado;
-    } else { // Dia de semana
+      breakdown.sabado = total;
+    } else { // Día de semana - calcular por rangos horarios
       const ranges = shiftRanges || {
         dayStart: 6, dayEnd: 14,
         afternoonStart: 14, afternoonEnd: 20,
@@ -203,18 +222,27 @@ export const AppProvider = ({ children }) => {
       const afternoonStartMin = ranges.afternoonStart * 60;
       const afternoonEndMin = ranges.afternoonEnd * 60;
 
+      // Calcular minuto por minuto para manejar correctamente los rangos
       for (let minute = startMinutes; minute < endMinutes; minute++) {
-        const currentHourInMinutes = minute % (24 * 60);
+        // Normalizar los minutos para el ciclo de 24 horas
+        const currentMinuteInDay = minute % (24 * 60);
         let rate = job.tarifaBase;
+        let rateType = 'noche'; // Por defecto nocturno
 
-        if (currentHourInMinutes >= dayStartMin && currentHourInMinutes < dayEndMin) {
+        if (currentMinuteInDay >= dayStartMin && currentMinuteInDay < dayEndMin) {
           rate = job.tarifas.diurno;
-        } else if (currentHourInMinutes >= afternoonStartMin && currentHourInMinutes < afternoonEndMin) {
+          rateType = 'diurno';
+        } else if (currentMinuteInDay >= afternoonStartMin && currentMinuteInDay < afternoonEndMin) {
           rate = job.tarifas.tarde;
+          rateType = 'tarde';
         } else {
           rate = job.tarifas.noche;
+          rateType = 'noche';
         }
-        total += rate / 60;
+
+        const ratePerMinute = rate / 60;
+        total += ratePerMinute;
+        breakdown[rateType] += ratePerMinute;
       }
     }
 
@@ -225,7 +253,9 @@ export const AppProvider = ({ children }) => {
       totalWithDiscount,
       hours,
       tips: 0,
-      isDelivery: false
+      isDelivery: false,
+      breakdown,
+      isNightShift: cruzaMedianoche || false
     };
   }, [trabajos, trabajosDelivery, shiftRanges, defaultDiscount, calculateHours]);
 
@@ -522,7 +552,7 @@ export const AppProvider = ({ children }) => {
         // Listener para turnos tradicionales
         const turnosQuery = query(
           subcollections.turnosRef,
-          orderBy('fecha', 'desc')
+          orderBy('fechaCreacion', 'desc')
         );
 
         unsubscribeTurnos = onSnapshot(turnosQuery, (snapshot) => {
@@ -530,6 +560,14 @@ export const AppProvider = ({ children }) => {
           snapshot.forEach(doc => {
             turnosData.push({ id: doc.id, ...doc.data() });
           });
+
+          turnosData.sort((a, b) => {
+            const fechaA = new Date(a.fechaInicio || a.fecha);
+            const fechaB = new Date(b.fechaInicio || b.fecha);
+            return fechaB - fechaA;
+          });
+
+
           setTurnos(turnosData);
           setLoading(false);
         }, (err) => {
@@ -573,10 +611,10 @@ export const AppProvider = ({ children }) => {
     turnosPorFecha: useMemo(() => {
       const allTurnos = [...turnos, ...turnosDelivery];
       return allTurnos.reduce((acc, turno) => {
-        if (!acc[turno.fecha]) {
-          acc[turno.fecha] = [];
-        }
-        acc[turno.fecha].push(turno);
+        const fechaClave = turno.fechaInicio || turno.fecha; 
+        if (!fechaClave) return acc;
+        if (!acc[fechaClave]) acc[fechaClave] = [];
+        acc[fechaClave].push(turno);
         return acc;
       }, {});
     }, [turnos, turnosDelivery]),
@@ -676,19 +714,15 @@ export const AppProvider = ({ children }) => {
       try {
         if (!currentUser) throw new Error('Usuario no autenticado');
         const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
-        if (!newShift.trabajoId || !newShift.fecha || !newShift.horaInicio || !newShift.horaFin) {
+        if (!newShift.trabajoId || !newShift.fechaInicio || !newShift.horaInicio || !newShift.horaFin) {
           throw new Error('Todos los campos del turno son requeridos');
         }
-        const shiftWithMetadata = {
-          ...newShift,
-          fechaCreacion: new Date(),
-          fechaActualizacion: new Date()
-        };
+        const shiftWithMetadata = { ...newShift, fechaCreacion: new Date(), fechaActualizacion: new Date() };
         const docRef = await addDoc(subcollections.turnosRef, shiftWithMetadata);
         return { ...shiftWithMetadata, id: docRef.id };
       } catch (err) {
-        setError('Error al agregar turno: ' + err.message);
+        console.error("Error al guardar turno:", err);
+        setError('Error al guardar turno: ' + err.message);
         throw err;
       }
     }, [currentUser, getUserSubcollections]),

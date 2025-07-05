@@ -1,15 +1,12 @@
-// src/components/sections/DaySection.jsx
-
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Calendar } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import TarjetaTurno from '../../cards/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
 
-const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => {
+const DaySection = forwardRef(({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }, ref) => {
   const { thematicColors } = useApp();
 
-  // Formatear fecha
   const fechaObj = new Date(fecha + 'T00:00:00');
   const diaSemana = fechaObj.toLocaleDateString('es-ES', { weekday: 'long' });
   const fechaFormateada = fechaObj.toLocaleDateString('es-ES', { 
@@ -19,8 +16,7 @@ const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => 
   });
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-      {/* Encabezado del día */}
+    <div ref={ref} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       <div className="p-4 border-b border-gray-200" style={{ backgroundColor: thematicColors?.transparent5 }}>
         <div className="flex items-center gap-2">
           <Calendar size={20} style={{ color: thematicColors?.base }} />
@@ -30,7 +26,6 @@ const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => 
         </div>
       </div>
 
-      {/* Lista de turnos */}
       <div className="p-4 space-y-3">
         {turnos.map(turno => {
           const trabajo = trabajos.find(t => t.id === turno.trabajoId);
@@ -60,6 +55,6 @@ const DaySection = ({ fecha, turnos, trabajos, onEditTurno, onDeleteTurno }) => 
       </div>
     </div>
   );
-};
+});
 
 export default DaySection;

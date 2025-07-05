@@ -4,6 +4,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
+import './styles/animation.css';
 
 // Componentes de autenticación
 import Login from './pages/auth/Login';
