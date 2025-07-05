@@ -13,23 +13,23 @@ import GlassButton from '../components/ui/GlassButton';
 const DIAS_POR_PAGINA = 6;
 
 const Turnos = () => ***REMOVED***
-  const ***REMOVED*** 
+  const ***REMOVED***
     turnosPorFecha, loading, deleteShift, deleteDeliveryShift,
     trabajos, trabajosDelivery, thematicColors
   ***REMOVED*** = useApp();
-  
+
   const deleteManager = useDeleteManager(async (turno) => ***REMOVED***
     if (turno.tipo === 'delivery') await deleteDeliveryShift(turno.id);
     else await deleteShift(turno.id);
   ***REMOVED***);
-  
+
   const ***REMOVED*** modalAbierto, turnoSeleccionado, abrirModalNuevo, abrirModalEditar, cerrarModal ***REMOVED*** = useTurnManager();
-  
+
   const [diasMostrados, setDiasMostrados] = useState(DIAS_POR_PAGINA);
   const [expandiendo, setExpandiendo] = useState(false);
 
   const todosLosTrabajos = useMemo(() => [...trabajos, ...trabajosDelivery], [trabajos, trabajosDelivery]);
-  
+
   const diasOrdenados = useMemo(() => ***REMOVED***
     return Object.entries(turnosPorFecha).sort(([a], [b]) => new Date(b) - new Date(a));
   ***REMOVED***, [turnosPorFecha]);
@@ -54,14 +54,45 @@ const Turnos = () => ***REMOVED***
 
   const generarDetallesTurno = (turno) => ***REMOVED***
     if (!turno) return [];
+
     const trabajo = todosLosTrabajos.find(t => t.id === turno.trabajoId);
-    const fecha = new Date(turno.fecha + 'T00:00:00');
+
+    // Manejar fechas para turnos que cruzan medianoche
+    let fechaTexto = '';
+    if (turno.fechaInicio && turno.fechaFin && turno.fechaInicio !== turno.fechaFin) ***REMOVED***
+      // Turno que cruza medianoche
+      const fechaInicio = new Date(turno.fechaInicio + 'T00:00:00');
+      const fechaFin = new Date(turno.fechaFin + 'T00:00:00');
+      const fechaInicioStr = fechaInicio.toLocaleDateString('es-ES', ***REMOVED***
+        weekday: 'long', day: 'numeric', month: 'long'
+      ***REMOVED***);
+      const fechaFinStr = fechaFin.toLocaleDateString('es-ES', ***REMOVED***
+        weekday: 'short', day: 'numeric', month: 'long'
+      ***REMOVED***);
+      fechaTexto = `$***REMOVED***fechaInicioStr***REMOVED*** - $***REMOVED***fechaFinStr***REMOVED***`;
+    ***REMOVED*** else ***REMOVED***
+      // Turno normal o turno legacy con solo 'fecha'
+      const fechaStr = turno.fechaInicio || turno.fecha;
+      if (fechaStr) ***REMOVED***
+        const fecha = new Date(fechaStr + 'T00:00:00');
+        fechaTexto = fecha.toLocaleDateString('es-ES', ***REMOVED***
+          weekday: 'long', day: 'numeric', month: 'long'
+        ***REMOVED***);
+      ***REMOVED*** else ***REMOVED***
+        fechaTexto = 'Fecha no disponible';
+      ***REMOVED***
+    ***REMOVED***
+
     const detalles = [
       trabajo?.nombre || 'Trabajo no encontrado',
-      fecha.toLocaleDateString('es-ES', ***REMOVED*** weekday: 'long', day: 'numeric', month: 'long' ***REMOVED***),
+      fechaTexto,
       `$***REMOVED***turno.horaInicio***REMOVED*** - $***REMOVED***turno.horaFin***REMOVED***`
     ];
-    if (turno.tipo === 'delivery') detalles.push(`$***REMOVED***turno.numeroPedidos || 0***REMOVED*** pedidos`);
+
+    if (turno.tipo === 'delivery') ***REMOVED***
+      detalles.push(`$***REMOVED***turno.numeroPedidos || 0***REMOVED*** pedidos`);
+    ***REMOVED***
+
     return detalles;
   ***REMOVED***;
 
@@ -87,7 +118,7 @@ const Turnos = () => ***REMOVED***
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
         <div className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center" style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent10 ***REMOVED******REMOVED***>
-          <Calendar className="w-10 h-10" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***/>
+          <Calendar className="w-10 h-10" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** />
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay turnos registrados</h3>
         <p className="text-gray-500 mb-6 max-w-md mx-auto">Comienza agregando tu primer turno para empezar a gestionar tus ingresos.</p>
@@ -148,26 +179,26 @@ const Turnos = () => ***REMOVED***
                 );
               ***REMOVED***)***REMOVED***
             </TransitionGroup>
-            
+
             ***REMOVED***hayMasDias && (
               <div className="relative flex flex-col items-center pt-4 pb-12">
-                <div 
+                <div
                   className="peek-card"
                   style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent5 ***REMOVED******REMOVED***
                 />
-                <GlassButton 
-                  onClick=***REMOVED***mostrarMasDias***REMOVED*** 
-                  loading=***REMOVED***expandiendo***REMOVED*** 
-                  variant="primary" 
-                  size="lg" 
+                <GlassButton
+                  onClick=***REMOVED***mostrarMasDias***REMOVED***
+                  loading=***REMOVED***expandiendo***REMOVED***
+                  variant="primary"
+                  size="lg"
                   icon=***REMOVED***Eye***REMOVED***
-                  className="relative z-10" 
+                  className="relative z-10"
                 >
                   Ver ***REMOVED***Math.min(DIAS_POR_PAGINA, diasRestantes)***REMOVED*** días más
                 </GlassButton>
               </div>
             )***REMOVED***
-            
+
             ***REMOVED***!hayMasDias && diasMostrados > DIAS_POR_PAGINA && (
               <div className="flex justify-center py-4">
                 <GlassButton onClick=***REMOVED***mostrarMenos***REMOVED*** variant="secondary" size="md">
@@ -178,9 +209,9 @@ const Turnos = () => ***REMOVED***
           </div>
         )***REMOVED***
       </div>
-      
+
       <ModalTurno isOpen=***REMOVED***modalAbierto***REMOVED*** onClose=***REMOVED***cerrarModal***REMOVED*** turno=***REMOVED***turnoSeleccionado***REMOVED*** />
-      
+
       <AlertaEliminacion
         visible=***REMOVED***deleteManager.showDeleteModal***REMOVED***
         onCancel=***REMOVED***deleteManager.cancelDeletion***REMOVED***

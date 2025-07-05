@@ -287,23 +287,25 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     try ***REMOVED***
       if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.trabajosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
+      if (!subcollections || !subcollections.trabajosDeliveryRef) ***REMOVED***
+        throw new Error('No se pudieron obtener las referencias de la colección');
+      ***REMOVED***
 
       const jobData = ***REMOVED***
         ...newJob,
-        type: 'delivery',
+        tipo: 'delivery',
         fechaCreacion: new Date(),
         fechaActualizacion: new Date(),
-        platform: newJob.platform || '',
-        vehicle: newJob.vehicle || '',
-        avatarColor: newJob.avatarColor || '#10B981',
-        statistics: ***REMOVED***
-          totalShifts: 0,
-          totalOrders: 0,
-          totalKilometers: 0,
-          totalEarnings: 0,
-          totalTips: 0,
-          totalFuelExpenses: 0
+        plataforma: newJob.plataforma || '',
+        vehiculo: newJob.vehiculo || '',
+        colorAvatar: newJob.colorAvatar || '#10B981',
+        estadisticas: ***REMOVED***
+          totalTurnos: 0,
+          totalPedidos: 0,
+          totalKilometros: 0,
+          totalGanancias: 0,
+          totalPropinas: 0,
+          totalGastosCombustible: 0
         ***REMOVED***
       ***REMOVED***;
 
@@ -368,11 +370,13 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     try ***REMOVED***
       if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
-      if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
+      if (!subcollections || !subcollections.turnosDeliveryRef) ***REMOVED***
+        throw new Error('No se pudieron obtener las referencias de la colección');
+      ***REMOVED***
 
       const shiftData = ***REMOVED***
         ...newShift,
-        type: 'delivery',
+        tipo: 'delivery', 
         fechaCreacion: new Date(),
         fechaActualizacion: new Date(),
         numeroPedidos: newShift.numeroPedidos || 0,
@@ -659,6 +663,10 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     weeklyHoursGoal,
     deliveryEnabled,
 
+    // Funciones de eliminación que faltaban
+    deleteDeliveryShift,
+    deleteShift,
+
     // Funciones CRUD para trabajos tradicionales
     addJob: useCallback(async (newJob) => ***REMOVED***
       try ***REMOVED***
@@ -783,6 +791,10 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     turnosDelivery,
     addDeliveryShift,
     editDeliveryShift,
+    deleteDeliveryShift,
+
+    deleteShift,
+    deleteDeliveryJob,
     deleteDeliveryShift,
 
     // Funciones de calculo
