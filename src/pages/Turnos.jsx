@@ -13,23 +13,23 @@ import GlassButton from '../components/ui/GlassButton';
 const DIAS_POR_PAGINA = 6;
 
 const Turnos = () => {
-  const { 
+  const {
     turnosPorFecha, loading, deleteShift, deleteDeliveryShift,
     trabajos, trabajosDelivery, thematicColors
   } = useApp();
-  
+
   const deleteManager = useDeleteManager(async (turno) => {
     if (turno.tipo === 'delivery') await deleteDeliveryShift(turno.id);
     else await deleteShift(turno.id);
   });
-  
+
   const { modalAbierto, turnoSeleccionado, abrirModalNuevo, abrirModalEditar, cerrarModal } = useTurnManager();
-  
+
   const [diasMostrados, setDiasMostrados] = useState(DIAS_POR_PAGINA);
   const [expandiendo, setExpandiendo] = useState(false);
 
   const todosLosTrabajos = useMemo(() => [...trabajos, ...trabajosDelivery], [trabajos, trabajosDelivery]);
-  
+
   const diasOrdenados = useMemo(() => {
     return Object.entries(turnosPorFecha).sort(([a], [b]) => new Date(b) - new Date(a));
   }, [turnosPorFecha]);
@@ -54,14 +54,45 @@ const Turnos = () => {
 
   const generarDetallesTurno = (turno) => {
     if (!turno) return [];
+
     const trabajo = todosLosTrabajos.find(t => t.id === turno.trabajoId);
-    const fecha = new Date(turno.fecha + 'T00:00:00');
+
+    // Manejar fechas para turnos que cruzan medianoche
+    let fechaTexto = '';
+    if (turno.fechaInicio && turno.fechaFin && turno.fechaInicio !== turno.fechaFin) {
+      // Turno que cruza medianoche
+      const fechaInicio = new Date(turno.fechaInicio + 'T00:00:00');
+      const fechaFin = new Date(turno.fechaFin + 'T00:00:00');
+      const fechaInicioStr = fechaInicio.toLocaleDateString('es-ES', {
+        weekday: 'long', day: 'numeric', month: 'long'
+      });
+      const fechaFinStr = fechaFin.toLocaleDateString('es-ES', {
+        weekday: 'short', day: 'numeric', month: 'long'
+      });
+      fechaTexto = `${fechaInicioStr} - ${fechaFinStr}`;
+    } else {
+      // Turno normal o turno legacy con solo 'fecha'
+      const fechaStr = turno.fechaInicio || turno.fecha;
+      if (fechaStr) {
+        const fecha = new Date(fechaStr + 'T00:00:00');
+        fechaTexto = fecha.toLocaleDateString('es-ES', {
+          weekday: 'long', day: 'numeric', month: 'long'
+        });
+      } else {
+        fechaTexto = 'Fecha no disponible';
+      }
+    }
+
     const detalles = [
       trabajo?.nombre || 'Trabajo no encontrado',
-      fecha.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' }),
+      fechaTexto,
       `${turno.horaInicio} - ${turno.horaFin}`
     ];
-    if (turno.tipo === 'delivery') detalles.push(`${turno.numeroPedidos || 0} pedidos`);
+
+    if (turno.tipo === 'delivery') {
+      detalles.push(`${turno.numeroPedidos || 0} pedidos`);
+    }
+
     return detalles;
   };
 
@@ -87,7 +118,7 @@ const Turnos = () => {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
         <div className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center" style={{ backgroundColor: thematicColors?.transparent10 }}>
-          <Calendar className="w-10 h-10" style={{ color: thematicColors?.base }}/>
+          <Calendar className="w-10 h-10" style={{ color: thematicColors?.base }} />
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay turnos registrados</h3>
         <p className="text-gray-500 mb-6 max-w-md mx-auto">Comienza agregando tu primer turno para empezar a gestionar tus ingresos.</p>
@@ -148,26 +179,26 @@ const Turnos = () => {
                 );
               })}
             </TransitionGroup>
-            
+
             {hayMasDias && (
               <div className="relative flex flex-col items-center pt-4 pb-12">
-                <div 
+                <div
                   className="peek-card"
                   style={{ backgroundColor: thematicColors?.transparent5 }}
                 />
-                <GlassButton 
-                  onClick={mostrarMasDias} 
-                  loading={expandiendo} 
-                  variant="primary" 
-                  size="lg" 
+                <GlassButton
+                  onClick={mostrarMasDias}
+                  loading={expandiendo}
+                  variant="primary"
+                  size="lg"
                   icon={Eye}
-                  className="relative z-10" 
+                  className="relative z-10"
                 >
                   Ver {Math.min(DIAS_POR_PAGINA, diasRestantes)} días más
                 </GlassButton>
               </div>
             )}
-            
+
             {!hayMasDias && diasMostrados > DIAS_POR_PAGINA && (
               <div className="flex justify-center py-4">
                 <GlassButton onClick={mostrarMenos} variant="secondary" size="md">
@@ -178,9 +209,9 @@ const Turnos = () => {
           </div>
         )}
       </div>
-      
+
       <ModalTurno isOpen={modalAbierto} onClose={cerrarModal} turno={turnoSeleccionado} />
-      
+
       <AlertaEliminacion
         visible={deleteManager.showDeleteModal}
         onCancel={deleteManager.cancelDeletion}
