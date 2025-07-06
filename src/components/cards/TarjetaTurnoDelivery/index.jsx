@@ -1,10 +1,13 @@
 // src/components/cards/TarjetaTurnoDelivery/index.jsx
 
 import React from 'react';
-import ***REMOVED*** Clock, Package, Car, TrendingUp, Edit2, Trash2, MoreVertical, Truck ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Clock, Package, Car, Edit2, Trash2, MoreVertical, Truck, DollarSign ***REMOVED*** from 'lucide-react';
+import InfoTooltip from '../../ui/InfoTooltip';
 
 const TarjetaTurnoDelivery = (***REMOVED*** turno, trabajo, onEdit, onDelete ***REMOVED***) => ***REMOVED***
   const [menuAbierto, setMenuAbierto] = React.useState(false);
+
+  
 
   // Cerrar menú al hacer clic fuera
   React.useEffect(() => ***REMOVED***
@@ -18,9 +21,9 @@ const TarjetaTurnoDelivery = (***REMOVED*** turno, trabajo, onEdit, onDelete ***
   ***REMOVED***, [menuAbierto]);
 
   const formatearMoneda = (valor) => ***REMOVED***
-    return new Intl.NumberFormat('es-AR', ***REMOVED***
+    return new Intl.NumberFormat('en-AU', ***REMOVED***
       style: 'currency',
-      currency: 'ARS',
+      currency: 'AUD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     ***REMOVED***).format(valor);
@@ -38,9 +41,55 @@ const TarjetaTurnoDelivery = (***REMOVED*** turno, trabajo, onEdit, onDelete ***
     return `$***REMOVED***horas***REMOVED***h $***REMOVED***minutos***REMOVED***min`;
   ***REMOVED***;
 
-  const gananciaBase = turno.gananciaTotal - (turno.propinas || 0);
   const gananciaNeta = turno.gananciaTotal - (turno.gastoCombustible || 0);
-  const promedioPorPedido = turno.numeroPedidos > 0 ? gananciaBase / turno.numeroPedidos : 0;
+  const promedioPorPedido = turno.numeroPedidos > 0 ? turno.gananciaTotal / turno.numeroPedidos : 0;
+
+  // Tooltip con información básica
+  const tooltipContent = (
+    <div className="space-y-2 text-xs text-left max-w-xs">
+      <div className="font-semibold mb-2 border-b border-gray-600 pb-1">
+        Resumen del Turno
+      </div>
+      
+      <div className="space-y-1.5">
+        <div className="flex justify-between gap-4">
+          <span>Duración:</span>
+          <span className="font-semibold">***REMOVED***formatearHoras(turno.horaInicio, turno.horaFin)***REMOVED***</span>
+        </div>
+        
+        ***REMOVED***turno.numeroPedidos > 0 && (
+          <div className="flex justify-between gap-4">
+            <span>Pedidos:</span>
+            <span className="font-semibold">***REMOVED***turno.numeroPedidos***REMOVED***</span>
+          </div>
+        )***REMOVED***
+        
+        ***REMOVED***turno.kilometros > 0 && (
+          <div className="flex justify-between gap-4">
+            <span>Kilómetros:</span>
+            <span className="font-semibold">***REMOVED***turno.kilometros***REMOVED*** km</span>
+          </div>
+        )***REMOVED***
+        
+        <div className="flex justify-between gap-4 border-t border-gray-600 pt-1.5 mt-2">
+          <span className="font-semibold">Ganancia Total:</span>
+          <span className="font-bold">***REMOVED***formatearMoneda(turno.gananciaTotal)***REMOVED***</span>
+        </div>
+        
+        <div className="flex justify-between gap-4">
+          <span className="font-semibold">Ganancia Neta:</span>
+          <span className="font-bold text-base">***REMOVED***formatearMoneda(gananciaNeta)***REMOVED***</span>
+        </div>
+        
+        ***REMOVED***turno.numeroPedidos > 0 && (
+          <div className="flex justify-between gap-4 text-yellow-200">
+            <span>Promedio/pedido:</span>
+            <span>***REMOVED***formatearMoneda(promedioPorPedido)***REMOVED***</span>
+          </div>
+        )***REMOVED***
+      </div>
+    </div>
+  );
 
   return (
     <div className="bg-white rounded-lg p-4">
@@ -61,83 +110,44 @@ const TarjetaTurnoDelivery = (***REMOVED*** turno, trabajo, onEdit, onDelete ***
           <div className="space-y-2">
             ***REMOVED***/* Horario */***REMOVED***
             <div className="flex items-center text-sm text-gray-600">
-              <Clock size=***REMOVED***16***REMOVED*** className="mr-2 text-gray-400" />
+              <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
               <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2 text-gray-300">•</span>
               <span>***REMOVED***formatearHoras(turno.horaInicio, turno.horaFin)***REMOVED***</span>
             </div>
 
             ***REMOVED***/* Estadísticas del turno */***REMOVED***
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              ***REMOVED***turno.numeroPedidos > 0 && (
-                <div className="flex items-center text-gray-600">
-                  <Package size=***REMOVED***14***REMOVED*** className="mr-1 text-blue-500" />
-                  <span>***REMOVED***turno.numeroPedidos***REMOVED*** pedidos</span>
-                </div>
-              )***REMOVED***
-              
-              ***REMOVED***turno.kilometros > 0 && (
-                <div className="flex items-center text-gray-600">
-                  <Car size=***REMOVED***14***REMOVED*** className="mr-1 text-purple-500" />
-                  <span>***REMOVED***turno.kilometros***REMOVED*** km</span>
-                </div>
-              )***REMOVED***
-            </div>
-
-            ***REMOVED***/* Desglose financiero */***REMOVED***
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <div className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Ganancia base:</span>
-                  <span className="font-medium">***REMOVED***formatearMoneda(gananciaBase)***REMOVED***</span>
-                </div>
-                
-                ***REMOVED***turno.propinas > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 flex items-center">
-                      <TrendingUp size=***REMOVED***12***REMOVED*** className="mr-1" />
-                      Propinas:
-                    </span>
-                    <span className="font-medium text-green-600">
-                      +***REMOVED***formatearMoneda(turno.propinas)***REMOVED***
-                    </span>
+            ***REMOVED***(turno.numeroPedidos > 0 || turno.kilometros > 0) && (
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                ***REMOVED***turno.numeroPedidos > 0 && (
+                  <div className="flex items-center">
+                    <Package size=***REMOVED***14***REMOVED*** className="mr-1 text-blue-500" />
+                    <span>***REMOVED***turno.numeroPedidos***REMOVED*** pedidos</span>
                   </div>
                 )***REMOVED***
                 
-                ***REMOVED***turno.gastoCombustible > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Combustible:</span>
-                    <span className="font-medium text-red-600">
-                      -***REMOVED***formatearMoneda(turno.gastoCombustible)***REMOVED***
-                    </span>
+                ***REMOVED***turno.kilometros > 0 && (
+                  <div className="flex items-center">
+                    <Car size=***REMOVED***14***REMOVED*** className="mr-1 text-purple-500" />
+                    <span>***REMOVED***turno.kilometros***REMOVED*** km</span>
                   </div>
                 )***REMOVED***
-                
-                <div className="flex justify-between text-sm pt-2 border-t border-gray-100">
-                  <span className="font-medium text-gray-700">Ganancia neta:</span>
-                  <span className="font-semibold text-green-600">
-                    ***REMOVED***formatearMoneda(gananciaNeta)***REMOVED***
-                  </span>
-                </div>
-              </div>
-
-              ***REMOVED***/* Métricas adicionales */***REMOVED***
-              ***REMOVED***turno.numeroPedidos > 0 && (
-                <div className="mt-2 pt-2 border-t border-gray-100">
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <span>Promedio por pedido:</span>
-                    <span className="font-medium">***REMOVED***formatearMoneda(promedioPorPedido)***REMOVED***</span>
-                  </div>
-                </div>
-              )***REMOVED***
-            </div>
-
-            ***REMOVED***/* Notas */***REMOVED***
-            ***REMOVED***turno.notas && (
-              <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600 italic">
-                ***REMOVED***turno.notas***REMOVED***
               </div>
             )***REMOVED***
+
+            ***REMOVED***/* Ganancia con tooltip */***REMOVED***
+            <div className="flex items-center">
+              <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1 text-green-600" />
+              <span className="text-sm font-semibold text-gray-800">***REMOVED***formatearMoneda(gananciaNeta)***REMOVED***</span>
+              <span className="text-xs text-gray-500 ml-1">total</span>
+              
+              <InfoTooltip 
+                content=***REMOVED***tooltipContent***REMOVED***
+                size="xs"
+                position="top"
+                className="ml-2"
+              />
+            </div>
           </div>
         </div>
 

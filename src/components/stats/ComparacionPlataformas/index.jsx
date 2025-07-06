@@ -17,9 +17,9 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
   ***REMOVED***, [deliveryStats, sortBy]);
 
   const formatCurrency = (amount) => ***REMOVED***
-    return new Intl.NumberFormat('es-AR', ***REMOVED***
+    return new Intl.NumberFormat('en-AU', ***REMOVED***
       style: 'currency',
-      currency: 'ARS',
+      currency: 'AUD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     ***REMOVED***).format(amount);
