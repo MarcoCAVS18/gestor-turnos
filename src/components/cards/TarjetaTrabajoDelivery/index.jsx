@@ -7,6 +7,10 @@ import WorkAvatar from '../../work/WorkAvatar';
 const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, showActions = true ***REMOVED***) => ***REMOVED***
   const [menuAbierto, setMenuAbierto] = React.useState(false);
 
+  const descripcion = trabajo.descripcion && trabajo.descripcion.trim()
+    ? trabajo.descripcion
+    : 'No olvides guardar más información sobre tu trabajo.';
+
   // Cerrar menú al hacer clic fuera
   React.useEffect(() => ***REMOVED***
     const cerrarMenu = (e) => ***REMOVED***
@@ -19,7 +23,7 @@ const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, showAct
   ***REMOVED***, [menuAbierto]);
 
   const getVehicleIcon = (vehiculo) => ***REMOVED***
-    switch(vehiculo) ***REMOVED***
+    switch (vehiculo) ***REMOVED***
       case 'Bicicleta': return <Bike size=***REMOVED***16***REMOVED*** className="text-green-500" />;
       case 'Moto': return <Truck size=***REMOVED***16***REMOVED*** className="text-orange-500" />;
       case 'Auto': return <Car size=***REMOVED***16***REMOVED*** className="text-blue-500" />;
@@ -33,12 +37,12 @@ const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, showAct
       <div className="flex items-start justify-between">
         <div className="flex items-center space-x-3 flex-1">
           ***REMOVED***/* WorkAvatar con colores de la plataforma */***REMOVED***
-          <WorkAvatar 
+          <WorkAvatar
             nombre=***REMOVED***trabajo.nombre***REMOVED***
             color=***REMOVED***trabajo.colorAvatar || '#10b981'***REMOVED***
             size="md"
           />
-          
+
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-gray-900">***REMOVED***trabajo.nombre***REMOVED***</h3>
@@ -46,16 +50,21 @@ const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, showAct
                 Delivery
               </span>
             </div>
-            
+            <div className="flex-1 mt-1">
+              <p className="text-gray-600 text-sm mb-3 leading-relaxed italic">
+                ***REMOVED***descripcion***REMOVED***
+              </p>
+            </div>
+
             ***REMOVED***/* Información del trabajo de delivery */***REMOVED***
-            <div className="mt-2 space-y-1">              
+            <div className="mt-2 space-y-1">
               ***REMOVED***trabajo.vehiculo && (
                 <p className="text-sm text-gray-600 flex items-center gap-1">
                   ***REMOVED***getVehicleIcon(trabajo.vehiculo)***REMOVED***
                   Vehículo: <span className="font-medium">***REMOVED***trabajo.vehiculo***REMOVED***</span>
                 </p>
               )***REMOVED***
-              
+
               <p className="text-sm text-gray-500 italic flex items-center gap-1 mt-2">
                 <Package size=***REMOVED***14***REMOVED*** className="text-gray-400" />
                 Ganancias variables por pedido

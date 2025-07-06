@@ -223,19 +223,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       const afternoonStartMin = ranges.afternoonStart * 60; // ej: 14*60 = 840 (14:00)
       const afternoonEndMin = ranges.afternoonEnd * 60;     // ej: 20*60 = 1200 (20:00)
 
-      console.log('🕐 Calculando pago para turno:', ***REMOVED***
-        horaInicio,
-        horaFin,
-        startMinutes,
-        endMinutes,
-        totalMinutes,
-        cruzaMedianoche,
-        ranges: ***REMOVED***
-          diurno: `$***REMOVED***ranges.dayStart***REMOVED***:00 - $***REMOVED***ranges.dayEnd***REMOVED***:00`,
-          tarde: `$***REMOVED***ranges.afternoonStart***REMOVED***:00 - $***REMOVED***ranges.afternoonEnd***REMOVED***:00`,
-          noche: `$***REMOVED***ranges.nightStart***REMOVED***:00 - 06:00 (next day)`
-        ***REMOVED***
-      ***REMOVED***);
 
       // Calcular minuto por minuto para manejar correctamente los rangos
       for (let minute = startMinutes; minute < endMinutes; minute++) ***REMOVED***
@@ -260,13 +247,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         breakdown[rateType] += ratePerMinute;
       ***REMOVED***
 
-      // Log del breakdown para debugging
-      console.log('💰 Breakdown de pago:', ***REMOVED***
-        diurno: `$***REMOVED***(breakdown.diurno / total * 100).toFixed(1)***REMOVED***% = $$***REMOVED***breakdown.diurno.toFixed(2)***REMOVED***`,
-        tarde: `$***REMOVED***(breakdown.tarde / total * 100).toFixed(1)***REMOVED***% = $$***REMOVED***breakdown.tarde.toFixed(2)***REMOVED***`,
-        noche: `$***REMOVED***(breakdown.noche / total * 100).toFixed(1)***REMOVED***% = $$***REMOVED***breakdown.noche.toFixed(2)***REMOVED***`,
-        total: `$$***REMOVED***total.toFixed(2)***REMOVED***`
-      ***REMOVED***);
+
     ***REMOVED***
 
     const totalWithDiscount = total * (1 - defaultDiscount / 100);
@@ -376,7 +357,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
 
       const shiftData = ***REMOVED***
         ...newShift,
-        tipo: 'delivery', 
+        tipo: 'delivery',
         fechaCreacion: new Date(),
         fechaActualizacion: new Date(),
         numeroPedidos: newShift.numeroPedidos || 0,
@@ -429,6 +410,22 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED*** catch (err) ***REMOVED***
       console.error('Error al eliminar turno de delivery:', err);
       setError('Error al eliminar turno delivery: ' + err.message);
+      throw err;
+    ***REMOVED***
+  ***REMOVED***, [currentUser, getUserSubcollections]);
+
+  // Función para eliminar turnos tradicionales
+  const deleteShift = useCallback(async (id) => ***REMOVED***
+    try ***REMOVED***
+      if (!currentUser) throw new Error('Usuario no autenticado');
+      const subcollections = getUserSubcollections();
+
+      if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
+
+      await deleteDoc(doc(subcollections.turnosRef, id));
+
+    ***REMOVED*** catch (err) ***REMOVED***
+      setError('Error al eliminar turno: ' + err.message);
       throw err;
     ***REMOVED***
   ***REMOVED***, [currentUser, getUserSubcollections]);
@@ -531,7 +528,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           ***REMOVED***
         );
 
-        // Listener para trabajos de delivery (se incorporo tu arreglo)
+        // Listener para trabajos de delivery
         const trabajosDeliveryQuery = query(
           subcollections.trabajosDeliveryRef,
           orderBy('fechaCreacion', 'desc')
@@ -593,7 +590,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
             const fechaB = new Date(b.fechaInicio || b.fecha);
             return fechaB - fechaA;
           ***REMOVED***);
-
 
           setTurnos(turnosData);
           setLoading(false);
@@ -663,10 +659,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     weeklyHoursGoal,
     deliveryEnabled,
 
-    // Funciones de eliminación que faltaban
-    deleteDeliveryShift,
-    deleteShift,
-
     // Funciones CRUD para trabajos tradicionales
     addJob: useCallback(async (newJob) => ***REMOVED***
       try ***REMOVED***
@@ -721,7 +713,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           return;
         ***REMOVED***
         const associatedShifts = turnos.filter(shift => shift.trabajoId === id);
-        setTurnos(prev => prev.filter(shift => shift.trabajoId !== id)); // Actualizacion optimista de la UI
+        setTurnos(prev => prev.filter(shift => shift.trabajoId !== id));
         const deleteShiftPromises = associatedShifts.map(shift =>
           deleteDoc(doc(subcollections.turnosRef, shift.id))
         );
@@ -775,26 +767,12 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       ***REMOVED***
     ***REMOVED***, [currentUser, getUserSubcollections]),
 
-    deleteShift: useCallback(async (id) => ***REMOVED***
-      try ***REMOVED***
-        if (!currentUser) throw new Error('Usuario no autenticado');
-        const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
-        await deleteDoc(doc(subcollections.turnosRef, id));
-      ***REMOVED*** catch (err) ***REMOVED***
-        setError('Error al eliminar turno: ' + err.message);
-        throw err;
-      ***REMOVED***
-    ***REMOVED***, [currentUser, getUserSubcollections]),
+    deleteShift,
 
     // Turnos de delivery
     turnosDelivery,
     addDeliveryShift,
     editDeliveryShift,
-    deleteDeliveryShift,
-
-    deleteShift,
-    deleteDeliveryJob,
     deleteDeliveryShift,
 
     // Funciones de calculo
@@ -832,7 +810,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           deliveryEnabled: newDelivery,
           metaHorasSemanales: newGoal,
         ***REMOVED*** = preferences;
-
 
         // Actualizar estados locales si se proporcionan valores
         if (newColor !== undefined) setPrimaryColor(newColor);

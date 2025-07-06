@@ -1,5 +1,3 @@
-// src/components/dashboard/FavoriteWorksCard/index.jsx
-
 import React from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** BarChart3, ChevronRight ***REMOVED*** from 'lucide-react';
@@ -25,9 +23,11 @@ const FavoriteWorksCard = (***REMOVED*** trabajosFavoritos ***REMOVED***) => ***
           size="sm"
           variant="ghost"
           className="flex items-center gap-1"
-          icon=***REMOVED***ChevronRight***REMOVED***
+          // Pasamos el color del tema al botón
+          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         >
           Ver más
+          <ChevronRight size=***REMOVED***14***REMOVED*** className="-mr-1" />
         </Button>
       </div>
       

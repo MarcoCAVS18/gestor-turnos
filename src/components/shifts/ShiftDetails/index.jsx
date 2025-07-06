@@ -2,6 +2,7 @@ import React from 'react';
 import ***REMOVED*** Clock, DollarSign, Timer ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import InfoTooltip from '../../ui/InfoTooltip'; 
+import ***REMOVED*** determinarTipoTurno, getTipoTurnoLabel ***REMOVED*** from '../../../utils/shiftDetailsUtils';
 
 const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** calculatePayment, shiftRanges ***REMOVED*** = useApp();
@@ -9,56 +10,9 @@ const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***
   // Obtenemos todos los datos necesarios del cálculo
   const ***REMOVED*** total, totalWithDiscount, hours, breakdown ***REMOVED*** = calculatePayment(turno);
 
-  // Función para determinar tipo de turno por rangos
-  const getTipoTurnoByHour = (hora) => ***REMOVED***
-    const ranges = shiftRanges || ***REMOVED***
-      dayStart: 6, dayEnd: 14,
-      afternoonStart: 14, afternoonEnd: 20,
-      nightStart: 20
-    ***REMOVED***;
-
-    if (hora >= ranges.dayStart && hora < ranges.dayEnd) ***REMOVED***
-      return 'Diurno';
-    ***REMOVED*** else if (hora >= ranges.afternoonStart && hora < ranges.afternoonEnd) ***REMOVED***
-      return 'Tarde';
-    ***REMOVED*** else ***REMOVED***
-      return 'Noche';
-    ***REMOVED***
-  ***REMOVED***;
-
-  // Determinar si es un turno mixto
-  const determinarTipoTurno = () => ***REMOVED***
-    if (turno.tipo === 'delivery') return 'Delivery';
-    
-    const [horaInicio, minutoInicio] = turno.horaInicio.split(':').map(Number);
-    const [horaFin, minutoFin] = turno.horaFin.split(':').map(Number);
-    
-    const inicioMinutos = horaInicio * 60 + minutoInicio;
-    let finMinutos = horaFin * 60 + minutoFin;
-    
-    // Si cruza medianoche
-    if (finMinutos <= inicioMinutos) ***REMOVED***
-      finMinutos += 24 * 60;
-    ***REMOVED***
-    
-    const tiposEncontrados = new Set();
-    
-    // Revisar cada hora del turno para ver si cambia de tipo
-    for (let minutos = inicioMinutos; minutos < finMinutos; minutos += 60) ***REMOVED***
-      const horaActual = Math.floor((minutos % (24 * 60)) / 60);
-      const tipo = getTipoTurnoByHour(horaActual);
-      tiposEncontrados.add(tipo);
-    ***REMOVED***
-    
-    // Si hay más de un tipo, es mixto
-    if (tiposEncontrados.size > 1) ***REMOVED***
-      return `Mixto ($***REMOVED***Array.from(tiposEncontrados).join(', ')***REMOVED***)`;
-    ***REMOVED***
-    
-    return Array.from(tiposEncontrados)[0] || 'Noche';
-  ***REMOVED***;
-
-  const tipoTurno = determinarTipoTurno();
+  // ✅ Usar la función centralizada
+  const tipoTurno = determinarTipoTurno(turno, shiftRanges);
+  const labelTipoTurno = getTipoTurnoLabel(tipoTurno);
 
   // Crear el contenido para el tooltip con información detallada por tipo de turno
   const tooltipContent = (
@@ -70,7 +24,7 @@ const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***
       <div className="space-y-1.5">
         <div className="flex justify-between gap-4">
           <span>Tipo de Turno:</span>
-          <span className="font-semibold">***REMOVED***tipoTurno***REMOVED***</span>
+          <span className="font-semibold">***REMOVED***labelTipoTurno***REMOVED***</span>
         </div>
         
         <div className="flex justify-between gap-4">
@@ -143,18 +97,13 @@ const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***
 
   return (
     <div className="space-y-2">
-      ***REMOVED***/* Horario y duración */***REMOVED***
+      ***REMOVED***/* Horario y duración - SIN etiqueta para evitar duplicados */***REMOVED***
       <div className="flex items-center text-sm text-gray-600">
         <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
         <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
         <span className="mx-2 text-gray-300">•</span>
         <Timer size=***REMOVED***14***REMOVED*** className="mr-1" />
         <span>***REMOVED***hours.toFixed(1)***REMOVED***h</span>
-        ***REMOVED***tipoTurno.includes('Mixto') && (
-          <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full">
-            Mixto
-          </span>
-        )***REMOVED***
       </div>
       
       ***REMOVED***/* Ganancia simplificada con tooltip y badges */***REMOVED***
