@@ -1,10 +1,13 @@
 // src/components/cards/TarjetaTurnoDelivery/index.jsx
 
 import React from 'react';
-import { Clock, Package, Car, TrendingUp, Edit2, Trash2, MoreVertical, Truck } from 'lucide-react';
+import { Clock, Package, Car, Edit2, Trash2, MoreVertical, Truck, DollarSign } from 'lucide-react';
+import InfoTooltip from '../../ui/InfoTooltip';
 
 const TarjetaTurnoDelivery = ({ turno, trabajo, onEdit, onDelete }) => {
   const [menuAbierto, setMenuAbierto] = React.useState(false);
+
+  
 
   // Cerrar menú al hacer clic fuera
   React.useEffect(() => {
@@ -18,9 +21,9 @@ const TarjetaTurnoDelivery = ({ turno, trabajo, onEdit, onDelete }) => {
   }, [menuAbierto]);
 
   const formatearMoneda = (valor) => {
-    return new Intl.NumberFormat('es-AR', {
+    return new Intl.NumberFormat('en-AU', {
       style: 'currency',
-      currency: 'ARS',
+      currency: 'AUD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(valor);
@@ -38,9 +41,55 @@ const TarjetaTurnoDelivery = ({ turno, trabajo, onEdit, onDelete }) => {
     return `${horas}h ${minutos}min`;
   };
 
-  const gananciaBase = turno.gananciaTotal - (turno.propinas || 0);
   const gananciaNeta = turno.gananciaTotal - (turno.gastoCombustible || 0);
-  const promedioPorPedido = turno.numeroPedidos > 0 ? gananciaBase / turno.numeroPedidos : 0;
+  const promedioPorPedido = turno.numeroPedidos > 0 ? turno.gananciaTotal / turno.numeroPedidos : 0;
+
+  // Tooltip con información básica
+  const tooltipContent = (
+    <div className="space-y-2 text-xs text-left max-w-xs">
+      <div className="font-semibold mb-2 border-b border-gray-600 pb-1">
+        Resumen del Turno
+      </div>
+      
+      <div className="space-y-1.5">
+        <div className="flex justify-between gap-4">
+          <span>Duración:</span>
+          <span className="font-semibold">{formatearHoras(turno.horaInicio, turno.horaFin)}</span>
+        </div>
+        
+        {turno.numeroPedidos > 0 && (
+          <div className="flex justify-between gap-4">
+            <span>Pedidos:</span>
+            <span className="font-semibold">{turno.numeroPedidos}</span>
+          </div>
+        )}
+        
+        {turno.kilometros > 0 && (
+          <div className="flex justify-between gap-4">
+            <span>Kilómetros:</span>
+            <span className="font-semibold">{turno.kilometros} km</span>
+          </div>
+        )}
+        
+        <div className="flex justify-between gap-4 border-t border-gray-600 pt-1.5 mt-2">
+          <span className="font-semibold">Ganancia Total:</span>
+          <span className="font-bold">{formatearMoneda(turno.gananciaTotal)}</span>
+        </div>
+        
+        <div className="flex justify-between gap-4">
+          <span className="font-semibold">Ganancia Neta:</span>
+          <span className="font-bold text-base">{formatearMoneda(gananciaNeta)}</span>
+        </div>
+        
+        {turno.numeroPedidos > 0 && (
+          <div className="flex justify-between gap-4 text-yellow-200">
+            <span>Promedio/pedido:</span>
+            <span>{formatearMoneda(promedioPorPedido)}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="bg-white rounded-lg p-4">
@@ -61,83 +110,44 @@ const TarjetaTurnoDelivery = ({ turno, trabajo, onEdit, onDelete }) => {
           <div className="space-y-2">
             {/* Horario */}
             <div className="flex items-center text-sm text-gray-600">
-              <Clock size={16} className="mr-2 text-gray-400" />
+              <Clock size={14} className="mr-1.5" />
               <span>{turno.horaInicio} - {turno.horaFin}</span>
-              <span className="mx-2">•</span>
+              <span className="mx-2 text-gray-300">•</span>
               <span>{formatearHoras(turno.horaInicio, turno.horaFin)}</span>
             </div>
 
             {/* Estadísticas del turno */}
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              {turno.numeroPedidos > 0 && (
-                <div className="flex items-center text-gray-600">
-                  <Package size={14} className="mr-1 text-blue-500" />
-                  <span>{turno.numeroPedidos} pedidos</span>
-                </div>
-              )}
-              
-              {turno.kilometros > 0 && (
-                <div className="flex items-center text-gray-600">
-                  <Car size={14} className="mr-1 text-purple-500" />
-                  <span>{turno.kilometros} km</span>
-                </div>
-              )}
-            </div>
-
-            {/* Desglose financiero */}
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <div className="space-y-1">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Ganancia base:</span>
-                  <span className="font-medium">{formatearMoneda(gananciaBase)}</span>
-                </div>
-                
-                {turno.propinas > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600 flex items-center">
-                      <TrendingUp size={12} className="mr-1" />
-                      Propinas:
-                    </span>
-                    <span className="font-medium text-green-600">
-                      +{formatearMoneda(turno.propinas)}
-                    </span>
+            {(turno.numeroPedidos > 0 || turno.kilometros > 0) && (
+              <div className="flex items-center gap-4 text-sm text-gray-600">
+                {turno.numeroPedidos > 0 && (
+                  <div className="flex items-center">
+                    <Package size={14} className="mr-1 text-blue-500" />
+                    <span>{turno.numeroPedidos} pedidos</span>
                   </div>
                 )}
                 
-                {turno.gastoCombustible > 0 && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Combustible:</span>
-                    <span className="font-medium text-red-600">
-                      -{formatearMoneda(turno.gastoCombustible)}
-                    </span>
+                {turno.kilometros > 0 && (
+                  <div className="flex items-center">
+                    <Car size={14} className="mr-1 text-purple-500" />
+                    <span>{turno.kilometros} km</span>
                   </div>
                 )}
-                
-                <div className="flex justify-between text-sm pt-2 border-t border-gray-100">
-                  <span className="font-medium text-gray-700">Ganancia neta:</span>
-                  <span className="font-semibold text-green-600">
-                    {formatearMoneda(gananciaNeta)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Métricas adicionales */}
-              {turno.numeroPedidos > 0 && (
-                <div className="mt-2 pt-2 border-t border-gray-100">
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <span>Promedio por pedido:</span>
-                    <span className="font-medium">{formatearMoneda(promedioPorPedido)}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Notas */}
-            {turno.notas && (
-              <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600 italic">
-                {turno.notas}
               </div>
             )}
+
+            {/* Ganancia con tooltip */}
+            <div className="flex items-center">
+              <DollarSign size={14} className="mr-1 text-green-600" />
+              <span className="text-sm font-semibold text-gray-800">{formatearMoneda(gananciaNeta)}</span>
+              <span className="text-xs text-gray-500 ml-1">total</span>
+              
+              <InfoTooltip 
+                content={tooltipContent}
+                size="xs"
+                position="top"
+                className="ml-2"
+              />
+            </div>
           </div>
         </div>
 

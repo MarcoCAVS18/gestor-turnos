@@ -2,6 +2,7 @@ import React from 'react';
 import { Clock, DollarSign, Timer } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import InfoTooltip from '../../ui/InfoTooltip'; 
+import { determinarTipoTurno, getTipoTurnoLabel } from '../../../utils/shiftDetailsUtils';
 
 const ShiftDetails = ({ turno, trabajo, badges }) => {
   const { calculatePayment, shiftRanges } = useApp();
@@ -9,56 +10,9 @@ const ShiftDetails = ({ turno, trabajo, badges }) => {
   // Obtenemos todos los datos necesarios del cálculo
   const { total, totalWithDiscount, hours, breakdown } = calculatePayment(turno);
 
-  // Función para determinar tipo de turno por rangos
-  const getTipoTurnoByHour = (hora) => {
-    const ranges = shiftRanges || {
-      dayStart: 6, dayEnd: 14,
-      afternoonStart: 14, afternoonEnd: 20,
-      nightStart: 20
-    };
-
-    if (hora >= ranges.dayStart && hora < ranges.dayEnd) {
-      return 'Diurno';
-    } else if (hora >= ranges.afternoonStart && hora < ranges.afternoonEnd) {
-      return 'Tarde';
-    } else {
-      return 'Noche';
-    }
-  };
-
-  // Determinar si es un turno mixto
-  const determinarTipoTurno = () => {
-    if (turno.tipo === 'delivery') return 'Delivery';
-    
-    const [horaInicio, minutoInicio] = turno.horaInicio.split(':').map(Number);
-    const [horaFin, minutoFin] = turno.horaFin.split(':').map(Number);
-    
-    const inicioMinutos = horaInicio * 60 + minutoInicio;
-    let finMinutos = horaFin * 60 + minutoFin;
-    
-    // Si cruza medianoche
-    if (finMinutos <= inicioMinutos) {
-      finMinutos += 24 * 60;
-    }
-    
-    const tiposEncontrados = new Set();
-    
-    // Revisar cada hora del turno para ver si cambia de tipo
-    for (let minutos = inicioMinutos; minutos < finMinutos; minutos += 60) {
-      const horaActual = Math.floor((minutos % (24 * 60)) / 60);
-      const tipo = getTipoTurnoByHour(horaActual);
-      tiposEncontrados.add(tipo);
-    }
-    
-    // Si hay más de un tipo, es mixto
-    if (tiposEncontrados.size > 1) {
-      return `Mixto (${Array.from(tiposEncontrados).join(', ')})`;
-    }
-    
-    return Array.from(tiposEncontrados)[0] || 'Noche';
-  };
-
-  const tipoTurno = determinarTipoTurno();
+  // ✅ Usar la función centralizada
+  const tipoTurno = determinarTipoTurno(turno, shiftRanges);
+  const labelTipoTurno = getTipoTurnoLabel(tipoTurno);
 
   // Crear el contenido para el tooltip con información detallada por tipo de turno
   const tooltipContent = (
@@ -70,7 +24,7 @@ const ShiftDetails = ({ turno, trabajo, badges }) => {
       <div className="space-y-1.5">
         <div className="flex justify-between gap-4">
           <span>Tipo de Turno:</span>
-          <span className="font-semibold">{tipoTurno}</span>
+          <span className="font-semibold">{labelTipoTurno}</span>
         </div>
         
         <div className="flex justify-between gap-4">
@@ -143,18 +97,13 @@ const ShiftDetails = ({ turno, trabajo, badges }) => {
 
   return (
     <div className="space-y-2">
-      {/* Horario y duración */}
+      {/* Horario y duración - SIN etiqueta para evitar duplicados */}
       <div className="flex items-center text-sm text-gray-600">
         <Clock size={14} className="mr-1.5" />
         <span>{turno.horaInicio} - {turno.horaFin}</span>
         <span className="mx-2 text-gray-300">•</span>
         <Timer size={14} className="mr-1" />
         <span>{hours.toFixed(1)}h</span>
-        {tipoTurno.includes('Mixto') && (
-          <span className="ml-2 text-xs bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full">
-            Mixto
-          </span>
-        )}
       </div>
       
       {/* Ganancia simplificada con tooltip y badges */}

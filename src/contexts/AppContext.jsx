@@ -223,19 +223,6 @@ export const AppProvider = ({ children }) => {
       const afternoonStartMin = ranges.afternoonStart * 60; // ej: 14*60 = 840 (14:00)
       const afternoonEndMin = ranges.afternoonEnd * 60;     // ej: 20*60 = 1200 (20:00)
 
-      console.log('🕐 Calculando pago para turno:', {
-        horaInicio,
-        horaFin,
-        startMinutes,
-        endMinutes,
-        totalMinutes,
-        cruzaMedianoche,
-        ranges: {
-          diurno: `${ranges.dayStart}:00 - ${ranges.dayEnd}:00`,
-          tarde: `${ranges.afternoonStart}:00 - ${ranges.afternoonEnd}:00`,
-          noche: `${ranges.nightStart}:00 - 06:00 (next day)`
-        }
-      });
 
       // Calcular minuto por minuto para manejar correctamente los rangos
       for (let minute = startMinutes; minute < endMinutes; minute++) {
@@ -260,13 +247,7 @@ export const AppProvider = ({ children }) => {
         breakdown[rateType] += ratePerMinute;
       }
 
-      // Log del breakdown para debugging
-      console.log('💰 Breakdown de pago:', {
-        diurno: `${(breakdown.diurno / total * 100).toFixed(1)}% = $${breakdown.diurno.toFixed(2)}`,
-        tarde: `${(breakdown.tarde / total * 100).toFixed(1)}% = $${breakdown.tarde.toFixed(2)}`,
-        noche: `${(breakdown.noche / total * 100).toFixed(1)}% = $${breakdown.noche.toFixed(2)}`,
-        total: `$${total.toFixed(2)}`
-      });
+
     }
 
     const totalWithDiscount = total * (1 - defaultDiscount / 100);
@@ -376,7 +357,7 @@ export const AppProvider = ({ children }) => {
 
       const shiftData = {
         ...newShift,
-        tipo: 'delivery', 
+        tipo: 'delivery',
         fechaCreacion: new Date(),
         fechaActualizacion: new Date(),
         numeroPedidos: newShift.numeroPedidos || 0,
@@ -429,6 +410,22 @@ export const AppProvider = ({ children }) => {
     } catch (err) {
       console.error('Error al eliminar turno de delivery:', err);
       setError('Error al eliminar turno delivery: ' + err.message);
+      throw err;
+    }
+  }, [currentUser, getUserSubcollections]);
+
+  // Función para eliminar turnos tradicionales
+  const deleteShift = useCallback(async (id) => {
+    try {
+      if (!currentUser) throw new Error('Usuario no autenticado');
+      const subcollections = getUserSubcollections();
+
+      if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
+
+      await deleteDoc(doc(subcollections.turnosRef, id));
+
+    } catch (err) {
+      setError('Error al eliminar turno: ' + err.message);
       throw err;
     }
   }, [currentUser, getUserSubcollections]);
@@ -531,7 +528,7 @@ export const AppProvider = ({ children }) => {
           }
         );
 
-        // Listener para trabajos de delivery (se incorporo tu arreglo)
+        // Listener para trabajos de delivery
         const trabajosDeliveryQuery = query(
           subcollections.trabajosDeliveryRef,
           orderBy('fechaCreacion', 'desc')
@@ -593,7 +590,6 @@ export const AppProvider = ({ children }) => {
             const fechaB = new Date(b.fechaInicio || b.fecha);
             return fechaB - fechaA;
           });
-
 
           setTurnos(turnosData);
           setLoading(false);
@@ -663,10 +659,6 @@ export const AppProvider = ({ children }) => {
     weeklyHoursGoal,
     deliveryEnabled,
 
-    // Funciones de eliminación que faltaban
-    deleteDeliveryShift,
-    deleteShift,
-
     // Funciones CRUD para trabajos tradicionales
     addJob: useCallback(async (newJob) => {
       try {
@@ -721,7 +713,7 @@ export const AppProvider = ({ children }) => {
           return;
         }
         const associatedShifts = turnos.filter(shift => shift.trabajoId === id);
-        setTurnos(prev => prev.filter(shift => shift.trabajoId !== id)); // Actualizacion optimista de la UI
+        setTurnos(prev => prev.filter(shift => shift.trabajoId !== id));
         const deleteShiftPromises = associatedShifts.map(shift =>
           deleteDoc(doc(subcollections.turnosRef, shift.id))
         );
@@ -775,26 +767,12 @@ export const AppProvider = ({ children }) => {
       }
     }, [currentUser, getUserSubcollections]),
 
-    deleteShift: useCallback(async (id) => {
-      try {
-        if (!currentUser) throw new Error('Usuario no autenticado');
-        const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
-        await deleteDoc(doc(subcollections.turnosRef, id));
-      } catch (err) {
-        setError('Error al eliminar turno: ' + err.message);
-        throw err;
-      }
-    }, [currentUser, getUserSubcollections]),
+    deleteShift,
 
     // Turnos de delivery
     turnosDelivery,
     addDeliveryShift,
     editDeliveryShift,
-    deleteDeliveryShift,
-
-    deleteShift,
-    deleteDeliveryJob,
     deleteDeliveryShift,
 
     // Funciones de calculo
@@ -832,7 +810,6 @@ export const AppProvider = ({ children }) => {
           deliveryEnabled: newDelivery,
           metaHorasSemanales: newGoal,
         } = preferences;
-
 
         // Actualizar estados locales si se proporcionan valores
         if (newColor !== undefined) setPrimaryColor(newColor);

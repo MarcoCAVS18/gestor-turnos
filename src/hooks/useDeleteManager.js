@@ -22,10 +22,11 @@ export const useDeleteManager = (deleteFunction) => {
     
     setDeleting(true);
     try {
-      await deleteFunction(itemToDelete.id);
+      await deleteFunction(itemToDelete);
       setShowDeleteModal(false);
       setItemToDelete(null);
     } catch (error) {
+      console.error('Error en deleteManager:', error);
     } finally {
       setDeleting(false);
     }

@@ -7,6 +7,10 @@ import WorkAvatar from '../../work/WorkAvatar';
 const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, showActions = true }) => {
   const [menuAbierto, setMenuAbierto] = React.useState(false);
 
+  const descripcion = trabajo.descripcion && trabajo.descripcion.trim()
+    ? trabajo.descripcion
+    : 'No olvides guardar más información sobre tu trabajo.';
+
   // Cerrar menú al hacer clic fuera
   React.useEffect(() => {
     const cerrarMenu = (e) => {
@@ -19,7 +23,7 @@ const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, showActions = true 
   }, [menuAbierto]);
 
   const getVehicleIcon = (vehiculo) => {
-    switch(vehiculo) {
+    switch (vehiculo) {
       case 'Bicicleta': return <Bike size={16} className="text-green-500" />;
       case 'Moto': return <Truck size={16} className="text-orange-500" />;
       case 'Auto': return <Car size={16} className="text-blue-500" />;
@@ -33,12 +37,12 @@ const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, showActions = true 
       <div className="flex items-start justify-between">
         <div className="flex items-center space-x-3 flex-1">
           {/* WorkAvatar con colores de la plataforma */}
-          <WorkAvatar 
+          <WorkAvatar
             nombre={trabajo.nombre}
             color={trabajo.colorAvatar || '#10b981'}
             size="md"
           />
-          
+
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-gray-900">{trabajo.nombre}</h3>
@@ -46,16 +50,21 @@ const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, showActions = true 
                 Delivery
               </span>
             </div>
-            
+            <div className="flex-1 mt-1">
+              <p className="text-gray-600 text-sm mb-3 leading-relaxed italic">
+                {descripcion}
+              </p>
+            </div>
+
             {/* Información del trabajo de delivery */}
-            <div className="mt-2 space-y-1">              
+            <div className="mt-2 space-y-1">
               {trabajo.vehiculo && (
                 <p className="text-sm text-gray-600 flex items-center gap-1">
                   {getVehicleIcon(trabajo.vehiculo)}
                   Vehículo: <span className="font-medium">{trabajo.vehiculo}</span>
                 </p>
               )}
-              
+
               <p className="text-sm text-gray-500 italic flex items-center gap-1 mt-2">
                 <Package size={14} className="text-gray-400" />
                 Ganancias variables por pedido

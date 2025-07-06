@@ -9,9 +9,9 @@ const SeguimientoCombustible = ({ deliveryStats }) => {
   const { thematicColors } = useApp();
 
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('es-AR', {
+    return new Intl.NumberFormat('en-AU', {
       style: 'currency',
-      currency: 'ARS',
+      currency: 'AUD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
