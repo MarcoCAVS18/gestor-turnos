@@ -83,7 +83,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
     try ***REMOVED***
       setLoading(true);
 
-      // NUEVO: Si fechaInicial está disponible y no hay turno (es nuevo), usar fechaInicial
+      // Si fechaInicial está disponible y no hay turno (es nuevo), usar fechaInicial
       let datosFinales = ***REMOVED*** ...datosTurno ***REMOVED***;
       
       if (fechaInicial && !turno) ***REMOVED***
@@ -183,7 +183,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
                   • Delivery
                 </span>
               )***REMOVED***
-              ***REMOVED***/* NUEVO: Mostrar fecha si viene del calendario */***REMOVED***
+              ***REMOVED***/* Mostrar fecha si viene del calendario */***REMOVED***
               ***REMOVED***fechaInicial && !turno && (
                 <span className="text-sm font-normal text-gray-600 ml-2 block">
                   ***REMOVED***fechaInicial instanceof Date 
@@ -229,7 +229,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
               thematicColors=***REMOVED***thematicColors***REMOVED***
               isMobile=***REMOVED***isMobile***REMOVED***
               loading=***REMOVED***loading***REMOVED***
-              fechaInicial=***REMOVED***fechaInicial***REMOVED*** // NUEVO: Pasar fecha inicial
+              fechaInicial=***REMOVED***fechaInicial***REMOVED*** 
             />
           ) : (
             <TurnoForm
@@ -242,7 +242,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
               thematicColors=***REMOVED***thematicColors***REMOVED***
               isMobile=***REMOVED***isMobile***REMOVED***
               loading=***REMOVED***loading***REMOVED***
-              fechaInicial=***REMOVED***fechaInicial***REMOVED*** // NUEVO: Pasar fecha inicial
+              fechaInicial=***REMOVED***fechaInicial***REMOVED*** 
             />
           )***REMOVED***
         </div>

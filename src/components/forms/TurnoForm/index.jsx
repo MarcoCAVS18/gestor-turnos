@@ -15,7 +15,7 @@ const TurnoForm = (***REMOVED***
   onTrabajoChange,
   isMobile,
   loading,
-  fechaInicial // NUEVO: Recibir fecha inicial del calendario
+  fechaInicial 
 ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
@@ -48,7 +48,6 @@ const TurnoForm = (***REMOVED***
         notas: turno.notas || '',
       ***REMOVED***);
     ***REMOVED*** else if (fechaInicial) ***REMOVED***
-      // NUEVO: Pre-llenar la fecha cuando viene del calendario
       let fechaStr;
       if (fechaInicial instanceof Date) ***REMOVED***
         const year = fechaInicial.getFullYear();
@@ -126,7 +125,7 @@ const TurnoForm = (***REMOVED***
       horaFin: formData.horaFin,
       trabajoId: formData.trabajoSeleccionado,
       notas: formData.notas.trim(),
-      cruzaMedianoche: cruzaMedianoche, // NUEVO: Incluir esta propiedad
+      cruzaMedianoche: cruzaMedianoche,
     ***REMOVED***;
 
     await onSubmit(datosTurno);

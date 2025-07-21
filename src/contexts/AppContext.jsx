@@ -357,7 +357,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         throw new Error('No se pudieron obtener las referencias de la colección');
       ***REMOVED***
 
-      // NUEVO: Calcular fechaFin automáticamente si no se proporciona
+      // Calcular fechaFin automáticamente si no se proporciona
       let fechaFin = newShift.fechaFin;
       if (!fechaFin && newShift.cruzaMedianoche) ***REMOVED***
         const fechaInicio = new Date(newShift.fechaInicio + 'T00:00:00');
@@ -382,7 +382,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         gastoCombustible: newShift.gastoCombustible || 0,
         gananciaBase: (newShift.gananciaTotal || 0) - (newShift.propinas || 0),
         gananciaNeta: (newShift.gananciaTotal || 0) - (newShift.gastoCombustible || 0),
-        // NUEVO: Campo para identificar turnos nocturnos
         cruzaMedianoche: newShift.cruzaMedianoche || false
       ***REMOVED***;
 
@@ -402,7 +401,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       const subcollections = getUserSubcollections();
       if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
-      // NUEVO: Calcular fechaFin automáticamente si no se proporciona
+      // Calcular fechaFin automáticamente si no se proporciona
       let fechaFin = updatedData.fechaFin;
       if (!fechaFin && updatedData.cruzaMedianoche) ***REMOVED***
         const fechaInicio = new Date((updatedData.fechaInicio || updatedData.fecha) + 'T00:00:00');
@@ -460,7 +459,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         (newShift.horaInicio && newShift.horaFin && 
          newShift.horaInicio.split(':')[0] > newShift.horaFin.split(':')[0]);
 
-      // NUEVO: Usar fechaFin proporcionada o calcularla
+      // Usar fechaFin proporcionada o calcularla
       let fechaFin = newShift.fechaFin;
       if (!fechaFin && cruzaMedianoche) ***REMOVED***
         const fechaInicio = new Date(newShift.fechaInicio + 'T00:00:00');
@@ -500,7 +499,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         (updatedData.horaInicio && updatedData.horaFin && 
          updatedData.horaInicio.split(':')[0] > updatedData.horaFin.split(':')[0]);
 
-      // NUEVO: Usar fechaFin proporcionada o calcularla
+      // Usar fechaFin proporcionada o calcularla
       let fechaFin = updatedData.fechaFin;
       if (!fechaFin && cruzaMedianoche) ***REMOVED***
         const fechaInicio = new Date(updatedData.fechaInicio + 'T00:00:00');
