@@ -1,4 +1,4 @@
-// src/components/calendar/CalendarDaySummary/index.jsx 
+// src/components/calendar/CalendarDaySummary/index.jsx
 
 import React from 'react';
 import ***REMOVED*** PlusCircle, Calendar, Moon, Sun ***REMOVED*** from 'lucide-react';
@@ -65,7 +65,7 @@ const CalendarDaySummary = (***REMOVED***
   const turnosValidos = Array.isArray(turnos) ? turnos : [];
   const totalDia = calcularTotalDia(turnosValidos);
 
-  // NUEVO: Agrupar turnos por tipo (normales vs nocturnos)
+  // Agrupar turnos por tipo (normales vs nocturnos)
   const turnosAgrupados = turnosValidos.reduce((grupos, turno) => ***REMOVED***
     const tipoTurno = obtenerTipoTurnoEnFecha(turno, fechaSeleccionada);
     
@@ -80,6 +80,13 @@ const CalendarDaySummary = (***REMOVED***
     return grupos;
   ***REMOVED***, ***REMOVED*** completos: [], inicianHoy: [], terminanHoy: [] ***REMOVED***);
 
+  // NUEVO: Función mejorada para manejar el click de nuevo turno
+  const handleNuevoTurno = () => ***REMOVED***
+    // Convertir fechaSeleccionada (string) a Date object
+    const fechaDate = new Date(fechaSeleccionada + 'T12:00:00');
+    onNuevoTurno(fechaDate);
+  ***REMOVED***;
+
   return (
     <div className="mt-6">
       <div className="flex justify-between items-center mb-3">
@@ -87,7 +94,7 @@ const CalendarDaySummary = (***REMOVED***
           Turnos del día seleccionado
         </h3>
         <Button
-          onClick=***REMOVED***() => onNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
+          onClick=***REMOVED***handleNuevoTurno***REMOVED***
           size="sm"
           className="flex items-center gap-1"
           icon=***REMOVED***PlusCircle***REMOVED***
@@ -265,7 +272,7 @@ const CalendarDaySummary = (***REMOVED***
           <Calendar size=***REMOVED***48***REMOVED*** className="mx-auto mb-4 text-gray-300" />
           <p className="text-gray-500 mb-4">No hay turnos para esta fecha</p>
           <Button
-            onClick=***REMOVED***() => onNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
+            onClick=***REMOVED***handleNuevoTurno***REMOVED***
             className="flex items-center gap-2"
             icon=***REMOVED***PlusCircle***REMOVED***
             themeColor=***REMOVED***thematicColors?.base***REMOVED***
