@@ -21,6 +21,64 @@ body ***REMOVED***
   ***REMOVED***
 ***REMOVED***
 
+/* Agregar esto a src/index.css o crear un archivo separado */
+
+/* Remover fondo gris de todos los inputs */
+input, 
+select, 
+textarea ***REMOVED***
+  background-color: white !important;
+  border: 1px solid #d1d5db; /* gray-300 */
+***REMOVED***
+
+input:focus, 
+select:focus, 
+textarea:focus ***REMOVED***
+  background-color: white !important;
+  outline: none;
+  border-color: transparent;
+  box-shadow: 0 0 0 2px var(--tw-ring-color, #EC4899);
+***REMOVED***
+
+/* Específico para inputs en modales */
+.modal input,
+.modal select,
+.modal textarea ***REMOVED***
+  background-color: white !important;
+  border: 1px solid #d1d5db;
+***REMOVED***
+
+/* Para inputs de tiempo y fecha */
+input[type="time"],
+input[type="date"] ***REMOVED***
+  background-color: white !important;
+  color: #374151; /* gray-700 */
+***REMOVED***
+
+input[type="time"]:focus,
+input[type="date"]:focus ***REMOVED***
+  background-color: white !important;
+***REMOVED***
+
+/* Arreglar scroll horizontal en modales */
+.modal-content ***REMOVED***
+  max-width: 100%;
+  overflow-x: hidden;
+***REMOVED***
+
+/* Específico para grids en modales pequeños */
+@media (max-width: 640px) ***REMOVED***
+  .grid-cols-2 ***REMOVED***
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  ***REMOVED***
+  
+  .grid-cols-3 ***REMOVED***
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  ***REMOVED***
+***REMOVED***
+
 
 /* Optimizaciones para formularios móviles */
 @media (max-width: 767px) ***REMOVED***

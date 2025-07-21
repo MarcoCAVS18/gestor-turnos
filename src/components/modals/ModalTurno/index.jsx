@@ -1,4 +1,4 @@
-// src/components/modals/ModalTurno/index.jsx
+// src/components/modals/ModalTurno/index.jsx - CORREGIDO
 
 import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
@@ -118,24 +118,24 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
 
   if (!isOpen) return null;
 
-  // Configuración del modal optimizada
+  // Configuración del modal optimizada para evitar scroll horizontal
   const modalConfig = ***REMOVED***
     mobileFullScreen: isMobile,
-    size: isMobile ? 'full' : 'lg',
+    size: isMobile ? 'full' : 'md', // Cambio de 'lg' a 'md' para evitar desbordamiento
     zIndex: 9999
   ***REMOVED***;
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-hidden"
       style=***REMOVED******REMOVED*** zIndex: modalConfig.zIndex ***REMOVED******REMOVED***
     >
       <div
         className=***REMOVED***`
-          bg-white shadow-2xl w-full relative
+          bg-white shadow-2xl relative
           $***REMOVED***isMobile
-            ? 'h-full max-w-none rounded-none'
-            : 'max-w-lg max-h-[90vh] rounded-xl'
+            ? 'w-full h-full max-w-none rounded-none'
+            : 'w-full max-w-md max-h-[90vh] rounded-xl mx-4' // Añadido mx-4 para margen
           ***REMOVED***
           $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'***REMOVED***
         `***REMOVED***
@@ -151,9 +151,9 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
             borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
           ***REMOVED******REMOVED***
         >
-          <div className="flex-1 pr-4">
+          <div className="flex-1 pr-4 min-w-0"> ***REMOVED***/* Añadido min-w-0 para truncar */***REMOVED***
             <h2
-              className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
+              className=***REMOVED***`font-semibold truncate $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
               style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
             >
               ***REMOVED***turno ? 'Editar Turno' : 'Nuevo Turno'***REMOVED***
@@ -185,7 +185,8 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
 
         ***REMOVED***/* Content con scroll optimizado */***REMOVED***
         <div className=***REMOVED***`
-          $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'***REMOVED***
+          $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4 overflow-y-auto'***REMOVED***
+          $***REMOVED***!isMobile ? 'max-h-[calc(90vh-120px)]' : ''***REMOVED*** // Limitamos altura en desktop
         `***REMOVED***>
           ***REMOVED***formularioTipo === 'delivery' ? (
             <TurnoDeliveryForm
