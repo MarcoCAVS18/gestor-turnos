@@ -1,4 +1,4 @@
-// src/components/modals/ModalTurno/index.jsx
+// src/components/modals/ModalTurno/index.jsx - CORREGIDO
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { X } from 'lucide-react';
@@ -118,24 +118,24 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
 
   if (!isOpen) return null;
 
-  // Configuración del modal optimizada
+  // Configuración del modal optimizada para evitar scroll horizontal
   const modalConfig = {
     mobileFullScreen: isMobile,
-    size: isMobile ? 'full' : 'lg',
+    size: isMobile ? 'full' : 'md', // Cambio de 'lg' a 'md' para evitar desbordamiento
     zIndex: 9999
   };
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-hidden"
       style={{ zIndex: modalConfig.zIndex }}
     >
       <div
         className={`
-          bg-white shadow-2xl w-full relative
+          bg-white shadow-2xl relative
           ${isMobile
-            ? 'h-full max-w-none rounded-none'
-            : 'max-w-lg max-h-[90vh] rounded-xl'
+            ? 'w-full h-full max-w-none rounded-none'
+            : 'w-full max-w-md max-h-[90vh] rounded-xl mx-4' // Añadido mx-4 para margen
           }
           ${isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'}
         `}
@@ -151,9 +151,9 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
             borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
           }}
         >
-          <div className="flex-1 pr-4">
+          <div className="flex-1 pr-4 min-w-0"> {/* Añadido min-w-0 para truncar */}
             <h2
-              className={`font-semibold ${isMobile ? 'text-lg' : 'text-xl'}`}
+              className={`font-semibold truncate ${isMobile ? 'text-lg' : 'text-xl'}`}
               style={{ color: thematicColors?.base || '#EC4899' }}
             >
               {turno ? 'Editar Turno' : 'Nuevo Turno'}
@@ -185,7 +185,8 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
 
         {/* Content con scroll optimizado */}
         <div className={`
-          ${isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'}
+          ${isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4 overflow-y-auto'}
+          ${!isMobile ? 'max-h-[calc(90vh-120px)]' : ''} // Limitamos altura en desktop
         `}>
           {formularioTipo === 'delivery' ? (
             <TurnoDeliveryForm

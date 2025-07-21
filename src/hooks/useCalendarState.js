@@ -29,7 +29,7 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => {
     return () => clearInterval(intervalo);
   }, [fechaActual]);
 
-  // Obtener días del mes actual
+  // FUNCIÓN ACTUALIZADA: Obtener días del mes considerando turnos nocturnos
   const obtenerDiasDelMes = () => {
     const primerDia = crearFechaLocal(anioActual, mesActual, 1);
     const ultimoDia = crearFechaLocal(anioActual, mesActual + 1, 0);
@@ -49,6 +49,7 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => {
         mesActual: false,
         tieneTurnos: turnosDelDia.length > 0,
         turnosDelDia
+        // Removemos tieneNocturnos para mantener compatibilidad
       });
     }
 
@@ -63,6 +64,7 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => {
         tieneTurnos: turnosDelDia.length > 0,
         turnosDelDia,
         esHoy: fechaEsHoy(fecha, fechaActual)
+        // Removemos tieneNocturnos para mantener compatibilidad
       });
     }
 
@@ -77,11 +79,14 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => {
         mesActual: false,
         tieneTurnos: turnosDelDia.length > 0,
         turnosDelDia
+        // Removemos tieneNocturnos para mantener compatibilidad
       });
     }
 
     return dias;
   };
+
+  // Removemos la función verificarTurnosNocturnos para simplificar y mantener compatibilidad
 
   // Handlers
   const cambiarMes = (incremento) => {
