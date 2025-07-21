@@ -22,7 +22,7 @@ export const obtenerTurnosMes = (turnos, anioActual, mesActual) => ***REMOVED***
   const primerDiaStr = fechaLocalAISO(primerDia);
   const ultimoDiaStr = fechaLocalAISO(ultimoDia);
   
-  // NUEVO: Filtrar turnos que ocurren en el mes (considerando turnos nocturnos)
+  // Filtrar turnos que ocurren en el mes (considerando turnos nocturnos)
   return turnos.filter(turno => ***REMOVED***
     // Fecha principal del turno
     const fechaPrincipal = turno.fechaInicio || turno.fecha;
@@ -50,7 +50,7 @@ export const verificarTurnosEnFecha = (fecha, turnos) => ***REMOVED***
       return true;
     ***REMOVED***
     
-    // NUEVO: Verificar fecha de fin para turnos nocturnos
+    // Verificar fecha de fin para turnos nocturnos
     if (turno.fechaFin && turno.fechaFin !== fechaPrincipal && turno.fechaFin === fechaStr) ***REMOVED***
       return true;
     ***REMOVED***
@@ -59,7 +59,7 @@ export const verificarTurnosEnFecha = (fecha, turnos) => ***REMOVED***
   ***REMOVED***);
 ***REMOVED***;
 
-// NUEVA FUNCIÓN: Obtener turnos de un día específico (incluyendo nocturnos)
+// Obtener turnos de un día específico (incluyendo nocturnos)
 export const obtenerTurnosDelDia = (fecha, turnos) => ***REMOVED***
   const fechaStr = fechaLocalAISO(fecha);
   
@@ -79,7 +79,7 @@ export const obtenerTurnosDelDia = (fecha, turnos) => ***REMOVED***
   ***REMOVED***);
 ***REMOVED***;
 
-// NUEVA FUNCIÓN: Obtener colores considerando turnos nocturnos
+// Obtener colores considerando turnos nocturnos
 export const obtenerColoresTrabajos = (turnosDelDia, trabajos) => ***REMOVED***
   const coloresUnicos = new Set();
   
@@ -98,7 +98,7 @@ export const obtenerColoresTrabajos = (turnosDelDia, trabajos) => ***REMOVED***
   return Array.from(coloresUnicos).slice(0, 3);
 ***REMOVED***;
 
-// NUEVA FUNCIÓN: Determinar el tipo de turno en una fecha específica
+// Determinar el tipo de turno en una fecha específica
 export const obtenerTipoTurnoEnFecha = (turno, fechaStr) => ***REMOVED***
   const fechaPrincipal = turno.fechaInicio || turno.fecha;
   
@@ -118,7 +118,7 @@ export const obtenerTipoTurnoEnFecha = (turno, fechaStr) => ***REMOVED***
   return 'normal';
 ***REMOVED***;
 
-// NUEVA FUNCIÓN: Formatear la información del turno para mostrar en el calendario
+// Formatear la información del turno para mostrar en el calendario
 export const formatearInfoTurnoParaCalendario = (turno, fechaStr, trabajo) => ***REMOVED***
   const tipoTurno = obtenerTipoTurnoEnFecha(turno, fechaStr);
   

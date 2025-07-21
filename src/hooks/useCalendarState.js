@@ -39,7 +39,7 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => ***REMOVED***
         return true;
       ***REMOVED***
       
-      // NUEVO: Verificar si es un turno nocturno que termina en esta fecha
+      // Verificar si es un turno nocturno que termina en esta fecha
       const esNocturno = turno.cruzaMedianoche || 
         (turno.horaInicio && turno.horaFin && 
          turno.horaInicio.split(':')[0] > turno.horaFin.split(':')[0]);

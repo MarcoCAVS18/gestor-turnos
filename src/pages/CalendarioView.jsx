@@ -43,9 +43,9 @@ const CalendarioView = () => ***REMOVED***
     setFechaSeleccionada(fechaStr);
   ***REMOVED***;
 
-  // NUEVO: Función mejorada para abrir modal con fecha
+  // Función mejorada para abrir modal con fecha
   const abrirModalNuevoTurno = (fecha) => ***REMOVED***
-    setFechaInicialModal(fecha); // Guardar la fecha Date object
+    setFechaInicialModal(fecha); 
     setModalAbierto(true);
   ***REMOVED***;
 
