@@ -60,6 +60,37 @@ const CalendarDaySummary = (***REMOVED***
     return trabajo;
   ***REMOVED***;
 
+  // Calcular fecha de finalización correcta para turnos nocturnos
+  const calcularFechaFinalizacion = (turno, fechaSeleccionada) => ***REMOVED***
+    // Si el turno tiene fechaFin explícita, usarla
+    if (turno.fechaFin && turno.fechaFin !== (turno.fechaInicio || turno.fecha)) ***REMOVED***
+      return new Date(turno.fechaFin + 'T00:00:00');
+    ***REMOVED***
+    
+    // Si es un turno nocturno pero no tiene fechaFin, calcularla
+    const esNocturno = turno.cruzaMedianoche || 
+      (turno.horaInicio && turno.horaFin && 
+       turno.horaInicio.split(':')[0] > turno.horaFin.split(':')[0]);
+    
+    if (esNocturno) ***REMOVED***
+      // Si el turno inicia en la fecha seleccionada, termina al día siguiente
+      const fechaInicioTurno = turno.fechaInicio || turno.fecha; // Renombrado
+      if (fechaInicioTurno === fechaSeleccionada) ***REMOVED***
+        const fechaFin = new Date(fechaSeleccionada + 'T00:00:00');
+        fechaFin.setDate(fechaFin.getDate() + 1);
+        return fechaFin;
+      ***REMOVED***
+      
+      // Si el turno termina en la fecha seleccionada, empezó el día anterior
+      const fechaInicioCalculada = new Date(fechaSeleccionada + 'T00:00:00'); // Renombrado
+      fechaInicioCalculada.setDate(fechaInicioCalculada.getDate() - 1);
+      return new Date(fechaSeleccionada + 'T00:00:00');
+    ***REMOVED***
+    
+    // Para turnos normales, usar la misma fecha
+    return new Date(fechaSeleccionada + 'T00:00:00');
+  ***REMOVED***;
+
   if (!fechaSeleccionada) return null;
 
   const turnosValidos = Array.isArray(turnos) ? turnos : [];
@@ -80,7 +111,7 @@ const CalendarDaySummary = (***REMOVED***
     return grupos;
   ***REMOVED***, ***REMOVED*** completos: [], inicianHoy: [], terminanHoy: [] ***REMOVED***);
 
-  // NUEVO: Función mejorada para manejar el click de nuevo turno
+  // Función mejorada para manejar el click de nuevo turno
   const handleNuevoTurno = () => ***REMOVED***
     // Convertir fechaSeleccionada (string) a Date object
     const fechaDate = new Date(fechaSeleccionada + 'T12:00:00');
@@ -132,13 +163,17 @@ const CalendarDaySummary = (***REMOVED***
                     const trabajo = obtenerTrabajo(turno.trabajoId);
                     if (!trabajo) return null;
 
+                    // Calcular la fecha de inicio correcta
+                    const fechaInicio = new Date(fechaSeleccionada + 'T00:00:00');
+                    fechaInicio.setDate(fechaInicio.getDate() - 1);
+
                     return (
                       <div key=***REMOVED***turno.id***REMOVED*** className="border-l-2 border-blue-300 pl-3">
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium text-sm">***REMOVED***trabajo.nombre***REMOVED***</p>
                             <p className="text-xs text-gray-600">
-                              Empezó: ***REMOVED***new Date(turno.fechaInicio + 'T00:00:00').toLocaleDateString('es-ES', ***REMOVED*** 
+                              Empezó: ***REMOVED***fechaInicio.toLocaleDateString('es-ES', ***REMOVED*** 
                                 weekday: 'short', day: 'numeric', month: 'short' 
                               ***REMOVED***)***REMOVED*** ***REMOVED***turno.horaInicio***REMOVED*** - Termina: ***REMOVED***turno.horaFin***REMOVED***
                             </p>
@@ -228,13 +263,16 @@ const CalendarDaySummary = (***REMOVED***
                     const trabajo = obtenerTrabajo(turno.trabajoId);
                     if (!trabajo) return null;
 
+                    // Calcular la fecha de finalización correcta
+                    const fechaFinalizacion = calcularFechaFinalizacion(turno, fechaSeleccionada);
+
                     return (
                       <div key=***REMOVED***turno.id***REMOVED*** className="border-l-2 border-purple-300 pl-3">
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium text-sm">***REMOVED***trabajo.nombre***REMOVED***</p>
                             <p className="text-xs text-gray-600">
-                              Inicia: ***REMOVED***turno.horaInicio***REMOVED*** - Termina: ***REMOVED***new Date(turno.fechaFin + 'T00:00:00').toLocaleDateString('es-ES', ***REMOVED*** 
+                              Inicia: ***REMOVED***turno.horaInicio***REMOVED*** - Termina: ***REMOVED***fechaFinalizacion.toLocaleDateString('es-ES', ***REMOVED*** 
                                 weekday: 'short', day: 'numeric', month: 'short' 
                               ***REMOVED***)***REMOVED*** ***REMOVED***turno.horaFin***REMOVED***
                             </p>
