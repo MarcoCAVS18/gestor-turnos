@@ -1,4 +1,4 @@
-// src/components/modals/ModalTurno/index.jsx - CORREGIDO
+// src/components/modals/ModalTurno/index.jsx
 
 import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
@@ -6,7 +6,7 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import TurnoForm from '../../forms/TurnoForm';
 import TurnoDeliveryForm from '../../forms/TurnoDeliveryForm';
 
-const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED***) => ***REMOVED***
+const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicial ***REMOVED***) => ***REMOVED***
   const ***REMOVED***
     addShift,
     editShift,
@@ -83,17 +83,38 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
     try ***REMOVED***
       setLoading(true);
 
+      // NUEVO: Si fechaInicial está disponible y no hay turno (es nuevo), usar fechaInicial
+      let datosFinales = ***REMOVED*** ...datosTurno ***REMOVED***;
+      
+      if (fechaInicial && !turno) ***REMOVED***
+        // Convertir fechaInicial a string formato YYYY-MM-DD si es Date
+        let fechaStr;
+        if (fechaInicial instanceof Date) ***REMOVED***
+          const year = fechaInicial.getFullYear();
+          const month = String(fechaInicial.getMonth() + 1).padStart(2, '0');
+          const day = String(fechaInicial.getDate()).padStart(2, '0');
+          fechaStr = `$***REMOVED***year***REMOVED***-$***REMOVED***month***REMOVED***-$***REMOVED***day***REMOVED***`;
+        ***REMOVED*** else ***REMOVED***
+          fechaStr = fechaInicial;
+        ***REMOVED***
+        
+        // Pre-llenar la fecha si no está definida en los datos del turno
+        if (!datosFinales.fechaInicio && !datosFinales.fecha) ***REMOVED***
+          datosFinales.fechaInicio = fechaStr;
+        ***REMOVED***
+      ***REMOVED***
+
       if (formularioTipo === 'delivery') ***REMOVED***
         if (turno) ***REMOVED***
-          await editDeliveryShift(turno.id, datosTurno);
+          await editDeliveryShift(turno.id, datosFinales);
         ***REMOVED*** else ***REMOVED***
-          await addDeliveryShift(datosTurno);
+          await addDeliveryShift(datosFinales);
         ***REMOVED***
       ***REMOVED*** else ***REMOVED***
         if (turno) ***REMOVED***
-          await editShift(turno.id, datosTurno);
+          await editShift(turno.id, datosFinales);
         ***REMOVED*** else ***REMOVED***
-          await addShift(datosTurno);
+          await addShift(datosFinales);
         ***REMOVED***
       ***REMOVED***
 
@@ -121,7 +142,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
   // Configuración del modal optimizada para evitar scroll horizontal
   const modalConfig = ***REMOVED***
     mobileFullScreen: isMobile,
-    size: isMobile ? 'full' : 'md', // Cambio de 'lg' a 'md' para evitar desbordamiento
+    size: isMobile ? 'full' : 'md',
     zIndex: 9999
   ***REMOVED***;
 
@@ -135,7 +156,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
           bg-white shadow-2xl relative
           $***REMOVED***isMobile
             ? 'w-full h-full max-w-none rounded-none'
-            : 'w-full max-w-md max-h-[90vh] rounded-xl mx-4' // Añadido mx-4 para margen
+            : 'w-full max-w-md max-h-[90vh] rounded-xl mx-4'
           ***REMOVED***
           $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'***REMOVED***
         `***REMOVED***
@@ -151,7 +172,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
             borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
           ***REMOVED******REMOVED***
         >
-          <div className="flex-1 pr-4 min-w-0"> ***REMOVED***/* Añadido min-w-0 para truncar */***REMOVED***
+          <div className="flex-1 pr-4 min-w-0">
             <h2
               className=***REMOVED***`font-semibold truncate $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
               style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
@@ -160,6 +181,15 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
               ***REMOVED***formularioTipo === 'delivery' && (
                 <span className="text-sm font-normal text-gray-600 ml-2">
                   • Delivery
+                </span>
+              )***REMOVED***
+              ***REMOVED***/* NUEVO: Mostrar fecha si viene del calendario */***REMOVED***
+              ***REMOVED***fechaInicial && !turno && (
+                <span className="text-sm font-normal text-gray-600 ml-2 block">
+                  ***REMOVED***fechaInicial instanceof Date 
+                    ? fechaInicial.toLocaleDateString('es-ES', ***REMOVED*** weekday: 'short', day: 'numeric', month: 'short' ***REMOVED***)
+                    : new Date(fechaInicial + 'T00:00:00').toLocaleDateString('es-ES', ***REMOVED*** weekday: 'short', day: 'numeric', month: 'short' ***REMOVED***)
+                  ***REMOVED***
                 </span>
               )***REMOVED***
             </h2>
@@ -186,7 +216,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
         ***REMOVED***/* Content con scroll optimizado */***REMOVED***
         <div className=***REMOVED***`
           $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4 overflow-y-auto'***REMOVED***
-          $***REMOVED***!isMobile ? 'max-h-[calc(90vh-120px)]' : ''***REMOVED*** // Limitamos altura en desktop
+          $***REMOVED***!isMobile ? 'max-h-[calc(90vh-120px)]' : ''***REMOVED***
         `***REMOVED***>
           ***REMOVED***formularioTipo === 'delivery' ? (
             <TurnoDeliveryForm
@@ -199,6 +229,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
               thematicColors=***REMOVED***thematicColors***REMOVED***
               isMobile=***REMOVED***isMobile***REMOVED***
               loading=***REMOVED***loading***REMOVED***
+              fechaInicial=***REMOVED***fechaInicial***REMOVED*** // NUEVO: Pasar fecha inicial
             />
           ) : (
             <TurnoForm
@@ -211,6 +242,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId ***REMOVED**
               thematicColors=***REMOVED***thematicColors***REMOVED***
               isMobile=***REMOVED***isMobile***REMOVED***
               loading=***REMOVED***loading***REMOVED***
+              fechaInicial=***REMOVED***fechaInicial***REMOVED*** // NUEVO: Pasar fecha inicial
             />
           )***REMOVED***
         </div>
