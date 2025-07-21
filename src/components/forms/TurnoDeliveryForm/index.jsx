@@ -86,7 +86,6 @@ const TurnoDeliveryForm = ({
         notas: turno.notas || ''
       });
     } else if (fechaInicial) {
-      // NUEVO: Pre-llenar la fecha cuando viene del calendario
       let fechaStr;
       if (fechaInicial instanceof Date) {
         const year = fechaInicial.getFullYear();

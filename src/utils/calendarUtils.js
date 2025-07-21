@@ -22,7 +22,7 @@ export const obtenerTurnosMes = (turnos, anioActual, mesActual) => {
   const primerDiaStr = fechaLocalAISO(primerDia);
   const ultimoDiaStr = fechaLocalAISO(ultimoDia);
   
-  // NUEVO: Filtrar turnos que ocurren en el mes (considerando turnos nocturnos)
+  // Filtrar turnos que ocurren en el mes (considerando turnos nocturnos)
   return turnos.filter(turno => {
     // Fecha principal del turno
     const fechaPrincipal = turno.fechaInicio || turno.fecha;
@@ -50,7 +50,7 @@ export const verificarTurnosEnFecha = (fecha, turnos) => {
       return true;
     }
     
-    // NUEVO: Verificar fecha de fin para turnos nocturnos
+    // Verificar fecha de fin para turnos nocturnos
     if (turno.fechaFin && turno.fechaFin !== fechaPrincipal && turno.fechaFin === fechaStr) {
       return true;
     }
@@ -59,7 +59,7 @@ export const verificarTurnosEnFecha = (fecha, turnos) => {
   });
 };
 
-// NUEVA FUNCIÓN: Obtener turnos de un día específico (incluyendo nocturnos)
+// Obtener turnos de un día específico (incluyendo nocturnos)
 export const obtenerTurnosDelDia = (fecha, turnos) => {
   const fechaStr = fechaLocalAISO(fecha);
   
@@ -79,7 +79,7 @@ export const obtenerTurnosDelDia = (fecha, turnos) => {
   });
 };
 
-// NUEVA FUNCIÓN: Obtener colores considerando turnos nocturnos
+// Obtener colores considerando turnos nocturnos
 export const obtenerColoresTrabajos = (turnosDelDia, trabajos) => {
   const coloresUnicos = new Set();
   
@@ -98,7 +98,7 @@ export const obtenerColoresTrabajos = (turnosDelDia, trabajos) => {
   return Array.from(coloresUnicos).slice(0, 3);
 };
 
-// NUEVA FUNCIÓN: Determinar el tipo de turno en una fecha específica
+// Determinar el tipo de turno en una fecha específica
 export const obtenerTipoTurnoEnFecha = (turno, fechaStr) => {
   const fechaPrincipal = turno.fechaInicio || turno.fecha;
   
@@ -118,7 +118,7 @@ export const obtenerTipoTurnoEnFecha = (turno, fechaStr) => {
   return 'normal';
 };
 
-// NUEVA FUNCIÓN: Formatear la información del turno para mostrar en el calendario
+// Formatear la información del turno para mostrar en el calendario
 export const formatearInfoTurnoParaCalendario = (turno, fechaStr, trabajo) => {
   const tipoTurno = obtenerTipoTurnoEnFecha(turno, fechaStr);
   

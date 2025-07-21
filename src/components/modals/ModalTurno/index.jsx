@@ -83,7 +83,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
     try {
       setLoading(true);
 
-      // NUEVO: Si fechaInicial está disponible y no hay turno (es nuevo), usar fechaInicial
+      // Si fechaInicial está disponible y no hay turno (es nuevo), usar fechaInicial
       let datosFinales = { ...datosTurno };
       
       if (fechaInicial && !turno) {
@@ -183,7 +183,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
                   • Delivery
                 </span>
               )}
-              {/* NUEVO: Mostrar fecha si viene del calendario */}
+              {/* Mostrar fecha si viene del calendario */}
               {fechaInicial && !turno && (
                 <span className="text-sm font-normal text-gray-600 ml-2 block">
                   {fechaInicial instanceof Date 
@@ -229,7 +229,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
               thematicColors={thematicColors}
               isMobile={isMobile}
               loading={loading}
-              fechaInicial={fechaInicial} // NUEVO: Pasar fecha inicial
+              fechaInicial={fechaInicial} 
             />
           ) : (
             <TurnoForm
@@ -242,7 +242,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
               thematicColors={thematicColors}
               isMobile={isMobile}
               loading={loading}
-              fechaInicial={fechaInicial} // NUEVO: Pasar fecha inicial
+              fechaInicial={fechaInicial} 
             />
           )}
         </div>
