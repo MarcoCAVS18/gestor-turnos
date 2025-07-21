@@ -1,3 +1,5 @@
+// src/components/forms/TurnoForm/index.jsx
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Calendar, Clock, Briefcase, AlertCircle } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
@@ -12,7 +14,8 @@ const TurnoForm = ({
   onCancel, 
   onTrabajoChange,
   isMobile,
-  loading 
+  loading,
+  fechaInicial // NUEVO: Recibir fecha inicial del calendario
 }) => {
   const { thematicColors } = useApp();
   
@@ -38,14 +41,30 @@ const TurnoForm = ({
   useEffect(() => {
     if (turno) {
       setFormData({
-        fecha: turno.fechaInicio || turno.fecha || '', // Soporte para datos antiguos y nuevos
+        fecha: turno.fechaInicio || turno.fecha || '',
         horaInicio: turno.horaInicio || '',
         horaFin: turno.horaFin || '',
         trabajoSeleccionado: turno.trabajoId || '',
         notas: turno.notas || '',
       });
+    } else if (fechaInicial) {
+      // NUEVO: Pre-llenar la fecha cuando viene del calendario
+      let fechaStr;
+      if (fechaInicial instanceof Date) {
+        const year = fechaInicial.getFullYear();
+        const month = String(fechaInicial.getMonth() + 1).padStart(2, '0');
+        const day = String(fechaInicial.getDate()).padStart(2, '0');
+        fechaStr = `${year}-${month}-${day}`;
+      } else {
+        fechaStr = fechaInicial;
+      }
+      
+      setFormData(prev => ({
+        ...prev,
+        fecha: fechaStr
+      }));
     }
-  }, [turno]);
+  }, [turno, fechaInicial]);
 
   useEffect(() => {
     if (trabajoId) {
@@ -84,7 +103,7 @@ const TurnoForm = ({
       end.setDate(end.getDate() + 1);
     }
     let diff = end.getTime() - start.getTime();
-    if (diff < 0) return "0.0"; // Evita duraciones negativas
+    if (diff < 0) return "0.0";
     return (diff / (1000 * 60 * 60)).toFixed(1);
   };
   
@@ -92,6 +111,7 @@ const TurnoForm = ({
     e.preventDefault();
     if (!validarFormulario()) return;
 
+    // Cálculo correcto de fecha de fin para turnos nocturnos
     const fechaInicioObj = new Date(formData.fecha + 'T00:00:00');
     let fechaFinObj = new Date(fechaInicioObj);
     if (cruzaMedianoche) {
@@ -106,6 +126,7 @@ const TurnoForm = ({
       horaFin: formData.horaFin,
       trabajoId: formData.trabajoSeleccionado,
       notas: formData.notas.trim(),
+      cruzaMedianoche: cruzaMedianoche, // NUEVO: Incluir esta propiedad
     };
 
     await onSubmit(datosTurno);
@@ -117,26 +138,64 @@ const TurnoForm = ({
   return (
     <form onSubmit={manejarSubmit} className={`space-y-6 ${isMobile ? 'mobile-form' : ''}`}>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2"><Briefcase size={16} className="inline mr-2" />Trabajo *</label>
-        <select value={formData.trabajoSeleccionado} onChange={handleTrabajoChange} className={`w-full border rounded-lg transition-colors ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'} border-gray-300`} required disabled={!!turno || loading}>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          <Briefcase size={16} className="inline mr-2" />
+          Trabajo *
+        </label>
+        <select 
+          value={formData.trabajoSeleccionado} 
+          onChange={handleTrabajoChange} 
+          className={`w-full border rounded-lg transition-colors ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'} border-gray-300`} 
+          required 
+          disabled={!!turno || loading}
+        >
           <option value="">Seleccionar trabajo</option>
-          {trabajosTradicionales.map(trabajo => (<option key={trabajo.id} value={trabajo.id}>{trabajo.nombre}</option>))}
+          {trabajosTradicionales.map(trabajo => (
+            <option key={trabajo.id} value={trabajo.id}>{trabajo.nombre}</option>
+          ))}
         </select>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2"><Calendar size={16} className="inline mr-2" />Fecha de Inicio *</label>
-        <ThemeInput type="date" value={formData.fecha} onChange={(e) => handleInputChange('fecha', e.target.value)} required themeColor={thematicColors?.base} />
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          <Calendar size={16} className="inline mr-2" />
+          Fecha de Inicio *
+        </label>
+        <ThemeInput 
+          type="date" 
+          value={formData.fecha} 
+          onChange={(e) => handleInputChange('fecha', e.target.value)} 
+          required 
+          themeColor={thematicColors?.base} 
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2"><Clock size={16} className="inline mr-2" />Hora inicio *</label>
-          <ThemeInput type="time" value={formData.horaInicio} onChange={(e) => handleInputChange('horaInicio', e.target.value)} required themeColor={thematicColors?.base} />
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Clock size={16} className="inline mr-2" />
+            Hora inicio *
+          </label>
+          <ThemeInput 
+            type="time" 
+            value={formData.horaInicio} 
+            onChange={(e) => handleInputChange('horaInicio', e.target.value)} 
+            required 
+            themeColor={thematicColors?.base} 
+          />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2"><Clock size={16} className="inline mr-2" />Hora fin *</label>
-          <ThemeInput type="time" value={formData.horaFin} onChange={(e) => handleInputChange('horaFin', e.target.value)} required themeColor={thematicColors?.base} />
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Clock size={16} className="inline mr-2" />
+            Hora fin *
+          </label>
+          <ThemeInput 
+            type="time" 
+            value={formData.horaFin} 
+            onChange={(e) => handleInputChange('horaFin', e.target.value)} 
+            required 
+            themeColor={thematicColors?.base} 
+          />
         </div>
       </div>
       
@@ -145,38 +204,91 @@ const TurnoForm = ({
           <AlertCircle size={16} className="text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
           <div className="text-sm">
             <p className="font-medium text-blue-800">Turno Nocturno Detectado</p>
-            <p className="text-blue-700 mt-1">Este turno finalizará el día siguiente.</p>
+            <p className="text-blue-700 mt-1">
+              Este turno finalizará el día siguiente: {" "}
+              {/* Mostrar la fecha correcta */}
+              {formData.fecha && (() => {
+                const fechaInicio = new Date(formData.fecha + 'T00:00:00');
+                const fechaFin = new Date(fechaInicio);
+                fechaFin.setDate(fechaFin.getDate() + 1);
+                return fechaFin.toLocaleDateString('es-ES', {
+                  weekday: 'long',
+                  day: 'numeric', 
+                  month: 'long'
+                });
+              })()}
+            </p>
           </div>
         </div>
       )}
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">Notas (opcional)</label>
-        <textarea value={formData.notas} onChange={(e) => handleInputChange('notas', e.target.value)} placeholder="Agregar notas sobre el turno..." rows={isMobile ? 4 : 3} className={`w-full border border-gray-300 rounded-lg transition-colors resize-none p-3 text-base`} />
+        <textarea 
+          value={formData.notas} 
+          onChange={(e) => handleInputChange('notas', e.target.value)} 
+          placeholder="Agregar notas sobre el turno..." 
+          rows={isMobile ? 4 : 3} 
+          className={`w-full border border-gray-300 rounded-lg transition-colors resize-none p-3 text-base`} 
+        />
       </div>
 
-      {error && (<div className="p-3 bg-red-50 border border-red-200 rounded-lg"><p className="text-sm text-red-600">{error}</p></div>)}
+      {error && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-600">{error}</p>
+        </div>
+      )}
 
       <div className={`flex pt-4 ${isMobile ? 'flex-col space-y-3' : 'gap-3'}`}>
-        <Button type="button" onClick={onCancel} variant="outline" className={isMobile ? 'w-full py-3' : 'flex-1'} disabled={loading} themeColor={thematicColors?.base}>Cancelar</Button>
-        <Button type="submit" className={isMobile ? 'w-full py-3' : 'flex-1'} loading={loading} themeColor={thematicColors?.base}>{turno ? 'Guardar Cambios' : 'Crear Turno'}</Button>
+        <Button 
+          type="button" 
+          onClick={onCancel} 
+          variant="outline" 
+          className={isMobile ? 'w-full py-3' : 'flex-1'} 
+          disabled={loading} 
+          themeColor={thematicColors?.base}
+        >
+          Cancelar
+        </Button>
+        <Button 
+          type="submit" 
+          className={isMobile ? 'w-full py-3' : 'flex-1'} 
+          loading={loading} 
+          themeColor={thematicColors?.base}
+        >
+          {turno ? 'Guardar Cambios' : 'Crear Turno'}
+        </Button>
       </div>
 
       {horasTrabajadas > 0 && trabajoSeleccionadoInfo && (
-        <div className={`rounded-lg p-4 border-l-4 mt-2`} style={{ borderLeftColor: trabajoSeleccionadoInfo.color || thematicColors?.base, backgroundColor: `${trabajoSeleccionadoInfo.color || thematicColors?.base}1A` }}>
+        <div 
+          className={`rounded-lg p-4 border-l-4 mt-2`} 
+          style={{ 
+            borderLeftColor: trabajoSeleccionadoInfo.color || thematicColors?.base, 
+            backgroundColor: `${trabajoSeleccionadoInfo.color || thematicColors?.base}1A` 
+          }}
+        >
           <div className="space-y-2">
             <div className="flex items-center space-x-3">
-              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: trabajoSeleccionadoInfo.color || thematicColors?.base }} />
+              <div 
+                className="w-4 h-4 rounded-full" 
+                style={{ backgroundColor: trabajoSeleccionadoInfo.color || thematicColors?.base }} 
+              />
               <span className="text-sm font-medium text-gray-700">{trabajoSeleccionadoInfo.nombre}</span>
             </div>
             <div className="flex items-center justify-between text-sm">
               <span className="text-gray-600">Duración:</span>
-              <span className="font-medium">{horasTrabajadas} horas{cruzaMedianoche && <span className="text-purple-600 ml-1">(nocturno)</span>}</span>
+              <span className="font-medium">
+                {horasTrabajadas} horas
+                {cruzaMedianoche && <span className="text-purple-600 ml-1">(nocturno)</span>}
+              </span>
             </div>
             {trabajoSeleccionadoInfo.tarifaBase && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600">Ganancia estimada:</span>
-                <span style={{ color: trabajoSeleccionadoInfo.color || thematicColors?.base }}>${(Number(horasTrabajadas) * trabajoSeleccionadoInfo.tarifaBase).toFixed(2)}</span>
+                <span style={{ color: trabajoSeleccionadoInfo.color || thematicColors?.base }}>
+                  ${(Number(horasTrabajadas) * trabajoSeleccionadoInfo.tarifaBase).toFixed(2)}
+                </span>
               </div>
             )}
           </div>

@@ -1,30 +1,58 @@
 // src/pages/CalendarioView.jsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useApp } from '../contexts/AppContext';
-import { useCalendar } from '../hooks/useCalendar';
 import Calendario from '../components/calendar/Calendario';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ModalTurno from '../components/modals/ModalTurno';
 
 const CalendarioView = () => {
   const { turnosPorFecha, todosLosTrabajos, thematicColors } = useApp();
-  const {
-    fechaSeleccionada,
-    modalAbierto,
-    nuevoTurnoFecha,
-    seleccionarDia,
-    abrirModalNuevoTurno,
-    cerrarModal,
-    formatearFecha
-  } = useCalendar();
+  
+  // Estados para el calendario
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [fechaInicialModal, setFechaInicialModal] = useState(null);
   
   // Validar que tenemos trabajos antes de mostrar funcionalidades
   const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
   
   // Obtener los turnos para la fecha seleccionada
   const turnosSeleccionados = fechaSeleccionada ? turnosPorFecha[fechaSeleccionada] || [] : [];
+  
+  // Función para formatear fecha
+  const formatearFecha = (fechaStr) => {
+    const fecha = new Date(fechaStr + 'T00:00:00');
+    return fecha.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
+  // Función para seleccionar día en el calendario
+  const seleccionarDia = (fecha) => {
+    // Convertir fecha a string formato YYYY-MM-DD
+    const year = fecha.getFullYear();
+    const month = String(fecha.getMonth() + 1).padStart(2, '0');
+    const day = String(fecha.getDate()).padStart(2, '0');
+    const fechaStr = `${year}-${month}-${day}`;
+    
+    setFechaSeleccionada(fechaStr);
+  };
+
+  // NUEVO: Función mejorada para abrir modal con fecha
+  const abrirModalNuevoTurno = (fecha) => {
+    setFechaInicialModal(fecha); // Guardar la fecha Date object
+    setModalAbierto(true);
+  };
+
+  const cerrarModal = () => {
+    setModalAbierto(false);
+    setFechaInicialModal(null);
+  };
   
   // Animaciones
   const calendarVariants = {
@@ -89,7 +117,7 @@ const CalendarioView = () => {
       <ModalTurno 
         isOpen={modalAbierto} 
         onClose={cerrarModal} 
-        fechaInicial={nuevoTurnoFecha}
+        fechaInicial={fechaInicialModal}
       />
     </div>
   );

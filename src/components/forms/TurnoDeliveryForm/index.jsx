@@ -15,7 +15,8 @@ const TurnoDeliveryForm = ({
   onTrabajoChange,
   thematicColors,
   isMobile,
-  loading 
+  loading,
+  fechaInicial
 }) => {
   const { thematicColors: contextColors } = useApp();
   const coloresTemáticos = thematicColors || contextColors;
@@ -36,23 +37,21 @@ const TurnoDeliveryForm = ({
   
   const [error, setError] = useState('');
 
-  // CORRECCIÓN: Filtrar trabajos de delivery correctamente
+  // Filtrar trabajos de delivery correctamente
   const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery' || t.type === 'delivery');
   
-  // NUEVO: También incluir el trabajo seleccionado si no es de delivery pero ya está seleccionado
+  // También incluir el trabajo seleccionado si no es de delivery pero ya está seleccionado
   const trabajosParaSelector = React.useMemo(() => {
-    // Si hay un trabajo seleccionado que no es de delivery, incluirlo
     const trabajoSeleccionadoActual = trabajos.find(t => t.id === formData.trabajoSeleccionado);
     
     if (trabajoSeleccionadoActual && trabajoSeleccionadoActual.tipo !== 'delivery' && trabajoSeleccionadoActual.type !== 'delivery') {
-      // Incluir el trabajo seleccionado aunque no sea de delivery
       return [...trabajosDelivery, trabajoSeleccionadoActual];
     }
     
     return trabajosDelivery;
   }, [trabajosDelivery, trabajos, formData.trabajoSeleccionado]);
 
-  // NUEVO: Detectar si el turno cruza medianoche
+  // Detectar si el turno cruza medianoche
   const cruzaMedianoche = useMemo(() => {
     if (!formData.horaInicio || !formData.horaFin) return false;
     const [hInicio] = formData.horaInicio.split(':').map(Number);
@@ -60,7 +59,7 @@ const TurnoDeliveryForm = ({
     return hFin <= hInicio;
   }, [formData.horaInicio, formData.horaFin]);
 
-  // NUEVO: Calcular fecha de fin automáticamente
+  // Calcular fecha de fin automáticamente
   const fechaFin = useMemo(() => {
     if (!formData.fecha || !cruzaMedianoche) return formData.fecha;
     
@@ -75,7 +74,7 @@ const TurnoDeliveryForm = ({
   useEffect(() => {
     if (turno) {
       setFormData({
-        fecha: turno.fecha || '',
+        fecha: turno.fechaInicio || turno.fecha || '',
         horaInicio: turno.horaInicio || '',
         horaFin: turno.horaFin || '',
         trabajoSeleccionado: turno.trabajoId || '',
@@ -86,10 +85,26 @@ const TurnoDeliveryForm = ({
         gastoCombustible: turno.gastoCombustible?.toString() || '',
         notas: turno.notas || ''
       });
+    } else if (fechaInicial) {
+      // NUEVO: Pre-llenar la fecha cuando viene del calendario
+      let fechaStr;
+      if (fechaInicial instanceof Date) {
+        const year = fechaInicial.getFullYear();
+        const month = String(fechaInicial.getMonth() + 1).padStart(2, '0');
+        const day = String(fechaInicial.getDate()).padStart(2, '0');
+        fechaStr = `${year}-${month}-${day}`;
+      } else {
+        fechaStr = fechaInicial;
+      }
+      
+      setFormData(prev => ({
+        ...prev,
+        fecha: fechaStr
+      }));
     }
-  }, [turno]);
+  }, [turno, fechaInicial]);
 
-  // CORRECCIÓN: Mantener el trabajoId cuando se pasa como prop
+  // Mantener el trabajoId cuando se pasa como prop
   useEffect(() => {
     if (trabajoId && trabajoId) {
       setFormData(prev => ({
@@ -104,14 +119,13 @@ const TurnoDeliveryForm = ({
       ...prev,
       [field]: value
     }));
-    setError(''); // Limpiar error al cambiar datos
+    setError('');
   };
 
   const handleTrabajoChange = (e) => {
     const nuevoTrabajoId = e.target.value;
     handleInputChange('trabajoSeleccionado', nuevoTrabajoId);
     
-    // Notificar al modal sobre el cambio
     if (onTrabajoChange) {
       onTrabajoChange(nuevoTrabajoId);
     }
@@ -135,10 +149,6 @@ const TurnoDeliveryForm = ({
       return false;
     }
     
-    // CORRECCIÓN: Validación mejorada para turnos nocturnos
-    // Ya no validamos que la hora de fin sea mayor que la de inicio
-    // porque puede cruzar medianoche legítimamente
-    
     return true;
   };
 
@@ -147,28 +157,28 @@ const TurnoDeliveryForm = ({
     
     if (!validarFormulario()) return;
 
-    // CORRECCIÓN: Crear datos del turno con fechas correctas
+    // Crear datos del turno con fechas correctas
     const datosTurno = {
-      fecha: formData.fecha, // Fecha de inicio
-      fechaInicio: formData.fecha, // Nueva propiedad para compatibilidad
-      fechaFin: fechaFin, // Fecha de fin (puede ser diferente si cruza medianoche)
+      fecha: formData.fecha,
+      fechaInicio: formData.fecha,
+      fechaFin: fechaFin,
       horaInicio: formData.horaInicio,
       horaFin: formData.horaFin,
       trabajoId: formData.trabajoSeleccionado,
-      tipo: 'delivery', // Asegurar que se marque como delivery
+      tipo: 'delivery',
       numeroPedidos: Number(formData.numeroPedidos) || 0,
       gananciaTotal: Number(formData.gananciaTotal) || 0,
       propinas: Number(formData.propinas) || 0,
       kilometros: Number(formData.kilometros) || 0,
       gastoCombustible: Number(formData.gastoCombustible) || 0,
       notas: formData.notas.trim(),
-      cruzaMedianoche: cruzaMedianoche // Nueva propiedad para identificar turnos nocturnos
+      cruzaMedianoche: cruzaMedianoche
     };
 
     await onSubmit(datosTurno);
   };
 
-  // NUEVO: Función para determinar si mostrar advertencia
+  // Determinar si mostrar advertencia
   const trabajoSeleccionadoInfo = trabajosParaSelector.find(t => t.id === formData.trabajoSeleccionado);
   const esTrabajoNoDelivery = trabajoSeleccionadoInfo && 
     trabajoSeleccionadoInfo.tipo !== 'delivery' && 
@@ -279,11 +289,18 @@ const TurnoDeliveryForm = ({
               <div className="text-sm">
                 <p className="font-medium text-blue-800">Turno Nocturno Detectado</p>
                 <p className="text-blue-700 mt-1">
-                  Este turno finalizará el {new Date(fechaFin + 'T00:00:00').toLocaleDateString('es-ES', {
-                    weekday: 'long',
-                    day: 'numeric', 
-                    month: 'long'
-                  })}.
+                  Este turno finalizará el {" "}
+                  {/* Mostrar la fecha correcta */}
+                  {formData.fecha && (() => {
+                    const fechaInicio = new Date(formData.fecha + 'T00:00:00');
+                    const fechaFin = new Date(fechaInicio);
+                    fechaFin.setDate(fechaFin.getDate() + 1);
+                    return fechaFin.toLocaleDateString('es-ES', {
+                      weekday: 'long',
+                      day: 'numeric', 
+                      month: 'long'
+                    });
+                  })()}
                 </p>
               </div>
             </div>

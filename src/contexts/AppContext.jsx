@@ -1,3 +1,5 @@
+// src/contexts/AppContext.jsx
+
 import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import {
   doc,
@@ -346,7 +348,7 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentUser, getUserSubcollections]);
 
-  // Funciones CRUD para turnos de delivery
+  // addDeliveryShift para manejar turnos nocturnos
   const addDeliveryShift = useCallback(async (newShift) => {
     try {
       if (!currentUser) throw new Error('Usuario no autenticado');
@@ -355,18 +357,33 @@ export const AppProvider = ({ children }) => {
         throw new Error('No se pudieron obtener las referencias de la colección');
       }
 
+      // NUEVO: Calcular fechaFin automáticamente si no se proporciona
+      let fechaFin = newShift.fechaFin;
+      if (!fechaFin && newShift.cruzaMedianoche) {
+        const fechaInicio = new Date(newShift.fechaInicio + 'T00:00:00');
+        const fechaFinCalculada = new Date(fechaInicio);
+        fechaFinCalculada.setDate(fechaFinCalculada.getDate() + 1);
+        fechaFin = fechaFinCalculada.toISOString().split('T')[0];
+      }
+
       const shiftData = {
         ...newShift,
         tipo: 'delivery',
         fechaCreacion: new Date(),
         fechaActualizacion: new Date(),
+        // Mantener compatibilidad con campo fecha existente
+        fecha: newShift.fechaInicio || newShift.fecha,
+        fechaInicio: newShift.fechaInicio || newShift.fecha,
+        fechaFin: fechaFin || newShift.fechaInicio || newShift.fecha,
         numeroPedidos: newShift.numeroPedidos || 0,
         gananciaTotal: newShift.gananciaTotal || 0,
         propinas: newShift.propinas || 0,
         kilometros: newShift.kilometros || 0,
         gastoCombustible: newShift.gastoCombustible || 0,
         gananciaBase: (newShift.gananciaTotal || 0) - (newShift.propinas || 0),
-        gananciaNeta: (newShift.gananciaTotal || 0) - (newShift.gastoCombustible || 0)
+        gananciaNeta: (newShift.gananciaTotal || 0) - (newShift.gastoCombustible || 0),
+        // NUEVO: Campo para identificar turnos nocturnos
+        cruzaMedianoche: newShift.cruzaMedianoche || false
       };
 
       const docRef = await addDoc(subcollections.turnosDeliveryRef, shiftData);
@@ -378,17 +395,32 @@ export const AppProvider = ({ children }) => {
     }
   }, [currentUser, getUserSubcollections]);
 
+  // editDeliveryShift para manejar turnos nocturnos
   const editDeliveryShift = useCallback(async (id, updatedData) => {
     try {
       if (!currentUser) throw new Error('Usuario no autenticado');
       const subcollections = getUserSubcollections();
       if (!subcollections || !subcollections.turnosDeliveryRef) throw new Error('No se pudieron obtener las referencias de la coleccion');
 
+      // NUEVO: Calcular fechaFin automáticamente si no se proporciona
+      let fechaFin = updatedData.fechaFin;
+      if (!fechaFin && updatedData.cruzaMedianoche) {
+        const fechaInicio = new Date((updatedData.fechaInicio || updatedData.fecha) + 'T00:00:00');
+        const fechaFinCalculada = new Date(fechaInicio);
+        fechaFinCalculada.setDate(fechaFinCalculada.getDate() + 1);
+        fechaFin = fechaFinCalculada.toISOString().split('T')[0];
+      }
+
       const dataWithMetadata = {
         ...updatedData,
         fechaActualizacion: new Date(),
+        // Mantener compatibilidad
+        fecha: updatedData.fechaInicio || updatedData.fecha,
+        fechaInicio: updatedData.fechaInicio || updatedData.fecha,
+        fechaFin: fechaFin || updatedData.fechaInicio || updatedData.fecha,
         gananciaBase: (updatedData.gananciaTotal || 0) - (updatedData.propinas || 0),
-        gananciaNeta: (updatedData.gananciaTotal || 0) - (updatedData.gastoCombustible || 0)
+        gananciaNeta: (updatedData.gananciaTotal || 0) - (updatedData.gastoCombustible || 0),
+        cruzaMedianoche: updatedData.cruzaMedianoche || false
       };
 
       const docRef = doc(subcollections.turnosDeliveryRef, id);
@@ -410,6 +442,86 @@ export const AppProvider = ({ children }) => {
     } catch (err) {
       console.error('Error al eliminar turno de delivery:', err);
       setError('Error al eliminar turno delivery: ' + err.message);
+      throw err;
+    }
+  }, [currentUser, getUserSubcollections]);
+
+  // addShift para turnos tradicionales nocturnos
+  const addShift = useCallback(async (newShift) => {
+    try {
+      if (!currentUser) throw new Error('Usuario no autenticado');
+      const subcollections = getUserSubcollections();
+      if (!newShift.trabajoId || !newShift.fechaInicio || !newShift.horaInicio || !newShift.horaFin) {
+        throw new Error('Todos los campos del turno son requeridos');
+      }
+
+      // Detectar turnos nocturnos de manera más robusta y asegurar que se guarden correctamente
+      const cruzaMedianoche = newShift.cruzaMedianoche || 
+        (newShift.horaInicio && newShift.horaFin && 
+         newShift.horaInicio.split(':')[0] > newShift.horaFin.split(':')[0]);
+
+      // NUEVO: Usar fechaFin proporcionada o calcularla
+      let fechaFin = newShift.fechaFin;
+      if (!fechaFin && cruzaMedianoche) {
+        const fechaInicio = new Date(newShift.fechaInicio + 'T00:00:00');
+        const fechaFinCalculada = new Date(fechaInicio);
+        fechaFinCalculada.setDate(fechaFinCalculada.getDate() + 1);
+        fechaFin = fechaFinCalculada.toISOString().split('T')[0];
+      }
+
+      const shiftWithMetadata = { 
+        ...newShift, 
+        fechaCreacion: new Date(), 
+        fechaActualizacion: new Date(),
+        // Mantener compatibilidad con campo fecha existente
+        fecha: newShift.fechaInicio,
+        fechaFin: fechaFin || newShift.fechaInicio,
+        cruzaMedianoche: cruzaMedianoche
+      };
+
+      const docRef = await addDoc(subcollections.turnosRef, shiftWithMetadata);
+      return { ...shiftWithMetadata, id: docRef.id };
+    } catch (err) {
+      console.error("Error al guardar turno:", err);
+      setError('Error al guardar turno: ' + err.message);
+      throw err;
+    }
+  }, [currentUser, getUserSubcollections]);
+
+  // editShift para turnos tradicionales nocturnos
+  const editShift = useCallback(async (id, updatedData) => {
+    try {
+      if (!currentUser) throw new Error('Usuario no autenticado');
+      const subcollections = getUserSubcollections();
+      if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
+
+      // Detectar turnos nocturnos de manera más robusta
+      const cruzaMedianoche = updatedData.cruzaMedianoche || 
+        (updatedData.horaInicio && updatedData.horaFin && 
+         updatedData.horaInicio.split(':')[0] > updatedData.horaFin.split(':')[0]);
+
+      // NUEVO: Usar fechaFin proporcionada o calcularla
+      let fechaFin = updatedData.fechaFin;
+      if (!fechaFin && cruzaMedianoche) {
+        const fechaInicio = new Date(updatedData.fechaInicio + 'T00:00:00');
+        const fechaFinCalculada = new Date(fechaInicio);
+        fechaFinCalculada.setDate(fechaFinCalculada.getDate() + 1);
+        fechaFin = fechaFinCalculada.toISOString().split('T')[0];
+      }
+
+      const dataWithMetadata = {
+        ...updatedData,
+        fechaActualizacion: new Date(),
+        // Mantener compatibilidad con campo fecha existente
+        fecha: updatedData.fechaInicio,
+        fechaFin: fechaFin || updatedData.fechaInicio,
+        cruzaMedianoche: cruzaMedianoche
+      };
+
+      const docRef = doc(subcollections.turnosRef, id);
+      await updateDoc(docRef, dataWithMetadata);
+    } catch (err) {
+      setError('Error al editar turno: ' + err.message);
       throw err;
     }
   }, [currentUser, getUserSubcollections]);
@@ -631,15 +743,53 @@ export const AppProvider = ({ children }) => {
   const contextValue = {
     trabajos,
     turnos,
+    // turnosPorFecha para manejar turnos nocturnos
     turnosPorFecha: useMemo(() => {
       const allTurnos = [...turnos, ...turnosDelivery];
-      return allTurnos.reduce((acc, turno) => {
-        const fechaClave = turno.fechaInicio || turno.fecha;
-        if (!fechaClave) return acc;
-        if (!acc[fechaClave]) acc[fechaClave] = [];
-        acc[fechaClave].push(turno);
-        return acc;
-      }, {});
+      const turnosPorFecha = {};
+
+      allTurnos.forEach(turno => {
+        // Fecha principal (siempre debe existir)
+        const fechaPrincipal = turno.fechaInicio || turno.fecha;
+        if (fechaPrincipal) {
+          if (!turnosPorFecha[fechaPrincipal]) {
+            turnosPorFecha[fechaPrincipal] = [];
+          }
+          turnosPorFecha[fechaPrincipal].push(turno);
+        }
+
+        // Detectar turnos nocturnos de manera más robusta
+        const esNocturno = turno.cruzaMedianoche || 
+          (turno.horaInicio && turno.horaFin && 
+           turno.horaInicio.split(':')[0] > turno.horaFin.split(':')[0]);
+
+        // Si es nocturno, agregarlo también al día siguiente
+        if (esNocturno && fechaPrincipal) {
+          let fechaFin = turno.fechaFin;
+          
+          // Si no tiene fechaFin, calcularla
+          if (!fechaFin) {
+            const fechaInicio = new Date(fechaPrincipal + 'T00:00:00');
+            const fechaFinCalculada = new Date(fechaInicio);
+            fechaFinCalculada.setDate(fechaFinCalculada.getDate() + 1);
+            fechaFin = fechaFinCalculada.toISOString().split('T')[0];
+          }
+          
+          // Agregar al día siguiente si es diferente al día principal
+          if (fechaFin && fechaFin !== fechaPrincipal) {
+            if (!turnosPorFecha[fechaFin]) {
+              turnosPorFecha[fechaFin] = [];
+            }
+            // Evitar duplicados
+            const yaExiste = turnosPorFecha[fechaFin].some(t => t.id === turno.id);
+            if (!yaExiste) {
+              turnosPorFecha[fechaFin].push(turno);
+            }
+          }
+        }
+      });
+
+      return turnosPorFecha;
     }, [turnos, turnosDelivery]),
     loading,
     error,
@@ -733,40 +883,8 @@ export const AppProvider = ({ children }) => {
     deleteDeliveryJob,
 
     // Funciones CRUD para turnos tradicionales
-    addShift: useCallback(async (newShift) => {
-      try {
-        if (!currentUser) throw new Error('Usuario no autenticado');
-        const subcollections = getUserSubcollections();
-        if (!newShift.trabajoId || !newShift.fechaInicio || !newShift.horaInicio || !newShift.horaFin) {
-          throw new Error('Todos los campos del turno son requeridos');
-        }
-        const shiftWithMetadata = { ...newShift, fechaCreacion: new Date(), fechaActualizacion: new Date() };
-        const docRef = await addDoc(subcollections.turnosRef, shiftWithMetadata);
-        return { ...shiftWithMetadata, id: docRef.id };
-      } catch (err) {
-        console.error("Error al guardar turno:", err);
-        setError('Error al guardar turno: ' + err.message);
-        throw err;
-      }
-    }, [currentUser, getUserSubcollections]),
-
-    editShift: useCallback(async (id, updatedData) => {
-      try {
-        if (!currentUser) throw new Error('Usuario no autenticado');
-        const subcollections = getUserSubcollections();
-        if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
-        const dataWithMetadata = {
-          ...updatedData,
-          fechaActualizacion: new Date()
-        };
-        const docRef = doc(subcollections.turnosRef, id);
-        await updateDoc(docRef, dataWithMetadata);
-      } catch (err) {
-        setError('Error al editar turno: ' + err.message);
-        throw err;
-      }
-    }, [currentUser, getUserSubcollections]),
-
+    addShift,
+    editShift,
     deleteShift,
 
     // Turnos de delivery

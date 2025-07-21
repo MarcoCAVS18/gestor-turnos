@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react';
 import { 
   crearFechaLocal, 
   fechaLocalAISO, 
-  fechaEsHoy, 
-  obtenerTurnosDelDia 
+  fechaEsHoy 
 } from '../utils/calendarUtils';
 
 export const useCalendarState = (turnos, onDiaSeleccionado) => {
@@ -29,6 +28,45 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => {
     return () => clearInterval(intervalo);
   }, [fechaActual]);
 
+  // Obtener turnos del día considerando turnos nocturnos
+  const obtenerTurnosDelDia = (fecha, todosLosTurnos) => {
+    const fechaStr = fechaLocalAISO(fecha);
+    
+    return todosLosTurnos.filter(turno => {
+      // Verificar fecha principal
+      const fechaPrincipal = turno.fechaInicio || turno.fecha;
+      if (fechaPrincipal === fechaStr) {
+        return true;
+      }
+      
+      // NUEVO: Verificar si es un turno nocturno que termina en esta fecha
+      const esNocturno = turno.cruzaMedianoche || 
+        (turno.horaInicio && turno.horaFin && 
+         turno.horaInicio.split(':')[0] > turno.horaFin.split(':')[0]);
+      
+      if (esNocturno) {
+        // Si tiene fechaFin explícita, usarla
+        if (turno.fechaFin && turno.fechaFin === fechaStr) {
+          return true;
+        }
+        
+        // Si no tiene fechaFin pero es nocturno, calcular si termina este día
+        if (!turno.fechaFin && fechaPrincipal) {
+          const fechaInicio = new Date(fechaPrincipal + 'T00:00:00');
+          const fechaFinCalculada = new Date(fechaInicio);
+          fechaFinCalculada.setDate(fechaFinCalculada.getDate() + 1);
+          const fechaFinStr = fechaFinCalculada.toISOString().split('T')[0];
+          
+          if (fechaFinStr === fechaStr) {
+            return true;
+          }
+        }
+      }
+      
+      return false;
+    });
+  };
+
   // FUNCIÓN ACTUALIZADA: Obtener días del mes considerando turnos nocturnos
   const obtenerDiasDelMes = () => {
     const primerDia = crearFechaLocal(anioActual, mesActual, 1);
@@ -49,7 +87,6 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => {
         mesActual: false,
         tieneTurnos: turnosDelDia.length > 0,
         turnosDelDia
-        // Removemos tieneNocturnos para mantener compatibilidad
       });
     }
 
@@ -64,7 +101,6 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => {
         tieneTurnos: turnosDelDia.length > 0,
         turnosDelDia,
         esHoy: fechaEsHoy(fecha, fechaActual)
-        // Removemos tieneNocturnos para mantener compatibilidad
       });
     }
 
@@ -79,14 +115,11 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => {
         mesActual: false,
         tieneTurnos: turnosDelDia.length > 0,
         turnosDelDia
-        // Removemos tieneNocturnos para mantener compatibilidad
       });
     }
 
     return dias;
   };
-
-  // Removemos la función verificarTurnosNocturnos para simplificar y mantener compatibilidad
 
   // Handlers
   const cambiarMes = (incremento) => {

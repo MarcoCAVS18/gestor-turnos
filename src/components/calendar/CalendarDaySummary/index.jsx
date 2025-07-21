@@ -1,4 +1,4 @@
-// src/components/calendar/CalendarDaySummary/index.jsx 
+// src/components/calendar/CalendarDaySummary/index.jsx
 
 import React from 'react';
 import { PlusCircle, Calendar, Moon, Sun } from 'lucide-react';
@@ -65,7 +65,7 @@ const CalendarDaySummary = ({
   const turnosValidos = Array.isArray(turnos) ? turnos : [];
   const totalDia = calcularTotalDia(turnosValidos);
 
-  // NUEVO: Agrupar turnos por tipo (normales vs nocturnos)
+  // Agrupar turnos por tipo (normales vs nocturnos)
   const turnosAgrupados = turnosValidos.reduce((grupos, turno) => {
     const tipoTurno = obtenerTipoTurnoEnFecha(turno, fechaSeleccionada);
     
@@ -80,6 +80,13 @@ const CalendarDaySummary = ({
     return grupos;
   }, { completos: [], inicianHoy: [], terminanHoy: [] });
 
+  // NUEVO: Función mejorada para manejar el click de nuevo turno
+  const handleNuevoTurno = () => {
+    // Convertir fechaSeleccionada (string) a Date object
+    const fechaDate = new Date(fechaSeleccionada + 'T12:00:00');
+    onNuevoTurno(fechaDate);
+  };
+
   return (
     <div className="mt-6">
       <div className="flex justify-between items-center mb-3">
@@ -87,7 +94,7 @@ const CalendarDaySummary = ({
           Turnos del día seleccionado
         </h3>
         <Button
-          onClick={() => onNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))}
+          onClick={handleNuevoTurno}
           size="sm"
           className="flex items-center gap-1"
           icon={PlusCircle}
@@ -265,7 +272,7 @@ const CalendarDaySummary = ({
           <Calendar size={48} className="mx-auto mb-4 text-gray-300" />
           <p className="text-gray-500 mb-4">No hay turnos para esta fecha</p>
           <Button
-            onClick={() => onNuevoTurno(new Date(fechaSeleccionada + 'T12:00:00'))}
+            onClick={handleNuevoTurno}
             className="flex items-center gap-2"
             icon={PlusCircle}
             themeColor={thematicColors?.base}

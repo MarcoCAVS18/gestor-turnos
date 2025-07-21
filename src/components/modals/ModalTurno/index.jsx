@@ -1,4 +1,4 @@
-// src/components/modals/ModalTurno/index.jsx - CORREGIDO
+// src/components/modals/ModalTurno/index.jsx
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { X } from 'lucide-react';
@@ -6,7 +6,7 @@ import { useApp } from '../../../contexts/AppContext';
 import TurnoForm from '../../forms/TurnoForm';
 import TurnoDeliveryForm from '../../forms/TurnoDeliveryForm';
 
-const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
+const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
   const {
     addShift,
     editShift,
@@ -83,17 +83,38 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
     try {
       setLoading(true);
 
+      // NUEVO: Si fechaInicial está disponible y no hay turno (es nuevo), usar fechaInicial
+      let datosFinales = { ...datosTurno };
+      
+      if (fechaInicial && !turno) {
+        // Convertir fechaInicial a string formato YYYY-MM-DD si es Date
+        let fechaStr;
+        if (fechaInicial instanceof Date) {
+          const year = fechaInicial.getFullYear();
+          const month = String(fechaInicial.getMonth() + 1).padStart(2, '0');
+          const day = String(fechaInicial.getDate()).padStart(2, '0');
+          fechaStr = `${year}-${month}-${day}`;
+        } else {
+          fechaStr = fechaInicial;
+        }
+        
+        // Pre-llenar la fecha si no está definida en los datos del turno
+        if (!datosFinales.fechaInicio && !datosFinales.fecha) {
+          datosFinales.fechaInicio = fechaStr;
+        }
+      }
+
       if (formularioTipo === 'delivery') {
         if (turno) {
-          await editDeliveryShift(turno.id, datosTurno);
+          await editDeliveryShift(turno.id, datosFinales);
         } else {
-          await addDeliveryShift(datosTurno);
+          await addDeliveryShift(datosFinales);
         }
       } else {
         if (turno) {
-          await editShift(turno.id, datosTurno);
+          await editShift(turno.id, datosFinales);
         } else {
-          await addShift(datosTurno);
+          await addShift(datosFinales);
         }
       }
 
@@ -121,7 +142,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
   // Configuración del modal optimizada para evitar scroll horizontal
   const modalConfig = {
     mobileFullScreen: isMobile,
-    size: isMobile ? 'full' : 'md', // Cambio de 'lg' a 'md' para evitar desbordamiento
+    size: isMobile ? 'full' : 'md',
     zIndex: 9999
   };
 
@@ -135,7 +156,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
           bg-white shadow-2xl relative
           ${isMobile
             ? 'w-full h-full max-w-none rounded-none'
-            : 'w-full max-w-md max-h-[90vh] rounded-xl mx-4' // Añadido mx-4 para margen
+            : 'w-full max-w-md max-h-[90vh] rounded-xl mx-4'
           }
           ${isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'}
         `}
@@ -151,7 +172,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
             borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
           }}
         >
-          <div className="flex-1 pr-4 min-w-0"> {/* Añadido min-w-0 para truncar */}
+          <div className="flex-1 pr-4 min-w-0">
             <h2
               className={`font-semibold truncate ${isMobile ? 'text-lg' : 'text-xl'}`}
               style={{ color: thematicColors?.base || '#EC4899' }}
@@ -160,6 +181,15 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
               {formularioTipo === 'delivery' && (
                 <span className="text-sm font-normal text-gray-600 ml-2">
                   • Delivery
+                </span>
+              )}
+              {/* NUEVO: Mostrar fecha si viene del calendario */}
+              {fechaInicial && !turno && (
+                <span className="text-sm font-normal text-gray-600 ml-2 block">
+                  {fechaInicial instanceof Date 
+                    ? fechaInicial.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })
+                    : new Date(fechaInicial + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })
+                  }
                 </span>
               )}
             </h2>
@@ -186,7 +216,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
         {/* Content con scroll optimizado */}
         <div className={`
           ${isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4 overflow-y-auto'}
-          ${!isMobile ? 'max-h-[calc(90vh-120px)]' : ''} // Limitamos altura en desktop
+          ${!isMobile ? 'max-h-[calc(90vh-120px)]' : ''}
         `}>
           {formularioTipo === 'delivery' ? (
             <TurnoDeliveryForm
@@ -199,6 +229,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
               thematicColors={thematicColors}
               isMobile={isMobile}
               loading={loading}
+              fechaInicial={fechaInicial} // NUEVO: Pasar fecha inicial
             />
           ) : (
             <TurnoForm
@@ -211,6 +242,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId }) => {
               thematicColors={thematicColors}
               isMobile={isMobile}
               loading={loading}
+              fechaInicial={fechaInicial} // NUEVO: Pasar fecha inicial
             />
           )}
         </div>
