@@ -60,6 +60,37 @@ const CalendarDaySummary = ({
     return trabajo;
   };
 
+  // Calcular fecha de finalización correcta para turnos nocturnos
+  const calcularFechaFinalizacion = (turno, fechaSeleccionada) => {
+    // Si el turno tiene fechaFin explícita, usarla
+    if (turno.fechaFin && turno.fechaFin !== (turno.fechaInicio || turno.fecha)) {
+      return new Date(turno.fechaFin + 'T00:00:00');
+    }
+    
+    // Si es un turno nocturno pero no tiene fechaFin, calcularla
+    const esNocturno = turno.cruzaMedianoche || 
+      (turno.horaInicio && turno.horaFin && 
+       turno.horaInicio.split(':')[0] > turno.horaFin.split(':')[0]);
+    
+    if (esNocturno) {
+      // Si el turno inicia en la fecha seleccionada, termina al día siguiente
+      const fechaInicioTurno = turno.fechaInicio || turno.fecha; // Renombrado
+      if (fechaInicioTurno === fechaSeleccionada) {
+        const fechaFin = new Date(fechaSeleccionada + 'T00:00:00');
+        fechaFin.setDate(fechaFin.getDate() + 1);
+        return fechaFin;
+      }
+      
+      // Si el turno termina en la fecha seleccionada, empezó el día anterior
+      const fechaInicioCalculada = new Date(fechaSeleccionada + 'T00:00:00'); // Renombrado
+      fechaInicioCalculada.setDate(fechaInicioCalculada.getDate() - 1);
+      return new Date(fechaSeleccionada + 'T00:00:00');
+    }
+    
+    // Para turnos normales, usar la misma fecha
+    return new Date(fechaSeleccionada + 'T00:00:00');
+  };
+
   if (!fechaSeleccionada) return null;
 
   const turnosValidos = Array.isArray(turnos) ? turnos : [];
@@ -80,7 +111,7 @@ const CalendarDaySummary = ({
     return grupos;
   }, { completos: [], inicianHoy: [], terminanHoy: [] });
 
-  // NUEVO: Función mejorada para manejar el click de nuevo turno
+  // Función mejorada para manejar el click de nuevo turno
   const handleNuevoTurno = () => {
     // Convertir fechaSeleccionada (string) a Date object
     const fechaDate = new Date(fechaSeleccionada + 'T12:00:00');
@@ -132,13 +163,17 @@ const CalendarDaySummary = ({
                     const trabajo = obtenerTrabajo(turno.trabajoId);
                     if (!trabajo) return null;
 
+                    // Calcular la fecha de inicio correcta
+                    const fechaInicio = new Date(fechaSeleccionada + 'T00:00:00');
+                    fechaInicio.setDate(fechaInicio.getDate() - 1);
+
                     return (
                       <div key={turno.id} className="border-l-2 border-blue-300 pl-3">
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium text-sm">{trabajo.nombre}</p>
                             <p className="text-xs text-gray-600">
-                              Empezó: {new Date(turno.fechaInicio + 'T00:00:00').toLocaleDateString('es-ES', { 
+                              Empezó: {fechaInicio.toLocaleDateString('es-ES', { 
                                 weekday: 'short', day: 'numeric', month: 'short' 
                               })} {turno.horaInicio} - Termina: {turno.horaFin}
                             </p>
@@ -228,13 +263,16 @@ const CalendarDaySummary = ({
                     const trabajo = obtenerTrabajo(turno.trabajoId);
                     if (!trabajo) return null;
 
+                    // Calcular la fecha de finalización correcta
+                    const fechaFinalizacion = calcularFechaFinalizacion(turno, fechaSeleccionada);
+
                     return (
                       <div key={turno.id} className="border-l-2 border-purple-300 pl-3">
                         <div className="flex items-center justify-between">
                           <div>
                             <p className="font-medium text-sm">{trabajo.nombre}</p>
                             <p className="text-xs text-gray-600">
-                              Inicia: {turno.horaInicio} - Termina: {new Date(turno.fechaFin + 'T00:00:00').toLocaleDateString('es-ES', { 
+                              Inicia: {turno.horaInicio} - Termina: {fechaFinalizacion.toLocaleDateString('es-ES', { 
                                 weekday: 'short', day: 'numeric', month: 'short' 
                               })} {turno.horaFin}
                             </p>
