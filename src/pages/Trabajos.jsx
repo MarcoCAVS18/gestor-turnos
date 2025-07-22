@@ -1,4 +1,4 @@
-// src/pages/Trabajos.jsx
+// src/pages/Trabajos.jsx - Con espaciado consistente
 
 import React, ***REMOVED*** useEffect, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** Briefcase, Plus ***REMOVED*** from 'lucide-react';
@@ -125,9 +125,10 @@ const Trabajos = () => ***REMOVED***
 
   return (
     <LoadingWrapper loading=***REMOVED***loading***REMOVED***>
-      <div className="space-y-6">
+      ***REMOVED***/* Contenedor principal con espaciado consistente */***REMOVED***
+      <div className="px-4 py-6 pb-32 space-y-6">
         ***REMOVED***/* Header que cambia según si hay trabajos */***REMOVED***
-        <div className="flex justify-between items-center pt-4">
+        <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
             <div 
               className="p-2 rounded-lg"
@@ -139,7 +140,7 @@ const Trabajos = () => ***REMOVED***
               />
             </div>
             <div>
-              <h1 className="text-xl font-semibold mb-4 pt-4">Mis Trabajos</h1>
+              <h1 className="text-xl font-semibold">Mis Trabajos</h1>
             </div>
           </div>
           ***REMOVED***/* Solo mostrar botón en header si hay trabajos */***REMOVED***
