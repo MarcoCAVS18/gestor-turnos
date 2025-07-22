@@ -37,8 +37,8 @@ const TurnoDeliveryForm = (***REMOVED***
   
   const [error, setError] = useState('');
 
-  // 🔥 CORRECCIÓN: Mostrar TODOS los trabajos disponibles, no solo delivery
-  const trabajosParaSelector = trabajos; // Usar todos los trabajos que se pasan como prop
+  // Mostrar TODOS los trabajos disponibles, no solo delivery
+  const trabajosParaSelector = trabajos;
 
   // Detectar si el turno cruza medianoche
   const cruzaMedianoche = useMemo(() => ***REMOVED***
@@ -221,7 +221,7 @@ const TurnoDeliveryForm = (***REMOVED***
           )***REMOVED***
         </div>
 
-        ***REMOVED***/* Fecha y horario - GRID CORREGIDO */***REMOVED***
+        ***REMOVED***/* Fecha y horario*/***REMOVED***
         <div className="space-y-4">
           ***REMOVED***/* Fecha - ancho limitado */***REMOVED***
           <div className="max-w-xs">
@@ -296,7 +296,7 @@ const TurnoDeliveryForm = (***REMOVED***
           )***REMOVED***
         </div>
 
-        ***REMOVED***/* Información de pedidos - GRID CORREGIDO */***REMOVED***
+        ***REMOVED***/* Información de pedidos */***REMOVED***
         <div className="space-y-4">
           <h3 className="text-sm font-medium text-gray-700">Información del turno</h3>
           
@@ -337,7 +337,7 @@ const TurnoDeliveryForm = (***REMOVED***
           </div>
         </div>
 
-        ***REMOVED***/* Información financiera - GRID CORREGIDO */***REMOVED***
+        ***REMOVED***/* Información financiera */***REMOVED***
         <div className="space-y-4">
           <h3 className="text-sm font-medium text-gray-700">Ganancias *</h3>
           
