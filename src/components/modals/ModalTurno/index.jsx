@@ -39,9 +39,8 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
     return [...trabajos, ...trabajosDelivery];
   ***REMOVED***, [trabajos, trabajosDelivery]);
 
-  // 🔥 CORRECCIÓN PRINCIPAL: Determinar el tipo de formulario basado en el trabajo - MEJORADA
+  // Determinar el tipo de formulario basado en el trabajo - MEJORADA
   useEffect(() => ***REMOVED***
-    // Si es edición de un turno existente, usar su tipo
     if (turno?.tipo === 'delivery') ***REMOVED***
       setFormularioTipo('delivery');
       return;
@@ -142,10 +141,9 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
     ***REMOVED***
   ***REMOVED***;
 
-  // 🔥 CORRECCIÓN: Manejar cambio de trabajo y actualizar el tipo automáticamente
+  // Manejar cambio de trabajo y actualizar el tipo automáticamente
   const manejarCambioTrabajo = (nuevoTrabajoId) => ***REMOVED***
     setTrabajoSeleccionadoId(nuevoTrabajoId);
-    // No necesitamos cambiar formularioTipo aquí, se maneja en el useEffect
   ***REMOVED***;
 
   const manejarCerrar = () => ***REMOVED***

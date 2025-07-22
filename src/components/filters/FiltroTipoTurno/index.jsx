@@ -14,6 +14,7 @@ const FiltroTipoTurno = (***REMOVED*** value, onChange ***REMOVED***) => ***REMO
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">
+        <Clock size=***REMOVED***16***REMOVED*** className="inline mr-2" />
         Tipo de turno
       </label>
       
@@ -59,6 +60,7 @@ const FiltroTipoTurno = (***REMOVED*** value, onChange ***REMOVED***) => ***REMO
       ***REMOVED***/* Mostrar tipo seleccionado */***REMOVED***
       ***REMOVED***value !== 'todos' && (
         <div className="mt-2 text-xs text-gray-600">
+          <Clock size=***REMOVED***12***REMOVED*** className="inline mr-1" />
           Filtrado por: ***REMOVED***tiposTurno.find(t => t.id === value)?.label***REMOVED***
         </div>
       )***REMOVED***
