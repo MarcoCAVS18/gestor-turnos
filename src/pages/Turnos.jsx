@@ -1,4 +1,4 @@
-// src/pages/Turnos.jsx - Con sistema de filtros
+// src/pages/Turnos.jsx
 
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
@@ -90,7 +90,8 @@ const Turnos = () => {
 
   return (
     <LoadingWrapper loading={loading}>
-      <div className="space-y-6">
+      {/* Contenedor principal con espaciado mejorado */}
+      <div className="px-4 py-6 pb-32 space-y-6">
         {/* Header con título y botón de acción */}
         <ShiftsHeader 
           hasShifts={hasShifts}

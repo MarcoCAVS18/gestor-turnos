@@ -14,6 +14,7 @@ const FiltroTipoTurno = ({ value, onChange }) => {
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">
+        <Clock size={16} className="inline mr-2" />
         Tipo de turno
       </label>
       
@@ -59,6 +60,7 @@ const FiltroTipoTurno = ({ value, onChange }) => {
       {/* Mostrar tipo seleccionado */}
       {value !== 'todos' && (
         <div className="mt-2 text-xs text-gray-600">
+          <Clock size={12} className="inline mr-1" />
           Filtrado por: {tiposTurno.find(t => t.id === value)?.label}
         </div>
       )}
