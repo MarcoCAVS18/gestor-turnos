@@ -37,19 +37,8 @@ const TurnoDeliveryForm = (***REMOVED***
   
   const [error, setError] = useState('');
 
-  // Filtrar trabajos de delivery correctamente
-  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery' || t.type === 'delivery');
-  
-  // También incluir el trabajo seleccionado si no es de delivery pero ya está seleccionado
-  const trabajosParaSelector = React.useMemo(() => ***REMOVED***
-    const trabajoSeleccionadoActual = trabajos.find(t => t.id === formData.trabajoSeleccionado);
-    
-    if (trabajoSeleccionadoActual && trabajoSeleccionadoActual.tipo !== 'delivery' && trabajoSeleccionadoActual.type !== 'delivery') ***REMOVED***
-      return [...trabajosDelivery, trabajoSeleccionadoActual];
-    ***REMOVED***
-    
-    return trabajosDelivery;
-  ***REMOVED***, [trabajosDelivery, trabajos, formData.trabajoSeleccionado]);
+  // 🔥 CORRECCIÓN: Mostrar TODOS los trabajos disponibles, no solo delivery
+  const trabajosParaSelector = trabajos; // Usar todos los trabajos que se pasan como prop
 
   // Detectar si el turno cruza medianoche
   const cruzaMedianoche = useMemo(() => ***REMOVED***
@@ -210,7 +199,7 @@ const TurnoDeliveryForm = (***REMOVED***
                 ***REMOVED***trabajo.nombre***REMOVED***
                 ***REMOVED***trabajo.tipo === 'delivery' || trabajo.type === 'delivery' 
                   ? ' (Delivery)' 
-                  : ' (Tradicional)'***REMOVED***
+                  : ''***REMOVED***
               </option>
             ))***REMOVED***
           </select>
@@ -232,9 +221,10 @@ const TurnoDeliveryForm = (***REMOVED***
           )***REMOVED***
         </div>
 
-        ***REMOVED***/* Fecha y horario */***REMOVED***
+        ***REMOVED***/* Fecha y horario - GRID CORREGIDO */***REMOVED***
         <div className="space-y-4">
-          <div>
+          ***REMOVED***/* Fecha - ancho limitado */***REMOVED***
+          <div className="max-w-xs">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <Calendar size=***REMOVED***16***REMOVED*** className="inline mr-2" />
               Fecha de inicio *
@@ -249,7 +239,8 @@ const TurnoDeliveryForm = (***REMOVED***
             />
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          ***REMOVED***/* Horarios - mismo ancho que los inputs de pedidos/kilómetros */***REMOVED***
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Clock size=***REMOVED***16***REMOVED*** className="inline mr-2" />
@@ -289,7 +280,6 @@ const TurnoDeliveryForm = (***REMOVED***
                 <p className="font-medium text-blue-800">Turno Nocturno Detectado</p>
                 <p className="text-blue-700 mt-1">
                   Este turno finalizará el ***REMOVED***" "***REMOVED***
-                  ***REMOVED***/* Mostrar la fecha correcta */***REMOVED***
                   ***REMOVED***formData.fecha && (() => ***REMOVED***
                     const fechaInicio = new Date(formData.fecha + 'T00:00:00');
                     const fechaFin = new Date(fechaInicio);
@@ -306,11 +296,12 @@ const TurnoDeliveryForm = (***REMOVED***
           )***REMOVED***
         </div>
 
-        ***REMOVED***/* Información de pedidos */***REMOVED***
+        ***REMOVED***/* Información de pedidos - GRID CORREGIDO */***REMOVED***
         <div className="space-y-4">
           <h3 className="text-sm font-medium text-gray-700">Información del turno</h3>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          ***REMOVED***/* Grid limitado para inputs numéricos pequeños */***REMOVED***
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Package size=***REMOVED***16***REMOVED*** className="inline mr-2" />
@@ -346,11 +337,12 @@ const TurnoDeliveryForm = (***REMOVED***
           </div>
         </div>
 
-        ***REMOVED***/* Información financiera */***REMOVED***
+        ***REMOVED***/* Información financiera - GRID CORREGIDO */***REMOVED***
         <div className="space-y-4">
           <h3 className="text-sm font-medium text-gray-700">Ganancias *</h3>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          ***REMOVED***/* Grid limitado para inputs de dinero */***REMOVED***
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <DollarSign size=***REMOVED***16***REMOVED*** className="inline mr-2" />
@@ -385,7 +377,8 @@ const TurnoDeliveryForm = (***REMOVED***
             </div>
           </div>
           
-          <div>
+          ***REMOVED***/* Gasto combustible - ancho limitado */***REMOVED***
+          <div className="max-w-xs">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Gasto en combustible
             </label>

@@ -155,7 +155,8 @@ const TurnoForm = (***REMOVED***
         </select>
       </div>
 
-      <div>
+      ***REMOVED***/* Fecha - ancho limitado */***REMOVED***
+      <div className="max-w-xs">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           <Calendar size=***REMOVED***16***REMOVED*** className="inline mr-2" />
           Fecha de Inicio *
@@ -164,12 +165,14 @@ const TurnoForm = (***REMOVED***
           type="date" 
           value=***REMOVED***formData.fecha***REMOVED*** 
           onChange=***REMOVED***(e) => handleInputChange('fecha', e.target.value)***REMOVED*** 
+          className="w-full"
           required 
           themeColor=***REMOVED***thematicColors?.base***REMOVED*** 
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      ***REMOVED***/* Horarios - grid limitado para inputs de tiempo */***REMOVED***
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-sm">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Clock size=***REMOVED***16***REMOVED*** className="inline mr-2" />
@@ -179,6 +182,7 @@ const TurnoForm = (***REMOVED***
             type="time" 
             value=***REMOVED***formData.horaInicio***REMOVED*** 
             onChange=***REMOVED***(e) => handleInputChange('horaInicio', e.target.value)***REMOVED*** 
+            className="w-full"
             required 
             themeColor=***REMOVED***thematicColors?.base***REMOVED*** 
           />
@@ -192,6 +196,7 @@ const TurnoForm = (***REMOVED***
             type="time" 
             value=***REMOVED***formData.horaFin***REMOVED*** 
             onChange=***REMOVED***(e) => handleInputChange('horaFin', e.target.value)***REMOVED*** 
+            className="w-full"
             required 
             themeColor=***REMOVED***thematicColors?.base***REMOVED*** 
           />
@@ -205,7 +210,6 @@ const TurnoForm = (***REMOVED***
             <p className="font-medium text-blue-800">Turno Nocturno Detectado</p>
             <p className="text-blue-700 mt-1">
               Este turno finalizará el día siguiente: ***REMOVED***" "***REMOVED***
-              ***REMOVED***/* Mostrar la fecha correcta */***REMOVED***
               ***REMOVED***formData.fecha && (() => ***REMOVED***
                 const fechaInicio = new Date(formData.fecha + 'T00:00:00');
                 const fechaFin = new Date(fechaInicio);

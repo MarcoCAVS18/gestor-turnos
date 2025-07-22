@@ -1,15 +1,16 @@
-// src/pages/Turnos.jsx
+// src/pages/Turnos.jsx - Con sistema de filtros
 
-import React, ***REMOVED*** useState ***REMOVED*** from 'react';
+import React, ***REMOVED*** useState, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** useTurnManager ***REMOVED*** from '../hooks/useTurnManager';
 import ***REMOVED*** useDeleteManager ***REMOVED*** from '../hooks/useDeleteManager';
-import ***REMOVED*** useShiftsData ***REMOVED*** from '../hooks/useShiftsData';
+import ***REMOVED*** useFilterTurnos ***REMOVED*** from '../hooks/useFilterTurnos';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import ShiftsHeader from '../components/shifts/ShiftsHeader';
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
 import ShiftsList from '../components/shifts/ShiftsList';
 import ShiftsNavigation from '../components/shifts/ShiftsNavigation';
+import FiltrosTurnos from '../components/filters/FiltrosTurnos';
 import ModalTurno from '../components/modals/ModalTurno';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 import ***REMOVED*** generateShiftDetails ***REMOVED*** from '../utils/shiftDetailsUtils';
@@ -17,15 +18,32 @@ import ***REMOVED*** generateShiftDetails ***REMOVED*** from '../utils/shiftDeta
 const DAYS_PER_PAGE = 6;
 
 const Turnos = () => ***REMOVED***
-  const ***REMOVED*** loading, deleteShift, deleteDeliveryShift, thematicColors ***REMOVED*** = useApp();
+  const ***REMOVED*** 
+    loading, 
+    deleteShift, 
+    deleteDeliveryShift, 
+    thematicColors, 
+    turnosPorFecha,
+    trabajos,
+    trabajosDelivery 
+  ***REMOVED*** = useApp();
+  
   const [daysShown, setDaysShown] = useState(DAYS_PER_PAGE);
   const [expanding, setExpanding] = useState(false);
 
+  // Hook para gestión de filtros
+  const ***REMOVED***
+    filters,
+    actualizarFiltros,
+    turnosFiltrados,
+    estadisticasFiltros,
+    tieneMetrosDeFiltrosActivos
+  ***REMOVED*** = useFilterTurnos(turnosPorFecha);
+
   // Hooks especializados
-  const ***REMOVED*** shiftsData ***REMOVED*** = useShiftsData();
   const ***REMOVED*** modalAbierto, turnoSeleccionado, abrirModalNuevo, abrirModalEditar, cerrarModal ***REMOVED*** = useTurnManager();
   
-  // Función de eliminación con logs detallados
+  // Función de eliminación
   const handleDeleteTurno = async (turno) => ***REMOVED***
     try ***REMOVED***
       if (turno.tipo === 'delivery') ***REMOVED***
@@ -34,19 +52,24 @@ const Turnos = () => ***REMOVED***
         await deleteShift(turno.id);
       ***REMOVED***
     ***REMOVED*** catch (error) ***REMOVED***
+      console.error('Error eliminando turno:', error);
     ***REMOVED***
   ***REMOVED***;
 
   const deleteManager = useDeleteManager(handleDeleteTurno);
 
-  const ***REMOVED***
-    sortedDays,
-    daysToShow,
-    hasMoreDays,
-    remainingDays,
-    hasShifts,
-    allJobs
-  ***REMOVED*** = shiftsData(daysShown);
+  // Procesar datos de turnos (usar filtrados si hay filtros activos)
+  const turnosParaMostrar = tieneMetrosDeFiltrosActivos ? turnosFiltrados : turnosPorFecha;
+  const allJobs = useMemo(() => [...trabajos, ...trabajosDelivery], [trabajos, trabajosDelivery]);
+
+  const sortedDays = useMemo(() => ***REMOVED***
+    return Object.entries(turnosParaMostrar || ***REMOVED******REMOVED***).sort(([a], [b]) => new Date(b) - new Date(a));
+  ***REMOVED***, [turnosParaMostrar]);
+
+  const daysToShow = sortedDays.slice(0, daysShown);
+  const hasMoreDays = sortedDays.length > daysShown;
+  const remainingDays = sortedDays.length - daysShown;
+  const hasShifts = sortedDays.length > 0;
 
   const handleShowMore = () => ***REMOVED***
     setExpanding(true);
@@ -79,13 +102,64 @@ const Turnos = () => ***REMOVED***
           daysPerPage=***REMOVED***DAYS_PER_PAGE***REMOVED***
         />
 
+        ***REMOVED***/* Sistema de filtros */***REMOVED***
+        ***REMOVED***(Object.keys(turnosPorFecha || ***REMOVED******REMOVED***).length > 0) && (
+          <FiltrosTurnos
+            onFiltersChange=***REMOVED***actualizarFiltros***REMOVED***
+            activeFilters=***REMOVED***filters***REMOVED***
+          />
+        )***REMOVED***
+
+        ***REMOVED***/* Estadísticas de filtrado */***REMOVED***
+        ***REMOVED***tieneMetrosDeFiltrosActivos && (
+          <div 
+            className="p-3 rounded-lg border-l-4 text-sm"
+            style=***REMOVED******REMOVED*** 
+              backgroundColor: thematicColors?.transparent5,
+              borderLeftColor: thematicColors?.base 
+            ***REMOVED******REMOVED***
+          >
+            <div className="flex items-center justify-between">
+              <span style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="font-medium">
+                Mostrando ***REMOVED***estadisticasFiltros.turnosFiltrados***REMOVED*** de ***REMOVED***estadisticasFiltros.totalTurnos***REMOVED*** turnos
+              </span>
+              <span className="text-gray-600">
+                ***REMOVED***estadisticasFiltros.diasMostrados***REMOVED*** días con turnos
+              </span>
+            </div>
+          </div>
+        )***REMOVED***
+
         ***REMOVED***/* Contenido principal */***REMOVED***
-        ***REMOVED***!hasShifts ? (
+        ***REMOVED***!hasShifts && !tieneMetrosDeFiltrosActivos ? (
           <ShiftsEmptyState 
             allJobs=***REMOVED***allJobs***REMOVED***
             onNewShift=***REMOVED***abrirModalNuevo***REMOVED***
             thematicColors=***REMOVED***thematicColors***REMOVED***
           />
+        ) : !hasShifts && tieneMetrosDeFiltrosActivos ? (
+          // Estado cuando hay filtros pero no resultados
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+            <div 
+              className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"
+              style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent10 ***REMOVED******REMOVED***
+            >
+              <span className="text-2xl">🔍</span>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              No hay turnos que coincidan con los filtros
+            </h3>
+            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+              Intenta ajustar los filtros para ver más resultados.
+            </p>
+            <button
+              onClick=***REMOVED***() => actualizarFiltros(***REMOVED*** trabajo: 'todos', diasSemana: [], tipoTurno: 'todos' ***REMOVED***)***REMOVED***
+              className="text-white px-6 py-3 rounded-lg transition-colors hover:opacity-90"
+              style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base ***REMOVED******REMOVED***
+            >
+              Limpiar filtros
+            </button>
+          </div>
         ) : (
           <>
             ***REMOVED***/* Lista de turnos */***REMOVED***

@@ -1,0 +1,149 @@
+// src/components/filters/FiltrosTurnos/index.jsx
+
+import React, ***REMOVED*** useState ***REMOVED*** from 'react';
+import ***REMOVED*** Filter, X ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import FiltroTrabajo from '../FiltroTrabajo';
+import FiltroDiasSemana from '../FiltroDiasSemana';
+import FiltroTipoTurno from '../FiltroTipoTurno';
+
+const FiltrosTurnos = (***REMOVED*** onFiltersChange, activeFilters = ***REMOVED******REMOVED*** ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Verificar si hay filtros activos
+  const hasActiveFilters = Object.values(activeFilters).some(filter => ***REMOVED***
+    if (Array.isArray(filter)) ***REMOVED***
+      return filter.length > 0;
+    ***REMOVED***
+    return filter && filter !== 'todos';
+  ***REMOVED***);
+  
+  // Manejar cambios en los filtros
+  const handleFilterChange = (filterType, value) => ***REMOVED***
+    const newFilters = ***REMOVED*** ...activeFilters, [filterType]: value ***REMOVED***;
+    onFiltersChange(newFilters);
+  ***REMOVED***;
+  
+  // Limpiar todos los filtros
+  const clearAllFilters = () => ***REMOVED***
+    const clearedFilters = ***REMOVED***
+      trabajo: 'todos',
+      diasSemana: [],
+      tipoTurno: 'todos'
+    ***REMOVED***;
+    onFiltersChange(clearedFilters);
+  ***REMOVED***;
+
+  return (
+    <div className="mb-6">
+      ***REMOVED***/* Botón para mostrar/ocultar filtros */***REMOVED***
+      <div className="flex items-center justify-between mb-4">
+        <button
+          onClick=***REMOVED***() => setShowFilters(!showFilters)***REMOVED***
+          className="flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors"
+          style=***REMOVED******REMOVED***
+            backgroundColor: showFilters ? thematicColors?.transparent10 : 'white',
+            borderColor: showFilters ? thematicColors?.base : '#E5E7EB',
+            color: showFilters ? thematicColors?.base : '#6B7280'
+          ***REMOVED******REMOVED***
+        >
+          <Filter size=***REMOVED***18***REMOVED*** />
+          <span className="font-medium">Filtros</span>
+          ***REMOVED***hasActiveFilters && (
+            <div 
+              className="w-2 h-2 rounded-full"
+              style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base ***REMOVED******REMOVED***
+            />
+          )***REMOVED***
+        </button>
+        
+        ***REMOVED***/* Botón de limpiar filtros */***REMOVED***
+        ***REMOVED***hasActiveFilters && (
+          <button
+            onClick=***REMOVED***clearAllFilters***REMOVED***
+            className="flex items-center space-x-1 px-3 py-1 text-sm text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            <X size=***REMOVED***14***REMOVED*** />
+            <span>Limpiar</span>
+          </button>
+        )***REMOVED***
+      </div>
+
+      ***REMOVED***/* Panel de filtros */***REMOVED***
+      ***REMOVED***showFilters && (
+        <div 
+          className="rounded-lg border p-4 space-y-4 transition-all"
+          style=***REMOVED******REMOVED*** 
+            backgroundColor: thematicColors?.transparent5,
+            borderColor: thematicColors?.transparent20 
+          ***REMOVED******REMOVED***
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            ***REMOVED***/* Filtro por trabajo */***REMOVED***
+            <FiltroTrabajo
+              value=***REMOVED***activeFilters.trabajo || 'todos'***REMOVED***
+              onChange=***REMOVED***(value) => handleFilterChange('trabajo', value)***REMOVED***
+            />
+            
+            ***REMOVED***/* Filtro por días de la semana */***REMOVED***
+            <FiltroDiasSemana
+              value=***REMOVED***activeFilters.diasSemana || []***REMOVED***
+              onChange=***REMOVED***(value) => handleFilterChange('diasSemana', value)***REMOVED***
+            />
+            
+            ***REMOVED***/* Filtro por tipo de turno */***REMOVED***
+            <FiltroTipoTurno
+              value=***REMOVED***activeFilters.tipoTurno || 'todos'***REMOVED***
+              onChange=***REMOVED***(value) => handleFilterChange('tipoTurno', value)***REMOVED***
+            />
+          </div>
+          
+          ***REMOVED***/* Resumen de filtros activos */***REMOVED***
+          ***REMOVED***hasActiveFilters && (
+            <div className="pt-3 border-t" style=***REMOVED******REMOVED*** borderColor: thematicColors?.transparent20 ***REMOVED******REMOVED***>
+              <div className="flex flex-wrap gap-2">
+                <span className="text-sm text-gray-600">Filtros activos:</span>
+                ***REMOVED***activeFilters.trabajo && activeFilters.trabajo !== 'todos' && (
+                  <span 
+                    className="px-2 py-1 rounded-full text-xs font-medium"
+                    style=***REMOVED******REMOVED*** 
+                      backgroundColor: thematicColors?.transparent20,
+                      color: thematicColors?.base 
+                    ***REMOVED******REMOVED***
+                  >
+                    Trabajo específico
+                  </span>
+                )***REMOVED***
+                ***REMOVED***activeFilters.diasSemana && activeFilters.diasSemana.length > 0 && (
+                  <span 
+                    className="px-2 py-1 rounded-full text-xs font-medium"
+                    style=***REMOVED******REMOVED*** 
+                      backgroundColor: thematicColors?.transparent20,
+                      color: thematicColors?.base 
+                    ***REMOVED******REMOVED***
+                  >
+                    ***REMOVED***activeFilters.diasSemana.length***REMOVED*** días
+                  </span>
+                )***REMOVED***
+                ***REMOVED***activeFilters.tipoTurno && activeFilters.tipoTurno !== 'todos' && (
+                  <span 
+                    className="px-2 py-1 rounded-full text-xs font-medium"
+                    style=***REMOVED******REMOVED*** 
+                      backgroundColor: thematicColors?.transparent20,
+                      color: thematicColors?.base 
+                    ***REMOVED******REMOVED***
+                  >
+                    Tipo: ***REMOVED***activeFilters.tipoTurno***REMOVED***
+                  </span>
+                )***REMOVED***
+              </div>
+            </div>
+          )***REMOVED***
+        </div>
+      )***REMOVED***
+    </div>
+  );
+***REMOVED***;
+
+export default FiltrosTurnos;
