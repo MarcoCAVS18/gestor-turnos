@@ -1,137 +1,21 @@
 // src/components/shift/ShiftTypeBadge/index.jsx
 
 import React from 'react';
-import { Sun, Sunset, Moon, Calendar, Truck, Clock } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { getShiftTypesConfig } from '../../../utils/shiftTypesConfig';
+import { determinarTipoTurno } from '../../../utils/shiftDetailsUtils';
 
 const ShiftTypeBadge = ({ tipoTurno, turno, size = 'sm' }) => {
   const { thematicColors, shiftRanges } = useApp();
   
-  // Función para determinar tipo de turno por rangos
-  const getTipoTurnoByHour = (hora) => {
-    const ranges = shiftRanges || {
-      dayStart: 6, dayEnd: 14,
-      afternoonStart: 14, afternoonEnd: 20,
-      nightStart: 20
-    };
-
-    if (hora >= ranges.dayStart && hora < ranges.dayEnd) {
-      return 'diurno';
-    } else if (hora >= ranges.afternoonStart && hora < ranges.afternoonEnd) {
-      return 'tarde';
-    } else {
-      return 'noche';
-    }
-  };
-
-  // Si se pasa el turno completo, determinar el tipo automáticamente
-  const determinarTipoTurno = (turnoData) => {
-    if (!turnoData) return 'noche';
-    
-    // Si es delivery, retornar delivery
-    if (turnoData.tipo === 'delivery' || turnoData.type === 'delivery') {
-      return 'delivery';
-    }
-    
-    // Determinar por fecha (fin de semana)
-    if (turnoData.fecha) {
-      const [year, month, day] = turnoData.fecha.split('-');
-      const date = new Date(year, month - 1, day);
-      const dayOfWeek = date.getDay();
-      
-      if (dayOfWeek === 0) return 'domingo';
-      if (dayOfWeek === 6) return 'sabado';
-    }
-    
-    // Determinar por hora de inicio y fin para detectar turnos mixtos
-    if (turnoData.horaInicio && turnoData.horaFin) {
-      const [horaInicio, minutoInicio] = turnoData.horaInicio.split(':').map(Number);
-      const [horaFin, minutoFin] = turnoData.horaFin.split(':').map(Number);
-      
-      const inicioMinutos = horaInicio * 60 + minutoInicio;
-      let finMinutos = horaFin * 60 + minutoFin;
-      
-      // Si cruza medianoche
-      if (finMinutos <= inicioMinutos) {
-        finMinutos += 24 * 60;
-      }
-      
-      const tiposEncontrados = new Set();
-      
-      // Revisar cada hora del turno para ver si cambia de tipo
-      for (let minutos = inicioMinutos; minutos < finMinutos; minutos += 60) {
-        const horaActual = Math.floor((minutos % (24 * 60)) / 60);
-        const tipo = getTipoTurnoByHour(horaActual);
-        tiposEncontrados.add(tipo);
-      }
-      
-      // Si hay más de un tipo, es mixto
-      if (tiposEncontrados.size > 1) {
-        return 'mixto';
-      }
-      
-      // Si solo hay un tipo, retornar ese tipo
-      return Array.from(tiposEncontrados)[0] || 'noche';
-    }
-    
-    return 'noche';
-  };
+  // Obtener la configuración de tipos de turno
+  const shiftTypesConfig = getShiftTypesConfig(thematicColors);
   
-  const tipo = tipoTurno || determinarTipoTurno(turno);
+  // Determinar el tipo si se pasa el turno completo
+  const tipo = tipoTurno || determinarTipoTurno(turno, shiftRanges);
   
-  const tipos = {
-    diurno: {
-      icon: Sun,
-      label: 'Diurno',
-      color: '#F59E0B',
-      bgColor: '#FEF3C7',
-      description: 'Turno de día'
-    },
-    tarde: {
-      icon: Sunset,
-      label: 'Tarde',
-      color: '#F97316',
-      bgColor: '#FED7AA',
-      description: 'Turno de tarde'
-    },
-    noche: {
-      icon: Moon,
-      label: 'Noche',
-      color: thematicColors?.base || '#6366F1',
-      bgColor: thematicColors?.transparent10 || '#E0E7FF',
-      description: turno?.cruzaMedianoche ? 'Turno nocturno (cruza medianoche)' : 'Turno de noche'
-    },
-    sabado: {
-      icon: Calendar,
-      label: 'Sábado',
-      color: '#8B5CF6',
-      bgColor: '#EDE9FE',
-      description: 'Turno de sábado'
-    },
-    domingo: {
-      icon: Calendar,
-      label: 'Domingo',
-      color: '#EF4444',
-      bgColor: '#FEE2E2',
-      description: 'Turno de domingo'
-    },
-    delivery: {
-      icon: Truck,
-      label: 'Delivery',
-      color: '#10B981',
-      bgColor: '#D1FAE5',
-      description: 'Turno de delivery'
-    },
-    mixto: {
-      icon: Clock,
-      label: 'Mixto',
-      color: '#6B7280',
-      bgColor: '#F3F4F6',
-      description: 'Turno mixto (múltiples tipos de horario)'
-    }
-  };
-
-  const tipoInfo = tipos[tipo] || tipos.noche;
+  // Obtener la configuración del tipo
+  const tipoInfo = shiftTypesConfig[tipo] || shiftTypesConfig.noche;
   const Icon = tipoInfo.icon;
   
   const sizeClasses = {

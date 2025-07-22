@@ -155,7 +155,8 @@ const TurnoForm = ({
         </select>
       </div>
 
-      <div>
+      {/* Fecha - ancho limitado */}
+      <div className="max-w-xs">
         <label className="block text-sm font-medium text-gray-700 mb-2">
           <Calendar size={16} className="inline mr-2" />
           Fecha de Inicio *
@@ -164,12 +165,14 @@ const TurnoForm = ({
           type="date" 
           value={formData.fecha} 
           onChange={(e) => handleInputChange('fecha', e.target.value)} 
+          className="w-full"
           required 
           themeColor={thematicColors?.base} 
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      {/* Horarios - grid limitado para inputs de tiempo */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-sm">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Clock size={16} className="inline mr-2" />
@@ -179,6 +182,7 @@ const TurnoForm = ({
             type="time" 
             value={formData.horaInicio} 
             onChange={(e) => handleInputChange('horaInicio', e.target.value)} 
+            className="w-full"
             required 
             themeColor={thematicColors?.base} 
           />
@@ -192,6 +196,7 @@ const TurnoForm = ({
             type="time" 
             value={formData.horaFin} 
             onChange={(e) => handleInputChange('horaFin', e.target.value)} 
+            className="w-full"
             required 
             themeColor={thematicColors?.base} 
           />
@@ -205,7 +210,6 @@ const TurnoForm = ({
             <p className="font-medium text-blue-800">Turno Nocturno Detectado</p>
             <p className="text-blue-700 mt-1">
               Este turno finalizará el día siguiente: {" "}
-              {/* Mostrar la fecha correcta */}
               {formData.fecha && (() => {
                 const fechaInicio = new Date(formData.fecha + 'T00:00:00');
                 const fechaFin = new Date(fechaInicio);

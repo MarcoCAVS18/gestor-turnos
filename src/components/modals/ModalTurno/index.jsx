@@ -39,19 +39,35 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
     return [...trabajos, ...trabajosDelivery];
   }, [trabajos, trabajosDelivery]);
 
-  // Determinar el tipo de formulario basado en el trabajo
+  // 🔥 CORRECCIÓN PRINCIPAL: Determinar el tipo de formulario basado en el trabajo - MEJORADA
   useEffect(() => {
+    // Si es edición de un turno existente, usar su tipo
     if (turno?.tipo === 'delivery') {
       setFormularioTipo('delivery');
-    } else if (trabajoSeleccionadoId) {
-      const trabajo = todosLosTrabajos.find(t => t.id === trabajoSeleccionadoId);
-      const esDelivery = trabajo?.tipo === 'delivery' || trabajo?.type === 'delivery';
-      setFormularioTipo(esDelivery ? 'delivery' : 'tradicional');
+      return;
+    }
 
+    // Si hay un trabajo seleccionado, determinar el tipo basándose en el trabajo actual
+    if (trabajoSeleccionadoId) {
+      const trabajo = todosLosTrabajos.find(t => t.id === trabajoSeleccionadoId);
+      
+      if (trabajo) {
+        const esDelivery = trabajo.tipo === 'delivery' || trabajo.type === 'delivery';
+        const nuevoTipo = esDelivery ? 'delivery' : 'tradicional';
+        
+        // Solo cambiar si es diferente para evitar re-renders innecesarios
+        if (formularioTipo !== nuevoTipo) {
+          setFormularioTipo(nuevoTipo);
+        }
+      } else {
+        // Si no se encuentra el trabajo, usar tradicional por defecto
+        setFormularioTipo('tradicional');
+      }
     } else {
+      // Si no hay trabajo seleccionado, usar tradicional por defecto
       setFormularioTipo('tradicional');
     }
-  }, [trabajoSeleccionadoId, todosLosTrabajos, turno]);
+  }, [trabajoSeleccionadoId, todosLosTrabajos, turno, formularioTipo]);
 
   // Reset cuando se abre/cierra el modal
   useEffect(() => {
@@ -126,8 +142,10 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
     }
   };
 
+  // 🔥 CORRECCIÓN: Manejar cambio de trabajo y actualizar el tipo automáticamente
   const manejarCambioTrabajo = (nuevoTrabajoId) => {
     setTrabajoSeleccionadoId(nuevoTrabajoId);
+    // No necesitamos cambiar formularioTipo aquí, se maneja en el useEffect
   };
 
   const manejarCerrar = () => {

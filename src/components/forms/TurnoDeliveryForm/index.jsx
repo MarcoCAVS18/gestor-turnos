@@ -37,19 +37,8 @@ const TurnoDeliveryForm = ({
   
   const [error, setError] = useState('');
 
-  // Filtrar trabajos de delivery correctamente
-  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery' || t.type === 'delivery');
-  
-  // También incluir el trabajo seleccionado si no es de delivery pero ya está seleccionado
-  const trabajosParaSelector = React.useMemo(() => {
-    const trabajoSeleccionadoActual = trabajos.find(t => t.id === formData.trabajoSeleccionado);
-    
-    if (trabajoSeleccionadoActual && trabajoSeleccionadoActual.tipo !== 'delivery' && trabajoSeleccionadoActual.type !== 'delivery') {
-      return [...trabajosDelivery, trabajoSeleccionadoActual];
-    }
-    
-    return trabajosDelivery;
-  }, [trabajosDelivery, trabajos, formData.trabajoSeleccionado]);
+  // 🔥 CORRECCIÓN: Mostrar TODOS los trabajos disponibles, no solo delivery
+  const trabajosParaSelector = trabajos; // Usar todos los trabajos que se pasan como prop
 
   // Detectar si el turno cruza medianoche
   const cruzaMedianoche = useMemo(() => {
@@ -210,7 +199,7 @@ const TurnoDeliveryForm = ({
                 {trabajo.nombre}
                 {trabajo.tipo === 'delivery' || trabajo.type === 'delivery' 
                   ? ' (Delivery)' 
-                  : ' (Tradicional)'}
+                  : ''}
               </option>
             ))}
           </select>
@@ -232,9 +221,10 @@ const TurnoDeliveryForm = ({
           )}
         </div>
 
-        {/* Fecha y horario */}
+        {/* Fecha y horario - GRID CORREGIDO */}
         <div className="space-y-4">
-          <div>
+          {/* Fecha - ancho limitado */}
+          <div className="max-w-xs">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               <Calendar size={16} className="inline mr-2" />
               Fecha de inicio *
@@ -249,7 +239,8 @@ const TurnoDeliveryForm = ({
             />
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Horarios - mismo ancho que los inputs de pedidos/kilómetros */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Clock size={16} className="inline mr-2" />
@@ -289,7 +280,6 @@ const TurnoDeliveryForm = ({
                 <p className="font-medium text-blue-800">Turno Nocturno Detectado</p>
                 <p className="text-blue-700 mt-1">
                   Este turno finalizará el {" "}
-                  {/* Mostrar la fecha correcta */}
                   {formData.fecha && (() => {
                     const fechaInicio = new Date(formData.fecha + 'T00:00:00');
                     const fechaFin = new Date(fechaInicio);
@@ -306,11 +296,12 @@ const TurnoDeliveryForm = ({
           )}
         </div>
 
-        {/* Información de pedidos */}
+        {/* Información de pedidos - GRID CORREGIDO */}
         <div className="space-y-4">
           <h3 className="text-sm font-medium text-gray-700">Información del turno</h3>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Grid limitado para inputs numéricos pequeños */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Package size={16} className="inline mr-2" />
@@ -346,11 +337,12 @@ const TurnoDeliveryForm = ({
           </div>
         </div>
 
-        {/* Información financiera */}
+        {/* Información financiera - GRID CORREGIDO */}
         <div className="space-y-4">
           <h3 className="text-sm font-medium text-gray-700">Ganancias *</h3>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Grid limitado para inputs de dinero */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <DollarSign size={16} className="inline mr-2" />
@@ -385,7 +377,8 @@ const TurnoDeliveryForm = ({
             </div>
           </div>
           
-          <div>
+          {/* Gasto combustible - ancho limitado */}
+          <div className="max-w-xs">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Gasto en combustible
             </label>
