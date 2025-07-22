@@ -1,4 +1,4 @@
-// src/pages/Dashboard.jsx - Versión Corregida
+// src/pages/Dashboard.jsx - Con espaciado consistente
 
 import React from 'react';
 import { useDashboardStats } from '../hooks/useDashboardStats';
@@ -25,7 +25,7 @@ const Dashboard = () => {
   }
   
   return (
-    <div className="px-4 py-6 space-y-6">
+    <div className="px-4 py-6 pb-32 space-y-6">
       <WelcomeCard totalGanado={stats.totalGanado} />
       
       <QuickStatsGrid stats={stats} />
