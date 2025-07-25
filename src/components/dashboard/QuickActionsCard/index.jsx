@@ -1,11 +1,13 @@
-// src/components/dashboard/QuickActionsCard/index.jsx
+// src/components/dashboard/QuickActionsCard/index.jsx - Con colores temáticos
 
 import { useNavigate } from 'react-router-dom';
 import { Plus, Briefcase } from 'lucide-react';
+import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
 const QuickActionsCard = () => {
+  const { thematicColors } = useApp();
   const navigate = useNavigate();
 
   return (
@@ -17,6 +19,7 @@ const QuickActionsCard = () => {
           variant="outline"
           className="flex items-center justify-center gap-2"
           icon={Plus}
+          themeColor={thematicColors?.base}
         >
           Nuevo turno
         </Button>
@@ -25,6 +28,7 @@ const QuickActionsCard = () => {
           variant="outline"
           className="flex items-center justify-center gap-2"
           icon={Briefcase}
+          themeColor={thematicColors?.base}
         >
           Nuevo trabajo
         </Button>

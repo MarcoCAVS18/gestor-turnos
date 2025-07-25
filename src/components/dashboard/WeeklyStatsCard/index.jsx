@@ -1,4 +1,4 @@
-// src/components/dashboard/WeeklyStatsCard/index.jsx
+// src/components/dashboard/WeeklyStatsCard/index.jsx - Versión vertical mejorada
 
 import { Activity, TrendingUp, TrendingDown } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
@@ -8,8 +8,9 @@ const WeeklyStatsCard = ({ stats }) => {
   const { thematicColors } = useApp();
 
   return (
-    <Card>
-      <div className="flex items-center justify-between mb-4">
+    <Card className="h-full flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold flex items-center">
           <Activity size={20} style={{ color: thematicColors?.base }} className="mr-2" />
           Esta semana
@@ -28,18 +29,25 @@ const WeeklyStatsCard = ({ stats }) => {
         )}
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <p className="text-sm text-gray-600">Turnos completados</p>
-          <p className="text-xl font-bold">{stats.turnosEstaSemana}</p>
+      {/* Stats - Layout vertical */}
+      <div className="flex-1 space-y-8">
+        {/* Turnos completados */}
+        <div className="text-center">
+          <p className="text-sm text-gray-600 mb-2">Turnos completados</p>
+          <p className="text-3xl font-bold text-gray-800">{stats.turnosEstaSemana}</p>
         </div>
-        <div>
-          <p className="text-sm text-gray-600">Ganancias</p>
+        
+        {/* Separador visual */}
+        <div className="w-full h-px bg-gray-200"></div>
+        
+        {/* Ganancias */}
+        <div className="text-center">
+          <p className="text-sm text-gray-600 mb-2">Ganancias</p>
           <p 
-            className="text-xl font-bold" 
+            className="text-3xl font-bold" 
             style={{ color: thematicColors?.base }}
           >
-            ${stats.gananciasEstaSemana.toFixed(2)}
+            ${stats.gananciasEstaSemana.toFixed(0)}
           </p>
         </div>
       </div>

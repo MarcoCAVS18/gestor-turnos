@@ -1,4 +1,4 @@
-// src/pages/Dashboard.jsx - Con espaciado consistente
+// src/pages/Dashboard.jsx - Versión responsiva mejorada
 
 import React from 'react';
 import { useDashboardStats } from '../hooks/useDashboardStats';
@@ -10,6 +10,7 @@ import NextShiftCard from '../components/dashboard/NextShiftCard';
 import TopWorkCard from '../components/dashboard/TopWorkCard';
 import FavoriteWorksCard from '../components/dashboard/FavoriteWorksCard';
 import ProjectionCard from '../components/dashboard/ProjectionCard';
+import QuickActionsCard from '../components/dashboard/QuickActionsCard';
 import { useApp } from '../contexts/AppContext';
 
 const Dashboard = () => {
@@ -26,25 +27,52 @@ const Dashboard = () => {
   
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
+      {/* Welcome Card - siempre full width */}
       <WelcomeCard totalGanado={stats.totalGanado} />
-      
-      <QuickStatsGrid stats={stats} />
 
-      <WeeklyStatsCard stats={stats} />
+      {/* Layout responsivo principal */}
+      <div className="space-y-6">
+        {/* Primera fila: Stats cuadradas + Acciones + Weekly Stats vertical */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Stats Grid + Acciones - 4 columnas en pantallas grandes */}
+          <div className="lg:col-span-4 space-y-6">
+            <QuickStatsGrid stats={stats} />
+            <QuickActionsCard />
+          </div>
+          
+          {/* Weekly Stats - 1 columna vertical */}
+          <div className="lg:col-span-1">
+            <div className="h-full">
+              <WeeklyStatsCard stats={stats} />
+            </div>
+          </div>
+        </div>
 
-      <NextShiftCard 
-        proximoTurno={stats.proximoTurno} 
-        formatearFecha={stats.formatearFecha} 
-      />
+        {/* Segunda fila: Projection + Top Work + Favorites */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Projection Card - 1 columna vertical a la izquierda */}
+          <div className="lg:col-span-1">
+            <div className="h-full">
+              <ProjectionCard 
+                proyeccionMensual={stats.proyeccionMensual}
+                horasTrabajadas={stats.horasTrabajadas}
+              />
+            </div>
+          </div>
+          
+          {/* Top Work + Favorites - 4 columnas con stack vertical */}
+          <div className="lg:col-span-4 space-y-6">
+            <TopWorkCard trabajoMasRentable={stats.trabajoMasRentable} />
+            <FavoriteWorksCard trabajosFavoritos={stats.trabajosFavoritos} />
+          </div>
+        </div>
 
-      <TopWorkCard trabajoMasRentable={stats.trabajoMasRentable} />
-
-      <FavoriteWorksCard trabajosFavoritos={stats.trabajosFavoritos} />
-
-      <ProjectionCard 
-        proyeccionMensual={stats.proyeccionMensual}
-        horasTrabajadas={stats.horasTrabajadas}
-      />
+        {/* Segunda fila: Next Shift */}
+        <NextShiftCard 
+          proximoTurno={stats.proximoTurno} 
+          formatearFecha={stats.formatearFecha} 
+        />
+      </div>
     </div>
   );
 };
