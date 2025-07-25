@@ -179,7 +179,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* 🔥 RUTA ESPECIAL para trabajos compartidos - ACCESO PÚBLICO */}
+        {/* RUTA ESPECIAL para trabajos compartidos - ACCESO PÚBLICO */}
         <Route
           path="/compartir/:token"
           element={

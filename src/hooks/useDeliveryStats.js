@@ -1,4 +1,4 @@
-// src/hooks/useDeliveryStats.js - Versión corregida
+// src/hooks/useDeliveryStats.js
 
 import { useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
@@ -7,12 +7,6 @@ export const useDeliveryStats = (periodo = 'mes') => {
   const { trabajosDelivery, turnosDelivery } = useApp();
   
   return useMemo(() => {
-    console.log('Calculando delivery:', {
-      trabajosDelivery: trabajosDelivery?.length || 0,
-      turnosDelivery: turnosDelivery?.length || 0,
-      periodo
-    });
-
     // Usar los datos específicos de delivery desde el contexto
     const trabajosDeliveryValidos = Array.isArray(trabajosDelivery) ? trabajosDelivery : [];
     const turnosDeliveryValidos = Array.isArray(turnosDelivery) ? turnosDelivery : [];
@@ -91,7 +85,7 @@ export const useDeliveryStats = (periodo = 'mes') => {
       }
       
       // Sumar totales usando los campos correctos del turno de delivery
-      const gananciaBase = turno.gananciaTotal || 0; // Campo principal de ganancia
+      const gananciaBase = turno.gananciaTotal || 0;
       const propinas = turno.propinas || 0;
       const pedidos = turno.numeroPedidos || 0;
       const kilometros = turno.kilometros || 0;

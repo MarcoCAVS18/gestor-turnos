@@ -33,15 +33,16 @@ const limpiarDatosTrabajo = (trabajo) => {
   datosLimpios.descripcion = trabajo.descripcion || '';
   datosLimpios.color = trabajo.color || '#EC4899'; // Color por defecto
   
-  // Campos opcionales - solo agregar si existen
+  // Para trabajos tradicionales - incluir tarifa base
   if (trabajo.tarifaBase !== undefined && trabajo.tarifaBase !== null) {
     datosLimpios.tarifaBase = trabajo.tarifaBase;
   }
   
+  // Para trabajos tradicionales - incluir TODAS las tarifas especiales
   if (trabajo.tarifas && typeof trabajo.tarifas === 'object') {
     datosLimpios.tarifas = {};
     
-    // Limpiar tarifas individualmente
+    // ✅ Incluir TODAS las tarifas, no importa si son iguales a la tarifa base
     if (trabajo.tarifas.diurno !== undefined && trabajo.tarifas.diurno !== null) {
       datosLimpios.tarifas.diurno = trabajo.tarifas.diurno;
     }
@@ -57,27 +58,38 @@ const limpiarDatosTrabajo = (trabajo) => {
     if (trabajo.tarifas.domingo !== undefined && trabajo.tarifas.domingo !== null) {
       datosLimpios.tarifas.domingo = trabajo.tarifas.domingo;
     }
+    
+    // Si no hay tarifas válidas, eliminar el objeto tarifas
+    if (Object.keys(datosLimpios.tarifas).length === 0) {
+      delete datosLimpios.tarifas;
+    }
   }
   
   // Para trabajos de delivery
   if (trabajo.tipo === 'delivery') {
     datosLimpios.tipo = 'delivery';
     
+    // Incluir plataforma si existe
     if (trabajo.plataforma) {
       datosLimpios.plataforma = trabajo.plataforma;
     }
     
+    // ✅ Incluir vehículo - IMPORTANTE para la preview
     if (trabajo.vehiculo) {
       datosLimpios.vehiculo = trabajo.vehiculo;
     }
     
-    // Para delivery, usar colorAvatar si existe
+    // Para delivery, usar colorAvatar si existe, sino usar color normal
     if (trabajo.colorAvatar) {
       datosLimpios.color = trabajo.colorAvatar;
     }
+    
+    // Incluir configuración de delivery si existe
+    if (trabajo.configuracion) {
+      datosLimpios.configuracion = trabajo.configuracion;
+    }
   }
-  
-  return datosLimpios;
+    return datosLimpios;
 };
 
 /**
@@ -87,16 +99,12 @@ const limpiarDatosTrabajo = (trabajo) => {
  * @returns {Promise<string>} - URL del enlace de compartir
  */
 export const crearEnlaceCompartir = async (userId, trabajo) => {
-  try {
-    console.log('Datos del trabajo recibidos:', trabajo);
-    
+  try {    
     const token = generarTokenCompartir();
     
     // Limpiar datos del trabajo para evitar undefined
     const trabajoLimpio = limpiarDatosTrabajo(trabajo);
-    
-    console.log('Datos del trabajo después de limpiar:', trabajoLimpio);
-    
+        
     // Crear documento temporal en Firestore con los datos del trabajo
     const shareDocRef = doc(db, 'trabajos_compartidos', token);
     
@@ -111,21 +119,16 @@ export const crearEnlaceCompartir = async (userId, trabajo) => {
       vecesUsado: 0,
       limiteUsos: 10
     };
-    
-    console.log('Datos a guardar en Firestore:', datosCompartir);
-    
+        
     await setDoc(shareDocRef, datosCompartir);
     
     // Generar URL completa
     const baseUrl = window.location.origin || 'https://gestortrabajo.netlify.app';
     const enlaceCompartir = `${baseUrl}/compartir/${token}`;
-
-    console.log('Enlace generado:', enlaceCompartir);
     
     return enlaceCompartir;
     
   } catch (error) {
-    console.error('Error al crear enlace de compartir:', error);
     throw new Error('No se pudo crear el enlace de compartir');
   }
 };
@@ -137,13 +140,27 @@ export const crearEnlaceCompartir = async (userId, trabajo) => {
  */
 export const compartirTrabajoNativo = async (userId, trabajo) => {
   try {
-    console.log('Iniciando compartir trabajo:', { userId, trabajo: trabajo?.nombre });
     
     // Generar enlace de compartir
     const enlace = await crearEnlaceCompartir(userId, trabajo);
     
-    // Texto para compartir (mensaje + enlace)
-    const mensaje = `¡Te comparto los detalles de mi trabajo "${trabajo.nombre}"!`;
+    // Texto para compartir personalizado según el tipo
+    let mensaje;
+    if (trabajo.tipo === 'delivery') {
+      mensaje = `¡Te comparto los detalles de mi trabajo de delivery "${trabajo.nombre}"!`;
+      if (trabajo.plataforma) {
+        mensaje += ` Es para ${trabajo.plataforma}`;
+      }
+      if (trabajo.vehiculo) {
+        mensaje += ` usando ${trabajo.vehiculo}`;
+      }
+    } else {
+      mensaje = `¡Te comparto los detalles de mi trabajo "${trabajo.nombre}"!`;
+      if (trabajo.tarifaBase) {
+        mensaje += ` Con tarifa base de $${trabajo.tarifaBase}/hora`;
+      }
+    }
+    
     const textoCompartir = `${mensaje}\n\nVisita este enlace para más información:\n${enlace}`;
     
     // Verificar si el navegador soporta Web Share API
@@ -154,25 +171,20 @@ export const compartirTrabajoNativo = async (userId, trabajo) => {
           text: mensaje,
           url: enlace
         });
-        console.log('Compartido exitosamente con Web Share API');
         return true;
       } catch (error) {
         // Si el usuario cancela o hay un error, usar fallback
         if (error.name !== 'AbortError') {
-          console.log('Error en Web Share API, usando fallback:', error);
           return await copiarAlPortapapeles(textoCompartir);
         }
         // Si el usuario canceló, no hacer nada más
-        console.log('Usuario canceló el compartir');
         return false;
       }
     } else {
       // Fallback para navegadores que no soportan Web Share API
-      console.log('Web Share API no disponible, usando fallback');
       return await copiarAlPortapapeles(textoCompartir);
     }
   } catch (error) {
-    console.error('Error al compartir trabajo:', error);
     throw error;
   }
 };
@@ -184,6 +196,7 @@ export const compartirTrabajoNativo = async (userId, trabajo) => {
  */
 export const obtenerTrabajoCompartido = async (token) => {
   try {
+    
     const shareDocRef = doc(db, 'trabajos_compartidos', token);
     const shareDoc = await getDoc(shareDocRef);
     
@@ -214,6 +227,7 @@ export const obtenerTrabajoCompartido = async (token) => {
       throw new Error('Este enlace de compartir ha alcanzado su límite de usos');
     }
     
+    
     return {
       trabajoData: datos.trabajoData,
       token: token,
@@ -222,7 +236,6 @@ export const obtenerTrabajoCompartido = async (token) => {
     };
     
   } catch (error) {
-    console.error('Error al obtener trabajo compartido:', error);
     throw error;
   }
 };
@@ -235,6 +248,7 @@ export const obtenerTrabajoCompartido = async (token) => {
  */
 export const aceptarTrabajoCompartido = async (userId, token) => {
   try {
+    
     const shareDocRef = doc(db, 'trabajos_compartidos', token);
     const shareDoc = await getDoc(shareDocRef);
     
@@ -261,7 +275,7 @@ export const aceptarTrabajoCompartido = async (userId, token) => {
       origen: 'compartido',
       tokenOrigen: token
     };
-    
+        
     const docRef = await addDoc(userTrabajosRef, nuevoTrabajo);
     
     // Incrementar contador de usos
@@ -270,13 +284,13 @@ export const aceptarTrabajoCompartido = async (userId, token) => {
       vecesUsado: datos.vecesUsado + 1
     }, { merge: true });
     
+    
     return {
       id: docRef.id,
       ...nuevoTrabajo
     };
     
   } catch (error) {
-    console.error('Error al aceptar trabajo compartido:', error);
     throw error;
   }
 };
@@ -296,7 +310,6 @@ export const copiarAlPortapapeles = async (texto) => {
       if (window.showToast) {
         window.showToast('Enlace copiado al portapapeles');
       } else {
-        console.log('Enlace copiado al portapapeles');
       }
       
       return true;
@@ -315,13 +328,11 @@ export const copiarAlPortapapeles = async (texto) => {
       document.body.removeChild(textArea);
       
       if (resultado) {
-        console.log('Enlace copiado al portapapeles (fallback)');
       }
       
       return resultado;
     }
   } catch (error) {
-    console.error('Error al copiar al portapapeles:', error);
     return false;
   }
 };
