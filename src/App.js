@@ -179,7 +179,7 @@ function App() ***REMOVED***
         <Route path="/forgot-password" element=***REMOVED***<ForgotPassword />***REMOVED*** />
         <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />
 
-        ***REMOVED***/* 🔥 RUTA ESPECIAL para trabajos compartidos - ACCESO PÚBLICO */***REMOVED***
+        ***REMOVED***/* RUTA ESPECIAL para trabajos compartidos - ACCESO PÚBLICO */***REMOVED***
         <Route
           path="/compartir/:token"
           element=***REMOVED***

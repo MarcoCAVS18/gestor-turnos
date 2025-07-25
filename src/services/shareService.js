@@ -33,15 +33,16 @@ const limpiarDatosTrabajo = (trabajo) => ***REMOVED***
   datosLimpios.descripcion = trabajo.descripcion || '';
   datosLimpios.color = trabajo.color || '#EC4899'; // Color por defecto
   
-  // Campos opcionales - solo agregar si existen
+  // Para trabajos tradicionales - incluir tarifa base
   if (trabajo.tarifaBase !== undefined && trabajo.tarifaBase !== null) ***REMOVED***
     datosLimpios.tarifaBase = trabajo.tarifaBase;
   ***REMOVED***
   
+  // Para trabajos tradicionales - incluir TODAS las tarifas especiales
   if (trabajo.tarifas && typeof trabajo.tarifas === 'object') ***REMOVED***
     datosLimpios.tarifas = ***REMOVED******REMOVED***;
     
-    // Limpiar tarifas individualmente
+    // ✅ Incluir TODAS las tarifas, no importa si son iguales a la tarifa base
     if (trabajo.tarifas.diurno !== undefined && trabajo.tarifas.diurno !== null) ***REMOVED***
       datosLimpios.tarifas.diurno = trabajo.tarifas.diurno;
     ***REMOVED***
@@ -57,27 +58,38 @@ const limpiarDatosTrabajo = (trabajo) => ***REMOVED***
     if (trabajo.tarifas.domingo !== undefined && trabajo.tarifas.domingo !== null) ***REMOVED***
       datosLimpios.tarifas.domingo = trabajo.tarifas.domingo;
     ***REMOVED***
+    
+    // Si no hay tarifas válidas, eliminar el objeto tarifas
+    if (Object.keys(datosLimpios.tarifas).length === 0) ***REMOVED***
+      delete datosLimpios.tarifas;
+    ***REMOVED***
   ***REMOVED***
   
   // Para trabajos de delivery
   if (trabajo.tipo === 'delivery') ***REMOVED***
     datosLimpios.tipo = 'delivery';
     
+    // Incluir plataforma si existe
     if (trabajo.plataforma) ***REMOVED***
       datosLimpios.plataforma = trabajo.plataforma;
     ***REMOVED***
     
+    // ✅ Incluir vehículo - IMPORTANTE para la preview
     if (trabajo.vehiculo) ***REMOVED***
       datosLimpios.vehiculo = trabajo.vehiculo;
     ***REMOVED***
     
-    // Para delivery, usar colorAvatar si existe
+    // Para delivery, usar colorAvatar si existe, sino usar color normal
     if (trabajo.colorAvatar) ***REMOVED***
       datosLimpios.color = trabajo.colorAvatar;
     ***REMOVED***
+    
+    // Incluir configuración de delivery si existe
+    if (trabajo.configuracion) ***REMOVED***
+      datosLimpios.configuracion = trabajo.configuracion;
+    ***REMOVED***
   ***REMOVED***
-  
-  return datosLimpios;
+    return datosLimpios;
 ***REMOVED***;
 
 /**
@@ -87,16 +99,12 @@ const limpiarDatosTrabajo = (trabajo) => ***REMOVED***
  * @returns ***REMOVED***Promise<string>***REMOVED*** - URL del enlace de compartir
  */
 export const crearEnlaceCompartir = async (userId, trabajo) => ***REMOVED***
-  try ***REMOVED***
-    console.log('Datos del trabajo recibidos:', trabajo);
-    
+  try ***REMOVED***    
     const token = generarTokenCompartir();
     
     // Limpiar datos del trabajo para evitar undefined
     const trabajoLimpio = limpiarDatosTrabajo(trabajo);
-    
-    console.log('Datos del trabajo después de limpiar:', trabajoLimpio);
-    
+        
     // Crear documento temporal en Firestore con los datos del trabajo
     const shareDocRef = doc(db, 'trabajos_compartidos', token);
     
@@ -111,21 +119,16 @@ export const crearEnlaceCompartir = async (userId, trabajo) => ***REMOVED***
       vecesUsado: 0,
       limiteUsos: 10
     ***REMOVED***;
-    
-    console.log('Datos a guardar en Firestore:', datosCompartir);
-    
+        
     await setDoc(shareDocRef, datosCompartir);
     
     // Generar URL completa
     const baseUrl = window.location.origin || 'https://gestortrabajo.netlify.app';
     const enlaceCompartir = `$***REMOVED***baseUrl***REMOVED***/compartir/$***REMOVED***token***REMOVED***`;
-
-    console.log('Enlace generado:', enlaceCompartir);
     
     return enlaceCompartir;
     
   ***REMOVED*** catch (error) ***REMOVED***
-    console.error('Error al crear enlace de compartir:', error);
     throw new Error('No se pudo crear el enlace de compartir');
   ***REMOVED***
 ***REMOVED***;
@@ -137,13 +140,27 @@ export const crearEnlaceCompartir = async (userId, trabajo) => ***REMOVED***
  */
 export const compartirTrabajoNativo = async (userId, trabajo) => ***REMOVED***
   try ***REMOVED***
-    console.log('Iniciando compartir trabajo:', ***REMOVED*** userId, trabajo: trabajo?.nombre ***REMOVED***);
     
     // Generar enlace de compartir
     const enlace = await crearEnlaceCompartir(userId, trabajo);
     
-    // Texto para compartir (mensaje + enlace)
-    const mensaje = `¡Te comparto los detalles de mi trabajo "$***REMOVED***trabajo.nombre***REMOVED***"!`;
+    // Texto para compartir personalizado según el tipo
+    let mensaje;
+    if (trabajo.tipo === 'delivery') ***REMOVED***
+      mensaje = `¡Te comparto los detalles de mi trabajo de delivery "$***REMOVED***trabajo.nombre***REMOVED***"!`;
+      if (trabajo.plataforma) ***REMOVED***
+        mensaje += ` Es para $***REMOVED***trabajo.plataforma***REMOVED***`;
+      ***REMOVED***
+      if (trabajo.vehiculo) ***REMOVED***
+        mensaje += ` usando $***REMOVED***trabajo.vehiculo***REMOVED***`;
+      ***REMOVED***
+    ***REMOVED*** else ***REMOVED***
+      mensaje = `¡Te comparto los detalles de mi trabajo "$***REMOVED***trabajo.nombre***REMOVED***"!`;
+      if (trabajo.tarifaBase) ***REMOVED***
+        mensaje += ` Con tarifa base de $$***REMOVED***trabajo.tarifaBase***REMOVED***/hora`;
+      ***REMOVED***
+    ***REMOVED***
+    
     const textoCompartir = `$***REMOVED***mensaje***REMOVED***\n\nVisita este enlace para más información:\n$***REMOVED***enlace***REMOVED***`;
     
     // Verificar si el navegador soporta Web Share API
@@ -154,25 +171,20 @@ export const compartirTrabajoNativo = async (userId, trabajo) => ***REMOVED***
           text: mensaje,
           url: enlace
         ***REMOVED***);
-        console.log('Compartido exitosamente con Web Share API');
         return true;
       ***REMOVED*** catch (error) ***REMOVED***
         // Si el usuario cancela o hay un error, usar fallback
         if (error.name !== 'AbortError') ***REMOVED***
-          console.log('Error en Web Share API, usando fallback:', error);
           return await copiarAlPortapapeles(textoCompartir);
         ***REMOVED***
         // Si el usuario canceló, no hacer nada más
-        console.log('Usuario canceló el compartir');
         return false;
       ***REMOVED***
     ***REMOVED*** else ***REMOVED***
       // Fallback para navegadores que no soportan Web Share API
-      console.log('Web Share API no disponible, usando fallback');
       return await copiarAlPortapapeles(textoCompartir);
     ***REMOVED***
   ***REMOVED*** catch (error) ***REMOVED***
-    console.error('Error al compartir trabajo:', error);
     throw error;
   ***REMOVED***
 ***REMOVED***;
@@ -184,6 +196,7 @@ export const compartirTrabajoNativo = async (userId, trabajo) => ***REMOVED***
  */
 export const obtenerTrabajoCompartido = async (token) => ***REMOVED***
   try ***REMOVED***
+    
     const shareDocRef = doc(db, 'trabajos_compartidos', token);
     const shareDoc = await getDoc(shareDocRef);
     
@@ -214,6 +227,7 @@ export const obtenerTrabajoCompartido = async (token) => ***REMOVED***
       throw new Error('Este enlace de compartir ha alcanzado su límite de usos');
     ***REMOVED***
     
+    
     return ***REMOVED***
       trabajoData: datos.trabajoData,
       token: token,
@@ -222,7 +236,6 @@ export const obtenerTrabajoCompartido = async (token) => ***REMOVED***
     ***REMOVED***;
     
   ***REMOVED*** catch (error) ***REMOVED***
-    console.error('Error al obtener trabajo compartido:', error);
     throw error;
   ***REMOVED***
 ***REMOVED***;
@@ -235,6 +248,7 @@ export const obtenerTrabajoCompartido = async (token) => ***REMOVED***
  */
 export const aceptarTrabajoCompartido = async (userId, token) => ***REMOVED***
   try ***REMOVED***
+    
     const shareDocRef = doc(db, 'trabajos_compartidos', token);
     const shareDoc = await getDoc(shareDocRef);
     
@@ -261,7 +275,7 @@ export const aceptarTrabajoCompartido = async (userId, token) => ***REMOVED***
       origen: 'compartido',
       tokenOrigen: token
     ***REMOVED***;
-    
+        
     const docRef = await addDoc(userTrabajosRef, nuevoTrabajo);
     
     // Incrementar contador de usos
@@ -270,13 +284,13 @@ export const aceptarTrabajoCompartido = async (userId, token) => ***REMOVED***
       vecesUsado: datos.vecesUsado + 1
     ***REMOVED***, ***REMOVED*** merge: true ***REMOVED***);
     
+    
     return ***REMOVED***
       id: docRef.id,
       ...nuevoTrabajo
     ***REMOVED***;
     
   ***REMOVED*** catch (error) ***REMOVED***
-    console.error('Error al aceptar trabajo compartido:', error);
     throw error;
   ***REMOVED***
 ***REMOVED***;
@@ -296,7 +310,6 @@ export const copiarAlPortapapeles = async (texto) => ***REMOVED***
       if (window.showToast) ***REMOVED***
         window.showToast('Enlace copiado al portapapeles');
       ***REMOVED*** else ***REMOVED***
-        console.log('Enlace copiado al portapapeles');
       ***REMOVED***
       
       return true;
@@ -315,13 +328,11 @@ export const copiarAlPortapapeles = async (texto) => ***REMOVED***
       document.body.removeChild(textArea);
       
       if (resultado) ***REMOVED***
-        console.log('Enlace copiado al portapapeles (fallback)');
       ***REMOVED***
       
       return resultado;
     ***REMOVED***
   ***REMOVED*** catch (error) ***REMOVED***
-    console.error('Error al copiar al portapapeles:', error);
     return false;
   ***REMOVED***
 ***REMOVED***;
