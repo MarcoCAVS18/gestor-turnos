@@ -3,11 +3,15 @@
 import ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useParams, useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
+import ***REMOVED*** obtenerTrabajoCompartido, aceptarTrabajoCompartido ***REMOVED*** from '../services/shareService';
 
 export const useSharedWork = () => ***REMOVED***
   const ***REMOVED*** token ***REMOVED*** = useParams();
   const navigate = useNavigate();
-  const ***REMOVED*** crearTrabajo ***REMOVED*** = useApp();
+  const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
+  const ***REMOVED*** reloadJobs ***REMOVED*** = useApp(); 
+  
   const [trabajoCompartido, setTrabajoCompartido] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
@@ -15,36 +19,52 @@ export const useSharedWork = () => ***REMOVED***
 
   useEffect(() => ***REMOVED***
     const cargarTrabajoCompartido = async () => ***REMOVED***
+      if (!token) ***REMOVED***
+        setError('Token de enlace no válido');
+        setCargando(false);
+        return;
+      ***REMOVED***
+
       try ***REMOVED***
-        const response = await fetch(`/api/trabajos/compartido/$***REMOVED***token***REMOVED***`);
-        if (!response.ok) throw new Error('Token inválido o expirado');
         
-        const data = await response.json();
+        const data = await obtenerTrabajoCompartido(token);
+        
         setTrabajoCompartido(data);
       ***REMOVED*** catch (err) ***REMOVED***
-        setError(err.message);
+        setError(err.message || 'Error al cargar el trabajo compartido');
       ***REMOVED*** finally ***REMOVED***
         setCargando(false);
       ***REMOVED***
     ***REMOVED***;
 
-    if (token) cargarTrabajoCompartido();
+    cargarTrabajoCompartido();
   ***REMOVED***, [token]);
 
   const agregarTrabajo = async () => ***REMOVED***
-    if (!trabajoCompartido) return;
+    if (!trabajoCompartido || !currentUser) ***REMOVED***
+      setError('No hay trabajo para agregar o usuario no autenticado');
+      return;
+    ***REMOVED***
     
     try ***REMOVED***
       setAgregando(true);
-      await crearTrabajo(***REMOVED***
-        nombre: trabajoCompartido.nombre,
-        descripcion: trabajoCompartido.descripcion,
-        salario: trabajoCompartido.salario,
-        color: trabajoCompartido.color,
-        descuento: trabajoCompartido.descuento
+      setError('');
+            
+      // Usar la función del shareService para agregar el trabajo
+      await aceptarTrabajoCompartido(currentUser.uid, token);
+            
+      // Recargar los trabajos en el contexto
+      if (reloadJobs) ***REMOVED***
+        await reloadJobs();
+      ***REMOVED***
+      
+      // Navegar a la lista de trabajos
+      navigate('/trabajos', ***REMOVED*** 
+        state: ***REMOVED*** 
+          message: `Trabajo "$***REMOVED***trabajoCompartido.trabajoData.nombre***REMOVED***" agregado exitosamente` 
+        ***REMOVED*** 
       ***REMOVED***);
       
-      navigate('/trabajos');
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al agregar el trabajo: ' + err.message);
     ***REMOVED*** finally ***REMOVED***
@@ -53,10 +73,11 @@ export const useSharedWork = () => ***REMOVED***
   ***REMOVED***;
 
   return ***REMOVED***
-    trabajoCompartido,
+    trabajoCompartido: trabajoCompartido?.trabajoData,
     cargando,
     error,
     agregando,
-    agregarTrabajo
+    agregarTrabajo,
+    tokenInfo: trabajoCompartido
   ***REMOVED***;
 ***REMOVED***;

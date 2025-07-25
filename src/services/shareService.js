@@ -21,6 +21,66 @@ const generarTokenCompartir = () => ***REMOVED***
 ***REMOVED***;
 
 /**
+ * Limpia y valida los datos del trabajo antes de compartir
+ * @param ***REMOVED***Object***REMOVED*** trabajo - Datos del trabajo a compartir
+ * @returns ***REMOVED***Object***REMOVED*** - Datos del trabajo limpios
+ */
+const limpiarDatosTrabajo = (trabajo) => ***REMOVED***
+  const datosLimpios = ***REMOVED******REMOVED***;
+  
+  // Campos obligatorios con valores por defecto
+  datosLimpios.nombre = trabajo.nombre || 'Trabajo sin nombre';
+  datosLimpios.descripcion = trabajo.descripcion || '';
+  datosLimpios.color = trabajo.color || '#EC4899'; // Color por defecto
+  
+  // Campos opcionales - solo agregar si existen
+  if (trabajo.tarifaBase !== undefined && trabajo.tarifaBase !== null) ***REMOVED***
+    datosLimpios.tarifaBase = trabajo.tarifaBase;
+  ***REMOVED***
+  
+  if (trabajo.tarifas && typeof trabajo.tarifas === 'object') ***REMOVED***
+    datosLimpios.tarifas = ***REMOVED******REMOVED***;
+    
+    // Limpiar tarifas individualmente
+    if (trabajo.tarifas.diurno !== undefined && trabajo.tarifas.diurno !== null) ***REMOVED***
+      datosLimpios.tarifas.diurno = trabajo.tarifas.diurno;
+    ***REMOVED***
+    if (trabajo.tarifas.tarde !== undefined && trabajo.tarifas.tarde !== null) ***REMOVED***
+      datosLimpios.tarifas.tarde = trabajo.tarifas.tarde;
+    ***REMOVED***
+    if (trabajo.tarifas.noche !== undefined && trabajo.tarifas.noche !== null) ***REMOVED***
+      datosLimpios.tarifas.noche = trabajo.tarifas.noche;
+    ***REMOVED***
+    if (trabajo.tarifas.sabado !== undefined && trabajo.tarifas.sabado !== null) ***REMOVED***
+      datosLimpios.tarifas.sabado = trabajo.tarifas.sabado;
+    ***REMOVED***
+    if (trabajo.tarifas.domingo !== undefined && trabajo.tarifas.domingo !== null) ***REMOVED***
+      datosLimpios.tarifas.domingo = trabajo.tarifas.domingo;
+    ***REMOVED***
+  ***REMOVED***
+  
+  // Para trabajos de delivery
+  if (trabajo.tipo === 'delivery') ***REMOVED***
+    datosLimpios.tipo = 'delivery';
+    
+    if (trabajo.plataforma) ***REMOVED***
+      datosLimpios.plataforma = trabajo.plataforma;
+    ***REMOVED***
+    
+    if (trabajo.vehiculo) ***REMOVED***
+      datosLimpios.vehiculo = trabajo.vehiculo;
+    ***REMOVED***
+    
+    // Para delivery, usar colorAvatar si existe
+    if (trabajo.colorAvatar) ***REMOVED***
+      datosLimpios.color = trabajo.colorAvatar;
+    ***REMOVED***
+  ***REMOVED***
+  
+  return datosLimpios;
+***REMOVED***;
+
+/**
  * Crea un enlace para compartir un trabajo directamente por correo o mensajería
  * @param ***REMOVED***string***REMOVED*** userId - ID del usuario que comparte
  * @param ***REMOVED***Object***REMOVED*** trabajo - Datos del trabajo a compartir
@@ -28,20 +88,21 @@ const generarTokenCompartir = () => ***REMOVED***
  */
 export const crearEnlaceCompartir = async (userId, trabajo) => ***REMOVED***
   try ***REMOVED***
+    console.log('Datos del trabajo recibidos:', trabajo);
+    
     const token = generarTokenCompartir();
+    
+    // Limpiar datos del trabajo para evitar undefined
+    const trabajoLimpio = limpiarDatosTrabajo(trabajo);
+    
+    console.log('Datos del trabajo después de limpiar:', trabajoLimpio);
     
     // Crear documento temporal en Firestore con los datos del trabajo
     const shareDocRef = doc(db, 'trabajos_compartidos', token);
     
     const datosCompartir = ***REMOVED***
-      // Datos del trabajo (sin ID ni metadatos del usuario original)
-      trabajoData: ***REMOVED***
-        nombre: trabajo.nombre,
-        descripcion: trabajo.descripcion || '',
-        color: trabajo.color,
-        tarifaBase: trabajo.tarifaBase,
-        tarifas: trabajo.tarifas
-      ***REMOVED***,
+      // Datos del trabajo limpios (sin valores undefined)
+      trabajoData: trabajoLimpio,
       // Metadatos de compartir
       compartidoPor: userId,
       fechaCreacion: serverTimestamp(),
@@ -51,12 +112,16 @@ export const crearEnlaceCompartir = async (userId, trabajo) => ***REMOVED***
       limiteUsos: 10
     ***REMOVED***;
     
+    console.log('Datos a guardar en Firestore:', datosCompartir);
+    
     await setDoc(shareDocRef, datosCompartir);
     
     // Generar URL completa
-    const baseUrl = 'https://gestortrabajo.netlify.app';
+    const baseUrl = window.location.origin || 'https://gestortrabajo.netlify.app';
     const enlaceCompartir = `$***REMOVED***baseUrl***REMOVED***/compartir/$***REMOVED***token***REMOVED***`;
 
+    console.log('Enlace generado:', enlaceCompartir);
+    
     return enlaceCompartir;
     
   ***REMOVED*** catch (error) ***REMOVED***
@@ -72,6 +137,8 @@ export const crearEnlaceCompartir = async (userId, trabajo) => ***REMOVED***
  */
 export const compartirTrabajoNativo = async (userId, trabajo) => ***REMOVED***
   try ***REMOVED***
+    console.log('Iniciando compartir trabajo:', ***REMOVED*** userId, trabajo: trabajo?.nombre ***REMOVED***);
+    
     // Generar enlace de compartir
     const enlace = await crearEnlaceCompartir(userId, trabajo);
     
@@ -87,17 +154,21 @@ export const compartirTrabajoNativo = async (userId, trabajo) => ***REMOVED***
           text: mensaje,
           url: enlace
         ***REMOVED***);
+        console.log('Compartido exitosamente con Web Share API');
         return true;
       ***REMOVED*** catch (error) ***REMOVED***
         // Si el usuario cancela o hay un error, usar fallback
         if (error.name !== 'AbortError') ***REMOVED***
+          console.log('Error en Web Share API, usando fallback:', error);
           return await copiarAlPortapapeles(textoCompartir);
         ***REMOVED***
         // Si el usuario canceló, no hacer nada más
+        console.log('Usuario canceló el compartir');
         return false;
       ***REMOVED***
     ***REMOVED*** else ***REMOVED***
       // Fallback para navegadores que no soportan Web Share API
+      console.log('Web Share API no disponible, usando fallback');
       return await copiarAlPortapapeles(textoCompartir);
     ***REMOVED***
   ***REMOVED*** catch (error) ***REMOVED***
@@ -178,8 +249,10 @@ export const aceptarTrabajoCompartido = async (userId, token) => ***REMOVED***
       throw new Error('No puedes agregar tu propio trabajo compartido');
     ***REMOVED***
     
-    // Agregar el trabajo a la subcolección del usuario
-    const userTrabajosRef = collection(db, 'usuarios', userId, 'trabajos');
+    // Determinar la colección correcta según el tipo
+    const esDelivery = datos.trabajoData.tipo === 'delivery';
+    const collectionName = esDelivery ? 'trabajos-delivery' : 'trabajos';
+    const userTrabajosRef = collection(db, 'usuarios', userId, collectionName);
     
     const nuevoTrabajo = ***REMOVED***
       ...datos.trabajoData,
@@ -223,7 +296,8 @@ export const copiarAlPortapapeles = async (texto) => ***REMOVED***
       if (window.showToast) ***REMOVED***
         window.showToast('Enlace copiado al portapapeles');
       ***REMOVED*** else ***REMOVED***
-          ***REMOVED***
+        console.log('Enlace copiado al portapapeles');
+      ***REMOVED***
       
       return true;
     ***REMOVED*** else ***REMOVED***
@@ -241,7 +315,8 @@ export const copiarAlPortapapeles = async (texto) => ***REMOVED***
       document.body.removeChild(textArea);
       
       if (resultado) ***REMOVED***
-          ***REMOVED***
+        console.log('Enlace copiado al portapapeles (fallback)');
+      ***REMOVED***
       
       return resultado;
     ***REMOVED***

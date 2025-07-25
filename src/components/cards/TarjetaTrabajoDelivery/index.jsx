@@ -1,10 +1,10 @@
 // src/components/cards/TarjetaTrabajoDelivery/index.jsx
 
 import React from 'react';
-import ***REMOVED*** MoreVertical, Edit2, Trash2, Package, Bike, Car, Truck, User ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** MoreVertical, Edit2, Trash2, Share2, Package, Bike, Car, Truck, User ***REMOVED*** from 'lucide-react';
 import WorkAvatar from '../../work/WorkAvatar';
 
-const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, showActions = true ***REMOVED***) => ***REMOVED***
+const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, onShare, showActions = true, isSharing = false ***REMOVED***) => ***REMOVED***
   const [menuAbierto, setMenuAbierto] = React.useState(false);
 
   const descripcion = trabajo.descripcion && trabajo.descripcion.trim()
@@ -33,7 +33,7 @@ const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, showAct
   ***REMOVED***;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-start justify-between">
         <div className="flex items-center space-x-3 flex-1">
           ***REMOVED***/* WorkAvatar con colores de la plataforma */***REMOVED***
@@ -82,6 +82,7 @@ const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, showAct
                 setMenuAbierto(!menuAbierto);
               ***REMOVED******REMOVED***
               className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              disabled=***REMOVED***isSharing***REMOVED***
             >
               <MoreVertical size=***REMOVED***20***REMOVED*** className="text-gray-500" />
             </button>
@@ -98,6 +99,22 @@ const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, showAct
                   <Edit2 size=***REMOVED***16***REMOVED*** />
                   <span>Editar</span>
                 </button>
+                
+                ***REMOVED***/* ← AGREGAR OPCIÓN DE COMPARTIR */***REMOVED***
+                ***REMOVED***onShare && (
+                  <button
+                    onClick=***REMOVED***() => ***REMOVED***
+                      onShare(trabajo);
+                      setMenuAbierto(false);
+                    ***REMOVED******REMOVED***
+                    disabled=***REMOVED***isSharing***REMOVED***
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center space-x-2 disabled:opacity-50"
+                  >
+                    <Share2 size=***REMOVED***16***REMOVED*** />
+                    <span>***REMOVED***isSharing ? 'Compartiendo...' : 'Compartir'***REMOVED***</span>
+                  </button>
+                )***REMOVED***
+                
                 <button
                   onClick=***REMOVED***() => ***REMOVED***
                     onDelete(trabajo);
