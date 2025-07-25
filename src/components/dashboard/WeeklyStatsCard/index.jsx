@@ -1,4 +1,4 @@
-// src/components/dashboard/WeeklyStatsCard/index.jsx
+// src/components/dashboard/WeeklyStatsCard/index.jsx - Versión vertical mejorada
 
 import ***REMOVED*** Activity, TrendingUp, TrendingDown ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
@@ -8,8 +8,9 @@ const WeeklyStatsCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
 
   return (
-    <Card>
-      <div className="flex items-center justify-between mb-4">
+    <Card className="h-full flex flex-col">
+      ***REMOVED***/* Header */***REMOVED***
+      <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold flex items-center">
           <Activity size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
           Esta semana
@@ -28,18 +29,25 @@ const WeeklyStatsCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
         )***REMOVED***
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <p className="text-sm text-gray-600">Turnos completados</p>
-          <p className="text-xl font-bold">***REMOVED***stats.turnosEstaSemana***REMOVED***</p>
+      ***REMOVED***/* Stats - Layout vertical */***REMOVED***
+      <div className="flex-1 space-y-8">
+        ***REMOVED***/* Turnos completados */***REMOVED***
+        <div className="text-center">
+          <p className="text-sm text-gray-600 mb-2">Turnos completados</p>
+          <p className="text-3xl font-bold text-gray-800">***REMOVED***stats.turnosEstaSemana***REMOVED***</p>
         </div>
-        <div>
-          <p className="text-sm text-gray-600">Ganancias</p>
+        
+        ***REMOVED***/* Separador visual */***REMOVED***
+        <div className="w-full h-px bg-gray-200"></div>
+        
+        ***REMOVED***/* Ganancias */***REMOVED***
+        <div className="text-center">
+          <p className="text-sm text-gray-600 mb-2">Ganancias</p>
           <p 
-            className="text-xl font-bold" 
+            className="text-3xl font-bold" 
             style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***
           >
-            $***REMOVED***stats.gananciasEstaSemana.toFixed(2)***REMOVED***
+            $***REMOVED***stats.gananciasEstaSemana.toFixed(0)***REMOVED***
           </p>
         </div>
       </div>
