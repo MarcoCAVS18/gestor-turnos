@@ -42,6 +42,21 @@ const PrivateRoute = ({ children }) => {
   return currentUser ? children : <Navigate to="/login" replace />;
 };
 
+// Ruta pública que permite acceso sin autenticación, pero redirige al login si es necesario
+const PublicRoute = ({ children }) => {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+      </div>
+    );
+  }
+
+  return children;
+};
+
 // Layout general de la app
 function AppLayout({ currentView }) {
   const [vistaActual, setVistaActual] = React.useState(currentView);
@@ -164,18 +179,23 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Rutas protegidas con AppProvider aplicado solo una vez */}
+        {/* 🔥 RUTA ESPECIAL para trabajos compartidos - ACCESO PÚBLICO */}
         <Route
           path="/compartir/:token"
           element={
-            <PrivateRoute>
+            <PublicRoute>
               <AppProvider>
-                <TrabajoCompartido />
+                <div className="min-h-screen bg-gray-100 font-poppins">
+                  <main className="max-w-md mx-auto">
+                    <TrabajoCompartido />
+                  </main>
+                </div>
               </AppProvider>
-            </PrivateRoute>
+            </PublicRoute>
           }
         />
 
+        {/* Rutas protegidas con AppProvider aplicado solo una vez */}
         <Route
           path="/dashboard"
           element={

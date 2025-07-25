@@ -21,6 +21,66 @@ const generarTokenCompartir = () => {
 };
 
 /**
+ * Limpia y valida los datos del trabajo antes de compartir
+ * @param {Object} trabajo - Datos del trabajo a compartir
+ * @returns {Object} - Datos del trabajo limpios
+ */
+const limpiarDatosTrabajo = (trabajo) => {
+  const datosLimpios = {};
+  
+  // Campos obligatorios con valores por defecto
+  datosLimpios.nombre = trabajo.nombre || 'Trabajo sin nombre';
+  datosLimpios.descripcion = trabajo.descripcion || '';
+  datosLimpios.color = trabajo.color || '#EC4899'; // Color por defecto
+  
+  // Campos opcionales - solo agregar si existen
+  if (trabajo.tarifaBase !== undefined && trabajo.tarifaBase !== null) {
+    datosLimpios.tarifaBase = trabajo.tarifaBase;
+  }
+  
+  if (trabajo.tarifas && typeof trabajo.tarifas === 'object') {
+    datosLimpios.tarifas = {};
+    
+    // Limpiar tarifas individualmente
+    if (trabajo.tarifas.diurno !== undefined && trabajo.tarifas.diurno !== null) {
+      datosLimpios.tarifas.diurno = trabajo.tarifas.diurno;
+    }
+    if (trabajo.tarifas.tarde !== undefined && trabajo.tarifas.tarde !== null) {
+      datosLimpios.tarifas.tarde = trabajo.tarifas.tarde;
+    }
+    if (trabajo.tarifas.noche !== undefined && trabajo.tarifas.noche !== null) {
+      datosLimpios.tarifas.noche = trabajo.tarifas.noche;
+    }
+    if (trabajo.tarifas.sabado !== undefined && trabajo.tarifas.sabado !== null) {
+      datosLimpios.tarifas.sabado = trabajo.tarifas.sabado;
+    }
+    if (trabajo.tarifas.domingo !== undefined && trabajo.tarifas.domingo !== null) {
+      datosLimpios.tarifas.domingo = trabajo.tarifas.domingo;
+    }
+  }
+  
+  // Para trabajos de delivery
+  if (trabajo.tipo === 'delivery') {
+    datosLimpios.tipo = 'delivery';
+    
+    if (trabajo.plataforma) {
+      datosLimpios.plataforma = trabajo.plataforma;
+    }
+    
+    if (trabajo.vehiculo) {
+      datosLimpios.vehiculo = trabajo.vehiculo;
+    }
+    
+    // Para delivery, usar colorAvatar si existe
+    if (trabajo.colorAvatar) {
+      datosLimpios.color = trabajo.colorAvatar;
+    }
+  }
+  
+  return datosLimpios;
+};
+
+/**
  * Crea un enlace para compartir un trabajo directamente por correo o mensajería
  * @param {string} userId - ID del usuario que comparte
  * @param {Object} trabajo - Datos del trabajo a compartir
@@ -28,20 +88,21 @@ const generarTokenCompartir = () => {
  */
 export const crearEnlaceCompartir = async (userId, trabajo) => {
   try {
+    console.log('Datos del trabajo recibidos:', trabajo);
+    
     const token = generarTokenCompartir();
+    
+    // Limpiar datos del trabajo para evitar undefined
+    const trabajoLimpio = limpiarDatosTrabajo(trabajo);
+    
+    console.log('Datos del trabajo después de limpiar:', trabajoLimpio);
     
     // Crear documento temporal en Firestore con los datos del trabajo
     const shareDocRef = doc(db, 'trabajos_compartidos', token);
     
     const datosCompartir = {
-      // Datos del trabajo (sin ID ni metadatos del usuario original)
-      trabajoData: {
-        nombre: trabajo.nombre,
-        descripcion: trabajo.descripcion || '',
-        color: trabajo.color,
-        tarifaBase: trabajo.tarifaBase,
-        tarifas: trabajo.tarifas
-      },
+      // Datos del trabajo limpios (sin valores undefined)
+      trabajoData: trabajoLimpio,
       // Metadatos de compartir
       compartidoPor: userId,
       fechaCreacion: serverTimestamp(),
@@ -51,12 +112,16 @@ export const crearEnlaceCompartir = async (userId, trabajo) => {
       limiteUsos: 10
     };
     
+    console.log('Datos a guardar en Firestore:', datosCompartir);
+    
     await setDoc(shareDocRef, datosCompartir);
     
     // Generar URL completa
-    const baseUrl = 'https://gestortrabajo.netlify.app';
+    const baseUrl = window.location.origin || 'https://gestortrabajo.netlify.app';
     const enlaceCompartir = `${baseUrl}/compartir/${token}`;
 
+    console.log('Enlace generado:', enlaceCompartir);
+    
     return enlaceCompartir;
     
   } catch (error) {
@@ -72,6 +137,8 @@ export const crearEnlaceCompartir = async (userId, trabajo) => {
  */
 export const compartirTrabajoNativo = async (userId, trabajo) => {
   try {
+    console.log('Iniciando compartir trabajo:', { userId, trabajo: trabajo?.nombre });
+    
     // Generar enlace de compartir
     const enlace = await crearEnlaceCompartir(userId, trabajo);
     
@@ -87,17 +154,21 @@ export const compartirTrabajoNativo = async (userId, trabajo) => {
           text: mensaje,
           url: enlace
         });
+        console.log('Compartido exitosamente con Web Share API');
         return true;
       } catch (error) {
         // Si el usuario cancela o hay un error, usar fallback
         if (error.name !== 'AbortError') {
+          console.log('Error en Web Share API, usando fallback:', error);
           return await copiarAlPortapapeles(textoCompartir);
         }
         // Si el usuario canceló, no hacer nada más
+        console.log('Usuario canceló el compartir');
         return false;
       }
     } else {
       // Fallback para navegadores que no soportan Web Share API
+      console.log('Web Share API no disponible, usando fallback');
       return await copiarAlPortapapeles(textoCompartir);
     }
   } catch (error) {
@@ -178,8 +249,10 @@ export const aceptarTrabajoCompartido = async (userId, token) => {
       throw new Error('No puedes agregar tu propio trabajo compartido');
     }
     
-    // Agregar el trabajo a la subcolección del usuario
-    const userTrabajosRef = collection(db, 'usuarios', userId, 'trabajos');
+    // Determinar la colección correcta según el tipo
+    const esDelivery = datos.trabajoData.tipo === 'delivery';
+    const collectionName = esDelivery ? 'trabajos-delivery' : 'trabajos';
+    const userTrabajosRef = collection(db, 'usuarios', userId, collectionName);
     
     const nuevoTrabajo = {
       ...datos.trabajoData,
@@ -223,7 +296,8 @@ export const copiarAlPortapapeles = async (texto) => {
       if (window.showToast) {
         window.showToast('Enlace copiado al portapapeles');
       } else {
-          }
+        console.log('Enlace copiado al portapapeles');
+      }
       
       return true;
     } else {
@@ -241,7 +315,8 @@ export const copiarAlPortapapeles = async (texto) => {
       document.body.removeChild(textArea);
       
       if (resultado) {
-          }
+        console.log('Enlace copiado al portapapeles (fallback)');
+      }
       
       return resultado;
     }

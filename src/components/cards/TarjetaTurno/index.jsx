@@ -45,7 +45,7 @@ const TarjetaTurno = ({
         {/* Título con etiqueta del tipo de turno */}
         <div className="flex items-center gap-2 mb-2">
           <h3 className="font-semibold text-gray-800">{trabajo.nombre}</h3>
-          {/* ✅ Etiqueta del tipo de turno al lado del nombre */}
+          {/* Etiqueta del tipo de turno al lado del nombre */}
           <span className={`text-xs px-2 py-1 rounded-full ${getTagColor(tipoTurno)}`}>
             {labelTipoTurno}
           </span>
@@ -70,7 +70,7 @@ const TarjetaTurno = ({
   }
 
   return (
-    <Card className="relative">
+    <Card className="relative !shadow-none">
       {cardContent}
     </Card>
   );

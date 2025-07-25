@@ -39,12 +39,17 @@ const ActionsMenu = ({ actions = [] }) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsOpen(false);
-                  action.onClick();
+                  if (!action.disabled) {
+                    action.onClick();
+                  }
                 }}
+                disabled={action.disabled} 
                 className={`w-full px-3 py-2 text-left text-sm flex items-center transition-colors ${
-                  action.variant === 'danger' 
-                    ? 'hover:bg-red-50 text-red-600' 
-                    : 'hover:bg-gray-50'
+                  action.disabled 
+                    ? 'opacity-50 cursor-not-allowed'
+                    : action.variant === 'danger' 
+                      ? 'hover:bg-red-50 text-red-600' 
+                      : 'hover:bg-gray-50'
                 }`}
               >
                 {action.icon && <action.icon size={14} className="mr-2" />}

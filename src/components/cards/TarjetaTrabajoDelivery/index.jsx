@@ -1,10 +1,10 @@
 // src/components/cards/TarjetaTrabajoDelivery/index.jsx
 
 import React from 'react';
-import { MoreVertical, Edit2, Trash2, Package, Bike, Car, Truck, User } from 'lucide-react';
+import { MoreVertical, Edit2, Trash2, Share2, Package, Bike, Car, Truck, User } from 'lucide-react';
 import WorkAvatar from '../../work/WorkAvatar';
 
-const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, showActions = true }) => {
+const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, onShare, showActions = true, isSharing = false }) => {
   const [menuAbierto, setMenuAbierto] = React.useState(false);
 
   const descripcion = trabajo.descripcion && trabajo.descripcion.trim()
@@ -33,7 +33,7 @@ const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, showActions = true 
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex items-start justify-between">
         <div className="flex items-center space-x-3 flex-1">
           {/* WorkAvatar con colores de la plataforma */}
@@ -82,6 +82,7 @@ const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, showActions = true 
                 setMenuAbierto(!menuAbierto);
               }}
               className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              disabled={isSharing}
             >
               <MoreVertical size={20} className="text-gray-500" />
             </button>
@@ -98,6 +99,22 @@ const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, showActions = true 
                   <Edit2 size={16} />
                   <span>Editar</span>
                 </button>
+                
+                {/* ← AGREGAR OPCIÓN DE COMPARTIR */}
+                {onShare && (
+                  <button
+                    onClick={() => {
+                      onShare(trabajo);
+                      setMenuAbierto(false);
+                    }}
+                    disabled={isSharing}
+                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center space-x-2 disabled:opacity-50"
+                  >
+                    <Share2 size={16} />
+                    <span>{isSharing ? 'Compartiendo...' : 'Compartir'}</span>
+                  </button>
+                )}
+                
                 <button
                   onClick={() => {
                     onDelete(trabajo);
