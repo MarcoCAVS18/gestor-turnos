@@ -1,4 +1,4 @@
-// src/components/dashboard/QuickStatsGrid/index.jsx
+// src/components/dashboard/QuickStatsGrid/index.jsx - Versión mejorada
 
 import ***REMOVED*** Briefcase, Calendar, Clock, Target ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
@@ -8,12 +8,17 @@ const QuickStatCard = (***REMOVED*** icon: Icon, label, value, subtitle ***REMOV
   const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
   return (
-    <Card>
-      <div className="flex items-center mb-2">
-        <Icon size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
-        <span className="text-sm text-gray-600">***REMOVED***label***REMOVED***</span>
+    <Card className="h-full aspect-square lg:aspect-auto flex flex-col justify-center text-center p-6">
+      ***REMOVED***/* Icono y label */***REMOVED***
+      <div className="flex items-center justify-center mb-4">
+        <Icon size=***REMOVED***24***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
+        <span className="text-sm text-gray-600 font-medium">***REMOVED***label***REMOVED***</span>
       </div>
-      <p className="text-2xl font-bold text-gray-800">***REMOVED***value***REMOVED***</p>
+      
+      ***REMOVED***/* Valor principal */***REMOVED***
+      <p className="text-3xl font-bold text-gray-800 mb-2">***REMOVED***value***REMOVED***</p>
+      
+      ***REMOVED***/* Subtítulo */***REMOVED***
       <p className="text-xs text-gray-500">***REMOVED***subtitle***REMOVED***</p>
     </Card>
   );
@@ -52,7 +57,7 @@ const QuickStatsGrid = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
       ***REMOVED***statsData.map((stat, index) => (
         <QuickStatCard key=***REMOVED***index***REMOVED*** ***REMOVED***...stat***REMOVED*** />
       ))***REMOVED***

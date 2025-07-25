@@ -1,11 +1,13 @@
-// src/components/dashboard/QuickActionsCard/index.jsx
+// src/components/dashboard/QuickActionsCard/index.jsx - Con colores temáticos
 
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Plus, Briefcase ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
 const QuickActionsCard = () => ***REMOVED***
+  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   const navigate = useNavigate();
 
   return (
@@ -17,6 +19,7 @@ const QuickActionsCard = () => ***REMOVED***
           variant="outline"
           className="flex items-center justify-center gap-2"
           icon=***REMOVED***Plus***REMOVED***
+          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         >
           Nuevo turno
         </Button>
@@ -25,6 +28,7 @@ const QuickActionsCard = () => ***REMOVED***
           variant="outline"
           className="flex items-center justify-center gap-2"
           icon=***REMOVED***Briefcase***REMOVED***
+          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         >
           Nuevo trabajo
         </Button>
