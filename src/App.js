@@ -42,6 +42,21 @@ const PrivateRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   return currentUser ? children : <Navigate to="/login" replace />;
 ***REMOVED***;
 
+// Ruta pública que permite acceso sin autenticación, pero redirige al login si es necesario
+const PublicRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** loading ***REMOVED*** = useAuth();
+
+  if (loading) ***REMOVED***
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+      </div>
+    );
+  ***REMOVED***
+
+  return children;
+***REMOVED***;
+
 // Layout general de la app
 function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
   const [vistaActual, setVistaActual] = React.useState(currentView);
@@ -164,18 +179,23 @@ function App() ***REMOVED***
         <Route path="/forgot-password" element=***REMOVED***<ForgotPassword />***REMOVED*** />
         <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />
 
-        ***REMOVED***/* Rutas protegidas con AppProvider aplicado solo una vez */***REMOVED***
+        ***REMOVED***/* 🔥 RUTA ESPECIAL para trabajos compartidos - ACCESO PÚBLICO */***REMOVED***
         <Route
           path="/compartir/:token"
           element=***REMOVED***
-            <PrivateRoute>
+            <PublicRoute>
               <AppProvider>
-                <TrabajoCompartido />
+                <div className="min-h-screen bg-gray-100 font-poppins">
+                  <main className="max-w-md mx-auto">
+                    <TrabajoCompartido />
+                  </main>
+                </div>
               </AppProvider>
-            </PrivateRoute>
+            </PublicRoute>
           ***REMOVED***
         />
 
+        ***REMOVED***/* Rutas protegidas con AppProvider aplicado solo una vez */***REMOVED***
         <Route
           path="/dashboard"
           element=***REMOVED***

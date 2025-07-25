@@ -39,12 +39,17 @@ const ActionsMenu = (***REMOVED*** actions = [] ***REMOVED***) => ***REMOVED***
                 onClick=***REMOVED***(e) => ***REMOVED***
                   e.stopPropagation();
                   setIsOpen(false);
-                  action.onClick();
+                  if (!action.disabled) ***REMOVED***
+                    action.onClick();
+                  ***REMOVED***
                 ***REMOVED******REMOVED***
+                disabled=***REMOVED***action.disabled***REMOVED*** 
                 className=***REMOVED***`w-full px-3 py-2 text-left text-sm flex items-center transition-colors $***REMOVED***
-                  action.variant === 'danger' 
-                    ? 'hover:bg-red-50 text-red-600' 
-                    : 'hover:bg-gray-50'
+                  action.disabled 
+                    ? 'opacity-50 cursor-not-allowed'
+                    : action.variant === 'danger' 
+                      ? 'hover:bg-red-50 text-red-600' 
+                      : 'hover:bg-gray-50'
                 ***REMOVED***`***REMOVED***
               >
                 ***REMOVED***action.icon && <action.icon size=***REMOVED***14***REMOVED*** className="mr-2" />***REMOVED***
