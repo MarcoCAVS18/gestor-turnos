@@ -1,4 +1,4 @@
-// src/pages/Dashboard.jsx - Versión responsiva mejorada
+// src/pages/Dashboard.jsx - Versión limpia final
 
 import React from 'react';
 import { useDashboardStats } from '../hooks/useDashboardStats';
@@ -32,25 +32,39 @@ const Dashboard = () => {
 
       {/* Layout responsivo principal */}
       <div className="space-y-6">
-        {/* Primera fila: Stats cuadradas + Acciones + Weekly Stats vertical */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Stats Grid + Acciones - 4 columnas en pantallas grandes */}
+        
+        {/* DESKTOP: Contenedor izquierdo + derecho */}
+        <div className="hidden lg:grid lg:grid-cols-5 lg:gap-6">
+          {/* CONTENEDOR IZQUIERDO: Stats + Acciones (4 columnas) */}
           <div className="lg:col-span-4 space-y-6">
+            {/* QuickStatsGrid maneja su propio layout desktop */}
             <QuickStatsGrid stats={stats} />
+            
+            {/* Acciones rápidas debajo */}
             <QuickActionsCard />
           </div>
           
-          {/* Weekly Stats - 1 columna vertical */}
+          {/* CONTENEDOR DERECHO: Esta semana vertical (1 columna) */}
           <div className="lg:col-span-1">
-            <div className="h-full">
-              <WeeklyStatsCard stats={stats} />
-            </div>
+            <WeeklyStatsCard stats={stats} />
           </div>
+        </div>
+
+        {/* MÓVIL: Stack vertical */}
+        <div className="block lg:hidden space-y-4">
+          {/* QuickStatsGrid maneja su propio layout móvil 2x2 */}
+          <QuickStatsGrid stats={stats} />
+          
+          {/* Esta semana */}
+          <WeeklyStatsCard stats={stats} />
+          
+          {/* Acciones rápidas */}
+          <QuickActionsCard />
         </div>
 
         {/* Segunda fila: Projection + Top Work + Favorites */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Projection Card - 1 columna vertical a la izquierda */}
+          {/* Projection Card - 1 columna vertical a la izquierda en desktop, full en móvil */}
           <div className="lg:col-span-1">
             <div className="h-full">
               <ProjectionCard 
@@ -67,7 +81,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Segunda fila: Next Shift */}
+        {/* Tercera fila: Next Shift */}
         <NextShiftCard 
           proximoTurno={stats.proximoTurno} 
           formatearFecha={stats.formatearFecha} 

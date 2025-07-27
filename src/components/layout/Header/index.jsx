@@ -1,67 +1,58 @@
-// src/components/layout/Header/index.jsx
+// src/components/layout/Header/index.jsx - Header mejorado con logo grande
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Settings } from 'lucide-react';
-import { useAuth } from '../../../contexts/AuthContext';
 import { useApp } from '../../../contexts/AppContext';
 
 const Header = ({ setVistaActual }) => {
-  const { currentUser } = useAuth();
-  const { thematicColors, userEmoji } = useApp();
+  const { thematicColors } = useApp();
   const navigate = useNavigate();
-  
-  const [userName, setUserName] = useState('Usuario');
-  
-  useEffect(() => {
-    if (currentUser) {
-      setUserName(
-        currentUser.displayName || 
-        (currentUser.email ? currentUser.email.split('@')[0] : 'Usuario')
-      );
-    }
-  }, [currentUser]);
   
   const handleSettingsClick = () => {
     navigate('/ajustes');
     setVistaActual('ajustes');
   };
 
+  const handleLogoClick = () => {
+    navigate('/dashboard');
+    setVistaActual('dashboard');
+  };
+
   return (
     <header 
-      className="flex justify-between items-center px-4 py-3 text-white shadow-md"
+      className="flex justify-between items-center px-4 py-4 text-white shadow-md"
       style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
     >
-      <div className="flex flex-col">
-        <h1 className="text-xl font-semibold leading-tight p-2">
-          Mi Gestión de Turnos
-        </h1>
-        <p className="text-sm opacity-90 leading-tight pl-2">
-          {userName} {userEmoji || '😊'}
-        </p>
+      {/* Logo y título centrados - clickeable */}
+      <div className="flex items-center justify-center flex-1">
+        <button 
+          onClick={handleLogoClick}
+          className="flex items-center hover:opacity-80 transition-opacity"
+        >
+          {/* Logo SVG más grande */}
+          <div className="w-20 h-20 flex items-center justify-center">
+            <img 
+              src="/assets/SVG/logo.svg" 
+              alt="Logo" 
+              className="w-full h-full filter brightness-0 invert"
+              style={{ filter: 'brightness(0) invert(1)' }}
+            />
+          </div>
+          
+          {/* Título */}
+          <h1 className="text-xl font-semibold">
+            Mi Gestión de Turnos
+          </h1>
+        </button>
       </div>
       
+      {/* Botón de settings a la derecha */}
       <div className="flex gap-2">
         <button
           onClick={handleSettingsClick}
-          className="text-white rounded-lg p-3 transition-all duration-200"
-          onMouseEnter={(e) => {
-            const baseColor = thematicColors?.base || '#EC4899';
-            const hex = baseColor.replace('#', '');
-            const r = parseInt(hex.substr(0, 2), 16);
-            const g = parseInt(hex.substr(2, 2), 16);
-            const b = parseInt(hex.substr(4, 2), 16);
-            
-            const lighterR = Math.min(255, r + 60);
-            const lighterG = Math.min(255, g + 60);
-            const lighterB = Math.min(255, b + 60);
-            
-            const lighterColor = `rgb(${lighterR}, ${lighterG}, ${lighterB}, 0.3)`;
-            e.target.style.backgroundColor = lighterColor;
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = 'transparent';
-          }}
+          className="text-white rounded-lg p-3 transition-all duration-200 hover:bg-white hover:bg-opacity-20"
+          title="Configuración"
         >
           <Settings className="h-6 w-6" />
         </button>

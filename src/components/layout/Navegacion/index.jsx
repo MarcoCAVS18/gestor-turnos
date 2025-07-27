@@ -1,18 +1,16 @@
-// src/components/layout/Navegacion/index.jsx
+// src/components/layout/Navegacion/index.jsx - Con logo en sidebar
 
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useApp } from '../../../contexts/AppContext';
-import { useAuth } from '../../../contexts/AuthContext';
 import './index.css';
 
-const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
+const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { thematicColors, userEmoji, trabajos, trabajosDelivery } = useApp();
-  const { currentUser } = useAuth();
+  const { thematicColors, trabajos, trabajosDelivery } = useApp();
   
   // Estado para el tooltip
   const [showTooltip, setShowTooltip] = useState(false);
@@ -90,9 +88,6 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
       : 'white'
   };
 
-  const userName = currentUser?.displayName || 
-    (currentUser?.email ? currentUser.email.split('@')[0] : 'Usuario');
-
   // Manejar hover del botón de turnos
   const handleTurnosMouseEnter = () => {
     if (!hayTrabajos) {
@@ -102,6 +97,11 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
 
   const handleTurnosMouseLeave = () => {
     setShowTooltip(false);
+  };
+
+  // Función para navegar al dashboard desde el logo
+  const handleLogoClick = () => {
+    navigateToView('dashboard');
   };
   
   return (
@@ -165,30 +165,33 @@ const Navegacion = ({ vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrir
       {/* SIDEBAR DESKTOP */}
       <aside className="hidden md:flex md:flex-col w-72 bg-white border-r border-gray-200 shadow-sm h-screen fixed left-0 top-0 z-30">
         
-        {/* HEADER DEL SIDEBAR */}
+        {/* HEADER DEL SIDEBAR - MEJORADO CON LOGO */}
         <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center space-x-3">
+          <button 
+            onClick={handleLogoClick}
+            className="flex items-center space-x-4 hover:opacity-80 transition-opacity w-full text-left"
+          >
+            {/* Logo en lugar del emoji */}
             <div 
-              className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg user-emoji"
+              className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg"
               style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
             >
-              <span style={{ 
-                fontSize: '1.5rem',
-                lineHeight: '1',
-                color: '#ffffff'
-              }}>
-                {userEmoji || '😊'}
-              </span>
+              <img 
+                src="/assets/SVG/logo.svg" 
+                alt="Logo" 
+                className="w-12 h-12 filter brightness-0 invert"
+                style={{ filter: 'brightness(0) invert(1)' }}
+              />
             </div>
+            
+            {/* Solo el título, sin saludo */}
             <div>
               <h1 className="text-xl font-bold text-gray-900">
                 Gestión de Turnos
               </h1>
-              <p className="text-sm text-gray-500">
-                Hola {userName}
-              </p>
+              {/* Eliminado: Hola {userName} */}
             </div>
-          </div>
+          </button>
         </div>
 
         {/* ACCIONES RÁPIDAS */}

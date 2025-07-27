@@ -1,5 +1,6 @@
-// src/components/dashboard/QuickStatsGrid/index.jsx - Versión mejorada
+// src/components/dashboard/QuickStatsGrid/index.jsx - Versión final que funciona
 
+import React from 'react';
 import { Briefcase, Calendar, Clock, Target } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
@@ -8,18 +9,13 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle }) => {
   const { thematicColors } = useApp();
   
   return (
-    <Card className="h-full aspect-square lg:aspect-auto flex flex-col justify-center text-center p-6">
-      {/* Icono y label */}
-      <div className="flex items-center justify-center mb-4">
-        <Icon size={24} style={{ color: thematicColors?.base }} className="mr-2" />
-        <span className="text-sm text-gray-600 font-medium">{label}</span>
+    <Card className="p-4 text-center">
+      <div className="flex flex-col items-center">
+        <Icon size={20} className="mb-2" style={{ color: thematicColors?.base }} />
+        <span className="text-sm text-gray-600 font-medium mb-1">{label}</span>
+        <p className="text-2xl font-bold text-gray-800 mb-1">{value}</p>
+        <p className="text-xs text-gray-500">{subtitle}</p>
       </div>
-      
-      {/* Valor principal */}
-      <p className="text-3xl font-bold text-gray-800 mb-2">{value}</p>
-      
-      {/* Subtítulo */}
-      <p className="text-xs text-gray-500">{subtitle}</p>
     </Card>
   );
 };
@@ -57,11 +53,25 @@ const QuickStatsGrid = ({ stats }) => {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-      {statsData.map((stat, index) => (
-        <QuickStatCard key={index} {...stat} />
-      ))}
-    </div>
+    <>
+      {/* DESKTOP: Grid normal 4 columnas */}
+      <div className="hidden lg:grid lg:grid-cols-4 lg:gap-6">
+        {statsData.map((stat, index) => (
+          <QuickStatCard key={index} {...stat} />
+        ))}
+      </div>
+
+      {/* MÓVIL: Flexbox 2x2 que funciona */}
+      <div className="block lg:hidden">
+        <div className="flex flex-wrap gap-3">
+          {statsData.map((stat, index) => (
+            <div key={index} className="w-[calc(50%-0.375rem)]">
+              <QuickStatCard {...stat} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   );
 };
 
