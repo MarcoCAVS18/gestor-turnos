@@ -1,7 +1,7 @@
 // src/components/cards/StatCard/index.jsx
 
 import React from 'react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 
 const StatCard = ({ 
@@ -15,7 +15,7 @@ const StatCard = ({
   className = '',
   onClick 
 }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   
   const getSizeClasses = () => {
     const sizes = {
@@ -51,7 +51,7 @@ const StatCard = ({
           {Icon && (
             <Icon 
               size={size === 'sm' ? 16 : size === 'lg' ? 24 : 20} 
-              style={{ color: thematicColors?.base || '#EC4899' }} 
+              style={{ color: colors.primary }} 
             />
           )}
         </div>
@@ -59,7 +59,7 @@ const StatCard = ({
         {/* Valor principal */}
         <p 
           className={`${getValueSize()} font-bold mb-1`}
-          style={{ color: thematicColors?.base || '#EC4899' }}
+          style={{ color: colors.primary }}
         >
           {value}
         </p>

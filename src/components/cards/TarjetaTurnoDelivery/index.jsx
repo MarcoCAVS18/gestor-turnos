@@ -2,12 +2,13 @@
 
 import React from 'react';
 import { Clock, Package, Car, Edit2, Trash2, MoreVertical, Truck, DollarSign } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 import InfoTooltip from '../../ui/InfoTooltip';
 
 const TarjetaTurnoDelivery = ({ turno, trabajo, onEdit, onDelete }) => {
   const [menuAbierto, setMenuAbierto] = React.useState(false);
-
-  
+  const colors = useThemeColors();
 
   // Cerrar menú al hacer clic fuera
   React.useEffect(() => {
@@ -19,15 +20,6 @@ const TarjetaTurnoDelivery = ({ turno, trabajo, onEdit, onDelete }) => {
     document.addEventListener('click', cerrarMenu);
     return () => document.removeEventListener('click', cerrarMenu);
   }, [menuAbierto]);
-
-  const formatearMoneda = (valor) => {
-    return new Intl.NumberFormat('en-AU', {
-      style: 'currency',
-      currency: 'AUD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(valor);
-  };
 
   const formatearHoras = (horaInicio, horaFin) => {
     const [horaI, minI] = horaInicio.split(':').map(Number);
@@ -73,18 +65,18 @@ const TarjetaTurnoDelivery = ({ turno, trabajo, onEdit, onDelete }) => {
         
         <div className="flex justify-between gap-4 border-t border-gray-600 pt-1.5 mt-2">
           <span className="font-semibold">Ganancia Total:</span>
-          <span className="font-bold">{formatearMoneda(turno.gananciaTotal)}</span>
+          <span className="font-bold">{formatCurrency(turno.gananciaTotal)}</span>
         </div>
         
         <div className="flex justify-between gap-4">
           <span className="font-semibold">Ganancia Neta:</span>
-          <span className="font-bold text-base">{formatearMoneda(gananciaNeta)}</span>
+          <span className="font-bold text-base">{formatCurrency(gananciaNeta)}</span>
         </div>
         
         {turno.numeroPedidos > 0 && (
           <div className="flex justify-between gap-4 text-yellow-200">
             <span>Promedio/pedido:</span>
-            <span>{formatearMoneda(promedioPorPedido)}</span>
+            <span>{formatCurrency(promedioPorPedido)}</span>
           </div>
         )}
       </div>
@@ -138,7 +130,7 @@ const TarjetaTurnoDelivery = ({ turno, trabajo, onEdit, onDelete }) => {
             {/* Ganancia con tooltip */}
             <div className="flex items-center">
               <DollarSign size={14} className="mr-1 text-green-600" />
-              <span className="text-sm font-semibold text-gray-800">{formatearMoneda(gananciaNeta)}</span>
+              <span className="text-sm font-semibold text-gray-800">{formatCurrency(gananciaNeta)}</span>
               <span className="text-xs text-gray-500 ml-1">total</span>
               
               <InfoTooltip 

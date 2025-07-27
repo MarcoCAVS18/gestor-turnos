@@ -2,10 +2,12 @@
 
 import React from 'react';
 import { MoreVertical, Edit2, Trash2, Share2, Package, Bike, Car, Truck, User } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import WorkAvatar from '../../work/WorkAvatar';
 
 const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, onShare, showActions = true, isSharing = false }) => {
   const [menuAbierto, setMenuAbierto] = React.useState(false);
+  const colors = useThemeColors();
 
   const descripcion = trabajo.descripcion && trabajo.descripcion.trim()
     ? trabajo.descripcion
@@ -100,7 +102,6 @@ const TarjetaTrabajoDelivery = ({ trabajo, onEdit, onDelete, onShare, showAction
                   <span>Editar</span>
                 </button>
                 
-                {/* ← AGREGAR OPCIÓN DE COMPARTIR */}
                 {onShare && (
                   <button
                     onClick={() => {

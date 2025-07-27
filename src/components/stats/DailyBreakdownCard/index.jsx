@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Calendar, Clock, DollarSign } from 'lucide-react';
+import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const DailyBreakdownCard = ({ turnosPorDia = {}, trabajos = [] }) => {
@@ -112,7 +113,7 @@ const DailyBreakdownCard = ({ turnosPorDia = {}, trabajos = [] }) => {
                 </div>
                 <div className="flex items-center text-green-600">
                   <DollarSign size={14} className="mr-1" />
-                  <span>${gananciaTotal.toFixed(2)}</span>
+                  <span>{formatCurrency(gananciaTotal)}</span>
                 </div>
               </div>
             </div>

@@ -4,11 +4,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, ChevronRight } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
 const NextShiftCard = ({ proximoTurno, formatearFecha }) => {
-  const { trabajos, thematicColors } = useApp();
+  const { trabajos } = useApp();
+  const colors = useThemeColors();
   const navigate = useNavigate();
 
   if (!proximoTurno) return null;
@@ -19,7 +21,7 @@ const NextShiftCard = ({ proximoTurno, formatearFecha }) => {
   return (
     <Card>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
-        <Star size={20} style={{ color: thematicColors?.base }} className="mr-2" />
+        <Star size={20} style={{ color: colors.primary }} className="mr-2" />
         Próximo turno
       </h3>
       <div className="flex items-center justify-between">
@@ -34,6 +36,7 @@ const NextShiftCard = ({ proximoTurno, formatearFecha }) => {
           size="sm"
           className="flex items-center gap-1"
           icon={ChevronRight}
+          themeColor={colors.primary}
         >
           Ver
         </Button>

@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import { Calendar, Clock, Award, DollarSign } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 
 const DailyDistribution = ({ gananciaPorDia }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
   React.useEffect(() => {
@@ -14,7 +15,7 @@ const DailyDistribution = ({ gananciaPorDia }) => {
     return () => clearTimeout(timer);
   }, [gananciaPorDia]);
 
-  // Función para formatear horas (ahora la usamos aquí)
+  // Función para formatear horas
   const formatearHoras = (horas) => {
     if (horas === 0) return '0h';
     if (horas < 1) {
@@ -73,7 +74,7 @@ const DailyDistribution = ({ gananciaPorDia }) => {
       {diaMasProductivo.ganancia > 0 && (
         <div className="bg-white rounded-xl shadow-md p-4">
           <div className="flex items-center mb-3">
-            <Award size={18} style={{ color: thematicColors?.base || '#EC4899' }} className="mr-2" />
+            <Award size={18} style={{ color: colors.primary }} className="mr-2" />
             <h3 className="font-semibold">Día más productivo</h3>
           </div>
           <div className="flex items-center justify-between">
@@ -84,8 +85,8 @@ const DailyDistribution = ({ gananciaPorDia }) => {
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xl font-bold" style={{ color: thematicColors?.base || '#EC4899' }}>
-                ${diaMasProductivo.ganancia.toFixed(2)}
+              <p className="text-xl font-bold" style={{ color: colors.primary }}>
+                {formatCurrency(diaMasProductivo.ganancia)}
               </p>
             </div>
           </div>
@@ -94,7 +95,7 @@ const DailyDistribution = ({ gananciaPorDia }) => {
 
       <div className="bg-white rounded-xl shadow-md p-4">
         <div className="flex items-center mb-4">
-          <Calendar size={18} style={{ color: thematicColors?.base || '#EC4899' }} className="mr-2" />
+          <Calendar size={18} style={{ color: colors.primary }} className="mr-2" />
           <h3 className="font-semibold">Distribución semanal</h3>
         </div>
 
@@ -122,9 +123,9 @@ const DailyDistribution = ({ gananciaPorDia }) => {
                   <span className="text-sm font-medium text-gray-700">{dia || 'Día'}</span>
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center">
-                      <DollarSign size={14} className="mr-1" style={{ color: thematicColors?.base || '#EC4899' }} />
-                      <span className="text-sm font-bold" style={{ color: thematicColors?.base || '#EC4899' }}>
-                        ${datosSeguro.ganancia.toFixed(2)}
+                      <DollarSign size={14} className="mr-1" style={{ color: colors.primary }} />
+                      <span className="text-sm font-bold" style={{ color: colors.primary }}>
+                        {formatCurrency(datosSeguro.ganancia)}
                       </span>
                     </div>
                     <div className="flex items-center">

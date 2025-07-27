@@ -1,12 +1,15 @@
+// src/components/dashboard/FavoriteWorksCard/index.jsx
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3, ChevronRight } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
 const FavoriteWorksCard = ({ trabajosFavoritos }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   const navigate = useNavigate();
 
   if (trabajosFavoritos.length === 0) return null;
@@ -15,7 +18,7 @@ const FavoriteWorksCard = ({ trabajosFavoritos }) => {
     <Card>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center">
-          <BarChart3 size={20} style={{ color: thematicColors?.base }} className="mr-2" />
+          <BarChart3 size={20} style={{ color: colors.primary }} className="mr-2" />
           Trabajos favoritos
         </h3>
         <Button
@@ -23,8 +26,7 @@ const FavoriteWorksCard = ({ trabajosFavoritos }) => {
           size="sm"
           variant="ghost"
           className="flex items-center gap-1"
-          // Pasamos el color del tema al botón
-          themeColor={thematicColors?.base}
+          themeColor={colors.primary}
         >
           Ver más
           <ChevronRight size={14} className="-mr-1" />
@@ -49,9 +51,9 @@ const FavoriteWorksCard = ({ trabajosFavoritos }) => {
             </div>
             <p 
               className="text-sm font-semibold" 
-              style={{ color: thematicColors?.base }}
+              style={{ color: colors.primary }}
             >
-              ${trabajoInfo.ganancia.toFixed(0)}
+              {formatCurrency(trabajoInfo.ganancia)}
             </p>
           </div>
         ))}

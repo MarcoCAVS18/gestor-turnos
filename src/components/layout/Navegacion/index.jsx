@@ -1,16 +1,18 @@
-// src/components/layout/Navegacion/index.jsx - Con logo en sidebar
+// src/components/layout/Navegacion/index.jsx
 
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import './index.css';
 
 const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { thematicColors, trabajos, trabajosDelivery } = useApp();
+  const { trabajos, trabajosDelivery } = useApp();
+  const colors = useThemeColors();
   
   // Estado para el tooltip
   const [showTooltip, setShowTooltip] = useState(false);
@@ -55,7 +57,7 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
   
   const getActiveTextStyle = (vista) => {
     return currentView === vista 
-      ? { color: thematicColors?.base || '#EC4899' } 
+      ? { color: colors.primary } 
       : { color: '#6B7280' };
   };
 
@@ -72,7 +74,7 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
 
     return currentView === vista
       ? {
-          backgroundColor: thematicColors?.base || '#EC4899',
+          backgroundColor: colors.primary,
           color: 'white'
         }
       : {
@@ -82,9 +84,9 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
   };
   
   const calendarButtonStyle = {
-    backgroundColor: thematicColors?.base || '#EC4899',
+    backgroundColor: colors.primary,
     borderColor: currentView === 'calendario' 
-      ? thematicColors?.dark || '#BE185D'
+      ? colors.primaryDark
       : 'white'
   };
 
@@ -135,7 +137,7 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
               whileTap={{ scale: 0.95 }}
               whileHover={{ 
                 scale: 1.05,
-                boxShadow: `0 8px 25px ${thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)'}`
+                boxShadow: `0 8px 25px ${colors.transparent50}`
               }}
             >
               <CalendarDays size={28} />
@@ -174,7 +176,7 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
             {/* Logo en lugar del emoji */}
             <div 
               className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg"
-              style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
+              style={{ backgroundColor: colors.primary }}
             >
               <img 
                 src="/assets/SVG/logo.svg" 
@@ -189,7 +191,6 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
               <h1 className="text-xl font-bold text-gray-900">
                 Gestión de Turnos
               </h1>
-              {/* Eliminado: Hola {userName} */}
             </div>
           </button>
         </div>
@@ -201,46 +202,40 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
               {abrirModalNuevoTurno && hayTrabajos && (
                 <button
                   onClick={abrirModalNuevoTurno}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg transform hover:scale-105 btn-primary"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg transform hover:scale-105 btn-primary text-white"
                   style={{ 
-                    backgroundColor: thematicColors?.base || '#EC4899',
-                    color: '#ffffff'
+                    backgroundColor: colors.primary
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = thematicColors?.dark || '#BE185D';
-                    e.target.style.color = '#ffffff';
+                    e.target.style.backgroundColor = colors.primaryDark;
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
-                    e.target.style.color = '#ffffff';
+                    e.target.style.backgroundColor = colors.primary;
                   }}
                 >
-                  <PlusCircle size={20} style={{ color: '#ffffff' }} />
-                  <span style={{ color: '#ffffff' }}>Nuevo Turno</span>
+                  <PlusCircle size={20} />
+                  <span>Nuevo Turno</span>
                 </button>
               )}
               {abrirModalNuevoTrabajo && (
                 <button
                   onClick={abrirModalNuevoTrabajo}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md bg-white"
                   style={{ 
                     borderWidth: '2px',
                     borderStyle: 'solid',
-                    borderColor: thematicColors?.base || '#EC4899',
-                    color: thematicColors?.base || '#EC4899',
-                    backgroundColor: '#ffffff'
+                    borderColor: colors.primary,
+                    color: colors.primary
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
-                    e.target.style.color = thematicColors?.base || '#EC4899';
+                    e.target.style.backgroundColor = colors.transparent10;
                   }}
                   onMouseLeave={(e) => {
                     e.target.style.backgroundColor = '#ffffff';
-                    e.target.style.color = thematicColors?.base || '#EC4899';
                   }}
                 >
-                  <Briefcase size={20} style={{ color: thematicColors?.base || '#EC4899' }} />
-                  <span style={{ color: thematicColors?.base || '#EC4899' }}>Nuevo Trabajo</span>
+                  <Briefcase size={20} />
+                  <span>Nuevo Trabajo</span>
                 </button>
               )}
             </div>
@@ -284,7 +279,7 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
               <div 
                 className="w-2 h-2 rounded-full ml-auto"
                 style={{ 
-                  backgroundColor: currentView === 'calendario' ? 'white' : thematicColors?.base 
+                  backgroundColor: currentView === 'calendario' ? 'white' : colors.primary 
                 }}
               />
             </motion.button>
@@ -337,16 +332,12 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
         <div className="p-4 border-t border-gray-100">
           <motion.button
             onClick={() => navigateToView('ajustes')}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:bg-gray-50"
-            style={{
-              backgroundColor: 'transparent',
-              color: '#6B7280'
-            }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:bg-gray-50 text-gray-600"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <Settings size={20} style={{ color: '#6B7280' }} />
-            <span style={{ color: '#6B7280' }}>Configuración</span>
+            <Settings size={20} />
+            <span>Configuración</span>
           </motion.button>
         </div>
       </aside>

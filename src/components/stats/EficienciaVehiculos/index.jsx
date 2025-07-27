@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { Car, Fuel, Navigation, Clock } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const EficienciaVehiculos = ({ deliveryStats }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
   React.useEffect(() => {
@@ -14,15 +15,6 @@ const EficienciaVehiculos = ({ deliveryStats }) => {
     const timer = setTimeout(() => setAnimacionActiva(false), 1000);
     return () => clearTimeout(timer);
   }, [deliveryStats]);
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-AU', {
-      style: 'currency',
-      currency: 'AUD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   const getVehicleIcon = (vehiculo) => {
     const icons = {
@@ -70,7 +62,7 @@ const EficienciaVehiculos = ({ deliveryStats }) => {
     <Card>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center">
-          <Car size={20} style={{ color: thematicColors?.base }} className="mr-2" />
+          <Car size={20} style={{ color: colors.primary }} className="mr-2" />
           Eficiencia por Vehículo
         </h3>
       </div>
@@ -155,13 +147,13 @@ const EficienciaVehiculos = ({ deliveryStats }) => {
         <div className="grid grid-cols-2 gap-4 text-sm text-center">
           <div>
             <p className="text-gray-600">Total recorrido</p>
-            <p className="font-semibold" style={{ color: thematicColors?.base }}>
+            <p className="font-semibold" style={{ color: colors.primary }}>
               {deliveryStats.totalKilometros.toFixed(1)} km
             </p>
           </div>
           <div>
             <p className="text-gray-600">Eficiencia promedio</p>
-            <p className="font-semibold" style={{ color: thematicColors?.base }}>
+            <p className="font-semibold" style={{ color: colors.primary }}>
               {deliveryStats.eficienciaCombustible.toFixed(1)} km/peso
             </p>
           </div>

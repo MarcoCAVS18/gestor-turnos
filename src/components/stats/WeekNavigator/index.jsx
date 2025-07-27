@@ -2,10 +2,10 @@
 
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const WeekNavigator = ({ offsetSemana = 0, onSemanaChange, fechaInicio, fechaFin }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
 
   const cambiarSemana = typeof onSemanaChange === 'function' ? onSemanaChange : () => {};
   const fechaInicioValida = fechaInicio instanceof Date ? fechaInicio : new Date();
@@ -37,8 +37,8 @@ const WeekNavigator = ({ offsetSemana = 0, onSemanaChange, fechaInicio, fechaFin
           onClick={() => cambiarSemana(offsetSemana - 1)}
           className="p-2 rounded-full transition-colors"
           style={{
-            backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-            color: thematicColors?.base || '#EC4899'
+            backgroundColor: colors.transparent10,
+            color: colors.primary
           }}
         >
           <ChevronLeft size={20} />
@@ -55,8 +55,8 @@ const WeekNavigator = ({ offsetSemana = 0, onSemanaChange, fechaInicio, fechaFin
           onClick={() => cambiarSemana(offsetSemana + 1)}
           className="p-2 rounded-full transition-colors"
           style={{
-            backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-            color: thematicColors?.base || '#EC4899'
+            backgroundColor: colors.transparent10,
+            color: colors.primary
           }}
         >
           <ChevronRight size={20} />

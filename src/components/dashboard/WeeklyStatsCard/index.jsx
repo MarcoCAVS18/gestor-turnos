@@ -1,58 +1,65 @@
-// src/components/dashboard/WeeklyStatsCard/index.jsx - Versión vertical mejorada
+// src/components/stats/WeeklyStatsGrid/index.jsx
 
-import { Activity, TrendingUp, TrendingDown } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
-import Card from '../../ui/Card';
+import React from 'react';
+import { DollarSign, Clock, Target, Activity } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 
-const WeeklyStatsCard = ({ stats }) => {
-  const { thematicColors } = useApp();
+const WeeklyStatsGrid = ({ datos = {} }) => {
+  const colors = useThemeColors();
+
+  const datosSeguro = {
+    totalGanado: (datos && typeof datos.totalGanado === 'number' && !isNaN(datos.totalGanado)) ? datos.totalGanado : 0,
+    horasTrabajadas: (datos && typeof datos.horasTrabajadas === 'number') ? datos.horasTrabajadas : 0,
+    diasTrabajados: (datos && typeof datos.diasTrabajados === 'number') ? datos.diasTrabajados : 0,
+    totalTurnos: (datos && typeof datos.totalTurnos === 'number') ? datos.totalTurnos : 0
+  };
+
+  const stats = [
+    {
+      icon: DollarSign,
+      label: 'Total ganado',
+      value: formatCurrency(datosSeguro.totalGanado),
+      color: colors.primary
+    },
+    {
+      icon: Clock,
+      label: 'Horas trabajadas',
+      value: `${datosSeguro.horasTrabajadas.toFixed(1)}h`,
+      color: colors.primary
+    },
+    {
+      icon: Target,
+      label: 'Total turnos',
+      value: datosSeguro.totalTurnos,
+      color: colors.primary
+    },
+    {
+      icon: Activity,
+      label: 'Días trabajados',
+      value: `${datosSeguro.diasTrabajados}/7`,
+      color: colors.primary
+    }
+  ];
 
   return (
-    <Card className="h-full flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold flex items-center">
-          <Activity size={20} style={{ color: thematicColors?.base }} className="mr-2" />
-          Esta semana
-        </h3>
-        {stats.tendenciaSemanal !== 0 && (
-          <div className={`flex items-center text-sm ${
-            stats.tendenciaSemanal > 0 ? 'text-green-600' : 'text-red-600'
-          }`}>
-            {stats.tendenciaSemanal > 0 ? (
-              <TrendingUp size={16} className="mr-1" />
-            ) : (
-              <TrendingDown size={16} className="mr-1" />
-            )}
-            {stats.tendenciaSemanal.toFixed(1)}%
+    <div className="grid grid-cols-2 gap-4">
+      {stats.map((stat, index) => {
+        const Icon = stat.icon;
+        return (
+          <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-center mb-2">
+              <Icon size={18} style={{ color: stat.color }} className="mr-1" />
+              <span className="text-sm text-gray-600">{stat.label}</span>
+            </div>
+            <p className="text-2xl font-bold" style={{ color: stat.color }}>
+              {stat.value}
+            </p>
           </div>
-        )}
-      </div>
-      
-      {/* Stats - Layout vertical */}
-      <div className="flex-1 space-y-8">
-        {/* Turnos completados */}
-        <div className="text-center">
-          <p className="text-sm text-gray-600 mb-2">Turnos completados</p>
-          <p className="text-3xl font-bold text-gray-800">{stats.turnosEstaSemana}</p>
-        </div>
-        
-        {/* Separador visual */}
-        <div className="w-full h-px bg-gray-200"></div>
-        
-        {/* Ganancias */}
-        <div className="text-center">
-          <p className="text-sm text-gray-600 mb-2">Ganancias</p>
-          <p 
-            className="text-3xl font-bold" 
-            style={{ color: thematicColors?.base }}
-          >
-            ${stats.gananciasEstaSemana.toFixed(0)}
-          </p>
-        </div>
-      </div>
-    </Card>
+        );
+      })}
+    </div>
   );
 };
 
-export default WeeklyStatsCard;
+export default WeeklyStatsGrid;

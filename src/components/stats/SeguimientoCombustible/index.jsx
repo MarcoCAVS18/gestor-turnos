@@ -2,20 +2,12 @@
 
 import React from 'react';
 import { Fuel } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const SeguimientoCombustible = ({ deliveryStats }) => {
-  const { thematicColors } = useApp();
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-AU', {
-      style: 'currency',
-      currency: 'AUD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
+  const colors = useThemeColors();
 
   const totalGastos = deliveryStats.totalGastos;
   const totalKilometros = deliveryStats.totalKilometros;
@@ -38,7 +30,7 @@ const SeguimientoCombustible = ({ deliveryStats }) => {
   return (
     <Card>
       <h3 className="text-lg font-semibold flex items-center mb-4">
-        <Fuel size={20} style={{ color: thematicColors?.base }} className="mr-2" />
+        <Fuel size={20} style={{ color: colors.primary }} className="mr-2" />
         Combustible
       </h3>
 

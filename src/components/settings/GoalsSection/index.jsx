@@ -3,11 +3,13 @@
 import React, { useState } from 'react';
 import { Target, Save, X } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 
 const GoalsSection = () => {
   // Usar el nombre correcto de la variable y función del contexto
-  const { weeklyHoursGoal, updateWeeklyHoursGoal, thematicColors } = useApp();
+  const { weeklyHoursGoal, updateWeeklyHoursGoal } = useApp();
+  const colors = useThemeColors();
   const [editando, setEditando] = useState(false);
   const [nuevaMeta, setNuevaMeta] = useState(weeklyHoursGoal || '');
 
@@ -51,7 +53,7 @@ const GoalsSection = () => {
               <div>
                 {weeklyHoursGoal ? (
                   <>
-                    <span className="text-lg font-semibold" style={{ color: thematicColors?.base }}>
+                    <span className="text-lg font-semibold" style={{ color: colors.primary }}>
                       {weeklyHoursGoal} horas
                     </span>
                     <p className="text-sm text-gray-500">
@@ -66,14 +68,14 @@ const GoalsSection = () => {
                 onClick={() => setEditando(true)}
                 className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 style={{
-                  backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-                  color: thematicColors?.base || '#EC4899'
+                  backgroundColor: colors.transparent10,
+                  color: colors.primary
                 }}
                 onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)';
+                  e.target.style.backgroundColor = colors.transparent20;
                 }}
                 onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+                  e.target.style.backgroundColor = colors.transparent10;
                 }}
               >
                 {weeklyHoursGoal ? 'Editar' : 'Configurar'}
@@ -91,7 +93,7 @@ const GoalsSection = () => {
                   max="168"
                   step="0.5"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
-                  style={{ '--tw-ring-color': thematicColors?.base || '#EC4899' }}
+                  style={{ '--tw-ring-color': colors.primary }}
                 />
                 <span className="text-sm text-gray-500">horas</span>
               </div>
@@ -101,15 +103,15 @@ const GoalsSection = () => {
                   onClick={handleGuardar}
                   disabled={!nuevaMeta || parseFloat(nuevaMeta) <= 0}
                   className="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
-                  style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
+                  style={{ backgroundColor: colors.primary }}
                   onMouseEnter={(e) => {
-                    if (!e.target.disabled && thematicColors?.dark) {
-                      e.target.style.backgroundColor = thematicColors.dark;
+                    if (!e.target.disabled) {
+                      e.target.style.backgroundColor = colors.primaryDark;
                     }
                   }}
                   onMouseLeave={(e) => {
                     if (!e.target.disabled) {
-                      e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
+                      e.target.style.backgroundColor = colors.primary;
                     }
                   }}
                 >
@@ -121,14 +123,14 @@ const GoalsSection = () => {
                   onClick={handleCancelar}
                   className="flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors"
                   style={{
-                    backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-                    color: thematicColors?.base || '#EC4899'
+                    backgroundColor: colors.transparent10,
+                    color: colors.primary
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)';
+                    e.target.style.backgroundColor = colors.transparent20;
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+                    e.target.style.backgroundColor = colors.transparent10;
                   }}
                 >
                   <X size={16} className="mr-1" />
@@ -151,9 +153,9 @@ const GoalsSection = () => {
 
         <div 
           className="p-3 rounded-lg"
-          style={{ backgroundColor: thematicColors?.transparent5 || 'rgba(59, 130, 246, 0.05)' }}
+          style={{ backgroundColor: colors.transparent5 }}
         >
-          <p className="text-sm" style={{ color: thematicColors?.base }}>
+          <p className="text-sm" style={{ color: colors.primary }}>
             <strong>Consejo:</strong> Configura una meta realista para ver tu progreso semanal 
             en la barra de progreso de Estadísticas.
           </p>

@@ -1,11 +1,12 @@
-// src/components/dashboard/ProjectionCard/index.jsx - Versión vertical mejorada
+// src/components/dashboard/ProjectionCard/index.jsx
 
 import { BarChart3 } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const ProjectionCard = ({ proyeccionMensual, horasTrabajadas }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
 
   if (proyeccionMensual <= 0) return null;
 
@@ -13,7 +14,7 @@ const ProjectionCard = ({ proyeccionMensual, horasTrabajadas }) => {
     <Card className="h-full flex flex-col">
       {/* Header */}
       <h3 className="text-lg font-semibold mb-6 flex items-center">
-        <BarChart3 size={20} style={{ color: thematicColors?.base }} className="mr-2" />
+        <BarChart3 size={20} style={{ color: colors.primary }} className="mr-2" />
         Proyección mensual
       </h3>
       
@@ -25,9 +26,9 @@ const ProjectionCard = ({ proyeccionMensual, horasTrabajadas }) => {
           </p>
           <p 
             className="text-4xl font-bold mb-2" 
-            style={{ color: thematicColors?.base }}
+            style={{ color: colors.primary }}
           >
-            ${proyeccionMensual.toFixed(0)}
+            {formatCurrency(proyeccionMensual)}
           </p>
           <p className="text-sm text-gray-500">
             ~{(horasTrabajadas * 4.33).toFixed(0)} horas

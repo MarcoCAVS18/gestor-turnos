@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { Truck, DollarSign, Package, Navigation } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const ResumenDelivery = ({ deliveryStats }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
   React.useEffect(() => {
@@ -14,15 +15,6 @@ const ResumenDelivery = ({ deliveryStats }) => {
     const timer = setTimeout(() => setAnimacionActiva(false), 1000);
     return () => clearTimeout(timer);
   }, [deliveryStats]);
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-AU', {
-      style: 'currency',
-      currency: 'AUD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
 
   // Múltiples formas de calcular el promedio por pedido
   const promedioPorPedido1 = deliveryStats.totalPedidos > 0 ? 
@@ -58,7 +50,7 @@ const ResumenDelivery = ({ deliveryStats }) => {
   return (
     <Card className='bg-white shadow-md p-6'>
       <h3 className="text-lg font-semibold flex items-center mb-4">
-        <Truck size={20} style={{ color: thematicColors?.base }} className="mr-2" />
+        <Truck size={20} style={{ color: colors.primary }} className="mr-2" />
         Resumen Delivery
       </h3>
 
@@ -82,8 +74,8 @@ const ResumenDelivery = ({ deliveryStats }) => {
         </div>
 
         <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <DollarSign size={24} className="mx-auto mb-2" style={{ color: thematicColors?.base }} />
-          <p className="text-2xl font-bold" style={{ color: thematicColors?.base }}>
+          <DollarSign size={24} className="mx-auto mb-2" style={{ color: colors.primary }} />
+          <p className="text-2xl font-bold" style={{ color: colors.primary }}>
             {formatCurrency(promedioPorPedido)}
           </p>
           <p className="text-sm text-gray-600">Por Pedido</p>

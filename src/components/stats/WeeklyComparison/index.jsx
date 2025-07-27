@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { formatCurrency } from '../../../utils/currency';
 
 const WeeklyComparison = ({ datosActuales = {}, datosAnteriores = {} }) => {
 
@@ -39,17 +40,20 @@ const WeeklyComparison = ({ datosActuales = {}, datosAnteriores = {} }) => {
     {
       label: 'Ganancia vs semana anterior',
       cambio: cambioGanancia,
-      valor: `${Math.abs(cambioGanancia).toFixed(1)}%`
+      valor: `${Math.abs(cambioGanancia).toFixed(1)}%`,
+      valorAbsoluto: formatCurrency(Math.abs(gananciaActual - gananciaAnterior))
     },
     {
       label: 'Horas vs semana anterior',
       cambio: cambioHoras,
-      valor: `${Math.abs(cambioHoras).toFixed(1)}%`
+      valor: `${Math.abs(cambioHoras).toFixed(1)}%`,
+      valorAbsoluto: `${Math.abs(horasActuales - horasAnteriores).toFixed(1)}h`
     },
     {
       label: 'Turnos vs semana anterior',
       cambio: cambioTurnos,
-      valor: `${Math.abs(cambioTurnos).toFixed(1)}%`
+      valor: `${Math.abs(cambioTurnos).toFixed(1)}%`,
+      valorAbsoluto: `${Math.abs(turnosActuales - turnosAnteriores)} turnos`
     }
   ];
 
@@ -64,7 +68,14 @@ const WeeklyComparison = ({ datosActuales = {}, datosAnteriores = {} }) => {
           
           return (
             <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span className="text-sm text-gray-600">{comp.label}</span>
+              <div className="flex-1">
+                <span className="text-sm text-gray-600">{comp.label}</span>
+                {comp.valorAbsoluto && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Diferencia: {comp.valorAbsoluto}
+                  </p>
+                )}
+              </div>
               <div className="flex items-center" style={{ color }}>
                 <Icono size={16} className="mr-1" />
                 <span className="text-sm font-medium">{comp.valor}</span>

@@ -1,18 +1,19 @@
 // src/components/dashboard/TopWorkCard/index.jsx
 
 import { Award } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const TopWorkCard = ({ trabajoMasRentable }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
 
   if (!trabajoMasRentable) return null;
 
   return (
     <Card>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
-        <Award size={20} style={{ color: thematicColors?.base }} className="mr-2" />
+        <Award size={20} style={{ color: colors.primary }} className="mr-2" />
         Trabajo más rentable
       </h3>
       <div className="flex items-center justify-between">
@@ -32,9 +33,9 @@ const TopWorkCard = ({ trabajoMasRentable }) => {
         </div>
         <p 
           className="text-xl font-bold" 
-          style={{ color: thematicColors?.base }}
+          style={{ color: colors.primary }}
         >
-          ${trabajoMasRentable.ganancia.toFixed(2)}
+          {formatCurrency(trabajoMasRentable.ganancia)}
         </p>
       </div>
     </Card>

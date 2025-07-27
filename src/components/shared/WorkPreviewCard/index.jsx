@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Briefcase, Truck, Bike, Car, User, Package } from 'lucide-react';
+import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const WorkPreviewCard = ({ trabajo }) => {
@@ -89,7 +90,7 @@ const WorkPreviewCard = ({ trabajo }) => {
               <Briefcase className="h-5 w-5 text-green-500 mr-2" />
               <div>
                 <p className="text-sm text-gray-600">Tarifa base</p>
-                <p className="font-semibold">${trabajo.tarifaBase.toFixed(2)}/hora</p>
+                <p className="font-semibold">{formatCurrency(trabajo.tarifaBase)}/hora</p>
               </div>
             </div>
           )}
@@ -101,35 +102,35 @@ const WorkPreviewCard = ({ trabajo }) => {
                 {trabajo.tarifas.diurno && (
                   <div className="text-center p-2 bg-yellow-50 rounded-lg border">
                     <p className="text-xs text-gray-600">Diurno</p>
-                    <p className="font-semibold text-sm">${trabajo.tarifas.diurno.toFixed(2)}/h</p>
+                    <p className="font-semibold text-sm">{formatCurrency(trabajo.tarifas.diurno)}/h</p>
                   </div>
                 )}
                 
                 {trabajo.tarifas.tarde && (
                   <div className="text-center p-2 bg-orange-50 rounded-lg border">
                     <p className="text-xs text-gray-600">Tarde</p>
-                    <p className="font-semibold text-sm">${trabajo.tarifas.tarde.toFixed(2)}/h</p>
+                    <p className="font-semibold text-sm">{formatCurrency(trabajo.tarifas.tarde)}/h</p>
                   </div>
                 )}
                 
                 {trabajo.tarifas.noche && (
                   <div className="text-center p-2 bg-blue-50 rounded-lg border">
                     <p className="text-xs text-gray-600">Noche</p>
-                    <p className="font-semibold text-sm">${trabajo.tarifas.noche.toFixed(2)}/h</p>
+                    <p className="font-semibold text-sm">{formatCurrency(trabajo.tarifas.noche)}/h</p>
                   </div>
                 )}
                 
                 {trabajo.tarifas.sabado && (
                   <div className="text-center p-2 bg-purple-50 rounded-lg border">
                     <p className="text-xs text-gray-600">Sábado</p>
-                    <p className="font-semibold text-sm">${trabajo.tarifas.sabado.toFixed(2)}/h</p>
+                    <p className="font-semibold text-sm">{formatCurrency(trabajo.tarifas.sabado)}/h</p>
                   </div>
                 )}
                 
                 {trabajo.tarifas.domingo && (
                   <div className="text-center p-2 bg-red-50 rounded-lg border">
                     <p className="text-xs text-gray-600">Domingo</p>
-                    <p className="font-semibold text-sm">${trabajo.tarifas.domingo.toFixed(2)}/h</p>
+                    <p className="font-semibold text-sm">{formatCurrency(trabajo.tarifas.domingo)}/h</p>
                   </div>
                 )}
               </div>

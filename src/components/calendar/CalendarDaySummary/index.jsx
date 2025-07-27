@@ -3,6 +3,8 @@
 import React from 'react';
 import { PlusCircle, Calendar, Moon, Sun } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 import { obtenerTipoTurnoEnFecha } from '../../../utils/calendarUtils';
 import TarjetaTurno from '../../cards/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
@@ -16,7 +18,8 @@ const CalendarDaySummary = ({
   onNuevoTurno 
 }) => {
   // Obtener TODOS los trabajos (tradicionales + delivery) y la función de cálculo
-  const { trabajos, trabajosDelivery, calculatePayment, thematicColors } = useApp();
+  const { trabajos, trabajosDelivery, calculatePayment } = useApp();
+  const colors = useThemeColors();
 
   const calcularTotalDia = (turnosList) => {
     if (!Array.isArray(turnosList) || turnosList.length === 0) {
@@ -74,7 +77,7 @@ const CalendarDaySummary = ({
     
     if (esNocturno) {
       // Si el turno inicia en la fecha seleccionada, termina al día siguiente
-      const fechaInicioTurno = turno.fechaInicio || turno.fecha; // Renombrado
+      const fechaInicioTurno = turno.fechaInicio || turno.fecha;
       if (fechaInicioTurno === fechaSeleccionada) {
         const fechaFin = new Date(fechaSeleccionada + 'T00:00:00');
         fechaFin.setDate(fechaFin.getDate() + 1);
@@ -82,7 +85,7 @@ const CalendarDaySummary = ({
       }
       
       // Si el turno termina en la fecha seleccionada, empezó el día anterior
-      const fechaInicioCalculada = new Date(fechaSeleccionada + 'T00:00:00'); // Renombrado
+      const fechaInicioCalculada = new Date(fechaSeleccionada + 'T00:00:00');
       fechaInicioCalculada.setDate(fechaInicioCalculada.getDate() - 1);
       return new Date(fechaSeleccionada + 'T00:00:00');
     }
@@ -129,7 +132,7 @@ const CalendarDaySummary = ({
           size="sm"
           className="flex items-center gap-1"
           icon={PlusCircle}
-          themeColor={thematicColors?.base}
+          themeColor={colors.primary}
         >
           Nuevo
         </Button>
@@ -140,10 +143,10 @@ const CalendarDaySummary = ({
           {/* Header del día */}
           <div 
             className="px-4 py-3 border-b rounded-t-xl"
-            style={{ backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
+            style={{ backgroundColor: colors.transparent10 }}
           >
             <div className="flex items-center">
-              <Calendar size={18} style={{ color: thematicColors?.base || '#EC4899' }} className="mr-2" />
+              <Calendar size={18} style={{ color: colors.primary }} className="mr-2" />
               <h3 className="font-semibold">{formatearFecha(fechaSeleccionada)}</h3>
             </div>
           </div>
@@ -180,7 +183,7 @@ const CalendarDaySummary = ({
                           </div>
                           {turno.tipo === 'delivery' && (
                             <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                              ${turno.gananciaTotal || 0}
+                              {formatCurrency(turno.gananciaTotal || 0)}
                             </span>
                           )}
                         </div>
@@ -217,7 +220,7 @@ const CalendarDaySummary = ({
                           </p>
                           {turno.tipo === 'delivery' && (
                             <p className="text-xs text-blue-600 mt-1">
-                              Turno de Delivery • Ganancia: ${turno.gananciaTotal || 0}
+                              Turno de Delivery • Ganancia: {formatCurrency(turno.gananciaTotal || 0)}
                             </p>
                           )}
                         </div>
@@ -279,7 +282,7 @@ const CalendarDaySummary = ({
                           </div>
                           {turno.tipo === 'delivery' && (
                             <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                              ${turno.gananciaTotal || 0}
+                              {formatCurrency(turno.gananciaTotal || 0)}
                             </span>
                           )}
                         </div>
@@ -293,14 +296,14 @@ const CalendarDaySummary = ({
             {/* Total del día */}
             <div 
               className="flex justify-between px-4 py-3 rounded-lg mt-4"
-              style={{ backgroundColor: thematicColors?.transparent5 || 'rgba(0,0,0,0.05)' }}
+              style={{ backgroundColor: colors.transparent5 }}
             >
               <span className="font-semibold">Total del día:</span>
               <span 
                 className="font-semibold"
-                style={{ color: thematicColors?.base || '#EC4899' }}
+                style={{ color: colors.primary }}
               >
-                ${totalDia.toFixed(2)}
+                {formatCurrency(totalDia)}
               </span>
             </div>
           </div>
@@ -313,7 +316,7 @@ const CalendarDaySummary = ({
             onClick={handleNuevoTurno}
             className="flex items-center gap-2"
             icon={PlusCircle}
-            themeColor={thematicColors?.base}
+            themeColor={colors.primary}
           >
             Agregar turno
           </Button>

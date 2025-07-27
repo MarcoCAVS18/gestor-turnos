@@ -3,11 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const WelcomeCard = ({ totalGanado }) => {
   const { currentUser } = useAuth();
-  const { userEmoji, thematicColors } = useApp();
+  const { userEmoji } = useApp();
+  const colors = useThemeColors();
   const [userName, setUserName] = useState('');
   
   useEffect(() => {
@@ -44,9 +47,9 @@ const WelcomeCard = ({ totalGanado }) => {
           <p className="text-xs text-gray-500 mb-1">Ganado total</p>
           <p 
             className="text-2xl font-bold"
-            style={{ color: thematicColors?.base || '#EC4899' }}
+            style={{ color: colors.primary }}
           >
-            ${totalGanado.toFixed(2)}
+            {formatCurrency(totalGanado)}
           </p>
         </div>
       </div>
@@ -66,9 +69,9 @@ const WelcomeCard = ({ totalGanado }) => {
           <p className="text-sm text-gray-500">Ganado total</p>
           <p 
             className="text-2xl font-bold"
-            style={{ color: thematicColors?.base || '#EC4899' }}
+            style={{ color: colors.primary }}
           >
-            ${totalGanado.toFixed(2)}
+            {formatCurrency(totalGanado)}
           </p>
         </div>
       </div>
