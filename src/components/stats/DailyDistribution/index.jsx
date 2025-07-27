@@ -2,10 +2,11 @@
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Calendar, Clock, Award, DollarSign ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 
 const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
   React.useEffect(() => ***REMOVED***
@@ -14,7 +15,7 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
     return () => clearTimeout(timer);
   ***REMOVED***, [gananciaPorDia]);
 
-  // Función para formatear horas (ahora la usamos aquí)
+  // Función para formatear horas
   const formatearHoras = (horas) => ***REMOVED***
     if (horas === 0) return '0h';
     if (horas < 1) ***REMOVED***
@@ -73,7 +74,7 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
       ***REMOVED***diaMasProductivo.ganancia > 0 && (
         <div className="bg-white rounded-xl shadow-md p-4">
           <div className="flex items-center mb-3">
-            <Award size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+            <Award size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
             <h3 className="font-semibold">Día más productivo</h3>
           </div>
           <div className="flex items-center justify-between">
@@ -84,8 +85,8 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xl font-bold" style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***>
-                $***REMOVED***diaMasProductivo.ganancia.toFixed(2)***REMOVED***
+              <p className="text-xl font-bold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                ***REMOVED***formatCurrency(diaMasProductivo.ganancia)***REMOVED***
               </p>
             </div>
           </div>
@@ -94,7 +95,7 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
 
       <div className="bg-white rounded-xl shadow-md p-4">
         <div className="flex items-center mb-4">
-          <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+          <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
           <h3 className="font-semibold">Distribución semanal</h3>
         </div>
 
@@ -122,9 +123,9 @@ const DailyDistribution = (***REMOVED*** gananciaPorDia ***REMOVED***) => ***REM
                   <span className="text-sm font-medium text-gray-700">***REMOVED***dia || 'Día'***REMOVED***</span>
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center">
-                      <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1" style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** />
-                      <span className="text-sm font-bold" style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***>
-                        $***REMOVED***datosSeguro.ganancia.toFixed(2)***REMOVED***
+                      <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
+                      <span className="text-sm font-bold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                        ***REMOVED***formatCurrency(datosSeguro.ganancia)***REMOVED***
                       </span>
                     </div>
                     <div className="flex items-center">

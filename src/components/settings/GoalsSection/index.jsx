@@ -3,11 +3,13 @@
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Target, Save, X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 
 const GoalsSection = () => ***REMOVED***
   // Usar el nombre correcto de la variable y función del contexto
-  const ***REMOVED*** weeklyHoursGoal, updateWeeklyHoursGoal, thematicColors ***REMOVED*** = useApp();
+  const ***REMOVED*** weeklyHoursGoal, updateWeeklyHoursGoal ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   const [editando, setEditando] = useState(false);
   const [nuevaMeta, setNuevaMeta] = useState(weeklyHoursGoal || '');
 
@@ -51,7 +53,7 @@ const GoalsSection = () => ***REMOVED***
               <div>
                 ***REMOVED***weeklyHoursGoal ? (
                   <>
-                    <span className="text-lg font-semibold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
+                    <span className="text-lg font-semibold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
                       ***REMOVED***weeklyHoursGoal***REMOVED*** horas
                     </span>
                     <p className="text-sm text-gray-500">
@@ -66,14 +68,14 @@ const GoalsSection = () => ***REMOVED***
                 onClick=***REMOVED***() => setEditando(true)***REMOVED***
                 className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 style=***REMOVED******REMOVED***
-                  backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-                  color: thematicColors?.base || '#EC4899'
+                  backgroundColor: colors.transparent10,
+                  color: colors.primary
                 ***REMOVED******REMOVED***
                 onMouseEnter=***REMOVED***(e) => ***REMOVED***
-                  e.target.style.backgroundColor = thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)';
+                  e.target.style.backgroundColor = colors.transparent20;
                 ***REMOVED******REMOVED***
                 onMouseLeave=***REMOVED***(e) => ***REMOVED***
-                  e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+                  e.target.style.backgroundColor = colors.transparent10;
                 ***REMOVED******REMOVED***
               >
                 ***REMOVED***weeklyHoursGoal ? 'Editar' : 'Configurar'***REMOVED***
@@ -91,7 +93,7 @@ const GoalsSection = () => ***REMOVED***
                   max="168"
                   step="0.5"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
-                  style=***REMOVED******REMOVED*** '--tw-ring-color': thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+                  style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
                 />
                 <span className="text-sm text-gray-500">horas</span>
               </div>
@@ -101,15 +103,15 @@ const GoalsSection = () => ***REMOVED***
                   onClick=***REMOVED***handleGuardar***REMOVED***
                   disabled=***REMOVED***!nuevaMeta || parseFloat(nuevaMeta) <= 0***REMOVED***
                   className="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
-                  style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+                  style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
                   onMouseEnter=***REMOVED***(e) => ***REMOVED***
-                    if (!e.target.disabled && thematicColors?.dark) ***REMOVED***
-                      e.target.style.backgroundColor = thematicColors.dark;
+                    if (!e.target.disabled) ***REMOVED***
+                      e.target.style.backgroundColor = colors.primaryDark;
                     ***REMOVED***
                   ***REMOVED******REMOVED***
                   onMouseLeave=***REMOVED***(e) => ***REMOVED***
                     if (!e.target.disabled) ***REMOVED***
-                      e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
+                      e.target.style.backgroundColor = colors.primary;
                     ***REMOVED***
                   ***REMOVED******REMOVED***
                 >
@@ -121,14 +123,14 @@ const GoalsSection = () => ***REMOVED***
                   onClick=***REMOVED***handleCancelar***REMOVED***
                   className="flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors"
                   style=***REMOVED******REMOVED***
-                    backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-                    color: thematicColors?.base || '#EC4899'
+                    backgroundColor: colors.transparent10,
+                    color: colors.primary
                   ***REMOVED******REMOVED***
                   onMouseEnter=***REMOVED***(e) => ***REMOVED***
-                    e.target.style.backgroundColor = thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)';
+                    e.target.style.backgroundColor = colors.transparent20;
                   ***REMOVED******REMOVED***
                   onMouseLeave=***REMOVED***(e) => ***REMOVED***
-                    e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+                    e.target.style.backgroundColor = colors.transparent10;
                   ***REMOVED******REMOVED***
                 >
                   <X size=***REMOVED***16***REMOVED*** className="mr-1" />
@@ -151,9 +153,9 @@ const GoalsSection = () => ***REMOVED***
 
         <div 
           className="p-3 rounded-lg"
-          style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent5 || 'rgba(59, 130, 246, 0.05)' ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** backgroundColor: colors.transparent5 ***REMOVED******REMOVED***
         >
-          <p className="text-sm" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
+          <p className="text-sm" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
             <strong>Consejo:</strong> Configura una meta realista para ver tu progreso semanal 
             en la barra de progreso de Estadísticas.
           </p>

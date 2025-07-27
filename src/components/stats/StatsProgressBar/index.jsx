@@ -2,7 +2,8 @@
 
 import React from 'react';
 import ***REMOVED*** Clock, DollarSign, Target ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const StatsProgressBar = (***REMOVED*** 
@@ -11,7 +12,7 @@ const StatsProgressBar = (***REMOVED***
   gananciaTotal = 0,
   className = '' 
 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   
   // Calcular porcentaje de progreso
   const porcentaje = metaHoras > 0 ? (horasSemanales / metaHoras) * 100 : 0;
@@ -19,7 +20,7 @@ const StatsProgressBar = (***REMOVED***
   
   const getColorProgreso = () => ***REMOVED***
     if (porcentaje >= 100) return '#10B981';
-    if (porcentaje >= 75) return thematicColors?.base || '#EC4899'; 
+    if (porcentaje >= 75) return colors.primary; 
     if (porcentaje >= 50) return '#F59E0B'; 
     return '#EF4444';
   ***REMOVED***;
@@ -30,7 +31,7 @@ const StatsProgressBar = (***REMOVED***
         ***REMOVED***/* Header */***REMOVED***
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-gray-800 flex items-center">
-            <Target size=***REMOVED***18***REMOVED*** className="mr-2" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** />
+            <Target size=***REMOVED***18***REMOVED*** className="mr-2" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
             Progreso Semanal
           </h3>
           <span className="text-sm text-gray-500">
@@ -72,7 +73,7 @@ const StatsProgressBar = (***REMOVED***
             <DollarSign size=***REMOVED***16***REMOVED*** className="text-green-500 mr-2" />
             <div>
               <p className="text-xs text-gray-500">Ganancia total</p>
-              <p className="font-medium">$***REMOVED***gananciaTotal.toFixed(2)***REMOVED***</p>
+              <p className="font-medium">***REMOVED***formatCurrency(gananciaTotal)***REMOVED***</p>
             </div>
           </div>
         </div>

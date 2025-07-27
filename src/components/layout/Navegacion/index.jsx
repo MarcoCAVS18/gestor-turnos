@@ -1,16 +1,18 @@
-// src/components/layout/Navegacion/index.jsx - Con logo en sidebar
+// src/components/layout/Navegacion/index.jsx
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import './index.css';
 
 const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno ***REMOVED***) => ***REMOVED***
   const navigate = useNavigate();
   const location = useLocation();
-  const ***REMOVED*** thematicColors, trabajos, trabajosDelivery ***REMOVED*** = useApp();
+  const ***REMOVED*** trabajos, trabajosDelivery ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   
   // Estado para el tooltip
   const [showTooltip, setShowTooltip] = useState(false);
@@ -55,7 +57,7 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
   
   const getActiveTextStyle = (vista) => ***REMOVED***
     return currentView === vista 
-      ? ***REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED*** 
+      ? ***REMOVED*** color: colors.primary ***REMOVED*** 
       : ***REMOVED*** color: '#6B7280' ***REMOVED***;
   ***REMOVED***;
 
@@ -72,7 +74,7 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
 
     return currentView === vista
       ? ***REMOVED***
-          backgroundColor: thematicColors?.base || '#EC4899',
+          backgroundColor: colors.primary,
           color: 'white'
         ***REMOVED***
       : ***REMOVED***
@@ -82,9 +84,9 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
   ***REMOVED***;
   
   const calendarButtonStyle = ***REMOVED***
-    backgroundColor: thematicColors?.base || '#EC4899',
+    backgroundColor: colors.primary,
     borderColor: currentView === 'calendario' 
-      ? thematicColors?.dark || '#BE185D'
+      ? colors.primaryDark
       : 'white'
   ***REMOVED***;
 
@@ -135,7 +137,7 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
               whileTap=***REMOVED******REMOVED*** scale: 0.95 ***REMOVED******REMOVED***
               whileHover=***REMOVED******REMOVED*** 
                 scale: 1.05,
-                boxShadow: `0 8px 25px $***REMOVED***thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)'***REMOVED***`
+                boxShadow: `0 8px 25px $***REMOVED***colors.transparent50***REMOVED***`
               ***REMOVED******REMOVED***
             >
               <CalendarDays size=***REMOVED***28***REMOVED*** />
@@ -174,7 +176,7 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
             ***REMOVED***/* Logo en lugar del emoji */***REMOVED***
             <div 
               className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg"
-              style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
             >
               <img 
                 src="/assets/SVG/logo.svg" 
@@ -189,7 +191,6 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
               <h1 className="text-xl font-bold text-gray-900">
                 Gestión de Turnos
               </h1>
-              ***REMOVED***/* Eliminado: Hola ***REMOVED***userName***REMOVED*** */***REMOVED***
             </div>
           </button>
         </div>
@@ -201,46 +202,40 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
               ***REMOVED***abrirModalNuevoTurno && hayTrabajos && (
                 <button
                   onClick=***REMOVED***abrirModalNuevoTurno***REMOVED***
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg transform hover:scale-105 btn-primary"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg transform hover:scale-105 btn-primary text-white"
                   style=***REMOVED******REMOVED*** 
-                    backgroundColor: thematicColors?.base || '#EC4899',
-                    color: '#ffffff'
+                    backgroundColor: colors.primary
                   ***REMOVED******REMOVED***
                   onMouseEnter=***REMOVED***(e) => ***REMOVED***
-                    e.target.style.backgroundColor = thematicColors?.dark || '#BE185D';
-                    e.target.style.color = '#ffffff';
+                    e.target.style.backgroundColor = colors.primaryDark;
                   ***REMOVED******REMOVED***
                   onMouseLeave=***REMOVED***(e) => ***REMOVED***
-                    e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
-                    e.target.style.color = '#ffffff';
+                    e.target.style.backgroundColor = colors.primary;
                   ***REMOVED******REMOVED***
                 >
-                  <PlusCircle size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: '#ffffff' ***REMOVED******REMOVED*** />
-                  <span style=***REMOVED******REMOVED*** color: '#ffffff' ***REMOVED******REMOVED***>Nuevo Turno</span>
+                  <PlusCircle size=***REMOVED***20***REMOVED*** />
+                  <span>Nuevo Turno</span>
                 </button>
               )***REMOVED***
               ***REMOVED***abrirModalNuevoTrabajo && (
                 <button
                   onClick=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md bg-white"
                   style=***REMOVED******REMOVED*** 
                     borderWidth: '2px',
                     borderStyle: 'solid',
-                    borderColor: thematicColors?.base || '#EC4899',
-                    color: thematicColors?.base || '#EC4899',
-                    backgroundColor: '#ffffff'
+                    borderColor: colors.primary,
+                    color: colors.primary
                   ***REMOVED******REMOVED***
                   onMouseEnter=***REMOVED***(e) => ***REMOVED***
-                    e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
-                    e.target.style.color = thematicColors?.base || '#EC4899';
+                    e.target.style.backgroundColor = colors.transparent10;
                   ***REMOVED******REMOVED***
                   onMouseLeave=***REMOVED***(e) => ***REMOVED***
                     e.target.style.backgroundColor = '#ffffff';
-                    e.target.style.color = thematicColors?.base || '#EC4899';
                   ***REMOVED******REMOVED***
                 >
-                  <Briefcase size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** />
-                  <span style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***>Nuevo Trabajo</span>
+                  <Briefcase size=***REMOVED***20***REMOVED*** />
+                  <span>Nuevo Trabajo</span>
                 </button>
               )***REMOVED***
             </div>
@@ -284,7 +279,7 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
               <div 
                 className="w-2 h-2 rounded-full ml-auto"
                 style=***REMOVED******REMOVED*** 
-                  backgroundColor: currentView === 'calendario' ? 'white' : thematicColors?.base 
+                  backgroundColor: currentView === 'calendario' ? 'white' : colors.primary 
                 ***REMOVED******REMOVED***
               />
             </motion.button>
@@ -337,16 +332,12 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
         <div className="p-4 border-t border-gray-100">
           <motion.button
             onClick=***REMOVED***() => navigateToView('ajustes')***REMOVED***
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:bg-gray-50"
-            style=***REMOVED******REMOVED***
-              backgroundColor: 'transparent',
-              color: '#6B7280'
-            ***REMOVED******REMOVED***
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:bg-gray-50 text-gray-600"
             whileHover=***REMOVED******REMOVED*** scale: 1.02 ***REMOVED******REMOVED***
             whileTap=***REMOVED******REMOVED*** scale: 0.98 ***REMOVED******REMOVED***
           >
-            <Settings size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: '#6B7280' ***REMOVED******REMOVED*** />
-            <span style=***REMOVED******REMOVED*** color: '#6B7280' ***REMOVED******REMOVED***>Configuración</span>
+            <Settings size=***REMOVED***20***REMOVED*** />
+            <span>Configuración</span>
           </motion.button>
         </div>
       </aside>

@@ -2,14 +2,16 @@
 
 import React from 'react';
 import ***REMOVED*** ChevronLeft, ChevronRight ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const CalendarHeader = (***REMOVED*** 
   mesActual, 
   anioActual, 
   onCambiarMes, 
-  onIrAHoy, 
-  thematicColors 
+  onIrAHoy
 ***REMOVED***) => ***REMOVED***
+  const colors = useThemeColors();
+  
   const getNombreMes = () => ***REMOVED***
     return new Date(anioActual, mesActual, 1).toLocaleDateString('es-ES', ***REMOVED*** month: 'long' ***REMOVED***);
   ***REMOVED***;
@@ -17,7 +19,7 @@ const CalendarHeader = (***REMOVED***
   return (
     <div
       className="p-4 text-white flex justify-between items-center"
-      style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+      style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
     >
       <button
         onClick=***REMOVED***() => onCambiarMes(-1)***REMOVED***

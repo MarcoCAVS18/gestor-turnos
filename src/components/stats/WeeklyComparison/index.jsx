@@ -2,6 +2,7 @@
 
 import React from 'react';
 import ***REMOVED*** TrendingUp, TrendingDown, Minus ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 
 const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED***, datosAnteriores = ***REMOVED******REMOVED*** ***REMOVED***) => ***REMOVED***
 
@@ -39,17 +40,20 @@ const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED*
     ***REMOVED***
       label: 'Ganancia vs semana anterior',
       cambio: cambioGanancia,
-      valor: `$***REMOVED***Math.abs(cambioGanancia).toFixed(1)***REMOVED***%`
+      valor: `$***REMOVED***Math.abs(cambioGanancia).toFixed(1)***REMOVED***%`,
+      valorAbsoluto: formatCurrency(Math.abs(gananciaActual - gananciaAnterior))
     ***REMOVED***,
     ***REMOVED***
       label: 'Horas vs semana anterior',
       cambio: cambioHoras,
-      valor: `$***REMOVED***Math.abs(cambioHoras).toFixed(1)***REMOVED***%`
+      valor: `$***REMOVED***Math.abs(cambioHoras).toFixed(1)***REMOVED***%`,
+      valorAbsoluto: `$***REMOVED***Math.abs(horasActuales - horasAnteriores).toFixed(1)***REMOVED***h`
     ***REMOVED***,
     ***REMOVED***
       label: 'Turnos vs semana anterior',
       cambio: cambioTurnos,
-      valor: `$***REMOVED***Math.abs(cambioTurnos).toFixed(1)***REMOVED***%`
+      valor: `$***REMOVED***Math.abs(cambioTurnos).toFixed(1)***REMOVED***%`,
+      valorAbsoluto: `$***REMOVED***Math.abs(turnosActuales - turnosAnteriores)***REMOVED*** turnos`
     ***REMOVED***
   ];
 
@@ -64,7 +68,14 @@ const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED*
           
           return (
             <div key=***REMOVED***index***REMOVED*** className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <span className="text-sm text-gray-600">***REMOVED***comp.label***REMOVED***</span>
+              <div className="flex-1">
+                <span className="text-sm text-gray-600">***REMOVED***comp.label***REMOVED***</span>
+                ***REMOVED***comp.valorAbsoluto && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Diferencia: ***REMOVED***comp.valorAbsoluto***REMOVED***
+                  </p>
+                )***REMOVED***
+              </div>
               <div className="flex items-center" style=***REMOVED******REMOVED*** color ***REMOVED******REMOVED***>
                 <Icono size=***REMOVED***16***REMOVED*** className="mr-1" />
                 <span className="text-sm font-medium">***REMOVED***comp.valor***REMOVED***</span>

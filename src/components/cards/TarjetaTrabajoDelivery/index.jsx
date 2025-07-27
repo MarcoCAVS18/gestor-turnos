@@ -2,10 +2,12 @@
 
 import React from 'react';
 import ***REMOVED*** MoreVertical, Edit2, Trash2, Share2, Package, Bike, Car, Truck, User ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import WorkAvatar from '../../work/WorkAvatar';
 
 const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, onShare, showActions = true, isSharing = false ***REMOVED***) => ***REMOVED***
   const [menuAbierto, setMenuAbierto] = React.useState(false);
+  const colors = useThemeColors();
 
   const descripcion = trabajo.descripcion && trabajo.descripcion.trim()
     ? trabajo.descripcion
@@ -100,7 +102,6 @@ const TarjetaTrabajoDelivery = (***REMOVED*** trabajo, onEdit, onDelete, onShare
                   <span>Editar</span>
                 </button>
                 
-                ***REMOVED***/* ← AGREGAR OPCIÓN DE COMPARTIR */***REMOVED***
                 ***REMOVED***onShare && (
                   <button
                     onClick=***REMOVED***() => ***REMOVED***

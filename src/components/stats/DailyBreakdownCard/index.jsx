@@ -2,6 +2,7 @@
 
 import React from 'react';
 import ***REMOVED*** Calendar, Clock, DollarSign ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED***, trabajos = [] ***REMOVED***) => ***REMOVED***
@@ -112,7 +113,7 @@ const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED
                 </div>
                 <div className="flex items-center text-green-600">
                   <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1" />
-                  <span>$***REMOVED***gananciaTotal.toFixed(2)***REMOVED***</span>
+                  <span>***REMOVED***formatCurrency(gananciaTotal)***REMOVED***</span>
                 </div>
               </div>
             </div>

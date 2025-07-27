@@ -1,11 +1,12 @@
-// src/components/dashboard/ProjectionCard/index.jsx - Versión vertical mejorada
+// src/components/dashboard/ProjectionCard/index.jsx
 
 import ***REMOVED*** BarChart3 ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const ProjectionCard = (***REMOVED*** proyeccionMensual, horasTrabajadas ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
 
   if (proyeccionMensual <= 0) return null;
 
@@ -13,7 +14,7 @@ const ProjectionCard = (***REMOVED*** proyeccionMensual, horasTrabajadas ***REMO
     <Card className="h-full flex flex-col">
       ***REMOVED***/* Header */***REMOVED***
       <h3 className="text-lg font-semibold mb-6 flex items-center">
-        <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
+        <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
         Proyección mensual
       </h3>
       
@@ -25,9 +26,9 @@ const ProjectionCard = (***REMOVED*** proyeccionMensual, horasTrabajadas ***REMO
           </p>
           <p 
             className="text-4xl font-bold mb-2" 
-            style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***
+            style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
           >
-            $***REMOVED***proyeccionMensual.toFixed(0)***REMOVED***
+            ***REMOVED***formatCurrency(proyeccionMensual)***REMOVED***
           </p>
           <p className="text-sm text-gray-500">
             ~***REMOVED***(horasTrabajadas * 4.33).toFixed(0)***REMOVED*** horas
