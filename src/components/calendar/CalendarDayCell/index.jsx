@@ -1,15 +1,16 @@
-// src/components/calendar/CalendarDayCell/index.jsx 
+// src/components/calendar/CalendarDayCell/index.jsx - REFACTORIZADO
 
 import React from 'react';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const CalendarDayCell = (***REMOVED***
   dia,
   esHoy,
   esSeleccionado,
   coloresTrabajos,
-  thematicColors,
   onClick
 ***REMOVED***) => ***REMOVED***
+  const colors = useThemeColors();
 
   return (
     <button
@@ -22,7 +23,7 @@ const CalendarDayCell = (***REMOVED***
       `***REMOVED***
       style=***REMOVED******REMOVED***
         backgroundColor: esSeleccionado
-          ? thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)'
+          ? colors.transparent10
           : 'transparent'
       ***REMOVED******REMOVED***
     >
@@ -31,7 +32,7 @@ const CalendarDayCell = (***REMOVED***
         <div
           className="absolute inset-0 m-auto rounded-full w-10 h-10 animate-pulse"
           style=***REMOVED******REMOVED***
-            border: `2px solid $***REMOVED***thematicColors?.base || '#EC4899'***REMOVED***`
+            border: `2px solid $***REMOVED***colors.primary***REMOVED***`
           ***REMOVED******REMOVED***
         />
       )***REMOVED***
@@ -41,17 +42,17 @@ const CalendarDayCell = (***REMOVED***
         className="rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200"
         style=***REMOVED******REMOVED***
           backgroundColor: esHoy
-            ? thematicColors?.base || '#EC4899'
+            ? colors.primary
             : (esSeleccionado && !esHoy)
-              ? thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+              ? colors.transparent20
               : 'transparent',
           color: esHoy
-            ? thematicColors?.textContrast || '#ffffff'
+            ? colors.textContrast
             : 'inherit',
           fontWeight: esHoy ? 'bold' : 'normal',
           transform: esHoy ? 'scale(1.1)' : 'scale(1)',
           boxShadow: esHoy
-            ? `0 4px 12px $***REMOVED***thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)'***REMOVED***`
+            ? `0 4px 12px $***REMOVED***colors.transparent50***REMOVED***`
             : 'none'
         ***REMOVED******REMOVED***
       >
@@ -95,7 +96,7 @@ const CalendarDayCell = (***REMOVED***
             // Fallback: mostrar indicador genérico si no hay colores específicos
             <div
               className="w-2 h-1 rounded"
-              style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
             />
           )***REMOVED***
         </div>

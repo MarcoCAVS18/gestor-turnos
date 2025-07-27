@@ -1,11 +1,14 @@
+// src/components/work/WorkHeader/index.jsx - REFACTORIZADO
+
 import React from 'react';
 import ***REMOVED*** Briefcase, Plus ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const WorkHeader = (***REMOVED*** 
   todosLosTrabajos, 
-  thematicColors, 
   onNuevoTrabajo 
 ***REMOVED***) => ***REMOVED***
+  const colors = useThemeColors();
   const tieneTrabajos = todosLosTrabajos.length > 0;
 
   return (
@@ -13,11 +16,11 @@ const WorkHeader = (***REMOVED***
       <div className="flex items-center space-x-3">
         <div 
           className="p-2 rounded-lg"
-          style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
         >
           <Briefcase 
             className="w-6 h-6" 
-            style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+            style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
           />
         </div>
         <div>
@@ -29,14 +32,12 @@ const WorkHeader = (***REMOVED***
         <button
           onClick=***REMOVED***onNuevoTrabajo***REMOVED***
           className="text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 shadow-sm hover:shadow-md"
-          style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
           onMouseEnter=***REMOVED***(e) => ***REMOVED***
-            if (thematicColors?.dark) ***REMOVED***
-              e.target.style.backgroundColor = thematicColors.dark;
-            ***REMOVED***
+            e.target.style.backgroundColor = colors.primaryDark;
           ***REMOVED******REMOVED***
           onMouseLeave=***REMOVED***(e) => ***REMOVED***
-            e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
+            e.target.style.backgroundColor = colors.primary;
           ***REMOVED******REMOVED***
         >
           <Plus className="w-4 h-4" />
