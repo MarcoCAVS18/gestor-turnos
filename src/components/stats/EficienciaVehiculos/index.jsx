@@ -2,11 +2,12 @@
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Car, Fuel, Navigation, Clock ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
   React.useEffect(() => ***REMOVED***
@@ -14,15 +15,6 @@ const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***RE
     const timer = setTimeout(() => setAnimacionActiva(false), 1000);
     return () => clearTimeout(timer);
   ***REMOVED***, [deliveryStats]);
-
-  const formatCurrency = (amount) => ***REMOVED***
-    return new Intl.NumberFormat('en-AU', ***REMOVED***
-      style: 'currency',
-      currency: 'AUD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    ***REMOVED***).format(amount);
-  ***REMOVED***;
 
   const getVehicleIcon = (vehiculo) => ***REMOVED***
     const icons = ***REMOVED***
@@ -70,7 +62,7 @@ const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***RE
     <Card>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center">
-          <Car size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
+          <Car size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
           Eficiencia por Vehículo
         </h3>
       </div>
@@ -155,13 +147,13 @@ const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***RE
         <div className="grid grid-cols-2 gap-4 text-sm text-center">
           <div>
             <p className="text-gray-600">Total recorrido</p>
-            <p className="font-semibold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
+            <p className="font-semibold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
               ***REMOVED***deliveryStats.totalKilometros.toFixed(1)***REMOVED*** km
             </p>
           </div>
           <div>
             <p className="text-gray-600">Eficiencia promedio</p>
-            <p className="font-semibold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
+            <p className="font-semibold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
               ***REMOVED***deliveryStats.eficienciaCombustible.toFixed(1)***REMOVED*** km/peso
             </p>
           </div>

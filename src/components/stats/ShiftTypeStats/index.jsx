@@ -2,10 +2,10 @@
 
 import React from 'react';
 import ***REMOVED*** Zap ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const ShiftTypeStats = (***REMOVED*** tiposDeTurno = ***REMOVED******REMOVED*** ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
 
   // Verificar que tiposDeTurno sea válido
   const tiposValidos = tiposDeTurno && typeof tiposDeTurno === 'object' && !Array.isArray(tiposDeTurno) ? tiposDeTurno : ***REMOVED******REMOVED***;
@@ -23,7 +23,7 @@ const ShiftTypeStats = (***REMOVED*** tiposDeTurno = ***REMOVED******REMOVED*** 
     return (
       <div className="bg-white rounded-xl shadow-md p-4">
         <div className="flex items-center mb-4">
-          <Zap size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+          <Zap size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
           <h3 className="font-semibold">Tipos de turno</h3>
         </div>
         <div className="text-center py-8 text-gray-500">
@@ -37,7 +37,7 @@ const ShiftTypeStats = (***REMOVED*** tiposDeTurno = ***REMOVED******REMOVED*** 
   return (
     <div className="bg-white rounded-xl shadow-md p-4">
       <div className="flex items-center mb-4">
-        <Zap size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+        <Zap size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
         <h3 className="font-semibold">Tipos de turno</h3>
       </div>
 

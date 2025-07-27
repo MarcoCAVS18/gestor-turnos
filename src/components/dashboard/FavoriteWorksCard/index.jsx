@@ -1,12 +1,15 @@
+// src/components/dashboard/FavoriteWorksCard/index.jsx
+
 import React from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** BarChart3, ChevronRight ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
 const FavoriteWorksCard = (***REMOVED*** trabajosFavoritos ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   const navigate = useNavigate();
 
   if (trabajosFavoritos.length === 0) return null;
@@ -15,7 +18,7 @@ const FavoriteWorksCard = (***REMOVED*** trabajosFavoritos ***REMOVED***) => ***
     <Card>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center">
-          <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
+          <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
           Trabajos favoritos
         </h3>
         <Button
@@ -23,8 +26,7 @@ const FavoriteWorksCard = (***REMOVED*** trabajosFavoritos ***REMOVED***) => ***
           size="sm"
           variant="ghost"
           className="flex items-center gap-1"
-          // Pasamos el color del tema al botón
-          themeColor=***REMOVED***thematicColors?.base***REMOVED***
+          themeColor=***REMOVED***colors.primary***REMOVED***
         >
           Ver más
           <ChevronRight size=***REMOVED***14***REMOVED*** className="-mr-1" />
@@ -49,9 +51,9 @@ const FavoriteWorksCard = (***REMOVED*** trabajosFavoritos ***REMOVED***) => ***
             </div>
             <p 
               className="text-sm font-semibold" 
-              style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
             >
-              $***REMOVED***trabajoInfo.ganancia.toFixed(0)***REMOVED***
+              ***REMOVED***formatCurrency(trabajoInfo.ganancia)***REMOVED***
             </p>
           </div>
         ))***REMOVED***

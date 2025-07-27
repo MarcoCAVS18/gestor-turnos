@@ -2,11 +2,12 @@
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** BarChart3, Package, Clock, DollarSign, TrendingUp ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   const [sortBy, setSortBy] = useState('totalGanado');
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
@@ -15,15 +16,6 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
     const timer = setTimeout(() => setAnimacionActiva(false), 1000);
     return () => clearTimeout(timer);
   ***REMOVED***, [deliveryStats, sortBy]);
-
-  const formatCurrency = (amount) => ***REMOVED***
-    return new Intl.NumberFormat('en-AU', ***REMOVED***
-      style: 'currency',
-      currency: 'AUD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    ***REMOVED***).format(amount);
-  ***REMOVED***;
 
   const plataformas = Object.values(deliveryStats.turnosPorPlataforma);
 
@@ -78,7 +70,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
     <Card>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold flex items-center">
-          <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
+          <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
           Plataformas
         </h3>
       </div>
@@ -93,7 +85,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
                 : 'text-gray-600 bg-gray-100'
             ***REMOVED***`***REMOVED***
             style=***REMOVED******REMOVED*** 
-              backgroundColor: sortBy === 'totalGanado' ? thematicColors?.base : undefined
+              backgroundColor: sortBy === 'totalGanado' ? colors.primary : undefined
             ***REMOVED******REMOVED***
           >
             Ganancias
@@ -106,7 +98,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
                 : 'text-gray-600 bg-gray-100'
             ***REMOVED***`***REMOVED***
             style=***REMOVED******REMOVED*** 
-              backgroundColor: sortBy === 'totalPedidos' ? thematicColors?.base : undefined
+              backgroundColor: sortBy === 'totalPedidos' ? colors.primary : undefined
             ***REMOVED******REMOVED***
           >
             Pedidos
@@ -119,7 +111,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
                 : 'text-gray-600 bg-gray-100'
             ***REMOVED***`***REMOVED***
             style=***REMOVED******REMOVED*** 
-              backgroundColor: sortBy === 'promedioPorHora' ? thematicColors?.base : undefined
+              backgroundColor: sortBy === 'promedioPorHora' ? colors.primary : undefined
             ***REMOVED******REMOVED***
           >
             Por hora
@@ -150,7 +142,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-bold" style=***REMOVED******REMOVED*** color: plataforma.color || thematicColors?.base ***REMOVED******REMOVED***>
+                  <p className="text-lg font-bold" style=***REMOVED******REMOVED*** color: plataforma.color || colors.primary ***REMOVED******REMOVED***>
                     ***REMOVED***formatCurrency(plataforma.totalGanado)***REMOVED***
                   </p>
                   <p className="text-sm text-gray-500">***REMOVED***porcentajeGanancias.toFixed(1)***REMOVED***%</p>
@@ -163,7 +155,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
                     className=***REMOVED***`h-2 rounded-full transition-all duration-500 $***REMOVED***animacionActiva ? 'animate-pulse' : ''***REMOVED***`***REMOVED***
                     style=***REMOVED******REMOVED*** 
                       width: `$***REMOVED***porcentajeGanancias***REMOVED***%`,
-                      backgroundColor: plataforma.color || thematicColors?.base
+                      backgroundColor: plataforma.color || colors.primary
                     ***REMOVED******REMOVED***
                   />
                 </div>
@@ -211,13 +203,13 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
         <div className="grid grid-cols-2 gap-4 text-sm text-center">
           <div>
             <p className="text-gray-600">Más rentable</p>
-            <p className="font-semibold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
+            <p className="font-semibold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
               ***REMOVED***plataformasOrdenadas[0]?.nombre***REMOVED***
             </p>
           </div>
           <div>
             <p className="text-gray-600">Promedio general</p>
-            <p className="font-semibold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
+            <p className="font-semibold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
               ***REMOVED***formatCurrency(totalGeneral / plataformas.length)***REMOVED***
             </p>
           </div>

@@ -2,11 +2,12 @@
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Truck, DollarSign, Package, Navigation ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const ResumenDelivery = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   const [animacionActiva, setAnimacionActiva] = useState(false);
 
   React.useEffect(() => ***REMOVED***
@@ -14,15 +15,6 @@ const ResumenDelivery = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVE
     const timer = setTimeout(() => setAnimacionActiva(false), 1000);
     return () => clearTimeout(timer);
   ***REMOVED***, [deliveryStats]);
-
-  const formatCurrency = (amount) => ***REMOVED***
-    return new Intl.NumberFormat('en-AU', ***REMOVED***
-      style: 'currency',
-      currency: 'AUD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    ***REMOVED***).format(amount);
-  ***REMOVED***;
 
   // Múltiples formas de calcular el promedio por pedido
   const promedioPorPedido1 = deliveryStats.totalPedidos > 0 ? 
@@ -58,7 +50,7 @@ const ResumenDelivery = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVE
   return (
     <Card className='bg-white shadow-md p-6'>
       <h3 className="text-lg font-semibold flex items-center mb-4">
-        <Truck size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
+        <Truck size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
         Resumen Delivery
       </h3>
 
@@ -82,8 +74,8 @@ const ResumenDelivery = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVE
         </div>
 
         <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <DollarSign size=***REMOVED***24***REMOVED*** className="mx-auto mb-2" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** />
-          <p className="text-2xl font-bold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
+          <DollarSign size=***REMOVED***24***REMOVED*** className="mx-auto mb-2" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
+          <p className="text-2xl font-bold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
             ***REMOVED***formatCurrency(promedioPorPedido)***REMOVED***
           </p>
           <p className="text-sm text-gray-600">Por Pedido</p>

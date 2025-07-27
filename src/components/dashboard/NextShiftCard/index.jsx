@@ -4,11 +4,13 @@ import React from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Star, ChevronRight ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
 const NextShiftCard = (***REMOVED*** proximoTurno, formatearFecha ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** trabajos, thematicColors ***REMOVED*** = useApp();
+  const ***REMOVED*** trabajos ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   const navigate = useNavigate();
 
   if (!proximoTurno) return null;
@@ -19,7 +21,7 @@ const NextShiftCard = (***REMOVED*** proximoTurno, formatearFecha ***REMOVED***)
   return (
     <Card>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
-        <Star size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
+        <Star size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
         Próximo turno
       </h3>
       <div className="flex items-center justify-between">
@@ -34,6 +36,7 @@ const NextShiftCard = (***REMOVED*** proximoTurno, formatearFecha ***REMOVED***)
           size="sm"
           className="flex items-center gap-1"
           icon=***REMOVED***ChevronRight***REMOVED***
+          themeColor=***REMOVED***colors.primary***REMOVED***
         >
           Ver
         </Button>

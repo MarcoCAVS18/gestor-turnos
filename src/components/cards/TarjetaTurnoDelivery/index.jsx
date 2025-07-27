@@ -2,12 +2,13 @@
 
 import React from 'react';
 import ***REMOVED*** Clock, Package, Car, Edit2, Trash2, MoreVertical, Truck, DollarSign ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import InfoTooltip from '../../ui/InfoTooltip';
 
 const TarjetaTurnoDelivery = (***REMOVED*** turno, trabajo, onEdit, onDelete ***REMOVED***) => ***REMOVED***
   const [menuAbierto, setMenuAbierto] = React.useState(false);
-
-  
+  const colors = useThemeColors();
 
   // Cerrar menú al hacer clic fuera
   React.useEffect(() => ***REMOVED***
@@ -19,15 +20,6 @@ const TarjetaTurnoDelivery = (***REMOVED*** turno, trabajo, onEdit, onDelete ***
     document.addEventListener('click', cerrarMenu);
     return () => document.removeEventListener('click', cerrarMenu);
   ***REMOVED***, [menuAbierto]);
-
-  const formatearMoneda = (valor) => ***REMOVED***
-    return new Intl.NumberFormat('en-AU', ***REMOVED***
-      style: 'currency',
-      currency: 'AUD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    ***REMOVED***).format(valor);
-  ***REMOVED***;
 
   const formatearHoras = (horaInicio, horaFin) => ***REMOVED***
     const [horaI, minI] = horaInicio.split(':').map(Number);
@@ -73,18 +65,18 @@ const TarjetaTurnoDelivery = (***REMOVED*** turno, trabajo, onEdit, onDelete ***
         
         <div className="flex justify-between gap-4 border-t border-gray-600 pt-1.5 mt-2">
           <span className="font-semibold">Ganancia Total:</span>
-          <span className="font-bold">***REMOVED***formatearMoneda(turno.gananciaTotal)***REMOVED***</span>
+          <span className="font-bold">***REMOVED***formatCurrency(turno.gananciaTotal)***REMOVED***</span>
         </div>
         
         <div className="flex justify-between gap-4">
           <span className="font-semibold">Ganancia Neta:</span>
-          <span className="font-bold text-base">***REMOVED***formatearMoneda(gananciaNeta)***REMOVED***</span>
+          <span className="font-bold text-base">***REMOVED***formatCurrency(gananciaNeta)***REMOVED***</span>
         </div>
         
         ***REMOVED***turno.numeroPedidos > 0 && (
           <div className="flex justify-between gap-4 text-yellow-200">
             <span>Promedio/pedido:</span>
-            <span>***REMOVED***formatearMoneda(promedioPorPedido)***REMOVED***</span>
+            <span>***REMOVED***formatCurrency(promedioPorPedido)***REMOVED***</span>
           </div>
         )***REMOVED***
       </div>
@@ -138,7 +130,7 @@ const TarjetaTurnoDelivery = (***REMOVED*** turno, trabajo, onEdit, onDelete ***
             ***REMOVED***/* Ganancia con tooltip */***REMOVED***
             <div className="flex items-center">
               <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1 text-green-600" />
-              <span className="text-sm font-semibold text-gray-800">***REMOVED***formatearMoneda(gananciaNeta)***REMOVED***</span>
+              <span className="text-sm font-semibold text-gray-800">***REMOVED***formatCurrency(gananciaNeta)***REMOVED***</span>
               <span className="text-xs text-gray-500 ml-1">total</span>
               
               <InfoTooltip 

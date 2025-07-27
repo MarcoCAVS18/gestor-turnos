@@ -2,10 +2,10 @@
 
 import React from 'react';
 import ***REMOVED*** ChevronLeft, ChevronRight ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const WeekNavigator = (***REMOVED*** offsetSemana = 0, onSemanaChange, fechaInicio, fechaFin ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
 
   const cambiarSemana = typeof onSemanaChange === 'function' ? onSemanaChange : () => ***REMOVED******REMOVED***;
   const fechaInicioValida = fechaInicio instanceof Date ? fechaInicio : new Date();
@@ -37,8 +37,8 @@ const WeekNavigator = (***REMOVED*** offsetSemana = 0, onSemanaChange, fechaInic
           onClick=***REMOVED***() => cambiarSemana(offsetSemana - 1)***REMOVED***
           className="p-2 rounded-full transition-colors"
           style=***REMOVED******REMOVED***
-            backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-            color: thematicColors?.base || '#EC4899'
+            backgroundColor: colors.transparent10,
+            color: colors.primary
           ***REMOVED******REMOVED***
         >
           <ChevronLeft size=***REMOVED***20***REMOVED*** />
@@ -55,8 +55,8 @@ const WeekNavigator = (***REMOVED*** offsetSemana = 0, onSemanaChange, fechaInic
           onClick=***REMOVED***() => cambiarSemana(offsetSemana + 1)***REMOVED***
           className="p-2 rounded-full transition-colors"
           style=***REMOVED******REMOVED***
-            backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-            color: thematicColors?.base || '#EC4899'
+            backgroundColor: colors.transparent10,
+            color: colors.primary
           ***REMOVED******REMOVED***
         >
           <ChevronRight size=***REMOVED***20***REMOVED*** />

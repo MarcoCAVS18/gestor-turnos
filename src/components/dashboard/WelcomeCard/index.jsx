@@ -3,11 +3,14 @@
 import ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const WelcomeCard = (***REMOVED*** totalGanado ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
-  const ***REMOVED*** userEmoji, thematicColors ***REMOVED*** = useApp();
+  const ***REMOVED*** userEmoji ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   const [userName, setUserName] = useState('');
   
   useEffect(() => ***REMOVED***
@@ -44,9 +47,9 @@ const WelcomeCard = (***REMOVED*** totalGanado ***REMOVED***) => ***REMOVED***
           <p className="text-xs text-gray-500 mb-1">Ganado total</p>
           <p 
             className="text-2xl font-bold"
-            style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+            style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
           >
-            $***REMOVED***totalGanado.toFixed(2)***REMOVED***
+            ***REMOVED***formatCurrency(totalGanado)***REMOVED***
           </p>
         </div>
       </div>
@@ -66,9 +69,9 @@ const WelcomeCard = (***REMOVED*** totalGanado ***REMOVED***) => ***REMOVED***
           <p className="text-sm text-gray-500">Ganado total</p>
           <p 
             className="text-2xl font-bold"
-            style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+            style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
           >
-            $***REMOVED***totalGanado.toFixed(2)***REMOVED***
+            ***REMOVED***formatCurrency(totalGanado)***REMOVED***
           </p>
         </div>
       </div>

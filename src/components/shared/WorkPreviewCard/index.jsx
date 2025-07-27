@@ -2,6 +2,7 @@
 
 import React from 'react';
 import ***REMOVED*** Briefcase, Truck, Bike, Car, User, Package ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const WorkPreviewCard = (***REMOVED*** trabajo ***REMOVED***) => ***REMOVED***
@@ -89,7 +90,7 @@ const WorkPreviewCard = (***REMOVED*** trabajo ***REMOVED***) => ***REMOVED***
               <Briefcase className="h-5 w-5 text-green-500 mr-2" />
               <div>
                 <p className="text-sm text-gray-600">Tarifa base</p>
-                <p className="font-semibold">$***REMOVED***trabajo.tarifaBase.toFixed(2)***REMOVED***/hora</p>
+                <p className="font-semibold">***REMOVED***formatCurrency(trabajo.tarifaBase)***REMOVED***/hora</p>
               </div>
             </div>
           )***REMOVED***
@@ -101,35 +102,35 @@ const WorkPreviewCard = (***REMOVED*** trabajo ***REMOVED***) => ***REMOVED***
                 ***REMOVED***trabajo.tarifas.diurno && (
                   <div className="text-center p-2 bg-yellow-50 rounded-lg border">
                     <p className="text-xs text-gray-600">Diurno</p>
-                    <p className="font-semibold text-sm">$***REMOVED***trabajo.tarifas.diurno.toFixed(2)***REMOVED***/h</p>
+                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(trabajo.tarifas.diurno)***REMOVED***/h</p>
                   </div>
                 )***REMOVED***
                 
                 ***REMOVED***trabajo.tarifas.tarde && (
                   <div className="text-center p-2 bg-orange-50 rounded-lg border">
                     <p className="text-xs text-gray-600">Tarde</p>
-                    <p className="font-semibold text-sm">$***REMOVED***trabajo.tarifas.tarde.toFixed(2)***REMOVED***/h</p>
+                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(trabajo.tarifas.tarde)***REMOVED***/h</p>
                   </div>
                 )***REMOVED***
                 
                 ***REMOVED***trabajo.tarifas.noche && (
                   <div className="text-center p-2 bg-blue-50 rounded-lg border">
                     <p className="text-xs text-gray-600">Noche</p>
-                    <p className="font-semibold text-sm">$***REMOVED***trabajo.tarifas.noche.toFixed(2)***REMOVED***/h</p>
+                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(trabajo.tarifas.noche)***REMOVED***/h</p>
                   </div>
                 )***REMOVED***
                 
                 ***REMOVED***trabajo.tarifas.sabado && (
                   <div className="text-center p-2 bg-purple-50 rounded-lg border">
                     <p className="text-xs text-gray-600">Sábado</p>
-                    <p className="font-semibold text-sm">$***REMOVED***trabajo.tarifas.sabado.toFixed(2)***REMOVED***/h</p>
+                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(trabajo.tarifas.sabado)***REMOVED***/h</p>
                   </div>
                 )***REMOVED***
                 
                 ***REMOVED***trabajo.tarifas.domingo && (
                   <div className="text-center p-2 bg-red-50 rounded-lg border">
                     <p className="text-xs text-gray-600">Domingo</p>
-                    <p className="font-semibold text-sm">$***REMOVED***trabajo.tarifas.domingo.toFixed(2)***REMOVED***/h</p>
+                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(trabajo.tarifas.domingo)***REMOVED***/h</p>
                   </div>
                 )***REMOVED***
               </div>

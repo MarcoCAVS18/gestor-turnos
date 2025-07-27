@@ -1,7 +1,7 @@
 // src/components/cards/StatCard/index.jsx
 
 import React from 'react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 
 const StatCard = (***REMOVED*** 
@@ -15,7 +15,7 @@ const StatCard = (***REMOVED***
   className = '',
   onClick 
 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   
   const getSizeClasses = () => ***REMOVED***
     const sizes = ***REMOVED***
@@ -51,7 +51,7 @@ const StatCard = (***REMOVED***
           ***REMOVED***Icon && (
             <Icon 
               size=***REMOVED***size === 'sm' ? 16 : size === 'lg' ? 24 : 20***REMOVED*** 
-              style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** 
+              style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** 
             />
           )***REMOVED***
         </div>
@@ -59,7 +59,7 @@ const StatCard = (***REMOVED***
         ***REMOVED***/* Valor principal */***REMOVED***
         <p 
           className=***REMOVED***`$***REMOVED***getValueSize()***REMOVED*** font-bold mb-1`***REMOVED***
-          style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
         >
           ***REMOVED***value***REMOVED***
         </p>
