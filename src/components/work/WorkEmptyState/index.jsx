@@ -1,17 +1,21 @@
-// src/components/work/WorkEmptyState/index.jsx
+// src/components/work/WorkEmptyState/index.jsx - REFACTORIZADO
+
 import React from 'react';
 import { Briefcase, Plus } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
-const WorkEmptyState = ({ thematicColors, onNuevoTrabajo }) => {
+const WorkEmptyState = ({ onNuevoTrabajo }) => {
+  const colors = useThemeColors();
+  
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
       <div 
         className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"
-        style={{ backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
+        style={{ backgroundColor: colors.transparent10 }}
       >
         <Briefcase 
           className="w-10 h-10" 
-          style={{ color: thematicColors?.base || '#EC4899' }}
+          style={{ color: colors.primary }}
         />
       </div>
       <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay trabajos aún</h3>
@@ -21,14 +25,12 @@ const WorkEmptyState = ({ thematicColors, onNuevoTrabajo }) => {
       <button
         onClick={onNuevoTrabajo}
         className="text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2 hover:shadow-md"
-        style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
+        style={{ backgroundColor: colors.primary }}
         onMouseEnter={(e) => {
-          if (thematicColors?.dark) {
-            e.target.style.backgroundColor = thematicColors.dark;
-          }
+          e.target.style.backgroundColor = colors.primaryDark;
         }}
         onMouseLeave={(e) => {
-          e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
+          e.target.style.backgroundColor = colors.primary;
         }}
       >
         <Plus className="w-4 h-4" />

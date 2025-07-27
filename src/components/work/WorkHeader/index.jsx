@@ -1,11 +1,14 @@
+// src/components/work/WorkHeader/index.jsx - REFACTORIZADO
+
 import React from 'react';
 import { Briefcase, Plus } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const WorkHeader = ({ 
   todosLosTrabajos, 
-  thematicColors, 
   onNuevoTrabajo 
 }) => {
+  const colors = useThemeColors();
   const tieneTrabajos = todosLosTrabajos.length > 0;
 
   return (
@@ -13,11 +16,11 @@ const WorkHeader = ({
       <div className="flex items-center space-x-3">
         <div 
           className="p-2 rounded-lg"
-          style={{ backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
+          style={{ backgroundColor: colors.transparent10 }}
         >
           <Briefcase 
             className="w-6 h-6" 
-            style={{ color: thematicColors?.base || '#EC4899' }}
+            style={{ color: colors.primary }}
           />
         </div>
         <div>
@@ -29,14 +32,12 @@ const WorkHeader = ({
         <button
           onClick={onNuevoTrabajo}
           className="text-white px-4 py-2 rounded-lg transition-colors flex items-center space-x-2 shadow-sm hover:shadow-md"
-          style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
+          style={{ backgroundColor: colors.primary }}
           onMouseEnter={(e) => {
-            if (thematicColors?.dark) {
-              e.target.style.backgroundColor = thematicColors.dark;
-            }
+            e.target.style.backgroundColor = colors.primaryDark;
           }}
           onMouseLeave={(e) => {
-            e.target.style.backgroundColor = thematicColors?.base || '#EC4899';
+            e.target.style.backgroundColor = colors.primary;
           }}
         >
           <Plus className="w-4 h-4" />

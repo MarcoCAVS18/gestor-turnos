@@ -1,15 +1,16 @@
-// src/components/calendar/CalendarDayCell/index.jsx 
+// src/components/calendar/CalendarDayCell/index.jsx - REFACTORIZADO
 
 import React from 'react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const CalendarDayCell = ({
   dia,
   esHoy,
   esSeleccionado,
   coloresTrabajos,
-  thematicColors,
   onClick
 }) => {
+  const colors = useThemeColors();
 
   return (
     <button
@@ -22,7 +23,7 @@ const CalendarDayCell = ({
       `}
       style={{
         backgroundColor: esSeleccionado
-          ? thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)'
+          ? colors.transparent10
           : 'transparent'
       }}
     >
@@ -31,7 +32,7 @@ const CalendarDayCell = ({
         <div
           className="absolute inset-0 m-auto rounded-full w-10 h-10 animate-pulse"
           style={{
-            border: `2px solid ${thematicColors?.base || '#EC4899'}`
+            border: `2px solid ${colors.primary}`
           }}
         />
       )}
@@ -41,17 +42,17 @@ const CalendarDayCell = ({
         className="rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200"
         style={{
           backgroundColor: esHoy
-            ? thematicColors?.base || '#EC4899'
+            ? colors.primary
             : (esSeleccionado && !esHoy)
-              ? thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+              ? colors.transparent20
               : 'transparent',
           color: esHoy
-            ? thematicColors?.textContrast || '#ffffff'
+            ? colors.textContrast
             : 'inherit',
           fontWeight: esHoy ? 'bold' : 'normal',
           transform: esHoy ? 'scale(1.1)' : 'scale(1)',
           boxShadow: esHoy
-            ? `0 4px 12px ${thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)'}`
+            ? `0 4px 12px ${colors.transparent50}`
             : 'none'
         }}
       >
@@ -95,7 +96,7 @@ const CalendarDayCell = ({
             // Fallback: mostrar indicador genérico si no hay colores específicos
             <div
               className="w-2 h-1 rounded"
-              style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
+              style={{ backgroundColor: colors.primary }}
             />
           )}
         </div>

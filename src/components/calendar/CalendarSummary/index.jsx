@@ -1,21 +1,44 @@
-// src/components/calendar/CalendarSummary/index.jsx
+// src/components/cards/TarjetaTrabajo/index.jsx - REFACTORIZADO
 
-import React from 'react';
+import { Edit, Trash2, Share2 } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import Card from '../../ui/Card';
+import WorkAvatar from '../../work/WorkAvatar';
+import WorkRates from '../../work/WorkRates';
+import ActionsMenu from '../../ui/ActionsMenu';
 
-const CalendarSummary = ({ totalTurnos, thematicColors }) => {
-  if (totalTurnos === 0) return null;
+const TarjetaTrabajo = ({ trabajo, onEdit, onDelete, onShare, showActions = true }) => {
+  const colors = useThemeColors();
+  
+  const descripcion = trabajo.descripcion && trabajo.descripcion.trim() 
+    ? trabajo.descripcion 
+    : 'No olvides guardar más información sobre tu trabajo.';
+
+  const actions = [
+    { icon: Edit, label: 'Editar', onClick: () => onEdit?.(trabajo) },
+    ...(onShare ? [{ icon: Share2, label: 'Compartir', onClick: () => onShare?.(trabajo) }] : []),
+    { icon: Trash2, label: 'Eliminar', onClick: () => onDelete?.(trabajo), variant: 'danger' }
+  ];
 
   return (
-    <div
-      className="p-2 text-xs text-center font-medium"
-      style={{
-        backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-        color: thematicColors?.dark || '#BE185D'
-      }}
-    >
-      {totalTurnos} {totalTurnos === 1 ? 'turno' : 'turnos'} este mes
-    </div>
+    <Card className="relative">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center flex-1">
+          <WorkAvatar nombre={trabajo.nombre} color={trabajo.color} />
+          
+          <div className="flex-1 ml-4">
+            <h3 className="font-semibold text-gray-800 mb-1">{trabajo.nombre}</h3>
+            <p className="text-gray-600 text-sm mb-3 leading-relaxed italic">
+              {descripcion}
+            </p>
+            <WorkRates trabajo={trabajo} />
+          </div>
+        </div>
+
+        {showActions && <ActionsMenu actions={actions} />}
+      </div>
+    </Card>
   );
 };
 
-export default CalendarSummary;
+export default TarjetaTrabajo;

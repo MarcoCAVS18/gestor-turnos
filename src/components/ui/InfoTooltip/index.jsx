@@ -1,8 +1,8 @@
-// src/components/ui/InfoTooltip/index.jsx
+// src/components/ui/InfoTooltip/index.jsx - REFACTORIZADO
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Info } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const InfoTooltip = ({ 
   content, 
@@ -10,7 +10,7 @@ const InfoTooltip = ({
   size = 'sm',
   className = '' 
 }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const timeoutRef = useRef(null);
@@ -93,8 +93,8 @@ const InfoTooltip = ({
         type="button"
         className={`${getSizeClasses()} rounded-full flex items-center justify-center transition-colors hover:bg-opacity-20`}
         style={{ 
-          backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)',
-          color: thematicColors?.base || '#EC4899'
+          backgroundColor: colors.transparent10,
+          color: colors.primary
         }}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}

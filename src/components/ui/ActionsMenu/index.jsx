@@ -1,11 +1,11 @@
-// src/components/ui/ActionsMenu/index.jsx
+// src/components/ui/ActionsMenu/index.jsx - REFACTORIZADO
 
 import React, { useState } from 'react';
 import { MoreVertical } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const ActionsMenu = ({ actions = [] }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   const [isOpen, setIsOpen] = useState(false);
 
   if (actions.length === 0) return null;
@@ -19,8 +19,8 @@ const ActionsMenu = ({ actions = [] }) => {
         }}
         className="p-2 rounded-lg transition-colors flex-shrink-0"
         style={{ 
-          backgroundColor: isOpen ? thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' : 'transparent',
-          color: isOpen ? thematicColors?.base || '#EC4899' : '#6B7280'
+          backgroundColor: isOpen ? colors.transparent10 : 'transparent',
+          color: isOpen ? colors.primary : '#6B7280'
         }}
       >
         <MoreVertical size={16} />
