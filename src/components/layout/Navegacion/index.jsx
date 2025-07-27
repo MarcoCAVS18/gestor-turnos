@@ -1,18 +1,16 @@
-// src/components/layout/Navegacion/index.jsx
+// src/components/layout/Navegacion/index.jsx - Con logo en sidebar
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
 import './index.css';
 
-const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno ***REMOVED***) => ***REMOVED***
+const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno ***REMOVED***) => ***REMOVED***
   const navigate = useNavigate();
   const location = useLocation();
-  const ***REMOVED*** thematicColors, userEmoji, trabajos, trabajosDelivery ***REMOVED*** = useApp();
-  const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
+  const ***REMOVED*** thematicColors, trabajos, trabajosDelivery ***REMOVED*** = useApp();
   
   // Estado para el tooltip
   const [showTooltip, setShowTooltip] = useState(false);
@@ -90,9 +88,6 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
       : 'white'
   ***REMOVED***;
 
-  const userName = currentUser?.displayName || 
-    (currentUser?.email ? currentUser.email.split('@')[0] : 'Usuario');
-
   // Manejar hover del botón de turnos
   const handleTurnosMouseEnter = () => ***REMOVED***
     if (!hayTrabajos) ***REMOVED***
@@ -102,6 +97,11 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
 
   const handleTurnosMouseLeave = () => ***REMOVED***
     setShowTooltip(false);
+  ***REMOVED***;
+
+  // Función para navegar al dashboard desde el logo
+  const handleLogoClick = () => ***REMOVED***
+    navigateToView('dashboard');
   ***REMOVED***;
   
   return (
@@ -165,30 +165,33 @@ const Navegacion = (***REMOVED*** vistaActual, setVistaActual, abrirModalNuevoTr
       ***REMOVED***/* SIDEBAR DESKTOP */***REMOVED***
       <aside className="hidden md:flex md:flex-col w-72 bg-white border-r border-gray-200 shadow-sm h-screen fixed left-0 top-0 z-30">
         
-        ***REMOVED***/* HEADER DEL SIDEBAR */***REMOVED***
+        ***REMOVED***/* HEADER DEL SIDEBAR - MEJORADO CON LOGO */***REMOVED***
         <div className="p-6 border-b border-gray-100">
-          <div className="flex items-center space-x-3">
+          <button 
+            onClick=***REMOVED***handleLogoClick***REMOVED***
+            className="flex items-center space-x-4 hover:opacity-80 transition-opacity w-full text-left"
+          >
+            ***REMOVED***/* Logo en lugar del emoji */***REMOVED***
             <div 
-              className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-xl font-bold shadow-lg user-emoji"
+              className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg"
               style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
             >
-              <span style=***REMOVED******REMOVED*** 
-                fontSize: '1.5rem',
-                lineHeight: '1',
-                color: '#ffffff'
-              ***REMOVED******REMOVED***>
-                ***REMOVED***userEmoji || '😊'***REMOVED***
-              </span>
+              <img 
+                src="/assets/SVG/logo.svg" 
+                alt="Logo" 
+                className="w-12 h-12 filter brightness-0 invert"
+                style=***REMOVED******REMOVED*** filter: 'brightness(0) invert(1)' ***REMOVED******REMOVED***
+              />
             </div>
+            
+            ***REMOVED***/* Solo el título, sin saludo */***REMOVED***
             <div>
               <h1 className="text-xl font-bold text-gray-900">
                 Gestión de Turnos
               </h1>
-              <p className="text-sm text-gray-500">
-                Hola ***REMOVED***userName***REMOVED***
-              </p>
+              ***REMOVED***/* Eliminado: Hola ***REMOVED***userName***REMOVED*** */***REMOVED***
             </div>
-          </div>
+          </button>
         </div>
 
         ***REMOVED***/* ACCIONES RÁPIDAS */***REMOVED***

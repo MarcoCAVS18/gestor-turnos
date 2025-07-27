@@ -1,4 +1,4 @@
-// src/pages/Dashboard.jsx - Versión responsiva mejorada
+// src/pages/Dashboard.jsx - Versión limpia final
 
 import React from 'react';
 import ***REMOVED*** useDashboardStats ***REMOVED*** from '../hooks/useDashboardStats';
@@ -32,25 +32,39 @@ const Dashboard = () => ***REMOVED***
 
       ***REMOVED***/* Layout responsivo principal */***REMOVED***
       <div className="space-y-6">
-        ***REMOVED***/* Primera fila: Stats cuadradas + Acciones + Weekly Stats vertical */***REMOVED***
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          ***REMOVED***/* Stats Grid + Acciones - 4 columnas en pantallas grandes */***REMOVED***
+        
+        ***REMOVED***/* DESKTOP: Contenedor izquierdo + derecho */***REMOVED***
+        <div className="hidden lg:grid lg:grid-cols-5 lg:gap-6">
+          ***REMOVED***/* CONTENEDOR IZQUIERDO: Stats + Acciones (4 columnas) */***REMOVED***
           <div className="lg:col-span-4 space-y-6">
+            ***REMOVED***/* QuickStatsGrid maneja su propio layout desktop */***REMOVED***
             <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
+            
+            ***REMOVED***/* Acciones rápidas debajo */***REMOVED***
             <QuickActionsCard />
           </div>
           
-          ***REMOVED***/* Weekly Stats - 1 columna vertical */***REMOVED***
+          ***REMOVED***/* CONTENEDOR DERECHO: Esta semana vertical (1 columna) */***REMOVED***
           <div className="lg:col-span-1">
-            <div className="h-full">
-              <WeeklyStatsCard stats=***REMOVED***stats***REMOVED*** />
-            </div>
+            <WeeklyStatsCard stats=***REMOVED***stats***REMOVED*** />
           </div>
+        </div>
+
+        ***REMOVED***/* MÓVIL: Stack vertical */***REMOVED***
+        <div className="block lg:hidden space-y-4">
+          ***REMOVED***/* QuickStatsGrid maneja su propio layout móvil 2x2 */***REMOVED***
+          <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
+          
+          ***REMOVED***/* Esta semana */***REMOVED***
+          <WeeklyStatsCard stats=***REMOVED***stats***REMOVED*** />
+          
+          ***REMOVED***/* Acciones rápidas */***REMOVED***
+          <QuickActionsCard />
         </div>
 
         ***REMOVED***/* Segunda fila: Projection + Top Work + Favorites */***REMOVED***
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          ***REMOVED***/* Projection Card - 1 columna vertical a la izquierda */***REMOVED***
+          ***REMOVED***/* Projection Card - 1 columna vertical a la izquierda en desktop, full en móvil */***REMOVED***
           <div className="lg:col-span-1">
             <div className="h-full">
               <ProjectionCard 
@@ -67,7 +81,7 @@ const Dashboard = () => ***REMOVED***
           </div>
         </div>
 
-        ***REMOVED***/* Segunda fila: Next Shift */***REMOVED***
+        ***REMOVED***/* Tercera fila: Next Shift */***REMOVED***
         <NextShiftCard 
           proximoTurno=***REMOVED***stats.proximoTurno***REMOVED*** 
           formatearFecha=***REMOVED***stats.formatearFecha***REMOVED*** 

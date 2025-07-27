@@ -1,5 +1,6 @@
-// src/components/dashboard/QuickStatsGrid/index.jsx - Versión mejorada
+// src/components/dashboard/QuickStatsGrid/index.jsx - Versión final que funciona
 
+import React from 'react';
 import ***REMOVED*** Briefcase, Calendar, Clock, Target ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
@@ -8,18 +9,13 @@ const QuickStatCard = (***REMOVED*** icon: Icon, label, value, subtitle ***REMOV
   const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
   return (
-    <Card className="h-full aspect-square lg:aspect-auto flex flex-col justify-center text-center p-6">
-      ***REMOVED***/* Icono y label */***REMOVED***
-      <div className="flex items-center justify-center mb-4">
-        <Icon size=***REMOVED***24***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
-        <span className="text-sm text-gray-600 font-medium">***REMOVED***label***REMOVED***</span>
+    <Card className="p-4 text-center">
+      <div className="flex flex-col items-center">
+        <Icon size=***REMOVED***20***REMOVED*** className="mb-2" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** />
+        <span className="text-sm text-gray-600 font-medium mb-1">***REMOVED***label***REMOVED***</span>
+        <p className="text-2xl font-bold text-gray-800 mb-1">***REMOVED***value***REMOVED***</p>
+        <p className="text-xs text-gray-500">***REMOVED***subtitle***REMOVED***</p>
       </div>
-      
-      ***REMOVED***/* Valor principal */***REMOVED***
-      <p className="text-3xl font-bold text-gray-800 mb-2">***REMOVED***value***REMOVED***</p>
-      
-      ***REMOVED***/* Subtítulo */***REMOVED***
-      <p className="text-xs text-gray-500">***REMOVED***subtitle***REMOVED***</p>
     </Card>
   );
 ***REMOVED***;
@@ -57,11 +53,25 @@ const QuickStatsGrid = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-      ***REMOVED***statsData.map((stat, index) => (
-        <QuickStatCard key=***REMOVED***index***REMOVED*** ***REMOVED***...stat***REMOVED*** />
-      ))***REMOVED***
-    </div>
+    <>
+      ***REMOVED***/* DESKTOP: Grid normal 4 columnas */***REMOVED***
+      <div className="hidden lg:grid lg:grid-cols-4 lg:gap-6">
+        ***REMOVED***statsData.map((stat, index) => (
+          <QuickStatCard key=***REMOVED***index***REMOVED*** ***REMOVED***...stat***REMOVED*** />
+        ))***REMOVED***
+      </div>
+
+      ***REMOVED***/* MÓVIL: Flexbox 2x2 que funciona */***REMOVED***
+      <div className="block lg:hidden">
+        <div className="flex flex-wrap gap-3">
+          ***REMOVED***statsData.map((stat, index) => (
+            <div key=***REMOVED***index***REMOVED*** className="w-[calc(50%-0.375rem)]">
+              <QuickStatCard ***REMOVED***...stat***REMOVED*** />
+            </div>
+          ))***REMOVED***
+        </div>
+      </div>
+    </>
   );
 ***REMOVED***;
 
