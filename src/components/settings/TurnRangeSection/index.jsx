@@ -1,12 +1,13 @@
-// src/components/settings/TurnRangeSection/index.jsx
+// src/components/settings/TurnRangeSection/index.jsx - REFACTORIZADO
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Clock, Sun, Sunset, Moon ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
-const TimeSelect = (***REMOVED*** label, value, onChange, icon: Icon, iconColor, thematicColors ***REMOVED***) => ***REMOVED***
+const TimeSelect = (***REMOVED*** label, value, onChange, icon: Icon, iconColor, colors ***REMOVED***) => ***REMOVED***
   return (
     <div>
       <label className="block text-sm text-gray-600 mb-1 flex items-center">
@@ -18,7 +19,7 @@ const TimeSelect = (***REMOVED*** label, value, onChange, icon: Icon, iconColor,
         onChange=***REMOVED***(e) => onChange(parseInt(e.target.value))***REMOVED***
         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 transition-colors"
         style=***REMOVED******REMOVED*** 
-          '--tw-ring-color': thematicColors?.base || '#EC4899'
+          '--tw-ring-color': colors.primary
         ***REMOVED******REMOVED***
       >
         ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
@@ -29,11 +30,11 @@ const TimeSelect = (***REMOVED*** label, value, onChange, icon: Icon, iconColor,
   );
 ***REMOVED***;
 
-const TurnRange = (***REMOVED*** title, icon: Icon, iconColor, children, thematicColors ***REMOVED***) => ***REMOVED***
+const TurnRange = (***REMOVED*** title, icon: Icon, iconColor, children, colors ***REMOVED***) => ***REMOVED***
   return (
     <div 
       className="border rounded-lg p-4"
-      style=***REMOVED******REMOVED*** borderColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)' ***REMOVED******REMOVED***
+      style=***REMOVED******REMOVED*** borderColor: colors.transparent20 ***REMOVED******REMOVED***
     >
       <div className="flex items-center mb-3">
         <Icon className="h-5 w-5 mr-2" style=***REMOVED******REMOVED*** color: iconColor ***REMOVED******REMOVED*** />
@@ -47,10 +48,10 @@ const TurnRange = (***REMOVED*** title, icon: Icon, iconColor, children, themati
 const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
     shiftRanges,
-    savePreferences,
-    thematicColors
+    savePreferences
   ***REMOVED*** = useApp();
   
+  const colors = useThemeColors();
   const [rangosTurnos, setRangosTurnos] = useState(shiftRanges || ***REMOVED***
     dayStart: 6,
     dayEnd: 14,
@@ -109,7 +110,7 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
       
       <div className="space-y-4 mb-6">
         ***REMOVED***/* Turno Diurno */***REMOVED***
-        <TurnRange title="Turno Diurno" icon=***REMOVED***Sun***REMOVED*** iconColor="#F59E0B" thematicColors=***REMOVED***thematicColors***REMOVED***>
+        <TurnRange title="Turno Diurno" icon=***REMOVED***Sun***REMOVED*** iconColor="#F59E0B" colors=***REMOVED***colors***REMOVED***>
           <div className="grid grid-cols-2 gap-4">
             <TimeSelect
               label="Hora de inicio"
@@ -118,7 +119,7 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
                 ...rangosTurnos,
                 dayStart: value
               ***REMOVED***)***REMOVED***
-              thematicColors=***REMOVED***thematicColors***REMOVED***
+              colors=***REMOVED***colors***REMOVED***
             />
             <TimeSelect
               label="Hora de fin"
@@ -127,13 +128,13 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
                 ...rangosTurnos,
                 dayEnd: value
               ***REMOVED***)***REMOVED***
-              thematicColors=***REMOVED***thematicColors***REMOVED***
+              colors=***REMOVED***colors***REMOVED***
             />
           </div>
         </TurnRange>
         
         ***REMOVED***/* Turno Tarde */***REMOVED***
-        <TurnRange title="Turno Tarde" icon=***REMOVED***Sunset***REMOVED*** iconColor="#F97316" thematicColors=***REMOVED***thematicColors***REMOVED***>
+        <TurnRange title="Turno Tarde" icon=***REMOVED***Sunset***REMOVED*** iconColor="#F97316" colors=***REMOVED***colors***REMOVED***>
           <div className="grid grid-cols-2 gap-4">
             <TimeSelect
               label="Hora de inicio"
@@ -142,7 +143,7 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
                 ...rangosTurnos,
                 afternoonStart: value
               ***REMOVED***)***REMOVED***
-              thematicColors=***REMOVED***thematicColors***REMOVED***
+              colors=***REMOVED***colors***REMOVED***
             />
             <TimeSelect
               label="Hora de fin"
@@ -151,13 +152,13 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
                 ...rangosTurnos,
                 afternoonEnd: value
               ***REMOVED***)***REMOVED***
-              thematicColors=***REMOVED***thematicColors***REMOVED***
+              colors=***REMOVED***colors***REMOVED***
             />
           </div>
         </TurnRange>
         
         ***REMOVED***/* Turno Noche */***REMOVED***
-        <TurnRange title="Turno Noche" icon=***REMOVED***Moon***REMOVED*** iconColor="#6366F1" thematicColors=***REMOVED***thematicColors***REMOVED***>
+        <TurnRange title="Turno Noche" icon=***REMOVED***Moon***REMOVED*** iconColor="#6366F1" colors=***REMOVED***colors***REMOVED***>
           <TimeSelect
             label="Hora de inicio"
             value=***REMOVED***rangosTurnos.nightStart***REMOVED***
@@ -165,7 +166,7 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
               ...rangosTurnos,
               nightStart: value
             ***REMOVED***)***REMOVED***
-            thematicColors=***REMOVED***thematicColors***REMOVED***
+            colors=***REMOVED***colors***REMOVED***
           />
           <p className="text-xs text-gray-500 mt-1">
             El turno de noche se extiende hasta el final del día
@@ -178,7 +179,7 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
         disabled=***REMOVED***loading***REMOVED***
         loading=***REMOVED***loading***REMOVED***
         className="w-full"
-        themeColor=***REMOVED***thematicColors?.base***REMOVED***
+        themeColor=***REMOVED***colors.primary***REMOVED***
       >
         Guardar rangos de turnos
       </Button>

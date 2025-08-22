@@ -1,14 +1,14 @@
-// src/components/modals/ModalTrabajoDelivery/index.jsx
-
 import ***REMOVED*** useCallback, useEffect, useState ***REMOVED*** from 'react';
 import ***REMOVED*** X, Truck ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import PlatformSelector from '../../delivery/PlatformSelector';
 import VehicleSelector from '../../delivery/VehicleSelector';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
   // ✅ Usar los nombres correctos del contexto
-  const ***REMOVED*** addDeliveryJob, editDeliveryJob, thematicColors ***REMOVED*** = useApp();
+  const ***REMOVED*** addDeliveryJob, editDeliveryJob ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   const [isMobile, setIsMobile] = useState(false);
 
   // Detectar móvil
@@ -76,7 +76,7 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
           `***REMOVED***
           style=***REMOVED******REMOVED*** 
             zIndex: 10,
-            borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+            borderBottomColor: colors.transparent20
           ***REMOVED******REMOVED***
         >
           <h2 
@@ -84,10 +84,10 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
           >
             <Truck 
               size=***REMOVED***20***REMOVED*** 
-              style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** 
+              style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** 
               className="mr-2" 
             />
-            <span style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
+            <span style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
               ***REMOVED***trabajo ? 'Editar' : 'Nuevo'***REMOVED*** Trabajo Delivery
             </span>
           </h2>
@@ -96,10 +96,10 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
             className="p-2 rounded-lg transition-colors flex-shrink-0"
             style=***REMOVED******REMOVED***
               backgroundColor: 'transparent',
-              color: thematicColors?.base || '#EC4899'
+              color: colors.primary
             ***REMOVED******REMOVED***
             onMouseEnter=***REMOVED***(e) => ***REMOVED***
-              e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+              e.target.style.backgroundColor = colors.transparent10;
             ***REMOVED******REMOVED***
             onMouseLeave=***REMOVED***(e) => ***REMOVED***
               e.target.style.backgroundColor = 'transparent';
@@ -114,14 +114,14 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
           $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'***REMOVED***
         `***REMOVED***>
             <div className="max-w-[420px] mx-auto w-full">
-    <TrabajoDeliveryFormContent
-      trabajo=***REMOVED***trabajo***REMOVED***
-      onSubmit=***REMOVED***manejarGuardado***REMOVED***
-      onCancel=***REMOVED***onClose***REMOVED***
-      thematicColors=***REMOVED***thematicColors***REMOVED***
-      isMobile=***REMOVED***isMobile***REMOVED***
-    />
-  </div>
+                <TrabajoDeliveryFormContent
+                trabajo=***REMOVED***trabajo***REMOVED***
+                onSubmit=***REMOVED***manejarGuardado***REMOVED***
+                onCancel=***REMOVED***onClose***REMOVED***
+                thematicColors=***REMOVED***colors***REMOVED***
+                isMobile=***REMOVED***isMobile***REMOVED***
+                />
+            </div>
         </div>
 
         ***REMOVED***/* Footer indicador en móvil */***REMOVED***
@@ -129,14 +129,14 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
           <div 
             className="sticky bottom-0 bg-white border-t p-2"
             style=***REMOVED******REMOVED*** 
-              borderTopColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)',
+              borderTopColor: colors.transparent20,
               zIndex: 10
             ***REMOVED******REMOVED***
           >
             <div className="flex justify-center">
               <div 
                 className="w-10 h-1 rounded-full"
-                style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)' ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** backgroundColor: colors.transparent50 ***REMOVED******REMOVED***
               />
             </div>
           </div>
@@ -261,7 +261,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
             $***REMOVED***errors.nombre ? 'border-red-500' : 'border-gray-300'***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED***
-            '--tw-ring-color': thematicColors?.base,
+            '--tw-ring-color': thematicColors.primary,
             borderColor: errors.nombre ? '#EF4444' : undefined
           ***REMOVED******REMOVED***
           placeholder="ej: Delivery Zona Norte"
@@ -290,7 +290,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
       ***REMOVED***/* Configuración de cálculos */***REMOVED***
       <div 
         className="space-y-3 p-4 rounded-lg"
-        style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent5 || 'rgba(0,0,0,0.05)' ***REMOVED******REMOVED***
+        style=***REMOVED******REMOVED*** backgroundColor: thematicColors.transparent5 ***REMOVED******REMOVED***
       >
         <h3 className="text-sm font-medium text-gray-700">Configuración de cálculos</h3>
 
@@ -300,7 +300,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
             checked=***REMOVED***formData.configuracion.incluyePropinas***REMOVED***
             onChange=***REMOVED***(e) => handleConfigChange('incluyePropinas', e.target.checked)***REMOVED***
             className="rounded w-4 h-4"
-            style=***REMOVED******REMOVED*** accentColor: thematicColors?.base ***REMOVED******REMOVED***
+            style=***REMOVED******REMOVED*** accentColor: thematicColors.primary ***REMOVED******REMOVED***
           />
           <span className="text-sm">Incluir propinas en el registro</span>
         </label>
@@ -311,7 +311,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
             checked=***REMOVED***formData.configuracion.rastreaCombustible***REMOVED***
             onChange=***REMOVED***(e) => handleConfigChange('rastreaCombustible', e.target.checked)***REMOVED***
             className="rounded w-4 h-4"
-            style=***REMOVED******REMOVED*** accentColor: thematicColors?.base ***REMOVED******REMOVED***
+            style=***REMOVED******REMOVED*** accentColor: thematicColors.primary ***REMOVED******REMOVED***
           />
           <span className="text-sm">Rastrear gastos de combustible</span>
         </label>
@@ -329,7 +329,7 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
             w-full border rounded-lg text-sm border-gray-300 resize-none
             $***REMOVED***isMobile ? 'p-3 text-base' : 'p-2'***REMOVED***
           `***REMOVED***
-          style=***REMOVED******REMOVED*** '--tw-ring-color': thematicColors?.base ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** '--tw-ring-color': thematicColors.primary ***REMOVED******REMOVED***
           rows=***REMOVED***isMobile ? "3" : "2"***REMOVED***
           placeholder="ej: Trabajo de delivery en zona céntrica..."
         />
@@ -357,15 +357,15 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
             disabled:opacity-50 transition-colors
             $***REMOVED***isMobile ? 'py-3 px-4 w-full' : 'flex-1 py-3 px-4'***REMOVED***
           `***REMOVED***
-          style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#3B82F6' ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** backgroundColor: thematicColors.primary ***REMOVED******REMOVED***
           onMouseEnter=***REMOVED***(e) => ***REMOVED***
-            if (!guardando && thematicColors?.dark) ***REMOVED***
-              e.target.style.backgroundColor = thematicColors.dark;
+            if (!guardando) ***REMOVED***
+              e.target.style.backgroundColor = thematicColors.primaryDark;
             ***REMOVED***
           ***REMOVED******REMOVED***
           onMouseLeave=***REMOVED***(e) => ***REMOVED***
             if (!guardando) ***REMOVED***
-              e.target.style.backgroundColor = thematicColors?.base || '#3B82F6';
+              e.target.style.backgroundColor = thematicColors.primary;
             ***REMOVED***
           ***REMOVED******REMOVED***
         >

@@ -1,15 +1,15 @@
-// src/components/settings/ProfileSection/index.jsx
+// src/components/settings/ProfileSection/index.jsx - REFACTORIZADO
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** User, Edit2, Save ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
 const ProfileSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser, updateUserName ***REMOVED*** = useAuth();
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
   const [editingName, setEditingName] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -44,7 +44,7 @@ const ProfileSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***RE
                 value=***REMOVED***displayName***REMOVED***
                 onChange=***REMOVED***(e) => setDisplayName(e.target.value)***REMOVED***
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 transition-colors"
-                style=***REMOVED******REMOVED*** '--tw-ring-color': thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
               />
               <Button
                 onClick=***REMOVED***handleSaveName***REMOVED***
@@ -53,7 +53,7 @@ const ProfileSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***RE
                 size="sm"
                 className="!p-2"
                 icon=***REMOVED***Save***REMOVED***
-                themeColor=***REMOVED***thematicColors?.base***REMOVED***
+                themeColor=***REMOVED***colors.primary***REMOVED***
               />
             </div>
           ) : (
@@ -62,7 +62,7 @@ const ProfileSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***RE
               <button
                 onClick=***REMOVED***() => setEditingName(true)***REMOVED***
                 className="ml-2 transition-colors p-1 rounded hover:bg-gray-100"
-                style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
               >
                 <Edit2 className="h-4 w-4" />
               </button>

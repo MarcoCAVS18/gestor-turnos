@@ -1,8 +1,8 @@
-// src/components/forms/TurnoDeliveryForm/index.jsx
+// src/components/forms/TurnoDeliveryForm/index.jsx - REFACTORIZADO
 
 import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** Calendar, Clock, Package, Car, DollarSign, TrendingUp, AlertCircle ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ThemeInput from '../../ui/ThemeInput';
 import Button from '../../ui/Button';
 
@@ -13,13 +13,11 @@ const TurnoDeliveryForm = (***REMOVED***
   onSubmit, 
   onCancel, 
   onTrabajoChange,
-  thematicColors,
   isMobile,
   loading,
   fechaInicial
 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors: contextColors ***REMOVED*** = useApp();
-  const coloresTemáticos = thematicColors || contextColors;
+  const colors = useThemeColors();
   
   // Estados del formulario
   const [formData, setFormData] = useState(***REMOVED***
@@ -189,7 +187,7 @@ const TurnoDeliveryForm = (***REMOVED***
             onChange=***REMOVED***handleTrabajoChange***REMOVED***
             className="w-full border border-gray-300 rounded-lg p-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:border-transparent bg-white"
             style=***REMOVED******REMOVED*** 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+              '--tw-ring-color': colors.primary,
             ***REMOVED******REMOVED***
             required
           >
@@ -235,7 +233,6 @@ const TurnoDeliveryForm = (***REMOVED***
               onChange=***REMOVED***(e) => handleInputChange('fecha', e.target.value)***REMOVED***
               className="w-full"
               required
-              themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
             />
           </div>
           
@@ -252,7 +249,6 @@ const TurnoDeliveryForm = (***REMOVED***
                 onChange=***REMOVED***(e) => handleInputChange('horaInicio', e.target.value)***REMOVED***
                 className="w-full"
                 required
-                themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
               />
             </div>
             
@@ -267,7 +263,6 @@ const TurnoDeliveryForm = (***REMOVED***
                 onChange=***REMOVED***(e) => handleInputChange('horaFin', e.target.value)***REMOVED***
                 className="w-full"
                 required
-                themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
               />
             </div>
           </div>
@@ -314,7 +309,6 @@ const TurnoDeliveryForm = (***REMOVED***
                 className="w-full"
                 placeholder="0"
                 min="0"
-                themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
               />
             </div>
             
@@ -331,7 +325,6 @@ const TurnoDeliveryForm = (***REMOVED***
                 placeholder="0"
                 min="0"
                 step="0.1"
-                themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
               />
             </div>
           </div>
@@ -356,7 +349,6 @@ const TurnoDeliveryForm = (***REMOVED***
                 placeholder="0.00"
                 step="0.01"
                 required
-                themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
               />
             </div>
             
@@ -372,7 +364,6 @@ const TurnoDeliveryForm = (***REMOVED***
                 className="w-full"
                 placeholder="0.00"
                 step="0.01"
-                themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
               />
             </div>
           </div>
@@ -389,7 +380,6 @@ const TurnoDeliveryForm = (***REMOVED***
               className="w-full"
               placeholder="0.00"
               step="0.01"
-              themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
             />
           </div>
         </div>
@@ -406,7 +396,7 @@ const TurnoDeliveryForm = (***REMOVED***
             rows=***REMOVED***3***REMOVED***
             className="w-full border border-gray-300 rounded-lg p-3 text-sm transition-colors resize-none bg-white focus:outline-none focus:ring-2 focus:border-transparent"
             style=***REMOVED******REMOVED***
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+              '--tw-ring-color': colors.primary
             ***REMOVED******REMOVED***
           />
         </div>
@@ -426,7 +416,7 @@ const TurnoDeliveryForm = (***REMOVED***
             variant="outline"
             className="flex-1"
             disabled=***REMOVED***loading***REMOVED***
-            themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
+            themeColor=***REMOVED***colors.primary***REMOVED***
           >
             Cancelar
           </Button>
@@ -434,7 +424,7 @@ const TurnoDeliveryForm = (***REMOVED***
             type="submit"
             className="flex-1"
             loading=***REMOVED***loading***REMOVED***
-            themeColor=***REMOVED***coloresTemáticos?.base***REMOVED***
+            themeColor=***REMOVED***colors.primary***REMOVED***
           >
             ***REMOVED***turno ? 'Guardar Cambios' : 'Crear Turno'***REMOVED***
           </Button>
@@ -445,8 +435,8 @@ const TurnoDeliveryForm = (***REMOVED***
           <div 
             className="rounded-lg p-4 border-l-4 mt-4"
             style=***REMOVED******REMOVED*** 
-              borderLeftColor: coloresTemáticos?.base || '#EC4899',
-              backgroundColor: `$***REMOVED***coloresTemáticos?.base || '#EC4899'***REMOVED***10`
+              borderLeftColor: colors.primary,
+              backgroundColor: colors.transparent10
             ***REMOVED******REMOVED***
           >
             <div className="space-y-2">
@@ -462,7 +452,7 @@ const TurnoDeliveryForm = (***REMOVED***
                   </div>
                   <div className="flex items-center justify-between text-sm font-medium border-t pt-2">
                     <span>Ganancia neta:</span>
-                    <span style=***REMOVED******REMOVED*** color: coloresTemáticos?.base || '#EC4899' ***REMOVED******REMOVED***>
+                    <span style=***REMOVED******REMOVED*** color: colors?.base || '#EC4899' ***REMOVED******REMOVED***>
                       $***REMOVED***(Number(formData.gananciaTotal) - Number(formData.gastoCombustible || 0)).toFixed(2)***REMOVED***
                     </span>
                   </div>

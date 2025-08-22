@@ -1,4 +1,4 @@
-// src/components/dashboard/QuickStatsGrid/index.jsx - Versión final que funciona
+// src/components/dashboard/QuickStatsGrid/index.jsx - Versión corregida
 
 import React from 'react';
 import ***REMOVED*** Briefcase, Calendar, Clock, Target ***REMOVED*** from 'lucide-react';
@@ -54,8 +54,8 @@ const QuickStatsGrid = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
 
   return (
     <>
-      ***REMOVED***/* DESKTOP: Grid normal 4 columnas */***REMOVED***
-      <div className="hidden lg:grid lg:grid-cols-4 lg:gap-6">
+      ***REMOVED***/* DESKTOP: Grid normal 4 columnas CON GAP */***REMOVED***
+      <div className="hidden lg:grid lg:grid-cols-4 gap-6">
         ***REMOVED***statsData.map((stat, index) => (
           <QuickStatCard key=***REMOVED***index***REMOVED*** ***REMOVED***...stat***REMOVED*** />
         ))***REMOVED***

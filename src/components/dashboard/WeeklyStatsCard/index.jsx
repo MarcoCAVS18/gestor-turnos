@@ -1,4 +1,4 @@
-// src/components/stats/WeeklyStatsGrid/index.jsx
+// src/components/dashboard/WeeklyStatsCard/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import ***REMOVED*** DollarSign, Clock, Target, Activity ***REMOVED*** from 'lucide-react';

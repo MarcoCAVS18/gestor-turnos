@@ -1,13 +1,11 @@
-// src/components/delivery/VehicleSelector/index.jsx
+// src/components/delivery/VehicleSelector/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import ***REMOVED*** Check, Bike, Car, Truck, User ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** DELIVERY_VEHICLES ***REMOVED*** from '../../../constants/delivery';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
-const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
-  
+const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick, colors ***REMOVED***) => ***REMOVED***
   const getVehicleIcon = (vehicleId) => ***REMOVED***
     const icons = ***REMOVED***
       'bicicleta': Bike,
@@ -30,8 +28,8 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick ***REMOVED***)
           : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
       ***REMOVED***`***REMOVED***
       style=***REMOVED******REMOVED***
-        borderColor: isSelected ? thematicColors?.base : undefined,
-        backgroundColor: isSelected ? thematicColors?.transparent10 : undefined
+        borderColor: isSelected ? colors.primary : undefined,
+        backgroundColor: isSelected ? colors.transparent10 : undefined
       ***REMOVED******REMOVED***
     >
       ***REMOVED***/* Layout horizontal para compactar */***REMOVED***
@@ -54,7 +52,7 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick ***REMOVED***)
       ***REMOVED***isSelected && (
         <div 
           className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center shadow-sm"
-          style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
         >
           <Check size=***REMOVED***10***REMOVED*** className="text-white" />
         </div>
@@ -69,6 +67,8 @@ const VehicleSelector = (***REMOVED***
   title = "Selecciona tu vehículo",
   className = "" 
 ***REMOVED***) => ***REMOVED***
+  const colors = useThemeColors();
+  
   return (
     <div className=***REMOVED***`space-y-3 $***REMOVED***className***REMOVED***`***REMOVED***>
       <h3 className="text-sm font-medium text-gray-700">***REMOVED***title***REMOVED***</h3>
@@ -81,6 +81,7 @@ const VehicleSelector = (***REMOVED***
             vehicle=***REMOVED***vehicle***REMOVED*** 
             isSelected=***REMOVED***selectedVehicle === vehicle.nombre***REMOVED***
             onClick=***REMOVED***onVehicleSelect***REMOVED***
+            colors=***REMOVED***colors***REMOVED***
           />
         ))***REMOVED***
       </div>

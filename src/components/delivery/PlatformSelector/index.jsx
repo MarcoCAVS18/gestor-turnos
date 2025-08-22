@@ -1,11 +1,11 @@
-// src/components/delivery/PlatformSelector/index.jsx
+// src/components/delivery/PlatformSelector/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../constants/delivery';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const PlatformSelector = (***REMOVED*** selectedPlatform, onPlatformSelect ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   
   return (
     <div className="space-y-3">
@@ -15,7 +15,7 @@ const PlatformSelector = (***REMOVED*** selectedPlatform, onPlatformSelect ***RE
         onChange=***REMOVED***(e) => onPlatformSelect(e.target.value)***REMOVED***
         className="w-full p-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:border-transparent bg-white"
         style=***REMOVED******REMOVED***
-          '--tw-ring-color': thematicColors?.base || '#EC4899'
+          '--tw-ring-color': colors.primary
         ***REMOVED******REMOVED***
       >
         <option value="">Selecciona una plataforma</option>

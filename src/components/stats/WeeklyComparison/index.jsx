@@ -1,10 +1,10 @@
-// src/components/stats/WeeklyComparison/index.jsx
-
 import React from 'react';
 import ***REMOVED*** TrendingUp, TrendingDown, Minus ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 
 const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED***, datosAnteriores = ***REMOVED******REMOVED*** ***REMOVED***) => ***REMOVED***
+  const colors = useThemeColors();
 
   const horasActuales = datosActuales.horasTrabajadas || 0;
   const horasAnteriores = datosAnteriores.horasTrabajadas || 0;
@@ -31,9 +31,10 @@ const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED*
   ***REMOVED***;
 
   const getColor = (cambio) => ***REMOVED***
-    if (cambio > 0) return '#10B981';
-    if (cambio < 0) return '#EF4444';
-    return '#6B7280';
+    // AHORA USAMOS LOS COLORES DEL HOOK CON FALLBACKS
+    if (cambio > 0) return colors.success || '#10B981';
+    if (cambio < 0) return colors.danger || '#EF4444';
+    return colors.neutral || '#6B7280';
   ***REMOVED***;
 
   const comparaciones = [

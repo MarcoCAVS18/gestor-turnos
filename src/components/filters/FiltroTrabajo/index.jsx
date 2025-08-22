@@ -1,11 +1,13 @@
-// src/components/filters/FiltroTrabajo/index.jsx
+// src/components/filters/FiltroTrabajo/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import ***REMOVED*** Briefcase, Truck ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const FiltroTrabajo = (***REMOVED*** value, onChange ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** trabajos, trabajosDelivery, thematicColors ***REMOVED*** = useApp();
+  const ***REMOVED*** trabajos, trabajosDelivery ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   
   // Combinar todos los trabajos
   const todosLosTrabajos = [
@@ -23,7 +25,7 @@ const FiltroTrabajo = (***REMOVED*** value, onChange ***REMOVED***) => ***REMOVE
           value=***REMOVED***value***REMOVED***
           onChange=***REMOVED***(e) => onChange(e.target.value)***REMOVED***
           className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
-          style=***REMOVED******REMOVED*** '--tw-ring-color': thematicColors?.base ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
         >
           <option value="todos">Todos los trabajos</option>
           ***REMOVED***todosLosTrabajos.map(trabajo => (
@@ -42,7 +44,7 @@ const FiltroTrabajo = (***REMOVED*** value, onChange ***REMOVED***) => ***REMOVE
               return trabajoSeleccionado?.tipo === 'delivery' ? (
                 <Truck size=***REMOVED***16***REMOVED*** className="text-green-600" />
               ) : (
-                <Briefcase size=***REMOVED***16***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** />
+                <Briefcase size=***REMOVED***16***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
               );
             ***REMOVED***)()
           ) : (

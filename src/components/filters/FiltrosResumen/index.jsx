@@ -1,11 +1,13 @@
-// src/components/filters/FiltrosResumen/index.jsx
+// src/components/filters/FiltrosResumen/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const FiltrosResumen = (***REMOVED*** filters, onRemoveFilter, onClearAll, estadisticas ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors, trabajos, trabajosDelivery ***REMOVED*** = useApp();
+  const ***REMOVED*** trabajos, trabajosDelivery ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   
   // Combinar trabajos para obtener nombres
   const todosLosTrabajos = [...trabajos, ...trabajosDelivery];
@@ -48,19 +50,19 @@ const FiltrosResumen = (***REMOVED*** filters, onRemoveFilter, onClearAll, estad
     <div 
       className="p-4 rounded-lg border-l-4 space-y-3"
       style=***REMOVED******REMOVED*** 
-        backgroundColor: thematicColors?.transparent5,
-        borderLeftColor: thematicColors?.base 
+        backgroundColor: colors.transparent5,
+        borderLeftColor: colors.primary 
       ***REMOVED******REMOVED***
     >
       ***REMOVED***/* Estadísticas */***REMOVED***
       <div className="flex items-center justify-between text-sm">
-        <span style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="font-medium">
+        <span style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="font-medium">
           Filtros activos: ***REMOVED***estadisticas?.turnosFiltrados || 0***REMOVED*** de ***REMOVED***estadisticas?.totalTurnos || 0***REMOVED*** turnos
         </span>
         <button
           onClick=***REMOVED***onClearAll***REMOVED***
           className="flex items-center space-x-1 px-2 py-1 text-xs rounded-md hover:bg-gray-100 transition-colors"
-          style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
         >
           <X size=***REMOVED***12***REMOVED*** />
           <span>Limpiar todo</span>
@@ -73,8 +75,8 @@ const FiltrosResumen = (***REMOVED*** filters, onRemoveFilter, onClearAll, estad
           <div 
             className="flex items-center space-x-2 px-3 py-1 rounded-full text-sm"
             style=***REMOVED******REMOVED*** 
-              backgroundColor: thematicColors?.transparent20,
-              color: thematicColors?.base 
+              backgroundColor: colors.transparent20,
+              color: colors.primary 
             ***REMOVED******REMOVED***
           >
             <span>Trabajo: ***REMOVED***getNombreTrabajo(filters.trabajo)***REMOVED***</span>
@@ -91,8 +93,8 @@ const FiltrosResumen = (***REMOVED*** filters, onRemoveFilter, onClearAll, estad
           <div 
             className="flex items-center space-x-2 px-3 py-1 rounded-full text-sm"
             style=***REMOVED******REMOVED*** 
-              backgroundColor: thematicColors?.transparent20,
-              color: thematicColors?.base 
+              backgroundColor: colors.transparent20,
+              color: colors.primary 
             ***REMOVED******REMOVED***
           >
             <span>
@@ -114,8 +116,8 @@ const FiltrosResumen = (***REMOVED*** filters, onRemoveFilter, onClearAll, estad
           <div 
             className="flex items-center space-x-2 px-3 py-1 rounded-full text-sm"
             style=***REMOVED******REMOVED*** 
-              backgroundColor: thematicColors?.transparent20,
-              color: thematicColors?.base 
+              backgroundColor: colors.transparent20,
+              color: colors.primary 
             ***REMOVED******REMOVED***
           >
             <span>Tipo: ***REMOVED***tiposTurnoLabels[filters.tipoTurno] || filters.tipoTurno***REMOVED***</span>

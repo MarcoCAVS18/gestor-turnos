@@ -1,14 +1,16 @@
-// src/components/modals/ModalTrabajo/index.jsx
+// src/components/modals/ModalTrabajo/index.jsx - REFACTORIZADO
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import TrabajoForm from '../../forms/TrabajoForm';
 import SelectorTipoTrabajo from '../SelectorTipoTrabajo';
 import ModalTrabajoDelivery from '../ModalTrabajoDelivery';
 
 const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** addJob, editJob, deliveryEnabled, thematicColors ***REMOVED*** = useApp();
+  const ***REMOVED*** addJob, editJob, deliveryEnabled ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   const [mostrarSelector, setMostrarSelector] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -107,7 +109,7 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
     );
   ***REMOVED***
 
-  // Configuración del modal usando modalConfig y thematicColors
+  // Configuración del modal usando modalConfig y colors
   const modalConfig = ***REMOVED***
     mobileFullScreen: isMobile,
     size: isMobile ? 'full' : 'lg',
@@ -130,19 +132,19 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
         `***REMOVED***
       >
         
-        ***REMOVED***/* Header optimizado con thematicColors */***REMOVED***
+        ***REMOVED***/* Header optimizado con colors */***REMOVED***
         <div 
           className=***REMOVED***`
             sticky top-0 bg-white border-b flex justify-between items-center z-10
             $***REMOVED***isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED*** 
-            borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+            borderBottomColor: colors.transparent20
           ***REMOVED******REMOVED***
         >
           <h2 
             className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
-            style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+            style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
           >
             ***REMOVED***trabajo ? 'Editar Trabajo' : 'Nuevo Trabajo'***REMOVED***
           </h2>
@@ -151,10 +153,10 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
             className="p-2 rounded-lg transition-colors"
             style=***REMOVED******REMOVED***
               backgroundColor: 'transparent',
-              color: thematicColors?.base || '#EC4899'
+              color: colors.primary
             ***REMOVED******REMOVED***
             onMouseEnter=***REMOVED***(e) => ***REMOVED***
-              e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+              e.target.style.backgroundColor = colors.transparent10;
             ***REMOVED******REMOVED***
             onMouseLeave=***REMOVED***(e) => ***REMOVED***
               e.target.style.backgroundColor = 'transparent';
@@ -172,7 +174,6 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
           ***REMOVED***mostrarSelector ? (
             <SelectorTipoTrabajo 
               onSelectTipo=***REMOVED***manejarSeleccionTipo***REMOVED***
-              thematicColors=***REMOVED***thematicColors***REMOVED***
               isMobile=***REMOVED***isMobile***REMOVED***
             />
           ) : (
@@ -181,7 +182,6 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
               onSubmit=***REMOVED***manejarGuardado***REMOVED***
               onCancel=***REMOVED***manejarCerrar***REMOVED***
               loading=***REMOVED***loading***REMOVED***
-              thematicColors=***REMOVED***thematicColors***REMOVED***
               isMobile=***REMOVED***isMobile***REMOVED***
             />
           )***REMOVED***
@@ -192,7 +192,7 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
           <div 
             className="sticky bottom-0 bg-white border-t p-4"
             style=***REMOVED******REMOVED*** 
-              borderTopColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+              borderTopColor: colors.transparent20
             ***REMOVED******REMOVED***
           >
             <div className="text-xs text-gray-500 text-center">
@@ -210,17 +210,17 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
             <div 
               className="bg-white rounded-lg p-4 flex items-center space-x-3"
               style=***REMOVED******REMOVED*** 
-                borderColor: thematicColors?.base || '#EC4899',
+                borderColor: colors.primary,
                 borderWidth: '2px'
               ***REMOVED******REMOVED***
             >
               <div 
                 className="animate-spin rounded-full h-6 w-6 border-b-2"
-                style=***REMOVED******REMOVED*** borderColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** borderColor: colors.primary ***REMOVED******REMOVED***
               />
               <span 
                 className="font-medium"
-                style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
               >
                 Guardando...
               </span>

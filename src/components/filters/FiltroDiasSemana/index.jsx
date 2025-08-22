@@ -1,10 +1,10 @@
-// src/components/filters/FiltroDiasSemana/index.jsx
+// src/components/filters/FiltroDiasSemana/index.jsx - REFACTORIZADO
 
 import React from 'react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const FiltroDiasSemana = (***REMOVED*** value, onChange ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   
   const diasSemana = [
     ***REMOVED*** id: 'lunes', label: 'L', nombre: 'Lunes' ***REMOVED***,
@@ -42,7 +42,7 @@ const FiltroDiasSemana = (***REMOVED*** value, onChange ***REMOVED***) => ***REM
             <button
               onClick=***REMOVED***selectAll***REMOVED***
               className="text-xs px-2 py-1 rounded-md hover:bg-gray-100 transition-colors"
-              style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
             >
               Todos
             </button>
@@ -68,16 +68,16 @@ const FiltroDiasSemana = (***REMOVED*** value, onChange ***REMOVED***) => ***REM
               className="w-8 h-8 rounded-lg text-xs font-medium transition-all hover:scale-105 flex items-center justify-center"
               style=***REMOVED******REMOVED***
                 backgroundColor: isSelected 
-                  ? thematicColors?.base 
+                  ? colors.primary 
                   : 'transparent',
                 color: isSelected 
                   ? 'white' 
-                  : thematicColors?.base,
+                  : colors.primary,
                 border: `1px solid $***REMOVED***isSelected 
-                  ? thematicColors?.base 
-                  : thematicColors?.transparent30***REMOVED***`,
+                  ? colors.primary 
+                  : colors.transparent30***REMOVED***`,
                 boxShadow: isSelected 
-                  ? `0 2px 4px $***REMOVED***thematicColors?.transparent30***REMOVED***` 
+                  ? `0 2px 4px $***REMOVED***colors.transparent30***REMOVED***` 
                   : 'none'
               ***REMOVED******REMOVED***
               title=***REMOVED***dia.nombre***REMOVED***
