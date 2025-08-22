@@ -1,3 +1,5 @@
+// src/components/cards/TarjetaTurno/index.jsx - Con soporte para showActions
+
 import React from 'react';
 import ***REMOVED*** Edit, Trash2 ***REMOVED*** from 'lucide-react';
 import Card from '../../ui/Card';
@@ -11,10 +13,34 @@ const TarjetaTurno = (***REMOVED***
   trabajo, 
   onEdit, 
   onDelete, 
-  showActions = true,
+  showActions = true, // Nueva prop para controlar las acciones
   variant = 'card'
 ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** shiftRanges ***REMOVED*** = useApp(); 
+
+  // Validaciones defensivas
+  if (!turno) ***REMOVED***
+    return (
+      <Card className="relative">
+        <div className="p-4 text-center text-gray-500">
+          <p className="text-sm">Turno no encontrado</p>
+        </div>
+      </Card>
+    );
+  ***REMOVED***
+
+  if (!trabajo) ***REMOVED***
+    return (
+      <Card className="relative">
+        <div className="p-4 text-center text-gray-500">
+          <p className="text-sm">Trabajo eliminado</p>
+          <p className="text-xs text-gray-400 mt-1">
+            ***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***
+          </p>
+        </div>
+      </Card>
+    );
+  ***REMOVED***
 
   // Usar la utilidad centralizada
   const tipoTurno = determinarTipoTurno(turno, shiftRanges);
@@ -57,13 +83,14 @@ const TarjetaTurno = (***REMOVED***
         />
       </div>
 
+      ***REMOVED***/* Solo mostrar acciones si showActions es true */***REMOVED***
       ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
     </div>
   );
 
   if (variant === 'compact') ***REMOVED***
     return (
-      <div className="rounded-lg transition-colors">
+      <div className="p-3 rounded-lg transition-colors">
         ***REMOVED***cardContent***REMOVED***
       </div>
     );

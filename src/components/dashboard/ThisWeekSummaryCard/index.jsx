@@ -1,4 +1,4 @@
-// src/components/dashboard/ThisWeekSummaryCard/index.jsx - Con call-to-action para metas
+// src/components/dashboard/ThisWeekSummaryCard/index.jsx - Usando turnosSemana
 
 import React from 'react';
 import ***REMOVED*** Calendar, TrendingUp, Target, ArrowRight ***REMOVED*** from 'lucide-react';
@@ -17,7 +17,7 @@ const ThisWeekSummaryCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
   const semanaActual = stats.semanaActual || ***REMOVED******REMOVED***;
   const totalSemana = semanaActual.totalGanado || 0;
   const horasSemana = semanaActual.horasTrabajadas || 0;
-  const turnosSemana = semanaActual.totalTurnos || 0;
+  const turnosSemana = semanaActual.totalTurnos || 0; // USAR la variable
 
   // Usar la meta del usuario o mostrar call-to-action si no hay meta
   const metaHoras = weeklyHoursGoal;
@@ -101,17 +101,27 @@ const ThisWeekSummaryCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
           </div>
         )***REMOVED***
 
-        ***REMOVED***/* Stats básicas - SIMPLIFICADO cuando no hay meta */***REMOVED***
+        ***REMOVED***/* Stats básicas - Mostrar turnos realizados */***REMOVED***
         <div className="flex justify-between text-sm">
+          <div className="text-center">
+            <p className="font-semibold text-gray-800">***REMOVED***turnosSemana***REMOVED***</p>
+            <p className="text-xs text-gray-500">turnos</p>
+          </div>
+          
           ***REMOVED***tieneMetaHoras && (
             <div className="text-center">
               <p className="font-semibold text-gray-800">***REMOVED***Math.ceil(progresoLimitado)***REMOVED***%</p>
               <p className="text-xs text-gray-500">meta</p>
             </div>
           )***REMOVED***
+          
+          <div className="text-center">
+            <p className="font-semibold text-gray-800">***REMOVED***horasSemana.toFixed(1)***REMOVED***h</p>
+            <p className="text-xs text-gray-500">horas</p>
+          </div>
         </div>
 
-        ***REMOVED***/* Mensaje simple */***REMOVED***
+        ***REMOVED***/* Mensaje motivacional */***REMOVED***
         ***REMOVED***totalSemana > 0 && tieneMetaHoras && (
           <div className="text-center p-2 rounded-lg" style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***>
             <div className="flex items-center justify-center">
