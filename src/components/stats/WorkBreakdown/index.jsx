@@ -1,11 +1,12 @@
-// src/components/stats/WorkBreakdown/index.jsx
+// src/components/stats/WorkBreakdown/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import ***REMOVED*** BarChart2 ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 
 const WorkBreakdown = (***REMOVED*** gananciaPorTrabajo = [], totalGanado = 0 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
 
   // Verificar datos
   const trabajosValidos = Array.isArray(gananciaPorTrabajo) ? gananciaPorTrabajo : [];
@@ -15,7 +16,7 @@ const WorkBreakdown = (***REMOVED*** gananciaPorTrabajo = [], totalGanado = 0 **
     return (
       <div className="bg-white rounded-xl shadow-md p-4">
         <div className="flex items-center mb-4">
-          <BarChart2 size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+          <BarChart2 size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
           <h3 className="font-semibold">Por trabajo</h3>
         </div>
         <div className="text-center py-8 text-gray-500">
@@ -33,7 +34,7 @@ const WorkBreakdown = (***REMOVED*** gananciaPorTrabajo = [], totalGanado = 0 **
       ganancia: (trabajo && typeof trabajo.ganancia === 'number') ? trabajo.ganancia : 0,
       turnos: (trabajo && typeof trabajo.turnos === 'number') ? trabajo.turnos : 0,
       horas: (trabajo && typeof trabajo.horas === 'number') ? trabajo.horas : 0,
-      color: (trabajo && typeof trabajo.color === 'string') ? trabajo.color : '#EC4899'
+      color: (trabajo && typeof trabajo.color === 'string') ? trabajo.color : colors.primary
     ***REMOVED***;
 
     const porcentaje = maximo > 0 ? (trabajoSeguro.ganancia / maximo) * 100 : 0;
@@ -44,7 +45,7 @@ const WorkBreakdown = (***REMOVED*** gananciaPorTrabajo = [], totalGanado = 0 **
           <span className="text-sm font-medium text-gray-700">***REMOVED***trabajoSeguro.nombre***REMOVED***</span>
           <div className="text-right">
             <span className="text-sm font-bold" style=***REMOVED******REMOVED*** color: trabajoSeguro.color ***REMOVED******REMOVED***>
-              $***REMOVED***trabajoSeguro.ganancia.toFixed(2)***REMOVED***
+              ***REMOVED***formatCurrency(trabajoSeguro.ganancia)***REMOVED***
             </span>
             <p className="text-xs text-gray-500">
               ***REMOVED***trabajoSeguro.turnos***REMOVED*** turnos · ***REMOVED***trabajoSeguro.horas.toFixed(1)***REMOVED***h
@@ -67,7 +68,7 @@ const WorkBreakdown = (***REMOVED*** gananciaPorTrabajo = [], totalGanado = 0 **
   return (
     <div className="bg-white rounded-xl shadow-md p-4">
       <div className="flex items-center mb-4">
-        <BarChart2 size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+        <BarChart2 size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
         <h3 className="font-semibold">Por trabajo</h3>
       </div>
 

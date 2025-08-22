@@ -1,11 +1,12 @@
-// src/pages/Dashboard.jsx - Versión limpia final
+// src/pages/Dashboard.jsx - Versión Completa Corregida
 
 import React from 'react';
 import ***REMOVED*** useDashboardStats ***REMOVED*** from '../hooks/useDashboardStats';
 import Loader from '../components/other/Loader';
 import WelcomeCard from '../components/dashboard/WelcomeCard';
 import QuickStatsGrid from '../components/dashboard/QuickStatsGrid';
-import WeeklyStatsCard from '../components/dashboard/WeeklyStatsCard';
+import ThisWeekSummaryCard from '../components/dashboard/ThisWeekSummaryCard';
+import RecentActivityCard from '../components/dashboard/RecentActivityCard';
 import NextShiftCard from '../components/dashboard/NextShiftCard';
 import TopWorkCard from '../components/dashboard/TopWorkCard';
 import FavoriteWorksCard from '../components/dashboard/FavoriteWorksCard';
@@ -46,7 +47,7 @@ const Dashboard = () => ***REMOVED***
           
           ***REMOVED***/* CONTENEDOR DERECHO: Esta semana vertical (1 columna) */***REMOVED***
           <div className="lg:col-span-1">
-            <WeeklyStatsCard stats=***REMOVED***stats***REMOVED*** />
+            <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** />
           </div>
         </div>
 
@@ -56,36 +57,48 @@ const Dashboard = () => ***REMOVED***
           <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
           
           ***REMOVED***/* Esta semana */***REMOVED***
-          <WeeklyStatsCard stats=***REMOVED***stats***REMOVED*** />
+          <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** />
           
           ***REMOVED***/* Acciones rápidas */***REMOVED***
           <QuickActionsCard />
         </div>
 
-        ***REMOVED***/* Segunda fila: Projection + Top Work + Favorites */***REMOVED***
+        ***REMOVED***/* Segunda fila: Recent Activity + Next Shift + Top Work + Favorite Works */***REMOVED***
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          ***REMOVED***/* Projection Card - 1 columna vertical a la izquierda en desktop, full en móvil */***REMOVED***
+          ***REMOVED***/* Recent Activity Card - 1 columna a la izquierda en desktop, full en móvil */***REMOVED***
           <div className="lg:col-span-1">
             <div className="h-full">
+              <RecentActivityCard 
+                stats=***REMOVED***stats***REMOVED***
+                todosLosTrabajos=***REMOVED***stats.todosLosTrabajos***REMOVED***
+                todosLosTurnos=***REMOVED***stats.todosLosTurnos***REMOVED***
+              />
+            </div>
+          </div>
+          
+          ***REMOVED***/* Next Shift + Top Work + Favorite Works - 4 columnas con stack vertical */***REMOVED***
+          <div className="lg:col-span-4 space-y-6">
+            <NextShiftCard 
+              proximoTurno=***REMOVED***stats.proximoTurno***REMOVED*** 
+              formatearFecha=***REMOVED***stats.formatearFecha***REMOVED*** 
+            />
+            <TopWorkCard trabajoMasRentable=***REMOVED***stats.trabajoMasRentable***REMOVED*** />
+            <FavoriteWorksCard trabajosFavoritos=***REMOVED***stats.trabajosFavoritos***REMOVED*** />
+          </div>
+        </div>
+
+        ***REMOVED***/* Tercera fila: Solo Projection */***REMOVED***
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          ***REMOVED***/* Projection Card - centrado */***REMOVED***
+          <div className="lg:col-span-5">
+            <div className="max-w-md mx-auto">
               <ProjectionCard 
                 proyeccionMensual=***REMOVED***stats.proyeccionMensual***REMOVED***
                 horasTrabajadas=***REMOVED***stats.horasTrabajadas***REMOVED***
               />
             </div>
           </div>
-          
-          ***REMOVED***/* Top Work + Favorites - 4 columnas con stack vertical */***REMOVED***
-          <div className="lg:col-span-4 space-y-6">
-            <TopWorkCard trabajoMasRentable=***REMOVED***stats.trabajoMasRentable***REMOVED*** />
-            <FavoriteWorksCard trabajosFavoritos=***REMOVED***stats.trabajosFavoritos***REMOVED*** />
-          </div>
         </div>
-
-        ***REMOVED***/* Tercera fila: Next Shift */***REMOVED***
-        <NextShiftCard 
-          proximoTurno=***REMOVED***stats.proximoTurno***REMOVED*** 
-          formatearFecha=***REMOVED***stats.formatearFecha***REMOVED*** 
-        />
       </div>
     </div>
   );

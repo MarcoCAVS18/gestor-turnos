@@ -1,4 +1,4 @@
-// src/hooks/useDashboardStats.js - Versión Mejorada
+// src/hooks/useDashboardStats.js - Versión actualizada con datos semanales
 
 import ***REMOVED*** useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
@@ -28,6 +28,23 @@ export const useDashboardStats = () => ***REMOVED***
     ***REMOVED***;
   ***REMOVED***, []);
 
+  // Función para obtener fechas de la semana actual
+  const obtenerFechasSemanaActual = useMemo(() => ***REMOVED***
+    const hoy = new Date();
+    const diaSemana = hoy.getDay();
+    const diffInicio = diaSemana === 0 ? 6 : diaSemana - 1; // Lunes como inicio
+    
+    const fechaInicio = new Date(hoy);
+    fechaInicio.setDate(hoy.getDate() - diffInicio);
+    fechaInicio.setHours(0, 0, 0, 0);
+    
+    const fechaFin = new Date(fechaInicio);
+    fechaFin.setDate(fechaInicio.getDate() + 6);
+    fechaFin.setHours(23, 59, 59, 999);
+    
+    return ***REMOVED*** fechaInicio, fechaFin ***REMOVED***;
+  ***REMOVED***, []);
+
   const stats = useMemo(() => ***REMOVED***
     // Validación defensiva de datos
     const trabajosValidos = Array.isArray(trabajos) ? trabajos : [];
@@ -51,7 +68,16 @@ export const useDashboardStats = () => ***REMOVED***
       tendenciaSemanal: 0,
       trabajosFavoritos: [],
       proyeccionMensual: 0,
-      diasTrabajados: 0
+      diasTrabajados: 0,
+      // Nuevos datos para componentes
+      semanaActual: ***REMOVED***
+        totalGanado: 0,
+        horasTrabajadas: 0,
+        totalTurnos: 0,
+        diasTrabajados: 0
+      ***REMOVED***,
+      todosLosTrabajos,
+      todosLosTurnos
     ***REMOVED***;
 
     if (todosLosTurnos.length === 0) ***REMOVED***
@@ -65,17 +91,16 @@ export const useDashboardStats = () => ***REMOVED***
       const fechasUnicas = new Set();
       
       // Calcular fecha de inicio de esta semana
-      const hoy = new Date();
-      const inicioSemana = new Date(hoy);
-      inicioSemana.setDate(hoy.getDate() - hoy.getDay() + 1);
-      inicioSemana.setHours(0, 0, 0, 0);
+      const ***REMOVED*** fechaInicio, fechaFin ***REMOVED*** = obtenerFechasSemanaActual;
       
-      const inicioSemanaAnterior = new Date(inicioSemana);
-      inicioSemanaAnterior.setDate(inicioSemana.getDate() - 7);
+      const inicioSemanaAnterior = new Date(fechaInicio);
+      inicioSemanaAnterior.setDate(fechaInicio.getDate() - 7);
       
       let turnosEstaSemana = 0;
       let gananciasEstaSemana = 0;
+      let horasEstaSemana = 0;
       let gananciasSemanaAnterior = 0;
+      const fechasUnicasSemana = new Set();
 
       todosLosTurnos.forEach(turno => ***REMOVED***
         try ***REMOVED***
@@ -106,7 +131,7 @@ export const useDashboardStats = () => ***REMOVED***
 
           totalGanado += ganancia;
           horasTrabajadas += horas;
-          fechasUnicas.add(turno.fecha);
+          fechasUnicas.add(turno.fechaInicio || turno.fecha);
 
           // Estadísticas por trabajo
           if (!gananciaPorTrabajo[trabajo.id]) ***REMOVED***
@@ -122,11 +147,13 @@ export const useDashboardStats = () => ***REMOVED***
           gananciaPorTrabajo[trabajo.id].turnos += 1;
 
           // Estadísticas semanales
-          const fechaTurno = new Date(turno.fecha + 'T00:00:00');
-          if (fechaTurno >= inicioSemana) ***REMOVED***
+          const fechaTurno = new Date((turno.fechaInicio || turno.fecha) + 'T00:00:00');
+          if (fechaTurno >= fechaInicio && fechaTurno <= fechaFin) ***REMOVED***
             turnosEstaSemana++;
             gananciasEstaSemana += ganancia;
-          ***REMOVED*** else if (fechaTurno >= inicioSemanaAnterior && fechaTurno < inicioSemana) ***REMOVED***
+            horasEstaSemana += horas;
+            fechasUnicasSemana.add(turno.fechaInicio || turno.fecha);
+          ***REMOVED*** else if (fechaTurno >= inicioSemanaAnterior && fechaTurno < fechaInicio) ***REMOVED***
             gananciasSemanaAnterior += ganancia;
           ***REMOVED***
         ***REMOVED*** catch (error) ***REMOVED***
@@ -144,14 +171,18 @@ export const useDashboardStats = () => ***REMOVED***
         : 0;
 
       // Encontrar próximo turno
-      const hoyStr = hoy.toISOString().split('T')[0];
-      const turnosFuturos = todosLosTurnos.filter(turno => turno.fecha >= hoyStr)
-        .sort((a, b) => ***REMOVED***
-          if (a.fecha === b.fecha) ***REMOVED***
-            return a.horaInicio.localeCompare(b.horaInicio);
-          ***REMOVED***
-          return a.fecha.localeCompare(b.fecha);
-        ***REMOVED***);
+      const hoyStr = new Date().toISOString().split('T')[0];
+      const turnosFuturos = todosLosTurnos.filter(turno => ***REMOVED***
+        const fechaTurno = turno.fechaInicio || turno.fecha;
+        return fechaTurno >= hoyStr;
+      ***REMOVED***).sort((a, b) => ***REMOVED***
+        const fechaA = a.fechaInicio || a.fecha;
+        const fechaB = b.fechaInicio || b.fecha;
+        if (fechaA === fechaB) ***REMOVED***
+          return a.horaInicio.localeCompare(b.horaInicio);
+        ***REMOVED***
+        return fechaA.localeCompare(fechaB);
+      ***REMOVED***);
       
       const proximoTurno = turnosFuturos[0] || null;
 
@@ -175,7 +206,16 @@ export const useDashboardStats = () => ***REMOVED***
         tendenciaSemanal: Number(tendenciaSemanal) || 0,
         trabajosFavoritos,
         proyeccionMensual: Number(proyeccionMensual) || 0,
-        diasTrabajados: fechasUnicas.size
+        diasTrabajados: fechasUnicas.size,
+        // Nuevos datos específicos para los componentes
+        semanaActual: ***REMOVED***
+          totalGanado: Number(gananciasEstaSemana) || 0,
+          horasTrabajadas: Number(horasEstaSemana) || 0,
+          totalTurnos: turnosEstaSemana,
+          diasTrabajados: fechasUnicasSemana.size
+        ***REMOVED***,
+        todosLosTrabajos,
+        todosLosTurnos
       ***REMOVED***;
 
       return resultado;
@@ -183,7 +223,7 @@ export const useDashboardStats = () => ***REMOVED***
       console.error('Error crítico calculando estadísticas del dashboard:', error);
       return defaultStats;
     ***REMOVED***
-  ***REMOVED***, [trabajos, trabajosDelivery, turnos, turnosDelivery, calculatePayment, calcularHoras]);
+  ***REMOVED***, [trabajos, trabajosDelivery, turnos, turnosDelivery, calculatePayment, calcularHoras, obtenerFechasSemanaActual]);
 
   // Función para formatear fecha
   const formatearFecha = useMemo(() => ***REMOVED***

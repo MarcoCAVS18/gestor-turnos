@@ -1,8 +1,9 @@
-// src/components/forms/TrabajoForm/index.jsx
+// src/components/forms/TrabajoForm/index.jsx - REFACTORIZADO
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Briefcase, DollarSign, Palette, FileText ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useFormValidation ***REMOVED*** from '../../../hooks/useFormValidation';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** VALIDATION_RULES ***REMOVED*** from '../../../constants/validation';
 import ***REMOVED*** PREDEFINED_COLORS ***REMOVED*** from '../../../constants/colors';
 import ThemeInput from '../../ui/ThemeInput';
@@ -13,13 +14,14 @@ const TrabajoForm = (***REMOVED***
   onSubmit, 
   onCancel, 
   loading, 
-  thematicColors, 
   isMobile 
 ***REMOVED***) => ***REMOVED***
+  const colors = useThemeColors();
+  
   const [formData, setFormData] = useState(***REMOVED***
     nombre: '',
     descripcion: '',
-    color: '#EC4899',
+    color: colors.primary,
     tarifaBase: '',
     tarifas: ***REMOVED***
       diurno: '',
@@ -47,7 +49,7 @@ const TrabajoForm = (***REMOVED***
       setFormData(***REMOVED***
         nombre: trabajo.nombre || '',
         descripcion: trabajo.descripcion || '',
-        color: trabajo.color || thematicColors?.base || '#EC4899',
+        color: trabajo.color || colors.primary,
         tarifaBase: trabajo.tarifaBase?.toString() || '',
         tarifas: ***REMOVED***
           diurno: trabajo.tarifas?.diurno?.toString() || '',
@@ -61,10 +63,10 @@ const TrabajoForm = (***REMOVED***
       // Para nuevos trabajos, usar el color temático por defecto
       setFormData(prev => (***REMOVED***
         ...prev,
-        color: thematicColors?.base || '#EC4899'
+        color: colors.primary
       ***REMOVED***));
     ***REMOVED***
-  ***REMOVED***, [trabajo, thematicColors]);
+  ***REMOVED***, [trabajo, colors.primary]);
 
   const handleInputChange = (field, value) => ***REMOVED***
     setFormData(prev => (***REMOVED***
@@ -134,12 +136,8 @@ const TrabajoForm = (***REMOVED***
             $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
             $***REMOVED***errors.nombre ? 'border-red-500' : 'border-gray-300'***REMOVED***
           `***REMOVED***
-          style=***REMOVED******REMOVED***
-            '--tw-ring-color': thematicColors?.base || '#EC4899'
-          ***REMOVED******REMOVED***
           placeholder="Ej: Tech Company Inc."
           required
-          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         />
         ***REMOVED***errors.nombre && (
           <p className="mt-1 text-sm text-red-600">***REMOVED***errors.nombre***REMOVED***</p>
@@ -199,14 +197,10 @@ const TrabajoForm = (***REMOVED***
             $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
             $***REMOVED***errors.tarifaBase ? 'border-red-500' : 'border-gray-300'***REMOVED***
           `***REMOVED***
-          style=***REMOVED******REMOVED***
-            '--tw-ring-color': thematicColors?.base || '#EC4899'
-          ***REMOVED******REMOVED***
           placeholder="15.00"
           step="0.01"
           min="0"
           required
-          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         />
         ***REMOVED***errors.tarifaBase && (
           <p className="mt-1 text-sm text-red-600">***REMOVED***errors.tarifaBase***REMOVED***</p>
@@ -239,14 +233,10 @@ const TrabajoForm = (***REMOVED***
                   $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
                   $***REMOVED***errors[`tarifas.$***REMOVED***tipo***REMOVED***`] ? 'border-red-500' : 'border-gray-300'***REMOVED***
                 `***REMOVED***
-                style=***REMOVED******REMOVED***
-                  '--tw-ring-color': thematicColors?.base || '#EC4899'
-                ***REMOVED******REMOVED***
                 placeholder="0.00"
                 step="0.01"
                 min="0"
                 required
-                themeColor=***REMOVED***thematicColors?.base***REMOVED***
               />
               ***REMOVED***errors[`tarifas.$***REMOVED***tipo***REMOVED***`] && (
                 <p className="mt-1 text-xs text-red-600">***REMOVED***errors[`tarifas.$***REMOVED***tipo***REMOVED***`]***REMOVED***</p>
@@ -272,7 +262,7 @@ const TrabajoForm = (***REMOVED***
             $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED***
-            '--tw-ring-color': thematicColors?.base || '#EC4899'
+            '--tw-ring-color': colors.primary
           ***REMOVED******REMOVED***
         />
       </div>
@@ -285,7 +275,7 @@ const TrabajoForm = (***REMOVED***
           variant="outline"
           className=***REMOVED***isMobile ? 'w-full py-3' : 'flex-1'***REMOVED***
           disabled=***REMOVED***loading***REMOVED***
-          themeColor=***REMOVED***thematicColors?.base***REMOVED***
+          themeColor=***REMOVED***colors.primary***REMOVED***
         >
           Cancelar
         </Button>
@@ -293,7 +283,7 @@ const TrabajoForm = (***REMOVED***
           type="submit"
           className=***REMOVED***isMobile ? 'w-full py-3' : 'flex-1'***REMOVED***
           loading=***REMOVED***loading***REMOVED***
-          themeColor=***REMOVED***thematicColors?.base***REMOVED***
+          themeColor=***REMOVED***colors.primary***REMOVED***
         >
           ***REMOVED***trabajo ? 'Guardar Cambios' : 'Crear Trabajo'***REMOVED***
         </Button>

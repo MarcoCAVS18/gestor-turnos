@@ -1,4 +1,4 @@
-// src/components/stats/ShiftTypeStats/index.jsx
+// src/components/stats/ShiftTypeStats/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import ***REMOVED*** Zap ***REMOVED*** from 'lucide-react';

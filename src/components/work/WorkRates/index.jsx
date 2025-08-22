@@ -1,13 +1,22 @@
-// src/components/work/WorkRates/index.jsx - REFACTORIZADO
+// src/components/work/WorkRates/index.jsx - Versión con validaciones defensivas
 
 import React from 'react';
 import ***REMOVED*** Sun, Moon ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 
 const WorkRates = (***REMOVED*** trabajo ***REMOVED***) => ***REMOVED***
+  // Validación defensiva
+  if (!trabajo) ***REMOVED***
+    return (
+      <div className="text-xs text-gray-500">
+        Sin información de tarifas
+      </div>
+    );
+  ***REMOVED***
+
   const tarifaBase = trabajo.tarifaBase || trabajo.salario || 0;
   const tarifaNoche = trabajo.tarifas?.noche || trabajo.tarifaBase || trabajo.salario || 0;
-  const tieneTarifaNocturna = tarifaNoche !== tarifaBase;
+  const tieneTarifaNocturna = tarifaNoche !== tarifaBase && tarifaNoche > 0;
 
   return (
     <div className="space-y-1">

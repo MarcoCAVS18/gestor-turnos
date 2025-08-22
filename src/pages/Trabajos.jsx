@@ -1,3 +1,5 @@
+// src/pages/Trabajos.jsx - Versión mejorada con layout en columnas
+
 import React from 'react';
 import ***REMOVED*** useTrabajos ***REMOVED*** from '../hooks/useTrabajos';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
@@ -28,6 +30,10 @@ const Trabajos = () => ***REMOVED***
 
   const tieneTrabajos = todosLosTrabajos.length > 0;
 
+  // Separar trabajos tradicionales y de delivery
+  const trabajosTradicionales = todosLosTrabajos.filter(trabajo => trabajo.tipo !== 'delivery');
+  const trabajosDelivery = todosLosTrabajos.filter(trabajo => trabajo.tipo === 'delivery');
+
   return (
     <LoadingWrapper loading=***REMOVED***loading***REMOVED***>
       <div className="px-4 py-6 pb-32 space-y-6">
@@ -37,47 +43,89 @@ const Trabajos = () => ***REMOVED***
         ***REMOVED***/* Header */***REMOVED***
         <WorkHeader 
           todosLosTrabajos=***REMOVED***todosLosTrabajos***REMOVED***
-          thematicColors=***REMOVED***thematicColors***REMOVED***
           onNuevoTrabajo=***REMOVED***abrirModalNuevo***REMOVED***
         />
 
         ***REMOVED***/* Contenido principal */***REMOVED***
         ***REMOVED***!tieneTrabajos ? (
           <WorkEmptyState 
-            thematicColors=***REMOVED***thematicColors***REMOVED***
             onNuevoTrabajo=***REMOVED***abrirModalNuevo***REMOVED***
           />
         ) : (
-          <div className="space-y-4">
-            ***REMOVED***todosLosTrabajos.map((trabajo) => ***REMOVED***
-              const isSharing = sharing[trabajo.id] || false;
-
-              if (trabajo.tipo === 'delivery') ***REMOVED***
-                return (
-                  <TarjetaDelivery
-                    key=***REMOVED***trabajo.id***REMOVED***
-                    trabajo=***REMOVED***trabajo***REMOVED***
-                    onEdit=***REMOVED***abrirModalEditar***REMOVED***
-                    onDelete=***REMOVED***deleteManager.startDeletion***REMOVED***
-                    onShare=***REMOVED***handleShareWork***REMOVED***
-                    showActions=***REMOVED***true***REMOVED***
-                    isSharing=***REMOVED***isSharing***REMOVED***
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            ***REMOVED***/* Trabajos Tradicionales */***REMOVED***
+            ***REMOVED***trabajosTradicionales.length > 0 && (
+              <div>
+                <div className="flex items-center mb-4">
+                  <div 
+                    className="w-1 h-6 rounded-full mr-3"
+                    style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.primary || '#EC4899' ***REMOVED******REMOVED***
                   />
-                );
-              ***REMOVED***
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    Trabajos Tradicionales
+                  </h2>
+                  <span className="ml-2 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                    ***REMOVED***trabajosTradicionales.length***REMOVED***
+                  </span>
+                </div>
+                
+                ***REMOVED***/* Layout en columnas para trabajos tradicionales */***REMOVED***
+                <div className="space-y-4">
+                  ***REMOVED***trabajosTradicionales.map((trabajo) => ***REMOVED***
+                    const isSharing = sharing[trabajo.id] || false;
+                    
+                    return (
+                      <TarjetaTrabajo
+                        key=***REMOVED***trabajo.id***REMOVED***
+                        trabajo=***REMOVED***trabajo***REMOVED***
+                        onEdit=***REMOVED***abrirModalEditar***REMOVED***
+                        onDelete=***REMOVED***deleteManager.startDeletion***REMOVED***
+                        onShare=***REMOVED***handleShareWork***REMOVED***
+                        showActions=***REMOVED***true***REMOVED***
+                        isSharing=***REMOVED***isSharing***REMOVED***
+                      />
+                    );
+                  ***REMOVED***)***REMOVED***
+                </div>
+              </div>
+            )***REMOVED***
 
-              return (
-                <TarjetaTrabajo
-                  key=***REMOVED***trabajo.id***REMOVED***
-                  trabajo=***REMOVED***trabajo***REMOVED***
-                  onEdit=***REMOVED***abrirModalEditar***REMOVED***
-                  onDelete=***REMOVED***deleteManager.startDeletion***REMOVED***
-                  onShare=***REMOVED***handleShareWork***REMOVED***
-                  showActions=***REMOVED***true***REMOVED***
-                  isSharing=***REMOVED***isSharing***REMOVED***
-                />
-              );
-            ***REMOVED***)***REMOVED***
+            ***REMOVED***/* Trabajos de Delivery */***REMOVED***
+            ***REMOVED***trabajosDelivery.length > 0 && (
+              <div>
+                <div className="flex items-center mb-4">
+                  <div 
+                    className="w-1 h-6 rounded-full mr-3"
+                    style=***REMOVED******REMOVED*** backgroundColor: '#10B981' ***REMOVED******REMOVED***
+                  />
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    Trabajos de Delivery
+                  </h2>
+                  <span className="ml-2 px-2 py-1 bg-green-100 text-green-600 text-xs rounded-full">
+                    ***REMOVED***trabajosDelivery.length***REMOVED***
+                  </span>
+                </div>
+                
+                ***REMOVED***/* Layout en columnas para trabajos de delivery */***REMOVED***
+                <div className="space-y-4">
+                  ***REMOVED***trabajosDelivery.map((trabajo) => ***REMOVED***
+                    const isSharing = sharing[trabajo.id] || false;
+                    
+                    return (
+                      <TarjetaDelivery
+                        key=***REMOVED***trabajo.id***REMOVED***
+                        trabajo=***REMOVED***trabajo***REMOVED***
+                        onEdit=***REMOVED***abrirModalEditar***REMOVED***
+                        onDelete=***REMOVED***deleteManager.startDeletion***REMOVED***
+                        onShare=***REMOVED***handleShareWork***REMOVED***
+                        showActions=***REMOVED***true***REMOVED***
+                        isSharing=***REMOVED***isSharing***REMOVED***
+                      />
+                    );
+                  ***REMOVED***)***REMOVED***
+                </div>
+              </div>
+            )***REMOVED***
           </div>
         )***REMOVED***
       </div>

@@ -1,328 +1,176 @@
-// src/components/calendar/CalendarDaySummary/index.jsx
+// src/components/calendar/CalendarDaySummary/index.jsx - Versión con validaciones defensivas
 
 import React from 'react';
-import ***REMOVED*** PlusCircle, Calendar, Moon, Sun ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Plus, Clock, DollarSign ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
-import ***REMOVED*** obtenerTipoTurnoEnFecha ***REMOVED*** from '../../../utils/calendarUtils';
-import TarjetaTurno from '../../cards/TarjetaTurno';
-import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
-import Button from '../../ui/Button';
 import Card from '../../ui/Card';
+import Button from '../../ui/Button';
 
-const CalendarDaySummary = (***REMOVED*** 
-  fechaSeleccionada, 
-  turnos, 
-  formatearFecha, 
-  onNuevoTurno 
-***REMOVED***) => ***REMOVED***
-  // Obtener TODOS los trabajos (tradicionales + delivery) y la función de cálculo
-  const ***REMOVED*** trabajos, trabajosDelivery, calculatePayment ***REMOVED*** = useApp();
-  const colors = useThemeColors();
+const CalendarDaySummary = (***REMOVED*** fechaSeleccionada, turnos, formatearFecha, onNuevoTurno ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** todosLosTrabajos, calculatePayment, thematicColors ***REMOVED*** = useApp();
 
-  const calcularTotalDia = (turnosList) => ***REMOVED***
-    if (!Array.isArray(turnosList) || turnosList.length === 0) ***REMOVED***
-      return 0;
-    ***REMOVED***
+  if (!fechaSeleccionada) ***REMOVED***
+    return (
+      <Card className="mt-6">
+        <div className="text-center py-8">
+          <h3 className="text-lg font-semibold text-gray-600 mb-2">
+            Selecciona un día
+          </h3>
+          <p className="text-gray-500">
+            Haz clic en cualquier día del calendario para ver los turnos
+          </p>
+        </div>
+      </Card>
+    );
+  ***REMOVED***
 
-    return turnosList.reduce((total, turno) => ***REMOVED***
-      try ***REMOVED***
-        if (turno.tipo === 'delivery') ***REMOVED***
-          // Para turnos de delivery, usar gananciaTotal directamente
-          const gananciaTotal = turno.gananciaTotal || 0;
-          return total + gananciaTotal;
-        ***REMOVED*** else ***REMOVED***
-          // Para turnos tradicionales, usar calculatePayment
-          if (typeof calculatePayment === 'function') ***REMOVED***
-            const resultado = calculatePayment(turno);
-            const ganancia = resultado.totalWithDiscount || resultado.totalConDescuento || 0;
-            return total + ganancia;
-          ***REMOVED*** else ***REMOVED***
-            console.warn('calculatePayment no está disponible');
-            return total;
-          ***REMOVED***
-        ***REMOVED***
-      ***REMOVED*** catch (error) ***REMOVED***
-        console.error('Error calculando pago para turno:', turno.id, error);
-        return total;
+  const turnosSegurosDia = Array.isArray(turnos) ? turnos : [];
+
+  // Calcular total del día de forma defensiva
+  const totalDia = turnosSegurosDia.reduce((total, turno) => ***REMOVED***
+    if (!turno) return total;
+    
+    try ***REMOVED***
+      if (turno.tipo === 'delivery') ***REMOVED***
+        return total + (turno.gananciaTotal || 0);
+      ***REMOVED*** else ***REMOVED***
+        const resultado = calculatePayment ? calculatePayment(turno) : ***REMOVED*** totalWithDiscount: 0 ***REMOVED***;
+        return total + (resultado.totalWithDiscount || resultado.totalConDescuento || 0);
       ***REMOVED***
-    ***REMOVED***, 0);
-  ***REMOVED***;
-
-  // Función para buscar trabajo en ambos tipos
-  const obtenerTrabajo = (trabajoId) => ***REMOVED***
-    // Primero buscar en trabajos tradicionales
-    let trabajo = trabajos?.find(t => t.id === trabajoId);
-    
-    // Si no se encuentra, buscar en trabajos de delivery
-    if (!trabajo) ***REMOVED***
-      trabajo = trabajosDelivery?.find(t => t.id === trabajoId);
+    ***REMOVED*** catch (error) ***REMOVED***
+      console.warn('Error calculando pago para turno:', turno.id, error);
+      return total;
     ***REMOVED***
-    
-    return trabajo;
-  ***REMOVED***;
+  ***REMOVED***, 0);
 
-  // Calcular fecha de finalización correcta para turnos nocturnos
-  const calcularFechaFinalizacion = (turno, fechaSeleccionada) => ***REMOVED***
-    // Si el turno tiene fechaFin explícita, usarla
-    if (turno.fechaFin && turno.fechaFin !== (turno.fechaInicio || turno.fecha)) ***REMOVED***
-      return new Date(turno.fechaFin + 'T00:00:00');
-    ***REMOVED***
+  const horasTotal = turnosSegurosDia.reduce((total, turno) => ***REMOVED***
+    if (!turno || !turno.horaInicio || !turno.horaFin) return total;
     
-    // Si es un turno nocturno pero no tiene fechaFin, calcularla
-    const esNocturno = turno.cruzaMedianoche || 
-      (turno.horaInicio && turno.horaFin && 
-       turno.horaInicio.split(':')[0] > turno.horaFin.split(':')[0]);
-    
-    if (esNocturno) ***REMOVED***
-      // Si el turno inicia en la fecha seleccionada, termina al día siguiente
-      const fechaInicioTurno = turno.fechaInicio || turno.fecha;
-      if (fechaInicioTurno === fechaSeleccionada) ***REMOVED***
-        const fechaFin = new Date(fechaSeleccionada + 'T00:00:00');
-        fechaFin.setDate(fechaFin.getDate() + 1);
-        return fechaFin;
-      ***REMOVED***
+    try ***REMOVED***
+      const [horaIni, minIni] = turno.horaInicio.split(':').map(Number);
+      const [horaFin, minFin] = turno.horaFin.split(':').map(Number);
       
-      // Si el turno termina en la fecha seleccionada, empezó el día anterior
-      const fechaInicioCalculada = new Date(fechaSeleccionada + 'T00:00:00');
-      fechaInicioCalculada.setDate(fechaInicioCalculada.getDate() - 1);
-      return new Date(fechaSeleccionada + 'T00:00:00');
+      let horas = (horaFin + minFin/60) - (horaIni + minIni/60);
+      if (horas < 0) horas += 24;
+      
+      return total + horas;
+    ***REMOVED*** catch (error) ***REMOVED***
+      console.warn('Error calculando horas para turno:', turno.id, error);
+      return total;
     ***REMOVED***
-    
-    // Para turnos normales, usar la misma fecha
-    return new Date(fechaSeleccionada + 'T00:00:00');
-  ***REMOVED***;
-
-  if (!fechaSeleccionada) return null;
-
-  const turnosValidos = Array.isArray(turnos) ? turnos : [];
-  const totalDia = calcularTotalDia(turnosValidos);
-
-  // Agrupar turnos por tipo (normales vs nocturnos)
-  const turnosAgrupados = turnosValidos.reduce((grupos, turno) => ***REMOVED***
-    const tipoTurno = obtenerTipoTurnoEnFecha(turno, fechaSeleccionada);
-    
-    if (tipoTurno === 'inicio-nocturno') ***REMOVED***
-      grupos.inicianHoy.push(turno);
-    ***REMOVED*** else if (tipoTurno === 'fin-nocturno') ***REMOVED***
-      grupos.terminanHoy.push(turno);
-    ***REMOVED*** else ***REMOVED***
-      grupos.completos.push(turno);
-    ***REMOVED***
-    
-    return grupos;
-  ***REMOVED***, ***REMOVED*** completos: [], inicianHoy: [], terminanHoy: [] ***REMOVED***);
-
-  // Función mejorada para manejar el click de nuevo turno
-  const handleNuevoTurno = () => ***REMOVED***
-    // Convertir fechaSeleccionada (string) a Date object
-    const fechaDate = new Date(fechaSeleccionada + 'T12:00:00');
-    onNuevoTurno(fechaDate);
-  ***REMOVED***;
+  ***REMOVED***, 0);
 
   return (
-    <div className="mt-6">
-      <div className="flex justify-between items-center mb-3">
+    <Card className="mt-6">
+      <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold">
-          Turnos del día seleccionado
+          ***REMOVED***formatearFecha ? formatearFecha(fechaSeleccionada) : fechaSeleccionada***REMOVED***
         </h3>
         <Button
-          onClick=***REMOVED***handleNuevoTurno***REMOVED***
+          onClick=***REMOVED***() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T00:00:00'))***REMOVED***
           size="sm"
-          className="flex items-center gap-1"
-          icon=***REMOVED***PlusCircle***REMOVED***
-          themeColor=***REMOVED***colors.primary***REMOVED***
+          icon=***REMOVED***Plus***REMOVED***
+          themeColor=***REMOVED***thematicColors?.base***REMOVED***
         >
-          Nuevo
+          Agregar turno
         </Button>
       </div>
-      
-      ***REMOVED***turnosValidos.length > 0 ? (
-        <Card className="overflow-hidden" padding="none">
-          ***REMOVED***/* Header del día */***REMOVED***
-          <div 
-            className="px-4 py-3 border-b rounded-t-xl"
-            style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
-          >
-            <div className="flex items-center">
-              <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-              <h3 className="font-semibold">***REMOVED***formatearFecha(fechaSeleccionada)***REMOVED***</h3>
-            </div>
-          </div>
-          
-          ***REMOVED***/* Lista de turnos */***REMOVED***
-          <div className="p-4 space-y-4">
-            
-            ***REMOVED***/* Turnos que terminan hoy (empezaron ayer) */***REMOVED***
-            ***REMOVED***turnosAgrupados.terminanHoy.length > 0 && (
-              <div>
-                <div className="flex items-center mb-2">
-                  <Moon size=***REMOVED***16***REMOVED*** className="text-blue-600 mr-2" />
-                  <h4 className="text-sm font-medium text-blue-800">Turnos que terminan hoy</h4>
-                </div>
-                <div className="space-y-2 ml-6">
-                  ***REMOVED***turnosAgrupados.terminanHoy.map(turno => ***REMOVED***
-                    const trabajo = obtenerTrabajo(turno.trabajoId);
-                    if (!trabajo) return null;
 
-                    // Calcular la fecha de inicio correcta
-                    const fechaInicio = new Date(fechaSeleccionada + 'T00:00:00');
-                    fechaInicio.setDate(fechaInicio.getDate() - 1);
-
-                    return (
-                      <div key=***REMOVED***turno.id***REMOVED*** className="border-l-2 border-blue-300 pl-3">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-medium text-sm">***REMOVED***trabajo.nombre***REMOVED***</p>
-                            <p className="text-xs text-gray-600">
-                              Empezó: ***REMOVED***fechaInicio.toLocaleDateString('es-ES', ***REMOVED*** 
-                                weekday: 'short', day: 'numeric', month: 'short' 
-                              ***REMOVED***)***REMOVED*** ***REMOVED***turno.horaInicio***REMOVED*** - Termina: ***REMOVED***turno.horaFin***REMOVED***
-                            </p>
-                          </div>
-                          ***REMOVED***turno.tipo === 'delivery' && (
-                            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                              ***REMOVED***formatCurrency(turno.gananciaTotal || 0)***REMOVED***
-                            </span>
-                          )***REMOVED***
-                        </div>
-                      </div>
-                    );
-                  ***REMOVED***)***REMOVED***
-                </div>
-              </div>
-            )***REMOVED***
-
-            ***REMOVED***/* Turnos completos en el día */***REMOVED***
-            ***REMOVED***turnosAgrupados.completos.length > 0 && (
-              <div>
-                ***REMOVED***(turnosAgrupados.terminanHoy.length > 0 || turnosAgrupados.inicianHoy.length > 0) && (
-                  <div className="flex items-center mb-2">
-                    <Sun size=***REMOVED***16***REMOVED*** className="text-orange-600 mr-2" />
-                    <h4 className="text-sm font-medium text-orange-800">Turnos completos del día</h4>
-                  </div>
-                )***REMOVED***
-                <div className="space-y-3">
-                  ***REMOVED***turnosAgrupados.completos.map(turno => ***REMOVED***
-                    const trabajo = obtenerTrabajo(turno.trabajoId);
-                    if (!trabajo) ***REMOVED***
-                      return (
-                        <div key=***REMOVED***turno.id***REMOVED*** className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                          <p className="text-red-600 text-sm font-medium">
-                            Trabajo no encontrado
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            ID: ***REMOVED***turno.trabajoId***REMOVED***
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            ***REMOVED***turno.fecha***REMOVED*** • ***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***
-                          </p>
-                          ***REMOVED***turno.tipo === 'delivery' && (
-                            <p className="text-xs text-blue-600 mt-1">
-                              Turno de Delivery • Ganancia: ***REMOVED***formatCurrency(turno.gananciaTotal || 0)***REMOVED***
-                            </p>
-                          )***REMOVED***
-                        </div>
-                      );
-                    ***REMOVED***
-
-                    // Renderizar según el tipo de turno
-                    if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') ***REMOVED***
-                      return (
-                        <TarjetaTurnoDelivery
-                          key=***REMOVED***turno.id***REMOVED***
-                          turno=***REMOVED***turno***REMOVED***
-                          trabajo=***REMOVED***trabajo***REMOVED***
-                          onEdit=***REMOVED***() => ***REMOVED******REMOVED******REMOVED*** 
-                          onDelete=***REMOVED***() => ***REMOVED******REMOVED******REMOVED*** 
-                        />
-                      );
-                    ***REMOVED***
-                    
-                    return (
-                      <TarjetaTurno
-                        key=***REMOVED***turno.id***REMOVED***
-                        turno=***REMOVED***turno***REMOVED***
-                        trabajo=***REMOVED***trabajo***REMOVED***
-                        onEdit=***REMOVED***() => ***REMOVED******REMOVED******REMOVED*** 
-                        onDelete=***REMOVED***() => ***REMOVED******REMOVED******REMOVED*** 
-                      />
-                    );
-                  ***REMOVED***)***REMOVED***
-                </div>
-              </div>
-            )***REMOVED***
-
-            ***REMOVED***/* Turnos que inician hoy (terminan mañana) */***REMOVED***
-            ***REMOVED***turnosAgrupados.inicianHoy.length > 0 && (
-              <div>
-                <div className="flex items-center mb-2">
-                  <Moon size=***REMOVED***16***REMOVED*** className="text-purple-600 mr-2" />
-                  <h4 className="text-sm font-medium text-purple-800">Turnos nocturnos (terminan mañana)</h4>
-                </div>
-                <div className="space-y-2 ml-6">
-                  ***REMOVED***turnosAgrupados.inicianHoy.map(turno => ***REMOVED***
-                    const trabajo = obtenerTrabajo(turno.trabajoId);
-                    if (!trabajo) return null;
-
-                    // Calcular la fecha de finalización correcta
-                    const fechaFinalizacion = calcularFechaFinalizacion(turno, fechaSeleccionada);
-
-                    return (
-                      <div key=***REMOVED***turno.id***REMOVED*** className="border-l-2 border-purple-300 pl-3">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="font-medium text-sm">***REMOVED***trabajo.nombre***REMOVED***</p>
-                            <p className="text-xs text-gray-600">
-                              Inicia: ***REMOVED***turno.horaInicio***REMOVED*** - Termina: ***REMOVED***fechaFinalizacion.toLocaleDateString('es-ES', ***REMOVED*** 
-                                weekday: 'short', day: 'numeric', month: 'short' 
-                              ***REMOVED***)***REMOVED*** ***REMOVED***turno.horaFin***REMOVED***
-                            </p>
-                          </div>
-                          ***REMOVED***turno.tipo === 'delivery' && (
-                            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded">
-                              ***REMOVED***formatCurrency(turno.gananciaTotal || 0)***REMOVED***
-                            </span>
-                          )***REMOVED***
-                        </div>
-                      </div>
-                    );
-                  ***REMOVED***)***REMOVED***
-                </div>
-              </div>
-            )***REMOVED***
-            
-            ***REMOVED***/* Total del día */***REMOVED***
-            <div 
-              className="flex justify-between px-4 py-3 rounded-lg mt-4"
-              style=***REMOVED******REMOVED*** backgroundColor: colors.transparent5 ***REMOVED******REMOVED***
-            >
-              <span className="font-semibold">Total del día:</span>
-              <span 
-                className="font-semibold"
-                style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
-              >
-                ***REMOVED***formatCurrency(totalDia)***REMOVED***
-              </span>
-            </div>
-          </div>
-        </Card>
-      ) : (
-        <Card className="text-center py-6">
-          <Calendar size=***REMOVED***48***REMOVED*** className="mx-auto mb-4 text-gray-300" />
-          <p className="text-gray-500 mb-4">No hay turnos para esta fecha</p>
+      ***REMOVED***turnosSegurosDia.length === 0 ? (
+        <div className="text-center py-6">
+          <p className="text-gray-500 mb-4">No hay turnos programados para este día</p>
           <Button
-            onClick=***REMOVED***handleNuevoTurno***REMOVED***
-            className="flex items-center gap-2"
-            icon=***REMOVED***PlusCircle***REMOVED***
-            themeColor=***REMOVED***colors.primary***REMOVED***
+            onClick=***REMOVED***() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T00:00:00'))***REMOVED***
+            themeColor=***REMOVED***thematicColors?.base***REMOVED***
           >
-            Agregar turno
+            Agregar primer turno
           </Button>
-        </Card>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          ***REMOVED***/* Resumen del día */***REMOVED***
+          <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <Clock size=***REMOVED***16***REMOVED*** className="text-blue-500 mr-2" />
+                <span className="text-sm font-medium">
+                  ***REMOVED***horasTotal.toFixed(1)***REMOVED*** horas
+                </span>
+              </div>
+              <div className="flex items-center">
+                <DollarSign size=***REMOVED***16***REMOVED*** className="text-green-500 mr-2" />
+                <span className="text-sm font-medium">
+                  ***REMOVED***formatCurrency(totalDia)***REMOVED***
+                </span>
+              </div>
+            </div>
+            <span className="text-sm text-gray-500">
+              ***REMOVED***turnosSegurosDia.length***REMOVED*** turno***REMOVED***turnosSegurosDia.length !== 1 ? 's' : ''***REMOVED***
+            </span>
+          </div>
+
+          ***REMOVED***/* Lista de turnos */***REMOVED***
+          <div className="space-y-3">
+            ***REMOVED***turnosSegurosDia.map((turno, index) => ***REMOVED***
+              if (!turno) return null;
+              
+              // Buscar trabajo de forma defensiva
+              const trabajo = todosLosTrabajos?.find(t => t && t.id === turno.trabajoId);
+              
+              return (
+                <div key=***REMOVED***turno.id || index***REMOVED*** className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                  <div className="flex items-center">
+                    <div 
+                      className="w-3 h-3 rounded-full mr-3"
+                      style=***REMOVED******REMOVED*** 
+                        backgroundColor: trabajo?.color || trabajo?.colorAvatar || '#6B7280' 
+                      ***REMOVED******REMOVED***
+                    />
+                    <div>
+                      <h4 className="font-medium text-gray-900">
+                        ***REMOVED***trabajo?.nombre || 'Trabajo eliminado'***REMOVED***
+                      </h4>
+                      <p className="text-sm text-gray-500">
+                        ***REMOVED***turno.horaInicio || '--:--'***REMOVED*** - ***REMOVED***turno.horaFin || '--:--'***REMOVED***
+                        ***REMOVED***turno.tipo === 'delivery' && (
+                          <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-600 rounded text-xs">
+                            Delivery
+                          </span>
+                        )***REMOVED***
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="text-right">
+                    ***REMOVED***turno.tipo === 'delivery' ? (
+                      <span className="font-medium text-green-600">
+                        ***REMOVED***formatCurrency(turno.gananciaTotal || 0)***REMOVED***
+                      </span>
+                    ) : (
+                      <span className="font-medium" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
+                        ***REMOVED***turno.horaInicio && turno.horaFin ? (
+                          (() => ***REMOVED***
+                            try ***REMOVED***
+                              const resultado = calculatePayment ? calculatePayment(turno) : ***REMOVED*** totalWithDiscount: 0 ***REMOVED***;
+                              return formatCurrency(resultado.totalWithDiscount || resultado.totalConDescuento || 0);
+                            ***REMOVED*** catch (error) ***REMOVED***
+                              return formatCurrency(0);
+                            ***REMOVED***
+                          ***REMOVED***)()
+                        ) : (
+                          formatCurrency(0)
+                        )***REMOVED***
+                      </span>
+                    )***REMOVED***
+                  </div>
+                </div>
+              );
+            ***REMOVED***)***REMOVED***
+          </div>
+        </div>
       )***REMOVED***
-    </div>
+    </Card>
   );
 ***REMOVED***;
 

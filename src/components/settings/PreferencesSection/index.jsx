@@ -1,8 +1,9 @@
-// src/components/settings/PreferencesSection/index.jsx
+// src/components/settings/PreferencesSection/index.jsx - REFACTORIZADO
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Clock ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 import InfoTooltip from '../../ui/InfoTooltip';
@@ -10,10 +11,10 @@ import InfoTooltip from '../../ui/InfoTooltip';
 const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
     defaultDiscount,
-    savePreferences,
-    thematicColors 
+    savePreferences
   ***REMOVED*** = useApp();
   
+  const colors = useThemeColors();
   const [descuentoDefault, setDescuentoDefault] = useState(defaultDiscount);
   const [loading, setLoading] = useState(false);
 
@@ -54,7 +55,7 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => *
             value=***REMOVED***descuentoDefault***REMOVED***
             onChange=***REMOVED***(e) => setDescuentoDefault(Number(e.target.value))***REMOVED***
             className="flex-1 px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 transition-colors"
-            style=***REMOVED******REMOVED*** '--tw-ring-color': thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
             placeholder="15"
           />
           <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
@@ -70,7 +71,7 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => *
           disabled=***REMOVED***loading***REMOVED***
           loading=***REMOVED***loading***REMOVED***
           className="w-full mt-4"
-          themeColor=***REMOVED***thematicColors?.base***REMOVED***
+          themeColor=***REMOVED***colors.primary***REMOVED***
         >
           Guardar cambios
         </Button>

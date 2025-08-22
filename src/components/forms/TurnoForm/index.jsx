@@ -1,8 +1,8 @@
-// src/components/forms/TurnoForm/index.jsx
+// src/components/forms/TurnoForm/index.jsx - REFACTORIZADO
 
 import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** Calendar, Clock, Briefcase, AlertCircle ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ThemeInput from '../../ui/ThemeInput';
 import Button from '../../ui/Button';
 
@@ -17,7 +17,7 @@ const TurnoForm = (***REMOVED***
   loading,
   fechaInicial 
 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   
   const [formData, setFormData] = useState(***REMOVED***
     fecha: '',
@@ -144,7 +144,8 @@ const TurnoForm = (***REMOVED***
         <select 
           value=***REMOVED***formData.trabajoSeleccionado***REMOVED*** 
           onChange=***REMOVED***handleTrabajoChange***REMOVED*** 
-          className=***REMOVED***`w-full border rounded-lg transition-colors $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED*** border-gray-300`***REMOVED*** 
+          className=***REMOVED***`w-full border rounded-lg transition-colors $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED*** border-gray-300`***REMOVED***
+          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
           required 
           disabled=***REMOVED***!!turno || loading***REMOVED***
         >
@@ -167,7 +168,6 @@ const TurnoForm = (***REMOVED***
           onChange=***REMOVED***(e) => handleInputChange('fecha', e.target.value)***REMOVED*** 
           className="w-full"
           required 
-          themeColor=***REMOVED***thematicColors?.base***REMOVED*** 
         />
       </div>
 
@@ -184,7 +184,6 @@ const TurnoForm = (***REMOVED***
             onChange=***REMOVED***(e) => handleInputChange('horaInicio', e.target.value)***REMOVED*** 
             className="w-full"
             required 
-            themeColor=***REMOVED***thematicColors?.base***REMOVED*** 
           />
         </div>
         <div>
@@ -198,7 +197,6 @@ const TurnoForm = (***REMOVED***
             onChange=***REMOVED***(e) => handleInputChange('horaFin', e.target.value)***REMOVED*** 
             className="w-full"
             required 
-            themeColor=***REMOVED***thematicColors?.base***REMOVED*** 
           />
         </div>
       </div>
@@ -232,7 +230,8 @@ const TurnoForm = (***REMOVED***
           onChange=***REMOVED***(e) => handleInputChange('notas', e.target.value)***REMOVED*** 
           placeholder="Agregar notas sobre el turno..." 
           rows=***REMOVED***isMobile ? 4 : 3***REMOVED*** 
-          className=***REMOVED***`w-full border border-gray-300 rounded-lg transition-colors resize-none p-3 text-base`***REMOVED*** 
+          className=***REMOVED***`w-full border border-gray-300 rounded-lg transition-colors resize-none p-3 text-base`***REMOVED***
+          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
         />
       </div>
 
@@ -249,7 +248,7 @@ const TurnoForm = (***REMOVED***
           variant="outline" 
           className=***REMOVED***isMobile ? 'w-full py-3' : 'flex-1'***REMOVED*** 
           disabled=***REMOVED***loading***REMOVED*** 
-          themeColor=***REMOVED***thematicColors?.base***REMOVED***
+          themeColor=***REMOVED***colors.primary***REMOVED***
         >
           Cancelar
         </Button>
@@ -257,7 +256,7 @@ const TurnoForm = (***REMOVED***
           type="submit" 
           className=***REMOVED***isMobile ? 'w-full py-3' : 'flex-1'***REMOVED*** 
           loading=***REMOVED***loading***REMOVED*** 
-          themeColor=***REMOVED***thematicColors?.base***REMOVED***
+          themeColor=***REMOVED***colors.primary***REMOVED***
         >
           ***REMOVED***turno ? 'Guardar Cambios' : 'Crear Turno'***REMOVED***
         </Button>
@@ -267,15 +266,15 @@ const TurnoForm = (***REMOVED***
         <div 
           className=***REMOVED***`rounded-lg p-4 border-l-4 mt-2`***REMOVED*** 
           style=***REMOVED******REMOVED*** 
-            borderLeftColor: trabajoSeleccionadoInfo.color || thematicColors?.base, 
-            backgroundColor: `$***REMOVED***trabajoSeleccionadoInfo.color || thematicColors?.base***REMOVED***1A` 
+            borderLeftColor: trabajoSeleccionadoInfo.color || colors.primary, 
+            backgroundColor: `$***REMOVED***trabajoSeleccionadoInfo.color || colors.primary***REMOVED***1A` 
           ***REMOVED******REMOVED***
         >
           <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <div 
                 className="w-4 h-4 rounded-full" 
-                style=***REMOVED******REMOVED*** backgroundColor: trabajoSeleccionadoInfo.color || thematicColors?.base ***REMOVED******REMOVED*** 
+                style=***REMOVED******REMOVED*** backgroundColor: trabajoSeleccionadoInfo.color || colors.primary ***REMOVED******REMOVED*** 
               />
               <span className="text-sm font-medium text-gray-700">***REMOVED***trabajoSeleccionadoInfo.nombre***REMOVED***</span>
             </div>
@@ -289,7 +288,7 @@ const TurnoForm = (***REMOVED***
             ***REMOVED***trabajoSeleccionadoInfo.tarifaBase && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600">Ganancia estimada:</span>
-                <span style=***REMOVED******REMOVED*** color: trabajoSeleccionadoInfo.color || thematicColors?.base ***REMOVED******REMOVED***>
+                <span style=***REMOVED******REMOVED*** color: trabajoSeleccionadoInfo.color || colors.primary ***REMOVED******REMOVED***>
                   $***REMOVED***(Number(horasTrabajadas) * trabajoSeleccionadoInfo.tarifaBase).toFixed(2)***REMOVED***
                 </span>
               </div>

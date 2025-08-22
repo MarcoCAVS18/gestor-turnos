@@ -1,11 +1,14 @@
-// src/components/stats/DailyBreakdownCard/index.jsx
+// src/components/stats/DailyBreakdownCard/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import ***REMOVED*** Calendar, Clock, DollarSign ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED***, trabajos = [] ***REMOVED***) => ***REMOVED***
+  const colors = useThemeColors();
+  
   // Validar datos
   const datos = turnosPorDia && typeof turnosPorDia === 'object' ? turnosPorDia : ***REMOVED******REMOVED***;
   const trabajosValidos = Array.isArray(trabajos) ? trabajos : [];
@@ -15,7 +18,7 @@ const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED
     return (
       <Card>
         <h3 className="text-lg font-semibold mb-4 flex items-center">
-          <Calendar size=***REMOVED***20***REMOVED*** className="mr-2" />
+          <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
           Desglose Diario
         </h3>
         <div className="text-center py-8 text-gray-500">
@@ -81,7 +84,7 @@ const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED
   return (
     <Card>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
-        <Calendar size=***REMOVED***20***REMOVED*** className="mr-2" />
+        <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
         Desglose Diario
       </h3>
       
@@ -93,8 +96,11 @@ const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED
           return (
             <div key=***REMOVED***fecha***REMOVED*** className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <Calendar size=***REMOVED***16***REMOVED*** className="text-blue-600" />
+                <div 
+                  className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
+                  style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
+                >
+                  <Calendar size=***REMOVED***16***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
                 </div>
                 <div>
                   <p className="font-medium text-gray-800">

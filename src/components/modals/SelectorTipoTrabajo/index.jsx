@@ -1,14 +1,10 @@
-// src/components/modals/SelectorTipoTrabajo/index.jsx
-
 import React from 'react';
 import ***REMOVED*** Briefcase, Truck, Clock, DollarSign, Package, Navigation ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
-const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, thematicColors, isMobile ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors: contextColors ***REMOVED*** = useApp();
-  
+const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***) => ***REMOVED***
   // Usar colores del contexto si no se pasan como prop
-  const colors = thematicColors || contextColors;
+  const colors = useThemeColors();
 
   const handleSelect = (tipo) => ***REMOVED***
     onSelectTipo(tipo);
@@ -19,7 +15,7 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, thematicColors, isMobil
       <div className="text-center mb-6">
         <h3 
           className=***REMOVED***`font-semibold mb-3 $***REMOVED***isMobile ? 'text-xl' : 'text-lg'***REMOVED***`***REMOVED***
-          style=***REMOVED******REMOVED*** color: colors?.base ***REMOVED******REMOVED***
+          style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
         >
           ¿Qué tipo de trabajo quieres agregar?
         </h3>
@@ -43,9 +39,9 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, thematicColors, isMobil
             backgroundColor: 'white'
           ***REMOVED******REMOVED***
           onMouseEnter=***REMOVED***(e) => ***REMOVED***
-            e.currentTarget.style.borderColor = colors?.base;
-            e.currentTarget.style.backgroundColor = colors?.transparent5;
-            e.currentTarget.style.boxShadow = `0 8px 25px $***REMOVED***colors?.transparent30 || 'rgba(0,0,0,0.1)'***REMOVED***`;
+            e.currentTarget.style.borderColor = colors.primary;
+            e.currentTarget.style.backgroundColor = colors.transparent5;
+            e.currentTarget.style.boxShadow = `0 8px 25px $***REMOVED***colors.transparent30***REMOVED***`;
           ***REMOVED******REMOVED***
           onMouseLeave=***REMOVED***(e) => ***REMOVED***
             e.currentTarget.style.borderColor = '#e5e7eb';
@@ -60,7 +56,7 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, thematicColors, isMobil
                   rounded-lg flex items-center justify-center transition-all duration-300
                   $***REMOVED***isMobile ? 'w-12 h-12' : 'w-10 h-10'***REMOVED***
                 `***REMOVED***
-                style=***REMOVED******REMOVED*** backgroundColor: colors?.transparent10 ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
               >
                 <Briefcase 
                   className=***REMOVED***`text-blue-500 group-hover:scale-110 transition-transform $***REMOVED***isMobile ? 'w-7 h-7' : 'w-6 h-6'***REMOVED***`***REMOVED*** 
@@ -106,9 +102,9 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, thematicColors, isMobil
             backgroundColor: 'white'
           ***REMOVED******REMOVED***
           onMouseEnter=***REMOVED***(e) => ***REMOVED***
-            e.currentTarget.style.borderColor = colors?.base;
-            e.currentTarget.style.backgroundColor = colors?.transparent5;
-            e.currentTarget.style.boxShadow = `0 8px 25px $***REMOVED***colors?.transparent30 || 'rgba(0,0,0,0.1)'***REMOVED***`;
+            e.currentTarget.style.borderColor = colors.primary;
+            e.currentTarget.style.backgroundColor = colors.transparent5;
+            e.currentTarget.style.boxShadow = `0 8px 25px $***REMOVED***colors.transparent30***REMOVED***`;
           ***REMOVED******REMOVED***
           onMouseLeave=***REMOVED***(e) => ***REMOVED***
             e.currentTarget.style.borderColor = '#e5e7eb';
@@ -159,13 +155,13 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, thematicColors, isMobil
       ***REMOVED***/* Consejo informativo */***REMOVED***
       <div 
         className=***REMOVED***`p-4 rounded-lg $***REMOVED***isMobile ? 'mt-6' : 'mt-6'***REMOVED***`***REMOVED***
-        style=***REMOVED******REMOVED*** backgroundColor: colors?.transparent10 || 'rgba(59, 130, 246, 0.1)' ***REMOVED******REMOVED***
+        style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
       >
         <div className="flex items-start space-x-3">
           <div className="flex-shrink-0">
             <div 
               className=***REMOVED***`rounded-full flex items-center justify-center $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***`***REMOVED***
-              style=***REMOVED******REMOVED*** backgroundColor: colors?.base ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
             >
               <span className="text-white text-xs font-bold">💡</span>
             </div>
@@ -173,7 +169,7 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, thematicColors, isMobil
           <div>
             <p 
               className=***REMOVED***`font-medium mb-1 $***REMOVED***isMobile ? 'text-base' : 'text-sm'***REMOVED***`***REMOVED***
-              style=***REMOVED******REMOVED*** color: colors?.base ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
             >
               Consejo
             </p>
