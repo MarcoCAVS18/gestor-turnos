@@ -1,19 +1,31 @@
-// src/pages/CalendarioView.jsx
+// src/pages/CalendarioView.jsx - Versión mejorada
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { CalendarDays, Plus } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
+import { useThemeColors } from '../hooks/useThemeColors';
+import { fechaLocalAISO } from '../utils/calendarUtils';
 import Calendario from '../components/calendar/Calendario';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ModalTurno from '../components/modals/ModalTurno';
+import Button from '../components/ui/Button';
 
 const CalendarioView = () => {
   const { turnosPorFecha, todosLosTrabajos, thematicColors } = useApp();
+  const colors = useThemeColors();
   
   // Estados para el calendario
   const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [fechaInicialModal, setFechaInicialModal] = useState(null);
+  
+  // Seleccionar automáticamente el día actual al cargar
+  useEffect(() => {
+    const hoy = new Date();
+    const fechaHoyStr = fechaLocalAISO(hoy);
+    setFechaSeleccionada(fechaHoyStr);
+  }, []);
   
   // Validar que tenemos trabajos antes de mostrar funcionalidades
   const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
@@ -24,12 +36,23 @@ const CalendarioView = () => {
   // Función para formatear fecha
   const formatearFecha = (fechaStr) => {
     const fecha = new Date(fechaStr + 'T00:00:00');
-    return fecha.toLocaleDateString('es-ES', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+    const hoy = new Date();
+    const ayer = new Date(hoy);
+    ayer.setDate(hoy.getDate() - 1);
+    
+    // Comparar fechas
+    if (fecha.toDateString() === hoy.toDateString()) {
+      return 'Hoy';
+    } else if (fecha.toDateString() === ayer.toDateString()) {
+      return 'Ayer';
+    } else {
+      return fecha.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
   };
 
   // Función para seleccionar día en el calendario
@@ -55,9 +78,14 @@ const CalendarioView = () => {
   };
   
   // Animaciones
+  const headerVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+  };
+
   const calendarVariants = {
     hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.1 } }
   };
   
   const detailsVariants = {
@@ -66,15 +94,47 @@ const CalendarioView = () => {
   };
   
   return (
-    <div className="px-4 py-6">
-      <motion.h2 
-        className="text-xl font-semibold mb-4"
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3 }}
+    <div className="px-4 py-6 pb-32 space-y-6">
+      {/* Header consistente con otras páginas */}
+      <motion.div
+        className="flex justify-between items-center"
+        variants={headerVariants}
+        initial="hidden"
+        animate="visible"
       >
-        Calendario de Turnos
-      </motion.h2>
+        <div className="flex items-center space-x-3">
+          <div 
+            className="p-2 rounded-lg"
+            style={{ backgroundColor: colors.transparent10 }}
+          >
+            <CalendarDays 
+              className="w-6 h-6" 
+              style={{ color: colors.primary }}
+            />
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold">Calendario de Turnos</h1>
+            {hayTrabajos && (
+              <p className="text-sm text-gray-600">
+                Visualiza y gestiona tus turnos por fecha
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Botón de agregar turno - solo si hay trabajos */}
+        {hayTrabajos && fechaSeleccionada && (
+          <Button
+            onClick={() => abrirModalNuevoTurno(new Date(fechaSeleccionada + 'T00:00:00'))}
+            className="flex items-center space-x-2 shadow-sm hover:shadow-md"
+            icon={Plus}
+            themeColor={colors.primary}
+          >
+            <span className="hidden sm:inline">Nuevo Turno</span>
+            <span className="sm:hidden">Nuevo</span>
+          </Button>
+        )}
+      </motion.div>
       
       {/* Mostrar mensaje si no hay trabajos */}
       {!hayTrabajos && (
@@ -93,6 +153,7 @@ const CalendarioView = () => {
         </motion.div>
       )}
       
+      {/* Calendario SIN CalendarSummary */}
       <motion.div
         variants={calendarVariants}
         initial="hidden"
@@ -101,6 +162,7 @@ const CalendarioView = () => {
         <Calendario onDiaSeleccionado={seleccionarDia} />
       </motion.div>
       
+      {/* Resumen del día seleccionado */}
       <motion.div
         variants={detailsVariants}
         initial="hidden"
@@ -114,6 +176,7 @@ const CalendarioView = () => {
         />
       </motion.div>
       
+      {/* Modal para crear/editar turnos */}
       <ModalTurno 
         isOpen={modalAbierto} 
         onClose={cerrarModal} 

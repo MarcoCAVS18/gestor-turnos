@@ -1,3 +1,5 @@
+// src/components/cards/TarjetaTurno/index.jsx - Con soporte para showActions
+
 import React from 'react';
 import { Edit, Trash2 } from 'lucide-react';
 import Card from '../../ui/Card';
@@ -11,10 +13,34 @@ const TarjetaTurno = ({
   trabajo, 
   onEdit, 
   onDelete, 
-  showActions = true,
+  showActions = true, // Nueva prop para controlar las acciones
   variant = 'card'
 }) => {
   const { shiftRanges } = useApp(); 
+
+  // Validaciones defensivas
+  if (!turno) {
+    return (
+      <Card className="relative">
+        <div className="p-4 text-center text-gray-500">
+          <p className="text-sm">Turno no encontrado</p>
+        </div>
+      </Card>
+    );
+  }
+
+  if (!trabajo) {
+    return (
+      <Card className="relative">
+        <div className="p-4 text-center text-gray-500">
+          <p className="text-sm">Trabajo eliminado</p>
+          <p className="text-xs text-gray-400 mt-1">
+            {turno.horaInicio} - {turno.horaFin}
+          </p>
+        </div>
+      </Card>
+    );
+  }
 
   // Usar la utilidad centralizada
   const tipoTurno = determinarTipoTurno(turno, shiftRanges);
@@ -57,13 +83,14 @@ const TarjetaTurno = ({
         />
       </div>
 
+      {/* Solo mostrar acciones si showActions es true */}
       {showActions && <ActionsMenu actions={actions} />}
     </div>
   );
 
   if (variant === 'compact') {
     return (
-      <div className="rounded-lg transition-colors">
+      <div className="p-3 rounded-lg transition-colors">
         {cardContent}
       </div>
     );

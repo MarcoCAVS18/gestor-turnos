@@ -1,4 +1,4 @@
-// src/components/dashboard/ThisWeekSummaryCard/index.jsx - Con call-to-action para metas
+// src/components/dashboard/ThisWeekSummaryCard/index.jsx - Usando turnosSemana
 
 import React from 'react';
 import { Calendar, TrendingUp, Target, ArrowRight } from 'lucide-react';
@@ -17,7 +17,7 @@ const ThisWeekSummaryCard = ({ stats }) => {
   const semanaActual = stats.semanaActual || {};
   const totalSemana = semanaActual.totalGanado || 0;
   const horasSemana = semanaActual.horasTrabajadas || 0;
-  const turnosSemana = semanaActual.totalTurnos || 0;
+  const turnosSemana = semanaActual.totalTurnos || 0; // USAR la variable
 
   // Usar la meta del usuario o mostrar call-to-action si no hay meta
   const metaHoras = weeklyHoursGoal;
@@ -101,17 +101,27 @@ const ThisWeekSummaryCard = ({ stats }) => {
           </div>
         )}
 
-        {/* Stats básicas - SIMPLIFICADO cuando no hay meta */}
+        {/* Stats básicas - Mostrar turnos realizados */}
         <div className="flex justify-between text-sm">
+          <div className="text-center">
+            <p className="font-semibold text-gray-800">{turnosSemana}</p>
+            <p className="text-xs text-gray-500">turnos</p>
+          </div>
+          
           {tieneMetaHoras && (
             <div className="text-center">
               <p className="font-semibold text-gray-800">{Math.ceil(progresoLimitado)}%</p>
               <p className="text-xs text-gray-500">meta</p>
             </div>
           )}
+          
+          <div className="text-center">
+            <p className="font-semibold text-gray-800">{horasSemana.toFixed(1)}h</p>
+            <p className="text-xs text-gray-500">horas</p>
+          </div>
         </div>
 
-        {/* Mensaje simple */}
+        {/* Mensaje motivacional */}
         {totalSemana > 0 && tieneMetaHoras && (
           <div className="text-center p-2 rounded-lg" style={{ backgroundColor: colors.transparent10 }}>
             <div className="flex items-center justify-center">

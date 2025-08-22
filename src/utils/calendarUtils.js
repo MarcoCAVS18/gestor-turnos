@@ -1,7 +1,13 @@
-// src/utils/calendarUtils.js - VERSIÓN ACTUALIZADA
+// src/utils/calendarUtils.js - VERSIÓN ACTUALIZADA COMPLETA
 
+/**
+ * Crea una fecha local evitando problemas de zona horaria
+ */
 export const crearFechaLocal = (year, month, day) => new Date(year, month, day);
 
+/**
+ * Convierte una fecha local a formato ISO string (YYYY-MM-DD)
+ */
 export const fechaLocalAISO = (fecha) => {
   const year = fecha.getFullYear();
   const month = String(fecha.getMonth() + 1).padStart(2, '0');
@@ -9,12 +15,18 @@ export const fechaLocalAISO = (fecha) => {
   return `${year}-${month}-${day}`;
 };
 
+/**
+ * Verifica si una fecha es hoy
+ */
 export const fechaEsHoy = (fecha, fechaActual) => {
   return fecha.getDate() === fechaActual.getDate() &&
          fecha.getMonth() === fechaActual.getMonth() &&
          fecha.getFullYear() === fechaActual.getFullYear();
 };
 
+/**
+ * Obtiene los turnos del mes considerando turnos nocturnos
+ */
 export const obtenerTurnosMes = (turnos, anioActual, mesActual) => {
   const primerDia = crearFechaLocal(anioActual, mesActual, 1);
   const ultimoDia = crearFechaLocal(anioActual, mesActual + 1, 0);
@@ -40,6 +52,9 @@ export const obtenerTurnosMes = (turnos, anioActual, mesActual) => {
   });
 };
 
+/**
+ * Verifica si hay turnos en una fecha específica
+ */
 export const verificarTurnosEnFecha = (fecha, turnos) => {
   const fechaStr = fechaLocalAISO(fecha);
   
@@ -59,7 +74,9 @@ export const verificarTurnosEnFecha = (fecha, turnos) => {
   });
 };
 
-// Obtener turnos de un día específico (incluyendo nocturnos)
+/**
+ * Obtener turnos de un día específico (incluyendo nocturnos)
+ */
 export const obtenerTurnosDelDia = (fecha, turnos) => {
   const fechaStr = fechaLocalAISO(fecha);
   
@@ -79,7 +96,9 @@ export const obtenerTurnosDelDia = (fecha, turnos) => {
   });
 };
 
-// Obtener colores considerando turnos nocturnos
+/**
+ * Obtener colores considerando turnos nocturnos
+ */
 export const obtenerColoresTrabajos = (turnosDelDia, trabajos) => {
   const coloresUnicos = new Set();
   
@@ -98,7 +117,9 @@ export const obtenerColoresTrabajos = (turnosDelDia, trabajos) => {
   return Array.from(coloresUnicos).slice(0, 3);
 };
 
-// Determinar el tipo de turno en una fecha específica
+/**
+ * Determinar el tipo de turno en una fecha específica
+ */
 export const obtenerTipoTurnoEnFecha = (turno, fechaStr) => {
   const fechaPrincipal = turno.fechaInicio || turno.fecha;
   
@@ -118,7 +139,9 @@ export const obtenerTipoTurnoEnFecha = (turno, fechaStr) => {
   return 'normal';
 };
 
-// Formatear la información del turno para mostrar en el calendario
+/**
+ * Formatear la información del turno para mostrar en el calendario
+ */
 export const formatearInfoTurnoParaCalendario = (turno, fechaStr, trabajo) => {
   const tipoTurno = obtenerTipoTurnoEnFecha(turno, fechaStr);
   
@@ -142,4 +165,47 @@ export const formatearInfoTurnoParaCalendario = (turno, fechaStr, trabajo) => {
     color: trabajo?.color || trabajo?.colorAvatar || '#6B7280',
     esDelivery: turno.tipo === 'delivery' || trabajo?.tipo === 'delivery'
   };
+};
+
+/**
+ * Obtiene los días de la semana en español
+ */
+export const getDiasSemana = () => {
+  return ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+};
+
+/**
+ * Obtiene los meses en español
+ */
+export const getMeses = () => {
+  return [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+};
+
+/**
+ * Formatea una fecha relativa (hoy, ayer, etc.)
+ */
+export const formatearFechaRelativa = (fechaStr) => {
+  const fecha = new Date(fechaStr + 'T00:00:00');
+  const hoy = new Date();
+  const ayer = new Date(hoy);
+  ayer.setDate(hoy.getDate() - 1);
+  const mañana = new Date(hoy);
+  mañana.setDate(hoy.getDate() + 1);
+  
+  if (fecha.toDateString() === hoy.toDateString()) {
+    return 'Hoy';
+  } else if (fecha.toDateString() === ayer.toDateString()) {
+    return 'Ayer';
+  } else if (fecha.toDateString() === mañana.toDateString()) {
+    return 'Mañana';
+  } else {
+    return fecha.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long'
+    });
+  }
 };

@@ -1,4 +1,4 @@
-// src/components/cards/TarjetaTrabajo/index.jsx
+// src/components/cards/TarjetaTrabajo/index.jsx - Con validaciones defensivas
 
 import { Edit, Trash2, Share2 } from 'lucide-react';
 import Card from '../../ui/Card';
