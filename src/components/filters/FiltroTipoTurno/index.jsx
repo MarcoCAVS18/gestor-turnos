@@ -1,15 +1,17 @@
-// src/components/filters/FiltroTipoTurno/index.jsx
+// src/components/filters/FiltroTipoTurno/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import { Clock } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import { getAvailableShiftTypes } from '../../../utils/shiftTypesConfig';
 
 const FiltroTipoTurno = ({ value, onChange }) => {
-  const { thematicColors, turnosPorFecha, shiftRanges } = useApp();
+  const { turnosPorFecha, shiftRanges } = useApp();
+  const colors = useThemeColors();
   
   // Obtener tipos de turno disponibles dinámicamente
-  const tiposTurno = getAvailableShiftTypes(turnosPorFecha, shiftRanges, thematicColors);
+  const tiposTurno = getAvailableShiftTypes(turnosPorFecha, shiftRanges, { base: colors.primary });
 
   return (
     <div>

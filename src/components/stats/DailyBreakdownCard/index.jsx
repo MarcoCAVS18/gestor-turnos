@@ -1,11 +1,14 @@
-// src/components/stats/DailyBreakdownCard/index.jsx
+// src/components/stats/DailyBreakdownCard/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import { Calendar, Clock, DollarSign } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const DailyBreakdownCard = ({ turnosPorDia = {}, trabajos = [] }) => {
+  const colors = useThemeColors();
+  
   // Validar datos
   const datos = turnosPorDia && typeof turnosPorDia === 'object' ? turnosPorDia : {};
   const trabajosValidos = Array.isArray(trabajos) ? trabajos : [];
@@ -15,7 +18,7 @@ const DailyBreakdownCard = ({ turnosPorDia = {}, trabajos = [] }) => {
     return (
       <Card>
         <h3 className="text-lg font-semibold mb-4 flex items-center">
-          <Calendar size={20} className="mr-2" />
+          <Calendar size={20} style={{ color: colors.primary }} className="mr-2" />
           Desglose Diario
         </h3>
         <div className="text-center py-8 text-gray-500">
@@ -81,7 +84,7 @@ const DailyBreakdownCard = ({ turnosPorDia = {}, trabajos = [] }) => {
   return (
     <Card>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
-        <Calendar size={20} className="mr-2" />
+        <Calendar size={20} style={{ color: colors.primary }} className="mr-2" />
         Desglose Diario
       </h3>
       
@@ -93,8 +96,11 @@ const DailyBreakdownCard = ({ turnosPorDia = {}, trabajos = [] }) => {
           return (
             <div key={fecha} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <Calendar size={16} className="text-blue-600" />
+                <div 
+                  className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
+                  style={{ backgroundColor: colors.transparent10 }}
+                >
+                  <Calendar size={16} style={{ color: colors.primary }} />
                 </div>
                 <div>
                   <p className="font-medium text-gray-800">

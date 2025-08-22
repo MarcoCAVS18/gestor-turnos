@@ -1,14 +1,14 @@
-// src/components/modals/ModalTrabajoDelivery/index.jsx
-
 import { useCallback, useEffect, useState } from 'react';
 import { X, Truck } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import PlatformSelector from '../../delivery/PlatformSelector';
 import VehicleSelector from '../../delivery/VehicleSelector';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
   // ✅ Usar los nombres correctos del contexto
-  const { addDeliveryJob, editDeliveryJob, thematicColors } = useApp();
+  const { addDeliveryJob, editDeliveryJob } = useApp();
+  const colors = useThemeColors();
   const [isMobile, setIsMobile] = useState(false);
 
   // Detectar móvil
@@ -76,7 +76,7 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
           `}
           style={{ 
             zIndex: 10,
-            borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+            borderBottomColor: colors.transparent20
           }}
         >
           <h2 
@@ -84,10 +84,10 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
           >
             <Truck 
               size={20} 
-              style={{ color: thematicColors?.base }} 
+              style={{ color: colors.primary }} 
               className="mr-2" 
             />
-            <span style={{ color: thematicColors?.base }}>
+            <span style={{ color: colors.primary }}>
               {trabajo ? 'Editar' : 'Nuevo'} Trabajo Delivery
             </span>
           </h2>
@@ -96,10 +96,10 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
             className="p-2 rounded-lg transition-colors flex-shrink-0"
             style={{
               backgroundColor: 'transparent',
-              color: thematicColors?.base || '#EC4899'
+              color: colors.primary
             }}
             onMouseEnter={(e) => {
-              e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+              e.target.style.backgroundColor = colors.transparent10;
             }}
             onMouseLeave={(e) => {
               e.target.style.backgroundColor = 'transparent';
@@ -114,14 +114,14 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
           ${isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'}
         `}>
             <div className="max-w-[420px] mx-auto w-full">
-    <TrabajoDeliveryFormContent
-      trabajo={trabajo}
-      onSubmit={manejarGuardado}
-      onCancel={onClose}
-      thematicColors={thematicColors}
-      isMobile={isMobile}
-    />
-  </div>
+                <TrabajoDeliveryFormContent
+                trabajo={trabajo}
+                onSubmit={manejarGuardado}
+                onCancel={onClose}
+                thematicColors={colors}
+                isMobile={isMobile}
+                />
+            </div>
         </div>
 
         {/* Footer indicador en móvil */}
@@ -129,14 +129,14 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
           <div 
             className="sticky bottom-0 bg-white border-t p-2"
             style={{ 
-              borderTopColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)',
+              borderTopColor: colors.transparent20,
               zIndex: 10
             }}
           >
             <div className="flex justify-center">
               <div 
                 className="w-10 h-1 rounded-full"
-                style={{ backgroundColor: thematicColors?.transparent50 || 'rgba(236, 72, 153, 0.5)' }}
+                style={{ backgroundColor: colors.transparent50 }}
               />
             </div>
           </div>
@@ -261,7 +261,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
             ${errors.nombre ? 'border-red-500' : 'border-gray-300'}
           `}
           style={{
-            '--tw-ring-color': thematicColors?.base,
+            '--tw-ring-color': thematicColors.primary,
             borderColor: errors.nombre ? '#EF4444' : undefined
           }}
           placeholder="ej: Delivery Zona Norte"
@@ -290,7 +290,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
       {/* Configuración de cálculos */}
       <div 
         className="space-y-3 p-4 rounded-lg"
-        style={{ backgroundColor: thematicColors?.transparent5 || 'rgba(0,0,0,0.05)' }}
+        style={{ backgroundColor: thematicColors.transparent5 }}
       >
         <h3 className="text-sm font-medium text-gray-700">Configuración de cálculos</h3>
 
@@ -300,7 +300,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
             checked={formData.configuracion.incluyePropinas}
             onChange={(e) => handleConfigChange('incluyePropinas', e.target.checked)}
             className="rounded w-4 h-4"
-            style={{ accentColor: thematicColors?.base }}
+            style={{ accentColor: thematicColors.primary }}
           />
           <span className="text-sm">Incluir propinas en el registro</span>
         </label>
@@ -311,7 +311,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
             checked={formData.configuracion.rastreaCombustible}
             onChange={(e) => handleConfigChange('rastreaCombustible', e.target.checked)}
             className="rounded w-4 h-4"
-            style={{ accentColor: thematicColors?.base }}
+            style={{ accentColor: thematicColors.primary }}
           />
           <span className="text-sm">Rastrear gastos de combustible</span>
         </label>
@@ -329,7 +329,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
             w-full border rounded-lg text-sm border-gray-300 resize-none
             ${isMobile ? 'p-3 text-base' : 'p-2'}
           `}
-          style={{ '--tw-ring-color': thematicColors?.base }}
+          style={{ '--tw-ring-color': thematicColors.primary }}
           rows={isMobile ? "3" : "2"}
           placeholder="ej: Trabajo de delivery en zona céntrica..."
         />
@@ -357,15 +357,15 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
             disabled:opacity-50 transition-colors
             ${isMobile ? 'py-3 px-4 w-full' : 'flex-1 py-3 px-4'}
           `}
-          style={{ backgroundColor: thematicColors?.base || '#3B82F6' }}
+          style={{ backgroundColor: thematicColors.primary }}
           onMouseEnter={(e) => {
-            if (!guardando && thematicColors?.dark) {
-              e.target.style.backgroundColor = thematicColors.dark;
+            if (!guardando) {
+              e.target.style.backgroundColor = thematicColors.primaryDark;
             }
           }}
           onMouseLeave={(e) => {
             if (!guardando) {
-              e.target.style.backgroundColor = thematicColors?.base || '#3B82F6';
+              e.target.style.backgroundColor = thematicColors.primary;
             }
           }}
         >

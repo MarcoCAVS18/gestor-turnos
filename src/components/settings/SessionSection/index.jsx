@@ -1,16 +1,16 @@
-// src/components/settings/SessionSection/index.jsx
+// src/components/settings/SessionSection/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import { LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
 const SessionSection = ({ onError }) => {
   const { logout } = useAuth();
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -29,7 +29,7 @@ const SessionSection = ({ onError }) => {
         variant="outline"
         className="w-full flex items-center justify-center gap-2"
         icon={LogOut}
-        themeColor={thematicColors?.base}
+        themeColor={colors.primary}
       >
         Cerrar sesión
       </Button>

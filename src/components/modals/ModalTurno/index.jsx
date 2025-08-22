@@ -1,8 +1,9 @@
-// src/components/modals/ModalTurno/index.jsx
+// src/components/modals/ModalTurno/index.jsx - REFACTORIZADO
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { X } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import TurnoForm from '../../forms/TurnoForm';
 import TurnoDeliveryForm from '../../forms/TurnoDeliveryForm';
 
@@ -13,10 +14,10 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
     addDeliveryShift,
     editDeliveryShift,
     trabajos,
-    trabajosDelivery,
-    thematicColors
+    trabajosDelivery
   } = useApp();
 
+  const colors = useThemeColors();
   const [trabajoSeleccionadoId, setTrabajoSeleccionadoId] = useState(trabajoId || '');
   const [formularioTipo, setFormularioTipo] = useState('tradicional');
   const [loading, setLoading] = useState(false);
@@ -178,20 +179,20 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
         `}
       >
 
-        {/* Header optimizado con thematicColors */}
+        {/* Header optimizado con colors */}
         <div
           className={`
             sticky top-0 bg-white border-b flex justify-between items-center z-10
             ${isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'}
           `}
           style={{
-            borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+            borderBottomColor: colors.transparent20
           }}
         >
           <div className="flex-1 pr-4 min-w-0">
             <h2
               className={`font-semibold truncate ${isMobile ? 'text-lg' : 'text-xl'}`}
-              style={{ color: thematicColors?.base || '#EC4899' }}
+              style={{ color: colors.primary }}
             >
               {turno ? 'Editar Turno' : 'Nuevo Turno'}
               {formularioTipo === 'delivery' && (
@@ -215,10 +216,10 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
             className="p-2 rounded-lg transition-colors flex-shrink-0"
             style={{
               backgroundColor: 'transparent',
-              color: thematicColors?.base || '#EC4899'
+              color: colors.primary
             }}
             onMouseEnter={(e) => {
-              e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+              e.target.style.backgroundColor = colors.transparent10;
             }}
             onMouseLeave={(e) => {
               e.target.style.backgroundColor = 'transparent';
@@ -242,7 +243,6 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
               onSubmit={manejarGuardado}
               onCancel={manejarCerrar}
               onTrabajoChange={manejarCambioTrabajo}
-              thematicColors={thematicColors}
               isMobile={isMobile}
               loading={loading}
               fechaInicial={fechaInicial} 
@@ -255,7 +255,6 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
               onSubmit={manejarGuardado}
               onCancel={manejarCerrar}
               onTrabajoChange={manejarCambioTrabajo}
-              thematicColors={thematicColors}
               isMobile={isMobile}
               loading={loading}
               fechaInicial={fechaInicial} 
@@ -268,7 +267,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
           <div
             className="sticky bottom-0 bg-white border-t p-4"
             style={{
-              borderTopColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+              borderTopColor: colors.transparent20
             }}
           >
             <div className="text-xs text-gray-500 text-center">
@@ -286,17 +285,17 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
             <div
               className="bg-white rounded-lg p-4 flex items-center space-x-3"
               style={{
-                borderColor: thematicColors?.base || '#EC4899',
+                borderColor: colors.primary,
                 borderWidth: '2px'
               }}
             >
               <div
                 className="animate-spin rounded-full h-6 w-6 border-b-2"
-                style={{ borderColor: thematicColors?.base || '#EC4899' }}
+                style={{ borderColor: colors.primary }}
               />
               <span
                 className="font-medium"
-                style={{ color: thematicColors?.base || '#EC4899' }}
+                style={{ color: colors.primary }}
               >
                 Guardando...
               </span>

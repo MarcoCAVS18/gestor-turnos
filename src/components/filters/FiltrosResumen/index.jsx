@@ -1,11 +1,13 @@
-// src/components/filters/FiltrosResumen/index.jsx
+// src/components/filters/FiltrosResumen/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import { X } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const FiltrosResumen = ({ filters, onRemoveFilter, onClearAll, estadisticas }) => {
-  const { thematicColors, trabajos, trabajosDelivery } = useApp();
+  const { trabajos, trabajosDelivery } = useApp();
+  const colors = useThemeColors();
   
   // Combinar trabajos para obtener nombres
   const todosLosTrabajos = [...trabajos, ...trabajosDelivery];
@@ -48,19 +50,19 @@ const FiltrosResumen = ({ filters, onRemoveFilter, onClearAll, estadisticas }) =
     <div 
       className="p-4 rounded-lg border-l-4 space-y-3"
       style={{ 
-        backgroundColor: thematicColors?.transparent5,
-        borderLeftColor: thematicColors?.base 
+        backgroundColor: colors.transparent5,
+        borderLeftColor: colors.primary 
       }}
     >
       {/* Estadísticas */}
       <div className="flex items-center justify-between text-sm">
-        <span style={{ color: thematicColors?.base }} className="font-medium">
+        <span style={{ color: colors.primary }} className="font-medium">
           Filtros activos: {estadisticas?.turnosFiltrados || 0} de {estadisticas?.totalTurnos || 0} turnos
         </span>
         <button
           onClick={onClearAll}
           className="flex items-center space-x-1 px-2 py-1 text-xs rounded-md hover:bg-gray-100 transition-colors"
-          style={{ color: thematicColors?.base }}
+          style={{ color: colors.primary }}
         >
           <X size={12} />
           <span>Limpiar todo</span>
@@ -73,8 +75,8 @@ const FiltrosResumen = ({ filters, onRemoveFilter, onClearAll, estadisticas }) =
           <div 
             className="flex items-center space-x-2 px-3 py-1 rounded-full text-sm"
             style={{ 
-              backgroundColor: thematicColors?.transparent20,
-              color: thematicColors?.base 
+              backgroundColor: colors.transparent20,
+              color: colors.primary 
             }}
           >
             <span>Trabajo: {getNombreTrabajo(filters.trabajo)}</span>
@@ -91,8 +93,8 @@ const FiltrosResumen = ({ filters, onRemoveFilter, onClearAll, estadisticas }) =
           <div 
             className="flex items-center space-x-2 px-3 py-1 rounded-full text-sm"
             style={{ 
-              backgroundColor: thematicColors?.transparent20,
-              color: thematicColors?.base 
+              backgroundColor: colors.transparent20,
+              color: colors.primary 
             }}
           >
             <span>
@@ -114,8 +116,8 @@ const FiltrosResumen = ({ filters, onRemoveFilter, onClearAll, estadisticas }) =
           <div 
             className="flex items-center space-x-2 px-3 py-1 rounded-full text-sm"
             style={{ 
-              backgroundColor: thematicColors?.transparent20,
-              color: thematicColors?.base 
+              backgroundColor: colors.transparent20,
+              color: colors.primary 
             }}
           >
             <span>Tipo: {tiposTurnoLabels[filters.tipoTurno] || filters.tipoTurno}</span>

@@ -1,19 +1,19 @@
-// src/components/settings/DeliverySection/index.jsx
+// src/components/settings/DeliverySection/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import { Truck, Info } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Switch from '../../ui/Switch';
 
 const DeliverySection = ({ onError, onSuccess }) => {
-  const { deliveryEnabled, savePreferences, thematicColors } = useApp();
+  const { deliveryEnabled, savePreferences } = useApp();
+  const colors = useThemeColors();
   
   const handleToggle = async (newValue) => {
     try {
-      
       await savePreferences({ deliveryEnabled: newValue });
-      
       onSuccess?.(`Modo delivery ${newValue ? 'activado' : 'desactivado'}`);
     } catch (error) {
       console.error('Error al cambiar configuración de delivery:', error);
@@ -43,14 +43,14 @@ const DeliverySection = ({ onError, onSuccess }) => {
           <div 
             className="p-4 rounded-lg border"
             style={{ 
-              backgroundColor: thematicColors?.transparent5 || 'rgba(236, 72, 153, 0.05)',
-              borderColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+              backgroundColor: colors.transparent5,
+              borderColor: colors.transparent20
             }}
           >
             <div className="flex items-start">
-              <Info size={16} className="mt-0.5 mr-2 flex-shrink-0" style={{ color: thematicColors?.base }} />
+              <Info size={16} className="mt-0.5 mr-2 flex-shrink-0" style={{ color: colors.primary }} />
               <div className="text-sm space-y-1">
-                <p className="font-medium" style={{ color: thematicColors?.base }}>¿Cómo funciona?</p>
+                <p className="font-medium" style={{ color: colors.primary }}>¿Cómo funciona?</p>
                 <ul className="space-y-1 text-gray-600">
                   <li>• Los trabajos de delivery no requieren tarifa por hora</li>
                   <li>• Registra tus ganancias totales por cada turno</li>

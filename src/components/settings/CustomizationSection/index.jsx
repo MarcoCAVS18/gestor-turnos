@@ -1,6 +1,9 @@
+// src/components/settings/CustomizationSection/index.jsx - REFACTORIZADO
+
 import React, { useState, useEffect } from 'react';
 import { Settings, Smile } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 
 const COLORES = [
@@ -18,10 +21,10 @@ const CustomizationSection = () => {
   const { 
     primaryColor: appColor, 
     userEmoji: appEmoji, 
-    savePreferences,
-    thematicColors
+    savePreferences
   } = useApp();
   
+  const colors = useThemeColors();
   const [emojiInput, setEmojiInput] = useState(appEmoji);
 
   useEffect(() => {
@@ -62,7 +65,7 @@ const CustomizationSection = () => {
               value={emojiInput}
               onChange={handleEmojiChange}
               className="w-16 h-10 border border-gray-300 rounded-md shadow-sm px-3 focus:outline-none focus:ring-2 text-xl"
-              style={{ '--tw-ring-color': thematicColors?.base || appColor }}
+              style={{ '--tw-ring-color': colors.primary }}
             />
             <p className="ml-3 text-sm text-gray-500">
               <Smile className="inline h-4 w-4 mb-1 mr-1" />

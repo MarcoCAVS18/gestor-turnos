@@ -1,4 +1,4 @@
-// src/components/stats/MonthlyProjection/index.jsx
+// src/components/stats/MonthlyProjection/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import { TrendingUp } from 'lucide-react';

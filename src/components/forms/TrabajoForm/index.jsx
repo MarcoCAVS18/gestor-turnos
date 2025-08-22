@@ -1,8 +1,9 @@
-// src/components/forms/TrabajoForm/index.jsx
+// src/components/forms/TrabajoForm/index.jsx - REFACTORIZADO
 
 import React, { useState, useEffect } from 'react';
 import { Briefcase, DollarSign, Palette, FileText } from 'lucide-react';
 import { useFormValidation } from '../../../hooks/useFormValidation';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import { VALIDATION_RULES } from '../../../constants/validation';
 import { PREDEFINED_COLORS } from '../../../constants/colors';
 import ThemeInput from '../../ui/ThemeInput';
@@ -13,13 +14,14 @@ const TrabajoForm = ({
   onSubmit, 
   onCancel, 
   loading, 
-  thematicColors, 
   isMobile 
 }) => {
+  const colors = useThemeColors();
+  
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
-    color: '#EC4899',
+    color: colors.primary,
     tarifaBase: '',
     tarifas: {
       diurno: '',
@@ -47,7 +49,7 @@ const TrabajoForm = ({
       setFormData({
         nombre: trabajo.nombre || '',
         descripcion: trabajo.descripcion || '',
-        color: trabajo.color || thematicColors?.base || '#EC4899',
+        color: trabajo.color || colors.primary,
         tarifaBase: trabajo.tarifaBase?.toString() || '',
         tarifas: {
           diurno: trabajo.tarifas?.diurno?.toString() || '',
@@ -61,10 +63,10 @@ const TrabajoForm = ({
       // Para nuevos trabajos, usar el color temático por defecto
       setFormData(prev => ({
         ...prev,
-        color: thematicColors?.base || '#EC4899'
+        color: colors.primary
       }));
     }
-  }, [trabajo, thematicColors]);
+  }, [trabajo, colors.primary]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -134,12 +136,8 @@ const TrabajoForm = ({
             ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
             ${errors.nombre ? 'border-red-500' : 'border-gray-300'}
           `}
-          style={{
-            '--tw-ring-color': thematicColors?.base || '#EC4899'
-          }}
           placeholder="Ej: Tech Company Inc."
           required
-          themeColor={thematicColors?.base}
         />
         {errors.nombre && (
           <p className="mt-1 text-sm text-red-600">{errors.nombre}</p>
@@ -199,14 +197,10 @@ const TrabajoForm = ({
             ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
             ${errors.tarifaBase ? 'border-red-500' : 'border-gray-300'}
           `}
-          style={{
-            '--tw-ring-color': thematicColors?.base || '#EC4899'
-          }}
           placeholder="15.00"
           step="0.01"
           min="0"
           required
-          themeColor={thematicColors?.base}
         />
         {errors.tarifaBase && (
           <p className="mt-1 text-sm text-red-600">{errors.tarifaBase}</p>
@@ -239,14 +233,10 @@ const TrabajoForm = ({
                   ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
                   ${errors[`tarifas.${tipo}`] ? 'border-red-500' : 'border-gray-300'}
                 `}
-                style={{
-                  '--tw-ring-color': thematicColors?.base || '#EC4899'
-                }}
                 placeholder="0.00"
                 step="0.01"
                 min="0"
                 required
-                themeColor={thematicColors?.base}
               />
               {errors[`tarifas.${tipo}`] && (
                 <p className="mt-1 text-xs text-red-600">{errors[`tarifas.${tipo}`]}</p>
@@ -272,7 +262,7 @@ const TrabajoForm = ({
             ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
           `}
           style={{
-            '--tw-ring-color': thematicColors?.base || '#EC4899'
+            '--tw-ring-color': colors.primary
           }}
         />
       </div>
@@ -285,7 +275,7 @@ const TrabajoForm = ({
           variant="outline"
           className={isMobile ? 'w-full py-3' : 'flex-1'}
           disabled={loading}
-          themeColor={thematicColors?.base}
+          themeColor={colors.primary}
         >
           Cancelar
         </Button>
@@ -293,7 +283,7 @@ const TrabajoForm = ({
           type="submit"
           className={isMobile ? 'w-full py-3' : 'flex-1'}
           loading={loading}
-          themeColor={thematicColors?.base}
+          themeColor={colors.primary}
         >
           {trabajo ? 'Guardar Cambios' : 'Crear Trabajo'}
         </Button>

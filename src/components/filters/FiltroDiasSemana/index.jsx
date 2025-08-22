@@ -1,10 +1,10 @@
-// src/components/filters/FiltroDiasSemana/index.jsx
+// src/components/filters/FiltroDiasSemana/index.jsx - REFACTORIZADO
 
 import React from 'react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const FiltroDiasSemana = ({ value, onChange }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   
   const diasSemana = [
     { id: 'lunes', label: 'L', nombre: 'Lunes' },
@@ -42,7 +42,7 @@ const FiltroDiasSemana = ({ value, onChange }) => {
             <button
               onClick={selectAll}
               className="text-xs px-2 py-1 rounded-md hover:bg-gray-100 transition-colors"
-              style={{ color: thematicColors?.base }}
+              style={{ color: colors.primary }}
             >
               Todos
             </button>
@@ -68,16 +68,16 @@ const FiltroDiasSemana = ({ value, onChange }) => {
               className="w-8 h-8 rounded-lg text-xs font-medium transition-all hover:scale-105 flex items-center justify-center"
               style={{
                 backgroundColor: isSelected 
-                  ? thematicColors?.base 
+                  ? colors.primary 
                   : 'transparent',
                 color: isSelected 
                   ? 'white' 
-                  : thematicColors?.base,
+                  : colors.primary,
                 border: `1px solid ${isSelected 
-                  ? thematicColors?.base 
-                  : thematicColors?.transparent30}`,
+                  ? colors.primary 
+                  : colors.transparent30}`,
                 boxShadow: isSelected 
-                  ? `0 2px 4px ${thematicColors?.transparent30}` 
+                  ? `0 2px 4px ${colors.transparent30}` 
                   : 'none'
               }}
               title={dia.nombre}

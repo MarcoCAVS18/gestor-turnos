@@ -1,8 +1,9 @@
-// src/components/settings/PreferencesSection/index.jsx
+// src/components/settings/PreferencesSection/index.jsx - REFACTORIZADO
 
 import React, { useState, useEffect } from 'react';
 import { Clock } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 import InfoTooltip from '../../ui/InfoTooltip';
@@ -10,10 +11,10 @@ import InfoTooltip from '../../ui/InfoTooltip';
 const PreferencesSection = ({ onError, onSuccess }) => {
   const { 
     defaultDiscount,
-    savePreferences,
-    thematicColors 
+    savePreferences
   } = useApp();
   
+  const colors = useThemeColors();
   const [descuentoDefault, setDescuentoDefault] = useState(defaultDiscount);
   const [loading, setLoading] = useState(false);
 
@@ -54,7 +55,7 @@ const PreferencesSection = ({ onError, onSuccess }) => {
             value={descuentoDefault}
             onChange={(e) => setDescuentoDefault(Number(e.target.value))}
             className="flex-1 px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 transition-colors"
-            style={{ '--tw-ring-color': thematicColors?.base || '#EC4899' }}
+            style={{ '--tw-ring-color': colors.primary }}
             placeholder="15"
           />
           <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
@@ -70,7 +71,7 @@ const PreferencesSection = ({ onError, onSuccess }) => {
           disabled={loading}
           loading={loading}
           className="w-full mt-4"
-          themeColor={thematicColors?.base}
+          themeColor={colors.primary}
         >
           Guardar cambios
         </Button>

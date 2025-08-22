@@ -1,11 +1,13 @@
-// src/components/filters/FiltroTrabajo/index.jsx
+// src/components/filters/FiltroTrabajo/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import { Briefcase, Truck } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const FiltroTrabajo = ({ value, onChange }) => {
-  const { trabajos, trabajosDelivery, thematicColors } = useApp();
+  const { trabajos, trabajosDelivery } = useApp();
+  const colors = useThemeColors();
   
   // Combinar todos los trabajos
   const todosLosTrabajos = [
@@ -23,7 +25,7 @@ const FiltroTrabajo = ({ value, onChange }) => {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
-          style={{ '--tw-ring-color': thematicColors?.base }}
+          style={{ '--tw-ring-color': colors.primary }}
         >
           <option value="todos">Todos los trabajos</option>
           {todosLosTrabajos.map(trabajo => (
@@ -42,7 +44,7 @@ const FiltroTrabajo = ({ value, onChange }) => {
               return trabajoSeleccionado?.tipo === 'delivery' ? (
                 <Truck size={16} className="text-green-600" />
               ) : (
-                <Briefcase size={16} style={{ color: thematicColors?.base }} />
+                <Briefcase size={16} style={{ color: colors.primary }} />
               );
             })()
           ) : (

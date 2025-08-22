@@ -1,12 +1,13 @@
-// src/components/settings/TurnRangeSection/index.jsx
+// src/components/settings/TurnRangeSection/index.jsx - REFACTORIZADO
 
 import React, { useState, useEffect } from 'react';
 import { Clock, Sun, Sunset, Moon } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
-const TimeSelect = ({ label, value, onChange, icon: Icon, iconColor, thematicColors }) => {
+const TimeSelect = ({ label, value, onChange, icon: Icon, iconColor, colors }) => {
   return (
     <div>
       <label className="block text-sm text-gray-600 mb-1 flex items-center">
@@ -18,7 +19,7 @@ const TimeSelect = ({ label, value, onChange, icon: Icon, iconColor, thematicCol
         onChange={(e) => onChange(parseInt(e.target.value))}
         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 transition-colors"
         style={{ 
-          '--tw-ring-color': thematicColors?.base || '#EC4899'
+          '--tw-ring-color': colors.primary
         }}
       >
         {Array.from({length: 24}, (_, i) => (
@@ -29,11 +30,11 @@ const TimeSelect = ({ label, value, onChange, icon: Icon, iconColor, thematicCol
   );
 };
 
-const TurnRange = ({ title, icon: Icon, iconColor, children, thematicColors }) => {
+const TurnRange = ({ title, icon: Icon, iconColor, children, colors }) => {
   return (
     <div 
       className="border rounded-lg p-4"
-      style={{ borderColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)' }}
+      style={{ borderColor: colors.transparent20 }}
     >
       <div className="flex items-center mb-3">
         <Icon className="h-5 w-5 mr-2" style={{ color: iconColor }} />
@@ -47,10 +48,10 @@ const TurnRange = ({ title, icon: Icon, iconColor, children, thematicColors }) =
 const TurnRangeSection = ({ onError, onSuccess }) => {
   const { 
     shiftRanges,
-    savePreferences,
-    thematicColors
+    savePreferences
   } = useApp();
   
+  const colors = useThemeColors();
   const [rangosTurnos, setRangosTurnos] = useState(shiftRanges || {
     dayStart: 6,
     dayEnd: 14,
@@ -109,7 +110,7 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
       
       <div className="space-y-4 mb-6">
         {/* Turno Diurno */}
-        <TurnRange title="Turno Diurno" icon={Sun} iconColor="#F59E0B" thematicColors={thematicColors}>
+        <TurnRange title="Turno Diurno" icon={Sun} iconColor="#F59E0B" colors={colors}>
           <div className="grid grid-cols-2 gap-4">
             <TimeSelect
               label="Hora de inicio"
@@ -118,7 +119,7 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
                 ...rangosTurnos,
                 dayStart: value
               })}
-              thematicColors={thematicColors}
+              colors={colors}
             />
             <TimeSelect
               label="Hora de fin"
@@ -127,13 +128,13 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
                 ...rangosTurnos,
                 dayEnd: value
               })}
-              thematicColors={thematicColors}
+              colors={colors}
             />
           </div>
         </TurnRange>
         
         {/* Turno Tarde */}
-        <TurnRange title="Turno Tarde" icon={Sunset} iconColor="#F97316" thematicColors={thematicColors}>
+        <TurnRange title="Turno Tarde" icon={Sunset} iconColor="#F97316" colors={colors}>
           <div className="grid grid-cols-2 gap-4">
             <TimeSelect
               label="Hora de inicio"
@@ -142,7 +143,7 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
                 ...rangosTurnos,
                 afternoonStart: value
               })}
-              thematicColors={thematicColors}
+              colors={colors}
             />
             <TimeSelect
               label="Hora de fin"
@@ -151,13 +152,13 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
                 ...rangosTurnos,
                 afternoonEnd: value
               })}
-              thematicColors={thematicColors}
+              colors={colors}
             />
           </div>
         </TurnRange>
         
         {/* Turno Noche */}
-        <TurnRange title="Turno Noche" icon={Moon} iconColor="#6366F1" thematicColors={thematicColors}>
+        <TurnRange title="Turno Noche" icon={Moon} iconColor="#6366F1" colors={colors}>
           <TimeSelect
             label="Hora de inicio"
             value={rangosTurnos.nightStart}
@@ -165,7 +166,7 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
               ...rangosTurnos,
               nightStart: value
             })}
-            thematicColors={thematicColors}
+            colors={colors}
           />
           <p className="text-xs text-gray-500 mt-1">
             El turno de noche se extiende hasta el final del día
@@ -178,7 +179,7 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
         disabled={loading}
         loading={loading}
         className="w-full"
-        themeColor={thematicColors?.base}
+        themeColor={colors.primary}
       >
         Guardar rangos de turnos
       </Button>

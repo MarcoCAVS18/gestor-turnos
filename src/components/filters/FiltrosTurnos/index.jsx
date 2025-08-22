@@ -1,14 +1,14 @@
-// src/components/filters/FiltrosTurnos/index.jsx
+// src/components/filters/FiltrosTurnos/index.jsx - REFACTORIZADO
 
 import React, { useState } from 'react';
 import { Filter, X } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import FiltroTrabajo from '../FiltroTrabajo';
 import FiltroDiasSemana from '../FiltroDiasSemana';
 import FiltroTipoTurno from '../FiltroTipoTurno';
 
 const FiltrosTurnos = ({ onFiltersChange, activeFilters = {} }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   const [showFilters, setShowFilters] = useState(false);
   
   // Verificar si hay filtros activos
@@ -43,9 +43,9 @@ const FiltrosTurnos = ({ onFiltersChange, activeFilters = {} }) => {
           onClick={() => setShowFilters(!showFilters)}
           className="flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors"
           style={{
-            backgroundColor: showFilters ? thematicColors?.transparent10 : 'white',
-            borderColor: showFilters ? thematicColors?.base : '#E5E7EB',
-            color: showFilters ? thematicColors?.base : '#6B7280'
+            backgroundColor: showFilters ? colors.transparent10 : 'white',
+            borderColor: showFilters ? colors.primary : '#E5E7EB',
+            color: showFilters ? colors.primary : '#6B7280'
           }}
         >
           <Filter size={18} />
@@ -53,7 +53,7 @@ const FiltrosTurnos = ({ onFiltersChange, activeFilters = {} }) => {
           {hasActiveFilters && (
             <div 
               className="w-2 h-2 rounded-full"
-              style={{ backgroundColor: thematicColors?.base }}
+              style={{ backgroundColor: colors.primary }}
             />
           )}
         </button>
@@ -75,8 +75,8 @@ const FiltrosTurnos = ({ onFiltersChange, activeFilters = {} }) => {
         <div 
           className="rounded-lg border p-4 space-y-4 transition-all"
           style={{ 
-            backgroundColor: thematicColors?.transparent5,
-            borderColor: thematicColors?.transparent20 
+            backgroundColor: colors.transparent5,
+            borderColor: colors.transparent20 
           }}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -101,15 +101,15 @@ const FiltrosTurnos = ({ onFiltersChange, activeFilters = {} }) => {
           
           {/* Resumen de filtros activos */}
           {hasActiveFilters && (
-            <div className="pt-3 border-t" style={{ borderColor: thematicColors?.transparent20 }}>
+            <div className="pt-3 border-t" style={{ borderColor: colors.transparent20 }}>
               <div className="flex flex-wrap gap-2">
                 <span className="text-sm text-gray-600">Filtros activos:</span>
                 {activeFilters.trabajo && activeFilters.trabajo !== 'todos' && (
                   <span 
                     className="px-2 py-1 rounded-full text-xs font-medium"
                     style={{ 
-                      backgroundColor: thematicColors?.transparent20,
-                      color: thematicColors?.base 
+                      backgroundColor: colors.transparent20,
+                      color: colors.primary 
                     }}
                   >
                     Trabajo específico
@@ -119,8 +119,8 @@ const FiltrosTurnos = ({ onFiltersChange, activeFilters = {} }) => {
                   <span 
                     className="px-2 py-1 rounded-full text-xs font-medium"
                     style={{ 
-                      backgroundColor: thematicColors?.transparent20,
-                      color: thematicColors?.base 
+                      backgroundColor: colors.transparent20,
+                      color: colors.primary 
                     }}
                   >
                     {activeFilters.diasSemana.length} días
@@ -130,8 +130,8 @@ const FiltrosTurnos = ({ onFiltersChange, activeFilters = {} }) => {
                   <span 
                     className="px-2 py-1 rounded-full text-xs font-medium"
                     style={{ 
-                      backgroundColor: thematicColors?.transparent20,
-                      color: thematicColors?.base 
+                      backgroundColor: colors.transparent20,
+                      color: colors.primary 
                     }}
                   >
                     Tipo: {activeFilters.tipoTurno}

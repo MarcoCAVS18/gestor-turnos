@@ -1,13 +1,11 @@
-// src/components/delivery/VehicleSelector/index.jsx
+// src/components/delivery/VehicleSelector/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import { Check, Bike, Car, Truck, User } from 'lucide-react';
 import { DELIVERY_VEHICLES } from '../../../constants/delivery';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
-const VehicleButton = ({ vehicle, isSelected, onClick }) => {
-  const { thematicColors } = useApp();
-  
+const VehicleButton = ({ vehicle, isSelected, onClick, colors }) => {
   const getVehicleIcon = (vehicleId) => {
     const icons = {
       'bicicleta': Bike,
@@ -30,8 +28,8 @@ const VehicleButton = ({ vehicle, isSelected, onClick }) => {
           : 'border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm'
       }`}
       style={{
-        borderColor: isSelected ? thematicColors?.base : undefined,
-        backgroundColor: isSelected ? thematicColors?.transparent10 : undefined
+        borderColor: isSelected ? colors.primary : undefined,
+        backgroundColor: isSelected ? colors.transparent10 : undefined
       }}
     >
       {/* Layout horizontal para compactar */}
@@ -54,7 +52,7 @@ const VehicleButton = ({ vehicle, isSelected, onClick }) => {
       {isSelected && (
         <div 
           className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center shadow-sm"
-          style={{ backgroundColor: thematicColors?.base }}
+          style={{ backgroundColor: colors.primary }}
         >
           <Check size={10} className="text-white" />
         </div>
@@ -69,6 +67,8 @@ const VehicleSelector = ({
   title = "Selecciona tu vehículo",
   className = "" 
 }) => {
+  const colors = useThemeColors();
+  
   return (
     <div className={`space-y-3 ${className}`}>
       <h3 className="text-sm font-medium text-gray-700">{title}</h3>
@@ -81,6 +81,7 @@ const VehicleSelector = ({
             vehicle={vehicle} 
             isSelected={selectedVehicle === vehicle.nombre}
             onClick={onVehicleSelect}
+            colors={colors}
           />
         ))}
       </div>

@@ -1,15 +1,15 @@
-// src/components/settings/ProfileSection/index.jsx
+// src/components/settings/ProfileSection/index.jsx - REFACTORIZADO
 
 import React, { useState } from 'react';
 import { User, Edit2, Save } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
 const ProfileSection = ({ onError, onSuccess }) => {
   const { currentUser, updateUserName } = useAuth();
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
   const [editingName, setEditingName] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -44,7 +44,7 @@ const ProfileSection = ({ onError, onSuccess }) => {
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 transition-colors"
-                style={{ '--tw-ring-color': thematicColors?.base || '#EC4899' }}
+                style={{ '--tw-ring-color': colors.primary }}
               />
               <Button
                 onClick={handleSaveName}
@@ -53,7 +53,7 @@ const ProfileSection = ({ onError, onSuccess }) => {
                 size="sm"
                 className="!p-2"
                 icon={Save}
-                themeColor={thematicColors?.base}
+                themeColor={colors.primary}
               />
             </div>
           ) : (
@@ -62,7 +62,7 @@ const ProfileSection = ({ onError, onSuccess }) => {
               <button
                 onClick={() => setEditingName(true)}
                 className="ml-2 transition-colors p-1 rounded hover:bg-gray-100"
-                style={{ color: thematicColors?.base || '#EC4899' }}
+                style={{ color: colors.primary }}
               >
                 <Edit2 className="h-4 w-4" />
               </button>

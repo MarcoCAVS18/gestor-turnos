@@ -1,8 +1,8 @@
-// src/components/forms/TurnoForm/index.jsx
+// src/components/forms/TurnoForm/index.jsx - REFACTORIZADO
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { Calendar, Clock, Briefcase, AlertCircle } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import ThemeInput from '../../ui/ThemeInput';
 import Button from '../../ui/Button';
 
@@ -17,7 +17,7 @@ const TurnoForm = ({
   loading,
   fechaInicial 
 }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   
   const [formData, setFormData] = useState({
     fecha: '',
@@ -144,7 +144,8 @@ const TurnoForm = ({
         <select 
           value={formData.trabajoSeleccionado} 
           onChange={handleTrabajoChange} 
-          className={`w-full border rounded-lg transition-colors ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'} border-gray-300`} 
+          className={`w-full border rounded-lg transition-colors ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'} border-gray-300`}
+          style={{ '--tw-ring-color': colors.primary }}
           required 
           disabled={!!turno || loading}
         >
@@ -167,7 +168,6 @@ const TurnoForm = ({
           onChange={(e) => handleInputChange('fecha', e.target.value)} 
           className="w-full"
           required 
-          themeColor={thematicColors?.base} 
         />
       </div>
 
@@ -184,7 +184,6 @@ const TurnoForm = ({
             onChange={(e) => handleInputChange('horaInicio', e.target.value)} 
             className="w-full"
             required 
-            themeColor={thematicColors?.base} 
           />
         </div>
         <div>
@@ -198,7 +197,6 @@ const TurnoForm = ({
             onChange={(e) => handleInputChange('horaFin', e.target.value)} 
             className="w-full"
             required 
-            themeColor={thematicColors?.base} 
           />
         </div>
       </div>
@@ -232,7 +230,8 @@ const TurnoForm = ({
           onChange={(e) => handleInputChange('notas', e.target.value)} 
           placeholder="Agregar notas sobre el turno..." 
           rows={isMobile ? 4 : 3} 
-          className={`w-full border border-gray-300 rounded-lg transition-colors resize-none p-3 text-base`} 
+          className={`w-full border border-gray-300 rounded-lg transition-colors resize-none p-3 text-base`}
+          style={{ '--tw-ring-color': colors.primary }}
         />
       </div>
 
@@ -249,7 +248,7 @@ const TurnoForm = ({
           variant="outline" 
           className={isMobile ? 'w-full py-3' : 'flex-1'} 
           disabled={loading} 
-          themeColor={thematicColors?.base}
+          themeColor={colors.primary}
         >
           Cancelar
         </Button>
@@ -257,7 +256,7 @@ const TurnoForm = ({
           type="submit" 
           className={isMobile ? 'w-full py-3' : 'flex-1'} 
           loading={loading} 
-          themeColor={thematicColors?.base}
+          themeColor={colors.primary}
         >
           {turno ? 'Guardar Cambios' : 'Crear Turno'}
         </Button>
@@ -267,15 +266,15 @@ const TurnoForm = ({
         <div 
           className={`rounded-lg p-4 border-l-4 mt-2`} 
           style={{ 
-            borderLeftColor: trabajoSeleccionadoInfo.color || thematicColors?.base, 
-            backgroundColor: `${trabajoSeleccionadoInfo.color || thematicColors?.base}1A` 
+            borderLeftColor: trabajoSeleccionadoInfo.color || colors.primary, 
+            backgroundColor: `${trabajoSeleccionadoInfo.color || colors.primary}1A` 
           }}
         >
           <div className="space-y-2">
             <div className="flex items-center space-x-3">
               <div 
                 className="w-4 h-4 rounded-full" 
-                style={{ backgroundColor: trabajoSeleccionadoInfo.color || thematicColors?.base }} 
+                style={{ backgroundColor: trabajoSeleccionadoInfo.color || colors.primary }} 
               />
               <span className="text-sm font-medium text-gray-700">{trabajoSeleccionadoInfo.nombre}</span>
             </div>
@@ -289,7 +288,7 @@ const TurnoForm = ({
             {trabajoSeleccionadoInfo.tarifaBase && (
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-600">Ganancia estimada:</span>
-                <span style={{ color: trabajoSeleccionadoInfo.color || thematicColors?.base }}>
+                <span style={{ color: trabajoSeleccionadoInfo.color || colors.primary }}>
                   ${(Number(horasTrabajadas) * trabajoSeleccionadoInfo.tarifaBase).toFixed(2)}
                 </span>
               </div>

@@ -1,14 +1,16 @@
-// src/components/modals/ModalTrabajo/index.jsx
+// src/components/modals/ModalTrabajo/index.jsx - REFACTORIZADO
 
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import TrabajoForm from '../../forms/TrabajoForm';
 import SelectorTipoTrabajo from '../SelectorTipoTrabajo';
 import ModalTrabajoDelivery from '../ModalTrabajoDelivery';
 
 const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
-  const { addJob, editJob, deliveryEnabled, thematicColors } = useApp();
+  const { addJob, editJob, deliveryEnabled } = useApp();
+  const colors = useThemeColors();
   const [mostrarSelector, setMostrarSelector] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -107,7 +109,7 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
     );
   }
 
-  // Configuración del modal usando modalConfig y thematicColors
+  // Configuración del modal usando modalConfig y colors
   const modalConfig = {
     mobileFullScreen: isMobile,
     size: isMobile ? 'full' : 'lg',
@@ -130,19 +132,19 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
         `}
       >
         
-        {/* Header optimizado con thematicColors */}
+        {/* Header optimizado con colors */}
         <div 
           className={`
             sticky top-0 bg-white border-b flex justify-between items-center z-10
             ${isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'}
           `}
           style={{ 
-            borderBottomColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+            borderBottomColor: colors.transparent20
           }}
         >
           <h2 
             className={`font-semibold ${isMobile ? 'text-lg' : 'text-xl'}`}
-            style={{ color: thematicColors?.base || '#EC4899' }}
+            style={{ color: colors.primary }}
           >
             {trabajo ? 'Editar Trabajo' : 'Nuevo Trabajo'}
           </h2>
@@ -151,10 +153,10 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
             className="p-2 rounded-lg transition-colors"
             style={{
               backgroundColor: 'transparent',
-              color: thematicColors?.base || '#EC4899'
+              color: colors.primary
             }}
             onMouseEnter={(e) => {
-              e.target.style.backgroundColor = thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)';
+              e.target.style.backgroundColor = colors.transparent10;
             }}
             onMouseLeave={(e) => {
               e.target.style.backgroundColor = 'transparent';
@@ -172,7 +174,6 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
           {mostrarSelector ? (
             <SelectorTipoTrabajo 
               onSelectTipo={manejarSeleccionTipo}
-              thematicColors={thematicColors}
               isMobile={isMobile}
             />
           ) : (
@@ -181,7 +182,6 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
               onSubmit={manejarGuardado}
               onCancel={manejarCerrar}
               loading={loading}
-              thematicColors={thematicColors}
               isMobile={isMobile}
             />
           )}
@@ -192,7 +192,7 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
           <div 
             className="sticky bottom-0 bg-white border-t p-4"
             style={{ 
-              borderTopColor: thematicColors?.transparent20 || 'rgba(236, 72, 153, 0.2)'
+              borderTopColor: colors.transparent20
             }}
           >
             <div className="text-xs text-gray-500 text-center">
@@ -210,17 +210,17 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
             <div 
               className="bg-white rounded-lg p-4 flex items-center space-x-3"
               style={{ 
-                borderColor: thematicColors?.base || '#EC4899',
+                borderColor: colors.primary,
                 borderWidth: '2px'
               }}
             >
               <div 
                 className="animate-spin rounded-full h-6 w-6 border-b-2"
-                style={{ borderColor: thematicColors?.base || '#EC4899' }}
+                style={{ borderColor: colors.primary }}
               />
               <span 
                 className="font-medium"
-                style={{ color: thematicColors?.base || '#EC4899' }}
+                style={{ color: colors.primary }}
               >
                 Guardando...
               </span>

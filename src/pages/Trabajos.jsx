@@ -1,3 +1,5 @@
+// src/pages/Trabajos.jsx - Versión mejorada con layout en columnas
+
 import React from 'react';
 import { useTrabajos } from '../hooks/useTrabajos';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
@@ -28,6 +30,10 @@ const Trabajos = () => {
 
   const tieneTrabajos = todosLosTrabajos.length > 0;
 
+  // Separar trabajos tradicionales y de delivery
+  const trabajosTradicionales = todosLosTrabajos.filter(trabajo => trabajo.tipo !== 'delivery');
+  const trabajosDelivery = todosLosTrabajos.filter(trabajo => trabajo.tipo === 'delivery');
+
   return (
     <LoadingWrapper loading={loading}>
       <div className="px-4 py-6 pb-32 space-y-6">
@@ -37,47 +43,89 @@ const Trabajos = () => {
         {/* Header */}
         <WorkHeader 
           todosLosTrabajos={todosLosTrabajos}
-          thematicColors={thematicColors}
           onNuevoTrabajo={abrirModalNuevo}
         />
 
         {/* Contenido principal */}
         {!tieneTrabajos ? (
           <WorkEmptyState 
-            thematicColors={thematicColors}
             onNuevoTrabajo={abrirModalNuevo}
           />
         ) : (
-          <div className="space-y-4">
-            {todosLosTrabajos.map((trabajo) => {
-              const isSharing = sharing[trabajo.id] || false;
-
-              if (trabajo.tipo === 'delivery') {
-                return (
-                  <TarjetaDelivery
-                    key={trabajo.id}
-                    trabajo={trabajo}
-                    onEdit={abrirModalEditar}
-                    onDelete={deleteManager.startDeletion}
-                    onShare={handleShareWork}
-                    showActions={true}
-                    isSharing={isSharing}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Trabajos Tradicionales */}
+            {trabajosTradicionales.length > 0 && (
+              <div>
+                <div className="flex items-center mb-4">
+                  <div 
+                    className="w-1 h-6 rounded-full mr-3"
+                    style={{ backgroundColor: thematicColors?.primary || '#EC4899' }}
                   />
-                );
-              }
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    Trabajos Tradicionales
+                  </h2>
+                  <span className="ml-2 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
+                    {trabajosTradicionales.length}
+                  </span>
+                </div>
+                
+                {/* Layout en columnas para trabajos tradicionales */}
+                <div className="space-y-4">
+                  {trabajosTradicionales.map((trabajo) => {
+                    const isSharing = sharing[trabajo.id] || false;
+                    
+                    return (
+                      <TarjetaTrabajo
+                        key={trabajo.id}
+                        trabajo={trabajo}
+                        onEdit={abrirModalEditar}
+                        onDelete={deleteManager.startDeletion}
+                        onShare={handleShareWork}
+                        showActions={true}
+                        isSharing={isSharing}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
-              return (
-                <TarjetaTrabajo
-                  key={trabajo.id}
-                  trabajo={trabajo}
-                  onEdit={abrirModalEditar}
-                  onDelete={deleteManager.startDeletion}
-                  onShare={handleShareWork}
-                  showActions={true}
-                  isSharing={isSharing}
-                />
-              );
-            })}
+            {/* Trabajos de Delivery */}
+            {trabajosDelivery.length > 0 && (
+              <div>
+                <div className="flex items-center mb-4">
+                  <div 
+                    className="w-1 h-6 rounded-full mr-3"
+                    style={{ backgroundColor: '#10B981' }}
+                  />
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    Trabajos de Delivery
+                  </h2>
+                  <span className="ml-2 px-2 py-1 bg-green-100 text-green-600 text-xs rounded-full">
+                    {trabajosDelivery.length}
+                  </span>
+                </div>
+                
+                {/* Layout en columnas para trabajos de delivery */}
+                <div className="space-y-4">
+                  {trabajosDelivery.map((trabajo) => {
+                    const isSharing = sharing[trabajo.id] || false;
+                    
+                    return (
+                      <TarjetaDelivery
+                        key={trabajo.id}
+                        trabajo={trabajo}
+                        onEdit={abrirModalEditar}
+                        onDelete={deleteManager.startDeletion}
+                        onShare={handleShareWork}
+                        showActions={true}
+                        isSharing={isSharing}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>

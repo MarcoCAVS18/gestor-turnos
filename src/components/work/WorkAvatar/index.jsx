@@ -1,4 +1,4 @@
-// src/components/work/WorkAvatar/index.jsx
+// src/components/work/WorkAvatar/index.jsx - Versión con validaciones defensivas
 
 import React from 'react';
 
@@ -9,13 +9,21 @@ const WorkAvatar = ({ nombre, color, size = 'md' }) => {
     lg: 'w-16 h-16 text-xl'
   };
 
+  // Validaciones defensivas
+  const nombreSeguro = nombre || 'T'; // T de "Trabajo"
+  const colorSeguro = color || '#EC4899';
+  const sizeSeguro = sizes[size] || sizes.md;
+
+  // Obtener primera letra del nombre de forma segura
+  const inicial = nombreSeguro.toString().charAt(0).toUpperCase() || 'T';
+
   return (
     <div 
-      className={`${sizes[size]} rounded-lg flex items-center justify-center`}
-      style={{ backgroundColor: color }}
+      className={`${sizeSeguro} rounded-lg flex items-center justify-center`}
+      style={{ backgroundColor: colorSeguro }}
     >
       <span className="text-white font-bold">
-        {nombre.charAt(0).toUpperCase()}
+        {inicial}
       </span>
     </div>
   );

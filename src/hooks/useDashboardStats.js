@@ -1,4 +1,4 @@
-// src/hooks/useDashboardStats.js - Versión Mejorada
+// src/hooks/useDashboardStats.js - Versión actualizada con datos semanales
 
 import { useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
@@ -28,6 +28,23 @@ export const useDashboardStats = () => {
     };
   }, []);
 
+  // Función para obtener fechas de la semana actual
+  const obtenerFechasSemanaActual = useMemo(() => {
+    const hoy = new Date();
+    const diaSemana = hoy.getDay();
+    const diffInicio = diaSemana === 0 ? 6 : diaSemana - 1; // Lunes como inicio
+    
+    const fechaInicio = new Date(hoy);
+    fechaInicio.setDate(hoy.getDate() - diffInicio);
+    fechaInicio.setHours(0, 0, 0, 0);
+    
+    const fechaFin = new Date(fechaInicio);
+    fechaFin.setDate(fechaInicio.getDate() + 6);
+    fechaFin.setHours(23, 59, 59, 999);
+    
+    return { fechaInicio, fechaFin };
+  }, []);
+
   const stats = useMemo(() => {
     // Validación defensiva de datos
     const trabajosValidos = Array.isArray(trabajos) ? trabajos : [];
@@ -51,7 +68,16 @@ export const useDashboardStats = () => {
       tendenciaSemanal: 0,
       trabajosFavoritos: [],
       proyeccionMensual: 0,
-      diasTrabajados: 0
+      diasTrabajados: 0,
+      // Nuevos datos para componentes
+      semanaActual: {
+        totalGanado: 0,
+        horasTrabajadas: 0,
+        totalTurnos: 0,
+        diasTrabajados: 0
+      },
+      todosLosTrabajos,
+      todosLosTurnos
     };
 
     if (todosLosTurnos.length === 0) {
@@ -65,17 +91,16 @@ export const useDashboardStats = () => {
       const fechasUnicas = new Set();
       
       // Calcular fecha de inicio de esta semana
-      const hoy = new Date();
-      const inicioSemana = new Date(hoy);
-      inicioSemana.setDate(hoy.getDate() - hoy.getDay() + 1);
-      inicioSemana.setHours(0, 0, 0, 0);
+      const { fechaInicio, fechaFin } = obtenerFechasSemanaActual;
       
-      const inicioSemanaAnterior = new Date(inicioSemana);
-      inicioSemanaAnterior.setDate(inicioSemana.getDate() - 7);
+      const inicioSemanaAnterior = new Date(fechaInicio);
+      inicioSemanaAnterior.setDate(fechaInicio.getDate() - 7);
       
       let turnosEstaSemana = 0;
       let gananciasEstaSemana = 0;
+      let horasEstaSemana = 0;
       let gananciasSemanaAnterior = 0;
+      const fechasUnicasSemana = new Set();
 
       todosLosTurnos.forEach(turno => {
         try {
@@ -106,7 +131,7 @@ export const useDashboardStats = () => {
 
           totalGanado += ganancia;
           horasTrabajadas += horas;
-          fechasUnicas.add(turno.fecha);
+          fechasUnicas.add(turno.fechaInicio || turno.fecha);
 
           // Estadísticas por trabajo
           if (!gananciaPorTrabajo[trabajo.id]) {
@@ -122,11 +147,13 @@ export const useDashboardStats = () => {
           gananciaPorTrabajo[trabajo.id].turnos += 1;
 
           // Estadísticas semanales
-          const fechaTurno = new Date(turno.fecha + 'T00:00:00');
-          if (fechaTurno >= inicioSemana) {
+          const fechaTurno = new Date((turno.fechaInicio || turno.fecha) + 'T00:00:00');
+          if (fechaTurno >= fechaInicio && fechaTurno <= fechaFin) {
             turnosEstaSemana++;
             gananciasEstaSemana += ganancia;
-          } else if (fechaTurno >= inicioSemanaAnterior && fechaTurno < inicioSemana) {
+            horasEstaSemana += horas;
+            fechasUnicasSemana.add(turno.fechaInicio || turno.fecha);
+          } else if (fechaTurno >= inicioSemanaAnterior && fechaTurno < fechaInicio) {
             gananciasSemanaAnterior += ganancia;
           }
         } catch (error) {
@@ -144,14 +171,18 @@ export const useDashboardStats = () => {
         : 0;
 
       // Encontrar próximo turno
-      const hoyStr = hoy.toISOString().split('T')[0];
-      const turnosFuturos = todosLosTurnos.filter(turno => turno.fecha >= hoyStr)
-        .sort((a, b) => {
-          if (a.fecha === b.fecha) {
-            return a.horaInicio.localeCompare(b.horaInicio);
-          }
-          return a.fecha.localeCompare(b.fecha);
-        });
+      const hoyStr = new Date().toISOString().split('T')[0];
+      const turnosFuturos = todosLosTurnos.filter(turno => {
+        const fechaTurno = turno.fechaInicio || turno.fecha;
+        return fechaTurno >= hoyStr;
+      }).sort((a, b) => {
+        const fechaA = a.fechaInicio || a.fecha;
+        const fechaB = b.fechaInicio || b.fecha;
+        if (fechaA === fechaB) {
+          return a.horaInicio.localeCompare(b.horaInicio);
+        }
+        return fechaA.localeCompare(fechaB);
+      });
       
       const proximoTurno = turnosFuturos[0] || null;
 
@@ -175,7 +206,16 @@ export const useDashboardStats = () => {
         tendenciaSemanal: Number(tendenciaSemanal) || 0,
         trabajosFavoritos,
         proyeccionMensual: Number(proyeccionMensual) || 0,
-        diasTrabajados: fechasUnicas.size
+        diasTrabajados: fechasUnicas.size,
+        // Nuevos datos específicos para los componentes
+        semanaActual: {
+          totalGanado: Number(gananciasEstaSemana) || 0,
+          horasTrabajadas: Number(horasEstaSemana) || 0,
+          totalTurnos: turnosEstaSemana,
+          diasTrabajados: fechasUnicasSemana.size
+        },
+        todosLosTrabajos,
+        todosLosTurnos
       };
 
       return resultado;
@@ -183,7 +223,7 @@ export const useDashboardStats = () => {
       console.error('Error crítico calculando estadísticas del dashboard:', error);
       return defaultStats;
     }
-  }, [trabajos, trabajosDelivery, turnos, turnosDelivery, calculatePayment, calcularHoras]);
+  }, [trabajos, trabajosDelivery, turnos, turnosDelivery, calculatePayment, calcularHoras, obtenerFechasSemanaActual]);
 
   // Función para formatear fecha
   const formatearFecha = useMemo(() => {

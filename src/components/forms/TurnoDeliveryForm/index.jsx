@@ -1,8 +1,8 @@
-// src/components/forms/TurnoDeliveryForm/index.jsx
+// src/components/forms/TurnoDeliveryForm/index.jsx - REFACTORIZADO
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { Calendar, Clock, Package, Car, DollarSign, TrendingUp, AlertCircle } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import ThemeInput from '../../ui/ThemeInput';
 import Button from '../../ui/Button';
 
@@ -13,13 +13,11 @@ const TurnoDeliveryForm = ({
   onSubmit, 
   onCancel, 
   onTrabajoChange,
-  thematicColors,
   isMobile,
   loading,
   fechaInicial
 }) => {
-  const { thematicColors: contextColors } = useApp();
-  const coloresTemáticos = thematicColors || contextColors;
+  const colors = useThemeColors();
   
   // Estados del formulario
   const [formData, setFormData] = useState({
@@ -189,7 +187,7 @@ const TurnoDeliveryForm = ({
             onChange={handleTrabajoChange}
             className="w-full border border-gray-300 rounded-lg p-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:border-transparent bg-white"
             style={{ 
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899',
+              '--tw-ring-color': colors.primary,
             }}
             required
           >
@@ -235,7 +233,6 @@ const TurnoDeliveryForm = ({
               onChange={(e) => handleInputChange('fecha', e.target.value)}
               className="w-full"
               required
-              themeColor={coloresTemáticos?.base}
             />
           </div>
           
@@ -252,7 +249,6 @@ const TurnoDeliveryForm = ({
                 onChange={(e) => handleInputChange('horaInicio', e.target.value)}
                 className="w-full"
                 required
-                themeColor={coloresTemáticos?.base}
               />
             </div>
             
@@ -267,7 +263,6 @@ const TurnoDeliveryForm = ({
                 onChange={(e) => handleInputChange('horaFin', e.target.value)}
                 className="w-full"
                 required
-                themeColor={coloresTemáticos?.base}
               />
             </div>
           </div>
@@ -314,7 +309,6 @@ const TurnoDeliveryForm = ({
                 className="w-full"
                 placeholder="0"
                 min="0"
-                themeColor={coloresTemáticos?.base}
               />
             </div>
             
@@ -331,7 +325,6 @@ const TurnoDeliveryForm = ({
                 placeholder="0"
                 min="0"
                 step="0.1"
-                themeColor={coloresTemáticos?.base}
               />
             </div>
           </div>
@@ -356,7 +349,6 @@ const TurnoDeliveryForm = ({
                 placeholder="0.00"
                 step="0.01"
                 required
-                themeColor={coloresTemáticos?.base}
               />
             </div>
             
@@ -372,7 +364,6 @@ const TurnoDeliveryForm = ({
                 className="w-full"
                 placeholder="0.00"
                 step="0.01"
-                themeColor={coloresTemáticos?.base}
               />
             </div>
           </div>
@@ -389,7 +380,6 @@ const TurnoDeliveryForm = ({
               className="w-full"
               placeholder="0.00"
               step="0.01"
-              themeColor={coloresTemáticos?.base}
             />
           </div>
         </div>
@@ -406,7 +396,7 @@ const TurnoDeliveryForm = ({
             rows={3}
             className="w-full border border-gray-300 rounded-lg p-3 text-sm transition-colors resize-none bg-white focus:outline-none focus:ring-2 focus:border-transparent"
             style={{
-              '--tw-ring-color': coloresTemáticos?.base || '#EC4899'
+              '--tw-ring-color': colors.primary
             }}
           />
         </div>
@@ -426,7 +416,7 @@ const TurnoDeliveryForm = ({
             variant="outline"
             className="flex-1"
             disabled={loading}
-            themeColor={coloresTemáticos?.base}
+            themeColor={colors.primary}
           >
             Cancelar
           </Button>
@@ -434,7 +424,7 @@ const TurnoDeliveryForm = ({
             type="submit"
             className="flex-1"
             loading={loading}
-            themeColor={coloresTemáticos?.base}
+            themeColor={colors.primary}
           >
             {turno ? 'Guardar Cambios' : 'Crear Turno'}
           </Button>
@@ -445,8 +435,8 @@ const TurnoDeliveryForm = ({
           <div 
             className="rounded-lg p-4 border-l-4 mt-4"
             style={{ 
-              borderLeftColor: coloresTemáticos?.base || '#EC4899',
-              backgroundColor: `${coloresTemáticos?.base || '#EC4899'}10`
+              borderLeftColor: colors.primary,
+              backgroundColor: colors.transparent10
             }}
           >
             <div className="space-y-2">
@@ -462,7 +452,7 @@ const TurnoDeliveryForm = ({
                   </div>
                   <div className="flex items-center justify-between text-sm font-medium border-t pt-2">
                     <span>Ganancia neta:</span>
-                    <span style={{ color: coloresTemáticos?.base || '#EC4899' }}>
+                    <span style={{ color: colors?.base || '#EC4899' }}>
                       ${(Number(formData.gananciaTotal) - Number(formData.gastoCombustible || 0)).toFixed(2)}
                     </span>
                   </div>

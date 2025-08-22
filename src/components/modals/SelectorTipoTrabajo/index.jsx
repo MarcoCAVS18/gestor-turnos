@@ -1,14 +1,10 @@
-// src/components/modals/SelectorTipoTrabajo/index.jsx
-
 import React from 'react';
 import { Briefcase, Truck, Clock, DollarSign, Package, Navigation } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
-const SelectorTipoTrabajo = ({ onSelectTipo, thematicColors, isMobile }) => {
-  const { thematicColors: contextColors } = useApp();
-  
+const SelectorTipoTrabajo = ({ onSelectTipo, isMobile }) => {
   // Usar colores del contexto si no se pasan como prop
-  const colors = thematicColors || contextColors;
+  const colors = useThemeColors();
 
   const handleSelect = (tipo) => {
     onSelectTipo(tipo);
@@ -19,7 +15,7 @@ const SelectorTipoTrabajo = ({ onSelectTipo, thematicColors, isMobile }) => {
       <div className="text-center mb-6">
         <h3 
           className={`font-semibold mb-3 ${isMobile ? 'text-xl' : 'text-lg'}`}
-          style={{ color: colors?.base }}
+          style={{ color: colors.primary }}
         >
           ¿Qué tipo de trabajo quieres agregar?
         </h3>
@@ -43,9 +39,9 @@ const SelectorTipoTrabajo = ({ onSelectTipo, thematicColors, isMobile }) => {
             backgroundColor: 'white'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = colors?.base;
-            e.currentTarget.style.backgroundColor = colors?.transparent5;
-            e.currentTarget.style.boxShadow = `0 8px 25px ${colors?.transparent30 || 'rgba(0,0,0,0.1)'}`;
+            e.currentTarget.style.borderColor = colors.primary;
+            e.currentTarget.style.backgroundColor = colors.transparent5;
+            e.currentTarget.style.boxShadow = `0 8px 25px ${colors.transparent30}`;
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = '#e5e7eb';
@@ -60,7 +56,7 @@ const SelectorTipoTrabajo = ({ onSelectTipo, thematicColors, isMobile }) => {
                   rounded-lg flex items-center justify-center transition-all duration-300
                   ${isMobile ? 'w-12 h-12' : 'w-10 h-10'}
                 `}
-                style={{ backgroundColor: colors?.transparent10 }}
+                style={{ backgroundColor: colors.transparent10 }}
               >
                 <Briefcase 
                   className={`text-blue-500 group-hover:scale-110 transition-transform ${isMobile ? 'w-7 h-7' : 'w-6 h-6'}`} 
@@ -106,9 +102,9 @@ const SelectorTipoTrabajo = ({ onSelectTipo, thematicColors, isMobile }) => {
             backgroundColor: 'white'
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = colors?.base;
-            e.currentTarget.style.backgroundColor = colors?.transparent5;
-            e.currentTarget.style.boxShadow = `0 8px 25px ${colors?.transparent30 || 'rgba(0,0,0,0.1)'}`;
+            e.currentTarget.style.borderColor = colors.primary;
+            e.currentTarget.style.backgroundColor = colors.transparent5;
+            e.currentTarget.style.boxShadow = `0 8px 25px ${colors.transparent30}`;
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.borderColor = '#e5e7eb';
@@ -159,13 +155,13 @@ const SelectorTipoTrabajo = ({ onSelectTipo, thematicColors, isMobile }) => {
       {/* Consejo informativo */}
       <div 
         className={`p-4 rounded-lg ${isMobile ? 'mt-6' : 'mt-6'}`}
-        style={{ backgroundColor: colors?.transparent10 || 'rgba(59, 130, 246, 0.1)' }}
+        style={{ backgroundColor: colors.transparent10 }}
       >
         <div className="flex items-start space-x-3">
           <div className="flex-shrink-0">
             <div 
               className={`rounded-full flex items-center justify-center ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}`}
-              style={{ backgroundColor: colors?.base }}
+              style={{ backgroundColor: colors.primary }}
             >
               <span className="text-white text-xs font-bold">💡</span>
             </div>
@@ -173,7 +169,7 @@ const SelectorTipoTrabajo = ({ onSelectTipo, thematicColors, isMobile }) => {
           <div>
             <p 
               className={`font-medium mb-1 ${isMobile ? 'text-base' : 'text-sm'}`}
-              style={{ color: colors?.base }}
+              style={{ color: colors.primary }}
             >
               Consejo
             </p>

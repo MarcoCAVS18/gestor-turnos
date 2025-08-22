@@ -1,11 +1,11 @@
-// src/components/delivery/PlatformSelector/index.jsx
+// src/components/delivery/PlatformSelector/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import { DELIVERY_PLATFORMS_AUSTRALIA } from '../../../constants/delivery';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const PlatformSelector = ({ selectedPlatform, onPlatformSelect }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
   
   return (
     <div className="space-y-3">
@@ -15,7 +15,7 @@ const PlatformSelector = ({ selectedPlatform, onPlatformSelect }) => {
         onChange={(e) => onPlatformSelect(e.target.value)}
         className="w-full p-3 border border-gray-300 rounded-lg text-base focus:outline-none focus:ring-2 focus:border-transparent bg-white"
         style={{
-          '--tw-ring-color': thematicColors?.base || '#EC4899'
+          '--tw-ring-color': colors.primary
         }}
       >
         <option value="">Selecciona una plataforma</option>

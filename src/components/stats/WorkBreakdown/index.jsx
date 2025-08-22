@@ -1,11 +1,12 @@
-// src/components/stats/WorkBreakdown/index.jsx
+// src/components/stats/WorkBreakdown/index.jsx - REFACTORIZADO
 
 import React from 'react';
 import { BarChart2 } from 'lucide-react';
-import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 
 const WorkBreakdown = ({ gananciaPorTrabajo = [], totalGanado = 0 }) => {
-  const { thematicColors } = useApp();
+  const colors = useThemeColors();
 
   // Verificar datos
   const trabajosValidos = Array.isArray(gananciaPorTrabajo) ? gananciaPorTrabajo : [];
@@ -15,7 +16,7 @@ const WorkBreakdown = ({ gananciaPorTrabajo = [], totalGanado = 0 }) => {
     return (
       <div className="bg-white rounded-xl shadow-md p-4">
         <div className="flex items-center mb-4">
-          <BarChart2 size={18} style={{ color: thematicColors?.base || '#EC4899' }} className="mr-2" />
+          <BarChart2 size={18} style={{ color: colors.primary }} className="mr-2" />
           <h3 className="font-semibold">Por trabajo</h3>
         </div>
         <div className="text-center py-8 text-gray-500">
@@ -33,7 +34,7 @@ const WorkBreakdown = ({ gananciaPorTrabajo = [], totalGanado = 0 }) => {
       ganancia: (trabajo && typeof trabajo.ganancia === 'number') ? trabajo.ganancia : 0,
       turnos: (trabajo && typeof trabajo.turnos === 'number') ? trabajo.turnos : 0,
       horas: (trabajo && typeof trabajo.horas === 'number') ? trabajo.horas : 0,
-      color: (trabajo && typeof trabajo.color === 'string') ? trabajo.color : '#EC4899'
+      color: (trabajo && typeof trabajo.color === 'string') ? trabajo.color : colors.primary
     };
 
     const porcentaje = maximo > 0 ? (trabajoSeguro.ganancia / maximo) * 100 : 0;
@@ -44,7 +45,7 @@ const WorkBreakdown = ({ gananciaPorTrabajo = [], totalGanado = 0 }) => {
           <span className="text-sm font-medium text-gray-700">{trabajoSeguro.nombre}</span>
           <div className="text-right">
             <span className="text-sm font-bold" style={{ color: trabajoSeguro.color }}>
-              ${trabajoSeguro.ganancia.toFixed(2)}
+              {formatCurrency(trabajoSeguro.ganancia)}
             </span>
             <p className="text-xs text-gray-500">
               {trabajoSeguro.turnos} turnos · {trabajoSeguro.horas.toFixed(1)}h
@@ -67,7 +68,7 @@ const WorkBreakdown = ({ gananciaPorTrabajo = [], totalGanado = 0 }) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-4">
       <div className="flex items-center mb-4">
-        <BarChart2 size={18} style={{ color: thematicColors?.base || '#EC4899' }} className="mr-2" />
+        <BarChart2 size={18} style={{ color: colors.primary }} className="mr-2" />
         <h3 className="font-semibold">Por trabajo</h3>
       </div>
 
