@@ -1,19 +1,31 @@
-// src/pages/CalendarioView.jsx
+// src/pages/CalendarioView.jsx - Versión mejorada
 
-import React, ***REMOVED*** useState ***REMOVED*** from 'react';
+import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
+import ***REMOVED*** CalendarDays, Plus ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../hooks/useThemeColors';
+import ***REMOVED*** fechaLocalAISO ***REMOVED*** from '../utils/calendarUtils';
 import Calendario from '../components/calendar/Calendario';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ModalTurno from '../components/modals/ModalTurno';
+import Button from '../components/ui/Button';
 
 const CalendarioView = () => ***REMOVED***
   const ***REMOVED*** turnosPorFecha, todosLosTrabajos, thematicColors ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   
   // Estados para el calendario
   const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [fechaInicialModal, setFechaInicialModal] = useState(null);
+  
+  // Seleccionar automáticamente el día actual al cargar
+  useEffect(() => ***REMOVED***
+    const hoy = new Date();
+    const fechaHoyStr = fechaLocalAISO(hoy);
+    setFechaSeleccionada(fechaHoyStr);
+  ***REMOVED***, []);
   
   // Validar que tenemos trabajos antes de mostrar funcionalidades
   const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
@@ -24,12 +36,23 @@ const CalendarioView = () => ***REMOVED***
   // Función para formatear fecha
   const formatearFecha = (fechaStr) => ***REMOVED***
     const fecha = new Date(fechaStr + 'T00:00:00');
-    return fecha.toLocaleDateString('es-ES', ***REMOVED***
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    ***REMOVED***);
+    const hoy = new Date();
+    const ayer = new Date(hoy);
+    ayer.setDate(hoy.getDate() - 1);
+    
+    // Comparar fechas
+    if (fecha.toDateString() === hoy.toDateString()) ***REMOVED***
+      return 'Hoy';
+    ***REMOVED*** else if (fecha.toDateString() === ayer.toDateString()) ***REMOVED***
+      return 'Ayer';
+    ***REMOVED*** else ***REMOVED***
+      return fecha.toLocaleDateString('es-ES', ***REMOVED***
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      ***REMOVED***);
+    ***REMOVED***
   ***REMOVED***;
 
   // Función para seleccionar día en el calendario
@@ -55,9 +78,14 @@ const CalendarioView = () => ***REMOVED***
   ***REMOVED***;
   
   // Animaciones
+  const headerVariants = ***REMOVED***
+    hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
+    visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.3 ***REMOVED*** ***REMOVED***
+  ***REMOVED***;
+
   const calendarVariants = ***REMOVED***
     hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
-    visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.5 ***REMOVED*** ***REMOVED***
+    visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.5, delay: 0.1 ***REMOVED*** ***REMOVED***
   ***REMOVED***;
   
   const detailsVariants = ***REMOVED***
@@ -66,15 +94,47 @@ const CalendarioView = () => ***REMOVED***
   ***REMOVED***;
   
   return (
-    <div className="px-4 py-6">
-      <motion.h2 
-        className="text-xl font-semibold mb-4"
-        initial=***REMOVED******REMOVED*** opacity: 0, x: -20 ***REMOVED******REMOVED***
-        animate=***REMOVED******REMOVED*** opacity: 1, x: 0 ***REMOVED******REMOVED***
-        transition=***REMOVED******REMOVED*** duration: 0.3 ***REMOVED******REMOVED***
+    <div className="px-4 py-6 pb-32 space-y-6">
+      ***REMOVED***/* Header consistente con otras páginas */***REMOVED***
+      <motion.div
+        className="flex justify-between items-center"
+        variants=***REMOVED***headerVariants***REMOVED***
+        initial="hidden"
+        animate="visible"
       >
-        Calendario de Turnos
-      </motion.h2>
+        <div className="flex items-center space-x-3">
+          <div 
+            className="p-2 rounded-lg"
+            style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
+          >
+            <CalendarDays 
+              className="w-6 h-6" 
+              style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
+            />
+          </div>
+          <div>
+            <h1 className="text-xl font-semibold">Calendario de Turnos</h1>
+            ***REMOVED***hayTrabajos && (
+              <p className="text-sm text-gray-600">
+                Visualiza y gestiona tus turnos por fecha
+              </p>
+            )***REMOVED***
+          </div>
+        </div>
+
+        ***REMOVED***/* Botón de agregar turno - solo si hay trabajos */***REMOVED***
+        ***REMOVED***hayTrabajos && fechaSeleccionada && (
+          <Button
+            onClick=***REMOVED***() => abrirModalNuevoTurno(new Date(fechaSeleccionada + 'T00:00:00'))***REMOVED***
+            className="flex items-center space-x-2 shadow-sm hover:shadow-md"
+            icon=***REMOVED***Plus***REMOVED***
+            themeColor=***REMOVED***colors.primary***REMOVED***
+          >
+            <span className="hidden sm:inline">Nuevo Turno</span>
+            <span className="sm:hidden">Nuevo</span>
+          </Button>
+        )***REMOVED***
+      </motion.div>
       
       ***REMOVED***/* Mostrar mensaje si no hay trabajos */***REMOVED***
       ***REMOVED***!hayTrabajos && (
@@ -93,6 +153,7 @@ const CalendarioView = () => ***REMOVED***
         </motion.div>
       )***REMOVED***
       
+      ***REMOVED***/* Calendario SIN CalendarSummary */***REMOVED***
       <motion.div
         variants=***REMOVED***calendarVariants***REMOVED***
         initial="hidden"
@@ -101,6 +162,7 @@ const CalendarioView = () => ***REMOVED***
         <Calendario onDiaSeleccionado=***REMOVED***seleccionarDia***REMOVED*** />
       </motion.div>
       
+      ***REMOVED***/* Resumen del día seleccionado */***REMOVED***
       <motion.div
         variants=***REMOVED***detailsVariants***REMOVED***
         initial="hidden"
@@ -114,6 +176,7 @@ const CalendarioView = () => ***REMOVED***
         />
       </motion.div>
       
+      ***REMOVED***/* Modal para crear/editar turnos */***REMOVED***
       <ModalTurno 
         isOpen=***REMOVED***modalAbierto***REMOVED*** 
         onClose=***REMOVED***cerrarModal***REMOVED*** 

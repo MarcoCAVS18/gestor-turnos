@@ -1,7 +1,13 @@
-// src/utils/calendarUtils.js - VERSIÓN ACTUALIZADA
+// src/utils/calendarUtils.js - VERSIÓN ACTUALIZADA COMPLETA
 
+/**
+ * Crea una fecha local evitando problemas de zona horaria
+ */
 export const crearFechaLocal = (year, month, day) => new Date(year, month, day);
 
+/**
+ * Convierte una fecha local a formato ISO string (YYYY-MM-DD)
+ */
 export const fechaLocalAISO = (fecha) => ***REMOVED***
   const year = fecha.getFullYear();
   const month = String(fecha.getMonth() + 1).padStart(2, '0');
@@ -9,12 +15,18 @@ export const fechaLocalAISO = (fecha) => ***REMOVED***
   return `$***REMOVED***year***REMOVED***-$***REMOVED***month***REMOVED***-$***REMOVED***day***REMOVED***`;
 ***REMOVED***;
 
+/**
+ * Verifica si una fecha es hoy
+ */
 export const fechaEsHoy = (fecha, fechaActual) => ***REMOVED***
   return fecha.getDate() === fechaActual.getDate() &&
          fecha.getMonth() === fechaActual.getMonth() &&
          fecha.getFullYear() === fechaActual.getFullYear();
 ***REMOVED***;
 
+/**
+ * Obtiene los turnos del mes considerando turnos nocturnos
+ */
 export const obtenerTurnosMes = (turnos, anioActual, mesActual) => ***REMOVED***
   const primerDia = crearFechaLocal(anioActual, mesActual, 1);
   const ultimoDia = crearFechaLocal(anioActual, mesActual + 1, 0);
@@ -40,6 +52,9 @@ export const obtenerTurnosMes = (turnos, anioActual, mesActual) => ***REMOVED***
   ***REMOVED***);
 ***REMOVED***;
 
+/**
+ * Verifica si hay turnos en una fecha específica
+ */
 export const verificarTurnosEnFecha = (fecha, turnos) => ***REMOVED***
   const fechaStr = fechaLocalAISO(fecha);
   
@@ -59,7 +74,9 @@ export const verificarTurnosEnFecha = (fecha, turnos) => ***REMOVED***
   ***REMOVED***);
 ***REMOVED***;
 
-// Obtener turnos de un día específico (incluyendo nocturnos)
+/**
+ * Obtener turnos de un día específico (incluyendo nocturnos)
+ */
 export const obtenerTurnosDelDia = (fecha, turnos) => ***REMOVED***
   const fechaStr = fechaLocalAISO(fecha);
   
@@ -79,7 +96,9 @@ export const obtenerTurnosDelDia = (fecha, turnos) => ***REMOVED***
   ***REMOVED***);
 ***REMOVED***;
 
-// Obtener colores considerando turnos nocturnos
+/**
+ * Obtener colores considerando turnos nocturnos
+ */
 export const obtenerColoresTrabajos = (turnosDelDia, trabajos) => ***REMOVED***
   const coloresUnicos = new Set();
   
@@ -98,7 +117,9 @@ export const obtenerColoresTrabajos = (turnosDelDia, trabajos) => ***REMOVED***
   return Array.from(coloresUnicos).slice(0, 3);
 ***REMOVED***;
 
-// Determinar el tipo de turno en una fecha específica
+/**
+ * Determinar el tipo de turno en una fecha específica
+ */
 export const obtenerTipoTurnoEnFecha = (turno, fechaStr) => ***REMOVED***
   const fechaPrincipal = turno.fechaInicio || turno.fecha;
   
@@ -118,7 +139,9 @@ export const obtenerTipoTurnoEnFecha = (turno, fechaStr) => ***REMOVED***
   return 'normal';
 ***REMOVED***;
 
-// Formatear la información del turno para mostrar en el calendario
+/**
+ * Formatear la información del turno para mostrar en el calendario
+ */
 export const formatearInfoTurnoParaCalendario = (turno, fechaStr, trabajo) => ***REMOVED***
   const tipoTurno = obtenerTipoTurnoEnFecha(turno, fechaStr);
   
@@ -142,4 +165,47 @@ export const formatearInfoTurnoParaCalendario = (turno, fechaStr, trabajo) => **
     color: trabajo?.color || trabajo?.colorAvatar || '#6B7280',
     esDelivery: turno.tipo === 'delivery' || trabajo?.tipo === 'delivery'
   ***REMOVED***;
+***REMOVED***;
+
+/**
+ * Obtiene los días de la semana en español
+ */
+export const getDiasSemana = () => ***REMOVED***
+  return ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+***REMOVED***;
+
+/**
+ * Obtiene los meses en español
+ */
+export const getMeses = () => ***REMOVED***
+  return [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ];
+***REMOVED***;
+
+/**
+ * Formatea una fecha relativa (hoy, ayer, etc.)
+ */
+export const formatearFechaRelativa = (fechaStr) => ***REMOVED***
+  const fecha = new Date(fechaStr + 'T00:00:00');
+  const hoy = new Date();
+  const ayer = new Date(hoy);
+  ayer.setDate(hoy.getDate() - 1);
+  const mañana = new Date(hoy);
+  mañana.setDate(hoy.getDate() + 1);
+  
+  if (fecha.toDateString() === hoy.toDateString()) ***REMOVED***
+    return 'Hoy';
+  ***REMOVED*** else if (fecha.toDateString() === ayer.toDateString()) ***REMOVED***
+    return 'Ayer';
+  ***REMOVED*** else if (fecha.toDateString() === mañana.toDateString()) ***REMOVED***
+    return 'Mañana';
+  ***REMOVED*** else ***REMOVED***
+    return fecha.toLocaleDateString('es-ES', ***REMOVED***
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long'
+    ***REMOVED***);
+  ***REMOVED***
 ***REMOVED***;
