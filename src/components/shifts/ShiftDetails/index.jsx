@@ -1,13 +1,15 @@
-// src/components/shifts/ShiftDetails/index.jsx - COMPLETAMENTE REESCRITO Y REACTIVO
+// src/components/shifts/ShiftDetails/index.jsx - CON HOOK DE COLORES
 
 import React from 'react';
 import ***REMOVED*** Clock, DollarSign, Timer ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import InfoTooltip from '../../ui/InfoTooltip'; 
 import ***REMOVED*** determinarTipoTurno, getTipoTurnoLabel ***REMOVED*** from '../../../utils/shiftDetailsUtils';
 
 const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** calculatePayment, shiftRanges ***REMOVED*** = useApp();
+  const colors = useThemeColors();
   
   // Hooks SIEMPRE al inicio
   const calculationResults = React.useMemo(() => ***REMOVED***
@@ -187,7 +189,13 @@ const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***
         ***REMOVED***turno.cruzaMedianoche && (
           <>
             <span className="mx-2 text-gray-300 hidden sm:inline">•</span>
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full mt-1 sm:mt-0">
+            <span 
+              className="text-xs px-2 py-0.5 rounded-full mt-1 sm:mt-0"
+              style=***REMOVED******REMOVED*** 
+                backgroundColor: colors.transparent10,
+                color: colors.primary 
+              ***REMOVED******REMOVED***
+            >
               🌙 Nocturno
             </span>
           </>
@@ -197,8 +205,15 @@ const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***
       ***REMOVED***/* GANANCIA CON TOOLTIP Y BADGES - RESPONSIVO */***REMOVED***
       <div className="flex items-center justify-between">
         <div className="flex items-center min-w-0">
-          <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1 text-green-600 flex-shrink-0" />
-          <span className="text-sm font-semibold text-gray-800 mr-1">
+          <DollarSign 
+            size=***REMOVED***14***REMOVED*** 
+            className="mr-1 flex-shrink-0" 
+            style=***REMOVED******REMOVED*** color: colors.success || '#10B981' ***REMOVED******REMOVED***
+          />
+          <span 
+            className="text-sm font-semibold mr-1"
+            style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
+          >
             $***REMOVED***totalWithDiscount.toFixed(2)***REMOVED***
           </span>
           <span className="text-xs text-gray-500 mr-2 whitespace-nowrap">total</span>
@@ -221,7 +236,13 @@ const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***
 
       ***REMOVED***/* INFORMACIÓN ADICIONAL PARA MÓVIL */***REMOVED***
       ***REMOVED***turno.observaciones && (
-        <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600">
+        <div 
+          className="mt-2 p-2 rounded text-xs"
+          style=***REMOVED******REMOVED*** 
+            backgroundColor: colors.transparent5,
+            color: '#6B7280'
+          ***REMOVED******REMOVED***
+        >
           <strong>Notas:</strong> ***REMOVED***turno.observaciones***REMOVED***
         </div>
       )***REMOVED***
