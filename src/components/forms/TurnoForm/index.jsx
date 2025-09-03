@@ -1,302 +1,362 @@
-// src/components/forms/TurnoForm/index.jsx - REFACTORIZADO
+// src/components/forms/TurnoForm/index.jsx - COMPLETAMENTE RESPONSIVO
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Calendar, Clock, Briefcase, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Briefcase, Calendar, Clock, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import ThemeInput from '../../ui/ThemeInput';
-import Button from '../../ui/Button';
 
-const TurnoForm = ({ 
-  turno, 
-  trabajoId, 
-  trabajos, 
-  onSubmit, 
-  onCancel, 
+const TurnoForm = ({
+  turno,
+  trabajoId,
+  trabajos = [],
+  onSubmit,
+  onCancel,
   onTrabajoChange,
-  isMobile,
-  loading,
-  fechaInicial 
+  isMobile = false,
+  loading = false,
+  fechaInicial
 }) => {
   const colors = useThemeColors();
-  
+
+  // Estados del formulario
   const [formData, setFormData] = useState({
-    fecha: '',
+    trabajoId: trabajoId || '',
+    fechaInicio: '',
     horaInicio: '',
     horaFin: '',
-    trabajoSeleccionado: trabajoId || '',
-    notas: '',
+    cruzaMedianoche: false,
+    fechaFin: ''
   });
-  
-  const [error, setError] = useState('');
 
-  const trabajosTradicionales = trabajos.filter(t => t.type !== 'delivery');
+  const [errors, setErrors] = useState({});
 
-  const cruzaMedianoche = useMemo(() => {
-    if (!formData.horaInicio || !formData.horaFin) return false;
-    const [hInicio] = formData.horaInicio.split(':').map(Number);
-    const [hFin] = formData.horaFin.split(':').map(Number);
-    return hFin <= hInicio;
-  }, [formData.horaInicio, formData.horaFin]);
-
+  // Inicializar formulario
   useEffect(() => {
     if (turno) {
       setFormData({
-        fecha: turno.fechaInicio || turno.fecha || '',
+        trabajoId: turno.trabajoId || '',
+        fechaInicio: turno.fechaInicio || turno.fecha || '',
         horaInicio: turno.horaInicio || '',
         horaFin: turno.horaFin || '',
-        trabajoSeleccionado: turno.trabajoId || '',
-        notas: turno.notas || '',
+        cruzaMedianoche: turno.cruzaMedianoche || false,
+        fechaFin: turno.fechaFin || ''
       });
     } else if (fechaInicial) {
-      let fechaStr;
-      if (fechaInicial instanceof Date) {
-        const year = fechaInicial.getFullYear();
-        const month = String(fechaInicial.getMonth() + 1).padStart(2, '0');
-        const day = String(fechaInicial.getDate()).padStart(2, '0');
-        fechaStr = `${year}-${month}-${day}`;
-      } else {
-        fechaStr = fechaInicial;
-      }
-      
-      setFormData(prev => ({
-        ...prev,
-        fecha: fechaStr
-      }));
+      const fechaStr = fechaInicial instanceof Date 
+        ? fechaInicial.toISOString().split('T')[0] 
+        : fechaInicial;
+      setFormData(prev => ({ ...prev, fechaInicio: fechaStr }));
     }
   }, [turno, fechaInicial]);
 
+  // Detectar turnos nocturnos automáticamente
   useEffect(() => {
-    if (trabajoId) {
-      setFormData(prev => ({ ...prev, trabajoSeleccionado: trabajoId }));
+    if (formData.horaInicio && formData.horaFin) {
+      const [horaI] = formData.horaInicio.split(':').map(Number);
+      const [horaF] = formData.horaFin.split(':').map(Number);
+      
+      const esNocturno = horaI > horaF;
+      
+      if (esNocturno !== formData.cruzaMedianoche) {
+        setFormData(prev => ({
+          ...prev,
+          cruzaMedianoche: esNocturno,
+          fechaFin: esNocturno && prev.fechaInicio 
+            ? calcularFechaFin(prev.fechaInicio)
+            : ''
+        }));
+      }
     }
-  }, [trabajoId]);
+  }, [formData.horaInicio, formData.horaFin, formData.fechaInicio, formData.cruzaMedianoche]);
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    setError('');
-  };
-
-  const handleTrabajoChange = (e) => {
-    const nuevoTrabajoId = e.target.value;
-    handleInputChange('trabajoSeleccionado', nuevoTrabajoId);
-    if (onTrabajoChange) {
-      onTrabajoChange(nuevoTrabajoId);
-    }
+  const calcularFechaFin = (fechaInicio) => {
+    const fecha = new Date(fechaInicio + 'T00:00:00');
+    fecha.setDate(fecha.getDate() + 1);
+    return fecha.toISOString().split('T')[0];
   };
 
   const validarFormulario = () => {
-    if (!formData.fecha || !formData.horaInicio || !formData.horaFin || !formData.trabajoSeleccionado) {
-      setError('Todos los campos con * son requeridos.');
-      return false;
+    const newErrors = {};
+
+    if (!formData.trabajoId) {
+      newErrors.trabajoId = 'Selecciona un trabajo';
     }
-    return true;
+    if (!formData.fechaInicio) {
+      newErrors.fechaInicio = 'La fecha es requerida';
+    }
+    if (!formData.horaInicio) {
+      newErrors.horaInicio = 'La hora de inicio es requerida';
+    }
+    if (!formData.horaFin) {
+      newErrors.horaFin = 'La hora de fin es requerida';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const calcularHoras = () => {
-    if (!formData.horaInicio || !formData.horaFin) return "0.0";
-    const [hI, mI] = formData.horaInicio.split(':').map(Number);
-    const [hF, mF] = formData.horaFin.split(':').map(Number);
-    let start = new Date(0, 0, 0, hI, mI, 0);
-    let end = new Date(0, 0, 0, hF, mF, 0);
-    if (cruzaMedianoche) {
-      end.setDate(end.getDate() + 1);
-    }
-    let diff = end.getTime() - start.getTime();
-    if (diff < 0) return "0.0";
-    return (diff / (1000 * 60 * 60)).toFixed(1);
-  };
-  
-  const manejarSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validarFormulario()) return;
-
-    // Cálculo correcto de fecha de fin para turnos nocturnos
-    const fechaInicioObj = new Date(formData.fecha + 'T00:00:00');
-    let fechaFinObj = new Date(fechaInicioObj);
-    if (cruzaMedianoche) {
-      fechaFinObj.setDate(fechaFinObj.getDate() + 1);
+    if (validarFormulario()) {
+      onSubmit(formData);
     }
-    const fechaFinStr = fechaFinObj.toISOString().split('T')[0];
-
-    const datosTurno = {
-      fechaInicio: formData.fecha,
-      fechaFin: fechaFinStr,
-      horaInicio: formData.horaInicio,
-      horaFin: formData.horaFin,
-      trabajoId: formData.trabajoSeleccionado,
-      notas: formData.notas.trim(),
-      cruzaMedianoche: cruzaMedianoche,
-    };
-
-    await onSubmit(datosTurno);
   };
 
-  const trabajoSeleccionadoInfo = trabajosTradicionales.find(t => t.id === formData.trabajoSeleccionado);
-  const horasTrabajadas = calcularHoras();
+  const handleInputChange = useCallback((field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+
+    // Notificar cambio de trabajo al componente padre
+    if (field === 'trabajoId') {
+      onTrabajoChange?.(value);
+    }
+  }, [errors, onTrabajoChange]);
+
+  const inputClasses = `
+    w-full px-3 py-3 border rounded-lg text-base transition-colors
+    focus:outline-none focus:ring-2 focus:border-transparent
+    ${isMobile ? 'text-base min-h-[44px]' : 'text-sm py-2'}
+  `;
 
   return (
-    <form onSubmit={manejarSubmit} className={`space-y-6 ${isMobile ? 'mobile-form' : ''}`}>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          <Briefcase size={16} className="inline mr-2" />
-          Trabajo *
-        </label>
-        <select 
-          value={formData.trabajoSeleccionado} 
-          onChange={handleTrabajoChange} 
-          className={`w-full border rounded-lg transition-colors ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'} border-gray-300`}
-          style={{ '--tw-ring-color': colors.primary }}
-          required 
-          disabled={!!turno || loading}
-        >
-          <option value="">Seleccionar trabajo</option>
-          {trabajosTradicionales.map(trabajo => (
-            <option key={trabajo.id} value={trabajo.id}>{trabajo.nombre}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Fecha - ancho limitado */}
-      <div className="max-w-xs">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          <Calendar size={16} className="inline mr-2" />
-          Fecha de Inicio *
-        </label>
-        <ThemeInput 
-          type="date" 
-          value={formData.fecha} 
-          onChange={(e) => handleInputChange('fecha', e.target.value)} 
-          className="w-full"
-          required 
-        />
-      </div>
-
-      {/* Horarios - grid limitado para inputs de tiempo */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-sm">
-        <div>
+    <div 
+      className={`w-full ${isMobile ? 'mobile-form' : ''}`}
+      style={{ 
+        maxWidth: '100%',
+        overflowX: 'hidden'
+      }}
+    >
+      <form onSubmit={handleSubmit} className="space-y-4 w-full">
+        {/* Selección de trabajo */}
+        <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            <Clock size={16} className="inline mr-2" />
-            Hora inicio *
+            <Briefcase size={16} className="inline mr-2" />
+            Trabajo
           </label>
-          <ThemeInput 
-            type="time" 
-            value={formData.horaInicio} 
-            onChange={(e) => handleInputChange('horaInicio', e.target.value)} 
-            className="w-full"
-            required 
-          />
+          <select
+            value={formData.trabajoId}
+            onChange={(e) => handleInputChange('trabajoId', e.target.value)}
+            className={`${inputClasses} ${errors.trabajoId ? 'border-red-500' : 'border-gray-300'}`}
+            style={{ '--tw-ring-color': colors.primary }}
+            required
+          >
+            <option value="">Seleccionar trabajo</option>
+            {trabajos.filter(t => t.tipo !== 'delivery').map(trabajo => (
+              <option key={trabajo.id} value={trabajo.id}>
+                {trabajo.nombre}
+              </option>
+            ))}
+          </select>
+          {errors.trabajoId && (
+            <p className="text-red-500 text-xs mt-1">{errors.trabajoId}</p>
+          )}
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <Clock size={16} className="inline mr-2" />
-            Hora fin *
-          </label>
-          <ThemeInput 
-            type="time" 
-            value={formData.horaFin} 
-            onChange={(e) => handleInputChange('horaFin', e.target.value)} 
-            className="w-full"
-            required 
-          />
-        </div>
-      </div>
-      
-      {cruzaMedianoche && (
-        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start">
-          <AlertCircle size={16} className="text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
-          <div className="text-sm">
-            <p className="font-medium text-blue-800">Turno Nocturno Detectado</p>
-            <p className="text-blue-700 mt-1">
-              Este turno finalizará el día siguiente: {" "}
-              {formData.fecha && (() => {
-                const fechaInicio = new Date(formData.fecha + 'T00:00:00');
-                const fechaFin = new Date(fechaInicio);
-                fechaFin.setDate(fechaFin.getDate() + 1);
-                return fechaFin.toLocaleDateString('es-ES', {
-                  weekday: 'long',
-                  day: 'numeric', 
-                  month: 'long'
-                });
-              })()}
-            </p>
-          </div>
-        </div>
-      )}
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Notas (opcional)</label>
-        <textarea 
-          value={formData.notas} 
-          onChange={(e) => handleInputChange('notas', e.target.value)} 
-          placeholder="Agregar notas sobre el turno..." 
-          rows={isMobile ? 4 : 3} 
-          className={`w-full border border-gray-300 rounded-lg transition-colors resize-none p-3 text-base`}
-          style={{ '--tw-ring-color': colors.primary }}
-        />
-      </div>
-
-      {error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-600">{error}</p>
-        </div>
-      )}
-
-      <div className={`flex pt-4 ${isMobile ? 'flex-col space-y-3' : 'gap-3'}`}>
-        <Button 
-          type="button" 
-          onClick={onCancel} 
-          variant="outline" 
-          className={isMobile ? 'w-full py-3' : 'flex-1'} 
-          disabled={loading} 
-          themeColor={colors.primary}
-        >
-          Cancelar
-        </Button>
-        <Button 
-          type="submit" 
-          className={isMobile ? 'w-full py-3' : 'flex-1'} 
-          loading={loading} 
-          themeColor={colors.primary}
-        >
-          {turno ? 'Guardar Cambios' : 'Crear Turno'}
-        </Button>
-      </div>
-
-      {horasTrabajadas > 0 && trabajoSeleccionadoInfo && (
-        <div 
-          className={`rounded-lg p-4 border-l-4 mt-2`} 
-          style={{ 
-            borderLeftColor: trabajoSeleccionadoInfo.color || colors.primary, 
-            backgroundColor: `${trabajoSeleccionadoInfo.color || colors.primary}1A` 
-          }}
-        >
-          <div className="space-y-2">
-            <div className="flex items-center space-x-3">
-              <div 
-                className="w-4 h-4 rounded-full" 
-                style={{ backgroundColor: trabajoSeleccionadoInfo.color || colors.primary }} 
+        {/* CONTENEDOR DE FECHAS RESPONSIVO */}
+        <div className="w-full">
+          <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
+            {/* Fecha de inicio */}
+            <div className="w-full min-w-0">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Calendar size={16} className="inline mr-2" />
+                Fecha de inicio
+              </label>
+              <input
+                type="date"
+                value={formData.fechaInicio}
+                onChange={(e) => handleInputChange('fechaInicio', e.target.value)}
+                className={`${inputClasses} ${errors.fechaInicio ? 'border-red-500' : 'border-gray-300'}`}
+                style={{ '--tw-ring-color': colors.primary }}
+                required
               />
-              <span className="text-sm font-medium text-gray-700">{trabajoSeleccionadoInfo.nombre}</span>
+              {errors.fechaInicio && (
+                <p className="text-red-500 text-xs mt-1">{errors.fechaInicio}</p>
+              )}
             </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Duración:</span>
-              <span className="font-medium">
-                {horasTrabajadas} horas
-                {cruzaMedianoche && <span className="text-purple-600 ml-1">(nocturno)</span>}
-              </span>
-            </div>
-            {trabajoSeleccionadoInfo.tarifaBase && (
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Ganancia estimada:</span>
-                <span style={{ color: trabajoSeleccionadoInfo.color || colors.primary }}>
-                  ${(Number(horasTrabajadas) * trabajoSeleccionadoInfo.tarifaBase).toFixed(2)}
-                </span>
+
+            {/* Fecha de fin - solo mostrar si es nocturno */}
+            {formData.cruzaMedianoche && (
+              <div className="w-full min-w-0">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Calendar size={16} className="inline mr-2" />
+                  Fecha de fin
+                </label>
+                <input
+                  type="date"
+                  value={formData.fechaFin || calcularFechaFin(formData.fechaInicio)}
+                  onChange={(e) => handleInputChange('fechaFin', e.target.value)}
+                  className={`${inputClasses} border-gray-300`}
+                  style={{ '--tw-ring-color': colors.primary }}
+                  disabled
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Se calcula automáticamente para turnos nocturnos
+                </p>
               </div>
             )}
           </div>
         </div>
+
+        {/* CONTENEDOR DE HORAS RESPONSIVO */}
+        <div className="w-full">
+          <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
+            {/* Hora de inicio */}
+            <div className="w-full min-w-0">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Clock size={16} className="inline mr-2" />
+                Hora de inicio
+              </label>
+              <input
+                type="time"
+                value={formData.horaInicio}
+                onChange={(e) => handleInputChange('horaInicio', e.target.value)}
+                className={`${inputClasses} ${errors.horaInicio ? 'border-red-500' : 'border-gray-300'}`}
+                style={{ '--tw-ring-color': colors.primary }}
+                required
+              />
+              {errors.horaInicio && (
+                <p className="text-red-500 text-xs mt-1">{errors.horaInicio}</p>
+              )}
+            </div>
+
+            {/* Hora de fin */}
+            <div className="w-full min-w-0">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Clock size={16} className="inline mr-2" />
+                Hora de fin
+              </label>
+              <input
+                type="time"
+                value={formData.horaFin}
+                onChange={(e) => handleInputChange('horaFin', e.target.value)}
+                className={`${inputClasses} ${errors.horaFin ? 'border-red-500' : 'border-gray-300'}`}
+                style={{ '--tw-ring-color': colors.primary }}
+                required
+              />
+              {errors.horaFin && (
+                <p className="text-red-500 text-xs mt-1">{errors.horaFin}</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Toggle para turno nocturno */}
+        {(formData.horaInicio && formData.horaFin) && (
+          <div className="w-full">
+            <div 
+              className="p-3 rounded-lg border"
+              style={{ backgroundColor: colors.transparent5, borderColor: colors.transparent20 }}
+            >
+              <button
+                type="button"
+                onClick={() => handleInputChange('cruzaMedianoche', !formData.cruzaMedianoche)}
+                className="flex items-center w-full"
+              >
+                {formData.cruzaMedianoche ? (
+                  <ToggleRight size={20} style={{ color: colors.primary }} />
+                ) : (
+                  <ToggleLeft size={20} className="text-gray-400" />
+                )}
+                <span className="ml-2 text-sm">
+                  {formData.cruzaMedianoche ? (
+                    <span style={{ color: colors.primary }}>
+                      ✓ Turno nocturno (cruza medianoche)
+                    </span>
+                  ) : (
+                    <span className="text-gray-600">
+                      Turno cruza medianoche
+                    </span>
+                  )}
+                </span>
+              </button>
+              <p className="text-xs text-gray-500 ml-7 mt-1">
+                Actívalo si el turno termina al día siguiente
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* BOTONES COMPLETAMENTE RESPONSIVOS */}
+        <div className={`
+          w-full pt-6 
+          ${isMobile ? 'flex flex-col space-y-4 px-0' : 'flex space-x-3'}
+        `}>
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={loading}
+            className={`
+              border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 
+              text-sm font-medium rounded-lg transition-colors disabled:opacity-50
+              ${isMobile ? 'py-4 px-4 w-full order-2' : 'flex-1 py-2 px-4'}
+            `}
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`
+              text-white rounded-lg hover:opacity-90 text-sm font-medium 
+              disabled:opacity-50 transition-colors
+              ${isMobile ? 'py-4 px-4 w-full order-1' : 'flex-1 py-2 px-4'}
+            `}
+            style={{ backgroundColor: colors.primary }}
+            onMouseEnter={(e) => {
+              if (!loading) {
+                e.target.style.backgroundColor = colors.primaryDark;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!loading) {
+                e.target.style.backgroundColor = colors.primary;
+              }
+            }}
+          >
+            {loading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div 
+                  className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"
+                />
+                <span>Guardando...</span>
+              </div>
+            ) : (
+              turno ? 'Actualizar Turno' : 'Crear Turno'
+            )}
+          </button>
+        </div>
+      </form>
+
+      {/* ESTILOS ADICIONALES PARA MÓVIL */}
+      {isMobile && (
+        <style jsx>{`
+          .mobile-form input[type="date"],
+          .mobile-form input[type="time"],
+          .mobile-form select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: none;
+            font-size: 16px !important; /* Prevenir zoom en iOS */
+          }
+          
+          .mobile-form input[type="time"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+          }
+        `}</style>
       )}
-    </form>
+    </div>
   );
 };
 

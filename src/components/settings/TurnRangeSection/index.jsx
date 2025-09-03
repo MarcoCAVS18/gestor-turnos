@@ -1,7 +1,7 @@
-// src/components/settings/TurnRangeSection/index.jsx - REFACTORIZADO
+// src/components/settings/TurnRangeSection/index.jsx
 
 import React, { useState, useEffect } from 'react';
-import { Clock, Sun, Sunset, Moon } from 'lucide-react';
+import { Clock, Sun, Sunset, Moon, Check } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
@@ -60,12 +60,33 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
     nightStart: 20
   });
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     if (shiftRanges) {
       setRangosTurnos(shiftRanges);
     }
   }, [shiftRanges]);
+
+  // Detectar cambios para habilitar/deshabilitar el botón
+  useEffect(() => {
+    if (!shiftRanges) return;
+    
+    const hasChanged = 
+      rangosTurnos.dayStart !== shiftRanges.dayStart ||
+      rangosTurnos.dayEnd !== shiftRanges.dayEnd ||
+      rangosTurnos.afternoonStart !== shiftRanges.afternoonStart ||
+      rangosTurnos.afternoonEnd !== shiftRanges.afternoonEnd ||
+      rangosTurnos.nightStart !== shiftRanges.nightStart;
+    
+    setHasChanges(hasChanged);
+    
+    // Ocultar el ícono de éxito si hay cambios nuevos
+    if (hasChanged && showSuccess) {
+      setShowSuccess(false);
+    }
+  }, [rangosTurnos, shiftRanges, showSuccess]);
 
   const validarRangos = (rangos) => {
     if (rangos.dayStart >= rangos.dayEnd) {
@@ -94,7 +115,16 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
       }
       
       await savePreferences({ rangosTurnos });
-      onSuccess?.('Rangos de turnos guardados correctamente');
+      
+      // Mostrar éxito y ocultar después de un tiempo
+      setShowSuccess(true);
+      setHasChanges(false);
+      onSuccess?.('Rangos de turnos guardados correctamente.');
+      
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+      
     } catch (error) {
       onError?.('Error al guardar rangos: ' + error.message);
     } finally {
@@ -102,10 +132,19 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
     }
   };
 
+  // Función helper para actualizar rangos
+  const updateRange = (key, value) => {
+    setRangosTurnos(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
   return (
     <SettingsSection icon={Clock} title="Rangos de Turnos">
       <p className="text-sm text-gray-600 mb-4">
         Configura los rangos de horarios para la detección automática de tipos de turno.
+        Los tags de turnos existentes se actualizarán automáticamente.
       </p>
       
       <div className="space-y-4 mb-6">
@@ -115,19 +154,13 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
             <TimeSelect
               label="Hora de inicio"
               value={rangosTurnos.dayStart}
-              onChange={(value) => setRangosTurnos({
-                ...rangosTurnos,
-                dayStart: value
-              })}
+              onChange={(value) => updateRange('dayStart', value)}
               colors={colors}
             />
             <TimeSelect
               label="Hora de fin"
               value={rangosTurnos.dayEnd}
-              onChange={(value) => setRangosTurnos({
-                ...rangosTurnos,
-                dayEnd: value
-              })}
+              onChange={(value) => updateRange('dayEnd', value)}
               colors={colors}
             />
           </div>
@@ -139,19 +172,13 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
             <TimeSelect
               label="Hora de inicio"
               value={rangosTurnos.afternoonStart}
-              onChange={(value) => setRangosTurnos({
-                ...rangosTurnos,
-                afternoonStart: value
-              })}
+              onChange={(value) => updateRange('afternoonStart', value)}
               colors={colors}
             />
             <TimeSelect
               label="Hora de fin"
               value={rangosTurnos.afternoonEnd}
-              onChange={(value) => setRangosTurnos({
-                ...rangosTurnos,
-                afternoonEnd: value
-              })}
+              onChange={(value) => updateRange('afternoonEnd', value)}
               colors={colors}
             />
           </div>
@@ -162,10 +189,7 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
           <TimeSelect
             label="Hora de inicio"
             value={rangosTurnos.nightStart}
-            onChange={(value) => setRangosTurnos({
-              ...rangosTurnos,
-              nightStart: value
-            })}
+            onChange={(value) => updateRange('nightStart', value)}
             colors={colors}
           />
           <p className="text-xs text-gray-500 mt-1">
@@ -176,12 +200,15 @@ const TurnRangeSection = ({ onError, onSuccess }) => {
 
       <Button
         onClick={handleSave}
-        disabled={loading}
+        disabled={loading || !hasChanges}
         loading={loading}
-        className="w-full"
+        className="w-full relative"
         themeColor={colors.primary}
+        icon={showSuccess ? Check : undefined}
       >
-        Guardar rangos de turnos
+        {loading ? 'Guardando...' : 
+         showSuccess ? 'Guardado correctamente' :
+         hasChanges ? 'Guardar rangos de turnos' : 'Sin cambios'}
       </Button>
     </SettingsSection>
   );

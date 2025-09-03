@@ -1,467 +1,494 @@
-// src/components/forms/TurnoDeliveryForm/index.jsx - REFACTORIZADO
+// src/components/forms/TurnoDeliveryForm/index.jsx - COMPLETAMENTE RESPONSIVO
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Calendar, Clock, Package, Car, DollarSign, TrendingUp, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Truck, Calendar, Clock, DollarSign, Package, Navigation, Fuel, Heart, ToggleLeft, ToggleRight } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import ThemeInput from '../../ui/ThemeInput';
-import Button from '../../ui/Button';
 
-const TurnoDeliveryForm = ({ 
-  turno, 
-  trabajoId, 
-  trabajos, 
-  onSubmit, 
-  onCancel, 
+const TurnoDeliveryForm = ({
+  turno,
+  trabajoId,
+  trabajos = [],
+  onSubmit,
+  onCancel,
   onTrabajoChange,
-  isMobile,
-  loading,
+  isMobile = false,
+  loading = false,
   fechaInicial
 }) => {
   const colors = useThemeColors();
-  
+
   // Estados del formulario
   const [formData, setFormData] = useState({
-    fecha: '',
+    trabajoId: trabajoId || '',
+    fechaInicio: '',
     horaInicio: '',
     horaFin: '',
-    trabajoSeleccionado: trabajoId || '',
-    numeroPedidos: '',
     gananciaTotal: '',
     propinas: '',
+    numeroPedidos: '',
     kilometros: '',
     gastoCombustible: '',
-    notas: ''
+    cruzaMedianoche: false,
+    fechaFin: '',
+    observaciones: ''
   });
-  
-  const [error, setError] = useState('');
 
-  // Mostrar TODOS los trabajos disponibles, no solo delivery
-  const trabajosParaSelector = trabajos;
+  const [errors, setErrors] = useState({});
 
-  // Detectar si el turno cruza medianoche
-  const cruzaMedianoche = useMemo(() => {
-    if (!formData.horaInicio || !formData.horaFin) return false;
-    const [hInicio] = formData.horaInicio.split(':').map(Number);
-    const [hFin] = formData.horaFin.split(':').map(Number);
-    return hFin <= hInicio;
-  }, [formData.horaInicio, formData.horaFin]);
-
-  // Calcular fecha de fin automáticamente
-  const fechaFin = useMemo(() => {
-    if (!formData.fecha || !cruzaMedianoche) return formData.fecha;
-    
-    const fechaInicio = new Date(formData.fecha + 'T00:00:00');
-    const fechaFinCalculada = new Date(fechaInicio);
-    fechaFinCalculada.setDate(fechaFinCalculada.getDate() + 1);
-    
-    return fechaFinCalculada.toISOString().split('T')[0];
-  }, [formData.fecha, cruzaMedianoche]);
-
-  // Cargar datos si es edición
+  // Inicializar formulario
   useEffect(() => {
     if (turno) {
       setFormData({
-        fecha: turno.fechaInicio || turno.fecha || '',
+        trabajoId: turno.trabajoId || '',
+        fechaInicio: turno.fechaInicio || turno.fecha || '',
         horaInicio: turno.horaInicio || '',
         horaFin: turno.horaFin || '',
-        trabajoSeleccionado: turno.trabajoId || '',
-        numeroPedidos: turno.numeroPedidos?.toString() || '',
         gananciaTotal: turno.gananciaTotal?.toString() || '',
         propinas: turno.propinas?.toString() || '',
+        numeroPedidos: turno.numeroPedidos?.toString() || '',
         kilometros: turno.kilometros?.toString() || '',
         gastoCombustible: turno.gastoCombustible?.toString() || '',
-        notas: turno.notas || ''
+        cruzaMedianoche: turno.cruzaMedianoche || false,
+        fechaFin: turno.fechaFin || '',
+        observaciones: turno.observaciones || ''
       });
     } else if (fechaInicial) {
-      let fechaStr;
-      if (fechaInicial instanceof Date) {
-        const year = fechaInicial.getFullYear();
-        const month = String(fechaInicial.getMonth() + 1).padStart(2, '0');
-        const day = String(fechaInicial.getDate()).padStart(2, '0');
-        fechaStr = `${year}-${month}-${day}`;
-      } else {
-        fechaStr = fechaInicial;
-      }
-      
-      setFormData(prev => ({
-        ...prev,
-        fecha: fechaStr
-      }));
+      const fechaStr = fechaInicial instanceof Date 
+        ? fechaInicial.toISOString().split('T')[0] 
+        : fechaInicial;
+      setFormData(prev => ({ ...prev, fechaInicio: fechaStr }));
     }
   }, [turno, fechaInicial]);
 
-  // Mantener el trabajoId cuando se pasa como prop
+  // Detectar turnos nocturnos automáticamente
   useEffect(() => {
-    if (trabajoId && trabajoId) {
-      setFormData(prev => ({
-        ...prev,
-        trabajoSeleccionado: trabajoId
-      }));
+    if (formData.horaInicio && formData.horaFin) {
+      const [horaI] = formData.horaInicio.split(':').map(Number);
+      const [horaF] = formData.horaFin.split(':').map(Number);
+      
+      const esNocturno = horaI > horaF;
+      
+      if (esNocturno !== formData.cruzaMedianoche) {
+        setFormData(prev => ({
+          ...prev,
+          cruzaMedianoche: esNocturno,
+          fechaFin: esNocturno && prev.fechaInicio 
+            ? calcularFechaFin(prev.fechaInicio)
+            : ''
+        }));
+      }
     }
-  }, [trabajoId]);
+  }, [formData.horaInicio, formData.horaFin, formData.fechaInicio, formData.cruzaMedianoche]);
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    setError('');
-  };
-
-  const handleTrabajoChange = (e) => {
-    const nuevoTrabajoId = e.target.value;
-    handleInputChange('trabajoSeleccionado', nuevoTrabajoId);
-    
-    if (onTrabajoChange) {
-      onTrabajoChange(nuevoTrabajoId);
-    }
+  const calcularFechaFin = (fechaInicio) => {
+    const fecha = new Date(fechaInicio + 'T00:00:00');
+    fecha.setDate(fecha.getDate() + 1);
+    return fecha.toISOString().split('T')[0];
   };
 
   const validarFormulario = () => {
-    if (!formData.fecha) {
-      setError('La fecha es requerida');
-      return false;
+    const newErrors = {};
+
+    if (!formData.trabajoId) {
+      newErrors.trabajoId = 'Selecciona un trabajo';
     }
-    if (!formData.horaInicio || !formData.horaFin) {
-      setError('Las horas de inicio y fin son requeridas');
-      return false;
+    if (!formData.fechaInicio) {
+      newErrors.fechaInicio = 'La fecha es requerida';
     }
-    if (!formData.trabajoSeleccionado) {
-      setError('Debes seleccionar un trabajo');
-      return false;
+    if (!formData.horaInicio) {
+      newErrors.horaInicio = 'La hora de inicio es requerida';
     }
-    if (!formData.gananciaTotal || isNaN(Number(formData.gananciaTotal))) {
-      setError('La ganancia total debe ser un número válido');
-      return false;
+    if (!formData.horaFin) {
+      newErrors.horaFin = 'La hora de fin es requerida';
     }
-    
-    return true;
+    if (!formData.gananciaTotal || parseFloat(formData.gananciaTotal) <= 0) {
+      newErrors.gananciaTotal = 'La ganancia total es requerida y debe ser mayor a 0';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const manejarSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    
-    if (!validarFormulario()) return;
-
-    // Crear datos del turno con fechas correctas
-    const datosTurno = {
-      fecha: formData.fecha,
-      fechaInicio: formData.fecha,
-      fechaFin: fechaFin,
-      horaInicio: formData.horaInicio,
-      horaFin: formData.horaFin,
-      trabajoId: formData.trabajoSeleccionado,
-      tipo: 'delivery',
-      numeroPedidos: Number(formData.numeroPedidos) || 0,
-      gananciaTotal: Number(formData.gananciaTotal) || 0,
-      propinas: Number(formData.propinas) || 0,
-      kilometros: Number(formData.kilometros) || 0,
-      gastoCombustible: Number(formData.gastoCombustible) || 0,
-      notas: formData.notas.trim(),
-      cruzaMedianoche: cruzaMedianoche
-    };
-
-    await onSubmit(datosTurno);
+    if (validarFormulario()) {
+      // Convertir strings a números
+      const dataToSubmit = {
+        ...formData,
+        gananciaTotal: parseFloat(formData.gananciaTotal) || 0,
+        propinas: parseFloat(formData.propinas) || 0,
+        numeroPedidos: parseInt(formData.numeroPedidos) || 0,
+        kilometros: parseFloat(formData.kilometros) || 0,
+        gastoCombustible: parseFloat(formData.gastoCombustible) || 0
+      };
+      onSubmit(dataToSubmit);
+    }
   };
 
-  // Determinar si mostrar advertencia
-  const trabajoSeleccionadoInfo = trabajosParaSelector.find(t => t.id === formData.trabajoSeleccionado);
-  const esTrabajoNoDelivery = trabajoSeleccionadoInfo && 
-    trabajoSeleccionadoInfo.tipo !== 'delivery' && 
-    trabajoSeleccionadoInfo.type !== 'delivery';
+  const handleInputChange = useCallback((field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+
+    // Notificar cambio de trabajo al componente padre
+    if (field === 'trabajoId') {
+      onTrabajoChange?.(value);
+    }
+  }, [errors, onTrabajoChange]);
+
+  const inputClasses = `
+    w-full px-3 py-3 border rounded-lg text-base transition-colors
+    focus:outline-none focus:ring-2 focus:border-transparent
+    ${isMobile ? 'text-base min-h-[44px]' : 'text-sm py-2'}
+  `;
+
+  // Filtrar solo trabajos de delivery
+  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
 
   return (
-    <div className="modal-content">
-      <form 
-        onSubmit={manejarSubmit} 
-        className={`space-y-4 ${isMobile ? 'mobile-form' : ''}`}
-      >
-        {/* Trabajo seleccionado */}
-        <div>
+    <div 
+      className={`w-full ${isMobile ? 'mobile-form' : ''}`}
+      style={{ 
+        maxWidth: '100%',
+        overflowX: 'hidden'
+      }}
+    >
+      <form onSubmit={handleSubmit} className="space-y-4 w-full">
+        {/* Selección de trabajo de delivery */}
+        <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            <Package size={16} className="inline mr-2" />
-            Trabajo *
+            <Truck size={16} className="inline mr-2" />
+            Trabajo de Delivery
           </label>
           <select
-            value={formData.trabajoSeleccionado}
-            onChange={handleTrabajoChange}
-            className="w-full border border-gray-300 rounded-lg p-3 text-sm transition-colors focus:outline-none focus:ring-2 focus:border-transparent bg-white"
-            style={{ 
-              '--tw-ring-color': colors.primary,
-            }}
+            value={formData.trabajoId}
+            onChange={(e) => handleInputChange('trabajoId', e.target.value)}
+            className={`${inputClasses} ${errors.trabajoId ? 'border-red-500' : 'border-gray-300'}`}
+            style={{ '--tw-ring-color': colors.primary }}
             required
           >
             <option value="">Seleccionar trabajo</option>
-            {trabajosParaSelector.map(trabajo => (
+            {trabajosDelivery.map(trabajo => (
               <option key={trabajo.id} value={trabajo.id}>
                 {trabajo.nombre}
-                {trabajo.tipo === 'delivery' || trabajo.type === 'delivery' 
-                  ? ' (Delivery)' 
-                  : ''}
               </option>
             ))}
           </select>
-          
-          {/* Advertencia si se selecciona un trabajo no-delivery */}
-          {esTrabajoNoDelivery && (
-            <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm text-yellow-800">
-                ⚠️ <strong>Nota:</strong> Has seleccionado un trabajo tradicional. 
-                Este turno se guardará como delivery con ganancias manuales.
-              </p>
-            </div>
-          )}
-          
-          {trabajosParaSelector.length === 0 && (
-            <p className="text-sm text-gray-500 mt-1">
-              No hay trabajos disponibles. Crea uno primero.
-            </p>
+          {errors.trabajoId && (
+            <p className="text-red-500 text-xs mt-1">{errors.trabajoId}</p>
           )}
         </div>
 
-        {/* Fecha y horario*/}
-        <div className="space-y-4">
-          {/* Fecha - ancho limitado */}
-          <div className="max-w-xs">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              <Calendar size={16} className="inline mr-2" />
-              Fecha de inicio *
-            </label>
-            <ThemeInput
-              type="date"
-              value={formData.fecha}
-              onChange={(e) => handleInputChange('fecha', e.target.value)}
-              className="w-full"
-              required
-            />
+        {/* CONTENEDOR DE FECHAS RESPONSIVO */}
+        <div className="w-full">
+          <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
+            {/* Fecha de inicio */}
+            <div className="w-full min-w-0">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Calendar size={16} className="inline mr-2" />
+                Fecha de inicio
+              </label>
+              <input
+                type="date"
+                value={formData.fechaInicio}
+                onChange={(e) => handleInputChange('fechaInicio', e.target.value)}
+                className={`${inputClasses} ${errors.fechaInicio ? 'border-red-500' : 'border-gray-300'}`}
+                style={{ '--tw-ring-color': colors.primary }}
+                required
+              />
+              {errors.fechaInicio && (
+                <p className="text-red-500 text-xs mt-1">{errors.fechaInicio}</p>
+              )}
+            </div>
+
+            {/* Fecha de fin - solo mostrar si es nocturno */}
+            {formData.cruzaMedianoche && (
+              <div className="w-full min-w-0">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Calendar size={16} className="inline mr-2" />
+                  Fecha de fin
+                </label>
+                <input
+                  type="date"
+                  value={formData.fechaFin || calcularFechaFin(formData.fechaInicio)}
+                  className={`${inputClasses} border-gray-300`}
+                  style={{ '--tw-ring-color': colors.primary }}
+                  disabled
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Se calcula automáticamente para turnos nocturnos
+                </p>
+              </div>
+            )}
           </div>
-          
-          {/* Horarios - mismo ancho que los inputs de pedidos/kilómetros */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
-            <div>
+        </div>
+
+        {/* CONTENEDOR DE HORAS RESPONSIVO */}
+        <div className="w-full">
+          <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
+            <div className="w-full min-w-0">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Clock size={16} className="inline mr-2" />
-                Hora inicio *
+                Hora de inicio
               </label>
-              <ThemeInput
+              <input
                 type="time"
                 value={formData.horaInicio}
                 onChange={(e) => handleInputChange('horaInicio', e.target.value)}
-                className="w-full"
+                className={`${inputClasses} ${errors.horaInicio ? 'border-red-500' : 'border-gray-300'}`}
+                style={{ '--tw-ring-color': colors.primary }}
                 required
               />
+              {errors.horaInicio && (
+                <p className="text-red-500 text-xs mt-1">{errors.horaInicio}</p>
+              )}
             </div>
-            
-            <div>
+
+            <div className="w-full min-w-0">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <Clock size={16} className="inline mr-2" />
-                Hora fin *
+                Hora de fin
               </label>
-              <ThemeInput
+              <input
                 type="time"
                 value={formData.horaFin}
                 onChange={(e) => handleInputChange('horaFin', e.target.value)}
-                className="w-full"
+                className={`${inputClasses} ${errors.horaFin ? 'border-red-500' : 'border-gray-300'}`}
+                style={{ '--tw-ring-color': colors.primary }}
                 required
               />
-            </div>
-          </div>
-
-          {/* Mostrar información del turno nocturno */}
-          {cruzaMedianoche && (
-            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start">
-              <AlertCircle size={16} className="text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
-              <div className="text-sm">
-                <p className="font-medium text-blue-800">Turno Nocturno Detectado</p>
-                <p className="text-blue-700 mt-1">
-                  Este turno finalizará el {" "}
-                  {formData.fecha && (() => {
-                    const fechaInicio = new Date(formData.fecha + 'T00:00:00');
-                    const fechaFin = new Date(fechaInicio);
-                    fechaFin.setDate(fechaFin.getDate() + 1);
-                    return fechaFin.toLocaleDateString('es-ES', {
-                      weekday: 'long',
-                      day: 'numeric', 
-                      month: 'long'
-                    });
-                  })()}
-                </p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Información de pedidos */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium text-gray-700">Información del turno</h3>
-          
-          {/* Grid limitado para inputs numéricos pequeños */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Package size={16} className="inline mr-2" />
-                Número de pedidos
-              </label>
-              <ThemeInput
-                type="number"
-                value={formData.numeroPedidos}
-                onChange={(e) => handleInputChange('numeroPedidos', e.target.value)}
-                className="w-full"
-                placeholder="0"
-                min="0"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Car size={16} className="inline mr-2" />
-                Kilómetros recorridos
-              </label>
-              <ThemeInput
-                type="number"
-                value={formData.kilometros}
-                onChange={(e) => handleInputChange('kilometros', e.target.value)}
-                className="w-full"
-                placeholder="0"
-                min="0"
-                step="0.1"
-              />
+              {errors.horaFin && (
+                <p className="text-red-500 text-xs mt-1">{errors.horaFin}</p>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Información financiera */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium text-gray-700">Ganancias *</h3>
-          
-          {/* Grid limitado para inputs de dinero */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
-            <div>
+        {/* Toggle para turno nocturno */}
+        {(formData.horaInicio && formData.horaFin) && (
+          <div className="w-full">
+            <div 
+              className="p-3 rounded-lg border"
+              style={{ backgroundColor: colors.transparent5, borderColor: colors.transparent20 }}
+            >
+              <button
+                type="button"
+                onClick={() => handleInputChange('cruzaMedianoche', !formData.cruzaMedianoche)}
+                className="flex items-center w-full"
+              >
+                {formData.cruzaMedianoche ? (
+                  <ToggleRight size={20} style={{ color: colors.primary }} />
+                ) : (
+                  <ToggleLeft size={20} className="text-gray-400" />
+                )}
+                <span className="ml-2 text-sm">
+                  {formData.cruzaMedianoche ? (
+                    <span style={{ color: colors.primary }}>
+                      ✓ Turno nocturno (cruza medianoche)
+                    </span>
+                  ) : (
+                    <span className="text-gray-600">
+                      Turno cruza medianoche
+                    </span>
+                  )}
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* GANANCIAS RESPONSIVAS */}
+        <div className="w-full">
+          <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
+            <div className="w-full min-w-0">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 <DollarSign size={16} className="inline mr-2" />
                 Ganancia total *
               </label>
-              <ThemeInput
+              <input
                 type="number"
+                step="0.01"
                 value={formData.gananciaTotal}
                 onChange={(e) => handleInputChange('gananciaTotal', e.target.value)}
-                className="w-full"
+                className={`${inputClasses} ${errors.gananciaTotal ? 'border-red-500' : 'border-gray-300'}`}
+                style={{ '--tw-ring-color': colors.primary }}
                 placeholder="0.00"
-                step="0.01"
                 required
               />
+              {errors.gananciaTotal && (
+                <p className="text-red-500 text-xs mt-1">{errors.gananciaTotal}</p>
+              )}
             </div>
-            
-            <div>
+
+            <div className="w-full min-w-0">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                <TrendingUp size={16} className="inline mr-2" />
+                <Heart size={16} className="inline mr-2" />
                 Propinas
               </label>
-              <ThemeInput
+              <input
                 type="number"
+                step="0.01"
                 value={formData.propinas}
                 onChange={(e) => handleInputChange('propinas', e.target.value)}
-                className="w-full"
+                className={`${inputClasses} border-gray-300`}
+                style={{ '--tw-ring-color': colors.primary }}
                 placeholder="0.00"
-                step="0.01"
               />
             </div>
-          </div>
-          
-          {/* Gasto combustible - ancho limitado */}
-          <div className="max-w-xs">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Gasto en combustible
-            </label>
-            <ThemeInput
-              type="number"
-              value={formData.gastoCombustible}
-              onChange={(e) => handleInputChange('gastoCombustible', e.target.value)}
-              className="w-full"
-              placeholder="0.00"
-              step="0.01"
-            />
           </div>
         </div>
 
-        {/* Notas */}
-        <div>
+        {/* DATOS ADICIONALES RESPONSIVOS */}
+        <div className="w-full">
+          <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
+            <div className="w-full min-w-0">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Package size={16} className="inline mr-2" />
+                Número de pedidos
+              </label>
+              <input
+                type="number"
+                value={formData.numeroPedidos}
+                onChange={(e) => handleInputChange('numeroPedidos', e.target.value)}
+                className={`${inputClasses} border-gray-300`}
+                style={{ '--tw-ring-color': colors.primary }}
+                placeholder="0"
+                min="0"
+              />
+            </div>
+
+            <div className="w-full min-w-0">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Navigation size={16} className="inline mr-2" />
+                Kilómetros recorridos
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                value={formData.kilometros}
+                onChange={(e) => handleInputChange('kilometros', e.target.value)}
+                className={`${inputClasses} border-gray-300`}
+                style={{ '--tw-ring-color': colors.primary }}
+                placeholder="0.0"
+                min="0"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Gastos de combustible */}
+        <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Notas (opcional)
+            <Fuel size={16} className="inline mr-2" />
+            Gastos de combustible
           </label>
-          <textarea
-            value={formData.notas}
-            onChange={(e) => handleInputChange('notas', e.target.value)}
-            placeholder="ej: Día lluvioso, mucha demanda..."
-            rows={3}
-            className="w-full border border-gray-300 rounded-lg p-3 text-sm transition-colors resize-none bg-white focus:outline-none focus:ring-2 focus:border-transparent"
-            style={{
-              '--tw-ring-color': colors.primary
-            }}
+          <input
+            type="number"
+            step="0.01"
+            value={formData.gastoCombustible}
+            onChange={(e) => handleInputChange('gastoCombustible', e.target.value)}
+            className={`${inputClasses} border-gray-300`}
+            style={{ '--tw-ring-color': colors.primary }}
+            placeholder="0.00"
+            min="0"
           />
         </div>
 
-        {/* Mensajes de error */}
-        {error && (
-          <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
-        )}
-
-        {/* Botones */}
-        <div className="flex gap-3 pt-4">
-          <Button
-            type="button"
-            onClick={onCancel}
-            variant="outline"
-            className="flex-1"
-            disabled={loading}
-            themeColor={colors.primary}
-          >
-            Cancelar
-          </Button>
-          <Button
-            type="submit"
-            className="flex-1"
-            loading={loading}
-            themeColor={colors.primary}
-          >
-            {turno ? 'Guardar Cambios' : 'Crear Turno'}
-          </Button>
+        {/* Observaciones */}
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Observaciones (opcional)
+          </label>
+          <textarea
+            value={formData.observaciones}
+            onChange={(e) => handleInputChange('observaciones', e.target.value)}
+            className={`${inputClasses} resize-none border-gray-300`}
+            style={{ '--tw-ring-color': colors.primary }}
+            rows={isMobile ? "3" : "2"}
+            placeholder="Notas adicionales sobre el turno..."
+          />
         </div>
 
-        {/* Vista previa de ganancias */}
-        {formData.gananciaTotal && (
-          <div 
-            className="rounded-lg p-4 border-l-4 mt-4"
-            style={{ 
-              borderLeftColor: colors.primary,
-              backgroundColor: colors.transparent10
+        {/* BOTONES COMPLETAMENTE RESPONSIVOS */}
+        <div className={`
+          w-full pt-6 
+          ${isMobile ? 'flex flex-col space-y-4 px-0' : 'flex space-x-3'}
+        `}>
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={loading}
+            className={`
+              border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 
+              text-sm font-medium rounded-lg transition-colors disabled:opacity-50
+              ${isMobile ? 'py-4 px-4 w-full order-2' : 'flex-1 py-2 px-4'}
+            `}
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className={`
+              text-white rounded-lg hover:opacity-90 text-sm font-medium 
+              disabled:opacity-50 transition-colors
+              ${isMobile ? 'py-4 px-4 w-full order-1' : 'flex-1 py-2 px-4'}
+            `}
+            style={{ backgroundColor: colors.primary }}
+            onMouseEnter={(e) => {
+              if (!loading) {
+                e.target.style.backgroundColor = colors.primaryDark;
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!loading) {
+                e.target.style.backgroundColor = colors.primary;
+              }
             }}
           >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Ganancia bruta:</span>
-                <span className="font-medium">${formData.gananciaTotal}</span>
+            {loading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
+                <span>Guardando...</span>
               </div>
-              {formData.gastoCombustible && (
-                <>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Gasto combustible:</span>
-                    <span className="text-red-600">-${formData.gastoCombustible}</span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm font-medium border-t pt-2">
-                    <span>Ganancia neta:</span>
-                    <span style={{ color: colors?.base || '#EC4899' }}>
-                      ${(Number(formData.gananciaTotal) - Number(formData.gastoCombustible || 0)).toFixed(2)}
-                    </span>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-        )}
+            ) : (
+              turno ? 'Actualizar Turno' : 'Crear Turno'
+            )}
+          </button>
+        </div>
       </form>
+
+      {/* ESTILOS ADICIONALES PARA MÓVIL */}
+      {isMobile && (
+        <style jsx>{`
+          .mobile-form input[type="date"],
+          .mobile-form input[type="time"],
+          .mobile-form input[type="number"],
+          .mobile-form select,
+          .mobile-form textarea {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: none;
+            font-size: 16px !important; /* Prevenir zoom en iOS */
+          }
+          
+          .mobile-form input[type="time"]::-webkit-calendar-picker-indicator {
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+          }
+        `}</style>
+      )}
     </div>
   );
 };

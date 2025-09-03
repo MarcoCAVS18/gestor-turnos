@@ -35,7 +35,7 @@ const Input = ({
           `}
           style={{
             '--tw-ring-color': error ? '#EF4444' : focusColor,
-            backgroundColor: '#FFFFFF' // ✅ Fondo blanco explícito
+            backgroundColor: '#FFFFFF'
           }}
           {...props}
         />

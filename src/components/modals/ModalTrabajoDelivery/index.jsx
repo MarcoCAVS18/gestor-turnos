@@ -6,7 +6,7 @@ import VehicleSelector from '../../delivery/VehicleSelector';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
-  // ✅ Usar los nombres correctos del contexto
+  // Usar los nombres correctos del contexto
   const { addDeliveryJob, editDeliveryJob } = useApp();
   const colors = useThemeColors();
   const [isMobile, setIsMobile] = useState(false);
@@ -39,10 +39,10 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
   const manejarGuardado = async (datosDelivery) => {
     try {
       if (trabajo) {
-        // ✅ Usar editDeliveryJob en lugar de editarTrabajoDelivery
+        // Usar editDeliveryJob en lugar de editarTrabajoDelivery
         await editDeliveryJob(trabajo.id, datosDelivery);
       } else {
-        // ✅ Usar addDeliveryJob en lugar de agregarTrabajoDelivery
+        // Usar addDeliveryJob en lugar de agregarTrabajoDelivery
         await addDeliveryJob(datosDelivery);
       }
       onClose();
