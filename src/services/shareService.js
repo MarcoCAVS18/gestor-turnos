@@ -83,7 +83,6 @@ const limpiarDatosTrabajo = (trabajo) => {
       datosLimpios.color = trabajo.colorAvatar;
     }
     
-    // Incluir configuración de delivery si existe
     if (trabajo.configuracion) {
       datosLimpios.configuracion = trabajo.configuracion;
     }

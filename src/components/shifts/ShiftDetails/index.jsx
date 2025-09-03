@@ -1,13 +1,15 @@
-// src/components/shifts/ShiftDetails/index.jsx - COMPLETAMENTE REESCRITO Y REACTIVO
+// src/components/shifts/ShiftDetails/index.jsx - CON HOOK DE COLORES
 
 import React from 'react';
 import { Clock, DollarSign, Timer } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import InfoTooltip from '../../ui/InfoTooltip'; 
 import { determinarTipoTurno, getTipoTurnoLabel } from '../../../utils/shiftDetailsUtils';
 
 const ShiftDetails = ({ turno, trabajo, badges }) => {
   const { calculatePayment, shiftRanges } = useApp();
+  const colors = useThemeColors();
   
   // Hooks SIEMPRE al inicio
   const calculationResults = React.useMemo(() => {
@@ -187,7 +189,13 @@ const ShiftDetails = ({ turno, trabajo, badges }) => {
         {turno.cruzaMedianoche && (
           <>
             <span className="mx-2 text-gray-300 hidden sm:inline">•</span>
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full mt-1 sm:mt-0">
+            <span 
+              className="text-xs px-2 py-0.5 rounded-full mt-1 sm:mt-0"
+              style={{ 
+                backgroundColor: colors.transparent10,
+                color: colors.primary 
+              }}
+            >
               🌙 Nocturno
             </span>
           </>
@@ -197,8 +205,15 @@ const ShiftDetails = ({ turno, trabajo, badges }) => {
       {/* GANANCIA CON TOOLTIP Y BADGES - RESPONSIVO */}
       <div className="flex items-center justify-between">
         <div className="flex items-center min-w-0">
-          <DollarSign size={14} className="mr-1 text-green-600 flex-shrink-0" />
-          <span className="text-sm font-semibold text-gray-800 mr-1">
+          <DollarSign 
+            size={14} 
+            className="mr-1 flex-shrink-0" 
+            style={{ color: colors.success || '#10B981' }}
+          />
+          <span 
+            className="text-sm font-semibold mr-1"
+            style={{ color: colors.primary }}
+          >
             ${totalWithDiscount.toFixed(2)}
           </span>
           <span className="text-xs text-gray-500 mr-2 whitespace-nowrap">total</span>
@@ -221,7 +236,13 @@ const ShiftDetails = ({ turno, trabajo, badges }) => {
 
       {/* INFORMACIÓN ADICIONAL PARA MÓVIL */}
       {turno.observaciones && (
-        <div className="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600">
+        <div 
+          className="mt-2 p-2 rounded text-xs"
+          style={{ 
+            backgroundColor: colors.transparent5,
+            color: '#6B7280'
+          }}
+        >
           <strong>Notas:</strong> {turno.observaciones}
         </div>
       )}
