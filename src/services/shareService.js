@@ -42,7 +42,6 @@ const limpiarDatosTrabajo = (trabajo) => ***REMOVED***
   if (trabajo.tarifas && typeof trabajo.tarifas === 'object') ***REMOVED***
     datosLimpios.tarifas = ***REMOVED******REMOVED***;
     
-    // ✅ Incluir TODAS las tarifas, no importa si son iguales a la tarifa base
     if (trabajo.tarifas.diurno !== undefined && trabajo.tarifas.diurno !== null) ***REMOVED***
       datosLimpios.tarifas.diurno = trabajo.tarifas.diurno;
     ***REMOVED***
@@ -74,7 +73,7 @@ const limpiarDatosTrabajo = (trabajo) => ***REMOVED***
       datosLimpios.plataforma = trabajo.plataforma;
     ***REMOVED***
     
-    // ✅ Incluir vehículo - IMPORTANTE para la preview
+    // Incluir vehículo
     if (trabajo.vehiculo) ***REMOVED***
       datosLimpios.vehiculo = trabajo.vehiculo;
     ***REMOVED***

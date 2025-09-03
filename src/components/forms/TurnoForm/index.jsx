@@ -1,302 +1,362 @@
-// src/components/forms/TurnoForm/index.jsx - REFACTORIZADO
+// src/components/forms/TurnoForm/index.jsx - COMPLETAMENTE RESPONSIVO
 
-import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react';
-import ***REMOVED*** Calendar, Clock, Briefcase, AlertCircle ***REMOVED*** from 'lucide-react';
+import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
+import ***REMOVED*** Briefcase, Calendar, Clock, ToggleLeft, ToggleRight ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
-import ThemeInput from '../../ui/ThemeInput';
-import Button from '../../ui/Button';
 
-const TurnoForm = (***REMOVED*** 
-  turno, 
-  trabajoId, 
-  trabajos, 
-  onSubmit, 
-  onCancel, 
+const TurnoForm = (***REMOVED***
+  turno,
+  trabajoId,
+  trabajos = [],
+  onSubmit,
+  onCancel,
   onTrabajoChange,
-  isMobile,
-  loading,
-  fechaInicial 
+  isMobile = false,
+  loading = false,
+  fechaInicial
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
-  
+
+  // Estados del formulario
   const [formData, setFormData] = useState(***REMOVED***
-    fecha: '',
+    trabajoId: trabajoId || '',
+    fechaInicio: '',
     horaInicio: '',
     horaFin: '',
-    trabajoSeleccionado: trabajoId || '',
-    notas: '',
+    cruzaMedianoche: false,
+    fechaFin: ''
   ***REMOVED***);
-  
-  const [error, setError] = useState('');
 
-  const trabajosTradicionales = trabajos.filter(t => t.type !== 'delivery');
+  const [errors, setErrors] = useState(***REMOVED******REMOVED***);
 
-  const cruzaMedianoche = useMemo(() => ***REMOVED***
-    if (!formData.horaInicio || !formData.horaFin) return false;
-    const [hInicio] = formData.horaInicio.split(':').map(Number);
-    const [hFin] = formData.horaFin.split(':').map(Number);
-    return hFin <= hInicio;
-  ***REMOVED***, [formData.horaInicio, formData.horaFin]);
-
+  // Inicializar formulario
   useEffect(() => ***REMOVED***
     if (turno) ***REMOVED***
       setFormData(***REMOVED***
-        fecha: turno.fechaInicio || turno.fecha || '',
+        trabajoId: turno.trabajoId || '',
+        fechaInicio: turno.fechaInicio || turno.fecha || '',
         horaInicio: turno.horaInicio || '',
         horaFin: turno.horaFin || '',
-        trabajoSeleccionado: turno.trabajoId || '',
-        notas: turno.notas || '',
+        cruzaMedianoche: turno.cruzaMedianoche || false,
+        fechaFin: turno.fechaFin || ''
       ***REMOVED***);
     ***REMOVED*** else if (fechaInicial) ***REMOVED***
-      let fechaStr;
-      if (fechaInicial instanceof Date) ***REMOVED***
-        const year = fechaInicial.getFullYear();
-        const month = String(fechaInicial.getMonth() + 1).padStart(2, '0');
-        const day = String(fechaInicial.getDate()).padStart(2, '0');
-        fechaStr = `$***REMOVED***year***REMOVED***-$***REMOVED***month***REMOVED***-$***REMOVED***day***REMOVED***`;
-      ***REMOVED*** else ***REMOVED***
-        fechaStr = fechaInicial;
-      ***REMOVED***
-      
-      setFormData(prev => (***REMOVED***
-        ...prev,
-        fecha: fechaStr
-      ***REMOVED***));
+      const fechaStr = fechaInicial instanceof Date 
+        ? fechaInicial.toISOString().split('T')[0] 
+        : fechaInicial;
+      setFormData(prev => (***REMOVED*** ...prev, fechaInicio: fechaStr ***REMOVED***));
     ***REMOVED***
   ***REMOVED***, [turno, fechaInicial]);
 
+  // Detectar turnos nocturnos automáticamente
   useEffect(() => ***REMOVED***
-    if (trabajoId) ***REMOVED***
-      setFormData(prev => (***REMOVED*** ...prev, trabajoSeleccionado: trabajoId ***REMOVED***));
+    if (formData.horaInicio && formData.horaFin) ***REMOVED***
+      const [horaI] = formData.horaInicio.split(':').map(Number);
+      const [horaF] = formData.horaFin.split(':').map(Number);
+      
+      const esNocturno = horaI > horaF;
+      
+      if (esNocturno !== formData.cruzaMedianoche) ***REMOVED***
+        setFormData(prev => (***REMOVED***
+          ...prev,
+          cruzaMedianoche: esNocturno,
+          fechaFin: esNocturno && prev.fechaInicio 
+            ? calcularFechaFin(prev.fechaInicio)
+            : ''
+        ***REMOVED***));
+      ***REMOVED***
     ***REMOVED***
-  ***REMOVED***, [trabajoId]);
+  ***REMOVED***, [formData.horaInicio, formData.horaFin, formData.fechaInicio, formData.cruzaMedianoche]);
 
-  const handleInputChange = (field, value) => ***REMOVED***
-    setFormData(prev => (***REMOVED*** ...prev, [field]: value ***REMOVED***));
-    setError('');
-  ***REMOVED***;
-
-  const handleTrabajoChange = (e) => ***REMOVED***
-    const nuevoTrabajoId = e.target.value;
-    handleInputChange('trabajoSeleccionado', nuevoTrabajoId);
-    if (onTrabajoChange) ***REMOVED***
-      onTrabajoChange(nuevoTrabajoId);
-    ***REMOVED***
+  const calcularFechaFin = (fechaInicio) => ***REMOVED***
+    const fecha = new Date(fechaInicio + 'T00:00:00');
+    fecha.setDate(fecha.getDate() + 1);
+    return fecha.toISOString().split('T')[0];
   ***REMOVED***;
 
   const validarFormulario = () => ***REMOVED***
-    if (!formData.fecha || !formData.horaInicio || !formData.horaFin || !formData.trabajoSeleccionado) ***REMOVED***
-      setError('Todos los campos con * son requeridos.');
-      return false;
+    const newErrors = ***REMOVED******REMOVED***;
+
+    if (!formData.trabajoId) ***REMOVED***
+      newErrors.trabajoId = 'Selecciona un trabajo';
     ***REMOVED***
-    return true;
+    if (!formData.fechaInicio) ***REMOVED***
+      newErrors.fechaInicio = 'La fecha es requerida';
+    ***REMOVED***
+    if (!formData.horaInicio) ***REMOVED***
+      newErrors.horaInicio = 'La hora de inicio es requerida';
+    ***REMOVED***
+    if (!formData.horaFin) ***REMOVED***
+      newErrors.horaFin = 'La hora de fin es requerida';
+    ***REMOVED***
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   ***REMOVED***;
 
-  const calcularHoras = () => ***REMOVED***
-    if (!formData.horaInicio || !formData.horaFin) return "0.0";
-    const [hI, mI] = formData.horaInicio.split(':').map(Number);
-    const [hF, mF] = formData.horaFin.split(':').map(Number);
-    let start = new Date(0, 0, 0, hI, mI, 0);
-    let end = new Date(0, 0, 0, hF, mF, 0);
-    if (cruzaMedianoche) ***REMOVED***
-      end.setDate(end.getDate() + 1);
-    ***REMOVED***
-    let diff = end.getTime() - start.getTime();
-    if (diff < 0) return "0.0";
-    return (diff / (1000 * 60 * 60)).toFixed(1);
-  ***REMOVED***;
-  
-  const manejarSubmit = async (e) => ***REMOVED***
+  const handleSubmit = (e) => ***REMOVED***
     e.preventDefault();
-    if (!validarFormulario()) return;
-
-    // Cálculo correcto de fecha de fin para turnos nocturnos
-    const fechaInicioObj = new Date(formData.fecha + 'T00:00:00');
-    let fechaFinObj = new Date(fechaInicioObj);
-    if (cruzaMedianoche) ***REMOVED***
-      fechaFinObj.setDate(fechaFinObj.getDate() + 1);
+    if (validarFormulario()) ***REMOVED***
+      onSubmit(formData);
     ***REMOVED***
-    const fechaFinStr = fechaFinObj.toISOString().split('T')[0];
-
-    const datosTurno = ***REMOVED***
-      fechaInicio: formData.fecha,
-      fechaFin: fechaFinStr,
-      horaInicio: formData.horaInicio,
-      horaFin: formData.horaFin,
-      trabajoId: formData.trabajoSeleccionado,
-      notas: formData.notas.trim(),
-      cruzaMedianoche: cruzaMedianoche,
-    ***REMOVED***;
-
-    await onSubmit(datosTurno);
   ***REMOVED***;
 
-  const trabajoSeleccionadoInfo = trabajosTradicionales.find(t => t.id === formData.trabajoSeleccionado);
-  const horasTrabajadas = calcularHoras();
+  const handleInputChange = useCallback((field, value) => ***REMOVED***
+    setFormData(prev => (***REMOVED*** ...prev, [field]: value ***REMOVED***));
+    if (errors[field]) ***REMOVED***
+      setErrors(prev => (***REMOVED*** ...prev, [field]: undefined ***REMOVED***));
+    ***REMOVED***
+
+    // Notificar cambio de trabajo al componente padre
+    if (field === 'trabajoId') ***REMOVED***
+      onTrabajoChange?.(value);
+    ***REMOVED***
+  ***REMOVED***, [errors, onTrabajoChange]);
+
+  const inputClasses = `
+    w-full px-3 py-3 border rounded-lg text-base transition-colors
+    focus:outline-none focus:ring-2 focus:border-transparent
+    $***REMOVED***isMobile ? 'text-base min-h-[44px]' : 'text-sm py-2'***REMOVED***
+  `;
 
   return (
-    <form onSubmit=***REMOVED***manejarSubmit***REMOVED*** className=***REMOVED***`space-y-6 $***REMOVED***isMobile ? 'mobile-form' : ''***REMOVED***`***REMOVED***>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          <Briefcase size=***REMOVED***16***REMOVED*** className="inline mr-2" />
-          Trabajo *
-        </label>
-        <select 
-          value=***REMOVED***formData.trabajoSeleccionado***REMOVED*** 
-          onChange=***REMOVED***handleTrabajoChange***REMOVED*** 
-          className=***REMOVED***`w-full border rounded-lg transition-colors $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED*** border-gray-300`***REMOVED***
-          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
-          required 
-          disabled=***REMOVED***!!turno || loading***REMOVED***
-        >
-          <option value="">Seleccionar trabajo</option>
-          ***REMOVED***trabajosTradicionales.map(trabajo => (
-            <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>***REMOVED***trabajo.nombre***REMOVED***</option>
-          ))***REMOVED***
-        </select>
-      </div>
-
-      ***REMOVED***/* Fecha - ancho limitado */***REMOVED***
-      <div className="max-w-xs">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          <Calendar size=***REMOVED***16***REMOVED*** className="inline mr-2" />
-          Fecha de Inicio *
-        </label>
-        <ThemeInput 
-          type="date" 
-          value=***REMOVED***formData.fecha***REMOVED*** 
-          onChange=***REMOVED***(e) => handleInputChange('fecha', e.target.value)***REMOVED*** 
-          className="w-full"
-          required 
-        />
-      </div>
-
-      ***REMOVED***/* Horarios - grid limitado para inputs de tiempo */***REMOVED***
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-sm">
-        <div>
+    <div 
+      className=***REMOVED***`w-full $***REMOVED***isMobile ? 'mobile-form' : ''***REMOVED***`***REMOVED***
+      style=***REMOVED******REMOVED*** 
+        maxWidth: '100%',
+        overflowX: 'hidden'
+      ***REMOVED******REMOVED***
+    >
+      <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className="space-y-4 w-full">
+        ***REMOVED***/* Selección de trabajo */***REMOVED***
+        <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            <Clock size=***REMOVED***16***REMOVED*** className="inline mr-2" />
-            Hora inicio *
+            <Briefcase size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+            Trabajo
           </label>
-          <ThemeInput 
-            type="time" 
-            value=***REMOVED***formData.horaInicio***REMOVED*** 
-            onChange=***REMOVED***(e) => handleInputChange('horaInicio', e.target.value)***REMOVED*** 
-            className="w-full"
-            required 
-          />
+          <select
+            value=***REMOVED***formData.trabajoId***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('trabajoId', e.target.value)***REMOVED***
+            className=***REMOVED***`$***REMOVED***inputClasses***REMOVED*** $***REMOVED***errors.trabajoId ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
+            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            required
+          >
+            <option value="">Seleccionar trabajo</option>
+            ***REMOVED***trabajos.filter(t => t.tipo !== 'delivery').map(trabajo => (
+              <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
+                ***REMOVED***trabajo.nombre***REMOVED***
+              </option>
+            ))***REMOVED***
+          </select>
+          ***REMOVED***errors.trabajoId && (
+            <p className="text-red-500 text-xs mt-1">***REMOVED***errors.trabajoId***REMOVED***</p>
+          )***REMOVED***
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <Clock size=***REMOVED***16***REMOVED*** className="inline mr-2" />
-            Hora fin *
-          </label>
-          <ThemeInput 
-            type="time" 
-            value=***REMOVED***formData.horaFin***REMOVED*** 
-            onChange=***REMOVED***(e) => handleInputChange('horaFin', e.target.value)***REMOVED*** 
-            className="w-full"
-            required 
-          />
-        </div>
-      </div>
-      
-      ***REMOVED***cruzaMedianoche && (
-        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start">
-          <AlertCircle size=***REMOVED***16***REMOVED*** className="text-blue-600 mt-0.5 mr-2 flex-shrink-0" />
-          <div className="text-sm">
-            <p className="font-medium text-blue-800">Turno Nocturno Detectado</p>
-            <p className="text-blue-700 mt-1">
-              Este turno finalizará el día siguiente: ***REMOVED***" "***REMOVED***
-              ***REMOVED***formData.fecha && (() => ***REMOVED***
-                const fechaInicio = new Date(formData.fecha + 'T00:00:00');
-                const fechaFin = new Date(fechaInicio);
-                fechaFin.setDate(fechaFin.getDate() + 1);
-                return fechaFin.toLocaleDateString('es-ES', ***REMOVED***
-                  weekday: 'long',
-                  day: 'numeric', 
-                  month: 'long'
-                ***REMOVED***);
-              ***REMOVED***)()***REMOVED***
-            </p>
-          </div>
-        </div>
-      )***REMOVED***
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Notas (opcional)</label>
-        <textarea 
-          value=***REMOVED***formData.notas***REMOVED*** 
-          onChange=***REMOVED***(e) => handleInputChange('notas', e.target.value)***REMOVED*** 
-          placeholder="Agregar notas sobre el turno..." 
-          rows=***REMOVED***isMobile ? 4 : 3***REMOVED*** 
-          className=***REMOVED***`w-full border border-gray-300 rounded-lg transition-colors resize-none p-3 text-base`***REMOVED***
-          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
-        />
-      </div>
-
-      ***REMOVED***error && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-600">***REMOVED***error***REMOVED***</p>
-        </div>
-      )***REMOVED***
-
-      <div className=***REMOVED***`flex pt-4 $***REMOVED***isMobile ? 'flex-col space-y-3' : 'gap-3'***REMOVED***`***REMOVED***>
-        <Button 
-          type="button" 
-          onClick=***REMOVED***onCancel***REMOVED*** 
-          variant="outline" 
-          className=***REMOVED***isMobile ? 'w-full py-3' : 'flex-1'***REMOVED*** 
-          disabled=***REMOVED***loading***REMOVED*** 
-          themeColor=***REMOVED***colors.primary***REMOVED***
-        >
-          Cancelar
-        </Button>
-        <Button 
-          type="submit" 
-          className=***REMOVED***isMobile ? 'w-full py-3' : 'flex-1'***REMOVED*** 
-          loading=***REMOVED***loading***REMOVED*** 
-          themeColor=***REMOVED***colors.primary***REMOVED***
-        >
-          ***REMOVED***turno ? 'Guardar Cambios' : 'Crear Turno'***REMOVED***
-        </Button>
-      </div>
-
-      ***REMOVED***horasTrabajadas > 0 && trabajoSeleccionadoInfo && (
-        <div 
-          className=***REMOVED***`rounded-lg p-4 border-l-4 mt-2`***REMOVED*** 
-          style=***REMOVED******REMOVED*** 
-            borderLeftColor: trabajoSeleccionadoInfo.color || colors.primary, 
-            backgroundColor: `$***REMOVED***trabajoSeleccionadoInfo.color || colors.primary***REMOVED***1A` 
-          ***REMOVED******REMOVED***
-        >
-          <div className="space-y-2">
-            <div className="flex items-center space-x-3">
-              <div 
-                className="w-4 h-4 rounded-full" 
-                style=***REMOVED******REMOVED*** backgroundColor: trabajoSeleccionadoInfo.color || colors.primary ***REMOVED******REMOVED*** 
+        ***REMOVED***/* CONTENEDOR DE FECHAS RESPONSIVO */***REMOVED***
+        <div className="w-full">
+          <div className=***REMOVED***`grid gap-4 $***REMOVED***isMobile ? 'grid-cols-1' : 'grid-cols-2'***REMOVED***`***REMOVED***>
+            ***REMOVED***/* Fecha de inicio */***REMOVED***
+            <div className="w-full min-w-0">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Calendar size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+                Fecha de inicio
+              </label>
+              <input
+                type="date"
+                value=***REMOVED***formData.fechaInicio***REMOVED***
+                onChange=***REMOVED***(e) => handleInputChange('fechaInicio', e.target.value)***REMOVED***
+                className=***REMOVED***`$***REMOVED***inputClasses***REMOVED*** $***REMOVED***errors.fechaInicio ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
+                style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+                required
               />
-              <span className="text-sm font-medium text-gray-700">***REMOVED***trabajoSeleccionadoInfo.nombre***REMOVED***</span>
+              ***REMOVED***errors.fechaInicio && (
+                <p className="text-red-500 text-xs mt-1">***REMOVED***errors.fechaInicio***REMOVED***</p>
+              )***REMOVED***
             </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Duración:</span>
-              <span className="font-medium">
-                ***REMOVED***horasTrabajadas***REMOVED*** horas
-                ***REMOVED***cruzaMedianoche && <span className="text-purple-600 ml-1">(nocturno)</span>***REMOVED***
-              </span>
-            </div>
-            ***REMOVED***trabajoSeleccionadoInfo.tarifaBase && (
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-600">Ganancia estimada:</span>
-                <span style=***REMOVED******REMOVED*** color: trabajoSeleccionadoInfo.color || colors.primary ***REMOVED******REMOVED***>
-                  $***REMOVED***(Number(horasTrabajadas) * trabajoSeleccionadoInfo.tarifaBase).toFixed(2)***REMOVED***
-                </span>
+
+            ***REMOVED***/* Fecha de fin - solo mostrar si es nocturno */***REMOVED***
+            ***REMOVED***formData.cruzaMedianoche && (
+              <div className="w-full min-w-0">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Calendar size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+                  Fecha de fin
+                </label>
+                <input
+                  type="date"
+                  value=***REMOVED***formData.fechaFin || calcularFechaFin(formData.fechaInicio)***REMOVED***
+                  onChange=***REMOVED***(e) => handleInputChange('fechaFin', e.target.value)***REMOVED***
+                  className=***REMOVED***`$***REMOVED***inputClasses***REMOVED*** border-gray-300`***REMOVED***
+                  style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+                  disabled
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Se calcula automáticamente para turnos nocturnos
+                </p>
               </div>
             )***REMOVED***
           </div>
         </div>
+
+        ***REMOVED***/* CONTENEDOR DE HORAS RESPONSIVO */***REMOVED***
+        <div className="w-full">
+          <div className=***REMOVED***`grid gap-4 $***REMOVED***isMobile ? 'grid-cols-1' : 'grid-cols-2'***REMOVED***`***REMOVED***>
+            ***REMOVED***/* Hora de inicio */***REMOVED***
+            <div className="w-full min-w-0">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Clock size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+                Hora de inicio
+              </label>
+              <input
+                type="time"
+                value=***REMOVED***formData.horaInicio***REMOVED***
+                onChange=***REMOVED***(e) => handleInputChange('horaInicio', e.target.value)***REMOVED***
+                className=***REMOVED***`$***REMOVED***inputClasses***REMOVED*** $***REMOVED***errors.horaInicio ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
+                style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+                required
+              />
+              ***REMOVED***errors.horaInicio && (
+                <p className="text-red-500 text-xs mt-1">***REMOVED***errors.horaInicio***REMOVED***</p>
+              )***REMOVED***
+            </div>
+
+            ***REMOVED***/* Hora de fin */***REMOVED***
+            <div className="w-full min-w-0">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <Clock size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+                Hora de fin
+              </label>
+              <input
+                type="time"
+                value=***REMOVED***formData.horaFin***REMOVED***
+                onChange=***REMOVED***(e) => handleInputChange('horaFin', e.target.value)***REMOVED***
+                className=***REMOVED***`$***REMOVED***inputClasses***REMOVED*** $***REMOVED***errors.horaFin ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
+                style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+                required
+              />
+              ***REMOVED***errors.horaFin && (
+                <p className="text-red-500 text-xs mt-1">***REMOVED***errors.horaFin***REMOVED***</p>
+              )***REMOVED***
+            </div>
+          </div>
+        </div>
+
+        ***REMOVED***/* Toggle para turno nocturno */***REMOVED***
+        ***REMOVED***(formData.horaInicio && formData.horaFin) && (
+          <div className="w-full">
+            <div 
+              className="p-3 rounded-lg border"
+              style=***REMOVED******REMOVED*** backgroundColor: colors.transparent5, borderColor: colors.transparent20 ***REMOVED******REMOVED***
+            >
+              <button
+                type="button"
+                onClick=***REMOVED***() => handleInputChange('cruzaMedianoche', !formData.cruzaMedianoche)***REMOVED***
+                className="flex items-center w-full"
+              >
+                ***REMOVED***formData.cruzaMedianoche ? (
+                  <ToggleRight size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
+                ) : (
+                  <ToggleLeft size=***REMOVED***20***REMOVED*** className="text-gray-400" />
+                )***REMOVED***
+                <span className="ml-2 text-sm">
+                  ***REMOVED***formData.cruzaMedianoche ? (
+                    <span style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                      ✓ Turno nocturno (cruza medianoche)
+                    </span>
+                  ) : (
+                    <span className="text-gray-600">
+                      Turno cruza medianoche
+                    </span>
+                  )***REMOVED***
+                </span>
+              </button>
+              <p className="text-xs text-gray-500 ml-7 mt-1">
+                Actívalo si el turno termina al día siguiente
+              </p>
+            </div>
+          </div>
+        )***REMOVED***
+
+        ***REMOVED***/* BOTONES COMPLETAMENTE RESPONSIVOS */***REMOVED***
+        <div className=***REMOVED***`
+          w-full pt-6 
+          $***REMOVED***isMobile ? 'flex flex-col space-y-4 px-0' : 'flex space-x-3'***REMOVED***
+        `***REMOVED***>
+          <button
+            type="button"
+            onClick=***REMOVED***onCancel***REMOVED***
+            disabled=***REMOVED***loading***REMOVED***
+            className=***REMOVED***`
+              border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 
+              text-sm font-medium rounded-lg transition-colors disabled:opacity-50
+              $***REMOVED***isMobile ? 'py-4 px-4 w-full order-2' : 'flex-1 py-2 px-4'***REMOVED***
+            `***REMOVED***
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            disabled=***REMOVED***loading***REMOVED***
+            className=***REMOVED***`
+              text-white rounded-lg hover:opacity-90 text-sm font-medium 
+              disabled:opacity-50 transition-colors
+              $***REMOVED***isMobile ? 'py-4 px-4 w-full order-1' : 'flex-1 py-2 px-4'***REMOVED***
+            `***REMOVED***
+            style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
+            onMouseEnter=***REMOVED***(e) => ***REMOVED***
+              if (!loading) ***REMOVED***
+                e.target.style.backgroundColor = colors.primaryDark;
+              ***REMOVED***
+            ***REMOVED******REMOVED***
+            onMouseLeave=***REMOVED***(e) => ***REMOVED***
+              if (!loading) ***REMOVED***
+                e.target.style.backgroundColor = colors.primary;
+              ***REMOVED***
+            ***REMOVED******REMOVED***
+          >
+            ***REMOVED***loading ? (
+              <div className="flex items-center justify-center space-x-2">
+                <div 
+                  className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"
+                />
+                <span>Guardando...</span>
+              </div>
+            ) : (
+              turno ? 'Actualizar Turno' : 'Crear Turno'
+            )***REMOVED***
+          </button>
+        </div>
+      </form>
+
+      ***REMOVED***/* ESTILOS ADICIONALES PARA MÓVIL */***REMOVED***
+      ***REMOVED***isMobile && (
+        <style jsx>***REMOVED***`
+          .mobile-form input[type="date"],
+          .mobile-form input[type="time"],
+          .mobile-form select ***REMOVED***
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: none;
+            font-size: 16px !important; /* Prevenir zoom en iOS */
+          ***REMOVED***
+          
+          .mobile-form input[type="time"]::-webkit-calendar-picker-indicator ***REMOVED***
+            background: transparent;
+            bottom: 0;
+            color: transparent;
+            cursor: pointer;
+            height: auto;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: auto;
+          ***REMOVED***
+        `***REMOVED***</style>
       )***REMOVED***
-    </form>
+    </div>
   );
 ***REMOVED***;
 

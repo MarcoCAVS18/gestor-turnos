@@ -3,10 +3,8 @@
 import React from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useCalendarState ***REMOVED*** from '../../../hooks/useCalendarState';
-import ***REMOVED*** obtenerTurnosMes ***REMOVED*** from '../../../utils/calendarUtils';
 import Card from '../../ui/Card';
 import CalendarHeader from '../CalendarHeader';
-import CalendarSummary from '../CalendarSummary';
 import CalendarGrid from '../CalendarGrid';
 
 const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED***
@@ -37,7 +35,6 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
     irADia
   ***REMOVED*** = useCalendarState(todosLosTurnos, onDiaSeleccionado);
 
-  const turnosMes = obtenerTurnosMes(todosLosTurnos, anioActual, mesActual);
   const dias = obtenerDiasDelMes();
 
   return (
@@ -47,11 +44,6 @@ const Calendario = (***REMOVED*** onDiaSeleccionado ***REMOVED***) => ***REMOVED
         anioActual=***REMOVED***anioActual***REMOVED***
         onCambiarMes=***REMOVED***cambiarMes***REMOVED***
         onIrAHoy=***REMOVED***irAHoy***REMOVED***
-        thematicColors=***REMOVED***thematicColors***REMOVED***
-      />
-
-      <CalendarSummary
-        totalTurnos=***REMOVED***turnosMes.length***REMOVED***
         thematicColors=***REMOVED***thematicColors***REMOVED***
       />
 

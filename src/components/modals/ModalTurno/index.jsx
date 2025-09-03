@@ -1,4 +1,4 @@
-// src/components/modals/ModalTurno/index.jsx - REFACTORIZADO
+// src/components/modals/ModalTurno/index.jsx - COMPLETAMENTE REESCRITO PARA MÓVIL
 
 import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
@@ -23,10 +23,11 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
   const [loading, setLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detectar móvil
+  //  DETECCIÓN DE MÓVIL MEJORADA
   useEffect(() => ***REMOVED***
     const checkMobile = () => ***REMOVED***
-      setIsMobile(window.innerWidth < 768);
+      const isMobileDevice = window.innerWidth < 768;
+      setIsMobile(isMobileDevice);
     ***REMOVED***;
 
     checkMobile();
@@ -47,7 +48,6 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
       return;
     ***REMOVED***
 
-    // Si hay un trabajo seleccionado, determinar el tipo basándose en el trabajo actual
     if (trabajoSeleccionadoId) ***REMOVED***
       const trabajo = todosLosTrabajos.find(t => t.id === trabajoSeleccionadoId);
       
@@ -55,16 +55,13 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
         const esDelivery = trabajo.tipo === 'delivery' || trabajo.type === 'delivery';
         const nuevoTipo = esDelivery ? 'delivery' : 'tradicional';
         
-        // Solo cambiar si es diferente para evitar re-renders innecesarios
         if (formularioTipo !== nuevoTipo) ***REMOVED***
           setFormularioTipo(nuevoTipo);
         ***REMOVED***
       ***REMOVED*** else ***REMOVED***
-        // Si no se encuentra el trabajo, usar tradicional por defecto
         setFormularioTipo('tradicional');
       ***REMOVED***
     ***REMOVED*** else ***REMOVED***
-      // Si no hay trabajo seleccionado, usar tradicional por defecto
       setFormularioTipo('tradicional');
     ***REMOVED***
   ***REMOVED***, [trabajoSeleccionadoId, todosLosTrabajos, turno, formularioTipo]);
@@ -82,16 +79,33 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
     ***REMOVED***
   ***REMOVED***, [isOpen, turno, trabajoId]);
 
-  // Prevenir scroll del body
+  // PREVENIR SCROLL DEL BODY MEJORADO
   useEffect(() => ***REMOVED***
     if (isOpen) ***REMOVED***
+      // Guardar el scroll actual
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-$***REMOVED***scrollY***REMOVED***px`;
+      document.body.style.width = '100%';
       document.body.style.overflow = 'hidden';
     ***REMOVED*** else ***REMOVED***
-      document.body.style.overflow = 'unset';
+      // Restaurar el scroll
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      if (scrollY) ***REMOVED***
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      ***REMOVED***
     ***REMOVED***
-
+    
     return () => ***REMOVED***
-      document.body.style.overflow = 'unset';
+      // Cleanup en caso de desmontaje
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
     ***REMOVED***;
   ***REMOVED***, [isOpen]);
 
@@ -103,7 +117,6 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
       let datosFinales = ***REMOVED*** ...datosTurno ***REMOVED***;
       
       if (fechaInicial && !turno) ***REMOVED***
-        // Convertir fechaInicial a string formato YYYY-MM-DD si es Date
         let fechaStr;
         if (fechaInicial instanceof Date) ***REMOVED***
           const year = fechaInicial.getFullYear();
@@ -114,7 +127,6 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
           fechaStr = fechaInicial;
         ***REMOVED***
         
-        // Pre-llenar la fecha si no está definida en los datos del turno
         if (!datosFinales.fechaInicio && !datosFinales.fecha) ***REMOVED***
           datosFinales.fechaInicio = fechaStr;
         ***REMOVED***
@@ -142,7 +154,6 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
     ***REMOVED***
   ***REMOVED***;
 
-  // Manejar cambio de trabajo y actualizar el tipo automáticamente
   const manejarCambioTrabajo = (nuevoTrabajoId) => ***REMOVED***
     setTrabajoSeleccionadoId(nuevoTrabajoId);
   ***REMOVED***;
@@ -156,152 +167,146 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
 
   if (!isOpen) return null;
 
-  // Configuración del modal optimizada para evitar scroll horizontal
-  const modalConfig = ***REMOVED***
-    mobileFullScreen: isMobile,
-    size: isMobile ? 'full' : 'md',
-    zIndex: 9999
-  ***REMOVED***;
-
+  // CONFIGURACIÓN DEL MODAL COMPLETAMENTE RESPONSIVA
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-hidden"
-      style=***REMOVED******REMOVED*** zIndex: modalConfig.zIndex ***REMOVED******REMOVED***
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 z-50"
+      style=***REMOVED******REMOVED*** zIndex: 9999 ***REMOVED******REMOVED***
     >
-      <div
-        className=***REMOVED***`
+      ***REMOVED***/* CONTENEDOR PRINCIPAL RESPONSIVO */***REMOVED***
+      <div className=***REMOVED***`
+        fixed inset-0 
+        $***REMOVED***isMobile 
+          ? 'flex items-end justify-center' 
+          : 'flex items-center justify-center p-4'
+        ***REMOVED***
+      `***REMOVED***>
+        ***REMOVED***/* MODAL ESTILO BOTTOM SHEET EN MÓVIL */***REMOVED***
+        <div className=***REMOVED***`
           bg-white shadow-2xl relative
           $***REMOVED***isMobile
-            ? 'w-full h-full max-w-none rounded-none'
-            : 'w-full max-w-md max-h-[90vh] rounded-xl mx-4'
+            ? 'w-full max-h-[90vh] rounded-t-2xl flex flex-col' 
+            : 'w-full max-w-md max-h-[90vh] rounded-xl overflow-hidden'
           ***REMOVED***
-          $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'***REMOVED***
-        `***REMOVED***
-      >
-
-        ***REMOVED***/* Header optimizado con colors */***REMOVED***
-        <div
-          className=***REMOVED***`
-            sticky top-0 bg-white border-b flex justify-between items-center z-10
-            $***REMOVED***isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'***REMOVED***
+        `***REMOVED***>
+          
+          ***REMOVED***/* HEADER OPTIMIZADO */***REMOVED***
+          <div className=***REMOVED***`
+            flex-shrink-0 bg-white border-b flex justify-between items-center
+            $***REMOVED***isMobile ? 'px-4 py-4 min-h-[60px]' : 'px-4 py-4'***REMOVED***
           `***REMOVED***
-          style=***REMOVED******REMOVED***
-            borderBottomColor: colors.transparent20
-          ***REMOVED******REMOVED***
-        >
-          <div className="flex-1 pr-4 min-w-0">
-            <h2
-              className=***REMOVED***`font-semibold truncate $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
-              style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
-            >
-              ***REMOVED***turno ? 'Editar Turno' : 'Nuevo Turno'***REMOVED***
-              ***REMOVED***formularioTipo === 'delivery' && (
-                <span className="text-sm font-normal text-gray-600 ml-2">
-                  • Delivery
-                </span>
-              )***REMOVED***
+          style=***REMOVED******REMOVED*** borderBottomColor: colors.transparent20 ***REMOVED******REMOVED***>
+            
+            <div className="flex-1 pr-4 min-w-0">
+              <h2 className=***REMOVED***`font-semibold truncate $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
+                  style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                ***REMOVED***turno ? 'Editar Turno' : 'Nuevo Turno'***REMOVED***
+                ***REMOVED***formularioTipo === 'delivery' && (
+                  <span className="text-sm font-normal text-gray-600 ml-2">
+                    • Delivery
+                  </span>
+                )***REMOVED***
+              </h2>
+              
               ***REMOVED***/* Mostrar fecha si viene del calendario */***REMOVED***
               ***REMOVED***fechaInicial && !turno && (
-                <span className="text-sm font-normal text-gray-600 ml-2 block">
+                <p className="text-sm font-normal text-gray-600 mt-1">
                   ***REMOVED***fechaInicial instanceof Date 
-                    ? fechaInicial.toLocaleDateString('es-ES', ***REMOVED*** weekday: 'short', day: 'numeric', month: 'short' ***REMOVED***)
-                    : new Date(fechaInicial + 'T00:00:00').toLocaleDateString('es-ES', ***REMOVED*** weekday: 'short', day: 'numeric', month: 'short' ***REMOVED***)
+                    ? fechaInicial.toLocaleDateString('es-ES', ***REMOVED*** 
+                        weekday: 'short', 
+                        day: 'numeric', 
+                        month: 'short' 
+                      ***REMOVED***)
+                    : new Date(fechaInicial + 'T00:00:00').toLocaleDateString('es-ES', ***REMOVED*** 
+                        weekday: 'short', 
+                        day: 'numeric', 
+                        month: 'short' 
+                      ***REMOVED***)
                   ***REMOVED***
-                </span>
+                </p>
               )***REMOVED***
-            </h2>
+            </div>
+            
+            <button
+              onClick=***REMOVED***manejarCerrar***REMOVED***
+              className="flex-shrink-0 p-2 rounded-lg transition-colors"
+              style=***REMOVED******REMOVED*** backgroundColor: 'transparent', color: colors.primary ***REMOVED******REMOVED***
+              onMouseEnter=***REMOVED***(e) => ***REMOVED***
+                e.target.style.backgroundColor = colors.transparent10;
+              ***REMOVED******REMOVED***
+              onMouseLeave=***REMOVED***(e) => ***REMOVED***
+                e.target.style.backgroundColor = 'transparent';
+              ***REMOVED******REMOVED***
+              disabled=***REMOVED***loading***REMOVED***
+            >
+              <X size=***REMOVED***isMobile ? 24 : 20***REMOVED*** />
+            </button>
           </div>
-          <button
-            onClick=***REMOVED***manejarCerrar***REMOVED***
-            className="p-2 rounded-lg transition-colors flex-shrink-0"
-            style=***REMOVED******REMOVED***
-              backgroundColor: 'transparent',
-              color: colors.primary
-            ***REMOVED******REMOVED***
-            onMouseEnter=***REMOVED***(e) => ***REMOVED***
-              e.target.style.backgroundColor = colors.transparent10;
-            ***REMOVED******REMOVED***
-            onMouseLeave=***REMOVED***(e) => ***REMOVED***
-              e.target.style.backgroundColor = 'transparent';
-            ***REMOVED******REMOVED***
-            disabled=***REMOVED***loading***REMOVED***
-          >
-            <X size=***REMOVED***isMobile ? 24 : 20***REMOVED*** />
-          </button>
-        </div>
 
-        ***REMOVED***/* Content con scroll optimizado */***REMOVED***
-        <div className=***REMOVED***`
-          $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4 overflow-y-auto'***REMOVED***
-          $***REMOVED***!isMobile ? 'max-h-[calc(90vh-120px)]' : ''***REMOVED***
-        `***REMOVED***>
-          ***REMOVED***formularioTipo === 'delivery' ? (
-            <TurnoDeliveryForm
-              turno=***REMOVED***turno***REMOVED***
-              trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
-              trabajos=***REMOVED***todosLosTrabajos***REMOVED***
-              onSubmit=***REMOVED***manejarGuardado***REMOVED***
-              onCancel=***REMOVED***manejarCerrar***REMOVED***
-              onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
-              isMobile=***REMOVED***isMobile***REMOVED***
-              loading=***REMOVED***loading***REMOVED***
-              fechaInicial=***REMOVED***fechaInicial***REMOVED*** 
-            />
-          ) : (
-            <TurnoForm
-              turno=***REMOVED***turno***REMOVED***
-              trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
-              trabajos=***REMOVED***todosLosTrabajos***REMOVED***
-              onSubmit=***REMOVED***manejarGuardado***REMOVED***
-              onCancel=***REMOVED***manejarCerrar***REMOVED***
-              onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
-              isMobile=***REMOVED***isMobile***REMOVED***
-              loading=***REMOVED***loading***REMOVED***
-              fechaInicial=***REMOVED***fechaInicial***REMOVED*** 
-            />
+          ***REMOVED***/* CONTENT COMPLETAMENTE RESPONSIVO */***REMOVED***
+          <div className=***REMOVED***`
+            $***REMOVED***isMobile 
+              ? 'flex-1 overflow-y-auto px-4 py-6 min-h-0' 
+              : 'p-4 overflow-y-auto max-h-[calc(90vh-120px)]'
+            ***REMOVED***
+          `***REMOVED*** 
+          style=***REMOVED******REMOVED***
+            overflowX: 'hidden',
+            width: '100%',
+            maxWidth: '100%'
+          ***REMOVED******REMOVED***>
+            
+            ***REMOVED***/* FORMULARIOS RESPONSIVOS */***REMOVED***
+            ***REMOVED***formularioTipo === 'delivery' ? (
+              <TurnoDeliveryForm
+                turno=***REMOVED***turno***REMOVED***
+                trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
+                trabajos=***REMOVED***todosLosTrabajos***REMOVED***
+                onSubmit=***REMOVED***manejarGuardado***REMOVED***
+                onCancel=***REMOVED***manejarCerrar***REMOVED***
+                onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
+                isMobile=***REMOVED***isMobile***REMOVED***
+                loading=***REMOVED***loading***REMOVED***
+                fechaInicial=***REMOVED***fechaInicial***REMOVED*** 
+              />
+            ) : (
+              <TurnoForm
+                turno=***REMOVED***turno***REMOVED***
+                trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
+                trabajos=***REMOVED***todosLosTrabajos***REMOVED***
+                onSubmit=***REMOVED***manejarGuardado***REMOVED***
+                onCancel=***REMOVED***manejarCerrar***REMOVED***
+                onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
+                isMobile=***REMOVED***isMobile***REMOVED***
+                loading=***REMOVED***loading***REMOVED***
+                fechaInicial=***REMOVED***fechaInicial***REMOVED*** 
+              />
+            )***REMOVED***
+          </div>
+
+          ***REMOVED***/* FOOTER SOLO EN MÓVIL - VISUAL */***REMOVED***
+          ***REMOVED***isMobile && !loading && (
+            <div className="flex-shrink-0 bg-white border-t p-4 flex justify-center"
+                 style=***REMOVED******REMOVED*** borderTopColor: colors.transparent20 ***REMOVED******REMOVED***>
+              <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
+            </div>
+          )***REMOVED***
+
+          ***REMOVED***/* LOADING OVERLAY MEJORADO */***REMOVED***
+          ***REMOVED***loading && (
+            <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center"
+                 style=***REMOVED******REMOVED*** zIndex: 10000 ***REMOVED******REMOVED***>
+              <div className="bg-white rounded-lg p-6 flex items-center space-x-3 shadow-2xl"
+                   style=***REMOVED******REMOVED*** borderColor: colors.primary, borderWidth: '2px' ***REMOVED******REMOVED***>
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2"
+                     style=***REMOVED******REMOVED*** borderColor: colors.primary ***REMOVED******REMOVED***></div>
+                <span className="font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                  Guardando turno...
+                </span>
+              </div>
+            </div>
           )***REMOVED***
         </div>
-
-        ***REMOVED***/* Footer fijo en móvil si es necesario */***REMOVED***
-        ***REMOVED***isMobile && !loading && (
-          <div
-            className="sticky bottom-0 bg-white border-t p-4"
-            style=***REMOVED******REMOVED***
-              borderTopColor: colors.transparent20
-            ***REMOVED******REMOVED***
-          >
-            <div className="text-xs text-gray-500 text-center">
-              Desliza hacia abajo para cerrar
-            </div>
-          </div>
-        )***REMOVED***
-
-        ***REMOVED***/* Indicador de carga */***REMOVED***
-        ***REMOVED***loading && (
-          <div
-            className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center"
-            style=***REMOVED******REMOVED*** zIndex: modalConfig.zIndex + 1 ***REMOVED******REMOVED***
-          >
-            <div
-              className="bg-white rounded-lg p-4 flex items-center space-x-3"
-              style=***REMOVED******REMOVED***
-                borderColor: colors.primary,
-                borderWidth: '2px'
-              ***REMOVED******REMOVED***
-            >
-              <div
-                className="animate-spin rounded-full h-6 w-6 border-b-2"
-                style=***REMOVED******REMOVED*** borderColor: colors.primary ***REMOVED******REMOVED***
-              />
-              <span
-                className="font-medium"
-                style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
-              >
-                Guardando...
-              </span>
-            </div>
-          </div>
-        )***REMOVED***
       </div>
     </div>
   );

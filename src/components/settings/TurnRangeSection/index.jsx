@@ -1,7 +1,7 @@
-// src/components/settings/TurnRangeSection/index.jsx - REFACTORIZADO
+// src/components/settings/TurnRangeSection/index.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** Clock, Sun, Sunset, Moon ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Clock, Sun, Sunset, Moon, Check ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
@@ -60,12 +60,33 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
     nightStart: 20
   ***REMOVED***);
   const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => ***REMOVED***
     if (shiftRanges) ***REMOVED***
       setRangosTurnos(shiftRanges);
     ***REMOVED***
   ***REMOVED***, [shiftRanges]);
+
+  // Detectar cambios para habilitar/deshabilitar el botón
+  useEffect(() => ***REMOVED***
+    if (!shiftRanges) return;
+    
+    const hasChanged = 
+      rangosTurnos.dayStart !== shiftRanges.dayStart ||
+      rangosTurnos.dayEnd !== shiftRanges.dayEnd ||
+      rangosTurnos.afternoonStart !== shiftRanges.afternoonStart ||
+      rangosTurnos.afternoonEnd !== shiftRanges.afternoonEnd ||
+      rangosTurnos.nightStart !== shiftRanges.nightStart;
+    
+    setHasChanges(hasChanged);
+    
+    // Ocultar el ícono de éxito si hay cambios nuevos
+    if (hasChanged && showSuccess) ***REMOVED***
+      setShowSuccess(false);
+    ***REMOVED***
+  ***REMOVED***, [rangosTurnos, shiftRanges, showSuccess]);
 
   const validarRangos = (rangos) => ***REMOVED***
     if (rangos.dayStart >= rangos.dayEnd) ***REMOVED***
@@ -94,7 +115,16 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
       ***REMOVED***
       
       await savePreferences(***REMOVED*** rangosTurnos ***REMOVED***);
-      onSuccess?.('Rangos de turnos guardados correctamente');
+      
+      // Mostrar éxito y ocultar después de un tiempo
+      setShowSuccess(true);
+      setHasChanges(false);
+      onSuccess?.('Rangos de turnos guardados correctamente.');
+      
+      setTimeout(() => ***REMOVED***
+        setShowSuccess(false);
+      ***REMOVED***, 3000);
+      
     ***REMOVED*** catch (error) ***REMOVED***
       onError?.('Error al guardar rangos: ' + error.message);
     ***REMOVED*** finally ***REMOVED***
@@ -102,10 +132,19 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
     ***REMOVED***
   ***REMOVED***;
 
+  // Función helper para actualizar rangos
+  const updateRange = (key, value) => ***REMOVED***
+    setRangosTurnos(prev => (***REMOVED***
+      ...prev,
+      [key]: value
+    ***REMOVED***));
+  ***REMOVED***;
+
   return (
     <SettingsSection icon=***REMOVED***Clock***REMOVED*** title="Rangos de Turnos">
       <p className="text-sm text-gray-600 mb-4">
         Configura los rangos de horarios para la detección automática de tipos de turno.
+        Los tags de turnos existentes se actualizarán automáticamente.
       </p>
       
       <div className="space-y-4 mb-6">
@@ -115,19 +154,13 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
             <TimeSelect
               label="Hora de inicio"
               value=***REMOVED***rangosTurnos.dayStart***REMOVED***
-              onChange=***REMOVED***(value) => setRangosTurnos(***REMOVED***
-                ...rangosTurnos,
-                dayStart: value
-              ***REMOVED***)***REMOVED***
+              onChange=***REMOVED***(value) => updateRange('dayStart', value)***REMOVED***
               colors=***REMOVED***colors***REMOVED***
             />
             <TimeSelect
               label="Hora de fin"
               value=***REMOVED***rangosTurnos.dayEnd***REMOVED***
-              onChange=***REMOVED***(value) => setRangosTurnos(***REMOVED***
-                ...rangosTurnos,
-                dayEnd: value
-              ***REMOVED***)***REMOVED***
+              onChange=***REMOVED***(value) => updateRange('dayEnd', value)***REMOVED***
               colors=***REMOVED***colors***REMOVED***
             />
           </div>
@@ -139,19 +172,13 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
             <TimeSelect
               label="Hora de inicio"
               value=***REMOVED***rangosTurnos.afternoonStart***REMOVED***
-              onChange=***REMOVED***(value) => setRangosTurnos(***REMOVED***
-                ...rangosTurnos,
-                afternoonStart: value
-              ***REMOVED***)***REMOVED***
+              onChange=***REMOVED***(value) => updateRange('afternoonStart', value)***REMOVED***
               colors=***REMOVED***colors***REMOVED***
             />
             <TimeSelect
               label="Hora de fin"
               value=***REMOVED***rangosTurnos.afternoonEnd***REMOVED***
-              onChange=***REMOVED***(value) => setRangosTurnos(***REMOVED***
-                ...rangosTurnos,
-                afternoonEnd: value
-              ***REMOVED***)***REMOVED***
+              onChange=***REMOVED***(value) => updateRange('afternoonEnd', value)***REMOVED***
               colors=***REMOVED***colors***REMOVED***
             />
           </div>
@@ -162,10 +189,7 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
           <TimeSelect
             label="Hora de inicio"
             value=***REMOVED***rangosTurnos.nightStart***REMOVED***
-            onChange=***REMOVED***(value) => setRangosTurnos(***REMOVED***
-              ...rangosTurnos,
-              nightStart: value
-            ***REMOVED***)***REMOVED***
+            onChange=***REMOVED***(value) => updateRange('nightStart', value)***REMOVED***
             colors=***REMOVED***colors***REMOVED***
           />
           <p className="text-xs text-gray-500 mt-1">
@@ -176,12 +200,15 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
 
       <Button
         onClick=***REMOVED***handleSave***REMOVED***
-        disabled=***REMOVED***loading***REMOVED***
+        disabled=***REMOVED***loading || !hasChanges***REMOVED***
         loading=***REMOVED***loading***REMOVED***
-        className="w-full"
+        className="w-full relative"
         themeColor=***REMOVED***colors.primary***REMOVED***
+        icon=***REMOVED***showSuccess ? Check : undefined***REMOVED***
       >
-        Guardar rangos de turnos
+        ***REMOVED***loading ? 'Guardando...' : 
+         showSuccess ? 'Guardado correctamente' :
+         hasChanges ? 'Guardar rangos de turnos' : 'Sin cambios'***REMOVED***
       </Button>
     </SettingsSection>
   );

@@ -35,7 +35,7 @@ const Input = (***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED***
             '--tw-ring-color': error ? '#EF4444' : focusColor,
-            backgroundColor: '#FFFFFF' // ✅ Fondo blanco explícito
+            backgroundColor: '#FFFFFF'
           ***REMOVED******REMOVED***
           ***REMOVED***...props***REMOVED***
         />

@@ -14,7 +14,7 @@ const ThemeInput = (***REMOVED***
   const combinedStyle = ***REMOVED***
     '--tw-ring-color': thematicColors?.base || '#EC4899',
     borderColor: '#D1D5DB', // Borde gris claro en lugar de gris oscuro
-    backgroundColor: '#FFFFFF', // ✅ Fondo blanco explícito
+    backgroundColor: '#FFFFFF',
     ...style
   ***REMOVED***;
 
