@@ -1,7 +1,7 @@
-// src/components/calendar/CalendarDaySummary/index.jsx - Versión limpia sin cuadrante innecesario
+// src/components/calendar/CalendarDaySummary/index.jsx - Corregido sin duplicaciones
 
 import React from 'react';
-import ***REMOVED*** PlusCircle, Calendar ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** PlusCircle, Calendar, Clock, DollarSign ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import TarjetaTurno from '../../cards/TarjetaTurno';
@@ -43,55 +43,68 @@ const CalendarDaySummary = (***REMOVED***
     return todosLosTrabajos.find(t => t && t.id === trabajoId) || null;
   ***REMOVED***;
 
+  // Validar que tenemos fecha seleccionada
+  if (!fechaSeleccionada) ***REMOVED***
+    return (
+      <Card className="mt-6">
+        <div className="text-center py-8">
+          <h3 className="text-lg font-semibold text-gray-600 mb-2">
+            Selecciona un día
+          </h3>
+          <p className="text-gray-500">
+            Haz clic en cualquier día del calendario para ver los turnos
+          </p>
+        </div>
+      </Card>
+    );
+  ***REMOVED***
+
   // Validar y filtrar turnos
   const turnosSegurosDia = Array.isArray(turnos) ? turnos.filter(turno => turno && turno.id) : [];
   const totalDia = calcularTotalDia(turnosSegurosDia);
 
-  // SIEMPRE mostramos algo si hay día seleccionado
-  if (!fechaSeleccionada) ***REMOVED***
-    return null;
-  ***REMOVED***
-
   return (
-    <Card>
-      ***REMOVED***/* Solo mostrar header con información si HAY turnos */***REMOVED***
+    <div className="mt-6">
+      <div className="flex justify-between items-center mb-3">
+        <h3 className="text-lg font-semibold">
+          Turnos del día seleccionado
+        </h3>
+        <Button
+          onClick=***REMOVED***() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
+          size="sm"
+          className="flex items-center gap-1"
+          icon=***REMOVED***PlusCircle***REMOVED***
+          themeColor=***REMOVED***thematicColors?.base***REMOVED***
+        >
+          Nuevo
+        </Button>
+      </div>
+      
       ***REMOVED***turnosSegurosDia.length > 0 ? (
-        <>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
-              <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** />
-              <div>
-                <h3 className="font-semibold text-gray-800">
+        <Card className="overflow-hidden" padding="none">
+          ***REMOVED***/* Header del día */***REMOVED***
+          <div 
+            className="px-4 py-3 border-b rounded-t-xl"
+            style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
+                <h3 className="font-semibold">
                   ***REMOVED***formatearFecha ? formatearFecha(fechaSeleccionada) : fechaSeleccionada***REMOVED***
                 </h3>
-                <p className="text-sm text-gray-600">
-                  ***REMOVED***turnosSegurosDia.length***REMOVED*** turno***REMOVED***turnosSegurosDia.length !== 1 ? 's' : ''***REMOVED*** programado***REMOVED***turnosSegurosDia.length !== 1 ? 's' : ''***REMOVED***
-                </p>
               </div>
-            </div>
-            
-            <div className="flex items-center space-x-3">
-              <div className="text-right">
-                <p className="text-lg font-bold" style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***>
-                  ***REMOVED***formatCurrency(totalDia)***REMOVED***
-                </p>
-                <p className="text-xs text-gray-500">Total del día</p>
+              <div className="flex items-center text-sm">
+                <Clock size=***REMOVED***14***REMOVED*** className="mr-1 text-blue-500" />
+                <span className="mr-3">***REMOVED***turnosSegurosDia.length***REMOVED*** turno***REMOVED***turnosSegurosDia.length !== 1 ? 's' : ''***REMOVED***</span>
+                <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1 text-green-500" />
+                <span className="font-medium">***REMOVED***formatCurrency(totalDia)***REMOVED***</span>
               </div>
-              
-              <Button
-                onClick=***REMOVED***() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
-                size="sm"
-                variant="outline"
-                icon=***REMOVED***PlusCircle***REMOVED***
-                themeColor=***REMOVED***thematicColors?.base***REMOVED***
-              >
-                Agregar
-              </Button>
             </div>
           </div>
           
-          ***REMOVED***/* Grid de turnos - 3 columnas en desktop, 1 en móvil */***REMOVED***
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          ***REMOVED***/* Grid de turnos - 3 columnas */***REMOVED***
+          <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             ***REMOVED***turnosSegurosDia.map(turno => ***REMOVED***
               const trabajo = obtenerTrabajo(turno.trabajoId);
               
@@ -99,57 +112,52 @@ const CalendarDaySummary = (***REMOVED***
               if (!trabajo) ***REMOVED***
                 return (
                   <div key=***REMOVED***turno.id***REMOVED*** className="p-3 border border-gray-200 rounded-lg bg-gray-50">
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 rounded-full bg-gray-400 mr-2" />
-                        <p className="font-medium text-gray-600 text-sm">Trabajo eliminado</p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-gray-600">Trabajo eliminado</p>
+                        <p className="text-sm text-gray-500">
+                          ***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***
+                        </p>
                       </div>
-                      <p className="text-xs text-gray-500">
-                        ***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***
-                      </p>
-                      <p className="text-sm font-medium text-gray-400">
+                      <span className="text-sm text-gray-400">
                         ***REMOVED***turno.tipo === 'delivery' ? formatCurrency(turno.gananciaTotal || 0) : '--'***REMOVED***
-                      </p>
+                      </span>
                     </div>
                   </div>
                 );
               ***REMOVED***
               
               return (
-                <div key=***REMOVED***turno.id***REMOVED*** className="border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                <div key=***REMOVED***turno.id***REMOVED*** className="w-full">
                   <TarjetaTurno
                     turno=***REMOVED***turno***REMOVED***
                     trabajo=***REMOVED***trabajo***REMOVED***
                     onEdit=***REMOVED***() => ***REMOVED******REMOVED******REMOVED*** 
                     onDelete=***REMOVED***() => ***REMOVED******REMOVED******REMOVED***
                     variant="compact"
-                    showActions=***REMOVED***false***REMOVED***
                   />
                 </div>
               );
             ***REMOVED***)***REMOVED***
           </div>
-        </>
+        </Card>
       ) : (
-        /* Si NO hay turnos, mostrar estado vacío */
-        <div className="text-center py-8">
+        <Card className="text-center py-6">
           <Calendar size=***REMOVED***48***REMOVED*** className="mx-auto mb-4 text-gray-300" />
-          <h4 className="text-lg font-semibold text-gray-600 mb-2">
-            Sin turnos para ***REMOVED***formatearFecha ? formatearFecha(fechaSeleccionada) : fechaSeleccionada***REMOVED***
-          </h4>
           <p className="text-gray-500 mb-4">
-            ¿Trabajaste este día? Agrega un turno para registrar tus horas
+            No hay turnos para ***REMOVED***formatearFecha ? formatearFecha(fechaSeleccionada) : 'esta fecha'***REMOVED***
           </p>
           <Button
             onClick=***REMOVED***() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
+            className="flex items-center gap-2"
             icon=***REMOVED***PlusCircle***REMOVED***
             themeColor=***REMOVED***thematicColors?.base***REMOVED***
           >
             Agregar turno
           </Button>
-        </div>
+        </Card>
       )***REMOVED***
-    </Card>
+    </div>
   );
 ***REMOVED***;
 
