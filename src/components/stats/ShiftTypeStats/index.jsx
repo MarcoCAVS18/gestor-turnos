@@ -1,8 +1,9 @@
-// src/components/stats/ShiftTypeStats/index.jsx - REFACTORIZADO
+// src/components/stats/ShiftTypeStats/index.jsx
 
 import React from 'react';
 import { Zap } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import { TURN_TYPE_COLORS } from '../../../constants/colors';
 
 const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
   const colors = useThemeColors();
@@ -10,13 +11,18 @@ const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
   // Verificar que tiposDeTurno sea válido
   const tiposValidos = tiposDeTurno && typeof tiposDeTurno === 'object' && !Array.isArray(tiposDeTurno) ? tiposDeTurno : {};
 
-  const colores = {
-    'diurno': '#10B981',
-    'tarde': '#F59E0B',
-    'noche': '#6366F1',
-    'sabado': '#8B5CF6',
-    'domingo': '#EF4444',
-    'mixto': '#6B7280'
+  // Mapeo de tipos a las constantes de colores
+  const getColorForType = (tipo) => {
+    const colorMap = {
+      'diurno': TURN_TYPE_COLORS.Diurno,
+      'tarde': TURN_TYPE_COLORS.Tarde,
+      'noche': TURN_TYPE_COLORS.Nocturno,
+      'nocturno': TURN_TYPE_COLORS.Nocturno,
+      'sabado': TURN_TYPE_COLORS.Sábado,
+      'domingo': TURN_TYPE_COLORS.Domingo,
+      'mixto': '#6B7280'
+    };
+    return colorMap[tipo.toLowerCase()] || '#6B7280';
   };
 
   if (Object.keys(tiposValidos).length === 0) {
@@ -49,13 +55,14 @@ const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
             ganancia: (datos && typeof datos.ganancia === 'number') ? datos.ganancia : 0
           };
 
-          const tipoMostrado = tipo === 'undefined' ? 'MIXTO' : tipo;
+          const tipoMostrado = tipo === 'undefined' ? 'MIXTO' : tipo.toUpperCase();
+          const colorTipo = getColorForType(tipo);
 
           return (
             <div key={tipo} className="text-center p-3 bg-gray-50 rounded-lg">
               <div
                 className="w-3 h-3 rounded-full mx-auto mb-2"
-                style={{ backgroundColor: colores[tipo] || '#6B7280' }}
+                style={{ backgroundColor: colorTipo }}
               />
               <p className="text-xs text-gray-600 capitalize">{tipoMostrado}</p>
               <p className="font-semibold">{datosSeguro.turnos} turnos</p>

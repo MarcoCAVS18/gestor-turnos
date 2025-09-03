@@ -1,4 +1,4 @@
-// src/components/shifts/ShiftDetails/index.jsx - CON HOOK DE COLORES
+// src/components/shifts/ShiftDetails/index.jsx
 
 import React from 'react';
 import { Clock, DollarSign, Timer } from 'lucide-react';
