@@ -1,7 +1,7 @@
-// src/components/forms/TurnoForm/index.jsx - COMPLETAMENTE RESPONSIVO
+// src/components/forms/TurnoForm/index.jsx
 
 import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
-import ***REMOVED*** Briefcase, Calendar, Clock, ToggleLeft, ToggleRight ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Briefcase, Calendar, Clock, FileText ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const TurnoForm = (***REMOVED***
@@ -24,7 +24,8 @@ const TurnoForm = (***REMOVED***
     horaInicio: '',
     horaFin: '',
     cruzaMedianoche: false,
-    fechaFin: ''
+    fechaFin: '',
+    notas: ''
   ***REMOVED***);
 
   const [errors, setErrors] = useState(***REMOVED******REMOVED***);
@@ -38,7 +39,8 @@ const TurnoForm = (***REMOVED***
         horaInicio: turno.horaInicio || '',
         horaFin: turno.horaFin || '',
         cruzaMedianoche: turno.cruzaMedianoche || false,
-        fechaFin: turno.fechaFin || ''
+        fechaFin: turno.fechaFin || '',
+        notas: turno.notas || ''
       ***REMOVED***);
     ***REMOVED*** else if (fechaInicial) ***REMOVED***
       const fechaStr = fechaInicial instanceof Date 
@@ -241,41 +243,21 @@ const TurnoForm = (***REMOVED***
           </div>
         </div>
 
-        ***REMOVED***/* Toggle para turno nocturno */***REMOVED***
-        ***REMOVED***(formData.horaInicio && formData.horaFin) && (
-          <div className="w-full">
-            <div 
-              className="p-3 rounded-lg border"
-              style=***REMOVED******REMOVED*** backgroundColor: colors.transparent5, borderColor: colors.transparent20 ***REMOVED******REMOVED***
-            >
-              <button
-                type="button"
-                onClick=***REMOVED***() => handleInputChange('cruzaMedianoche', !formData.cruzaMedianoche)***REMOVED***
-                className="flex items-center w-full"
-              >
-                ***REMOVED***formData.cruzaMedianoche ? (
-                  <ToggleRight size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
-                ) : (
-                  <ToggleLeft size=***REMOVED***20***REMOVED*** className="text-gray-400" />
-                )***REMOVED***
-                <span className="ml-2 text-sm">
-                  ***REMOVED***formData.cruzaMedianoche ? (
-                    <span style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                      ✓ Turno nocturno (cruza medianoche)
-                    </span>
-                  ) : (
-                    <span className="text-gray-600">
-                      Turno cruza medianoche
-                    </span>
-                  )***REMOVED***
-                </span>
-              </button>
-              <p className="text-xs text-gray-500 ml-7 mt-1">
-                Actívalo si el turno termina al día siguiente
-              </p>
-            </div>
-          </div>
-        )***REMOVED***
+        ***REMOVED***/* Campo de notas */***REMOVED***
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <FileText size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+            Notas (opcional)
+          </label>
+          <textarea
+            value=***REMOVED***formData.notas***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('notas', e.target.value)***REMOVED***
+            placeholder="Agregar notas sobre este turno..."
+            className=***REMOVED***`$***REMOVED***inputClasses***REMOVED*** border-gray-300 resize-none`***REMOVED***
+            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            rows=***REMOVED***3***REMOVED***
+          />
+        </div>
 
         ***REMOVED***/* BOTONES COMPLETAMENTE RESPONSIVOS */***REMOVED***
         <div className=***REMOVED***`
@@ -334,7 +316,8 @@ const TurnoForm = (***REMOVED***
         <style jsx>***REMOVED***`
           .mobile-form input[type="date"],
           .mobile-form input[type="time"],
-          .mobile-form select ***REMOVED***
+          .mobile-form select,
+          .mobile-form textarea ***REMOVED***
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
