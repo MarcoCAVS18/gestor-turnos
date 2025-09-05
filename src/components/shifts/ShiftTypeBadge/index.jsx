@@ -1,22 +1,56 @@
-// src/components/shift/ShiftTypeBadge/index.jsx
+// src/components/shifts/ShiftTypeBadge/index.jsx
 
 import React from 'react';
 import { useApp } from '../../../contexts/AppContext';
+import { TURN_TYPE_COLORS } from '../../../constants/colors';
 import { getShiftTypesConfig } from '../../../utils/shiftTypesConfig';
 import { determinarTipoTurno } from '../../../utils/shiftDetailsUtils';
 
 const ShiftTypeBadge = ({ tipoTurno, turno, size = 'sm' }) => {
-  const { thematicColors, shiftRanges } = useApp();
-  
-  // Obtener la configuración de tipos de turno
-  const shiftTypesConfig = getShiftTypesConfig(thematicColors);
+  const { shiftRanges } = useApp();
   
   // Determinar el tipo si se pasa el turno completo
   const tipo = tipoTurno || determinarTipoTurno(turno, shiftRanges);
   
-  // Obtener la configuración del tipo
-  const tipoInfo = shiftTypesConfig[tipo] || shiftTypesConfig.noche;
-  const Icon = tipoInfo.icon;
+  // Mapeo directo a las constantes de colores
+  const getColorAndConfig = (tipoTurno) => {
+    const configs = {
+      diurno: {
+        color: TURN_TYPE_COLORS.Diurno,
+        label: 'Diurno',
+        bgColor: TURN_TYPE_COLORS.Diurno + '20'
+      },
+      tarde: {
+        color: TURN_TYPE_COLORS.Tarde,
+        label: 'Tarde', 
+        bgColor: TURN_TYPE_COLORS.Tarde + '20'
+      },
+      noche: {
+        color: TURN_TYPE_COLORS.Nocturno,
+        label: 'Nocturno',
+        bgColor: TURN_TYPE_COLORS.Nocturno + '20'
+      },
+      sabado: {
+        color: TURN_TYPE_COLORS.Sábado,
+        label: 'Sábado',
+        bgColor: TURN_TYPE_COLORS.Sábado + '20'
+      },
+      domingo: {
+        color: TURN_TYPE_COLORS.Domingo,
+        label: 'Domingo',
+        bgColor: TURN_TYPE_COLORS.Domingo + '20'
+      },
+      mixto: {
+        color: '#6B7280',
+        label: 'Mixto',
+        bgColor: '#6B728020'
+      }
+    };
+    
+    return configs[tipoTurno] || configs.mixto;
+  };
+  
+  const tipoConfig = getColorAndConfig(tipo);
   
   const sizeClasses = {
     xs: 'px-1.5 py-0.5 text-xs',
@@ -24,34 +58,26 @@ const ShiftTypeBadge = ({ tipoTurno, turno, size = 'sm' }) => {
     md: 'px-3 py-1.5 text-sm',
     lg: 'px-4 py-2 text-base'
   };
-  
-  const iconSizes = {
-    xs: 10,
-    sm: 12,
-    md: 14,
-    lg: 16
-  };
 
   return (
     <div 
       className={`inline-flex items-center rounded-full font-medium ${sizeClasses[size]}`}
       style={{ 
-        backgroundColor: tipoInfo.bgColor,
-        color: tipoInfo.color
+        backgroundColor: tipoConfig.bgColor,
+        color: tipoConfig.color
       }}
-      title={tipoInfo.description}
+      title={`Turno ${tipoConfig.label}`}
     >
-      <Icon size={iconSizes[size]} className="mr-1 flex-shrink-0" />
-      <span className="truncate">{tipoInfo.label}</span>
+      <span className="truncate">{tipoConfig.label}</span>
       
       {/* Indicador especial para turnos nocturnos */}
       {turno?.cruzaMedianoche && tipo === 'noche' && (
-        <span className="ml-1 text-xs opacity-75">🌙</span>
+        <span className="ml-1 text-xs opacity-75">•</span>
       )}
       
       {/* Indicador especial para turnos mixtos */}
       {tipo === 'mixto' && (
-        <span className="ml-1 text-xs opacity-75">🔄</span>
+        <span className="ml-1 text-xs opacity-75">~</span>
       )}
     </div>
   );

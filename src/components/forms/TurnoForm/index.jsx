@@ -1,7 +1,7 @@
-// src/components/forms/TurnoForm/index.jsx - COMPLETAMENTE RESPONSIVO
+// src/components/forms/TurnoForm/index.jsx
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Briefcase, Calendar, Clock, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Briefcase, Calendar, Clock, FileText } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const TurnoForm = ({
@@ -24,7 +24,8 @@ const TurnoForm = ({
     horaInicio: '',
     horaFin: '',
     cruzaMedianoche: false,
-    fechaFin: ''
+    fechaFin: '',
+    notas: ''
   });
 
   const [errors, setErrors] = useState({});
@@ -38,7 +39,8 @@ const TurnoForm = ({
         horaInicio: turno.horaInicio || '',
         horaFin: turno.horaFin || '',
         cruzaMedianoche: turno.cruzaMedianoche || false,
-        fechaFin: turno.fechaFin || ''
+        fechaFin: turno.fechaFin || '',
+        notas: turno.notas || ''
       });
     } else if (fechaInicial) {
       const fechaStr = fechaInicial instanceof Date 
@@ -241,41 +243,21 @@ const TurnoForm = ({
           </div>
         </div>
 
-        {/* Toggle para turno nocturno */}
-        {(formData.horaInicio && formData.horaFin) && (
-          <div className="w-full">
-            <div 
-              className="p-3 rounded-lg border"
-              style={{ backgroundColor: colors.transparent5, borderColor: colors.transparent20 }}
-            >
-              <button
-                type="button"
-                onClick={() => handleInputChange('cruzaMedianoche', !formData.cruzaMedianoche)}
-                className="flex items-center w-full"
-              >
-                {formData.cruzaMedianoche ? (
-                  <ToggleRight size={20} style={{ color: colors.primary }} />
-                ) : (
-                  <ToggleLeft size={20} className="text-gray-400" />
-                )}
-                <span className="ml-2 text-sm">
-                  {formData.cruzaMedianoche ? (
-                    <span style={{ color: colors.primary }}>
-                      ✓ Turno nocturno (cruza medianoche)
-                    </span>
-                  ) : (
-                    <span className="text-gray-600">
-                      Turno cruza medianoche
-                    </span>
-                  )}
-                </span>
-              </button>
-              <p className="text-xs text-gray-500 ml-7 mt-1">
-                Actívalo si el turno termina al día siguiente
-              </p>
-            </div>
-          </div>
-        )}
+        {/* Campo de notas */}
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <FileText size={16} className="inline mr-2" />
+            Notas (opcional)
+          </label>
+          <textarea
+            value={formData.notas}
+            onChange={(e) => handleInputChange('notas', e.target.value)}
+            placeholder="Agregar notas sobre este turno..."
+            className={`${inputClasses} border-gray-300 resize-none`}
+            style={{ '--tw-ring-color': colors.primary }}
+            rows={3}
+          />
+        </div>
 
         {/* BOTONES COMPLETAMENTE RESPONSIVOS */}
         <div className={`
@@ -334,7 +316,8 @@ const TurnoForm = ({
         <style jsx>{`
           .mobile-form input[type="date"],
           .mobile-form input[type="time"],
-          .mobile-form select {
+          .mobile-form select,
+          .mobile-form textarea {
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
