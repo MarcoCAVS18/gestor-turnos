@@ -1,6 +1,7 @@
 // src/pages/Estadisticas.jsx
 
 import React, { useState } from 'react';
+import { Truck } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useWeeklyStats } from '../hooks/useWeeklyStats';
 import { useDeliveryStats } from '../hooks/useDeliveryStats';
@@ -11,22 +12,21 @@ import WeeklyStatsGrid from '../components/stats/WeeklyStatsGrid';
 import WeeklyComparison from '../components/stats/WeeklyComparison';
 import DailyDistribution from '../components/stats/DailyDistribution';
 import ShiftTypeStats from '../components/stats/ShiftTypeStats';
+import InteractiveCharts from '../components/stats/InteractiveCharts';
+import MostProductiveDay from '../components/stats/MostProductiveDay';
 
-// Componentes de delivery
 import ResumenDelivery from '../components/stats/ResumenDelivery';
 import EficienciaVehiculos from '../components/stats/EficienciaVehiculos';
-import ComparacionPlataformas from '../components/stats/ComparacionPlataformas';
 import SeguimientoCombustible from '../components/stats/SeguimientoCombustible';
+import ComparacionPlataformas from '../components/stats/ComparacionPlataformas';
 
 const Estadisticas = () => {
-  const { cargando, metaHorasSemanales, deliveryEnabled } = useApp();
+  const { cargando, weeklyHoursGoal, deliveryEnabled } = useApp();
   const [offsetSemana, setOffsetSemana] = useState(0);
-  
-  // Usar el hook corregido sin pasar parámetros innecesarios
+
   const datosActuales = useWeeklyStats(offsetSemana);
   const datosAnteriores = useWeeklyStats(offsetSemana - 1);
-  
-  // Obtener estadísticas de delivery si está habilitado
+
   const deliveryStats = useDeliveryStats('mes');
   const tieneDelivery = deliveryEnabled && deliveryStats.totalPedidos > 0;
 
@@ -34,58 +34,148 @@ const Estadisticas = () => {
     <LoadingWrapper loading={cargando}>
       <div className="px-4 py-6 space-y-6">
 
-        <WeekNavigator 
+        {/* NAVEGADOR SEMANAL - Siempre full width */}
+        <WeekNavigator
           offsetSemana={offsetSemana}
           onSemanaChange={setOffsetSemana}
           fechaInicio={datosActuales.fechaInicio}
           fechaFin={datosActuales.fechaFin}
         />
 
-        {metaHorasSemanales && (
-          <StatsProgressBar 
-            horasSemanales={datosActuales.horasTrabajadas}
-            metaHoras={metaHorasSemanales}
-            gananciaTotal={datosActuales.totalGanado}
-          />
-        )}
+        {/* LAYOUT RESPONSIVO PRINCIPAL */}
+        <div className="space-y-6">
 
-        <WeeklyStatsGrid 
-          datos={datosActuales}
-        />
+          {/* DESKTOP: Grid de 3 columnas principales */}
+          <div className="hidden lg:grid lg:grid-cols-3 lg:gap-6">
 
-        <WeeklyComparison 
-          datosActuales={datosActuales}
-          datosAnteriores={datosAnteriores}
-        />
+            {/* CONTENEDOR 1: Progreso Semanal + Tipos de Turno */}
+            <div className="lg:col-span-1 space-y-6">
+              <StatsProgressBar
+                horasSemanales={datosActuales.horasTrabajadas}
+                metaHoras={weeklyHoursGoal || 40}
+                gananciaTotal={datosActuales.totalGanado}
+                className={!weeklyHoursGoal ? 'opacity-60' : ''}
+              />
 
-        <DailyDistribution 
-          gananciaPorDia={datosActuales.gananciaPorDia}
-        />
+              {datosActuales.tiposDeTurno && Object.keys(datosActuales.tiposDeTurno).length > 0 && (
+                <ShiftTypeStats tiposDeTurno={datosActuales.tiposDeTurno} />
+              )}
+            </div>
 
-        {datosActuales.tiposDeTurno && Object.keys(datosActuales.tiposDeTurno).length > 0 && (
-          <ShiftTypeStats 
-            tiposDeTurno={datosActuales.tiposDeTurno}
-          />
-        )}
+            {/* CONTENEDOR 2: Comparación Semanal (expandida con 4 estadísticas) */}
+            <div className="lg:col-span-1">
+              <WeeklyComparison
+                datosActuales={datosActuales}
+                datosAnteriores={datosAnteriores}
+              />
+            </div>
 
-        {/* Sección de estadísticas de delivery - solo visible si está habilitado */}
+            {/* CONTENEDOR 3: Stats Grid + Sub-grid (Día más productivo + Gráficos) */}
+            <div className="lg:col-span-1 space-y-6">
+              <WeeklyStatsGrid datos={datosActuales} />
+
+              {/* Sub-grid: Día más productivo */}
+              <div className=" gap-3">
+                <div className="space-y-3">
+                  <div className="bg-white rounded-xl shadow-md p-3">
+                    <MostProductiveDay diaMasProductivo={datosActuales.diaMasProductivo} />
+                  </div>
+                </div>
+
+                {/* Gráficos interactivos */}
+                <div className="h-full">
+                  <InteractiveCharts
+                    datosActuales={datosActuales}
+                    gananciaPorTrabajo={datosActuales.gananciaPorTrabajo || []}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* MÓVIL Y TABLET: Stack vertical reorganizado */}
+          <div className="block lg:hidden space-y-6">
+            {/* Progreso semanal */}
+            <StatsProgressBar
+              horasSemanales={datosActuales.horasTrabajadas}
+              metaHoras={weeklyHoursGoal || 40}
+              gananciaTotal={datosActuales.totalGanado}
+              className={!weeklyHoursGoal ? 'opacity-60' : ''}
+            />
+
+            {/* Stats grid */}
+            <WeeklyStatsGrid datos={datosActuales} />
+
+            {/* Día más productivo en móvil */}
+            <div className="bg-white rounded-xl shadow-md p-4">
+              <MostProductiveDay diaMasProductivo={datosActuales.diaMasProductivo} />
+            </div>
+
+            {/* Gráficos interactivos en móvil */}
+            <InteractiveCharts
+              datosActuales={datosActuales}
+              gananciaPorTrabajo={datosActuales.gananciaPorTrabajo || []}
+            />
+
+            {/* Comparación semanal */}
+            <WeeklyComparison
+              datosActuales={datosActuales}
+              datosAnteriores={datosAnteriores}
+            />
+
+            {/* Tipos de turno */}
+            {datosActuales.tiposDeTurno && Object.keys(datosActuales.tiposDeTurno).length > 0 && (
+              <ShiftTypeStats tiposDeTurno={datosActuales.tiposDeTurno} />
+            )}
+          </div>
+
+          {/* DISTRIBUCIÓN DIARIA - En el mismo contenedor */}
+          <div className="bg-white rounded-xl shadow-md p-4">
+            <DailyDistribution gananciaPorDia={datosActuales.gananciaPorDia} />
+          </div>
+
+        </div>
+
+        {/* SECCIÓN DELIVERY - Solo si está habilitado */}
         {tieneDelivery && (
           <>
-            <div className="pt-4">
-              <h2 className="text-xl font-semibold mb-4 text-center">
-                📦 Estadísticas de Delivery
-              </h2>
+            {/* Header de delivery */}
+            <div className="pt-8">
+              <div className="flex items-center justify-center mb-6">
+                <Truck className="mr-2" size={20} />
+                <h2 className="text-xl font-semibold">
+                  Estadísticas de Delivery
+                </h2>
+              </div>
             </div>
-            
-            <ResumenDelivery deliveryStats={deliveryStats} />
-            
-            {/* Tarjetas horizontales una debajo de la otra */}
+
+            {/* Layout responsivo para delivery */}
             <div className="space-y-6">
-              <EficienciaVehiculos deliveryStats={deliveryStats} />
-              <SeguimientoCombustible deliveryStats={deliveryStats} />
+
+              {/* DESKTOP: Grid de 2 columnas para delivery */}
+              <div className="hidden lg:grid lg:grid-cols-2 lg:gap-6">
+                {/* Columna 1: Resumen + Combustible */}
+                <div className="space-y-6">
+                  <ResumenDelivery deliveryStats={deliveryStats} />
+                  <SeguimientoCombustible deliveryStats={deliveryStats} />
+                </div>
+
+                {/* Columna 2: Eficiencia + Plataformas */}
+                <div className="space-y-6">
+                  <EficienciaVehiculos deliveryStats={deliveryStats} />
+                  <ComparacionPlataformas deliveryStats={deliveryStats} />
+                </div>
+              </div>
+
+              {/* MÓVIL: Stack vertical para delivery */}
+              <div className="block lg:hidden space-y-6">
+                <ResumenDelivery deliveryStats={deliveryStats} />
+                <EficienciaVehiculos deliveryStats={deliveryStats} />
+                <SeguimientoCombustible deliveryStats={deliveryStats} />
+                <ComparacionPlataformas deliveryStats={deliveryStats} />
+              </div>
+
             </div>
-            
-            <ComparacionPlataformas deliveryStats={deliveryStats} />
           </>
         )}
       </div>
