@@ -1,4 +1,4 @@
-// src/pages/Estadisticas.jsx
+// src/pages/Estadisticas.jsx - Layout actualizado
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Truck ***REMOVED*** from 'lucide-react';
@@ -70,25 +70,13 @@ const Estadisticas = () => ***REMOVED***
               />
             </div>
 
-            ***REMOVED***/* CONTENEDOR 3: Stats Grid + Sub-grid (Día más productivo + Gráficos) */***REMOVED***
+            ***REMOVED***/* CONTENEDOR 3: Stats Grid + Día más productivo */***REMOVED***
             <div className="lg:col-span-1 space-y-6">
               <WeeklyStatsGrid datos=***REMOVED***datosActuales***REMOVED*** />
 
-              ***REMOVED***/* Sub-grid: Día más productivo */***REMOVED***
-              <div className=" gap-3">
-                <div className="space-y-3">
-                  <div className="bg-white rounded-xl shadow-md p-3">
-                    <MostProductiveDay diaMasProductivo=***REMOVED***datosActuales.diaMasProductivo***REMOVED*** />
-                  </div>
-                </div>
-
-                ***REMOVED***/* Gráficos interactivos */***REMOVED***
-                <div className="h-full">
-                  <InteractiveCharts
-                    datosActuales=***REMOVED***datosActuales***REMOVED***
-                    gananciaPorTrabajo=***REMOVED***datosActuales.gananciaPorTrabajo || []***REMOVED***
-                  />
-                </div>
+              ***REMOVED***/* Día más productivo */***REMOVED***
+              <div className="bg-white rounded-xl shadow-md p-3">
+                <MostProductiveDay diaMasProductivo=***REMOVED***datosActuales.diaMasProductivo***REMOVED*** />
               </div>
             </div>
           </div>
@@ -111,29 +99,32 @@ const Estadisticas = () => ***REMOVED***
               <MostProductiveDay diaMasProductivo=***REMOVED***datosActuales.diaMasProductivo***REMOVED*** />
             </div>
 
-            ***REMOVED***/* Gráficos interactivos en móvil */***REMOVED***
-            <InteractiveCharts
-              datosActuales=***REMOVED***datosActuales***REMOVED***
-              gananciaPorTrabajo=***REMOVED***datosActuales.gananciaPorTrabajo || []***REMOVED***
-            />
-
             ***REMOVED***/* Comparación semanal */***REMOVED***
             <WeeklyComparison
               datosActuales=***REMOVED***datosActuales***REMOVED***
               datosAnteriores=***REMOVED***datosAnteriores***REMOVED***
             />
 
-            ***REMOVED***/* Tipos de turno */***REMOVED***
-            ***REMOVED***datosActuales.tiposDeTurno && Object.keys(datosActuales.tiposDeTurno).length > 0 && (
-              <ShiftTypeStats tiposDeTurno=***REMOVED***datosActuales.tiposDeTurno***REMOVED*** />
-            )***REMOVED***
+            ***REMOVED***/* Tipos de turno - SIEMPRE se muestra */***REMOVED***
+            <ShiftTypeStats tiposDeTurno=***REMOVED***datosActuales.tiposDeTurno***REMOVED*** />
           </div>
 
-          ***REMOVED***/* DISTRIBUCIÓN DIARIA - En el mismo contenedor */***REMOVED***
+        </div>
+
+        ***REMOVED***/* NUEVO CONTENEDOR: InteractiveCharts + DailyDistribution en dos columnas */***REMOVED***
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          ***REMOVED***/* Columna izquierda: InteractiveCharts */***REMOVED***
+          <div>
+            <InteractiveCharts
+              datosActuales=***REMOVED***datosActuales***REMOVED***
+              gananciaPorTrabajo=***REMOVED***datosActuales.gananciaPorTrabajo || []***REMOVED***
+            />
+          </div>
+
+          ***REMOVED***/* Columna derecha: DailyDistribution */***REMOVED***
           <div className="bg-white rounded-xl shadow-md p-4">
             <DailyDistribution gananciaPorDia=***REMOVED***datosActuales.gananciaPorDia***REMOVED*** />
           </div>
-
         </div>
 
         ***REMOVED***/* SECCIÓN DELIVERY - Solo si está habilitado */***REMOVED***
