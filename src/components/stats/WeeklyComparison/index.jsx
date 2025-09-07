@@ -15,6 +15,10 @@ const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED*
   const gananciaActual = (datosActuales && typeof datosActuales.totalGanado === 'number' && !isNaN(datosActuales.totalGanado)) ? datosActuales.totalGanado : 0;
   const gananciaAnterior = (datosAnteriores && typeof datosAnteriores.totalGanado === 'number' && !isNaN(datosAnteriores.totalGanado)) ? datosAnteriores.totalGanado : 0;
 
+  // NUEVA ESTADÍSTICA: Días trabajados
+  const diasActuales = datosActuales.diasTrabajados || 0;
+  const diasAnteriores = datosAnteriores.diasTrabajados || 0;
+
   const calcularCambio = (actual, anterior) => ***REMOVED***
     if (anterior === 0) return actual > 0 ? 100 : 0;
     return ((actual - anterior) / anterior) * 100;
@@ -23,6 +27,7 @@ const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED*
   const cambioHoras = calcularCambio(horasActuales, horasAnteriores);
   const cambioTurnos = calcularCambio(turnosActuales, turnosAnteriores);
   const cambioGanancia = calcularCambio(gananciaActual, gananciaAnterior);
+  const cambioDias = calcularCambio(diasActuales, diasAnteriores); // NUEVO
 
   const getIcono = (cambio) => ***REMOVED***
     if (cambio > 0) return TrendingUp;
@@ -31,7 +36,6 @@ const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED*
   ***REMOVED***;
 
   const getColor = (cambio) => ***REMOVED***
-    // AHORA USAMOS LOS COLORES DEL HOOK CON FALLBACKS
     if (cambio > 0) return colors.success || '#10B981';
     if (cambio < 0) return colors.danger || '#EF4444';
     return colors.neutral || '#6B7280';
@@ -55,6 +59,12 @@ const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED*
       cambio: cambioTurnos,
       valor: `$***REMOVED***Math.abs(cambioTurnos).toFixed(1)***REMOVED***%`,
       valorAbsoluto: `$***REMOVED***Math.abs(turnosActuales - turnosAnteriores)***REMOVED*** turnos`
+    ***REMOVED***,
+    ***REMOVED***
+      label: 'Días vs semana anterior', // NUEVA ESTADÍSTICA
+      cambio: cambioDias,
+      valor: `$***REMOVED***Math.abs(cambioDias).toFixed(1)***REMOVED***%`,
+      valorAbsoluto: `$***REMOVED***Math.abs(diasActuales - diasAnteriores)***REMOVED*** días`
     ***REMOVED***
   ];
 
