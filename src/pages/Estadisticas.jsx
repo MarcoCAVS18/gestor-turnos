@@ -1,4 +1,4 @@
-// src/pages/Estadisticas.jsx
+// src/pages/Estadisticas.jsx - Layout actualizado
 
 import React, { useState } from 'react';
 import { Truck } from 'lucide-react';
@@ -70,25 +70,13 @@ const Estadisticas = () => {
               />
             </div>
 
-            {/* CONTENEDOR 3: Stats Grid + Sub-grid (Día más productivo + Gráficos) */}
+            {/* CONTENEDOR 3: Stats Grid + Día más productivo */}
             <div className="lg:col-span-1 space-y-6">
               <WeeklyStatsGrid datos={datosActuales} />
 
-              {/* Sub-grid: Día más productivo */}
-              <div className=" gap-3">
-                <div className="space-y-3">
-                  <div className="bg-white rounded-xl shadow-md p-3">
-                    <MostProductiveDay diaMasProductivo={datosActuales.diaMasProductivo} />
-                  </div>
-                </div>
-
-                {/* Gráficos interactivos */}
-                <div className="h-full">
-                  <InteractiveCharts
-                    datosActuales={datosActuales}
-                    gananciaPorTrabajo={datosActuales.gananciaPorTrabajo || []}
-                  />
-                </div>
+              {/* Día más productivo */}
+              <div className="bg-white rounded-xl shadow-md p-3">
+                <MostProductiveDay diaMasProductivo={datosActuales.diaMasProductivo} />
               </div>
             </div>
           </div>
@@ -111,29 +99,32 @@ const Estadisticas = () => {
               <MostProductiveDay diaMasProductivo={datosActuales.diaMasProductivo} />
             </div>
 
-            {/* Gráficos interactivos en móvil */}
-            <InteractiveCharts
-              datosActuales={datosActuales}
-              gananciaPorTrabajo={datosActuales.gananciaPorTrabajo || []}
-            />
-
             {/* Comparación semanal */}
             <WeeklyComparison
               datosActuales={datosActuales}
               datosAnteriores={datosAnteriores}
             />
 
-            {/* Tipos de turno */}
-            {datosActuales.tiposDeTurno && Object.keys(datosActuales.tiposDeTurno).length > 0 && (
-              <ShiftTypeStats tiposDeTurno={datosActuales.tiposDeTurno} />
-            )}
+            {/* Tipos de turno - SIEMPRE se muestra */}
+            <ShiftTypeStats tiposDeTurno={datosActuales.tiposDeTurno} />
           </div>
 
-          {/* DISTRIBUCIÓN DIARIA - En el mismo contenedor */}
+        </div>
+
+        {/* NUEVO CONTENEDOR: InteractiveCharts + DailyDistribution en dos columnas */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Columna izquierda: InteractiveCharts */}
+          <div>
+            <InteractiveCharts
+              datosActuales={datosActuales}
+              gananciaPorTrabajo={datosActuales.gananciaPorTrabajo || []}
+            />
+          </div>
+
+          {/* Columna derecha: DailyDistribution */}
           <div className="bg-white rounded-xl shadow-md p-4">
             <DailyDistribution gananciaPorDia={datosActuales.gananciaPorDia} />
           </div>
-
         </div>
 
         {/* SECCIÓN DELIVERY - Solo si está habilitado */}

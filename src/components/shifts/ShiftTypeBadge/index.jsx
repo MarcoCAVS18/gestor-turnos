@@ -1,86 +1,79 @@
-// src/components/shifts/ShiftTypeBadge/index.jsx
+// src/components/stats/ShiftTypeStats/index.jsx
 
 import React from 'react';
-import { useApp } from '../../../contexts/AppContext';
+import { Zap } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import { TURN_TYPE_COLORS } from '../../../constants/colors';
-import { getShiftTypesConfig } from '../../../utils/shiftTypesConfig';
-import { determinarTipoTurno } from '../../../utils/shiftDetailsUtils';
 
-const ShiftTypeBadge = ({ tipoTurno, turno, size = 'sm' }) => {
-  const { shiftRanges } = useApp();
-  
-  // Determinar el tipo si se pasa el turno completo
-  const tipo = tipoTurno || determinarTipoTurno(turno, shiftRanges);
-  
-  // Mapeo directo a las constantes de colores
-  const getColorAndConfig = (tipoTurno) => {
-    const configs = {
-      diurno: {
-        color: TURN_TYPE_COLORS.Diurno,
-        label: 'Diurno',
-        bgColor: TURN_TYPE_COLORS.Diurno + '20'
-      },
-      tarde: {
-        color: TURN_TYPE_COLORS.Tarde,
-        label: 'Tarde', 
-        bgColor: TURN_TYPE_COLORS.Tarde + '20'
-      },
-      noche: {
-        color: TURN_TYPE_COLORS.Nocturno,
-        label: 'Nocturno',
-        bgColor: TURN_TYPE_COLORS.Nocturno + '20'
-      },
-      sabado: {
-        color: TURN_TYPE_COLORS.Sábado,
-        label: 'Sábado',
-        bgColor: TURN_TYPE_COLORS.Sábado + '20'
-      },
-      domingo: {
-        color: TURN_TYPE_COLORS.Domingo,
-        label: 'Domingo',
-        bgColor: TURN_TYPE_COLORS.Domingo + '20'
-      },
-      mixto: {
-        color: '#6B7280',
-        label: 'Mixto',
-        bgColor: '#6B728020'
-      }
+const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
+  const colors = useThemeColors();
+
+  // Verificar que tiposDeTurno sea válido
+  const tiposValidos = tiposDeTurno && typeof tiposDeTurno === 'object' && !Array.isArray(tiposDeTurno) ? tiposDeTurno : {};
+
+  // Mapeo de tipos a las constantes de colores
+  const getColorForType = (tipo) => {
+    const colorMap = {
+      'diurno': TURN_TYPE_COLORS.Diurno,
+      'tarde': TURN_TYPE_COLORS.Tarde,
+      'noche': TURN_TYPE_COLORS.Nocturno,
+      'nocturno': TURN_TYPE_COLORS.Nocturno,
+      'sabado': TURN_TYPE_COLORS.Sábado,
+      'domingo': TURN_TYPE_COLORS.Domingo,
+      'mixto': '#6B7280'
     };
-    
-    return configs[tipoTurno] || configs.mixto;
-  };
-  
-  const tipoConfig = getColorAndConfig(tipo);
-  
-  const sizeClasses = {
-    xs: 'px-1.5 py-0.5 text-xs',
-    sm: 'px-2 py-1 text-xs',
-    md: 'px-3 py-1.5 text-sm',
-    lg: 'px-4 py-2 text-base'
+    return colorMap[tipo.toLowerCase()] || '#6B7280';
   };
 
   return (
-    <div 
-      className={`inline-flex items-center rounded-full font-medium ${sizeClasses[size]}`}
-      style={{ 
-        backgroundColor: tipoConfig.bgColor,
-        color: tipoConfig.color
-      }}
-      title={`Turno ${tipoConfig.label}`}
-    >
-      <span className="truncate">{tipoConfig.label}</span>
-      
-      {/* Indicador especial para turnos nocturnos */}
-      {turno?.cruzaMedianoche && tipo === 'noche' && (
-        <span className="ml-1 text-xs opacity-75">•</span>
-      )}
-      
-      {/* Indicador especial para turnos mixtos */}
-      {tipo === 'mixto' && (
-        <span className="ml-1 text-xs opacity-75">~</span>
+    <div className="bg-white rounded-xl shadow-md p-4">
+      <div className="flex items-center mb-4">
+        <Zap size={18} style={{ color: colors.primary }} className="mr-2" />
+        <h3 className="font-semibold">Tipos de turno</h3>
+      </div>
+
+      {/* ESTADO VACÍO - Ahora siempre se muestra */}
+      {Object.keys(tiposValidos).length === 0 ? (
+        <div className="flex items-center justify-center py-8">
+          <div className="text-center text-gray-500">
+            <Zap size={32} className="mx-auto mb-3 text-gray-300" />
+            <h4 className="text-sm font-medium text-gray-600 mb-1">
+              Sin tipos de turno
+            </h4>
+            <p className="text-xs text-gray-500">
+              Los tipos aparecerán al registrar turnos
+            </p>
+          </div>
+        </div>
+      ) : (
+        /* ESTADO CON DATOS */
+        <div className="grid grid-cols-2 gap-4">
+          {Object.entries(tiposValidos).map(([tipo, datos]) => {
+            const datosSeguro = {
+              turnos: (datos && typeof datos.turnos === 'number') ? datos.turnos : 0,
+              horas: (datos && typeof datos.horas === 'number') ? datos.horas : 0,
+              ganancia: (datos && typeof datos.ganancia === 'number') ? datos.ganancia : 0
+            };
+
+            const tipoMostrado = tipo === 'undefined' ? 'MIXTO' : tipo.toUpperCase();
+            const colorTipo = getColorForType(tipo);
+
+            return (
+              <div key={tipo} className="text-center p-3 bg-gray-50 rounded-lg">
+                <div
+                  className="w-3 h-3 rounded-full mx-auto mb-2"
+                  style={{ backgroundColor: colorTipo }}
+                />
+                <p className="text-xs text-gray-600 capitalize">{tipoMostrado}</p>
+                <p className="font-semibold">{datosSeguro.turnos} turnos</p>
+                <p className="text-xs text-gray-500">{datosSeguro.horas.toFixed(1)}h</p>
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );
 };
 
-export default ShiftTypeBadge;
+export default ShiftTypeStats;
