@@ -1,3 +1,5 @@
+// src/components/stats/WeeklyComparison/index.jsx
+
 import React from 'react';
 import ***REMOVED*** TrendingUp, TrendingDown, Minus ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
@@ -27,7 +29,7 @@ const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED*
   const cambioHoras = calcularCambio(horasActuales, horasAnteriores);
   const cambioTurnos = calcularCambio(turnosActuales, turnosAnteriores);
   const cambioGanancia = calcularCambio(gananciaActual, gananciaAnterior);
-  const cambioDias = calcularCambio(diasActuales, diasAnteriores); // NUEVO
+  const cambioDias = calcularCambio(diasActuales, diasAnteriores);
 
   const getIcono = (cambio) => ***REMOVED***
     if (cambio > 0) return TrendingUp;
@@ -61,7 +63,7 @@ const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED*
       valorAbsoluto: `$***REMOVED***Math.abs(turnosActuales - turnosAnteriores)***REMOVED*** turnos`
     ***REMOVED***,
     ***REMOVED***
-      label: 'Días vs semana anterior', // NUEVA ESTADÍSTICA
+      label: 'Días vs semana anterior',
       cambio: cambioDias,
       valor: `$***REMOVED***Math.abs(cambioDias).toFixed(1)***REMOVED***%`,
       valorAbsoluto: `$***REMOVED***Math.abs(diasActuales - diasAnteriores)***REMOVED*** días`
@@ -69,10 +71,10 @@ const WeeklyComparison = (***REMOVED*** datosActuales = ***REMOVED******REMOVED*
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-4">
+    <div className="bg-white rounded-xl shadow-md p-4 h-full flex flex-col">
       <h3 className="font-semibold mb-4">Comparación semanal</h3>
       
-      <div className="space-y-3">
+      <div className="space-y-3 flex-1 flex flex-col justify-center">
         ***REMOVED***comparaciones.map((comp, index) => ***REMOVED***
           const Icono = getIcono(comp.cambio);
           const color = getColor(comp.cambio);

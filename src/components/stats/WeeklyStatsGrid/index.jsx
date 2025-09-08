@@ -42,21 +42,23 @@ const WeeklyStatsGrid = (***REMOVED*** datos = ***REMOVED******REMOVED*** ***REM
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      ***REMOVED***stats.map((stat, index) => ***REMOVED***
-        const Icon = stat.icon;
-        return (
-          <div key=***REMOVED***index***REMOVED*** className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-center mb-2">
-              <Icon size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: stat.color ***REMOVED******REMOVED*** className="mr-1" />
-              <span className="text-sm text-gray-600">***REMOVED***stat.label***REMOVED***</span>
+    <div className="bg-white rounded-xl shadow-md p-4">
+      <div className="grid grid-cols-2 gap-4">
+        ***REMOVED***stats.map((stat, index) => ***REMOVED***
+          const Icon = stat.icon;
+          return (
+            <div key=***REMOVED***index***REMOVED*** className="text-center p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-center mb-2">
+                <Icon size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: stat.color ***REMOVED******REMOVED*** className="mr-1" />
+                <span className="text-sm text-gray-600">***REMOVED***stat.label***REMOVED***</span>
+              </div>
+              <p className="text-2xl font-bold" style=***REMOVED******REMOVED*** color: stat.color ***REMOVED******REMOVED***>
+                ***REMOVED***stat.value***REMOVED***
+              </p>
             </div>
-            <p className="text-2xl font-bold" style=***REMOVED******REMOVED*** color: stat.color ***REMOVED******REMOVED***>
-              ***REMOVED***stat.value***REMOVED***
-            </p>
-          </div>
-        );
-      ***REMOVED***)***REMOVED***
+          );
+        ***REMOVED***)***REMOVED***
+      </div>
     </div>
   );
 ***REMOVED***;

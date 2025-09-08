@@ -24,34 +24,38 @@ const MostProductiveDay = (***REMOVED*** diaMasProductivo ***REMOVED***) => ***R
     return `$***REMOVED***horasEnteras***REMOVED***h $***REMOVED***minutos***REMOVED***min`;
   ***REMOVED***;
 
-  // Si no hay datos válidos, no mostrar el componente
+  // Si no hay datos válidos, mostrar estado vacío
   if (!diaMasProductivo || diaMasProductivo.dia === 'Ninguno' || !diaMasProductivo.ganancia || diaMasProductivo.ganancia <= 0) ***REMOVED***
     return (
-      <div className="text-center py-4">
-        <Award size=***REMOVED***24***REMOVED*** className="mx-auto mb-2 text-gray-300" />
-        <p className="text-sm text-gray-500">Sin datos suficientes</p>
+      <div className="h-full flex flex-col justify-center">
+        <div className="text-center py-4">
+          <Award size=***REMOVED***24***REMOVED*** className="mx-auto mb-2 text-gray-300" />
+          <p className="text-sm text-gray-500">Sin datos suficientes</p>
+        </div>
       </div>
     );
   ***REMOVED***
 
   return (
-    <div>
+    <div className="h-full flex flex-col">
       <div className="flex items-center mb-3">
         <Award size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
         <h4 className="font-medium text-sm">Día más productivo</h4>
       </div>
       
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="font-bold text-lg">***REMOVED***diaMasProductivo.dia***REMOVED***</p>
-          <p className="text-xs text-gray-600">
-            ***REMOVED***diaMasProductivo.turnos || 0***REMOVED*** turnos • ***REMOVED***formatearHoras(diaMasProductivo.horas || 0)***REMOVED***
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-lg font-bold text-green-600">
-            ***REMOVED***formatCurrency(diaMasProductivo.ganancia)***REMOVED***
-          </p>
+      <div className="flex-1 flex flex-col justify-center">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-bold text-lg">***REMOVED***diaMasProductivo.dia***REMOVED***</p>
+            <p className="text-xs text-gray-600">
+              ***REMOVED***diaMasProductivo.turnos || 0***REMOVED*** turnos • ***REMOVED***formatearHoras(diaMasProductivo.horas || 0)***REMOVED***
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-lg font-bold text-green-600">
+              ***REMOVED***formatCurrency(diaMasProductivo.ganancia)***REMOVED***
+            </p>
+          </div>
         </div>
       </div>
     </div>

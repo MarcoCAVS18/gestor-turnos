@@ -1,79 +1,95 @@
-// src/components/stats/ShiftTypeStats/index.jsx
+// src/components/shifts/ShiftTypeBadge/index.jsx - Corregido
 
 import React from 'react';
-import ***REMOVED*** Zap ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** TURN_TYPE_COLORS ***REMOVED*** from '../../../constants/colors';
+import ***REMOVED*** determinarTipoTurno ***REMOVED*** from '../../../utils/shiftDetailsUtils';
 
-const ShiftTypeStats = (***REMOVED*** tiposDeTurno = ***REMOVED******REMOVED*** ***REMOVED***) => ***REMOVED***
-  const colors = useThemeColors();
-
-  // Verificar que tiposDeTurno sea válido
-  const tiposValidos = tiposDeTurno && typeof tiposDeTurno === 'object' && !Array.isArray(tiposDeTurno) ? tiposDeTurno : ***REMOVED******REMOVED***;
-
-  // Mapeo de tipos a las constantes de colores
-  const getColorForType = (tipo) => ***REMOVED***
-    const colorMap = ***REMOVED***
-      'diurno': TURN_TYPE_COLORS.Diurno,
-      'tarde': TURN_TYPE_COLORS.Tarde,
-      'noche': TURN_TYPE_COLORS.Nocturno,
-      'nocturno': TURN_TYPE_COLORS.Nocturno,
-      'sabado': TURN_TYPE_COLORS.Sábado,
-      'domingo': TURN_TYPE_COLORS.Domingo,
-      'mixto': '#6B7280'
+const ShiftTypeBadge = (***REMOVED*** tipoTurno, turno, size = 'sm' ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** shiftRanges ***REMOVED*** = useApp();
+  
+  // Determinar el tipo si se pasa el turno completo
+  const tipo = tipoTurno || determinarTipoTurno(turno, shiftRanges);
+  
+  // Mapeo directo a las constantes de colores
+  const getColorAndConfig = (tipoTurno) => ***REMOVED***
+    const configs = ***REMOVED***
+      diurno: ***REMOVED***
+        color: TURN_TYPE_COLORS.Diurno,
+        label: 'Diurno',
+        bgColor: TURN_TYPE_COLORS.Diurno + '20'
+      ***REMOVED***,
+      tarde: ***REMOVED***
+        color: TURN_TYPE_COLORS.Tarde,
+        label: 'Tarde', 
+        bgColor: TURN_TYPE_COLORS.Tarde + '20'
+      ***REMOVED***,
+      noche: ***REMOVED***
+        color: TURN_TYPE_COLORS.Nocturno,
+        label: 'Nocturno',
+        bgColor: TURN_TYPE_COLORS.Nocturno + '20'
+      ***REMOVED***,
+      nocturno: ***REMOVED***
+        color: TURN_TYPE_COLORS.Nocturno,
+        label: 'Nocturno',
+        bgColor: TURN_TYPE_COLORS.Nocturno + '20'
+      ***REMOVED***,
+      sabado: ***REMOVED***
+        color: TURN_TYPE_COLORS.Sábado,
+        label: 'Sábado',
+        bgColor: TURN_TYPE_COLORS.Sábado + '20'
+      ***REMOVED***,
+      domingo: ***REMOVED***
+        color: TURN_TYPE_COLORS.Domingo,
+        label: 'Domingo',
+        bgColor: TURN_TYPE_COLORS.Domingo + '20'
+      ***REMOVED***,
+      delivery: ***REMOVED***
+        color: '#10B981', // Verde para delivery
+        label: 'Delivery',
+        bgColor: '#10B98120'
+      ***REMOVED***,
+      mixto: ***REMOVED***
+        color: '#6B7280',
+        label: 'Mixto',
+        bgColor: '#6B728020'
+      ***REMOVED***
     ***REMOVED***;
-    return colorMap[tipo.toLowerCase()] || '#6B7280';
+    
+    return configs[tipoTurno] || configs.mixto;
+  ***REMOVED***;
+  
+  const tipoConfig = getColorAndConfig(tipo);
+  
+  const sizeClasses = ***REMOVED***
+    xs: 'px-1.5 py-0.5 text-xs',
+    sm: 'px-2 py-1 text-xs',
+    md: 'px-3 py-1.5 text-sm',
+    lg: 'px-4 py-2 text-base'
   ***REMOVED***;
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-4">
-      <div className="flex items-center mb-4">
-        <Zap size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-        <h3 className="font-semibold">Tipos de turno</h3>
-      </div>
-
-      ***REMOVED***/* ESTADO VACÍO - Ahora siempre se muestra */***REMOVED***
-      ***REMOVED***Object.keys(tiposValidos).length === 0 ? (
-        <div className="flex items-center justify-center py-8">
-          <div className="text-center text-gray-500">
-            <Zap size=***REMOVED***32***REMOVED*** className="mx-auto mb-3 text-gray-300" />
-            <h4 className="text-sm font-medium text-gray-600 mb-1">
-              Sin tipos de turno
-            </h4>
-            <p className="text-xs text-gray-500">
-              Los tipos aparecerán al registrar turnos
-            </p>
-          </div>
-        </div>
-      ) : (
-        /* ESTADO CON DATOS */
-        <div className="grid grid-cols-2 gap-4">
-          ***REMOVED***Object.entries(tiposValidos).map(([tipo, datos]) => ***REMOVED***
-            const datosSeguro = ***REMOVED***
-              turnos: (datos && typeof datos.turnos === 'number') ? datos.turnos : 0,
-              horas: (datos && typeof datos.horas === 'number') ? datos.horas : 0,
-              ganancia: (datos && typeof datos.ganancia === 'number') ? datos.ganancia : 0
-            ***REMOVED***;
-
-            const tipoMostrado = tipo === 'undefined' ? 'MIXTO' : tipo.toUpperCase();
-            const colorTipo = getColorForType(tipo);
-
-            return (
-              <div key=***REMOVED***tipo***REMOVED*** className="text-center p-3 bg-gray-50 rounded-lg">
-                <div
-                  className="w-3 h-3 rounded-full mx-auto mb-2"
-                  style=***REMOVED******REMOVED*** backgroundColor: colorTipo ***REMOVED******REMOVED***
-                />
-                <p className="text-xs text-gray-600 capitalize">***REMOVED***tipoMostrado***REMOVED***</p>
-                <p className="font-semibold">***REMOVED***datosSeguro.turnos***REMOVED*** turnos</p>
-                <p className="text-xs text-gray-500">***REMOVED***datosSeguro.horas.toFixed(1)***REMOVED***h</p>
-              </div>
-            );
-          ***REMOVED***)***REMOVED***
-        </div>
+    <div 
+      className=***REMOVED***`inline-flex items-center rounded-full font-medium $***REMOVED***sizeClasses[size]***REMOVED*** flex-shrink-0`***REMOVED***
+      style=***REMOVED******REMOVED*** 
+        backgroundColor: tipoConfig.bgColor,
+        color: tipoConfig.color
+      ***REMOVED******REMOVED***
+      title=***REMOVED***`Turno $***REMOVED***tipoConfig.label***REMOVED***`***REMOVED***
+    >
+      <span className="truncate">***REMOVED***tipoConfig.label***REMOVED***</span>
+      
+      ***REMOVED***/* Indicador especial para turnos nocturnos */***REMOVED***
+      ***REMOVED***turno?.cruzaMedianoche && tipo === 'noche' && (
+        <span className="ml-1 text-xs opacity-75">🌙</span>
+      )***REMOVED***
+      
+      ***REMOVED***/* Indicador especial para turnos mixtos */***REMOVED***
+      ***REMOVED***tipo === 'mixto' && (
+        <span className="ml-1 text-xs opacity-75">~</span>
       )***REMOVED***
     </div>
   );
 ***REMOVED***;
 
-export default ShiftTypeStats;
+export default ShiftTypeBadge;
