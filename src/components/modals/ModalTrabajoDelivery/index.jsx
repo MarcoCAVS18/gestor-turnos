@@ -1,3 +1,5 @@
+// ModalTrabajoDelivery - ACTUALIZADO con lógica de vehículos
+
 import ***REMOVED*** useCallback, useEffect, useState ***REMOVED*** from 'react';
 import ***REMOVED*** X, Truck ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
@@ -6,12 +8,10 @@ import VehicleSelector from '../../delivery/VehicleSelector';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
-  // Usar los nombres correctos del contexto
   const ***REMOVED*** addDeliveryJob, editDeliveryJob ***REMOVED*** = useApp();
   const colors = useThemeColors();
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detectar móvil
   useEffect(() => ***REMOVED***
     const checkMobile = () => ***REMOVED***
       setIsMobile(window.innerWidth < 768);
@@ -23,7 +23,6 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
     return () => window.removeEventListener('resize', checkMobile);
   ***REMOVED***, []);
 
-  // Prevenir scroll del body cuando está abierto
   useEffect(() => ***REMOVED***
     if (isOpen) ***REMOVED***
       document.body.style.overflow = 'hidden';
@@ -39,10 +38,8 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
   const manejarGuardado = async (datosDelivery) => ***REMOVED***
     try ***REMOVED***
       if (trabajo) ***REMOVED***
-        // Usar editDeliveryJob en lugar de editarTrabajoDelivery
         await editDeliveryJob(trabajo.id, datosDelivery);
       ***REMOVED*** else ***REMOVED***
-        // Usar addDeliveryJob en lugar de agregarTrabajoDelivery
         await addDeliveryJob(datosDelivery);
       ***REMOVED***
       onClose();
@@ -68,7 +65,6 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
           $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'***REMOVED***
         `***REMOVED***
       >
-        ***REMOVED***/* Header fijo con z-index correcto */***REMOVED***
         <div 
           className=***REMOVED***`
             sticky top-0 bg-white border-b flex justify-between items-center
@@ -109,7 +105,6 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
           </button>
         </div>
 
-        ***REMOVED***/* Content scrolleable */***REMOVED***
         <div className=***REMOVED***`
           $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'***REMOVED***
         `***REMOVED***>
@@ -124,7 +119,6 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
             </div>
         </div>
 
-        ***REMOVED***/* Footer indicador en móvil */***REMOVED***
         ***REMOVED***isMobile && (
           <div 
             className="sticky bottom-0 bg-white border-t p-2"
@@ -166,6 +160,15 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
   const [errors, setErrors] = useState(***REMOVED******REMOVED***); 
   const [guardando, setGuardando] = useState(false); 
 
+  // Función para determinar si el vehículo necesita combustible
+  const vehiculoNecesitaCombustible = (vehiculo) => ***REMOVED***
+    const vehiculoLower = vehiculo.toLowerCase();
+    return vehiculoLower.includes('moto') || 
+           vehiculoLower.includes('auto') || 
+           vehiculoLower.includes('carro') ||
+           vehiculoLower.includes('coche');
+  ***REMOVED***;
+
   useEffect(() => ***REMOVED*** 
     if (trabajo) ***REMOVED***
       setFormData(***REMOVED***
@@ -180,11 +183,25 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
           calculaPorPedido: true,
           tarifaBasePedido: 0,
           incluyePropinas: true,
-          rastreaCombustible: true
+          rastreaCombustible: vehiculoNecesitaCombustible(trabajo.vehiculo || '')
         ***REMOVED***
       ***REMOVED***);
     ***REMOVED***
   ***REMOVED***, [trabajo]);
+
+  // Actualizar automáticamente el rastreo de combustible cuando cambia el vehículo
+  useEffect(() => ***REMOVED***
+    if (formData.vehiculo) ***REMOVED***
+      const necesitaCombustible = vehiculoNecesitaCombustible(formData.vehiculo);
+      setFormData(prev => (***REMOVED***
+        ...prev,
+        configuracion: ***REMOVED***
+          ...prev.configuracion,
+          rastreaCombustible: necesitaCombustible
+        ***REMOVED***
+      ***REMOVED***));
+    ***REMOVED***
+  ***REMOVED***, [formData.vehiculo]);
 
   const validarFormulario = () => ***REMOVED***
     const newErrors = ***REMOVED******REMOVED***;
@@ -243,6 +260,9 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
       ***REMOVED***
     ***REMOVED***));
   ***REMOVED***;
+
+  // Determinar si mostrar la opción de combustible
+  const mostrarOpcionCombustible = vehiculoNecesitaCombustible(formData.vehiculo);
 
   return (
     <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className=***REMOVED***`space-y-6 $***REMOVED***isMobile ? 'mobile-form' : ''***REMOVED***`***REMOVED***>
@@ -305,16 +325,26 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
           <span className="text-sm">Incluir propinas en el registro</span>
         </label>
 
-        <label className="flex items-center space-x-3">
-          <input
-            type="checkbox"
-            checked=***REMOVED***formData.configuracion.rastreaCombustible***REMOVED***
-            onChange=***REMOVED***(e) => handleConfigChange('rastreaCombustible', e.target.checked)***REMOVED***
-            className="rounded w-4 h-4"
-            style=***REMOVED******REMOVED*** accentColor: thematicColors.primary ***REMOVED******REMOVED***
-          />
-          <span className="text-sm">Rastrear gastos de combustible</span>
-        </label>
+        ***REMOVED***/* Solo mostrar opción de combustible si el vehículo lo requiere */***REMOVED***
+        ***REMOVED***mostrarOpcionCombustible && (
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked=***REMOVED***formData.configuracion.rastreaCombustible***REMOVED***
+              onChange=***REMOVED***(e) => handleConfigChange('rastreaCombustible', e.target.checked)***REMOVED***
+              className="rounded w-4 h-4"
+              style=***REMOVED******REMOVED*** accentColor: thematicColors.primary ***REMOVED******REMOVED***
+            />
+            <span className="text-sm">Rastrear gastos de combustible</span>
+          </label>
+        )***REMOVED***
+
+        ***REMOVED***/* Mensaje informativo para vehículos sin combustible */***REMOVED***
+        ***REMOVED***!mostrarOpcionCombustible && formData.vehiculo && (
+          <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded border border-blue-200">
+            💡 Este vehículo no requiere combustible, por lo que no se incluirán gastos relacionados.
+          </div>
+        )***REMOVED***
       </div>
 
       ***REMOVED***/* Descripción opcional */***REMOVED***

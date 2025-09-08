@@ -1,7 +1,7 @@
-// src/components/forms/TurnoDeliveryForm/index.jsx - COMPLETAMENTE RESPONSIVO
+// src/components/forms/TurnoDeliveryForm/index.jsx - SIN detección automática de medianoche
 
 import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
-import ***REMOVED*** Truck, Calendar, Clock, DollarSign, Package, Navigation, Fuel, Heart, ToggleLeft, ToggleRight ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Truck, Calendar, Clock, DollarSign, Package, Navigation, Fuel, Heart ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const TurnoDeliveryForm = (***REMOVED***
@@ -28,12 +28,24 @@ const TurnoDeliveryForm = (***REMOVED***
     numeroPedidos: '',
     kilometros: '',
     gastoCombustible: '',
-    cruzaMedianoche: false,
-    fechaFin: '',
     observaciones: ''
   ***REMOVED***);
 
   const [errors, setErrors] = useState(***REMOVED******REMOVED***);
+
+  // Función para determinar si el vehículo necesita combustible
+  const vehiculoNecesitaCombustible = useCallback((vehiculo) => ***REMOVED***
+    if (!vehiculo) return false;
+    const vehiculoLower = vehiculo.toLowerCase();
+    return vehiculoLower.includes('moto') || 
+           vehiculoLower.includes('auto') || 
+           vehiculoLower.includes('carro') ||
+           vehiculoLower.includes('coche');
+  ***REMOVED***, []);
+
+  // Obtener el trabajo seleccionado y verificar si necesita combustible
+  const trabajoSeleccionado = trabajos.find(t => t.id === formData.trabajoId);
+  const mostrarCombustible = trabajoSeleccionado ? vehiculoNecesitaCombustible(trabajoSeleccionado.vehiculo) : true;
 
   // Inicializar formulario
   useEffect(() => ***REMOVED***
@@ -48,8 +60,6 @@ const TurnoDeliveryForm = (***REMOVED***
         numeroPedidos: turno.numeroPedidos?.toString() || '',
         kilometros: turno.kilometros?.toString() || '',
         gastoCombustible: turno.gastoCombustible?.toString() || '',
-        cruzaMedianoche: turno.cruzaMedianoche || false,
-        fechaFin: turno.fechaFin || '',
         observaciones: turno.observaciones || ''
       ***REMOVED***);
     ***REMOVED*** else if (fechaInicial) ***REMOVED***
@@ -60,31 +70,12 @@ const TurnoDeliveryForm = (***REMOVED***
     ***REMOVED***
   ***REMOVED***, [turno, fechaInicial]);
 
-  // Detectar turnos nocturnos automáticamente
+  // Limpiar gastos de combustible cuando se selecciona un vehículo que no lo necesita
   useEffect(() => ***REMOVED***
-    if (formData.horaInicio && formData.horaFin) ***REMOVED***
-      const [horaI] = formData.horaInicio.split(':').map(Number);
-      const [horaF] = formData.horaFin.split(':').map(Number);
-      
-      const esNocturno = horaI > horaF;
-      
-      if (esNocturno !== formData.cruzaMedianoche) ***REMOVED***
-        setFormData(prev => (***REMOVED***
-          ...prev,
-          cruzaMedianoche: esNocturno,
-          fechaFin: esNocturno && prev.fechaInicio 
-            ? calcularFechaFin(prev.fechaInicio)
-            : ''
-        ***REMOVED***));
-      ***REMOVED***
+    if (!mostrarCombustible && formData.gastoCombustible) ***REMOVED***
+      setFormData(prev => (***REMOVED*** ...prev, gastoCombustible: '' ***REMOVED***));
     ***REMOVED***
-  ***REMOVED***, [formData.horaInicio, formData.horaFin, formData.fechaInicio, formData.cruzaMedianoche]);
-
-  const calcularFechaFin = (fechaInicio) => ***REMOVED***
-    const fecha = new Date(fechaInicio + 'T00:00:00');
-    fecha.setDate(fecha.getDate() + 1);
-    return fecha.toISOString().split('T')[0];
-  ***REMOVED***;
+  ***REMOVED***, [mostrarCombustible, formData.gastoCombustible]);
 
   const validarFormulario = () => ***REMOVED***
     const newErrors = ***REMOVED******REMOVED***;
@@ -112,14 +103,14 @@ const TurnoDeliveryForm = (***REMOVED***
   const handleSubmit = (e) => ***REMOVED***
     e.preventDefault();
     if (validarFormulario()) ***REMOVED***
-      // Convertir strings a números
+      // Convertir strings a números y asegurar que combustible sea 0 si no aplica
       const dataToSubmit = ***REMOVED***
         ...formData,
         gananciaTotal: parseFloat(formData.gananciaTotal) || 0,
         propinas: parseFloat(formData.propinas) || 0,
         numeroPedidos: parseInt(formData.numeroPedidos) || 0,
         kilometros: parseFloat(formData.kilometros) || 0,
-        gastoCombustible: parseFloat(formData.gastoCombustible) || 0
+        gastoCombustible: mostrarCombustible ? (parseFloat(formData.gastoCombustible) || 0) : 0
       ***REMOVED***;
       onSubmit(dataToSubmit);
     ***REMOVED***
@@ -171,7 +162,7 @@ const TurnoDeliveryForm = (***REMOVED***
             <option value="">Seleccionar trabajo</option>
             ***REMOVED***trabajosDelivery.map(trabajo => (
               <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
-                ***REMOVED***trabajo.nombre***REMOVED***
+                ***REMOVED***trabajo.nombre***REMOVED*** ***REMOVED***trabajo.vehiculo ? `($***REMOVED***trabajo.vehiculo***REMOVED***)` : ''***REMOVED***
               </option>
             ))***REMOVED***
           </select>
@@ -180,48 +171,23 @@ const TurnoDeliveryForm = (***REMOVED***
           )***REMOVED***
         </div>
 
-        ***REMOVED***/* CONTENEDOR DE FECHAS RESPONSIVO */***REMOVED***
+        ***REMOVED***/* Fecha de trabajo */***REMOVED***
         <div className="w-full">
-          <div className=***REMOVED***`grid gap-4 $***REMOVED***isMobile ? 'grid-cols-1' : 'grid-cols-2'***REMOVED***`***REMOVED***>
-            ***REMOVED***/* Fecha de inicio */***REMOVED***
-            <div className="w-full min-w-0">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Calendar size=***REMOVED***16***REMOVED*** className="inline mr-2" />
-                Fecha de inicio
-              </label>
-              <input
-                type="date"
-                value=***REMOVED***formData.fechaInicio***REMOVED***
-                onChange=***REMOVED***(e) => handleInputChange('fechaInicio', e.target.value)***REMOVED***
-                className=***REMOVED***`$***REMOVED***inputClasses***REMOVED*** $***REMOVED***errors.fechaInicio ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
-                style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
-                required
-              />
-              ***REMOVED***errors.fechaInicio && (
-                <p className="text-red-500 text-xs mt-1">***REMOVED***errors.fechaInicio***REMOVED***</p>
-              )***REMOVED***
-            </div>
-
-            ***REMOVED***/* Fecha de fin - solo mostrar si es nocturno */***REMOVED***
-            ***REMOVED***formData.cruzaMedianoche && (
-              <div className="w-full min-w-0">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Calendar size=***REMOVED***16***REMOVED*** className="inline mr-2" />
-                  Fecha de fin
-                </label>
-                <input
-                  type="date"
-                  value=***REMOVED***formData.fechaFin || calcularFechaFin(formData.fechaInicio)***REMOVED***
-                  className=***REMOVED***`$***REMOVED***inputClasses***REMOVED*** border-gray-300`***REMOVED***
-                  style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
-                  disabled
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Se calcula automáticamente para turnos nocturnos
-                </p>
-              </div>
-            )***REMOVED***
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Calendar size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+            Fecha del turno
+          </label>
+          <input
+            type="date"
+            value=***REMOVED***formData.fechaInicio***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('fechaInicio', e.target.value)***REMOVED***
+            className=***REMOVED***`$***REMOVED***inputClasses***REMOVED*** $***REMOVED***errors.fechaInicio ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
+            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            required
+          />
+          ***REMOVED***errors.fechaInicio && (
+            <p className="text-red-500 text-xs mt-1">***REMOVED***errors.fechaInicio***REMOVED***</p>
+          )***REMOVED***
         </div>
 
         ***REMOVED***/* CONTENEDOR DE HORAS RESPONSIVO */***REMOVED***
@@ -264,39 +230,6 @@ const TurnoDeliveryForm = (***REMOVED***
             </div>
           </div>
         </div>
-
-        ***REMOVED***/* Toggle para turno nocturno */***REMOVED***
-        ***REMOVED***(formData.horaInicio && formData.horaFin) && (
-          <div className="w-full">
-            <div 
-              className="p-3 rounded-lg border"
-              style=***REMOVED******REMOVED*** backgroundColor: colors.transparent5, borderColor: colors.transparent20 ***REMOVED******REMOVED***
-            >
-              <button
-                type="button"
-                onClick=***REMOVED***() => handleInputChange('cruzaMedianoche', !formData.cruzaMedianoche)***REMOVED***
-                className="flex items-center w-full"
-              >
-                ***REMOVED***formData.cruzaMedianoche ? (
-                  <ToggleRight size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
-                ) : (
-                  <ToggleLeft size=***REMOVED***20***REMOVED*** className="text-gray-400" />
-                )***REMOVED***
-                <span className="ml-2 text-sm">
-                  ***REMOVED***formData.cruzaMedianoche ? (
-                    <span style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                      ✓ Turno nocturno (cruza medianoche)
-                    </span>
-                  ) : (
-                    <span className="text-gray-600">
-                      Turno cruza medianoche
-                    </span>
-                  )***REMOVED***
-                </span>
-              </button>
-            </div>
-          </div>
-        )***REMOVED***
 
         ***REMOVED***/* GANANCIAS RESPONSIVAS */***REMOVED***
         <div className="w-full">
@@ -377,28 +310,30 @@ const TurnoDeliveryForm = (***REMOVED***
           </div>
         </div>
 
-        ***REMOVED***/* Gastos de combustible */***REMOVED***
-        <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <Fuel size=***REMOVED***16***REMOVED*** className="inline mr-2" />
-            Gastos de combustible
-          </label>
-          <input
-            type="number"
-            step="0.01"
-            value=***REMOVED***formData.gastoCombustible***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('gastoCombustible', e.target.value)***REMOVED***
-            className=***REMOVED***`$***REMOVED***inputClasses***REMOVED*** border-gray-300`***REMOVED***
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
-            placeholder="0.00"
-            min="0"
-          />
-        </div>
+        ***REMOVED***/* Gastos de combustible - SOLO SI EL VEHÍCULO LO REQUIERE */***REMOVED***
+        ***REMOVED***mostrarCombustible && (
+          <div className="w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Fuel size=***REMOVED***16***REMOVED*** className="inline mr-2" />
+              Gastos de combustible
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              value=***REMOVED***formData.gastoCombustible***REMOVED***
+              onChange=***REMOVED***(e) => handleInputChange('gastoCombustible', e.target.value)***REMOVED***
+              className=***REMOVED***`$***REMOVED***inputClasses***REMOVED*** border-gray-300`***REMOVED***
+              style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+              placeholder="0.00"
+              min="0"
+            />
+          </div>
+        )***REMOVED***
 
         ***REMOVED***/* Observaciones */***REMOVED***
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Observaciones (opcional)
+            Notas (opcional)
           </label>
           <textarea
             value=***REMOVED***formData.observaciones***REMOVED***

@@ -9,11 +9,18 @@ const Card = (***REMOVED***
   shadow = 'md',
   rounded = 'xl',
   borderColor,
-  borderPosition = 'none'
+  borderPosition = 'none',
+  borderWidth = '1',
+  hover = false,
+  interactive = false,
+  onClick,
+  variant = 'default',
+  ...props
 ***REMOVED***) => ***REMOVED***
   const getPaddingClasses = () => ***REMOVED***
     const paddings = ***REMOVED***
       none: '',
+      xs: 'p-2',
       sm: 'p-3',
       md: 'p-4',
       lg: 'p-6',
@@ -49,14 +56,31 @@ const Card = (***REMOVED***
     if (!borderColor || borderPosition === 'none') return '';
     
     const positions = ***REMOVED***
-      left: 'border-l-4',
-      right: 'border-r-4',
-      top: 'border-t-4',
-      bottom: 'border-b-4',
-      all: 'border-4'
+      left: `border-l-$***REMOVED***borderWidth***REMOVED***`,
+      right: `border-r-$***REMOVED***borderWidth***REMOVED***`,
+      top: `border-t-$***REMOVED***borderWidth***REMOVED***`,
+      bottom: `border-b-$***REMOVED***borderWidth***REMOVED***`,
+      all: `border-$***REMOVED***borderWidth***REMOVED***`
     ***REMOVED***;
     
     return positions[borderPosition] || '';
+  ***REMOVED***;
+
+  const getVariantClasses = () => ***REMOVED***
+    const variants = ***REMOVED***
+      default: 'bg-white border border-gray-200',
+      elevated: 'bg-white',
+      outlined: 'bg-white border-2 border-gray-300',
+      ghost: 'bg-transparent',
+      gradient: 'bg-gradient-to-br from-white to-gray-50 border border-gray-200'
+    ***REMOVED***;
+    return variants[variant] || variants.default;
+  ***REMOVED***;
+
+  const getInteractiveClasses = () => ***REMOVED***
+    if (!interactive && !onClick && !hover) return '';
+    
+    return 'transition-all duration-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-md';
   ***REMOVED***;
 
   const getBorderStyle = () => ***REMOVED***
@@ -67,10 +91,22 @@ const Card = (***REMOVED***
     ***REMOVED***;
   ***REMOVED***;
 
+  const combinedClassName = `
+    $***REMOVED***getVariantClasses()***REMOVED***
+    $***REMOVED***getPaddingClasses()***REMOVED*** 
+    $***REMOVED***getShadowClasses()***REMOVED*** 
+    $***REMOVED***getRoundedClasses()***REMOVED*** 
+    $***REMOVED***getBorderClasses()***REMOVED***
+    $***REMOVED***getInteractiveClasses()***REMOVED***
+    $***REMOVED***className***REMOVED***
+  `.trim().replace(/\s+/g, ' ');
+
   return (
     <div
-      className=***REMOVED***`bg-white $***REMOVED***getPaddingClasses()***REMOVED*** $***REMOVED***getShadowClasses()***REMOVED*** $***REMOVED***getRoundedClasses()***REMOVED*** $***REMOVED***getBorderClasses()***REMOVED*** $***REMOVED***className***REMOVED***`***REMOVED***
+      className=***REMOVED***combinedClassName***REMOVED***
       style=***REMOVED***getBorderStyle()***REMOVED***
+      onClick=***REMOVED***interactive || onClick ? onClick : undefined***REMOVED***
+      ***REMOVED***...props***REMOVED***
     >
       ***REMOVED***children***REMOVED***
     </div>

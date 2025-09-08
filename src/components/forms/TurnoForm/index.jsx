@@ -1,4 +1,4 @@
-// src/components/forms/TurnoForm/index.jsx
+// src/components/forms/TurnoForm/index.jsx - ACTUALIZADO PARA MOSTRAR TODOS LOS TRABAJOS
 
 import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
 import ***REMOVED*** Briefcase, Calendar, Clock, FileText ***REMOVED*** from 'lucide-react';
@@ -121,6 +121,10 @@ const TurnoForm = (***REMOVED***
     $***REMOVED***isMobile ? 'text-base min-h-[44px]' : 'text-sm py-2'***REMOVED***
   `;
 
+  // Separar trabajos por tipo para mostrarlos organizados
+  const trabajosTradicionales = trabajos.filter(t => t.tipo !== 'delivery');
+  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
+
   return (
     <div 
       className=***REMOVED***`w-full $***REMOVED***isMobile ? 'mobile-form' : ''***REMOVED***`***REMOVED***
@@ -130,7 +134,7 @@ const TurnoForm = (***REMOVED***
       ***REMOVED******REMOVED***
     >
       <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className="space-y-4 w-full">
-        ***REMOVED***/* Selección de trabajo */***REMOVED***
+        ***REMOVED***/* Selección de trabajo - ACTUALIZADO */***REMOVED***
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Briefcase size=***REMOVED***16***REMOVED*** className="inline mr-2" />
@@ -144,11 +148,28 @@ const TurnoForm = (***REMOVED***
             required
           >
             <option value="">Seleccionar trabajo</option>
-            ***REMOVED***trabajos.filter(t => t.tipo !== 'delivery').map(trabajo => (
-              <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
-                ***REMOVED***trabajo.nombre***REMOVED***
-              </option>
-            ))***REMOVED***
+            
+            ***REMOVED***/* Trabajos tradicionales */***REMOVED***
+            ***REMOVED***trabajosTradicionales.length > 0 && (
+              <optgroup label="Trabajos Tradicionales">
+                ***REMOVED***trabajosTradicionales.map(trabajo => (
+                  <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
+                    ***REMOVED***trabajo.nombre***REMOVED***
+                  </option>
+                ))***REMOVED***
+              </optgroup>
+            )***REMOVED***
+            
+            ***REMOVED***/* Trabajos de delivery */***REMOVED***
+            ***REMOVED***trabajosDelivery.length > 0 && (
+              <optgroup label="Trabajos de Delivery">
+                ***REMOVED***trabajosDelivery.map(trabajo => (
+                  <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
+                    ***REMOVED***trabajo.nombre***REMOVED***
+                  </option>
+                ))***REMOVED***
+              </optgroup>
+            )***REMOVED***
           </select>
           ***REMOVED***errors.trabajoId && (
             <p className="text-red-500 text-xs mt-1">***REMOVED***errors.trabajoId***REMOVED***</p>
