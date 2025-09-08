@@ -1,3 +1,5 @@
+// src/components/stats/WeeklyComparison/index.jsx
+
 import React from 'react';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -27,7 +29,7 @@ const WeeklyComparison = ({ datosActuales = {}, datosAnteriores = {} }) => {
   const cambioHoras = calcularCambio(horasActuales, horasAnteriores);
   const cambioTurnos = calcularCambio(turnosActuales, turnosAnteriores);
   const cambioGanancia = calcularCambio(gananciaActual, gananciaAnterior);
-  const cambioDias = calcularCambio(diasActuales, diasAnteriores); // NUEVO
+  const cambioDias = calcularCambio(diasActuales, diasAnteriores);
 
   const getIcono = (cambio) => {
     if (cambio > 0) return TrendingUp;
@@ -61,7 +63,7 @@ const WeeklyComparison = ({ datosActuales = {}, datosAnteriores = {} }) => {
       valorAbsoluto: `${Math.abs(turnosActuales - turnosAnteriores)} turnos`
     },
     {
-      label: 'Días vs semana anterior', // NUEVA ESTADÍSTICA
+      label: 'Días vs semana anterior',
       cambio: cambioDias,
       valor: `${Math.abs(cambioDias).toFixed(1)}%`,
       valorAbsoluto: `${Math.abs(diasActuales - diasAnteriores)} días`
@@ -69,10 +71,10 @@ const WeeklyComparison = ({ datosActuales = {}, datosAnteriores = {} }) => {
   ];
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-4">
+    <div className="bg-white rounded-xl shadow-md p-4 h-full flex flex-col">
       <h3 className="font-semibold mb-4">Comparación semanal</h3>
       
-      <div className="space-y-3">
+      <div className="space-y-3 flex-1 flex flex-col justify-center">
         {comparaciones.map((comp, index) => {
           const Icono = getIcono(comp.cambio);
           const color = getColor(comp.cambio);

@@ -42,21 +42,23 @@ const WeeklyStatsGrid = ({ datos = {} }) => {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      {stats.map((stat, index) => {
-        const Icon = stat.icon;
-        return (
-          <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-center mb-2">
-              <Icon size={18} style={{ color: stat.color }} className="mr-1" />
-              <span className="text-sm text-gray-600">{stat.label}</span>
+    <div className="bg-white rounded-xl shadow-md p-4">
+      <div className="grid grid-cols-2 gap-4">
+        {stats.map((stat, index) => {
+          const Icon = stat.icon;
+          return (
+            <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-center mb-2">
+                <Icon size={18} style={{ color: stat.color }} className="mr-1" />
+                <span className="text-sm text-gray-600">{stat.label}</span>
+              </div>
+              <p className="text-2xl font-bold" style={{ color: stat.color }}>
+                {stat.value}
+              </p>
             </div>
-            <p className="text-2xl font-bold" style={{ color: stat.color }}>
-              {stat.value}
-            </p>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };

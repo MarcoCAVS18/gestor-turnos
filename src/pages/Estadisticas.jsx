@@ -57,9 +57,8 @@ const Estadisticas = () => {
                 className={!weeklyHoursGoal ? 'opacity-60' : ''}
               />
 
-              {datosActuales.tiposDeTurno && Object.keys(datosActuales.tiposDeTurno).length > 0 && (
-                <ShiftTypeStats tiposDeTurno={datosActuales.tiposDeTurno} />
-              )}
+              {/* CAMBIO: Siempre mostrar ShiftTypeStats */}
+              <ShiftTypeStats tiposDeTurno={datosActuales.tiposDeTurno} />
             </div>
 
             {/* CONTENEDOR 2: Comparación Semanal (expandida con 4 estadísticas) */}
@@ -105,7 +104,7 @@ const Estadisticas = () => {
               datosAnteriores={datosAnteriores}
             />
 
-            {/* Tipos de turno - SIEMPRE se muestra */}
+            {/* CAMBIO: Tipos de turno - SIEMPRE se muestra */}
             <ShiftTypeStats tiposDeTurno={datosActuales.tiposDeTurno} />
           </div>
 

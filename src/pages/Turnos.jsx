@@ -1,4 +1,4 @@
-// src/pages/Turnos.jsx
+// src/pages/Turnos.jsx - MEJORADO con layout de 3 columnas y agrupación por semanas
 
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
@@ -8,14 +8,13 @@ import { useFilterTurnos } from '../hooks/useFilterTurnos';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import ShiftsHeader from '../components/shifts/ShiftsHeader';
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
-import ShiftsList from '../components/shifts/ShiftsList';
-import ShiftsNavigation from '../components/shifts/ShiftsNavigation';
 import FiltrosTurnos from '../components/filters/FiltrosTurnos';
 import ModalTurno from '../components/modals/ModalTurno';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
+import WeeklyShiftsSection from '../components/shifts/WeeklyShiftsSection';
 import { generateShiftDetails } from '../utils/shiftDetailsUtils';
 
-const DAYS_PER_PAGE = 6;
+const WEEKS_PER_PAGE = 4; // Mostrar 4 semanas por página
 
 const Turnos = () => {
   const { 
@@ -28,7 +27,7 @@ const Turnos = () => {
     trabajosDelivery 
   } = useApp();
   
-  const [daysShown, setDaysShown] = useState(DAYS_PER_PAGE);
+  const [weeksShown, setWeeksShown] = useState(WEEKS_PER_PAGE);
   const [expanding, setExpanding] = useState(false);
 
   // Hook para gestión de filtros
@@ -62,25 +61,73 @@ const Turnos = () => {
   const turnosParaMostrar = tieneMetrosDeFiltrosActivos ? turnosFiltrados : turnosPorFecha;
   const allJobs = useMemo(() => [...trabajos, ...trabajosDelivery], [trabajos, trabajosDelivery]);
 
-  const sortedDays = useMemo(() => {
-    return Object.entries(turnosParaMostrar || {}).sort(([a], [b]) => new Date(b) - new Date(a));
+  // Función para obtener el lunes de una fecha
+  const obtenerLunesDeLaSemana = (fecha) => {
+    const date = new Date(fecha + 'T00:00:00');
+    const diaSemana = date.getDay();
+    const diasHastaLunes = diaSemana === 0 ? -6 : -(diaSemana - 1);
+    const lunes = new Date(date);
+    lunes.setDate(date.getDate() + diasHastaLunes);
+    return lunes.toISOString().split('T')[0];
+  };
+
+  // Función para formatear el rango de semana
+  const formatearRangoSemana = (fechaLunes) => {
+    const lunes = new Date(fechaLunes + 'T00:00:00');
+    const domingo = new Date(lunes);
+    domingo.setDate(lunes.getDate() + 6);
+
+    const opcionesLunes = { day: 'numeric', month: 'short' };
+    const opcionesDomingo = { day: 'numeric', month: 'short', year: 'numeric' };
+
+    const lunesStr = lunes.toLocaleDateString('es-ES', opcionesLunes);
+    const domingoStr = domingo.toLocaleDateString('es-ES', opcionesDomingo);
+
+    return `${lunesStr} - ${domingoStr}`;
+  };
+
+  // Agrupar turnos por semanas
+  const turnosPorSemana = useMemo(() => {
+    const semanas = {};
+    
+    Object.entries(turnosParaMostrar || {}).forEach(([fecha, turnos]) => {
+      const fechaLunes = obtenerLunesDeLaSemana(fecha);
+      
+      if (!semanas[fechaLunes]) {
+        semanas[fechaLunes] = {};
+      }
+      
+      semanas[fechaLunes][fecha] = turnos;
+    });
+
+    // Ordenar semanas por fecha (más reciente primero)
+    const semanasOrdenadas = Object.keys(semanas)
+      .sort((a, b) => new Date(b) - new Date(a))
+      .map(fechaLunes => ({
+        fechaLunes,
+        rangoSemana: formatearRangoSemana(fechaLunes),
+        turnos: semanas[fechaLunes],
+        totalTurnos: Object.values(semanas[fechaLunes]).flat().length
+      }));
+
+    return semanasOrdenadas;
   }, [turnosParaMostrar]);
 
-  const daysToShow = sortedDays.slice(0, daysShown);
-  const hasMoreDays = sortedDays.length > daysShown;
-  const remainingDays = sortedDays.length - daysShown;
-  const hasShifts = sortedDays.length > 0;
+  const semanasParaMostrar = turnosPorSemana.slice(0, weeksShown);
+  const hayMasSemanas = turnosPorSemana.length > weeksShown;
+  const semanasRestantes = turnosPorSemana.length - weeksShown;
+  const hayTurnos = turnosPorSemana.length > 0;
 
-  const handleShowMore = () => {
+  const handleShowMoreWeeks = () => {
     setExpanding(true);
     setTimeout(() => {
-      setDaysShown(prev => Math.min(prev + DAYS_PER_PAGE, sortedDays.length));
+      setWeeksShown(prev => Math.min(prev + WEEKS_PER_PAGE, turnosPorSemana.length));
       setExpanding(false);
     }, 150);
   };
 
-  const handleShowLess = () => {
-    setDaysShown(DAYS_PER_PAGE);
+  const handleShowLessWeeks = () => {
+    setWeeksShown(WEEKS_PER_PAGE);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -94,13 +141,13 @@ const Turnos = () => {
       <div className="px-4 py-6 pb-32 space-y-6">
         {/* Header con título y botón de acción */}
         <ShiftsHeader 
-          hasShifts={hasShifts}
+          hasShifts={hayTurnos}
           allJobs={allJobs}
-          sortedDays={sortedDays}
-          daysShown={daysShown}
+          sortedDays={turnosPorSemana}
+          daysShown={weeksShown}
           onNewShift={abrirModalNuevo}
           thematicColors={thematicColors}
-          daysPerPage={DAYS_PER_PAGE}
+          daysPerPage={WEEKS_PER_PAGE}
         />
 
         {/* Sistema de filtros */}
@@ -125,20 +172,20 @@ const Turnos = () => {
                 Mostrando {estadisticasFiltros.turnosFiltrados} de {estadisticasFiltros.totalTurnos} turnos
               </span>
               <span className="text-gray-600">
-                {estadisticasFiltros.diasMostrados} días con turnos
+                {turnosPorSemana.length} semanas con turnos
               </span>
             </div>
           </div>
         )}
 
         {/* Contenido principal */}
-        {!hasShifts && !tieneMetrosDeFiltrosActivos ? (
+        {!hayTurnos && !tieneMetrosDeFiltrosActivos ? (
           <ShiftsEmptyState 
             allJobs={allJobs}
             onNewShift={abrirModalNuevo}
             thematicColors={thematicColors}
           />
-        ) : !hasShifts && tieneMetrosDeFiltrosActivos ? (
+        ) : !hayTurnos && tieneMetrosDeFiltrosActivos ? (
           // Estado cuando hay filtros pero no resultados
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <div 
@@ -163,25 +210,67 @@ const Turnos = () => {
           </div>
         ) : (
           <>
-            {/* Lista de turnos */}
-            <ShiftsList 
-              daysToShow={daysToShow}
-              allJobs={allJobs}
-              onEditShift={abrirModalEditar}
-              onDeleteShift={testDelete}
-            />
+            {/* Lista de turnos organizados por semanas */}
+            <div className="space-y-8">
+              {semanasParaMostrar.map(({ fechaLunes, rangoSemana, turnos, totalTurnos }) => (
+                <WeeklyShiftsSection
+                  key={fechaLunes}
+                  rangoSemana={rangoSemana}
+                  turnos={turnos}
+                  totalTurnos={totalTurnos}
+                  allJobs={allJobs}
+                  onEditShift={abrirModalEditar}
+                  onDeleteShift={testDelete}
+                  thematicColors={thematicColors}
+                />
+              ))}
+            </div>
 
-            {/* Navegación (mostrar más/menos) */}
-            <ShiftsNavigation 
-              hasMoreDays={hasMoreDays}
-              daysShown={daysShown}
-              daysPerPage={DAYS_PER_PAGE}
-              remainingDays={remainingDays}
-              expanding={expanding}
-              onShowMore={handleShowMore}
-              onShowLess={handleShowLess}
-              thematicColors={thematicColors}
-            />
+            {/* Navegación (mostrar más/menos semanas) */}
+            {hayMasSemanas && (
+              <div className="relative flex flex-col items-center pt-8 pb-12">
+                <div
+                  className="absolute top-0 left-0 right-0 h-16 rounded-lg opacity-30"
+                  style={{ backgroundColor: thematicColors?.transparent5 }}
+                />
+                <button
+                  onClick={handleShowMoreWeeks}
+                  disabled={expanding}
+                  className="relative z-10 flex items-center space-x-2 px-6 py-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+                  style={{ 
+                    borderColor: thematicColors?.transparent20,
+                    color: thematicColors?.base
+                  }}
+                >
+                  {expanding ? (
+                    <>
+                      <div 
+                        className="animate-spin rounded-full h-4 w-4 border-b-2"
+                        style={{ borderColor: thematicColors?.base }}
+                      />
+                      <span>Cargando...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>👁️</span>
+                      <span>Ver {Math.min(WEEKS_PER_PAGE, semanasRestantes)} semanas más</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {!hayMasSemanas && weeksShown > WEEKS_PER_PAGE && (
+              <div className="flex justify-center py-4">
+                <button
+                  onClick={handleShowLessWeeks}
+                  className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                >
+                  <span>↑</span>
+                  <span>Mostrar menos</span>
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

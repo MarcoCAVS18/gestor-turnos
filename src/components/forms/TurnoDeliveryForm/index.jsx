@@ -1,7 +1,7 @@
-// src/components/forms/TurnoDeliveryForm/index.jsx - COMPLETAMENTE RESPONSIVO
+// src/components/forms/TurnoDeliveryForm/index.jsx - SIN detección automática de medianoche
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Truck, Calendar, Clock, DollarSign, Package, Navigation, Fuel, Heart, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Truck, Calendar, Clock, DollarSign, Package, Navigation, Fuel, Heart } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const TurnoDeliveryForm = ({
@@ -28,12 +28,24 @@ const TurnoDeliveryForm = ({
     numeroPedidos: '',
     kilometros: '',
     gastoCombustible: '',
-    cruzaMedianoche: false,
-    fechaFin: '',
     observaciones: ''
   });
 
   const [errors, setErrors] = useState({});
+
+  // Función para determinar si el vehículo necesita combustible
+  const vehiculoNecesitaCombustible = useCallback((vehiculo) => {
+    if (!vehiculo) return false;
+    const vehiculoLower = vehiculo.toLowerCase();
+    return vehiculoLower.includes('moto') || 
+           vehiculoLower.includes('auto') || 
+           vehiculoLower.includes('carro') ||
+           vehiculoLower.includes('coche');
+  }, []);
+
+  // Obtener el trabajo seleccionado y verificar si necesita combustible
+  const trabajoSeleccionado = trabajos.find(t => t.id === formData.trabajoId);
+  const mostrarCombustible = trabajoSeleccionado ? vehiculoNecesitaCombustible(trabajoSeleccionado.vehiculo) : true;
 
   // Inicializar formulario
   useEffect(() => {
@@ -48,8 +60,6 @@ const TurnoDeliveryForm = ({
         numeroPedidos: turno.numeroPedidos?.toString() || '',
         kilometros: turno.kilometros?.toString() || '',
         gastoCombustible: turno.gastoCombustible?.toString() || '',
-        cruzaMedianoche: turno.cruzaMedianoche || false,
-        fechaFin: turno.fechaFin || '',
         observaciones: turno.observaciones || ''
       });
     } else if (fechaInicial) {
@@ -60,31 +70,12 @@ const TurnoDeliveryForm = ({
     }
   }, [turno, fechaInicial]);
 
-  // Detectar turnos nocturnos automáticamente
+  // Limpiar gastos de combustible cuando se selecciona un vehículo que no lo necesita
   useEffect(() => {
-    if (formData.horaInicio && formData.horaFin) {
-      const [horaI] = formData.horaInicio.split(':').map(Number);
-      const [horaF] = formData.horaFin.split(':').map(Number);
-      
-      const esNocturno = horaI > horaF;
-      
-      if (esNocturno !== formData.cruzaMedianoche) {
-        setFormData(prev => ({
-          ...prev,
-          cruzaMedianoche: esNocturno,
-          fechaFin: esNocturno && prev.fechaInicio 
-            ? calcularFechaFin(prev.fechaInicio)
-            : ''
-        }));
-      }
+    if (!mostrarCombustible && formData.gastoCombustible) {
+      setFormData(prev => ({ ...prev, gastoCombustible: '' }));
     }
-  }, [formData.horaInicio, formData.horaFin, formData.fechaInicio, formData.cruzaMedianoche]);
-
-  const calcularFechaFin = (fechaInicio) => {
-    const fecha = new Date(fechaInicio + 'T00:00:00');
-    fecha.setDate(fecha.getDate() + 1);
-    return fecha.toISOString().split('T')[0];
-  };
+  }, [mostrarCombustible, formData.gastoCombustible]);
 
   const validarFormulario = () => {
     const newErrors = {};
@@ -112,14 +103,14 @@ const TurnoDeliveryForm = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validarFormulario()) {
-      // Convertir strings a números
+      // Convertir strings a números y asegurar que combustible sea 0 si no aplica
       const dataToSubmit = {
         ...formData,
         gananciaTotal: parseFloat(formData.gananciaTotal) || 0,
         propinas: parseFloat(formData.propinas) || 0,
         numeroPedidos: parseInt(formData.numeroPedidos) || 0,
         kilometros: parseFloat(formData.kilometros) || 0,
-        gastoCombustible: parseFloat(formData.gastoCombustible) || 0
+        gastoCombustible: mostrarCombustible ? (parseFloat(formData.gastoCombustible) || 0) : 0
       };
       onSubmit(dataToSubmit);
     }
@@ -171,7 +162,7 @@ const TurnoDeliveryForm = ({
             <option value="">Seleccionar trabajo</option>
             {trabajosDelivery.map(trabajo => (
               <option key={trabajo.id} value={trabajo.id}>
-                {trabajo.nombre}
+                {trabajo.nombre} {trabajo.vehiculo ? `(${trabajo.vehiculo})` : ''}
               </option>
             ))}
           </select>
@@ -180,48 +171,23 @@ const TurnoDeliveryForm = ({
           )}
         </div>
 
-        {/* CONTENEDOR DE FECHAS RESPONSIVO */}
+        {/* Fecha de trabajo */}
         <div className="w-full">
-          <div className={`grid gap-4 ${isMobile ? 'grid-cols-1' : 'grid-cols-2'}`}>
-            {/* Fecha de inicio */}
-            <div className="w-full min-w-0">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Calendar size={16} className="inline mr-2" />
-                Fecha de inicio
-              </label>
-              <input
-                type="date"
-                value={formData.fechaInicio}
-                onChange={(e) => handleInputChange('fechaInicio', e.target.value)}
-                className={`${inputClasses} ${errors.fechaInicio ? 'border-red-500' : 'border-gray-300'}`}
-                style={{ '--tw-ring-color': colors.primary }}
-                required
-              />
-              {errors.fechaInicio && (
-                <p className="text-red-500 text-xs mt-1">{errors.fechaInicio}</p>
-              )}
-            </div>
-
-            {/* Fecha de fin - solo mostrar si es nocturno */}
-            {formData.cruzaMedianoche && (
-              <div className="w-full min-w-0">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Calendar size={16} className="inline mr-2" />
-                  Fecha de fin
-                </label>
-                <input
-                  type="date"
-                  value={formData.fechaFin || calcularFechaFin(formData.fechaInicio)}
-                  className={`${inputClasses} border-gray-300`}
-                  style={{ '--tw-ring-color': colors.primary }}
-                  disabled
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  Se calcula automáticamente para turnos nocturnos
-                </p>
-              </div>
-            )}
-          </div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <Calendar size={16} className="inline mr-2" />
+            Fecha del turno
+          </label>
+          <input
+            type="date"
+            value={formData.fechaInicio}
+            onChange={(e) => handleInputChange('fechaInicio', e.target.value)}
+            className={`${inputClasses} ${errors.fechaInicio ? 'border-red-500' : 'border-gray-300'}`}
+            style={{ '--tw-ring-color': colors.primary }}
+            required
+          />
+          {errors.fechaInicio && (
+            <p className="text-red-500 text-xs mt-1">{errors.fechaInicio}</p>
+          )}
         </div>
 
         {/* CONTENEDOR DE HORAS RESPONSIVO */}
@@ -264,39 +230,6 @@ const TurnoDeliveryForm = ({
             </div>
           </div>
         </div>
-
-        {/* Toggle para turno nocturno */}
-        {(formData.horaInicio && formData.horaFin) && (
-          <div className="w-full">
-            <div 
-              className="p-3 rounded-lg border"
-              style={{ backgroundColor: colors.transparent5, borderColor: colors.transparent20 }}
-            >
-              <button
-                type="button"
-                onClick={() => handleInputChange('cruzaMedianoche', !formData.cruzaMedianoche)}
-                className="flex items-center w-full"
-              >
-                {formData.cruzaMedianoche ? (
-                  <ToggleRight size={20} style={{ color: colors.primary }} />
-                ) : (
-                  <ToggleLeft size={20} className="text-gray-400" />
-                )}
-                <span className="ml-2 text-sm">
-                  {formData.cruzaMedianoche ? (
-                    <span style={{ color: colors.primary }}>
-                      ✓ Turno nocturno (cruza medianoche)
-                    </span>
-                  ) : (
-                    <span className="text-gray-600">
-                      Turno cruza medianoche
-                    </span>
-                  )}
-                </span>
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* GANANCIAS RESPONSIVAS */}
         <div className="w-full">
@@ -377,28 +310,30 @@ const TurnoDeliveryForm = ({
           </div>
         </div>
 
-        {/* Gastos de combustible */}
-        <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            <Fuel size={16} className="inline mr-2" />
-            Gastos de combustible
-          </label>
-          <input
-            type="number"
-            step="0.01"
-            value={formData.gastoCombustible}
-            onChange={(e) => handleInputChange('gastoCombustible', e.target.value)}
-            className={`${inputClasses} border-gray-300`}
-            style={{ '--tw-ring-color': colors.primary }}
-            placeholder="0.00"
-            min="0"
-          />
-        </div>
+        {/* Gastos de combustible - SOLO SI EL VEHÍCULO LO REQUIERE */}
+        {mostrarCombustible && (
+          <div className="w-full">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <Fuel size={16} className="inline mr-2" />
+              Gastos de combustible
+            </label>
+            <input
+              type="number"
+              step="0.01"
+              value={formData.gastoCombustible}
+              onChange={(e) => handleInputChange('gastoCombustible', e.target.value)}
+              className={`${inputClasses} border-gray-300`}
+              style={{ '--tw-ring-color': colors.primary }}
+              placeholder="0.00"
+              min="0"
+            />
+          </div>
+        )}
 
         {/* Observaciones */}
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Observaciones (opcional)
+            Notas (opcional)
           </label>
           <textarea
             value={formData.observaciones}

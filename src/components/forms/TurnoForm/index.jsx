@@ -1,4 +1,4 @@
-// src/components/forms/TurnoForm/index.jsx
+// src/components/forms/TurnoForm/index.jsx - ACTUALIZADO PARA MOSTRAR TODOS LOS TRABAJOS
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Briefcase, Calendar, Clock, FileText } from 'lucide-react';
@@ -121,6 +121,10 @@ const TurnoForm = ({
     ${isMobile ? 'text-base min-h-[44px]' : 'text-sm py-2'}
   `;
 
+  // Separar trabajos por tipo para mostrarlos organizados
+  const trabajosTradicionales = trabajos.filter(t => t.tipo !== 'delivery');
+  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
+
   return (
     <div 
       className={`w-full ${isMobile ? 'mobile-form' : ''}`}
@@ -130,7 +134,7 @@ const TurnoForm = ({
       }}
     >
       <form onSubmit={handleSubmit} className="space-y-4 w-full">
-        {/* Selección de trabajo */}
+        {/* Selección de trabajo - ACTUALIZADO */}
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Briefcase size={16} className="inline mr-2" />
@@ -144,11 +148,28 @@ const TurnoForm = ({
             required
           >
             <option value="">Seleccionar trabajo</option>
-            {trabajos.filter(t => t.tipo !== 'delivery').map(trabajo => (
-              <option key={trabajo.id} value={trabajo.id}>
-                {trabajo.nombre}
-              </option>
-            ))}
+            
+            {/* Trabajos tradicionales */}
+            {trabajosTradicionales.length > 0 && (
+              <optgroup label="Trabajos Tradicionales">
+                {trabajosTradicionales.map(trabajo => (
+                  <option key={trabajo.id} value={trabajo.id}>
+                    {trabajo.nombre}
+                  </option>
+                ))}
+              </optgroup>
+            )}
+            
+            {/* Trabajos de delivery */}
+            {trabajosDelivery.length > 0 && (
+              <optgroup label="Trabajos de Delivery">
+                {trabajosDelivery.map(trabajo => (
+                  <option key={trabajo.id} value={trabajo.id}>
+                    {trabajo.nombre}
+                  </option>
+                ))}
+              </optgroup>
+            )}
           </select>
           {errors.trabajoId && (
             <p className="text-red-500 text-xs mt-1">{errors.trabajoId}</p>

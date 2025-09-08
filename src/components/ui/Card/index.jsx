@@ -9,11 +9,18 @@ const Card = ({
   shadow = 'md',
   rounded = 'xl',
   borderColor,
-  borderPosition = 'none'
+  borderPosition = 'none',
+  borderWidth = '1',
+  hover = false,
+  interactive = false,
+  onClick,
+  variant = 'default',
+  ...props
 }) => {
   const getPaddingClasses = () => {
     const paddings = {
       none: '',
+      xs: 'p-2',
       sm: 'p-3',
       md: 'p-4',
       lg: 'p-6',
@@ -49,14 +56,31 @@ const Card = ({
     if (!borderColor || borderPosition === 'none') return '';
     
     const positions = {
-      left: 'border-l-4',
-      right: 'border-r-4',
-      top: 'border-t-4',
-      bottom: 'border-b-4',
-      all: 'border-4'
+      left: `border-l-${borderWidth}`,
+      right: `border-r-${borderWidth}`,
+      top: `border-t-${borderWidth}`,
+      bottom: `border-b-${borderWidth}`,
+      all: `border-${borderWidth}`
     };
     
     return positions[borderPosition] || '';
+  };
+
+  const getVariantClasses = () => {
+    const variants = {
+      default: 'bg-white border border-gray-200',
+      elevated: 'bg-white',
+      outlined: 'bg-white border-2 border-gray-300',
+      ghost: 'bg-transparent',
+      gradient: 'bg-gradient-to-br from-white to-gray-50 border border-gray-200'
+    };
+    return variants[variant] || variants.default;
+  };
+
+  const getInteractiveClasses = () => {
+    if (!interactive && !onClick && !hover) return '';
+    
+    return 'transition-all duration-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-md';
   };
 
   const getBorderStyle = () => {
@@ -67,10 +91,22 @@ const Card = ({
     };
   };
 
+  const combinedClassName = `
+    ${getVariantClasses()}
+    ${getPaddingClasses()} 
+    ${getShadowClasses()} 
+    ${getRoundedClasses()} 
+    ${getBorderClasses()}
+    ${getInteractiveClasses()}
+    ${className}
+  `.trim().replace(/\s+/g, ' ');
+
   return (
     <div
-      className={`bg-white ${getPaddingClasses()} ${getShadowClasses()} ${getRoundedClasses()} ${getBorderClasses()} ${className}`}
+      className={combinedClassName}
       style={getBorderStyle()}
+      onClick={interactive || onClick ? onClick : undefined}
+      {...props}
     >
       {children}
     </div>

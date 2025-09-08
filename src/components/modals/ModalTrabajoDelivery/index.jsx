@@ -1,3 +1,5 @@
+// ModalTrabajoDelivery - ACTUALIZADO con lógica de vehículos
+
 import { useCallback, useEffect, useState } from 'react';
 import { X, Truck } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
@@ -6,12 +8,10 @@ import VehicleSelector from '../../delivery/VehicleSelector';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
-  // Usar los nombres correctos del contexto
   const { addDeliveryJob, editDeliveryJob } = useApp();
   const colors = useThemeColors();
   const [isMobile, setIsMobile] = useState(false);
 
-  // Detectar móvil
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
@@ -23,7 +23,6 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Prevenir scroll del body cuando está abierto
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -39,10 +38,8 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
   const manejarGuardado = async (datosDelivery) => {
     try {
       if (trabajo) {
-        // Usar editDeliveryJob en lugar de editarTrabajoDelivery
         await editDeliveryJob(trabajo.id, datosDelivery);
       } else {
-        // Usar addDeliveryJob en lugar de agregarTrabajoDelivery
         await addDeliveryJob(datosDelivery);
       }
       onClose();
@@ -68,7 +65,6 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
           ${isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'}
         `}
       >
-        {/* Header fijo con z-index correcto */}
         <div 
           className={`
             sticky top-0 bg-white border-b flex justify-between items-center
@@ -109,7 +105,6 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
           </button>
         </div>
 
-        {/* Content scrolleable */}
         <div className={`
           ${isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'}
         `}>
@@ -124,7 +119,6 @@ const ModalTrabajoDelivery = ({ isOpen, onClose, trabajo }) => {
             </div>
         </div>
 
-        {/* Footer indicador en móvil */}
         {isMobile && (
           <div 
             className="sticky bottom-0 bg-white border-t p-2"
@@ -166,6 +160,15 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
   const [errors, setErrors] = useState({}); 
   const [guardando, setGuardando] = useState(false); 
 
+  // Función para determinar si el vehículo necesita combustible
+  const vehiculoNecesitaCombustible = (vehiculo) => {
+    const vehiculoLower = vehiculo.toLowerCase();
+    return vehiculoLower.includes('moto') || 
+           vehiculoLower.includes('auto') || 
+           vehiculoLower.includes('carro') ||
+           vehiculoLower.includes('coche');
+  };
+
   useEffect(() => { 
     if (trabajo) {
       setFormData({
@@ -180,11 +183,25 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
           calculaPorPedido: true,
           tarifaBasePedido: 0,
           incluyePropinas: true,
-          rastreaCombustible: true
+          rastreaCombustible: vehiculoNecesitaCombustible(trabajo.vehiculo || '')
         }
       });
     }
   }, [trabajo]);
+
+  // Actualizar automáticamente el rastreo de combustible cuando cambia el vehículo
+  useEffect(() => {
+    if (formData.vehiculo) {
+      const necesitaCombustible = vehiculoNecesitaCombustible(formData.vehiculo);
+      setFormData(prev => ({
+        ...prev,
+        configuracion: {
+          ...prev.configuracion,
+          rastreaCombustible: necesitaCombustible
+        }
+      }));
+    }
+  }, [formData.vehiculo]);
 
   const validarFormulario = () => {
     const newErrors = {};
@@ -243,6 +260,9 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
       }
     }));
   };
+
+  // Determinar si mostrar la opción de combustible
+  const mostrarOpcionCombustible = vehiculoNecesitaCombustible(formData.vehiculo);
 
   return (
     <form onSubmit={handleSubmit} className={`space-y-6 ${isMobile ? 'mobile-form' : ''}`}>
@@ -305,16 +325,26 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
           <span className="text-sm">Incluir propinas en el registro</span>
         </label>
 
-        <label className="flex items-center space-x-3">
-          <input
-            type="checkbox"
-            checked={formData.configuracion.rastreaCombustible}
-            onChange={(e) => handleConfigChange('rastreaCombustible', e.target.checked)}
-            className="rounded w-4 h-4"
-            style={{ accentColor: thematicColors.primary }}
-          />
-          <span className="text-sm">Rastrear gastos de combustible</span>
-        </label>
+        {/* Solo mostrar opción de combustible si el vehículo lo requiere */}
+        {mostrarOpcionCombustible && (
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={formData.configuracion.rastreaCombustible}
+              onChange={(e) => handleConfigChange('rastreaCombustible', e.target.checked)}
+              className="rounded w-4 h-4"
+              style={{ accentColor: thematicColors.primary }}
+            />
+            <span className="text-sm">Rastrear gastos de combustible</span>
+          </label>
+        )}
+
+        {/* Mensaje informativo para vehículos sin combustible */}
+        {!mostrarOpcionCombustible && formData.vehiculo && (
+          <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded border border-blue-200">
+            💡 Este vehículo no requiere combustible, por lo que no se incluirán gastos relacionados.
+          </div>
+        )}
       </div>
 
       {/* Descripción opcional */}

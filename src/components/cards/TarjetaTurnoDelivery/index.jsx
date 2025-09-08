@@ -1,31 +1,54 @@
-// src/components/cards/TarjetaTurnoDelivery/index.jsx
+// src/components/cards/TarjetaTurnoDelivery/index.jsx - Versión actualizada
 
-import React from 'react';
-import { Clock, Package, Car, Edit2, Trash2, MoreVertical, Truck, DollarSign } from 'lucide-react';
-import { useThemeColors } from '../../../hooks/useThemeColors';
+import React, { useState } from 'react';
+import { Clock, Package, Edit2, Trash2, DollarSign, Truck, Navigation, ChevronDown, ChevronUp } from 'lucide-react';
+import Card from '../../ui/Card';
+import ActionsMenu from '../../ui/ActionsMenu';
+import ShiftTypeBadge from '../../shifts/ShiftTypeBadge';
 import { formatCurrency } from '../../../utils/currency';
-import InfoTooltip from '../../ui/InfoTooltip';
 
-const TarjetaTurnoDelivery = ({ turno, trabajo, onEdit, onDelete }) => {
-  const [menuAbierto, setMenuAbierto] = React.useState(false);
-  const colors = useThemeColors();
+const TarjetaTurnoDelivery = ({ 
+  turno, 
+  trabajo, 
+  onEdit, 
+  onDelete,
+  variant = 'default',
+  showActions = true
+}) => {
+    const [expanded, setExpanded] = useState(false);
 
-  // Cerrar menú al hacer clic fuera
-  React.useEffect(() => {
-    const cerrarMenu = (e) => {
-      if (menuAbierto && !e.target.closest('.menu-turno')) {
-        setMenuAbierto(false);
-      }
-    };
-    document.addEventListener('click', cerrarMenu);
-    return () => document.removeEventListener('click', cerrarMenu);
-  }, [menuAbierto]);
+  // Validaciones
+  if (!turno) {
+    return (
+      <Card variant="outlined" className="opacity-50">
+        <div className="text-center text-gray-500">
+          <p className="text-sm">Turno no encontrado</p>
+        </div>
+      </Card>
+    );
+  }
 
+  if (!trabajo) {
+    return (
+      <Card variant="outlined" className="opacity-50">
+        <div className="text-center text-gray-500">
+          <p className="text-sm">Trabajo eliminado</p>
+          <p className="text-xs text-gray-400 mt-1">
+            {turno.horaInicio} - {turno.horaFin}
+          </p>
+        </div>
+      </Card>
+    );
+  }
+
+  // Calcular datos del turno
   const formatearHoras = (horaInicio, horaFin) => {
     const [horaI, minI] = horaInicio.split(':').map(Number);
     const [horaF, minF] = horaFin.split(':').map(Number);
     
-    const totalMinutos = (horaF * 60 + minF) - (horaI * 60 + minI);
+    let totalMinutos = (horaF * 60 + minF) - (horaI * 60 + minI);
+    if (totalMinutos < 0) totalMinutos += 24 * 60;
+    
     const horas = Math.floor(totalMinutos / 60);
     const minutos = totalMinutos % 60;
     
@@ -33,155 +56,205 @@ const TarjetaTurnoDelivery = ({ turno, trabajo, onEdit, onDelete }) => {
     return `${horas}h ${minutos}min`;
   };
 
-  const gananciaNeta = turno.gananciaTotal - (turno.gastoCombustible || 0);
-  const promedioPorPedido = turno.numeroPedidos > 0 ? turno.gananciaTotal / turno.numeroPedidos : 0;
+  const gananciaNeta = (turno.gananciaTotal || 0) - (turno.gastoCombustible || 0);
+  const promedioPorPedido = turno.numeroPedidos > 0 ? (turno.gananciaTotal || 0) / turno.numeroPedidos : 0;
 
-  // Tooltip con información básica
-  const tooltipContent = (
-    <div className="space-y-2 text-xs text-left max-w-xs">
-      <div className="font-semibold mb-2 border-b border-gray-600 pb-1">
-        Resumen del Turno
-      </div>
-      
-      <div className="space-y-1.5">
-        <div className="flex justify-between gap-4">
-          <span>Duración:</span>
-          <span className="font-semibold">{formatearHoras(turno.horaInicio, turno.horaFin)}</span>
-        </div>
-        
-        {turno.numeroPedidos > 0 && (
-          <div className="flex justify-between gap-4">
-            <span>Pedidos:</span>
-            <span className="font-semibold">{turno.numeroPedidos}</span>
-          </div>
-        )}
-        
-        {turno.kilometros > 0 && (
-          <div className="flex justify-between gap-4">
-            <span>Kilómetros:</span>
-            <span className="font-semibold">{turno.kilometros} km</span>
-          </div>
-        )}
-        
-        <div className="flex justify-between gap-4 border-t border-gray-600 pt-1.5 mt-2">
-          <span className="font-semibold">Ganancia Total:</span>
-          <span className="font-bold">{formatCurrency(turno.gananciaTotal)}</span>
-        </div>
-        
-        <div className="flex justify-between gap-4">
-          <span className="font-semibold">Ganancia Neta:</span>
-          <span className="font-bold text-base">{formatCurrency(gananciaNeta)}</span>
-        </div>
-        
-        {turno.numeroPedidos > 0 && (
-          <div className="flex justify-between gap-4 text-yellow-200">
-            <span>Promedio/pedido:</span>
-            <span>{formatCurrency(promedioPorPedido)}</span>
-          </div>
-        )}
-      </div>
-    </div>
+  // Determinar si hay contenido adicional
+  const hasAdditionalContent = Boolean(
+    turno.observaciones?.trim() ||
+    turno.propinas > 0 ||
+    turno.gastoCombustible > 0 ||
+    turno.cruzaMedianoche
   );
 
-  return (
-    <div className="bg-white rounded-lg p-4">
-      <div className="flex justify-between items-start">
-        <div className="flex-1">
-          {/* Encabezado con trabajo y tipo */}
-          <div className="flex items-center gap-2 mb-2">
-            <div className="p-1 bg-green-50 rounded">
-              <Truck size={16} className="text-green-600" />
-            </div>
-            <h4 className="font-medium text-gray-900">{trabajo?.nombre || 'Sin trabajo'}</h4>
-            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-              Delivery
-            </span>
-          </div>
+  const actions = [
+    { icon: Edit2, label: 'Editar', onClick: () => onEdit?.(turno) },
+    { icon: Trash2, label: 'Eliminar', onClick: () => onDelete?.(turno), variant: 'danger' }
+  ];
 
-          {/* Información del turno */}
-          <div className="space-y-2">
-            {/* Horario */}
-            <div className="flex items-center text-sm text-gray-600">
-              <Clock size={14} className="mr-1.5" />
-              <span>{turno.horaInicio} - {turno.horaFin}</span>
-              <span className="mx-2 text-gray-300">•</span>
-              <span>{formatearHoras(turno.horaInicio, turno.horaFin)}</span>
+  const toggleExpanded = () => {
+    if (hasAdditionalContent) {
+      setExpanded(!expanded);
+    }
+  };
+
+  return (
+    <Card 
+      variant={variant}
+      hover={true}
+    >
+      <div className="space-y-3">
+        {/* Header con avatar, nombre y badge */}
+        <div className="flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3 mb-3">
+              {/* Avatar del trabajo */}
+              <div 
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold flex-shrink-0"
+                style={{ backgroundColor: trabajo.colorAvatar || trabajo.color || '#10B981' }}
+              >
+                <Truck size={16} />
+              </div>
+
+              {/* Nombre del trabajo y badges */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <h4 className="font-medium text-gray-900 truncate min-w-0">{trabajo.nombre}</h4>
+                  <ShiftTypeBadge turno={turno} size="sm" />
+                </div>
+                
+                {/* Información básica del turno */}
+                <div className="flex items-center text-sm text-gray-600 gap-3">
+                  <div className="flex items-center">
+                    <Clock size={14} className="mr-1.5" />
+                    <span>{turno.horaInicio} - {turno.horaFin}</span>
+                  </div>
+                  <span className="text-gray-300">•</span>
+                  <span>{formatearHoras(turno.horaInicio, turno.horaFin)}</span>
+                  
+                  {/* Indicador nocturno */}
+                  {turno.cruzaMedianoche && (
+                    <>
+                      <span className="text-gray-300">•</span>
+                      <span className="text-blue-600 text-xs">🌙</span>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Estadísticas del turno */}
-            {(turno.numeroPedidos > 0 || turno.kilometros > 0) && (
+            <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-4 text-sm text-gray-600">
                 {turno.numeroPedidos > 0 && (
                   <div className="flex items-center">
                     <Package size={14} className="mr-1 text-blue-500" />
-                    <span>{turno.numeroPedidos} pedidos</span>
+                    <span>{turno.numeroPedidos}</span>
                   </div>
                 )}
                 
                 {turno.kilometros > 0 && (
                   <div className="flex items-center">
-                    <Car size={14} className="mr-1 text-purple-500" />
+                    <Navigation size={14} className="mr-1 text-purple-500" />
                     <span>{turno.kilometros} km</span>
                   </div>
                 )}
               </div>
+
+              {/* Ganancia */}
+              <div className="flex items-center">
+                <DollarSign size={16} className="mr-1 text-green-600" />
+                <span className="text-lg font-semibold text-green-600">
+                  {formatCurrency(gananciaNeta)}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Acciones */}
+          <div className="flex items-center gap-2 ml-4">
+            {/* Botón de expansión */}
+            {hasAdditionalContent && (
+              <button
+                onClick={toggleExpanded}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                title={expanded ? 'Ocultar detalles' : 'Ver detalles'}
+              >
+                {expanded ? (
+                  <ChevronUp size={16} className="text-gray-500" />
+                ) : (
+                  <ChevronDown size={16} className="text-gray-500" />
+                )}
+              </button>
             )}
 
-            {/* Ganancia con tooltip */}
-            <div className="flex items-center">
-              <DollarSign size={14} className="mr-1 text-green-600" />
-              <span className="text-sm font-semibold text-gray-800">{formatCurrency(gananciaNeta)}</span>
-              <span className="text-xs text-gray-500 ml-1">total</span>
-              
-              <InfoTooltip 
-                content={tooltipContent}
-                size="xs"
-                position="top"
-                className="ml-2"
-              />
-            </div>
+            {/* Menú de acciones */}
+            {showActions && <ActionsMenu actions={actions} />}
           </div>
         </div>
 
-        {/* Menú de acciones */}
-        <div className="relative menu-turno ml-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setMenuAbierto(!menuAbierto);
-            }}
-            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <MoreVertical size={20} className="text-gray-500" />
-          </button>
-
-          {menuAbierto && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10">
-              <button
-                onClick={() => {
-                  onEdit(turno);
-                  setMenuAbierto(false);
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center space-x-2"
-              >
-                <Edit2 size={16} />
-                <span>Editar</span>
-              </button>
-              <button
-                onClick={() => {
-                  onDelete(turno);
-                  setMenuAbierto(false);
-                }}
-                className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center space-x-2 text-red-600"
-              >
-                <Trash2 size={16} />
-                <span>Eliminar</span>
-              </button>
+        {/* Contenido expandible */}
+        {hasAdditionalContent && expanded && (
+          <div className="border-t pt-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
+            {/* Detalles financieros */}
+            <div className="bg-green-50 rounded-lg p-3">
+              <div className="text-sm space-y-2">
+                <div className="font-medium text-green-700 mb-2">Detalles Financieros</div>
+                
+                <div className="flex justify-between">
+                  <span className="text-green-600">Ganancia total:</span>
+                  <span className="font-medium">{formatCurrency(turno.gananciaTotal || 0)}</span>
+                </div>
+                
+                {turno.propinas > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-green-600">Propinas:</span>
+                    <span className="font-medium">{formatCurrency(turno.propinas)}</span>
+                  </div>
+                )}
+                
+                {turno.gastoCombustible > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-green-600">Gastos combustible:</span>
+                    <span className="font-medium">{formatCurrency(turno.gastoCombustible)}</span>
+                  </div>
+                )}
+                
+                {turno.numeroPedidos > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Promedio/pedido:</span>
+                    <span>{formatCurrency(promedioPorPedido)}</span>
+                  </div>
+                )}
+                
+                <div className="flex justify-between border-t border-green-200 pt-2">
+                  <span className="font-semibold text-green-700">Ganancia neta:</span>
+                  <span className="font-bold">{formatCurrency(gananciaNeta)}</span>
+                </div>
+              </div>
             </div>
-          )}
-        </div>
+
+            {/* Observaciones si existen */}
+            {turno.observaciones?.trim() && (
+              <div className="bg-gray-50 rounded-lg p-3">
+                <div className="text-sm font-medium text-gray-700 mb-2">Notas</div>
+                <p className="text-sm text-gray-600 leading-relaxed">
+                  {turno.observaciones}
+                </p>
+              </div>
+            )}
+
+            {/* Información nocturna */}
+            {turno.cruzaMedianoche && (
+              <div className="bg-blue-50 rounded-lg p-3">
+                <div className="text-sm font-medium text-blue-700 mb-1">Turno Nocturno</div>
+                <div className="text-sm text-blue-600">
+                  <p>Este turno cruza la medianoche</p>
+                  {turno.fechaFin && (
+                    <p>Termina el: {new Date(turno.fechaFin + 'T00:00:00').toLocaleDateString('es-ES', {
+                      weekday: 'short',
+                      day: 'numeric',
+                      month: 'short'
+                    })}</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Indicador visual si hay contenido pero no está expandido */}
+        {hasAdditionalContent && !expanded && (
+          <div className="flex items-center justify-center pt-1">
+            <div className="flex space-x-1">
+              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </Card>
   );
 };
 
