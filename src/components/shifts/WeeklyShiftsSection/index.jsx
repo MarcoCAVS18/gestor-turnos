@@ -1,4 +1,4 @@
-// src/components/shifts/WeeklyShiftsSection/index.jsx - Actualizado
+// src/components/shifts/WeeklyShiftsSection/index.jsx - Actualizado para pasar fecha
 
 import React from 'react';
 import ***REMOVED*** Calendar, TrendingUp ***REMOVED*** from 'lucide-react';
@@ -75,6 +75,7 @@ const WeeklyShiftsSection = (***REMOVED***
       key: `$***REMOVED***turno.id***REMOVED***-$***REMOVED***index***REMOVED***`,
       turno: turno,
       trabajo: trabajo,
+      fecha: turno.fecha, // NUEVA: Pasar la fecha del turno
       onEdit: () => onEditShift(turno),
       onDelete: () => onDeleteShift(turno),
       variant: 'default',
