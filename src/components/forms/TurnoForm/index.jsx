@@ -351,28 +351,6 @@ const TurnoForm = (***REMOVED***
           </div>
         )***REMOVED***
 
-        ***REMOVED***/* Mostrar duración del turno */***REMOVED***
-        ***REMOVED***duracion && (
-          <div 
-            className="p-3 rounded-lg text-sm"
-            style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700">Duración del turno:</span>
-              <div className="text-right">
-                <span className="font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                  ***REMOVED***duracion.horas***REMOVED***h ***REMOVED***duracion.minutos***REMOVED***min
-                </span>
-                ***REMOVED***duracion.smokoAplicado && (
-                  <p className="text-xs text-gray-500">
-                    (descontando ***REMOVED***smokoMinutes***REMOVED***min de descanso)
-                  </p>
-                )***REMOVED***
-              </div>
-            </div>
-          </div>
-        )***REMOVED***
-
         ***REMOVED***/* Campo de notas */***REMOVED***
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
