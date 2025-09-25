@@ -4,12 +4,17 @@ import React from 'react';
 import ***REMOVED*** Zap ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** TURN_TYPE_COLORS ***REMOVED*** from '../../../constants/colors';
+import ***REMOVED*** formatTurnosCount, pluralizeTiposDeTurno, calculateTotalTurnos ***REMOVED*** from '../../../utils/pluralization';
 
 const ShiftTypeStats = (***REMOVED*** tiposDeTurno = ***REMOVED******REMOVED*** ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
 
   // Verificar que tiposDeTurno sea válido
   const tiposValidos = tiposDeTurno && typeof tiposDeTurno === 'object' && !Array.isArray(tiposDeTurno) ? tiposDeTurno : ***REMOVED******REMOVED***;
+
+  // Calcular total de turnos para el título dinámico
+  const totalTurnos = calculateTotalTurnos(tiposValidos);
+  const tituloPlural = pluralizeTiposDeTurno(totalTurnos);
 
   // Mapeo de tipos a las constantes de colores
   const getColorForType = (tipo) => ***REMOVED***
@@ -29,7 +34,7 @@ const ShiftTypeStats = (***REMOVED*** tiposDeTurno = ***REMOVED******REMOVED*** 
     <div className="bg-white rounded-xl shadow-md p-4">
       <div className="flex items-center mb-4">
         <Zap size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-        <h3 className="font-semibold">Tipos de turno</h3>
+        <h3 className="font-semibold">***REMOVED***tituloPlural***REMOVED***</h3>
       </div>
 
       ***REMOVED***Object.keys(tiposValidos).length === 0 ? (
@@ -63,7 +68,7 @@ const ShiftTypeStats = (***REMOVED*** tiposDeTurno = ***REMOVED******REMOVED*** 
                   style=***REMOVED******REMOVED*** backgroundColor: colorTipo ***REMOVED******REMOVED***
                 />
                 <p className="text-xs text-gray-600 capitalize">***REMOVED***tipoMostrado***REMOVED***</p>
-                <p className="font-semibold">***REMOVED***datosSeguro.turnos***REMOVED*** turnos</p>
+                <p className="font-semibold">***REMOVED***formatTurnosCount(datosSeguro.turnos)***REMOVED***</p>
                 <p className="text-xs text-gray-500">***REMOVED***datosSeguro.horas.toFixed(1)***REMOVED***h</p>
               </div>
             );

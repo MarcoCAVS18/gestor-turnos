@@ -44,6 +44,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
   const [error, setError] = useState(null);
   const [weeklyHoursGoal, setWeeklyHoursGoal] = useState(null);
   const [deliveryEnabled, setDeliveryEnabled] = useState(false);
+  const [smokoEnabled, setSmokoEnabled] = useState(false);
+  const [smokoMinutes, setSmokoMinutes] = useState(30);
 
   // Estados de preferencias de personalizacion
   const [primaryColor, setPrimaryColor] = useState('#EC4899');
@@ -92,6 +94,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         descuentoDefault: 15,
         metaHorasSemanales: null,
         deliveryEnabled: false,
+        smokoEnabled: false,
+        smokoMinutes: 30,
         rangosTurnos: ***REMOVED***
           diurnoInicio: 6,
           diurnoFin: 14,
@@ -110,6 +114,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         setDefaultDiscount(settings.descuentoDefault);
         setWeeklyHoursGoal(settings.metaHorasSemanales);
         setDeliveryEnabled(settings.deliveryEnabled);
+        setSmokoEnabled(settings.smokoEnabled || false); // NUEVO
+        setSmokoMinutes(settings.smokoMinutes || 30);    // NUEVO
         setShiftRanges(settings.rangosTurnos);
       ***REMOVED*** else ***REMOVED***
         const defaultUserData = ***REMOVED***
@@ -125,6 +131,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         setDefaultDiscount(defaultSettings.descuentoDefault);
         setWeeklyHoursGoal(defaultSettings.metaHorasSemanales);
         setDeliveryEnabled(defaultSettings.deliveryEnabled);
+        setSmokoEnabled(defaultSettings.smokoEnabled);
+        setSmokoMinutes(defaultSettings.smokoMinutes);
         setShiftRanges(defaultSettings.rangosTurnos);
       ***REMOVED***
     ***REMOVED*** catch (err) ***REMOVED***
@@ -176,7 +184,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       ***REMOVED***;
     ***REMOVED***
 
-    const ***REMOVED*** horaInicio, horaFin, fechaInicio, cruzaMedianoche = false ***REMOVED*** = shift;
+    const ***REMOVED*** horaInicio, horaFin, fechaInicio, cruzaMedianoche = false, tuvoDescanso = true ***REMOVED*** = shift;
 
     if (!horaInicio || !horaFin || !fechaInicio) ***REMOVED***
       return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false ***REMOVED***;
@@ -196,8 +204,15 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       endMinutes += 24 * 60;
     ***REMOVED***
 
+
+
     const totalMinutes = endMinutes - startMinutes;
-    const hours = totalMinutes / 60;
+    let workingMinutes = totalMinutes;
+    if (smokoEnabled && tuvoDescanso && totalMinutes > smokoMinutes) ***REMOVED***
+      workingMinutes = totalMinutes - smokoMinutes;
+    ***REMOVED***
+
+    const hours = workingMinutes / 60;
 
     // Determinar si es fin de semana
     const date = new Date(fechaInicio + 'T00:00:00');
@@ -225,13 +240,15 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       const afternoonStartMin = ranges.afternoonStart * 60; // ej: 14*60 = 840 (14:00)
       const afternoonEndMin = ranges.afternoonEnd * 60;     // ej: 20*60 = 1200 (20:00)
 
+      const minutesToProcess = Math.min(workingMinutes, totalMinutes);
+
 
       // Calcular minuto por minuto para manejar correctamente los rangos
-      for (let minute = startMinutes; minute < endMinutes; minute++) ***REMOVED***
-        // Normalizar los minutos para el ciclo de 24 horas
-        const currentMinuteInDay = minute % (24 * 60);
+      for (let minute = 0; minute < minutesToProcess; minute++) ***REMOVED***
+        const actualMinute = startMinutes + (minute * totalMinutes / workingMinutes);
+        const currentMinuteInDay = Math.floor(actualMinute) % (24 * 60);
         let rate = job.tarifaBase;
-        let rateType = 'noche'; // Por defecto nocturno
+        let rateType = 'noche';
 
         if (currentMinuteInDay >= dayStartMin && currentMinuteInDay < dayEndMin) ***REMOVED***
           rate = job.tarifas.diurno;
@@ -248,8 +265,6 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         total += ratePerMinute;
         breakdown[rateType] += ratePerMinute;
       ***REMOVED***
-
-
     ***REMOVED***
 
     const totalWithDiscount = total * (1 - defaultDiscount / 100);
@@ -261,9 +276,13 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       tips: 0,
       isDelivery: false,
       breakdown,
-      isNightShift: cruzaMedianoche || false
+      isNightShift: cruzaMedianoche || false,
+      smokoApplied: smokoEnabled && tuvoDescanso && totalMinutes > smokoMinutes,
+      smokoMinutes: smokoEnabled && tuvoDescanso ? smokoMinutes : 0,
+      totalMinutesWorked: workingMinutes,
+      totalMinutesScheduled: totalMinutes
     ***REMOVED***;
-  ***REMOVED***, [trabajos, trabajosDelivery, shiftRanges, defaultDiscount, calculateHours]);
+  ***REMOVED***, [trabajos, trabajosDelivery, shiftRanges, defaultDiscount, calculateHours, smokoEnabled, smokoMinutes]);
 
   // Funciones CRUD para trabajos de delivery
   const addDeliveryJob = useCallback(async (newJob) => ***REMOVED***
@@ -455,9 +474,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       ***REMOVED***
 
       // Detectar turnos nocturnos de manera más robusta y asegurar que se guarden correctamente
-      const cruzaMedianoche = newShift.cruzaMedianoche || 
-        (newShift.horaInicio && newShift.horaFin && 
-         newShift.horaInicio.split(':')[0] > newShift.horaFin.split(':')[0]);
+      const cruzaMedianoche = newShift.cruzaMedianoche ||
+        (newShift.horaInicio && newShift.horaFin &&
+          newShift.horaInicio.split(':')[0] > newShift.horaFin.split(':')[0]);
 
       // Usar fechaFin proporcionada o calcularla
       let fechaFin = newShift.fechaFin;
@@ -468,9 +487,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         fechaFin = fechaFinCalculada.toISOString().split('T')[0];
       ***REMOVED***
 
-      const shiftWithMetadata = ***REMOVED*** 
-        ...newShift, 
-        fechaCreacion: new Date(), 
+      const shiftWithMetadata = ***REMOVED***
+        ...newShift,
+        fechaCreacion: new Date(),
         fechaActualizacion: new Date(),
         // Mantener compatibilidad con campo fecha existente
         fecha: newShift.fechaInicio,
@@ -495,9 +514,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       if (!subcollections || !subcollections.turnosRef) throw new Error('No se pudieron obtener las referencias de la subcoleccion');
 
       // Detectar turnos nocturnos de manera más robusta
-      const cruzaMedianoche = updatedData.cruzaMedianoche || 
-        (updatedData.horaInicio && updatedData.horaFin && 
-         updatedData.horaInicio.split(':')[0] > updatedData.horaFin.split(':')[0]);
+      const cruzaMedianoche = updatedData.cruzaMedianoche ||
+        (updatedData.horaInicio && updatedData.horaFin &&
+          updatedData.horaInicio.split(':')[0] > updatedData.horaFin.split(':')[0]);
 
       // Usar fechaFin proporcionada o calcularla
       let fechaFin = updatedData.fechaFin;
@@ -758,14 +777,14 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         ***REMOVED***
 
         // Detectar turnos nocturnos de manera más robusta
-        const esNocturno = turno.cruzaMedianoche || 
-          (turno.horaInicio && turno.horaFin && 
-           turno.horaInicio.split(':')[0] > turno.horaFin.split(':')[0]);
+        const esNocturno = turno.cruzaMedianoche ||
+          (turno.horaInicio && turno.horaFin &&
+            turno.horaInicio.split(':')[0] > turno.horaFin.split(':')[0]);
 
         // Si es nocturno, agregarlo también al día siguiente
         if (esNocturno && fechaPrincipal) ***REMOVED***
           let fechaFin = turno.fechaFin;
-          
+
           // Si no tiene fechaFin, calcularla
           if (!fechaFin) ***REMOVED***
             const fechaInicio = new Date(fechaPrincipal + 'T00:00:00');
@@ -773,7 +792,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
             fechaFinCalculada.setDate(fechaFinCalculada.getDate() + 1);
             fechaFin = fechaFinCalculada.toISOString().split('T')[0];
           ***REMOVED***
-          
+
           // Agregar al día siguiente si es diferente al día principal
           if (fechaFin && fechaFin !== fechaPrincipal) ***REMOVED***
             if (!turnosPorFecha[fechaFin]) ***REMOVED***
@@ -792,6 +811,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     ***REMOVED***, [turnos, turnosDelivery]),
     loading,
     error,
+    smokoEnabled,
+    smokoMinutes,
 
     // Combinar todos los trabajos
     todosLosTrabajos: useMemo(() => ***REMOVED***
@@ -926,6 +947,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           rangosTurnos: newRanges,
           deliveryEnabled: newDelivery,
           metaHorasSemanales: newGoal,
+          smokoEnabled: newSmokoEnabled,
+          smokoMinutes: newSmokoMinutes,
         ***REMOVED*** = preferences;
 
         // Actualizar estados locales si se proporcionan valores
@@ -938,6 +961,9 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
         ***REMOVED***
         if (newGoal !== undefined) setWeeklyHoursGoal(newGoal);
 
+        if (newSmokoEnabled !== undefined) setSmokoEnabled(newSmokoEnabled);
+        if (newSmokoMinutes !== undefined) setSmokoMinutes(newSmokoMinutes);
+
         // Persistir en localStorage
         if (newColor !== undefined) localStorage.setItem('primaryColor', newColor);
         if (newEmoji !== undefined) localStorage.setItem('userEmoji', newEmoji);
@@ -947,6 +973,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           localStorage.setItem('deliveryEnabled', newDelivery.toString());
         ***REMOVED***
         if (newGoal !== undefined) localStorage.setItem('weeklyHoursGoal', newGoal === null ? 'null' : newGoal.toString());
+        if (newSmokoEnabled !== undefined) localStorage.setItem('smokoEnabled', newSmokoEnabled.toString());
+        if (newSmokoMinutes !== undefined) localStorage.setItem('smokoMinutes', newSmokoMinutes.toString());
 
         // Actualizar Firestore
         const userDocRef = doc(db, 'usuarios', currentUser.uid);
@@ -960,6 +988,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           updatedData['ajustes.deliveryEnabled'] = newDelivery;
         ***REMOVED***
         if (newGoal !== undefined) updatedData['ajustes.metaHorasSemanales'] = newGoal;
+        if (newSmokoEnabled !== undefined) updatedData['ajustes.smokoEnabled'] = newSmokoEnabled;
+        if (newSmokoMinutes !== undefined) updatedData['ajustes.smokoMinutes'] = newSmokoMinutes;
 
         updatedData['fechaActualizacion'] = new Date();
 
@@ -984,6 +1014,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     const savedRangos = localStorage.getItem('shiftRanges');
     const savedMeta = localStorage.getItem('weeklyHoursGoal');
     const savedDelivery = localStorage.getItem('deliveryEnabled');
+    const savedSmokoEnabled = localStorage.getItem('smokoEnabled');
+    const savedSmokoMinutes = localStorage.getItem('smokoMinutes');
 
     if (savedColor) setPrimaryColor(savedColor);
     if (savedEmoji) setUserEmoji(savedEmoji);
@@ -991,6 +1023,8 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
     if (savedRangos) setShiftRanges(JSON.parse(savedRangos));
     if (savedMeta) setWeeklyHoursGoal(savedMeta === 'null' ? null : parseInt(savedMeta));
     if (savedDelivery !== null) setDeliveryEnabled(savedDelivery === 'true');
+    if (savedSmokoEnabled !== null) setSmokoEnabled(savedSmokoEnabled === 'true');
+    if (savedSmokoMinutes) setSmokoMinutes(parseInt(savedSmokoMinutes));
   ***REMOVED***, []);
 
   return (
