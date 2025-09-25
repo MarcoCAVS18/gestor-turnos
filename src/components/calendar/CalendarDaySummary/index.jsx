@@ -1,10 +1,11 @@
-// src/components/calendar/CalendarDaySummary/index.jsx - Corregido sin duplicaciones
+// src/components/calendar/CalendarDaySummary/index.jsx - Actualizado con fecha
 
 import React from 'react';
 import ***REMOVED*** PlusCircle, Calendar, Clock, DollarSign ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import TarjetaTurno from '../../cards/TarjetaTurno';
+import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
@@ -127,11 +128,17 @@ const CalendarDaySummary = (***REMOVED***
                 );
               ***REMOVED***
               
+              // Determinar qué componente usar
+              const TarjetaComponent = (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') 
+                ? TarjetaTurnoDelivery 
+                : TarjetaTurno;
+              
               return (
                 <div key=***REMOVED***turno.id***REMOVED*** className="w-full">
-                  <TarjetaTurno
+                  <TarjetaComponent
                     turno=***REMOVED***turno***REMOVED***
                     trabajo=***REMOVED***trabajo***REMOVED***
+                    fecha=***REMOVED***fechaSeleccionada***REMOVED*** // NUEVA: Pasar la fecha seleccionada
                     onEdit=***REMOVED***() => ***REMOVED******REMOVED******REMOVED*** 
                     onDelete=***REMOVED***() => ***REMOVED******REMOVED******REMOVED***
                     variant="compact"

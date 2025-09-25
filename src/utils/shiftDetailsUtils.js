@@ -107,6 +107,11 @@ export function getTipoTurnoLabel(tipo) ***REMOVED***
   return labels[tipo] || 'Noche';
 ***REMOVED***
 
+// ✅ Nueva función para pluralizar "turnos"
+export function formatTurnos(cantidad) ***REMOVED***
+  return `$***REMOVED***cantidad***REMOVED*** $***REMOVED***cantidad === 1 ? 'TURNO' : 'TURNOS'***REMOVED***`;
+***REMOVED***
+
 // Función para generar los detalles del turno para el modal de eliminación
 export function generateShiftDetails(turno, allJobs) ***REMOVED***
   if (!turno) return [];

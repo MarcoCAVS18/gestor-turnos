@@ -1,7 +1,7 @@
-// src/components/cards/TarjetaTurno/index.jsx - Versión actualizada
+// src/components/cards/TarjetaTurno/index.jsx
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
-import ***REMOVED*** Edit, Trash2, ChevronDown, ChevronUp, MessageSquare, Clock, DollarSign, Package, Navigation ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Edit, Trash2, ChevronDown, ChevronUp, MessageSquare, Clock, DollarSign, Package, Navigation, Calendar ***REMOVED*** from 'lucide-react';
 import Card from '../../ui/Card';
 import ActionsMenu from '../../ui/ActionsMenu';
 import ShiftTypeBadge from '../../shifts/ShiftTypeBadge';
@@ -12,6 +12,7 @@ import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency'
 const TarjetaTurno = (***REMOVED***
   turno,
   trabajo,
+  fecha,
   onEdit,
   onDelete,
   showActions = true,
@@ -21,6 +22,34 @@ const TarjetaTurno = (***REMOVED***
   const ***REMOVED*** calculatePayment ***REMOVED*** = useApp();
   const colors = useThemeColors();
   const [expanded, setExpanded] = useState(false);
+
+  // Función para formatear la fecha de manera amigable
+  const formatearFechaAmigable = (fechaStr) => ***REMOVED***
+    if (!fechaStr) return '';
+    
+    const fechaTurno = new Date(fechaStr + 'T00:00:00');
+    const hoy = new Date();
+    const ayer = new Date(hoy);
+    ayer.setDate(hoy.getDate() - 1);
+    const manana = new Date(hoy);
+    manana.setDate(hoy.getDate() + 1);
+    
+    // Comparar fechas
+    if (fechaTurno.toDateString() === hoy.toDateString()) ***REMOVED***
+      return 'Hoy';
+    ***REMOVED*** else if (fechaTurno.toDateString() === ayer.toDateString()) ***REMOVED***
+      return 'Ayer';
+    ***REMOVED*** else if (fechaTurno.toDateString() === manana.toDateString()) ***REMOVED***
+      return 'Mañana';
+    ***REMOVED*** else ***REMOVED***
+      // Para fechas más lejanas, mostrar día y mes
+      return fechaTurno.toLocaleDateString('es-ES', ***REMOVED***
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short'
+      ***REMOVED***);
+    ***REMOVED***
+  ***REMOVED***;
 
   // Calcular información del turno
   const shiftData = React.useMemo(() => ***REMOVED***
@@ -128,6 +157,14 @@ const TarjetaTurno = (***REMOVED***
                     ***REMOVED***trabajo.nombre***REMOVED***
                   </h3>
                   <ShiftTypeBadge turno=***REMOVED***turno***REMOVED*** size="sm" />
+                  
+                  ***REMOVED***/* NUEVA: Badge de fecha */***REMOVED***
+                  ***REMOVED***fecha && (
+                    <div className="flex items-center px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs">
+                      <Calendar size=***REMOVED***12***REMOVED*** className="mr-1" />
+                      <span>***REMOVED***formatearFechaAmigable(fecha)***REMOVED***</span>
+                    </div>
+                  )***REMOVED***
                 </div>
                 
                 ***REMOVED***/* Información básica del turno */***REMOVED***
