@@ -4,12 +4,17 @@ import React from 'react';
 import { Zap } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { TURN_TYPE_COLORS } from '../../../constants/colors';
+import { formatTurnosCount, pluralizeTiposDeTurno, calculateTotalTurnos } from '../../../utils/pluralization';
 
 const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
   const colors = useThemeColors();
 
   // Verificar que tiposDeTurno sea válido
   const tiposValidos = tiposDeTurno && typeof tiposDeTurno === 'object' && !Array.isArray(tiposDeTurno) ? tiposDeTurno : {};
+
+  // Calcular total de turnos para el título dinámico
+  const totalTurnos = calculateTotalTurnos(tiposValidos);
+  const tituloPlural = pluralizeTiposDeTurno(totalTurnos);
 
   // Mapeo de tipos a las constantes de colores
   const getColorForType = (tipo) => {
@@ -29,7 +34,7 @@ const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
     <div className="bg-white rounded-xl shadow-md p-4">
       <div className="flex items-center mb-4">
         <Zap size={18} style={{ color: colors.primary }} className="mr-2" />
-        <h3 className="font-semibold">Tipos de turno</h3>
+        <h3 className="font-semibold">{tituloPlural}</h3>
       </div>
 
       {Object.keys(tiposValidos).length === 0 ? (
@@ -63,7 +68,7 @@ const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
                   style={{ backgroundColor: colorTipo }}
                 />
                 <p className="text-xs text-gray-600 capitalize">{tipoMostrado}</p>
-                <p className="font-semibold">{datosSeguro.turnos} turnos</p>
+                <p className="font-semibold">{formatTurnosCount(datosSeguro.turnos)}</p>
                 <p className="text-xs text-gray-500">{datosSeguro.horas.toFixed(1)}h</p>
               </div>
             );

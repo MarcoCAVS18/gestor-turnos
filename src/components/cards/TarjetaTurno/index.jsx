@@ -1,7 +1,7 @@
-// src/components/cards/TarjetaTurno/index.jsx
+// src/components/cards/TarjetaTurno/index.jsx - ACTUALIZADO CON SMOKO
 
 import React, { useState } from 'react';
-import { Edit, Trash2, ChevronDown, ChevronUp, MessageSquare, Clock, DollarSign, Package, Navigation, Calendar } from 'lucide-react';
+import { Edit, Trash2, ChevronDown, ChevronUp, MessageSquare, Clock, DollarSign, Package, Navigation, Calendar, Coffee } from 'lucide-react';
 import Card from '../../ui/Card';
 import ActionsMenu from '../../ui/ActionsMenu';
 import ShiftTypeBadge from '../../shifts/ShiftTypeBadge';
@@ -19,7 +19,7 @@ const TarjetaTurno = ({
   variant = 'default',
   compact = false
 }) => {
-  const { calculatePayment } = useApp();
+  const { calculatePayment, smokoEnabled } = useApp(); // ACTUALIZADO
   const colors = useThemeColors();
   const [expanded, setExpanded] = useState(false);
 
@@ -51,7 +51,7 @@ const TarjetaTurno = ({
     }
   };
 
-  // Calcular información del turno
+  // Calcular información del turno - ACTUALIZADO
   const shiftData = React.useMemo(() => {
     if (!turno || !trabajo) {
       return { hours: 0, totalWithDiscount: 0, isDelivery: false };
@@ -80,20 +80,26 @@ const TarjetaTurno = ({
     return {
       hours: result.hours || 0,
       totalWithDiscount: result.totalWithDiscount || 0,
-      isDelivery: false
+      isDelivery: false,
+      // NUEVOS CAMPOS PARA SMOKO
+      smokoApplied: result.smokoApplied || false,
+      smokoMinutes: result.smokoMinutes || 0,
+      totalMinutesWorked: result.totalMinutesWorked || 0,
+      totalMinutesScheduled: result.totalMinutesScheduled || 0
     };
   }, [turno, trabajo, calculatePayment]);
 
-  // Determinar si hay contenido adicional
+  // Determinar si hay contenido adicional - ACTUALIZADO
   const hasAdditionalContent = React.useMemo(() => {
     return Boolean(
       turno?.observaciones?.trim() ||
       turno?.descripcion?.trim() ||
       turno?.notas?.trim() ||
       turno?.cruzaMedianoche ||
-      (shiftData.isDelivery && (shiftData.deliveryData.propinas > 0 || shiftData.deliveryData.gastos > 0))
+      (shiftData.isDelivery && (shiftData.deliveryData.propinas > 0 || shiftData.deliveryData.gastos > 0)) ||
+      (shiftData.smokoApplied && smokoEnabled) // NUEVO
     );
-  }, [turno, shiftData]);
+  }, [turno, shiftData, smokoEnabled]);
 
   const actions = React.useMemo(() => [
     { icon: Edit, label: 'Editar', onClick: () => onEdit?.(turno) },
@@ -158,23 +164,51 @@ const TarjetaTurno = ({
                   </h3>
                   <ShiftTypeBadge turno={turno} size="sm" />
                   
-                  {/* NUEVA: Badge de fecha */}
+                  {/* Badge de fecha */}
                   {fecha && (
                     <div className="flex items-center px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs">
                       <Calendar size={12} className="mr-1" />
                       <span>{formatearFechaAmigable(fecha)}</span>
                     </div>
                   )}
+
+                  {/* NUEVO: Badge de Smoko - Mostrar siempre si está habilitado */}
+                  {smokoEnabled && (
+                    <div className={`flex items-center px-2 py-1 rounded-full text-xs ${
+                      shiftData.smokoApplied 
+                        ? 'bg-orange-50 text-orange-700' 
+                        : 'bg-gray-100 text-gray-500'
+                    }`}>
+                      <Coffee size={12} className="mr-1" />
+                      <span>
+                        {shiftData.smokoApplied 
+                          ? `-${shiftData.smokoMinutes}min` 
+                          : `${shiftData.smokoMinutes || 30}min`
+                        }
+                      </span>
+                    </div>
+                  )}
                 </div>
                 
-                {/* Información básica del turno */}
+                {/* Información básica del turno - ACTUALIZADA */}
                 <div className="flex items-center text-sm text-gray-600 gap-3">
                   <div className="flex items-center">
                     <Clock size={14} className="mr-1.5" />
                     <span>{turno.horaInicio} - {turno.horaFin}</span>
                   </div>
                   <span className="text-gray-300">•</span>
-                  <span>{shiftData.hours.toFixed(1)}h</span>
+                  
+                  {/* ACTUALIZADO: Mostrar tiempo real trabajado si hay smoko */}
+                  {shiftData.smokoApplied && smokoEnabled ? (
+                    <div className="flex items-center gap-1">
+                      <span>{shiftData.hours.toFixed(1)}h</span>
+                      <span className="text-xs text-gray-400">
+                        ({Math.floor(shiftData.totalMinutesScheduled / 60).toFixed(1)}h programado)
+                      </span>
+                    </div>
+                  ) : (
+                    <span>{shiftData.hours.toFixed(1)}h</span>
+                  )}
                   
                   {/* Indicador nocturno */}
                   {turno.cruzaMedianoche && (
@@ -189,7 +223,7 @@ const TarjetaTurno = ({
 
             {/* Información específica por tipo */}
             {shiftData.isDelivery ? (
-              // Información de delivery
+              // Información de delivery (sin cambios)
               <div className="flex items-center justify-between">
                 <div className="flex items-center text-sm text-gray-600 gap-4">
                   {shiftData.deliveryData.numeroPedidos > 0 && (
@@ -250,7 +284,7 @@ const TarjetaTurno = ({
           </div>
         </div>
 
-        {/* Contenido expandible */}
+        {/* Contenido expandible - ACTUALIZADO */}
         {hasAdditionalContent && expanded && (
           <div className="border-t pt-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
             {/* Observaciones/Notas */}
@@ -263,6 +297,30 @@ const TarjetaTurno = ({
                 <p className="text-sm text-gray-600 leading-relaxed">
                   {turno.observaciones?.trim() || turno.descripcion?.trim() || turno.notas?.trim()}
                 </p>
+              </div>
+            )}
+
+            {/* NUEVA SECCIÓN: Información de Smoko */}
+            {smokoEnabled && shiftData.smokoApplied && (
+              <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Coffee size={14} className="text-orange-600" />
+                  <span className="text-sm font-medium text-orange-700">Descanso aplicado</span>
+                </div>
+                <div className="text-sm space-y-1">
+                  <div className="flex justify-between text-orange-600">
+                    <span>Tiempo programado:</span>
+                    <span>{Math.floor(shiftData.totalMinutesScheduled / 60)}h {shiftData.totalMinutesScheduled % 60}min</span>
+                  </div>
+                  <div className="flex justify-between text-orange-600">
+                    <span>Descanso descontado:</span>
+                    <span>-{shiftData.smokoMinutes}min</span>
+                  </div>
+                  <div className="flex justify-between border-t border-orange-200 pt-1">
+                    <span className="font-semibold text-orange-700">Tiempo pagado:</span>
+                    <span className="font-bold">{Math.floor(shiftData.totalMinutesWorked / 60)}h {shiftData.totalMinutesWorked % 60}min</span>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -312,7 +370,7 @@ const TarjetaTurno = ({
                 </div>
               </div>
             )}
-
+            
             {/* Información de fechas */}
             {turno.fechaCreacion && (
               <div className="text-xs text-gray-500 border-t pt-2">

@@ -1,9 +1,10 @@
-// src/components/shifts/WeeklyShiftsSection/index.jsx - Actualizado para pasar fecha
+// src/components/shifts/WeeklyShiftsSection/index.jsx
 
 import React from 'react';
 import { Calendar, TrendingUp } from 'lucide-react';
 import TarjetaTurno from '../../cards/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
+import { formatTurnosCount } from '../../../utils/pluralization';
 
 const WeeklyShiftsSection = ({ 
   rangoSemana, 
@@ -75,11 +76,11 @@ const WeeklyShiftsSection = ({
       key: `${turno.id}-${index}`,
       turno: turno,
       trabajo: trabajo,
-      fecha: turno.fecha, // NUEVA: Pasar la fecha del turno
+      fecha: turno.fecha,
       onEdit: () => onEditShift(turno),
       onDelete: () => onDeleteShift(turno),
       variant: 'default',
-      compact: true // Para que se vean más compactas en el grid
+      compact: true
     };
 
     // Determinar si es delivery y renderizar el componente apropiado
@@ -113,8 +114,9 @@ const WeeklyShiftsSection = ({
               >
                 Semana {rangoSemana}
               </h3>
+              {/* ✅ AQUÍ ESTÁ EL CAMBIO PRINCIPAL */}
               <p className="text-sm text-gray-600">
-                {totalTurnos} {totalTurnos === 1 ? 'turno' : 'turnos'}
+                {formatTurnosCount(totalTurnos)}
               </p>
             </div>
           </div>
