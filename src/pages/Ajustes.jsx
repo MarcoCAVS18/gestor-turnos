@@ -1,4 +1,4 @@
-// src/pages/Ajustes.jsx 
+// src/pages/Ajustes.jsx
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ProfileSection from '../components/settings/ProfileSection';
@@ -10,6 +10,7 @@ import SessionSection from '../components/settings/SessionSection';
 import FooterSection from '../components/settings/FooterSection'; 
 import NotificationBanner from '../components/ui/NotificationBanner';
 import DeliverySection from '../components/settings/DeliverySection';
+import SmokoSection from '../components/settings/SmokoSection'; // NUEVO
 
 const Ajustes = () => ***REMOVED***
   const [message, setMessage] = useState('');
@@ -56,6 +57,11 @@ const Ajustes = () => ***REMOVED***
       <CustomizationSection />
 
       <DeliverySection />
+
+      <SmokoSection 
+        onError=***REMOVED***handleError***REMOVED*** 
+        onSuccess=***REMOVED***handleSuccess***REMOVED*** 
+      />
 
       <GoalsSection />
       

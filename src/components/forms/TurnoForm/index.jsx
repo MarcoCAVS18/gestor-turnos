@@ -1,8 +1,9 @@
-// src/components/forms/TurnoForm/index.jsx - ACTUALIZADO PARA MOSTRAR TODOS LOS TRABAJOS
+// src/components/forms/TurnoForm/index.jsx - ACTUALIZADO CON SMOKO
 
 import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
-import ***REMOVED*** Briefcase, Calendar, Clock, FileText ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Briefcase, Calendar, Clock, FileText, Coffee ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 
 const TurnoForm = (***REMOVED***
   turno,
@@ -16,8 +17,9 @@ const TurnoForm = (***REMOVED***
   fechaInicial
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
+  const ***REMOVED*** smokoEnabled, smokoMinutes ***REMOVED*** = useApp(); // NUEVO
 
-  // Estados del formulario
+  // Estados del formulario - ACTUALIZADO
   const [formData, setFormData] = useState(***REMOVED***
     trabajoId: trabajoId || '',
     fechaInicio: '',
@@ -25,30 +27,38 @@ const TurnoForm = (***REMOVED***
     horaFin: '',
     cruzaMedianoche: false,
     fechaFin: '',
+    tuvoDescanso: true, // NUEVO - por defecto asume que tuvo descanso
     notas: ''
   ***REMOVED***);
 
   const [errors, setErrors] = useState(***REMOVED******REMOVED***);
 
-  // Inicializar formulario
-  useEffect(() => ***REMOVED***
-    if (turno) ***REMOVED***
-      setFormData(***REMOVED***
-        trabajoId: turno.trabajoId || '',
-        fechaInicio: turno.fechaInicio || turno.fecha || '',
-        horaInicio: turno.horaInicio || '',
-        horaFin: turno.horaFin || '',
-        cruzaMedianoche: turno.cruzaMedianoche || false,
-        fechaFin: turno.fechaFin || '',
-        notas: turno.notas || ''
-      ***REMOVED***);
-    ***REMOVED*** else if (fechaInicial) ***REMOVED***
-      const fechaStr = fechaInicial instanceof Date 
-        ? fechaInicial.toISOString().split('T')[0] 
-        : fechaInicial;
-      setFormData(prev => (***REMOVED*** ...prev, fechaInicio: fechaStr ***REMOVED***));
+  // Función para calcular duración del turno - ACTUALIZADA
+  const calcularDuracionTurno = useCallback(() => ***REMOVED***
+    if (!formData.horaInicio || !formData.horaFin) return null;
+    
+    const [horaI, minI] = formData.horaInicio.split(':').map(Number);
+    const [horaF, minF] = formData.horaFin.split(':').map(Number);
+    
+    let totalMinutos = (horaF * 60 + minF) - (horaI * 60 + minI);
+    if (totalMinutos <= 0) totalMinutos += 24 * 60; // Turno nocturno
+    
+    // Aplicar descuento de smoko si está habilitado
+    let minutosReales = totalMinutos;
+    if (smokoEnabled && formData.tuvoDescanso && totalMinutos > smokoMinutes) ***REMOVED***
+      minutosReales = totalMinutos - smokoMinutes;
     ***REMOVED***
-  ***REMOVED***, [turno, fechaInicial]);
+    
+    return ***REMOVED***
+      totalMinutos,
+      minutosReales,
+      horas: Math.floor(minutosReales / 60),
+      minutos: minutosReales % 60,
+      smokoAplicado: smokoEnabled && formData.tuvoDescanso && totalMinutos > smokoMinutes
+    ***REMOVED***;
+  ***REMOVED***, [formData.horaInicio, formData.horaFin, formData.tuvoDescanso, smokoEnabled, smokoMinutes]);
+
+  const duracion = calcularDuracionTurno();
 
   // Detectar turnos nocturnos automáticamente
   useEffect(() => ***REMOVED***
@@ -115,13 +125,39 @@ const TurnoForm = (***REMOVED***
     ***REMOVED***
   ***REMOVED***, [errors, onTrabajoChange]);
 
+  // Inicializar formulario - ACTUALIZADO
+  useEffect(() => ***REMOVED***
+    if (turno) ***REMOVED***
+      setFormData(***REMOVED***
+        trabajoId: turno.trabajoId || '',
+        fechaInicio: turno.fechaInicio || turno.fecha || '',
+        horaInicio: turno.horaInicio || '',
+        horaFin: turno.horaFin || '',
+        cruzaMedianoche: turno.cruzaMedianoche || false,
+        fechaFin: turno.fechaFin || '',
+        tuvoDescanso: turno.tuvoDescanso !== undefined ? turno.tuvoDescanso : true, // NUEVO
+        notas: turno.notas || ''
+      ***REMOVED***);
+    ***REMOVED*** else if (fechaInicial) ***REMOVED***
+      const fechaStr = fechaInicial instanceof Date 
+        ? fechaInicial.toISOString().split('T')[0] 
+        : fechaInicial;
+      setFormData(prev => (***REMOVED*** 
+        ...prev, 
+        fechaInicio: fechaStr,
+        tuvoDescanso: true // NUEVO - por defecto en turnos nuevos
+      ***REMOVED***));
+    ***REMOVED***
+  ***REMOVED***, [turno, fechaInicial]);
+
+  // Resto del código igual hasta el JSX...
+
   const inputClasses = `
     w-full px-3 py-3 border rounded-lg text-base transition-colors
     focus:outline-none focus:ring-2 focus:border-transparent
     $***REMOVED***isMobile ? 'text-base min-h-[44px]' : 'text-sm py-2'***REMOVED***
   `;
 
-  // Separar trabajos por tipo para mostrarlos organizados
   const trabajosTradicionales = trabajos.filter(t => t.tipo !== 'delivery');
   const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
 
@@ -134,7 +170,7 @@ const TurnoForm = (***REMOVED***
       ***REMOVED******REMOVED***
     >
       <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className="space-y-4 w-full">
-        ***REMOVED***/* Selección de trabajo - ACTUALIZADO */***REMOVED***
+        ***REMOVED***/* Selección de trabajo */***REMOVED***
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <Briefcase size=***REMOVED***16***REMOVED*** className="inline mr-2" />
@@ -149,7 +185,6 @@ const TurnoForm = (***REMOVED***
           >
             <option value="">Seleccionar trabajo</option>
             
-            ***REMOVED***/* Trabajos tradicionales */***REMOVED***
             ***REMOVED***trabajosTradicionales.length > 0 && (
               <optgroup label="Trabajos Tradicionales">
                 ***REMOVED***trabajosTradicionales.map(trabajo => (
@@ -160,7 +195,6 @@ const TurnoForm = (***REMOVED***
               </optgroup>
             )***REMOVED***
             
-            ***REMOVED***/* Trabajos de delivery */***REMOVED***
             ***REMOVED***trabajosDelivery.length > 0 && (
               <optgroup label="Trabajos de Delivery">
                 ***REMOVED***trabajosDelivery.map(trabajo => (
@@ -264,6 +298,81 @@ const TurnoForm = (***REMOVED***
           </div>
         </div>
 
+        ***REMOVED***/* NUEVA SECCIÓN: DESCANSO (SMOKO) - Solo mostrar si está habilitado */***REMOVED***
+        ***REMOVED***smokoEnabled && duracion && duracion.totalMinutos > smokoMinutes && (
+          <div className="w-full">
+            <div 
+              className="p-4 rounded-lg border"
+              style=***REMOVED******REMOVED*** 
+                backgroundColor: colors.transparent5,
+                borderColor: colors.transparent20 
+              ***REMOVED******REMOVED***
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center">
+                  <Coffee size=***REMOVED***16***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
+                  <span className="text-sm font-medium text-gray-700">
+                    ¿Tuviste descanso?
+                  </span>
+                </div>
+                <label className="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked=***REMOVED***formData.tuvoDescanso***REMOVED***
+                    onChange=***REMOVED***(e) => handleInputChange('tuvoDescanso', e.target.checked)***REMOVED***
+                    className="rounded w-4 h-4 mr-2"
+                    style=***REMOVED******REMOVED*** accentColor: colors.primary ***REMOVED******REMOVED***
+                  />
+                  <span className="text-sm text-gray-600">
+                    Sí, tuve descanso
+                  </span>
+                </label>
+              </div>
+
+              ***REMOVED***/* Información del cálculo */***REMOVED***
+              <div className="text-xs text-gray-600 space-y-1">
+                <p>
+                  • Tiempo programado: <strong>***REMOVED***Math.floor(duracion.totalMinutos / 60)***REMOVED***h ***REMOVED***duracion.totalMinutos % 60***REMOVED***min</strong>
+                </p>
+                ***REMOVED***formData.tuvoDescanso ? (
+                  <>
+                    <p>• Descanso configurado: <strong>***REMOVED***smokoMinutes***REMOVED*** minutos</strong></p>
+                    <p style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                      • Tiempo pagado: <strong>***REMOVED***duracion.horas***REMOVED***h ***REMOVED***duracion.minutos***REMOVED***min</strong>
+                    </p>
+                  </>
+                ) : (
+                  <p style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                    • Tiempo pagado: <strong>***REMOVED***Math.floor(duracion.totalMinutos / 60)***REMOVED***h ***REMOVED***duracion.totalMinutos % 60***REMOVED***min</strong> (sin descuento)
+                  </p>
+                )***REMOVED***
+              </div>
+            </div>
+          </div>
+        )***REMOVED***
+
+        ***REMOVED***/* Mostrar duración del turno */***REMOVED***
+        ***REMOVED***duracion && (
+          <div 
+            className="p-3 rounded-lg text-sm"
+            style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-gray-700">Duración del turno:</span>
+              <div className="text-right">
+                <span className="font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                  ***REMOVED***duracion.horas***REMOVED***h ***REMOVED***duracion.minutos***REMOVED***min
+                </span>
+                ***REMOVED***duracion.smokoAplicado && (
+                  <p className="text-xs text-gray-500">
+                    (descontando ***REMOVED***smokoMinutes***REMOVED***min de descanso)
+                  </p>
+                )***REMOVED***
+              </div>
+            </div>
+          </div>
+        )***REMOVED***
+
         ***REMOVED***/* Campo de notas */***REMOVED***
         <div className="w-full">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -343,7 +452,7 @@ const TurnoForm = (***REMOVED***
             -moz-appearance: none;
             appearance: none;
             background-image: none;
-            font-size: 16px !important; /* Prevenir zoom en iOS */
+            font-size: 16px !important;
           ***REMOVED***
           
           .mobile-form input[type="time"]::-webkit-calendar-picker-indicator ***REMOVED***

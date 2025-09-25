@@ -1,7 +1,7 @@
-// src/components/cards/TarjetaTurno/index.jsx
+// src/components/cards/TarjetaTurno/index.jsx - ACTUALIZADO CON SMOKO
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
-import ***REMOVED*** Edit, Trash2, ChevronDown, ChevronUp, MessageSquare, Clock, DollarSign, Package, Navigation, Calendar ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Edit, Trash2, ChevronDown, ChevronUp, MessageSquare, Clock, DollarSign, Package, Navigation, Calendar, Coffee ***REMOVED*** from 'lucide-react';
 import Card from '../../ui/Card';
 import ActionsMenu from '../../ui/ActionsMenu';
 import ShiftTypeBadge from '../../shifts/ShiftTypeBadge';
@@ -19,7 +19,7 @@ const TarjetaTurno = (***REMOVED***
   variant = 'default',
   compact = false
 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** calculatePayment ***REMOVED*** = useApp();
+  const ***REMOVED*** calculatePayment, smokoEnabled ***REMOVED*** = useApp(); // ACTUALIZADO
   const colors = useThemeColors();
   const [expanded, setExpanded] = useState(false);
 
@@ -51,7 +51,7 @@ const TarjetaTurno = (***REMOVED***
     ***REMOVED***
   ***REMOVED***;
 
-  // Calcular información del turno
+  // Calcular información del turno - ACTUALIZADO
   const shiftData = React.useMemo(() => ***REMOVED***
     if (!turno || !trabajo) ***REMOVED***
       return ***REMOVED*** hours: 0, totalWithDiscount: 0, isDelivery: false ***REMOVED***;
@@ -80,20 +80,26 @@ const TarjetaTurno = (***REMOVED***
     return ***REMOVED***
       hours: result.hours || 0,
       totalWithDiscount: result.totalWithDiscount || 0,
-      isDelivery: false
+      isDelivery: false,
+      // NUEVOS CAMPOS PARA SMOKO
+      smokoApplied: result.smokoApplied || false,
+      smokoMinutes: result.smokoMinutes || 0,
+      totalMinutesWorked: result.totalMinutesWorked || 0,
+      totalMinutesScheduled: result.totalMinutesScheduled || 0
     ***REMOVED***;
   ***REMOVED***, [turno, trabajo, calculatePayment]);
 
-  // Determinar si hay contenido adicional
+  // Determinar si hay contenido adicional - ACTUALIZADO
   const hasAdditionalContent = React.useMemo(() => ***REMOVED***
     return Boolean(
       turno?.observaciones?.trim() ||
       turno?.descripcion?.trim() ||
       turno?.notas?.trim() ||
       turno?.cruzaMedianoche ||
-      (shiftData.isDelivery && (shiftData.deliveryData.propinas > 0 || shiftData.deliveryData.gastos > 0))
+      (shiftData.isDelivery && (shiftData.deliveryData.propinas > 0 || shiftData.deliveryData.gastos > 0)) ||
+      (shiftData.smokoApplied && smokoEnabled) // NUEVO
     );
-  ***REMOVED***, [turno, shiftData]);
+  ***REMOVED***, [turno, shiftData, smokoEnabled]);
 
   const actions = React.useMemo(() => [
     ***REMOVED*** icon: Edit, label: 'Editar', onClick: () => onEdit?.(turno) ***REMOVED***,
@@ -158,23 +164,51 @@ const TarjetaTurno = (***REMOVED***
                   </h3>
                   <ShiftTypeBadge turno=***REMOVED***turno***REMOVED*** size="sm" />
                   
-                  ***REMOVED***/* NUEVA: Badge de fecha */***REMOVED***
+                  ***REMOVED***/* Badge de fecha */***REMOVED***
                   ***REMOVED***fecha && (
                     <div className="flex items-center px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs">
                       <Calendar size=***REMOVED***12***REMOVED*** className="mr-1" />
                       <span>***REMOVED***formatearFechaAmigable(fecha)***REMOVED***</span>
                     </div>
                   )***REMOVED***
+
+                  ***REMOVED***/* NUEVO: Badge de Smoko - Mostrar siempre si está habilitado */***REMOVED***
+                  ***REMOVED***smokoEnabled && (
+                    <div className=***REMOVED***`flex items-center px-2 py-1 rounded-full text-xs $***REMOVED***
+                      shiftData.smokoApplied 
+                        ? 'bg-orange-50 text-orange-700' 
+                        : 'bg-gray-100 text-gray-500'
+                    ***REMOVED***`***REMOVED***>
+                      <Coffee size=***REMOVED***12***REMOVED*** className="mr-1" />
+                      <span>
+                        ***REMOVED***shiftData.smokoApplied 
+                          ? `-$***REMOVED***shiftData.smokoMinutes***REMOVED***min` 
+                          : `$***REMOVED***shiftData.smokoMinutes || 30***REMOVED***min`
+                        ***REMOVED***
+                      </span>
+                    </div>
+                  )***REMOVED***
                 </div>
                 
-                ***REMOVED***/* Información básica del turno */***REMOVED***
+                ***REMOVED***/* Información básica del turno - ACTUALIZADA */***REMOVED***
                 <div className="flex items-center text-sm text-gray-600 gap-3">
                   <div className="flex items-center">
                     <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
                     <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
                   </div>
                   <span className="text-gray-300">•</span>
-                  <span>***REMOVED***shiftData.hours.toFixed(1)***REMOVED***h</span>
+                  
+                  ***REMOVED***/* ACTUALIZADO: Mostrar tiempo real trabajado si hay smoko */***REMOVED***
+                  ***REMOVED***shiftData.smokoApplied && smokoEnabled ? (
+                    <div className="flex items-center gap-1">
+                      <span>***REMOVED***shiftData.hours.toFixed(1)***REMOVED***h</span>
+                      <span className="text-xs text-gray-400">
+                        (***REMOVED***Math.floor(shiftData.totalMinutesScheduled / 60).toFixed(1)***REMOVED***h programado)
+                      </span>
+                    </div>
+                  ) : (
+                    <span>***REMOVED***shiftData.hours.toFixed(1)***REMOVED***h</span>
+                  )***REMOVED***
                   
                   ***REMOVED***/* Indicador nocturno */***REMOVED***
                   ***REMOVED***turno.cruzaMedianoche && (
@@ -189,7 +223,7 @@ const TarjetaTurno = (***REMOVED***
 
             ***REMOVED***/* Información específica por tipo */***REMOVED***
             ***REMOVED***shiftData.isDelivery ? (
-              // Información de delivery
+              // Información de delivery (sin cambios)
               <div className="flex items-center justify-between">
                 <div className="flex items-center text-sm text-gray-600 gap-4">
                   ***REMOVED***shiftData.deliveryData.numeroPedidos > 0 && (
@@ -250,7 +284,7 @@ const TarjetaTurno = (***REMOVED***
           </div>
         </div>
 
-        ***REMOVED***/* Contenido expandible */***REMOVED***
+        ***REMOVED***/* Contenido expandible - ACTUALIZADO */***REMOVED***
         ***REMOVED***hasAdditionalContent && expanded && (
           <div className="border-t pt-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
             ***REMOVED***/* Observaciones/Notas */***REMOVED***
@@ -263,6 +297,30 @@ const TarjetaTurno = (***REMOVED***
                 <p className="text-sm text-gray-600 leading-relaxed">
                   ***REMOVED***turno.observaciones?.trim() || turno.descripcion?.trim() || turno.notas?.trim()***REMOVED***
                 </p>
+              </div>
+            )***REMOVED***
+
+            ***REMOVED***/* NUEVA SECCIÓN: Información de Smoko */***REMOVED***
+            ***REMOVED***smokoEnabled && shiftData.smokoApplied && (
+              <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <Coffee size=***REMOVED***14***REMOVED*** className="text-orange-600" />
+                  <span className="text-sm font-medium text-orange-700">Descanso aplicado</span>
+                </div>
+                <div className="text-sm space-y-1">
+                  <div className="flex justify-between text-orange-600">
+                    <span>Tiempo programado:</span>
+                    <span>***REMOVED***Math.floor(shiftData.totalMinutesScheduled / 60)***REMOVED***h ***REMOVED***shiftData.totalMinutesScheduled % 60***REMOVED***min</span>
+                  </div>
+                  <div className="flex justify-between text-orange-600">
+                    <span>Descanso descontado:</span>
+                    <span>-***REMOVED***shiftData.smokoMinutes***REMOVED***min</span>
+                  </div>
+                  <div className="flex justify-between border-t border-orange-200 pt-1">
+                    <span className="font-semibold text-orange-700">Tiempo pagado:</span>
+                    <span className="font-bold">***REMOVED***Math.floor(shiftData.totalMinutesWorked / 60)***REMOVED***h ***REMOVED***shiftData.totalMinutesWorked % 60***REMOVED***min</span>
+                  </div>
+                </div>
               </div>
             )***REMOVED***
 
@@ -312,7 +370,7 @@ const TarjetaTurno = (***REMOVED***
                 </div>
               </div>
             )***REMOVED***
-
+            
             ***REMOVED***/* Información de fechas */***REMOVED***
             ***REMOVED***turno.fechaCreacion && (
               <div className="text-xs text-gray-500 border-t pt-2">
