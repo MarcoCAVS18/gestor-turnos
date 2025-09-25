@@ -1,7 +1,7 @@
-// src/components/cards/TarjetaTurnoDelivery/index.jsx - Versión actualizada
+// src/components/cards/TarjetaTurnoDelivery/index.jsx - Con fecha agregada
 
 import React, { useState } from 'react';
-import { Clock, Package, Edit2, Trash2, DollarSign, Truck, Navigation, ChevronDown, ChevronUp } from 'lucide-react';
+import { Clock, Package, Edit2, Trash2, DollarSign, Truck, Navigation, ChevronDown, ChevronUp, Calendar } from 'lucide-react';
 import Card from '../../ui/Card';
 import ActionsMenu from '../../ui/ActionsMenu';
 import ShiftTypeBadge from '../../shifts/ShiftTypeBadge';
@@ -9,13 +9,42 @@ import { formatCurrency } from '../../../utils/currency';
 
 const TarjetaTurnoDelivery = ({ 
   turno, 
-  trabajo, 
+  trabajo,
+  fecha, // Nueva prop para la fecha
   onEdit, 
   onDelete,
   variant = 'default',
   showActions = true
 }) => {
-    const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  // Función para formatear la fecha de manera amigable
+  const formatearFechaAmigable = (fechaStr) => {
+    if (!fechaStr) return '';
+    
+    const fechaTurno = new Date(fechaStr + 'T00:00:00');
+    const hoy = new Date();
+    const ayer = new Date(hoy);
+    ayer.setDate(hoy.getDate() - 1);
+    const manana = new Date(hoy);
+    manana.setDate(hoy.getDate() + 1);
+    
+    // Comparar fechas
+    if (fechaTurno.toDateString() === hoy.toDateString()) {
+      return 'Hoy';
+    } else if (fechaTurno.toDateString() === ayer.toDateString()) {
+      return 'Ayer';
+    } else if (fechaTurno.toDateString() === manana.toDateString()) {
+      return 'Mañana';
+    } else {
+      // Para fechas más lejanas, mostrar día y mes
+      return fechaTurno.toLocaleDateString('es-ES', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short'
+      });
+    }
+  };
 
   // Validaciones
   if (!turno) {
@@ -101,6 +130,14 @@ const TarjetaTurnoDelivery = ({
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <h4 className="font-medium text-gray-900 truncate min-w-0">{trabajo.nombre}</h4>
                   <ShiftTypeBadge turno={turno} size="sm" />
+                  
+                  {/* NUEVA: Badge de fecha */}
+                  {fecha && (
+                    <div className="flex items-center px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs">
+                      <Calendar size={12} className="mr-1" />
+                      <span>{formatearFechaAmigable(fecha)}</span>
+                    </div>
+                  )}
                 </div>
                 
                 {/* Información básica del turno */}
