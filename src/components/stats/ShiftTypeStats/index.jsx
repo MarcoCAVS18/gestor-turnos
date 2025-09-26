@@ -31,15 +31,15 @@ const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-4">
+    <div className="bg-white rounded-xl shadow-md p-4 h-72"> 
       <div className="flex items-center mb-4">
         <Zap size={18} style={{ color: colors.primary }} className="mr-2" />
         <h3 className="font-semibold">{tituloPlural}</h3>
       </div>
 
       {Object.keys(tiposValidos).length === 0 ? (
-        // Estado vacío cuando no hay datos
-        <div className="text-center py-8">
+        // Estado vacío cuando no hay datos - centrado verticalmente
+        <div className="flex flex-col items-center justify-center h-56"> 
           <Zap size={48} className="mx-auto mb-3 opacity-30" style={{ color: colors.primary }} />
           <h4 className="text-sm font-medium text-gray-600 mb-1">
             Sin datos de tipos de turno
@@ -49,30 +49,32 @@ const ShiftTypeStats = ({ tiposDeTurno = {} }) => {
           </p>
         </div>
       ) : (
-        // Estado con datos
-        <div className="grid grid-cols-2 gap-4">
-          {Object.entries(tiposValidos).map(([tipo, datos]) => {
-            const datosSeguro = {
-              turnos: (datos && typeof datos.turnos === 'number') ? datos.turnos : 0,
-              horas: (datos && typeof datos.horas === 'number') ? datos.horas : 0,
-              ganancia: (datos && typeof datos.ganancia === 'number') ? datos.ganancia : 0
-            };
+        // Estado con datos - grid que ocupa el espacio disponible
+        <div className="h-56 overflow-y-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-3 min-h-full items-start">
+            {Object.entries(tiposValidos).map(([tipo, datos]) => {
+              const datosSeguro = {
+                turnos: (datos && typeof datos.turnos === 'number') ? datos.turnos : 0,
+                horas: (datos && typeof datos.horas === 'number') ? datos.horas : 0,
+                ganancia: (datos && typeof datos.ganancia === 'number') ? datos.ganancia : 0
+              };
 
-            const tipoMostrado = tipo === 'undefined' ? 'MIXTO' : tipo.toUpperCase();
-            const colorTipo = getColorForType(tipo);
+              const tipoMostrado = tipo === 'undefined' ? 'MIXTO' : tipo.toUpperCase();
+              const colorTipo = getColorForType(tipo);
 
-            return (
-              <div key={tipo} className="text-center p-3 bg-gray-50 rounded-lg">
-                <div
-                  className="w-3 h-3 rounded-full mx-auto mb-2"
-                  style={{ backgroundColor: colorTipo }}
-                />
-                <p className="text-xs text-gray-600 capitalize">{tipoMostrado}</p>
-                <p className="font-semibold">{formatTurnosCount(datosSeguro.turnos)}</p>
-                <p className="text-xs text-gray-500">{datosSeguro.horas.toFixed(1)}h</p>
-              </div>
-            );
-          })}
+              return (
+                <div key={tipo} className="text-center p-2 bg-gray-50 rounded-lg">
+                  <div
+                    className="w-3 h-3 rounded-full mx-auto mb-2"
+                    style={{ backgroundColor: colorTipo }}
+                  />
+                  <p className="text-xs text-gray-600 capitalize">{tipoMostrado}</p>
+                  <p className="font-semibold text-sm">{formatTurnosCount(datosSeguro.turnos)}</p>
+                  <p className="text-xs text-gray-500">{datosSeguro.horas.toFixed(1)}h</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

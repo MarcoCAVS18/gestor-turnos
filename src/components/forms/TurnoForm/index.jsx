@@ -298,58 +298,195 @@ const TurnoForm = ({
           </div>
         </div>
 
-        {/* NUEVA SECCIÓN: DESCANSO (SMOKO) - Solo mostrar si está habilitado */}
-        {smokoEnabled && duracion && duracion.totalMinutos > smokoMinutes && (
-          <div className="w-full">
-            <div 
-              className="p-4 rounded-lg border"
-              style={{ 
-                backgroundColor: colors.transparent5,
-                borderColor: colors.transparent20 
-              }}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center">
-                  <Coffee size={16} style={{ color: colors.primary }} className="mr-2" />
-                  <span className="text-sm font-medium text-gray-700">
-                    ¿Tuviste descanso?
-                  </span>
-                </div>
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={formData.tuvoDescanso}
-                    onChange={(e) => handleInputChange('tuvoDescanso', e.target.checked)}
-                    className="rounded w-4 h-4 mr-2"
-                    style={{ accentColor: colors.primary }}
-                  />
-                  <span className="text-sm text-gray-600">
-                    Sí, tuve descanso
-                  </span>
-                </label>
-              </div>
+{/* NUEVA SECCIÓN: DESCANSO (SMOKO) - OPTIMIZADA PARA MÓVIL */}
+{smokoEnabled && duracion && duracion.totalMinutos > smokoMinutes && (
+  <div className="w-full">
+    <div 
+      className={`
+        rounded-lg border
+        ${isMobile ? 'p-4 space-y-4' : 'p-4 space-y-3'}
+      `}
+      style={{ 
+        backgroundColor: colors.transparent5,
+        borderColor: colors.transparent20 
+      }}
+    >
+      {/* Header con título y toggle customizado */}
+      <div className={`
+        flex items-center justify-between 
+        ${isMobile ? 'pb-2 border-b border-gray-200' : ''}
+      `}>
+        <div className="flex items-center flex-1">
+          <Coffee 
+            size={isMobile ? 18 : 16} 
+            style={{ color: colors.primary }} 
+            className="mr-2 flex-shrink-0" 
+          />
+          <span className={`font-medium text-gray-700 ${isMobile ? 'text-base' : 'text-sm'}`}>
+            ¿Tuviste descanso?
+          </span>
+        </div>
 
-              {/* Información del cálculo */}
-              <div className="text-xs text-gray-600 space-y-1">
-                <p>
-                  • Tiempo programado: <strong>{Math.floor(duracion.totalMinutos / 60)}h {duracion.totalMinutos % 60}min</strong>
-                </p>
-                {formData.tuvoDescanso ? (
-                  <>
-                    <p>• Descanso configurado: <strong>{smokoMinutes} minutos</strong></p>
-                    <p style={{ color: colors.primary }}>
-                      • Tiempo pagado: <strong>{duracion.horas}h {duracion.minutos}min</strong>
-                    </p>
-                  </>
-                ) : (
-                  <p style={{ color: colors.primary }}>
-                    • Tiempo pagado: <strong>{Math.floor(duracion.totalMinutos / 60)}h {duracion.totalMinutos % 60}min</strong> (sin descuento)
-                  </p>
-                )}
+        {/* Toggle Switch Customizado */}
+        <label className="relative inline-flex items-center cursor-pointer">
+          {/* Input oculto */}
+          <input
+            type="checkbox"
+            checked={formData.tuvoDescanso}
+            onChange={(e) => handleInputChange('tuvoDescanso', e.target.checked)}
+            className="sr-only peer"
+          />
+          
+          {/* Switch personalizado */}
+          <div className={`
+            relative bg-gray-200 rounded-full peer 
+            peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2
+            peer-checked:after:translate-x-full peer-checked:after:border-white 
+            after:content-[''] after:absolute after:bg-white after:border-gray-300 
+            after:border after:rounded-full after:transition-all
+            ${isMobile 
+              ? 'w-12 h-6 after:top-[2px] after:left-[2px] after:h-5 after:w-5' 
+              : 'w-10 h-5 after:top-[1px] after:left-[1px] after:h-4 after:w-4'
+            }
+          `}
+          style={{
+            '--tw-ring-color': colors.primary,
+            backgroundColor: formData.tuvoDescanso ? colors.primary : undefined
+          }}
+          />
+          
+          {/* Texto del toggle */}
+          <span className={`
+            ml-3 font-medium
+            ${isMobile ? 'text-sm' : 'text-xs'}
+            ${formData.tuvoDescanso ? 'text-green-700' : 'text-gray-600'}
+          `}>
+            {formData.tuvoDescanso ? 'Sí' : 'No'}
+          </span>
+        </label>
+      </div>
+
+      {/* Información del cálculo - LAYOUT RESPONSIVO */}
+      <div className={`
+        ${isMobile ? 'space-y-3' : 'space-y-2'}
+        ${isMobile ? 'text-sm' : 'text-xs'}
+        text-gray-600
+      `}>
+        {/* Tiempo programado */}
+        <div className={`
+          flex items-center justify-between p-2 rounded
+          ${isMobile ? 'bg-blue-50' : 'bg-gray-50'}
+        `}>
+          <div className="flex items-center">
+            <div className={`
+              rounded-full flex items-center justify-center mr-2
+              ${isMobile ? 'w-6 h-6 text-xs' : 'w-5 h-5 text-xs'}
+            `}
+            style={{ backgroundColor: colors.transparent20, color: colors.primary }}>
+              <Clock size={isMobile ? 12 : 10} />
+            </div>
+            <span className={isMobile ? 'text-sm' : 'text-xs'}>Tiempo programado:</span>
+          </div>
+          <span className={`font-semibold ${isMobile ? 'text-sm' : 'text-xs'}`}>
+            {Math.floor(duracion.totalMinutos / 60)}h {duracion.totalMinutos % 60}min
+          </span>
+        </div>
+
+        {formData.tuvoDescanso ? (
+          <>
+            {/* Descanso configurado */}
+            <div className={`
+              flex items-center justify-between p-2 rounded
+              ${isMobile ? 'bg-orange-50' : 'bg-gray-50'}
+            `}>
+              <div className="flex items-center">
+                <div className={`
+                  rounded-full flex items-center justify-center mr-2
+                  ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
+                `}
+                style={{ backgroundColor: '#FED7AA', color: '#EA580C' }}>
+                  <Coffee size={isMobile ? 10 : 8} />
+                </div>
+                <span className={isMobile ? 'text-sm' : 'text-xs'}>Descanso configurado:</span>
+              </div>
+              <span className={`font-semibold ${isMobile ? 'text-sm' : 'text-xs'}`}>
+                {smokoMinutes} minutos
+              </span>
+            </div>
+
+            {/* Tiempo pagado */}
+            <div className={`
+              flex items-center justify-between p-2 rounded border
+              ${isMobile ? 'bg-green-50 border-green-200' : 'bg-gray-50'}
+            `}
+            style={{ 
+              backgroundColor: isMobile ? colors.transparent10 : undefined,
+              borderColor: isMobile ? colors.transparent30 : undefined
+            }}>
+              <div className="flex items-center">
+                <div className={`
+                  rounded-full flex items-center justify-center mr-2
+                  ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
+                `}
+                style={{ backgroundColor: colors.primary, color: 'white' }}>
+                  <span className={`font-bold ${isMobile ? 'text-xs' : 'text-[10px]'}`}>$</span>
+                </div>
+                <span className={`font-medium ${isMobile ? 'text-sm' : 'text-xs'}`}
+                      style={{ color: colors.primary }}>
+                  Tiempo pagado:
+                </span>
+              </div>
+              <span className={`font-bold ${isMobile ? 'text-sm' : 'text-xs'}`}
+                    style={{ color: colors.primary }}>
+                {duracion.horas}h {duracion.minutos}min
+              </span>
+            </div>
+          </>
+        ) : (
+          /* Sin descuento aplicado */
+          <div className={`
+            flex items-center justify-between p-2 rounded border
+            ${isMobile ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'}
+          `}
+          style={{ 
+            backgroundColor: isMobile ? colors.transparent10 : undefined,
+            borderColor: isMobile ? colors.transparent30 : undefined
+          }}>
+            <div className="flex items-center">
+              <div className={`
+                rounded-full flex items-center justify-center mr-2
+                ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
+              `}
+              style={{ backgroundColor: colors.primary, color: 'white' }}>
+                <span className={`font-bold ${isMobile ? 'text-xs' : 'text-[10px]'}`}>$</span>
+              </div>
+              <span className={`font-medium ${isMobile ? 'text-sm' : 'text-xs'}`}
+                    style={{ color: colors.primary }}>
+                Tiempo pagado:
+              </span>
+            </div>
+            <div className="text-right">
+              <div className={`font-bold ${isMobile ? 'text-sm' : 'text-xs'}`}
+                   style={{ color: colors.primary }}>
+                {Math.floor(duracion.totalMinutos / 60)}h {duracion.totalMinutos % 60}min
+              </div>
+              <div className={`${isMobile ? 'text-xs' : 'text-[10px]'} text-gray-500`}>
+                (sin descuento)
               </div>
             </div>
           </div>
         )}
+
+        {/* Mensaje informativo en móvil */}
+        {isMobile && (
+          <div className="mt-3 p-2 bg-gray-50 rounded text-xs text-gray-600 text-center">
+            💡 El descuento se aplica automáticamente según tu configuración
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+)}
 
         {/* Campo de notas */}
         <div className="w-full">

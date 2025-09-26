@@ -1,4 +1,4 @@
-// src/pages/Estadisticas.jsx - Layout actualizado
+// src/pages/Estadisticas.jsx - Layout actualizado con cards de Smoko
 
 import React, { useState } from 'react';
 import { Truck } from 'lucide-react';
@@ -14,6 +14,10 @@ import DailyDistribution from '../components/stats/DailyDistribution';
 import ShiftTypeStats from '../components/stats/ShiftTypeStats';
 import InteractiveCharts from '../components/stats/InteractiveCharts';
 import MostProductiveDay from '../components/stats/MostProductiveDay';
+
+// NUEVAS IMPORTACIONES - Cards de Smoko
+import SmokoStatusCard from '../components/stats/SmokoStatusCard';
+import SmokoTimeCard from '../components/stats/SmokoTimeCard';
 
 import ResumenDelivery from '../components/stats/ResumenDelivery';
 import EficienciaVehiculos from '../components/stats/EficienciaVehiculos';
@@ -69,13 +73,19 @@ const Estadisticas = () => {
               />
             </div>
 
-            {/* CONTENEDOR 3: Stats Grid + Día más productivo */}
+            {/* CONTENEDOR 3: Stats Grid + Día más productivo + NUEVAS CARDS SMOKO */}
             <div className="lg:col-span-1 space-y-6">
               <WeeklyStatsGrid datos={datosActuales} />
 
               {/* Día más productivo */}
               <div className="bg-white rounded-xl shadow-md p-3">
                 <MostProductiveDay diaMasProductivo={datosActuales.diaMasProductivo} />
+              </div>
+
+              {/* NUEVAS CARDS SMOKO - Grid de 2 columnas en el espacio señalado */}
+              <div className="grid grid-cols-2 gap-4">
+                <SmokoStatusCard />
+                <SmokoTimeCard />
               </div>
             </div>
           </div>
@@ -96,6 +106,12 @@ const Estadisticas = () => {
             {/* Día más productivo en móvil */}
             <div className="bg-white rounded-xl shadow-md p-4">
               <MostProductiveDay diaMasProductivo={datosActuales.diaMasProductivo} />
+            </div>
+
+            {/* NUEVAS CARDS SMOKO en móvil - Grid de 2 columnas */}
+            <div className="grid grid-cols-2 gap-4">
+              <SmokoStatusCard />
+              <SmokoTimeCard />
             </div>
 
             {/* Comparación semanal */}
