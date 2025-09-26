@@ -298,58 +298,195 @@ const TurnoForm = (***REMOVED***
           </div>
         </div>
 
-        ***REMOVED***/* NUEVA SECCIÓN: DESCANSO (SMOKO) - Solo mostrar si está habilitado */***REMOVED***
-        ***REMOVED***smokoEnabled && duracion && duracion.totalMinutos > smokoMinutes && (
-          <div className="w-full">
-            <div 
-              className="p-4 rounded-lg border"
-              style=***REMOVED******REMOVED*** 
-                backgroundColor: colors.transparent5,
-                borderColor: colors.transparent20 
-              ***REMOVED******REMOVED***
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center">
-                  <Coffee size=***REMOVED***16***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-                  <span className="text-sm font-medium text-gray-700">
-                    ¿Tuviste descanso?
-                  </span>
-                </div>
-                <label className="flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked=***REMOVED***formData.tuvoDescanso***REMOVED***
-                    onChange=***REMOVED***(e) => handleInputChange('tuvoDescanso', e.target.checked)***REMOVED***
-                    className="rounded w-4 h-4 mr-2"
-                    style=***REMOVED******REMOVED*** accentColor: colors.primary ***REMOVED******REMOVED***
-                  />
-                  <span className="text-sm text-gray-600">
-                    Sí, tuve descanso
-                  </span>
-                </label>
-              </div>
+***REMOVED***/* NUEVA SECCIÓN: DESCANSO (SMOKO) - OPTIMIZADA PARA MÓVIL */***REMOVED***
+***REMOVED***smokoEnabled && duracion && duracion.totalMinutos > smokoMinutes && (
+  <div className="w-full">
+    <div 
+      className=***REMOVED***`
+        rounded-lg border
+        $***REMOVED***isMobile ? 'p-4 space-y-4' : 'p-4 space-y-3'***REMOVED***
+      `***REMOVED***
+      style=***REMOVED******REMOVED*** 
+        backgroundColor: colors.transparent5,
+        borderColor: colors.transparent20 
+      ***REMOVED******REMOVED***
+    >
+      ***REMOVED***/* Header con título y toggle customizado */***REMOVED***
+      <div className=***REMOVED***`
+        flex items-center justify-between 
+        $***REMOVED***isMobile ? 'pb-2 border-b border-gray-200' : ''***REMOVED***
+      `***REMOVED***>
+        <div className="flex items-center flex-1">
+          <Coffee 
+            size=***REMOVED***isMobile ? 18 : 16***REMOVED*** 
+            style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** 
+            className="mr-2 flex-shrink-0" 
+          />
+          <span className=***REMOVED***`font-medium text-gray-700 $***REMOVED***isMobile ? 'text-base' : 'text-sm'***REMOVED***`***REMOVED***>
+            ¿Tuviste descanso?
+          </span>
+        </div>
 
-              ***REMOVED***/* Información del cálculo */***REMOVED***
-              <div className="text-xs text-gray-600 space-y-1">
-                <p>
-                  • Tiempo programado: <strong>***REMOVED***Math.floor(duracion.totalMinutos / 60)***REMOVED***h ***REMOVED***duracion.totalMinutos % 60***REMOVED***min</strong>
-                </p>
-                ***REMOVED***formData.tuvoDescanso ? (
-                  <>
-                    <p>• Descanso configurado: <strong>***REMOVED***smokoMinutes***REMOVED*** minutos</strong></p>
-                    <p style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                      • Tiempo pagado: <strong>***REMOVED***duracion.horas***REMOVED***h ***REMOVED***duracion.minutos***REMOVED***min</strong>
-                    </p>
-                  </>
-                ) : (
-                  <p style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                    • Tiempo pagado: <strong>***REMOVED***Math.floor(duracion.totalMinutos / 60)***REMOVED***h ***REMOVED***duracion.totalMinutos % 60***REMOVED***min</strong> (sin descuento)
-                  </p>
-                )***REMOVED***
+        ***REMOVED***/* Toggle Switch Customizado */***REMOVED***
+        <label className="relative inline-flex items-center cursor-pointer">
+          ***REMOVED***/* Input oculto */***REMOVED***
+          <input
+            type="checkbox"
+            checked=***REMOVED***formData.tuvoDescanso***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('tuvoDescanso', e.target.checked)***REMOVED***
+            className="sr-only peer"
+          />
+          
+          ***REMOVED***/* Switch personalizado */***REMOVED***
+          <div className=***REMOVED***`
+            relative bg-gray-200 rounded-full peer 
+            peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2
+            peer-checked:after:translate-x-full peer-checked:after:border-white 
+            after:content-[''] after:absolute after:bg-white after:border-gray-300 
+            after:border after:rounded-full after:transition-all
+            $***REMOVED***isMobile 
+              ? 'w-12 h-6 after:top-[2px] after:left-[2px] after:h-5 after:w-5' 
+              : 'w-10 h-5 after:top-[1px] after:left-[1px] after:h-4 after:w-4'
+            ***REMOVED***
+          `***REMOVED***
+          style=***REMOVED******REMOVED***
+            '--tw-ring-color': colors.primary,
+            backgroundColor: formData.tuvoDescanso ? colors.primary : undefined
+          ***REMOVED******REMOVED***
+          />
+          
+          ***REMOVED***/* Texto del toggle */***REMOVED***
+          <span className=***REMOVED***`
+            ml-3 font-medium
+            $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***
+            $***REMOVED***formData.tuvoDescanso ? 'text-green-700' : 'text-gray-600'***REMOVED***
+          `***REMOVED***>
+            ***REMOVED***formData.tuvoDescanso ? 'Sí' : 'No'***REMOVED***
+          </span>
+        </label>
+      </div>
+
+      ***REMOVED***/* Información del cálculo - LAYOUT RESPONSIVO */***REMOVED***
+      <div className=***REMOVED***`
+        $***REMOVED***isMobile ? 'space-y-3' : 'space-y-2'***REMOVED***
+        $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***
+        text-gray-600
+      `***REMOVED***>
+        ***REMOVED***/* Tiempo programado */***REMOVED***
+        <div className=***REMOVED***`
+          flex items-center justify-between p-2 rounded
+          $***REMOVED***isMobile ? 'bg-blue-50' : 'bg-gray-50'***REMOVED***
+        `***REMOVED***>
+          <div className="flex items-center">
+            <div className=***REMOVED***`
+              rounded-full flex items-center justify-center mr-2
+              $***REMOVED***isMobile ? 'w-6 h-6 text-xs' : 'w-5 h-5 text-xs'***REMOVED***
+            `***REMOVED***
+            style=***REMOVED******REMOVED*** backgroundColor: colors.transparent20, color: colors.primary ***REMOVED******REMOVED***>
+              <Clock size=***REMOVED***isMobile ? 12 : 10***REMOVED*** />
+            </div>
+            <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Tiempo programado:</span>
+          </div>
+          <span className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***>
+            ***REMOVED***Math.floor(duracion.totalMinutos / 60)***REMOVED***h ***REMOVED***duracion.totalMinutos % 60***REMOVED***min
+          </span>
+        </div>
+
+        ***REMOVED***formData.tuvoDescanso ? (
+          <>
+            ***REMOVED***/* Descanso configurado */***REMOVED***
+            <div className=***REMOVED***`
+              flex items-center justify-between p-2 rounded
+              $***REMOVED***isMobile ? 'bg-orange-50' : 'bg-gray-50'***REMOVED***
+            `***REMOVED***>
+              <div className="flex items-center">
+                <div className=***REMOVED***`
+                  rounded-full flex items-center justify-center mr-2
+                  $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***
+                `***REMOVED***
+                style=***REMOVED******REMOVED*** backgroundColor: '#FED7AA', color: '#EA580C' ***REMOVED******REMOVED***>
+                  <Coffee size=***REMOVED***isMobile ? 10 : 8***REMOVED*** />
+                </div>
+                <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Descanso configurado:</span>
+              </div>
+              <span className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***>
+                ***REMOVED***smokoMinutes***REMOVED*** minutos
+              </span>
+            </div>
+
+            ***REMOVED***/* Tiempo pagado */***REMOVED***
+            <div className=***REMOVED***`
+              flex items-center justify-between p-2 rounded border
+              $***REMOVED***isMobile ? 'bg-green-50 border-green-200' : 'bg-gray-50'***REMOVED***
+            `***REMOVED***
+            style=***REMOVED******REMOVED*** 
+              backgroundColor: isMobile ? colors.transparent10 : undefined,
+              borderColor: isMobile ? colors.transparent30 : undefined
+            ***REMOVED******REMOVED***>
+              <div className="flex items-center">
+                <div className=***REMOVED***`
+                  rounded-full flex items-center justify-center mr-2
+                  $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***
+                `***REMOVED***
+                style=***REMOVED******REMOVED*** backgroundColor: colors.primary, color: 'white' ***REMOVED******REMOVED***>
+                  <span className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-xs' : 'text-[10px]'***REMOVED***`***REMOVED***>$</span>
+                </div>
+                <span className=***REMOVED***`font-medium $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
+                      style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                  Tiempo pagado:
+                </span>
+              </div>
+              <span className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
+                    style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                ***REMOVED***duracion.horas***REMOVED***h ***REMOVED***duracion.minutos***REMOVED***min
+              </span>
+            </div>
+          </>
+        ) : (
+          /* Sin descuento aplicado */
+          <div className=***REMOVED***`
+            flex items-center justify-between p-2 rounded border
+            $***REMOVED***isMobile ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'***REMOVED***
+          `***REMOVED***
+          style=***REMOVED******REMOVED*** 
+            backgroundColor: isMobile ? colors.transparent10 : undefined,
+            borderColor: isMobile ? colors.transparent30 : undefined
+          ***REMOVED******REMOVED***>
+            <div className="flex items-center">
+              <div className=***REMOVED***`
+                rounded-full flex items-center justify-center mr-2
+                $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***
+              `***REMOVED***
+              style=***REMOVED******REMOVED*** backgroundColor: colors.primary, color: 'white' ***REMOVED******REMOVED***>
+                <span className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-xs' : 'text-[10px]'***REMOVED***`***REMOVED***>$</span>
+              </div>
+              <span className=***REMOVED***`font-medium $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
+                    style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                Tiempo pagado:
+              </span>
+            </div>
+            <div className="text-right">
+              <div className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
+                   style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                ***REMOVED***Math.floor(duracion.totalMinutos / 60)***REMOVED***h ***REMOVED***duracion.totalMinutos % 60***REMOVED***min
+              </div>
+              <div className=***REMOVED***`$***REMOVED***isMobile ? 'text-xs' : 'text-[10px]'***REMOVED*** text-gray-500`***REMOVED***>
+                (sin descuento)
               </div>
             </div>
           </div>
         )***REMOVED***
+
+        ***REMOVED***/* Mensaje informativo en móvil */***REMOVED***
+        ***REMOVED***isMobile && (
+          <div className="mt-3 p-2 bg-gray-50 rounded text-xs text-gray-600 text-center">
+            💡 El descuento se aplica automáticamente según tu configuración
+          </div>
+        )***REMOVED***
+      </div>
+    </div>
+  </div>
+)***REMOVED***
 
         ***REMOVED***/* Campo de notas */***REMOVED***
         <div className="w-full">

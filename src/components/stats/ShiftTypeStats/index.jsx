@@ -31,15 +31,15 @@ const ShiftTypeStats = (***REMOVED*** tiposDeTurno = ***REMOVED******REMOVED*** 
   ***REMOVED***;
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-4">
+    <div className="bg-white rounded-xl shadow-md p-4 h-72"> 
       <div className="flex items-center mb-4">
         <Zap size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
         <h3 className="font-semibold">***REMOVED***tituloPlural***REMOVED***</h3>
       </div>
 
       ***REMOVED***Object.keys(tiposValidos).length === 0 ? (
-        // Estado vacío cuando no hay datos
-        <div className="text-center py-8">
+        // Estado vacío cuando no hay datos - centrado verticalmente
+        <div className="flex flex-col items-center justify-center h-56"> 
           <Zap size=***REMOVED***48***REMOVED*** className="mx-auto mb-3 opacity-30" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
           <h4 className="text-sm font-medium text-gray-600 mb-1">
             Sin datos de tipos de turno
@@ -49,30 +49,32 @@ const ShiftTypeStats = (***REMOVED*** tiposDeTurno = ***REMOVED******REMOVED*** 
           </p>
         </div>
       ) : (
-        // Estado con datos
-        <div className="grid grid-cols-2 gap-4">
-          ***REMOVED***Object.entries(tiposValidos).map(([tipo, datos]) => ***REMOVED***
-            const datosSeguro = ***REMOVED***
-              turnos: (datos && typeof datos.turnos === 'number') ? datos.turnos : 0,
-              horas: (datos && typeof datos.horas === 'number') ? datos.horas : 0,
-              ganancia: (datos && typeof datos.ganancia === 'number') ? datos.ganancia : 0
-            ***REMOVED***;
+        // Estado con datos - grid que ocupa el espacio disponible
+        <div className="h-56 overflow-y-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-3 min-h-full items-start">
+            ***REMOVED***Object.entries(tiposValidos).map(([tipo, datos]) => ***REMOVED***
+              const datosSeguro = ***REMOVED***
+                turnos: (datos && typeof datos.turnos === 'number') ? datos.turnos : 0,
+                horas: (datos && typeof datos.horas === 'number') ? datos.horas : 0,
+                ganancia: (datos && typeof datos.ganancia === 'number') ? datos.ganancia : 0
+              ***REMOVED***;
 
-            const tipoMostrado = tipo === 'undefined' ? 'MIXTO' : tipo.toUpperCase();
-            const colorTipo = getColorForType(tipo);
+              const tipoMostrado = tipo === 'undefined' ? 'MIXTO' : tipo.toUpperCase();
+              const colorTipo = getColorForType(tipo);
 
-            return (
-              <div key=***REMOVED***tipo***REMOVED*** className="text-center p-3 bg-gray-50 rounded-lg">
-                <div
-                  className="w-3 h-3 rounded-full mx-auto mb-2"
-                  style=***REMOVED******REMOVED*** backgroundColor: colorTipo ***REMOVED******REMOVED***
-                />
-                <p className="text-xs text-gray-600 capitalize">***REMOVED***tipoMostrado***REMOVED***</p>
-                <p className="font-semibold">***REMOVED***formatTurnosCount(datosSeguro.turnos)***REMOVED***</p>
-                <p className="text-xs text-gray-500">***REMOVED***datosSeguro.horas.toFixed(1)***REMOVED***h</p>
-              </div>
-            );
-          ***REMOVED***)***REMOVED***
+              return (
+                <div key=***REMOVED***tipo***REMOVED*** className="text-center p-2 bg-gray-50 rounded-lg">
+                  <div
+                    className="w-3 h-3 rounded-full mx-auto mb-2"
+                    style=***REMOVED******REMOVED*** backgroundColor: colorTipo ***REMOVED******REMOVED***
+                  />
+                  <p className="text-xs text-gray-600 capitalize">***REMOVED***tipoMostrado***REMOVED***</p>
+                  <p className="font-semibold text-sm">***REMOVED***formatTurnosCount(datosSeguro.turnos)***REMOVED***</p>
+                  <p className="text-xs text-gray-500">***REMOVED***datosSeguro.horas.toFixed(1)***REMOVED***h</p>
+                </div>
+              );
+            ***REMOVED***)***REMOVED***
+          </div>
         </div>
       )***REMOVED***
     </div>
