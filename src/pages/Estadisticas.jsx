@@ -1,4 +1,4 @@
-// src/pages/Estadisticas.jsx - Layout actualizado
+// src/pages/Estadisticas.jsx - Layout actualizado con cards de Smoko
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Truck ***REMOVED*** from 'lucide-react';
@@ -14,6 +14,10 @@ import DailyDistribution from '../components/stats/DailyDistribution';
 import ShiftTypeStats from '../components/stats/ShiftTypeStats';
 import InteractiveCharts from '../components/stats/InteractiveCharts';
 import MostProductiveDay from '../components/stats/MostProductiveDay';
+
+// NUEVAS IMPORTACIONES - Cards de Smoko
+import SmokoStatusCard from '../components/stats/SmokoStatusCard';
+import SmokoTimeCard from '../components/stats/SmokoTimeCard';
 
 import ResumenDelivery from '../components/stats/ResumenDelivery';
 import EficienciaVehiculos from '../components/stats/EficienciaVehiculos';
@@ -69,13 +73,19 @@ const Estadisticas = () => ***REMOVED***
               />
             </div>
 
-            ***REMOVED***/* CONTENEDOR 3: Stats Grid + Día más productivo */***REMOVED***
+            ***REMOVED***/* CONTENEDOR 3: Stats Grid + Día más productivo + NUEVAS CARDS SMOKO */***REMOVED***
             <div className="lg:col-span-1 space-y-6">
               <WeeklyStatsGrid datos=***REMOVED***datosActuales***REMOVED*** />
 
               ***REMOVED***/* Día más productivo */***REMOVED***
               <div className="bg-white rounded-xl shadow-md p-3">
                 <MostProductiveDay diaMasProductivo=***REMOVED***datosActuales.diaMasProductivo***REMOVED*** />
+              </div>
+
+              ***REMOVED***/* NUEVAS CARDS SMOKO - Grid de 2 columnas en el espacio señalado */***REMOVED***
+              <div className="grid grid-cols-2 gap-4">
+                <SmokoStatusCard />
+                <SmokoTimeCard />
               </div>
             </div>
           </div>
@@ -96,6 +106,12 @@ const Estadisticas = () => ***REMOVED***
             ***REMOVED***/* Día más productivo en móvil */***REMOVED***
             <div className="bg-white rounded-xl shadow-md p-4">
               <MostProductiveDay diaMasProductivo=***REMOVED***datosActuales.diaMasProductivo***REMOVED*** />
+            </div>
+
+            ***REMOVED***/* NUEVAS CARDS SMOKO en móvil - Grid de 2 columnas */***REMOVED***
+            <div className="grid grid-cols-2 gap-4">
+              <SmokoStatusCard />
+              <SmokoTimeCard />
             </div>
 
             ***REMOVED***/* Comparación semanal */***REMOVED***
