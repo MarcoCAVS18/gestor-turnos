@@ -1,4 +1,4 @@
-// src/components/ui/Card/index.jsx
+// src/components/ui/Card/index.jsx - Con variante transparent
 
 import React from 'react';
 
@@ -72,7 +72,8 @@ const Card = (***REMOVED***
       elevated: 'bg-white',
       outlined: 'bg-white border-2 border-gray-300',
       ghost: 'bg-transparent',
-      gradient: 'bg-gradient-to-br from-white to-gray-50 border border-gray-200'
+      gradient: 'bg-gradient-to-br from-white to-gray-50 border border-gray-200',
+      transparent: 'bg-transparent border-none shadow-none'
     ***REMOVED***;
     return variants[variant] || variants.default;
   ***REMOVED***;
@@ -94,7 +95,7 @@ const Card = (***REMOVED***
   const combinedClassName = `
     $***REMOVED***getVariantClasses()***REMOVED***
     $***REMOVED***getPaddingClasses()***REMOVED*** 
-    $***REMOVED***getShadowClasses()***REMOVED*** 
+    $***REMOVED***variant !== 'transparent' ? getShadowClasses() : ''***REMOVED*** 
     $***REMOVED***getRoundedClasses()***REMOVED*** 
     $***REMOVED***getBorderClasses()***REMOVED***
     $***REMOVED***getInteractiveClasses()***REMOVED***

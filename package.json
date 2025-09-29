@@ -11,6 +11,8 @@
     "framer-motion": "^12.12.1",
     "git-filter-repo": "^0.0.30",
     "gsap": "^3.13.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.3",
     "lucide-react": "^0.511.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
