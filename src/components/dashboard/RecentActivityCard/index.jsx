@@ -11,7 +11,19 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
   const colors = useThemeColors();
   const navigate = useNavigate();
 
-  // Obtener los últimos 2 turnos (reducido de 3)
+  // Determinar límite según dispositivo
+  const [limite, setLimite] = React.useState(window.innerWidth >= 768 ? 4 : 2);
+
+  React.useEffect(() => ***REMOVED***
+    const handleResize = () => ***REMOVED***
+      setLimite(window.innerWidth >= 768 ? 4 : 2);
+    ***REMOVED***;
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  ***REMOVED***, []);
+
+  // Obtener turnos recientes con límite responsivo
   const turnosRecientes = React.useMemo(() => ***REMOVED***
     if (!Array.isArray(todosLosTurnos)) return [];
     
@@ -21,8 +33,8 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
         const fechaB = new Date((b.fechaInicio || b.fecha) + 'T' + b.horaInicio);
         return fechaB - fechaA;
       ***REMOVED***)
-      .slice(0, 2); // Solo 2 turnos
-  ***REMOVED***, [todosLosTurnos]);
+      .slice(0, limite);
+  ***REMOVED***, [todosLosTurnos, limite]);
 
   // Función para obtener trabajo
   const getTrabajo = (trabajoId) => ***REMOVED***
@@ -151,9 +163,9 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
 
       ***REMOVED***/* Total simple */***REMOVED***
       <div className="mt-4 pt-3 border-t border-gray-200">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">Total reciente:</span>
-          <span className="font-semibold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-600">Total reciente:</span>
+          <span className="text-lg font-bold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
             ***REMOVED***formatCurrency(
               turnosRecientes.reduce((total, turno) => total + calcularGananciaDisplay(turno), 0)
             )***REMOVED***
