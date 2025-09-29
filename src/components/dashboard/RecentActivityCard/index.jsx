@@ -11,7 +11,19 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
 
-  // Obtener los últimos 2 turnos (reducido de 3)
+  // Determinar límite según dispositivo
+  const [limite, setLimite] = React.useState(window.innerWidth >= 768 ? 4 : 2);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setLimite(window.innerWidth >= 768 ? 4 : 2);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Obtener turnos recientes con límite responsivo
   const turnosRecientes = React.useMemo(() => {
     if (!Array.isArray(todosLosTurnos)) return [];
     
@@ -21,8 +33,8 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
         const fechaB = new Date((b.fechaInicio || b.fecha) + 'T' + b.horaInicio);
         return fechaB - fechaA;
       })
-      .slice(0, 2); // Solo 2 turnos
-  }, [todosLosTurnos]);
+      .slice(0, limite);
+  }, [todosLosTurnos, limite]);
 
   // Función para obtener trabajo
   const getTrabajo = (trabajoId) => {
@@ -151,9 +163,9 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
 
       {/* Total simple */}
       <div className="mt-4 pt-3 border-t border-gray-200">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-600">Total reciente:</span>
-          <span className="font-semibold" style={{ color: colors.primary }}>
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-600">Total reciente:</span>
+          <span className="text-lg font-bold" style={{ color: colors.primary }}>
             {formatCurrency(
               turnosRecientes.reduce((total, turno) => total + calcularGananciaDisplay(turno), 0)
             )}
