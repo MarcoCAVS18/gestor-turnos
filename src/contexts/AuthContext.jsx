@@ -13,6 +13,7 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '../services/firebase';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { uploadProfilePhoto, deleteProfilePhoto, getDefaultProfilePhoto } from '../services/profilePhotoService';
 
 // Crear el contexto
 const AuthContext = createContext();
@@ -27,6 +28,7 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [profilePhotoURL, setProfilePhotoURL] = useState(getDefaultProfilePhoto());
 
   // Registrar usuario
   const signup = async (email, password, displayName) => {
@@ -159,23 +161,23 @@ export const AuthProvider = ({ children }) => {
   const updateUserName = async (displayName) => {
     try {
       setError('');
-      
+
       // Validar que hay un usuario y un displayName válido
       if (!currentUser) throw new Error('No hay usuario logueado');
       if (!displayName.trim()) throw new Error('El nombre no puede estar vacío');
-      
+
       // Actualizar el displayName en Firebase Auth
       await updateProfile(currentUser, { displayName });
-      
+
       // Actualizar en Firestore también
       const userDocRef = doc(db, 'usuarios', currentUser.uid);
-      await updateDoc(userDocRef, { 
-        displayName, 
-        fechaActualizacion: new Date() 
+      await updateDoc(userDocRef, {
+        displayName,
+        fechaActualizacion: new Date()
       });
-      
+
       setCurrentUser({...currentUser, displayName});
-      
+
       return true;
     } catch (error) {
       setError('Error al actualizar nombre: ' + error.message);
@@ -183,10 +185,101 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Actualizar foto de perfil
+  const updateProfilePhoto = async (file) => {
+    try {
+      setError('');
+
+      if (!currentUser) throw new Error('No hay usuario logueado');
+
+      // Subir imagen a Storage y obtener URL
+      const photoURL = await uploadProfilePhoto(currentUser.uid, file);
+
+      // Actualizar en Firebase Auth
+      await updateProfile(currentUser, { photoURL });
+
+      // Actualizar en Firestore
+      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      await updateDoc(userDocRef, {
+        photoURL,
+        fechaActualizacion: new Date()
+      });
+
+      // Actualizar estado local
+      setProfilePhotoURL(photoURL);
+      setCurrentUser({...currentUser, photoURL});
+
+      return photoURL;
+    } catch (error) {
+      setError('Error al actualizar foto de perfil: ' + error.message);
+      throw error;
+    }
+  };
+
+  // Eliminar foto de perfil
+  const removeProfilePhoto = async () => {
+    try {
+      setError('');
+
+      if (!currentUser) throw new Error('No hay usuario logueado');
+
+      // Eliminar del Storage
+      await deleteProfilePhoto(currentUser.uid);
+
+      // Actualizar en Firebase Auth (volver a null)
+      await updateProfile(currentUser, { photoURL: null });
+
+      // Actualizar en Firestore
+      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      await updateDoc(userDocRef, {
+        photoURL: null,
+        fechaActualizacion: new Date()
+      });
+
+      // Volver al logo por defecto
+      const defaultPhoto = getDefaultProfilePhoto();
+      setProfilePhotoURL(defaultPhoto);
+      setCurrentUser({...currentUser, photoURL: null});
+
+      return true;
+    } catch (error) {
+      setError('Error al eliminar foto de perfil: ' + error.message);
+      throw error;
+    }
+  };
+
+  // Cargar foto de perfil del usuario
+  const loadProfilePhoto = async (user) => {
+    try {
+      if (!user) {
+        setProfilePhotoURL(getDefaultProfilePhoto());
+        return;
+      }
+
+      // Primero verificar si hay photoURL en Firebase Auth
+      if (user.photoURL) {
+        setProfilePhotoURL(user.photoURL);
+        return;
+      }
+
+      // Si no, verificar en Firestore
+      const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
+      if (userDoc.exists() && userDoc.data().photoURL) {
+        setProfilePhotoURL(userDoc.data().photoURL);
+      } else {
+        setProfilePhotoURL(getDefaultProfilePhoto());
+      }
+    } catch (error) {
+      console.error('Error al cargar foto de perfil:', error);
+      setProfilePhotoURL(getDefaultProfilePhoto());
+    }
+  };
+
   // Monitorear cambios en el estado de autenticación
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+      loadProfilePhoto(user);
       setLoading(false);
     });
 
@@ -197,13 +290,16 @@ export const AuthProvider = ({ children }) => {
     currentUser,
     loading,
     error,
+    profilePhotoURL,
     signup,
     login,
     loginWithGoogle,
     logout,
     resetPassword,
     getUserData,
-    updateUserName
+    updateUserName,
+    updateProfilePhoto,
+    removeProfilePhoto
   };
 
   return (

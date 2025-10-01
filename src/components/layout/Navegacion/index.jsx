@@ -1,10 +1,11 @@
 // src/components/layout/Navegacion/index.jsx
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle } from 'lucide-react';
+import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle, Pencil } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useApp } from '../../../contexts/AppContext';
+import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import './index.css';
 
@@ -12,10 +13,13 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
   const navigate = useNavigate();
   const location = useLocation();
   const { trabajos, trabajosDelivery } = useApp();
+  const { profilePhotoURL, updateProfilePhoto } = useAuth();
   const colors = useThemeColors();
-  
+
   // Estado para el tooltip
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showPhotoEdit, setShowPhotoEdit] = useState(false);
+  const fileInputRef = useRef(null);
   
   const getCurrentView = () => {
     const path = location.pathname;
@@ -105,6 +109,27 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
   const handleLogoClick = () => {
     navigateToView('dashboard');
   };
+
+  // Manejar subida de foto de perfil desde desktop
+  const handlePhotoUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      await updateProfilePhoto(file);
+    } catch (error) {
+      console.error('Error al actualizar foto:', error);
+    } finally {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleEditPhotoClick = (e) => {
+    e.stopPropagation();
+    fileInputRef.current?.click();
+  };
   
   return (
     <>
@@ -167,30 +192,65 @@ const Navegacion = ({ setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTur
       {/* SIDEBAR DESKTOP */}
       <aside className="hidden md:flex md:flex-col w-72 bg-white border-r border-gray-200 shadow-sm h-screen fixed left-0 top-0 z-30">
         
-        {/* HEADER DEL SIDEBAR - MEJORADO CON LOGO */}
+        {/* HEADER DEL SIDEBAR - CON FOTO DE PERFIL */}
         <div className="p-6 border-b border-gray-100">
-          <button 
+          {/* Input oculto para subir foto */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoUpload}
+            className="hidden"
+          />
+
+          <button
             onClick={handleLogoClick}
             className="flex items-center space-x-4 hover:opacity-80 transition-opacity w-full text-left"
           >
-            {/* Logo en lugar del emoji */}
-            <div 
-              className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg"
-              style={{ backgroundColor: colors.primary }}
+            {/* Foto de perfil o Logo con hover edit */}
+            <div
+              className="relative w-14 h-14 rounded-xl overflow-hidden shadow-lg group"
+              onMouseEnter={() => setShowPhotoEdit(true)}
+              onMouseLeave={() => setShowPhotoEdit(false)}
+              style={{
+                backgroundColor: profilePhotoURL?.includes('logo.svg') ? colors.primary : 'transparent'
+              }}
             >
-              <img 
-                src="/assets/SVG/logo.svg" 
-                alt="Logo" 
-                className="w-12 h-12 filter brightness-0 invert"
-                style={{ filter: 'brightness(0) invert(1)' }}
+              <img
+                src={profilePhotoURL}
+                alt="Foto de perfil"
+                className={`w-full h-full ${
+                  profilePhotoURL?.includes('logo.svg')
+                    ? 'object-contain p-2 filter brightness-0 invert'
+                    : 'object-cover'
+                }`}
+                style={
+                  profilePhotoURL?.includes('logo.svg')
+                    ? { filter: 'brightness(0) invert(1)' }
+                    : {}
+                }
               />
+
+              {/* Overlay con ícono de editar al hacer hover */}
+              {showPhotoEdit && (
+                <div
+                  onClick={handleEditPhotoClick}
+                  className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center cursor-pointer transition-opacity"
+                  style={{ backgroundColor: colors.transparent50 }}
+                >
+                  <Pencil className="text-white" size={20} />
+                </div>
+              )}
             </div>
-            
-            {/* Solo el título, sin saludo */}
+
+            {/* Título y subtítulo */}
             <div>
               <h1 className="text-xl font-bold text-gray-900">
-                Gestión de Turnos
+                GestAPP.
               </h1>
+              <p className="text-xs text-gray-500 font-light">
+                Tu gestor de trabajos y turnos
+              </p>
             </div>
           </button>
         </div>

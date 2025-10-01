@@ -3,11 +3,11 @@
 import React from 'react';
 import Card from '../../ui/Card';
 
-const SettingsSection = ({ 
-  icon: Icon, 
-  title, 
-  children, 
-  className = '' 
+const SettingsSection = ({
+  icon: Icon,
+  title,
+  children,
+  className = ''
 }) => {
   return (
     <Card className={`mb-6 ${className}`}>
