@@ -13,6 +13,7 @@ import ***REMOVED***
 ***REMOVED*** from 'firebase/auth';
 import ***REMOVED*** auth, db ***REMOVED*** from '../services/firebase';
 import ***REMOVED*** doc, setDoc, getDoc, updateDoc ***REMOVED*** from 'firebase/firestore';
+import ***REMOVED*** uploadProfilePhoto, deleteProfilePhoto, getDefaultProfilePhoto ***REMOVED*** from '../services/profilePhotoService';
 
 // Crear el contexto
 const AuthContext = createContext();
@@ -27,6 +28,7 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [profilePhotoURL, setProfilePhotoURL] = useState(getDefaultProfilePhoto());
 
   // Registrar usuario
   const signup = async (email, password, displayName) => ***REMOVED***
@@ -159,23 +161,23 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
   const updateUserName = async (displayName) => ***REMOVED***
     try ***REMOVED***
       setError('');
-      
+
       // Validar que hay un usuario y un displayName válido
       if (!currentUser) throw new Error('No hay usuario logueado');
       if (!displayName.trim()) throw new Error('El nombre no puede estar vacío');
-      
+
       // Actualizar el displayName en Firebase Auth
       await updateProfile(currentUser, ***REMOVED*** displayName ***REMOVED***);
-      
+
       // Actualizar en Firestore también
       const userDocRef = doc(db, 'usuarios', currentUser.uid);
-      await updateDoc(userDocRef, ***REMOVED*** 
-        displayName, 
-        fechaActualizacion: new Date() 
+      await updateDoc(userDocRef, ***REMOVED***
+        displayName,
+        fechaActualizacion: new Date()
       ***REMOVED***);
-      
+
       setCurrentUser(***REMOVED***...currentUser, displayName***REMOVED***);
-      
+
       return true;
     ***REMOVED*** catch (error) ***REMOVED***
       setError('Error al actualizar nombre: ' + error.message);
@@ -183,10 +185,101 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
     ***REMOVED***
   ***REMOVED***;
 
+  // Actualizar foto de perfil
+  const updateProfilePhoto = async (file) => ***REMOVED***
+    try ***REMOVED***
+      setError('');
+
+      if (!currentUser) throw new Error('No hay usuario logueado');
+
+      // Subir imagen a Storage y obtener URL
+      const photoURL = await uploadProfilePhoto(currentUser.uid, file);
+
+      // Actualizar en Firebase Auth
+      await updateProfile(currentUser, ***REMOVED*** photoURL ***REMOVED***);
+
+      // Actualizar en Firestore
+      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      await updateDoc(userDocRef, ***REMOVED***
+        photoURL,
+        fechaActualizacion: new Date()
+      ***REMOVED***);
+
+      // Actualizar estado local
+      setProfilePhotoURL(photoURL);
+      setCurrentUser(***REMOVED***...currentUser, photoURL***REMOVED***);
+
+      return photoURL;
+    ***REMOVED*** catch (error) ***REMOVED***
+      setError('Error al actualizar foto de perfil: ' + error.message);
+      throw error;
+    ***REMOVED***
+  ***REMOVED***;
+
+  // Eliminar foto de perfil
+  const removeProfilePhoto = async () => ***REMOVED***
+    try ***REMOVED***
+      setError('');
+
+      if (!currentUser) throw new Error('No hay usuario logueado');
+
+      // Eliminar del Storage
+      await deleteProfilePhoto(currentUser.uid);
+
+      // Actualizar en Firebase Auth (volver a null)
+      await updateProfile(currentUser, ***REMOVED*** photoURL: null ***REMOVED***);
+
+      // Actualizar en Firestore
+      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      await updateDoc(userDocRef, ***REMOVED***
+        photoURL: null,
+        fechaActualizacion: new Date()
+      ***REMOVED***);
+
+      // Volver al logo por defecto
+      const defaultPhoto = getDefaultProfilePhoto();
+      setProfilePhotoURL(defaultPhoto);
+      setCurrentUser(***REMOVED***...currentUser, photoURL: null***REMOVED***);
+
+      return true;
+    ***REMOVED*** catch (error) ***REMOVED***
+      setError('Error al eliminar foto de perfil: ' + error.message);
+      throw error;
+    ***REMOVED***
+  ***REMOVED***;
+
+  // Cargar foto de perfil del usuario
+  const loadProfilePhoto = async (user) => ***REMOVED***
+    try ***REMOVED***
+      if (!user) ***REMOVED***
+        setProfilePhotoURL(getDefaultProfilePhoto());
+        return;
+      ***REMOVED***
+
+      // Primero verificar si hay photoURL en Firebase Auth
+      if (user.photoURL) ***REMOVED***
+        setProfilePhotoURL(user.photoURL);
+        return;
+      ***REMOVED***
+
+      // Si no, verificar en Firestore
+      const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
+      if (userDoc.exists() && userDoc.data().photoURL) ***REMOVED***
+        setProfilePhotoURL(userDoc.data().photoURL);
+      ***REMOVED*** else ***REMOVED***
+        setProfilePhotoURL(getDefaultProfilePhoto());
+      ***REMOVED***
+    ***REMOVED*** catch (error) ***REMOVED***
+      console.error('Error al cargar foto de perfil:', error);
+      setProfilePhotoURL(getDefaultProfilePhoto());
+    ***REMOVED***
+  ***REMOVED***;
+
   // Monitorear cambios en el estado de autenticación
   useEffect(() => ***REMOVED***
     const unsubscribe = onAuthStateChanged(auth, (user) => ***REMOVED***
       setCurrentUser(user);
+      loadProfilePhoto(user);
       setLoading(false);
     ***REMOVED***);
 
@@ -197,13 +290,16 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
     currentUser,
     loading,
     error,
+    profilePhotoURL,
     signup,
     login,
     loginWithGoogle,
     logout,
     resetPassword,
     getUserData,
-    updateUserName
+    updateUserName,
+    updateProfilePhoto,
+    removeProfilePhoto
   ***REMOVED***;
 
   return (

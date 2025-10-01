@@ -1,10 +1,11 @@
 // src/components/layout/Navegacion/index.jsx
 
-import React, ***REMOVED*** useState ***REMOVED*** from 'react';
+import React, ***REMOVED*** useState, useRef ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle, Pencil ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import './index.css';
 
@@ -12,10 +13,13 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
   const navigate = useNavigate();
   const location = useLocation();
   const ***REMOVED*** trabajos, trabajosDelivery ***REMOVED*** = useApp();
+  const ***REMOVED*** profilePhotoURL, updateProfilePhoto ***REMOVED*** = useAuth();
   const colors = useThemeColors();
-  
+
   // Estado para el tooltip
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showPhotoEdit, setShowPhotoEdit] = useState(false);
+  const fileInputRef = useRef(null);
   
   const getCurrentView = () => ***REMOVED***
     const path = location.pathname;
@@ -105,6 +109,27 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
   const handleLogoClick = () => ***REMOVED***
     navigateToView('dashboard');
   ***REMOVED***;
+
+  // Manejar subida de foto de perfil desde desktop
+  const handlePhotoUpload = async (event) => ***REMOVED***
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try ***REMOVED***
+      await updateProfilePhoto(file);
+    ***REMOVED*** catch (error) ***REMOVED***
+      console.error('Error al actualizar foto:', error);
+    ***REMOVED*** finally ***REMOVED***
+      if (fileInputRef.current) ***REMOVED***
+        fileInputRef.current.value = '';
+      ***REMOVED***
+    ***REMOVED***
+  ***REMOVED***;
+
+  const handleEditPhotoClick = (e) => ***REMOVED***
+    e.stopPropagation();
+    fileInputRef.current?.click();
+  ***REMOVED***;
   
   return (
     <>
@@ -167,30 +192,65 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
       ***REMOVED***/* SIDEBAR DESKTOP */***REMOVED***
       <aside className="hidden md:flex md:flex-col w-72 bg-white border-r border-gray-200 shadow-sm h-screen fixed left-0 top-0 z-30">
         
-        ***REMOVED***/* HEADER DEL SIDEBAR - MEJORADO CON LOGO */***REMOVED***
+        ***REMOVED***/* HEADER DEL SIDEBAR - CON FOTO DE PERFIL */***REMOVED***
         <div className="p-6 border-b border-gray-100">
-          <button 
+          ***REMOVED***/* Input oculto para subir foto */***REMOVED***
+          <input
+            ref=***REMOVED***fileInputRef***REMOVED***
+            type="file"
+            accept="image/*"
+            onChange=***REMOVED***handlePhotoUpload***REMOVED***
+            className="hidden"
+          />
+
+          <button
             onClick=***REMOVED***handleLogoClick***REMOVED***
             className="flex items-center space-x-4 hover:opacity-80 transition-opacity w-full text-left"
           >
-            ***REMOVED***/* Logo en lugar del emoji */***REMOVED***
-            <div 
-              className="w-14 h-14 rounded-xl flex items-center justify-center shadow-lg"
-              style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
+            ***REMOVED***/* Foto de perfil o Logo con hover edit */***REMOVED***
+            <div
+              className="relative w-14 h-14 rounded-xl overflow-hidden shadow-lg group"
+              onMouseEnter=***REMOVED***() => setShowPhotoEdit(true)***REMOVED***
+              onMouseLeave=***REMOVED***() => setShowPhotoEdit(false)***REMOVED***
+              style=***REMOVED******REMOVED***
+                backgroundColor: profilePhotoURL?.includes('logo.svg') ? colors.primary : 'transparent'
+              ***REMOVED******REMOVED***
             >
-              <img 
-                src="/assets/SVG/logo.svg" 
-                alt="Logo" 
-                className="w-12 h-12 filter brightness-0 invert"
-                style=***REMOVED******REMOVED*** filter: 'brightness(0) invert(1)' ***REMOVED******REMOVED***
+              <img
+                src=***REMOVED***profilePhotoURL***REMOVED***
+                alt="Foto de perfil"
+                className=***REMOVED***`w-full h-full $***REMOVED***
+                  profilePhotoURL?.includes('logo.svg')
+                    ? 'object-contain p-2 filter brightness-0 invert'
+                    : 'object-cover'
+                ***REMOVED***`***REMOVED***
+                style=***REMOVED***
+                  profilePhotoURL?.includes('logo.svg')
+                    ? ***REMOVED*** filter: 'brightness(0) invert(1)' ***REMOVED***
+                    : ***REMOVED******REMOVED***
+                ***REMOVED***
               />
+
+              ***REMOVED***/* Overlay con ícono de editar al hacer hover */***REMOVED***
+              ***REMOVED***showPhotoEdit && (
+                <div
+                  onClick=***REMOVED***handleEditPhotoClick***REMOVED***
+                  className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center cursor-pointer transition-opacity"
+                  style=***REMOVED******REMOVED*** backgroundColor: colors.transparent50 ***REMOVED******REMOVED***
+                >
+                  <Pencil className="text-white" size=***REMOVED***20***REMOVED*** />
+                </div>
+              )***REMOVED***
             </div>
-            
-            ***REMOVED***/* Solo el título, sin saludo */***REMOVED***
+
+            ***REMOVED***/* Título y subtítulo */***REMOVED***
             <div>
               <h1 className="text-xl font-bold text-gray-900">
-                Gestión de Turnos
+                GestAPP.
               </h1>
+              <p className="text-xs text-gray-500 font-light">
+                Tu gestor de trabajos y turnos
+              </p>
             </div>
           </button>
         </div>

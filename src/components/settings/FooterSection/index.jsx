@@ -9,7 +9,7 @@ const FooterSection = () => ***REMOVED***
       <p className="text-gray-300 text-sm">
         <span className="font-bold">Hecho por Marco :)</span>
       </p>
-      
+
       <div className="flex items-center justify-center gap-2 text-gray-300 text-sm">
         <span>Como lo estuve desarrollando? Mira:</span>
         <a
