@@ -1,6 +1,8 @@
 // src/pages/Ajustes.jsx
 
 import React, { useState } from 'react';
+import { Settings } from 'lucide-react';
+import { useThemeColors } from '../hooks/useThemeColors';
 import ProfileSection from '../components/settings/ProfileSection';
 import ProfilePhotoSection from '../components/settings/ProfilePhotoSection';
 import CustomizationSection from '../components/settings/CustomizationSection';
@@ -14,6 +16,7 @@ import DeliverySection from '../components/settings/DeliverySection';
 import SmokoSection from '../components/settings/SmokoSection';
 
 const Ajustes = () => {
+  const colors = useThemeColors();
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -36,7 +39,13 @@ const Ajustes = () => {
 
   return (
     <div className="px-4 py-6 space-y-6">
-      <h1 className="text-2xl font-semibold mb-6">Ajustes</h1>
+      {/* Título con icono */}
+      <div className="flex items-center space-x-3">
+        <div className="p-2 rounded-lg" style={{ backgroundColor: colors.transparent10 }}>
+          <Settings className="w-6 h-6" style={{ color: colors.primary }} />
+        </div>
+        <h1 className="text-2xl font-semibold">Ajustes</h1>
+      </div>
 
       <NotificationBanner
         message={message}
@@ -50,102 +59,97 @@ const Ajustes = () => {
         onClose={clearMessages}
       />
 
-      {/* LAYOUT RESPONSIVO PRINCIPAL */}
-      <div className="space-y-6">
+      {/* CONTENEDOR PRINCIPAL CON ALTURA COMPLETA */}
+      <div className="h-full">
+        {/* LAYOUT RESPONSIVO PRINCIPAL */}
+        <div className="space-y-6">
 
-        {/* DESKTOP: Grid dinámico con diferentes distribuciones */}
-        <div className="hidden lg:block space-y-6">
+          {/* DESKTOP: Grid dinámico con diferentes distribuciones */}
+          <div className="hidden lg:block space-y-6">
 
-          {/* PRIMERA FILA: 3 columnas con contenedores verticales */}
-          <div className="grid grid-cols-3 gap-6">
-            {/* CONTENEDOR 1: Foto de perfil + Perfil + Objetivos */}
-            <div className="space-y-6">
-              <ProfilePhotoSection
-                onError={handleError}
-                onSuccess={handleSuccess}
-              />
-              <ProfileSection
-                onError={handleError}
-                onSuccess={handleSuccess}
-              />
-              <GoalsSection />
+            {/* PRIMERA FILA: 3 columnas con contenedores verticales */}
+            <div className="grid grid-cols-3 gap-6">
+              {/* CONTENEDOR 1: Foto de perfil + Perfil + Objetivos + Configuración de trabajo */}
+              <div className="space-y-6 h-full">
+                <ProfilePhotoSection
+                  onError={handleError}
+                  onSuccess={handleSuccess}
+                />
+                <ProfileSection
+                  onError={handleError}
+                  onSuccess={handleSuccess}
+                />
+                <GoalsSection />
+                <PreferencesSection
+                  onError={handleError}
+                  onSuccess={handleSuccess}
+                />
+              </div>
+
+              {/* CONTENEDOR 2: Personalización + Smoko + Sesión */}
+              <div className="flex flex-col gap-3 h-full">
+                <CustomizationSection />
+                <SmokoSection
+                  onError={handleError}
+                  onSuccess={handleSuccess}
+                />
+                <SessionSection
+                  className="flex-grow"
+                  onError={handleError}
+                />
+              </div>
+
+              {/* CONTENEDOR 3: Delivery + Rango de Turnos */}
+              <div className="space-y-6 h-full">
+                <DeliverySection />
+                <TurnRangeSection
+                  onError={handleError}
+                  onSuccess={handleSuccess}
+                />
+              </div>
             </div>
 
-            {/* CONTENEDOR 2: Personalización */}
-            <div className="space-y-6">
-              <CustomizationSection />
-            </div>
-
-            {/* CONTENEDOR 3: Configuración de trabajo + Delivery */}
-            <div className="space-y-6">
-              <PreferencesSection
-                onError={handleError}
-                onSuccess={handleSuccess}
-              />
-              <DeliverySection />
-            </div>
           </div>
 
-          {/* SEGUNDA FILA: 2 columnas - Smoko + Rango de Turnos */}
-          <div className="grid grid-cols-3 gap-6">
-            <div className="col-span-2">
-              <SmokoSection
-                onError={handleError}
-                onSuccess={handleSuccess}
-              />
-            </div>
+          {/* MÓVIL: Stack vertical */}
+          <div className="block lg:hidden space-y-6">
+            <ProfilePhotoSection
+              onError={handleError}
+              onSuccess={handleSuccess}
+            />
+
+            <ProfileSection
+              onError={handleError}
+              onSuccess={handleSuccess}
+            />
+
+            <CustomizationSection />
+
+            <DeliverySection />
+
+            <SmokoSection
+              onError={handleError}
+              onSuccess={handleSuccess}
+            />
+
+            <GoalsSection />
 
             <TurnRangeSection
               onError={handleError}
               onSuccess={handleSuccess}
             />
+
+            <PreferencesSection
+              onError={handleError}
+              onSuccess={handleSuccess}
+            />
+
+            <SessionSection
+              onError={handleError}
+            />
           </div>
 
-          {/* TERCERA FILA: Sesión (full width) */}
-          <SessionSection
-            onError={handleError}
-          />
-
         </div>
-
-        {/* MÓVIL: Stack vertical */}
-        <div className="block lg:hidden space-y-6">
-          <ProfilePhotoSection
-            onError={handleError}
-            onSuccess={handleSuccess}
-          />
-
-          <ProfileSection
-            onError={handleError}
-            onSuccess={handleSuccess}
-          />
-
-          <CustomizationSection />
-
-          <DeliverySection />
-
-          <SmokoSection
-            onError={handleError}
-            onSuccess={handleSuccess}
-          />
-
-          <GoalsSection />
-
-          <TurnRangeSection
-            onError={handleError}
-            onSuccess={handleSuccess}
-          />
-
-          <PreferencesSection
-            onError={handleError}
-            onSuccess={handleSuccess}
-          />
-
-          <SessionSection
-            onError={handleError}
-          />
-        </div>
-
       </div>
 
       <FooterSection />

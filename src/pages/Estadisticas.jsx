@@ -1,10 +1,9 @@
-// src/pages/Estadisticas.jsx - Layout actualizado con cards de Smoko
+// src/pages/Estadisticas.jsx - Refactorizado con StatsContext
 
-import React, { useState } from 'react';
-import { Truck } from 'lucide-react';
-import { useApp } from '../contexts/AppContext';
-import { useWeeklyStats } from '../hooks/useWeeklyStats';
-import { useDeliveryStats } from '../hooks/useDeliveryStats';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Truck, BarChart } from 'lucide-react';
+import { useStats } from '../contexts/StatsContext';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import WeekNavigator from '../components/stats/WeekNavigator';
 import StatsProgressBar from '../components/stats/StatsProgressBar';
@@ -25,111 +24,200 @@ import SeguimientoCombustible from '../components/stats/SeguimientoCombustible';
 import ComparacionPlataformas from '../components/stats/ComparacionPlataformas';
 
 const Estadisticas = () => {
-  const { cargando, weeklyHoursGoal, deliveryEnabled } = useApp();
-  const [offsetSemana, setOffsetSemana] = useState(0);
 
-  const datosActuales = useWeeklyStats(offsetSemana);
-  const datosAnteriores = useWeeklyStats(offsetSemana - 1);
+  const {
 
-  const deliveryStats = useDeliveryStats('mes');
-  const tieneDelivery = deliveryEnabled && deliveryStats.totalPedidos > 0;
+    loading,
+
+    datosActuales,
+
+    datosAnteriores,
+
+    offsetSemana,
+
+    setOffsetSemana,
+
+    deliveryEnabled,
+
+    deliveryStats,
+
+    weeklyHoursGoal,
+
+    thematicColors,
+
+    smokoEnabled,
+
+    smokoMinutes,
+
+  } = useStats();
+
+  
+
+  const tieneDelivery = deliveryEnabled && deliveryStats.turnosRealizados > 0;
+
+  const headerVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+  };
 
   return (
-    <LoadingWrapper loading={cargando}>
+    <LoadingWrapper loading={loading}>
       <div className="px-4 py-6 space-y-6">
 
-        {/* NAVEGADOR SEMANAL - Siempre full width */}
-        <WeekNavigator
-          offsetSemana={offsetSemana}
-          onSemanaChange={setOffsetSemana}
-          fechaInicio={datosActuales.fechaInicio}
-          fechaFin={datosActuales.fechaFin}
-        />
+        <div className="lg:flex lg:justify-between lg:items-center">
+          <motion.div
+            className="flex justify-between items-center mb-4 lg:mb-0"
+            variants={headerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <div className="flex items-center space-x-3">
+              <div 
+                className="p-2 rounded-lg"
+                style={{ backgroundColor: thematicColors.transparent10 }}
+              >
+                <BarChart 
+                  className="w-6 h-6" 
+                  style={{ color: thematicColors.primary }}
+                />
+              </div>
+              <div>
+                <h1 className="text-xl font-semibold">Estadísticas</h1>
+                <p className="text-sm text-gray-600">
+                  Analiza tu rendimiento y proyecciones
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          <div className="lg:w-2/5 lg:max-w-md">
+            <WeekNavigator
+              offsetSemana={offsetSemana}
+              onSemanaChange={setOffsetSemana}
+              fechaInicio={datosActuales.fechaInicio}
+              fechaFin={datosActuales.fechaFin}
+            />
+          </div>
+        </div>
 
         {/* LAYOUT RESPONSIVO PRINCIPAL */}
+
         <div className="space-y-6">
 
+
+
           {/* DESKTOP: Grid de 3 columnas principales */}
+
           <div className="hidden lg:grid lg:grid-cols-3 lg:gap-6">
 
+
+
             {/* CONTENEDOR 1: Progreso Semanal + Tipos de Turno */}
-            <div className="lg:col-span-1 space-y-6">
-              <StatsProgressBar
-                horasSemanales={datosActuales.horasTrabajadas}
-                metaHoras={weeklyHoursGoal || 40}
-                gananciaTotal={datosActuales.totalGanado}
-                className={!weeklyHoursGoal ? 'opacity-60' : ''}
-              />
+
+            <div className="lg:col-span-1 flex flex-col gap-6">
+
+              <StatsProgressBar className="flex-grow" datosActuales={datosActuales} weeklyHoursGoal={weeklyHoursGoal} />
+
+
 
               {/* CAMBIO: Siempre mostrar ShiftTypeStats */}
-              <ShiftTypeStats tiposDeTurno={datosActuales.tiposDeTurno} />
+
+              <ShiftTypeStats className="flex-grow" datosActuales={datosActuales} loading={loading} />
+
             </div>
+
+
 
             {/* CONTENEDOR 2: Comparación Semanal (expandida con 4 estadísticas) */}
+
             <div className="lg:col-span-1">
-              <WeeklyComparison
-                datosActuales={datosActuales}
-                datosAnteriores={datosAnteriores}
-              />
-            </div>
 
-            {/* CONTENEDOR 3: Stats Grid + Día más productivo + NUEVAS CARDS SMOKO */}
-            <div className="lg:col-span-1 space-y-6">
-              <WeeklyStatsGrid datos={datosActuales} />
+                          <WeeklyComparison className="h-full" datosActuales={datosActuales} datosAnteriores={datosAnteriores} thematicColors={thematicColors} />
 
-              {/* Día más productivo */}
-              <div className="bg-white rounded-xl shadow-md p-3">
-                <MostProductiveDay diaMasProductivo={datosActuales.diaMasProductivo} />
-              </div>
+                        </div>
 
-              {/* NUEVAS CARDS SMOKO - Grid de 2 columnas en el espacio señalado */}
-              <div className="grid grid-cols-2 gap-4">
-                <SmokoStatusCard />
-                <SmokoTimeCard />
-              </div>
-            </div>
-          </div>
+            
 
-          {/* MÓVIL Y TABLET: Stack vertical reorganizado */}
-          <div className="block lg:hidden space-y-6">
-            {/* Progreso semanal */}
-            <StatsProgressBar
-              horasSemanales={datosActuales.horasTrabajadas}
-              metaHoras={weeklyHoursGoal || 40}
-              gananciaTotal={datosActuales.totalGanado}
-              className={!weeklyHoursGoal ? 'opacity-60' : ''}
-            />
+                        {/* CONTENEDOR 3: Stats Grid + Día más productivo + NUEVAS CARDS SMOKO */}
 
-            {/* Stats grid */}
-            <WeeklyStatsGrid datos={datosActuales} />
+                        <div className="lg:col-span-1 flex flex-col gap-6">
 
-            {/* Día más productivo en móvil */}
-            <div className="bg-white rounded-xl shadow-md p-4">
-              <MostProductiveDay diaMasProductivo={datosActuales.diaMasProductivo} />
-            </div>
+                          <WeeklyStatsGrid className="flex-grow" datosActuales={datosActuales} thematicColors={thematicColors} loading={loading} />
 
-            {/* NUEVAS CARDS SMOKO en móvil - Grid de 2 columnas */}
-            <div className="grid grid-cols-2 gap-4">
-              <SmokoStatusCard />
-              <SmokoTimeCard />
-            </div>
+            
 
-            {/* Comparación semanal */}
-            <WeeklyComparison
-              datosActuales={datosActuales}
-              datosAnteriores={datosAnteriores}
-            />
+                          {/* Día más productivo */}
 
-            {/* CAMBIO: Tipos de turno - SIEMPRE se muestra */}
-            <ShiftTypeStats tiposDeTurno={datosActuales.tiposDeTurno} />
-          </div>
+                          <MostProductiveDay className="flex-grow" datosActuales={datosActuales} thematicColors={thematicColors} loading={loading} />
+
+            
+
+                          {/* NUEVAS CARDS SMOKO - Grid de 2 columnas en el espacio señalado */}
+                          <div className="flex-grow grid grid-cols-2 gap-4">
+                            <SmokoStatusCard className="h-full" smokoEnabled={smokoEnabled} thematicColors={thematicColors} loading={loading} />
+                            <SmokoTimeCard className="h-full" smokoEnabled={smokoEnabled} smokoMinutes={smokoMinutes} thematicColors={thematicColors} loading={loading} />
+                          </div>
+
+                        </div>
+
+                      </div>
+
+            
+
+                      {/* MÓVIL Y TABLET: Stack vertical reorganizado */}
+
+                      <div className="block lg:hidden space-y-6">
+
+                        {/* Progreso semanal */}
+
+                        <StatsProgressBar datosActuales={datosActuales} weeklyHoursGoal={weeklyHoursGoal} />
+
+            
+
+                        {/* Stats grid */}
+
+                        <WeeklyStatsGrid datosActuales={datosActuales} thematicColors={thematicColors} loading={loading} />
+
+            
+
+                        {/* Día más productivo en móvil */}
+
+                        <MostProductiveDay datosActuales={datosActuales} thematicColors={thematicColors} loading={loading} />
+
+            
+
+                        {/* NUEVAS CARDS SMOKO en móvil - Grid de 2 columnas */}
+
+                        <div className="grid grid-cols-2 gap-4">
+
+                          <SmokoStatusCard smokoEnabled={smokoEnabled} thematicColors={thematicColors} loading={loading} />
+
+                          <SmokoTimeCard smokoEnabled={smokoEnabled} smokoMinutes={smokoMinutes} thematicColors={thematicColors} loading={loading} />
+
+                        </div>
+
+            
+
+                        {/* Comparación semanal */}
+
+                        <WeeklyComparison datosActuales={datosActuales} datosAnteriores={datosAnteriores} thematicColors={thematicColors} />
+
+            
+
+                        {/* CAMBIO: Tipos de turno - SIEMPRE se muestra */}
+
+                        <ShiftTypeStats datosActuales={datosActuales} loading={loading} />
+
+                      </div>
+
+
 
         </div>
 
         {/* NUEVO CONTENEDOR: InteractiveCharts + DailyDistribution en dos columnas */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Columna izquierda: InteractiveCharts */}
-          <div>
+          <div className="h-96">
             <InteractiveCharts
               datosActuales={datosActuales}
               gananciaPorTrabajo={datosActuales.gananciaPorTrabajo || []}
@@ -137,9 +225,8 @@ const Estadisticas = () => {
           </div>
 
           {/* Columna derecha: DailyDistribution */}
-          <div className="bg-white rounded-xl shadow-md p-4">
-            <DailyDistribution gananciaPorDia={datosActuales.gananciaPorDia} />
-          </div>
+          <DailyDistribution datosActuales={datosActuales} thematicColors={thematicColors} loading={loading} />
+
         </div>
 
         {/* SECCIÓN DELIVERY - Solo si está habilitado */}

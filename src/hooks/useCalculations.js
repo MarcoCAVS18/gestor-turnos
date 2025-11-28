@@ -2,22 +2,14 @@
 
 import { useCallback } from 'react';
 import { useApp } from '../contexts/AppContext';
+import { calculateShiftHours } from '../utils/time';
 
 export const useCalculations = () => {
   const { trabajos, rangosTurnos, descuentoDefault } = useApp();
 
+  // Usar la utilidad centralizada
   const calcularHoras = useCallback((inicio, fin) => {
-    const [horaIni, minIni] = inicio.split(':').map(n => parseInt(n));
-    const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
-
-    let inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFn * 60 + minFn;
-
-    if (finMinutos <= inicioMinutos) {
-      finMinutos += 24 * 60;
-    }
-
-    return (finMinutos - inicioMinutos) / 60;
+    return calculateShiftHours(inicio, fin);
   }, []);
 
   const calcularPago = useCallback((turno) => {
@@ -25,6 +17,10 @@ export const useCalculations = () => {
     if (!trabajo) return { total: 0, totalConDescuento: 0, horas: 0 };
 
     const { horaInicio, horaFin } = turno;
+
+    // Usar la utilidad centralizada
+    const horas = calculateShiftHours(horaInicio, horaFin);
+
     const [horaIni, minIni] = horaInicio.split(':').map(n => parseInt(n));
     const [horaFn, minFn] = horaFin.split(':').map(n => parseInt(n));
 
@@ -34,9 +30,6 @@ export const useCalculations = () => {
     if (finMinutos <= inicioMinutos) {
       finMinutos += 24 * 60;
     }
-
-    const totalMinutos = finMinutos - inicioMinutos;
-    const horas = totalMinutos / 60;
 
     const [year, month, day] = turno.fecha.split('-');
     const fecha = new Date(year, month - 1, day);

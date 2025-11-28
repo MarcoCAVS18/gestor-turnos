@@ -2,27 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import Loader from '../../other/Loader';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 
-const LoadingWrapper = ({ 
-  loading, 
-  delay = 3000, 
-  children, 
-  className = '' 
+const LoadingWrapper = ({
+  loading,
+  delay = 3000,
+  children,
+  className = ''
 }) => {
   const [showLoading, setShowLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-  
-  // Detectar si estamos en móvil
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     let timer;

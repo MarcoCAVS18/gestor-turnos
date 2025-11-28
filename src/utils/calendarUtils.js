@@ -1,5 +1,7 @@
 // src/utils/calendarUtils.js - VERSIÓN ACTUALIZADA COMPLETA
 
+import { createSafeDate } from './time';
+
 /**
  * Crea una fecha local evitando problemas de zona horaria
  */
@@ -188,13 +190,13 @@ export const getMeses = () => {
  * Formatea una fecha relativa (hoy, ayer, etc.)
  */
 export const formatearFechaRelativa = (fechaStr) => {
-  const fecha = new Date(fechaStr + 'T00:00:00');
+  const fecha = createSafeDate(fechaStr);
   const hoy = new Date();
   const ayer = new Date(hoy);
   ayer.setDate(hoy.getDate() - 1);
   const mañana = new Date(hoy);
   mañana.setDate(hoy.getDate() + 1);
-  
+
   if (fecha.toDateString() === hoy.toDateString()) {
     return 'Hoy';
   } else if (fecha.toDateString() === ayer.toDateString()) {

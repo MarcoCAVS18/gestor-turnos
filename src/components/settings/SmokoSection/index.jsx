@@ -6,7 +6,6 @@ import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
-import New from '../../ui/New';
 
 const SmokoSection = ({ onError, onSuccess }) => {
   const { 
@@ -66,14 +65,9 @@ const SmokoSection = ({ onError, onSuccess }) => {
   };
 
   return (
-    <SettingsSection 
-      icon={Coffee} 
-      title={
-        <div className="flex items-center gap-2">
-          <span>Smoko (Descansos)</span>
-          <New size="xs">NUEVO</New>
-        </div>
-      }
+    <SettingsSection
+      icon={Coffee}
+      title="Smoko (Descansos)"
     >
       <div className="space-y-6">
         {/* Información explicativa */}
@@ -113,18 +107,18 @@ const SmokoSection = ({ onError, onSuccess }) => {
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Duración del descanso
               </label>
-              
-              {/* Botones rápidos */}
-              <div className="grid grid-cols-4 gap-2 mb-4">
-                {[15, 30, 45, 60].map(min => (
+
+              {/* Botones rápidos con input personalizado */}
+              <div className="grid grid-cols-4 gap-2">
+                {[15, 30, 45].map(min => (
                   <button
                     key={min}
                     type="button"
                     onClick={() => handleMinutesChange(min)}
                     className={`
                       px-3 py-2 text-sm rounded-lg border transition-colors
-                      ${minutes === min 
-                        ? 'border-2 text-white' 
+                      ${minutes === min
+                        ? 'border-2 text-white'
                         : 'border-gray-300 text-gray-700 hover:bg-gray-50'
                       }
                     `}
@@ -136,28 +130,24 @@ const SmokoSection = ({ onError, onSuccess }) => {
                     {formatearTiempo(min)}
                   </button>
                 ))}
-              </div>
 
-              {/* Input personalizado */}
-              <div className="flex items-center space-x-2">
-                <input
-                  type="number"
-                  value={minutes}
-                  onChange={(e) => handleMinutesChange(e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
-                  style={{ '--tw-ring-color': colors.primary }}
-                  min="5"
-                  max="120"
-                  placeholder="30"
-                />
-                <span className="text-sm text-gray-500 whitespace-nowrap">
-                  minutos
-                </span>
+                {/* Input personalizado integrado con sufijo "min" */}
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={minutes}
+                    onChange={(e) => handleMinutesChange(e.target.value)}
+                    className="w-full px-3 py-2 pr-10 text-sm text-center border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                    style={{ '--tw-ring-color': colors.primary }}
+                    min="5"
+                    max="120"
+                    placeholder="30"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none">
+                    min
+                  </span>
+                </div>
               </div>
-              
-              <p className="text-xs text-gray-500 mt-1">
-                Mínimo 5 minutos, máximo 2 horas
-              </p>
             </div>
           </div>
         )}
@@ -182,7 +172,6 @@ const SmokoSection = ({ onError, onSuccess }) => {
         <div className="text-xs text-gray-500 space-y-1 pt-2 border-t border-gray-100">
           <p>• El descanso se aplicará automáticamente a todos tus turnos</p>
           <p>• Podrás desactivar el descanso en turnos específicos si no lo tomaste</p>
-          <p>• Los cálculos de pago se ajustarán según el tiempo trabajado real</p>
         </div>
       </div>
     </SettingsSection>

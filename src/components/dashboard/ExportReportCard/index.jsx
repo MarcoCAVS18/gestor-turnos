@@ -1,9 +1,10 @@
 // src/components/dashboard/ExportReportCard/index.jsx
 
 import React, { useState } from 'react';
-import { Download, FileText, Image } from 'lucide-react';
+import { Download, FileText, Image, FileSpreadsheet } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
+import New from '../../ui/New';
 
 const ExportReportCard = ({ onExport }) => {
   const colors = useThemeColors();
@@ -29,17 +30,19 @@ const ExportReportCard = ({ onExport }) => {
 
   return (
     <Card variant="transparent" className="relative overflow-hidden">
-      {/* Contenido principal */}
       <div className="flex items-center justify-between">
         {/* Lado izquierdo: Texto y selector de formato */}
         <div className="flex-1 pr-4">
-          <h3 className="text-lg font-semibold mb-2 text-gray-800">Exportar Reporte</h3>
+          <div className="flex items-center gap-2 mb-2">
+            <h3 className="text-lg font-semibold text-gray-800">Exportar Reporte</h3>
+            <New size="xs" />
+          </div>
           <p className="text-sm text-gray-700 mb-4">
             Descargá un resumen completo de tus estadísticas, turnos y actividad
           </p>
-          
+
           {/* Selector de formato */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => setSelectedFormat('pdf')}
               disabled={isExporting}
@@ -53,7 +56,7 @@ const ExportReportCard = ({ onExport }) => {
               <FileText size={16} />
               <span className="text-sm font-medium">PDF</span>
             </button>
-            
+
             <button
               onClick={() => setSelectedFormat('png')}
               disabled={isExporting}
@@ -66,6 +69,20 @@ const ExportReportCard = ({ onExport }) => {
             >
               <Image size={16} />
               <span className="text-sm font-medium">PNG</span>
+            </button>
+
+            <button
+              onClick={() => setSelectedFormat('xlsx')}
+              disabled={isExporting}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                selectedFormat === 'xlsx'
+                  ? 'text-white shadow-md'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+              style={selectedFormat === 'xlsx' ? { backgroundColor: colors.primary } : {}}
+            >
+              <FileSpreadsheet size={16} />
+              <span className="text-sm font-medium">Excel</span>
             </button>
           </div>
         </div>
@@ -118,7 +135,6 @@ const ExportReportCard = ({ onExport }) => {
         </div>
       </div>
 
-      {/* Mensaje de estado */}
       {isExporting && (
         <div className="mt-4 pt-4 border-t border-gray-300 animate-fadeIn">
           <div className="flex items-center justify-center gap-2 text-sm">
@@ -133,7 +149,6 @@ const ExportReportCard = ({ onExport }) => {
         </div>
       )}
       
-      {/* Estilos inline para las animaciones */}
       <style>{`
         @keyframes downloadAnimation {
           0% {

@@ -8,7 +8,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
-const SessionSection = ({ onError }) => {
+const SessionSection = ({ onError, className = '' }) => {
   const { logout } = useAuth();
   const colors = useThemeColors();
   const navigate = useNavigate();
@@ -23,16 +23,18 @@ const SessionSection = ({ onError }) => {
   };
 
   return (
-    <SettingsSection icon={LogOut} title="Sesión">
-      <Button
-        onClick={handleLogout}
-        variant="outline"
-        className="w-full flex items-center justify-center gap-2"
-        icon={LogOut}
-        themeColor={colors.primary}
-      >
-        Cerrar sesión
-      </Button>
+    <SettingsSection icon={LogOut} title="Sesión" className={className}>
+      <div className="flex-1 flex items-center justify-center">
+        <Button
+          onClick={handleLogout}
+          variant="outline"
+          className="w-full max-w-xs flex items-center justify-center gap-2"
+          icon={LogOut}
+          themeColor={colors.primary}
+        >
+          Cerrar sesión
+        </Button>
+      </div>
     </SettingsSection>
   );
 };

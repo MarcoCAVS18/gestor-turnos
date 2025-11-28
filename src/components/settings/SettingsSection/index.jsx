@@ -10,12 +10,14 @@ const SettingsSection = ({
   className = ''
 }) => {
   return (
-    <Card className={`mb-6 ${className}`}>
+    <Card className={`mb-6 flex flex-col ${className}`}>
       <div className="flex items-center mb-4">
         <Icon className="h-5 w-5 text-gray-500 mr-2" />
         <h2 className="text-lg font-semibold">{title}</h2>
       </div>
-      {children}
+      <div className="flex-1 flex flex-col">
+        {children}
+      </div>
     </Card>
   );
 };

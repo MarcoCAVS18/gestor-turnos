@@ -1,106 +1,57 @@
 // src/components/stats/DailyDistribution/index.jsx
-
-import React, { useState } from 'react';
+import React from 'react';
 import { Calendar, Clock, DollarSign } from 'lucide-react';
-import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
+import { formatHoursDecimal } from '../../../utils/time';
+import BaseStatsCard from '../../cards/base/BaseStatsCard';
 
-const DailyDistribution = ({ gananciaPorDia }) => {
-  const colors = useThemeColors();
-  const [animacionActiva, setAnimacionActiva] = useState(false);
+const DailyDistribution = ({ datosActuales, loading, thematicColors }) => {
+  const { gananciaPorDia, totalGanado } = datosActuales;
 
-  React.useEffect(() => {
-    setAnimacionActiva(true);
-    const timer = setTimeout(() => setAnimacionActiva(false), 1000);
-    return () => clearTimeout(timer);
-  }, [gananciaPorDia]);
-
-  // Función para formatear horas
-  const formatearHoras = (horas) => {
-    if (horas === 0) return '0h';
-    if (horas < 1) {
-      const minutos = Math.round(horas * 60);
-      return `${minutos}min`;
-    }
-    const horasEnteras = Math.floor(horas);
-    const minutos = Math.round((horas - horasEnteras) * 60);
-    
-    if (minutos === 0) {
-      return `${horasEnteras}h`;
-    }
-    return `${horasEnteras}h ${minutos}min`;
-  };
-
-  if (!gananciaPorDia || typeof gananciaPorDia !== 'object') {
-    return (
-      <div>
-        <div className="flex items-center mb-4">
-          <Calendar size={18} className="mr-2 text-gray-500" />
-          <h3 className="font-semibold">Distribución semanal</h3>
-        </div>
-        <div className={`text-center py-8 text-gray-500 transition-opacity duration-1000 ${animacionActiva ? 'opacity-50' : 'opacity-100'}`}>
-          <Calendar size={48} className="mx-auto mb-3 opacity-30" />
-          <p>No hay datos de esta semana</p>
-        </div>
-      </div>
-    );
-  }
+  const isEmpty = !totalGanado || totalGanado === 0;
 
   return (
-    <div>
-      <div className="flex items-center mb-4">
-        <Calendar size={18} style={{ color: colors.primary }} className="mr-2" />
-        <h3 className="font-semibold">Distribución semanal</h3>
-      </div>
-
-      <div className="space-y-2">
-        {Object.entries(gananciaPorDia).map(([dia, datos]) => {
-          const datosSeguro = {
-            horas: 0,
-            turnos: 0,
-            ganancia: 0
-          };
-
-          try {
-            if (datos && typeof datos === 'object') {
-              datosSeguro.horas = (typeof datos.horas === 'number' && !isNaN(datos.horas)) ? datos.horas : 0;
-              datosSeguro.turnos = (typeof datos.turnos === 'number' && !isNaN(datos.turnos)) ? datos.turnos : 0;
-              datosSeguro.ganancia = (typeof datos.ganancia === 'number' && !isNaN(datos.ganancia)) ? datos.ganancia : 0;
-            }
-          } catch (error) {
-            console.error(`Error procesando día ${dia}:`, error);
-          }
-
-          return (
-            <div key={dia} className={`p-3 bg-gray-50 rounded-lg transition-all duration-500 ${animacionActiva ? 'scale-105 shadow-md' : 'scale-100'}`}>
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-700">{dia || 'Día'}</span>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center">
-                    <DollarSign size={14} className="mr-1" style={{ color: colors.primary }} />
-                    <span className="text-sm font-bold" style={{ color: colors.primary }}>
-                      {formatCurrency(datosSeguro.ganancia)}
+    <BaseStatsCard
+      icon={Calendar}
+      title="Distribución Semanal"
+      loading={loading}
+      empty={isEmpty}
+      emptyMessage="No hay datos de ganancias esta semana."
+    >
+      <div className="w-full">
+        {/* Wrapper para habilitar scroll horizontal en móvil */}
+        <div className="lg:overflow-x-hidden overflow-x-auto">
+          <div className="space-y-2 lg:w-full min-w-[30rem]">
+            {Object.entries(gananciaPorDia).map(([dia, datos]) => (
+              <div key={dia} className="p-2 bg-gray-50 rounded-lg">
+                {/* Usar grid para un mejor control de las columnas */}
+                <div className="grid grid-cols-4 gap-x-2 items-center">
+                  <span className="text-sm font-medium text-gray-700 col-span-1 truncate">{dia}</span>
+                  
+                  <div className="flex items-center justify-end col-span-1">
+                    <DollarSign size={14} className="mr-1 flex-shrink-0" style={{ color: thematicColors?.primary }} />
+                    <span className="text-sm font-bold text-right" style={{ color: thematicColors?.primary }}>
+                      {formatCurrency(datos.ganancia)}
                     </span>
                   </div>
-                  <div className="flex items-center">
-                    <Clock size={14} className="mr-1 text-gray-500" />
-                    <span className="text-sm text-gray-600">
-                      {formatearHoras(datosSeguro.horas)}
+
+                  <div className="flex items-center justify-end col-span-1">
+                    <Clock size={14} className="mr-1 text-gray-500 flex-shrink-0" />
+                    <span className="text-sm text-gray-600 text-right whitespace-nowrap">
+                      {formatHoursDecimal(datos.horas)}
                     </span>
                   </div>
-                  <div className="text-sm text-gray-500">
-                    {datosSeguro.turnos} turno{datosSeguro.turnos !== 1 ? 's' : ''}
+
+                  <div className="text-sm text-gray-500 text-right col-span-1 whitespace-nowrap">
+                    {datos.turnos} turno{datos.turnos !== 1 ? 's' : ''}
                   </div>
                 </div>
               </div>
-              {datosSeguro.turnos === 0 && (
-                <p className="text-xs text-gray-400 mt-1">Sin actividad</p>
-              )}
-            </div>
-          );
-        })}
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
+    </BaseStatsCard>
   );
 };
 

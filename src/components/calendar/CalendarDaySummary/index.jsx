@@ -4,8 +4,8 @@ import React from 'react';
 import { PlusCircle, Calendar, Clock, DollarSign } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { formatCurrency } from '../../../utils/currency';
-import TarjetaTurno from '../../cards/TarjetaTurno';
-import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
+import TarjetaTurno from '../../cards/shift/TarjetaTurno';
+import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 

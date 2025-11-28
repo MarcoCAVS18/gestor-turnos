@@ -1,5 +1,7 @@
 // src/utils/shiftDetailsUtils.js
 
+import { createSafeDate } from './time';
+
 // Función para detectar si un turno cruza medianoche
 export function checkIfShiftCrossesMidnight(turno) {
   if (!turno.horaInicio || !turno.horaFin) return false;
@@ -129,13 +131,13 @@ export function generateShiftDetails(turno, allJobs) {
     
     if (turno.fechaInicio && turno.fechaFin && turno.fechaInicio !== turno.fechaFin) {
       // Usar las fechas existentes si son diferentes
-      fechaInicio = new Date(turno.fechaInicio + 'T00:00:00');
-      fechaFin = new Date(turno.fechaFin + 'T00:00:00');
+      fechaInicio = createSafeDate(turno.fechaInicio);
+      fechaFin = createSafeDate(turno.fechaFin);
     } else {
       // Calcular la fecha de fin basándose en la fecha de inicio
       const fechaBase = turno.fechaInicio || turno.fecha;
-      fechaInicio = new Date(fechaBase + 'T00:00:00');
-      fechaFin = new Date(fechaBase + 'T00:00:00'); // Crear desde la fecha base
+      fechaInicio = createSafeDate(fechaBase);
+      fechaFin = createSafeDate(fechaBase); // Crear desde la fecha base
       fechaFin.setDate(fechaFin.getDate() + 1); // Sumar 1 día
     }
     
@@ -156,10 +158,10 @@ export function generateShiftDetails(turno, allJobs) {
     // Turno normal en un solo día
     const fechaStr = turno.fechaInicio || turno.fecha;
     if (fechaStr) {
-      const fecha = new Date(fechaStr + 'T00:00:00');
+      const fecha = createSafeDate(fechaStr);
       fechaTexto = fecha.toLocaleDateString('es-ES', {
-        weekday: 'long', 
-        day: 'numeric', 
+        weekday: 'long',
+        day: 'numeric',
         month: 'long'
       });
     } else {

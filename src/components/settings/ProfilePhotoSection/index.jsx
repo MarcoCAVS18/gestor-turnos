@@ -132,6 +132,7 @@ const ProfilePhotoSection = ({ onError, onSuccess }) => {
               loading={loading}
               icon={Trash2}
               variant="outline"
+              themeColor={colors.primary}
               className="flex-1"
             >
               Eliminar foto

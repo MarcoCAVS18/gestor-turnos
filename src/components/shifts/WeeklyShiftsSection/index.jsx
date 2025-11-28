@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Calendar, TrendingUp } from 'lucide-react';
-import TarjetaTurno from '../../cards/TarjetaTurno';
-import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
+import TarjetaTurno from '../../cards/shift/TarjetaTurno';
+import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
 import { formatTurnosCount } from '../../../utils/pluralization';
 
 const WeeklyShiftsSection = ({ 
@@ -73,7 +73,6 @@ const WeeklyShiftsSection = ({
     
     // Props comunes para ambos tipos de tarjeta
     const commonProps = {
-      key: `${turno.id}-${index}`,
       turno: turno,
       trabajo: trabajo,
       fecha: turno.fecha,
@@ -85,10 +84,10 @@ const WeeklyShiftsSection = ({
 
     // Determinar si es delivery y renderizar el componente apropiado
     if (turno.tipo === 'delivery') {
-      return <TarjetaTurnoDelivery {...commonProps} />;
+      return <TarjetaTurnoDelivery key={`${turno.id}-${index}`} {...commonProps} />;
     }
     
-    return <TarjetaTurno {...commonProps} />;
+    return <TarjetaTurno key={`${turno.id}-${index}`} {...commonProps} />;
   };
 
   return (

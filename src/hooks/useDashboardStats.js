@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
+import { formatRelativeDate } from '../utils/time';
 
 export const useDashboardStats = () => {
   const { trabajos, trabajosDelivery, turnos, turnosDelivery, calculatePayment } = useApp();
@@ -225,33 +226,8 @@ export const useDashboardStats = () => {
     }
   }, [trabajos, trabajosDelivery, turnos, turnosDelivery, calculatePayment, calcularHoras, obtenerFechasSemanaActual]);
 
-  // Función para formatear fecha
-  const formatearFecha = useMemo(() => {
-    return (fechaStr) => {
-      try {
-        const fecha = new Date(fechaStr + 'T00:00:00');
-        const hoy = new Date();
-        const mañana = new Date(hoy);
-        mañana.setDate(hoy.getDate() + 1);
-        
-        const fechaLocal = fecha.toDateString();
-        const hoyLocal = hoy.toDateString();
-        const mañanaLocal = mañana.toDateString();
-        
-        if (fechaLocal === hoyLocal) return 'Hoy';
-        if (fechaLocal === mañanaLocal) return 'Mañana';
-        
-        return fecha.toLocaleDateString('es-ES', { 
-          weekday: 'short', 
-          day: 'numeric', 
-          month: 'short' 
-        });
-      } catch (error) {
-        console.warn('Error formateando fecha:', fechaStr, error);
-        return fechaStr;
-      }
-    };
-  }, []);
+  // Función para formatear fecha - usar utilidad centralizada
+  const formatearFecha = useMemo(() => formatRelativeDate, []);
 
   return {
     ...stats,

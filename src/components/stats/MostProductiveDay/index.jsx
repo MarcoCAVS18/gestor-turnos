@@ -1,54 +1,32 @@
 // src/components/stats/MostProductiveDay/index.jsx
-
 import React from 'react';
 import { Award } from 'lucide-react';
-import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
+import { formatHoursDecimal } from '../../../utils/time';
+import BaseStatsCard from '../../cards/base/BaseStatsCard';
 
-const MostProductiveDay = ({ diaMasProductivo }) => {
-  const colors = useThemeColors();
-
-  // Función para formatear horas
-  const formatearHoras = (horas) => {
-    if (horas === 0) return '0h';
-    if (horas < 1) {
-      const minutos = Math.round(horas * 60);
-      return `${minutos}min`;
-    }
-    const horasEnteras = Math.floor(horas);
-    const minutos = Math.round((horas - horasEnteras) * 60);
-    
-    if (minutos === 0) {
-      return `${horasEnteras}h`;
-    }
-    return `${horasEnteras}h ${minutos}min`;
-  };
-
-  // Si no hay datos válidos, mostrar estado vacío
-  if (!diaMasProductivo || diaMasProductivo.dia === 'Ninguno' || !diaMasProductivo.ganancia || diaMasProductivo.ganancia <= 0) {
-    return (
-      <div className="h-full flex flex-col justify-center">
-        <div className="text-center py-4">
-          <Award size={24} className="mx-auto mb-2 text-gray-300" />
-          <p className="text-sm text-gray-500">Sin datos suficientes</p>
-        </div>
-      </div>
-    );
-  }
+const MostProductiveDay = ({ datosActuales, loading, thematicColors, className = '' }) => {
+  const diaMasProductivo = datosActuales?.diaMasProductivo;
+  
+  const isEmpty = !diaMasProductivo || diaMasProductivo.dia === 'Ninguno' || !diaMasProductivo.ganancia || diaMasProductivo.ganancia <= 0;
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="flex items-center mb-3">
-        <Award size={18} style={{ color: colors.primary }} className="mr-2" />
-        <h4 className="font-medium text-sm">Día más productivo</h4>
-      </div>
-      
-      <div className="flex-1 flex flex-col justify-center">
+    <BaseStatsCard
+      icon={Award} // Pass the component directly
+      title="Día más productivo"
+      loading={loading}
+      empty={isEmpty}
+      emptyMessage="Sin datos suficientes esta semana."
+      className={className}
+    >
+      <div className="w-full">
         <div className="flex items-center justify-between">
           <div>
-            <p className="font-bold text-lg">{diaMasProductivo.dia}</p>
+            <p className="font-bold text-lg" style={{ color: thematicColors?.primary }}>
+              {diaMasProductivo.dia}
+            </p>
             <p className="text-xs text-gray-600">
-              {diaMasProductivo.turnos || 0} turnos • {formatearHoras(diaMasProductivo.horas || 0)}
+              {diaMasProductivo.turnos || 0} turnos • {formatHoursDecimal(diaMasProductivo.horas || 0)}
             </p>
           </div>
           <div className="text-right">
@@ -58,7 +36,7 @@ const MostProductiveDay = ({ diaMasProductivo }) => {
           </div>
         </div>
       </div>
-    </div>
+    </BaseStatsCard>
   );
 };
 

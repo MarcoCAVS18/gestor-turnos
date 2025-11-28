@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Filter, X } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import Badge from '../../ui/Badge';
 import FiltroTrabajo from '../FiltroTrabajo';
 import FiltroDiasSemana from '../FiltroDiasSemana';
 import FiltroTipoTurno from '../FiltroTipoTurno';
@@ -102,40 +103,22 @@ const FiltrosTurnos = ({ onFiltersChange, activeFilters = {} }) => {
           {/* Resumen de filtros activos */}
           {hasActiveFilters && (
             <div className="pt-3 border-t" style={{ borderColor: colors.transparent20 }}>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 items-center">
                 <span className="text-sm text-gray-600">Filtros activos:</span>
                 {activeFilters.trabajo && activeFilters.trabajo !== 'todos' && (
-                  <span 
-                    className="px-2 py-1 rounded-full text-xs font-medium"
-                    style={{ 
-                      backgroundColor: colors.transparent20,
-                      color: colors.primary 
-                    }}
-                  >
+                  <Badge variant="info" size="xs" rounded>
                     Trabajo específico
-                  </span>
+                  </Badge>
                 )}
                 {activeFilters.diasSemana && activeFilters.diasSemana.length > 0 && (
-                  <span 
-                    className="px-2 py-1 rounded-full text-xs font-medium"
-                    style={{ 
-                      backgroundColor: colors.transparent20,
-                      color: colors.primary 
-                    }}
-                  >
+                  <Badge variant="info" size="xs" rounded>
                     {activeFilters.diasSemana.length} días
-                  </span>
+                  </Badge>
                 )}
                 {activeFilters.tipoTurno && activeFilters.tipoTurno !== 'todos' && (
-                  <span 
-                    className="px-2 py-1 rounded-full text-xs font-medium"
-                    style={{ 
-                      backgroundColor: colors.transparent20,
-                      color: colors.primary 
-                    }}
-                  >
+                  <Badge variant="info" size="xs" rounded>
                     Tipo: {activeFilters.tipoTurno}
-                  </span>
+                  </Badge>
                 )}
               </div>
             </div>

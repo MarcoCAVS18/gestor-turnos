@@ -3,7 +3,7 @@
 import React from 'react';
 import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useApp } from '../contexts/AppContext';
-import { generatePDFReport, generatePNGReport } from '../services/exportService';
+import { generatePDFReport, generatePNGReport, generateXLSXReport } from '../services/exportService';
 import Loader from '../components/other/Loader';
 import WelcomeCard from '../components/dashboard/WelcomeCard';
 import QuickStatsGrid from '../components/dashboard/QuickStatsGrid';
@@ -15,11 +15,12 @@ import FavoriteWorksCard from '../components/dashboard/FavoriteWorksCard';
 import ProjectionCard from '../components/dashboard/ProjectionCard';
 import QuickActionsCard from '../components/dashboard/QuickActionsCard';
 import ExportReportCard from '../components/dashboard/ExportReportCard';
+import FooterSection from '../components/settings/FooterSection';
 
 const Dashboard = () => {
-  const { loading } = useApp(); 
+  const { loading, calculatePayment } = useApp();
   const stats = useDashboardStats();
-  
+
   // Función para manejar la exportación
   const handleExport = async (format) => {
     try {
@@ -27,12 +28,14 @@ const Dashboard = () => {
         await generatePDFReport(stats, stats.todosLosTurnos, stats.todosLosTrabajos);
       } else if (format === 'png') {
         await generatePNGReport(stats, stats.todosLosTurnos, stats.todosLosTrabajos);
+      } else if (format === 'xlsx') {
+        await generateXLSXReport(stats, stats.todosLosTurnos, stats.todosLosTrabajos, calculatePayment);
       }
     } catch (error) {
       console.error('Error al exportar reporte:', error);
     }
   };
-  
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -40,7 +43,7 @@ const Dashboard = () => {
       </div>
     );
   }
-  
+
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
       {/* Welcome Card - siempre full width */}
@@ -48,7 +51,7 @@ const Dashboard = () => {
 
       {/* Layout responsivo principal */}
       <div className="space-y-6">
-        
+
         {/* DESKTOP: Grid de 3 columnas principales */}
         <div className="hidden lg:grid lg:grid-cols-5 lg:gap-6">
 
@@ -56,11 +59,11 @@ const Dashboard = () => {
           <div className="lg:col-span-4 space-y-6">
             {/* QuickStatsGrid maneja su propio layout desktop */}
             <QuickStatsGrid stats={stats} />
-            
+
             {/* Acciones rápidas debajo */}
             <QuickActionsCard />
           </div>
-          
+
           {/* CONTENEDOR 2: Esta semana vertical (1 columna) */}
           <div className="lg:col-span-1">
             <ThisWeekSummaryCard stats={stats} />
@@ -71,53 +74,56 @@ const Dashboard = () => {
         <div className="block lg:hidden space-y-4">
           {/* QuickStatsGrid maneja su propio layout móvil 2x2 */}
           <QuickStatsGrid stats={stats} />
-          
+
           {/* Esta semana */}
           <ThisWeekSummaryCard stats={stats} />
-          
+
           {/* Acciones rápidas */}
           <QuickActionsCard />
         </div>
 
-        {/* Segunda fila: Recent Activity + Next Shift + Top Work + Favorite Works */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Recent Activity Card - 1 columna a la izquierda en desktop, full en móvil */}
-          <div className="lg:col-span-1">
-            <div className="h-full">
-              <RecentActivityCard 
-                stats={stats}
-                todosLosTrabajos={stats.todosLosTrabajos}
-                todosLosTurnos={stats.todosLosTurnos}
-              />
+        {/* Segunda fila: Reorganizada con grilla anidada que ahora incluye Proyección */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:items-start">
+          {/* Columna Izquierda: Actividad Reciente */}
+          <div className="lg:col-span-1 h-full">
+            <RecentActivityCard
+              stats={stats}
+              todosLosTrabajos={stats.todosLosTrabajos}
+              todosLosTurnos={stats.todosLosTurnos}
+            />
+          </div>
+
+          {/* Columna Derecha: Grilla anidada de 2 columnas + fila inferior */}
+          <div className="lg:col-span-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Columna anidada 1: Favoritos y Más Rentable */}
+              <div className="space-y-6">
+                <FavoriteWorksCard trabajosFavoritos={stats.trabajosFavoritos} />
+                <TopWorkCard trabajoMasRentable={stats.trabajoMasRentable} />
+              </div>
+              {/* Columna anidada 2: Próximo Turno y Exportar */}
+              <div className="space-y-6">
+                <NextShiftCard
+                  proximoTurno={stats.proximoTurno}
+                  formatearFecha={stats.formatearFecha}
+                />
+                <ExportReportCard onExport={handleExport} />
+              </div>
+              {/* Fila inferior para Proyección */}
+              <div className="md:col-span-2">
+                <ProjectionCard
+                  proyeccionMensual={stats.proyeccionMensual}
+                  horasTrabajadas={stats.horasTrabajadas}
+                />
+              </div>
             </div>
           </div>
-          
-          {/* Next Shift + Top Work + Favorite Works - 4 columnas con stack vertical */}
-          <div className="lg:col-span-4 space-y-6">
-            <NextShiftCard 
-              proximoTurno={stats.proximoTurno} 
-              formatearFecha={stats.formatearFecha} 
-            />
-            <TopWorkCard trabajoMasRentable={stats.trabajoMasRentable} />
-            <FavoriteWorksCard trabajosFavoritos={stats.trabajosFavoritos} />
-          </div>
         </div>
+      </div>
 
-        {/* Tercera fila: Export Report + Projection */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Export Report Card - izquierda */}
-          <div>
-            <ExportReportCard onExport={handleExport} />
-          </div>
-          
-          {/* Projection Card - derecha */}
-          <div>
-            <ProjectionCard 
-              proyeccionMensual={stats.proyeccionMensual}
-              horasTrabajadas={stats.horasTrabajadas}
-            />
-          </div>
-        </div>
+      {/* Footer */}
+      <div className="flex justify-center mt-8">
+        <FooterSection />
       </div>
     </div>
   );

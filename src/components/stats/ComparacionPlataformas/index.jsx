@@ -5,6 +5,13 @@ import { BarChart3, Package, Clock, DollarSign, TrendingUp } from 'lucide-react'
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
+import {
+  calculateAveragePerOrder,
+  calculateAveragePerHour,
+  calculateNetEarnings,
+  calculateEarningsPercentage,
+  sortPlatforms
+} from '../../../utils/statsCalculations';
 
 const ComparacionPlataformas = ({ deliveryStats }) => {
   const colors = useThemeColors();
@@ -35,22 +42,14 @@ const ComparacionPlataformas = ({ deliveryStats }) => {
     );
   }
 
-  const plataformasConMetricas = plataformas.map(plataforma => {
-    const promedioPorPedido = plataforma.totalPedidos > 0 ? plataforma.totalGanado / plataforma.totalPedidos : 0;
-    const promedioPorHora = plataforma.totalHoras > 0 ? plataforma.totalGanado / plataforma.totalHoras : 0;
-    const gananciaLiquida = plataforma.totalGanado - plataforma.totalGastos;
-    
-    return {
-      ...plataforma,
-      promedioPorPedido,
-      promedioPorHora,
-      gananciaLiquida
-    };
-  });
+  const plataformasConMetricas = plataformas.map(plataforma => ({
+    ...plataforma,
+    promedioPorPedido: calculateAveragePerOrder(plataforma),
+    promedioPorHora: calculateAveragePerHour(plataforma),
+    gananciaLiquida: calculateNetEarnings(plataforma)
+  }));
 
-  const plataformasOrdenadas = [...plataformasConMetricas].sort((a, b) => {
-    return b[sortBy] - a[sortBy];
-  });
+  const plataformasOrdenadas = sortPlatforms(plataformasConMetricas, sortBy);
 
   const totalGeneral = plataformas.reduce((sum, p) => sum + p.totalGanado, 0);
 
@@ -121,7 +120,7 @@ const ComparacionPlataformas = ({ deliveryStats }) => {
 
       <div className="space-y-3">
         {plataformasOrdenadas.map((plataforma, index) => {
-          const porcentajeGanancias = totalGeneral > 0 ? (plataforma.totalGanado / totalGeneral) * 100 : 0;
+          const porcentajeGanancias = calculateEarningsPercentage(plataforma, totalGeneral);
           const icon = getPlataformaIcon(plataforma.nombre);
           
           return (

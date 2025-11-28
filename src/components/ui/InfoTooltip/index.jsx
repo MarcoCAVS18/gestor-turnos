@@ -1,29 +1,20 @@
 // src/components/ui/InfoTooltip/index.jsx - REFACTORIZADO
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Info } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 
-const InfoTooltip = ({ 
-  content, 
+const InfoTooltip = ({
+  content,
   position = 'top',
   size = 'sm',
-  className = '' 
+  className = ''
 }) => {
   const colors = useThemeColors();
   const [isVisible, setIsVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const timeoutRef = useRef(null);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const handleMouseEnter = () => {
     if (!isMobile) {

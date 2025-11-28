@@ -17,8 +17,8 @@ export { default as LoadingWrapper } from './layout/LoadingWrapper';
 
 // Card Components
 export { default as StatCard } from './cards/StatCard';
-export { default as TarjetaTrabajo } from './cards/TarjetaTrabajo';
-export { default as TarjetaTurno } from './cards/TarjetaTurno';
+export { default as TarjetaTrabajo } from './cards/work/TarjetaTrabajo';
+export { default as TarjetaTurno } from './cards/shift/TarjetaTurno';
 export { default as TrabajoCard } from './forms/TrabajoCard';
 
 // Work Components
@@ -30,12 +30,12 @@ export { default as ShiftDetails } from './shift/ShiftDetails';
 export { default as ShiftTypeBadge } from './shift/ShiftTypeBadge';
 
 // Form Components
-export { default as TrabajoForm } from './forms/TrabajoForm';
-export { default as TurnoForm } from './forms/TurnoForm';
+export { default as TrabajoForm } from './forms/work/TrabajoForm';
+export { default as TurnoForm } from './forms/shift/TurnoForm';
 
 // Modal Components
-export { default as ModalTrabajo } from './modals/ModalTrabajo';
-export { default as ModalTurno } from './modals/ModalTurno';
+export { default as ModalTrabajo } from './modals/work/ModalTrabajo';
+export { default as ModalTurno } from './modals/shift/ModalTurno';
 
 // Alert Components
 export { default as AlertaEliminacion } from './alerts/AlertaEliminacion';

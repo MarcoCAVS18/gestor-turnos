@@ -8,41 +8,23 @@ import Card from '../../ui/Card';
 
 const ProjectionCard = ({ proyeccionMensual, horasTrabajadas }) => {
   const colors = useThemeColors();
-  const { turnos } = useApp();
+  const { calculateMonthlyStats } = useApp();
 
   if (proyeccionMensual <= 0) return null;
 
-  // Obtener datos del mes anterior
-  const obtenerDatosMesAnterior = () => {
-    const ahora = new Date();
-    const mesAnterior = new Date(ahora.getFullYear(), ahora.getMonth() - 1, 1);
-    const inicioMesAnterior = new Date(mesAnterior.getFullYear(), mesAnterior.getMonth(), 1);
-    const finMesAnterior = new Date(mesAnterior.getFullYear(), mesAnterior.getMonth() + 1, 0, 23, 59, 59);
+  // Obtener datos del mes anterior usando la nueva función centralizada
+  const now = new Date();
+  const previousMonthStats = calculateMonthlyStats(now.getFullYear(), now.getMonth() - 1);
 
-    const turnosMesAnterior = turnos.filter(turno => {
-      const fecha = turno.fecha?.toDate ? turno.fecha.toDate() : new Date(turno.fecha);
-      return fecha >= inicioMesAnterior && fecha <= finMesAnterior;
-    });
-
-    const totalGanado = turnosMesAnterior.reduce((sum, turno) => sum + (turno.ganancia || 0), 0);
-
-    return {
-      existe: turnosMesAnterior.length > 0,
-      ganancia: totalGanado
-    };
-  };
-
-  const mesAnterior = obtenerDatosMesAnterior();
-  
   // Calcular diferencias
   const obtenerTextoComparacion = () => {
-    if (!mesAnterior.existe) {
+    if (previousMonthStats.shiftsCount === 0) {
       return 'Tu primer mes registrado';
     }
 
-    const diferencia = proyeccionMensual - mesAnterior.ganancia;
-    const porcentaje = ((diferencia / mesAnterior.ganancia) * 100).toFixed(1);
-    
+    const diferencia = proyeccionMensual - previousMonthStats.totalEarnings;
+    const porcentaje = ((diferencia / previousMonthStats.totalEarnings) * 100).toFixed(1);
+
     if (diferencia > 0) {
       return `${formatCurrency(Math.abs(diferencia))} más que el mes anterior (+${porcentaje}%)`;
     } else if (diferencia < 0) {

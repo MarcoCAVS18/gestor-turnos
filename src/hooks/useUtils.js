@@ -1,6 +1,7 @@
 // src/hooks/useUtils.js
 
 import { useCallback } from 'react';
+import { createSafeDate } from '../utils/time';
 
 export const useUtils = () => {
   
@@ -16,7 +17,7 @@ export const useUtils = () => {
 
   // Formateo de fechas
   const formatDate = useCallback((dateString, format = 'full') => {
-    const date = new Date(dateString + 'T00:00:00');
+    const date = createSafeDate(dateString);
     
     switch (format) {
       case 'short':
@@ -48,7 +49,7 @@ export const useUtils = () => {
 
   // Verificar si una fecha es hoy
   const isToday = useCallback((dateString) => {
-    const date = new Date(dateString + 'T00:00:00');
+    const date = createSafeDate(dateString);
     const today = new Date();
     
     return date.getDate() === today.getDate() &&
@@ -58,7 +59,7 @@ export const useUtils = () => {
 
   // Verificar si una fecha es ayer
   const isYesterday = useCallback((dateString) => {
-    const date = new Date(dateString + 'T00:00:00');
+    const date = createSafeDate(dateString);
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     

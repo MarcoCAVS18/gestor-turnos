@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { determinarTipoTurno } from '../utils/shiftDetailsUtils';
+import { createSafeDate } from '../utils/time';
 
 export const useFilterTurnos = (turnosPorFecha) => {
   const { trabajos, trabajosDelivery, shiftRanges } = useApp();
@@ -22,7 +23,7 @@ export const useFilterTurnos = (turnosPorFecha) => {
 
   // Función para obtener el día de la semana de una fecha
   const obtenerDiaSemana = (fechaStr) => {
-    const fecha = new Date(fechaStr + 'T00:00:00');
+    const fecha = createSafeDate(fechaStr);
     const dias = ['domingo', 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado'];
     return dias[fecha.getDay()];
   };

@@ -4,6 +4,7 @@ import React from 'react';
 import { Briefcase, Truck, Bike, Car, User, Package } from 'lucide-react';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
+import Badge from '../../ui/Badge';
 
 const WorkPreviewCard = ({ trabajo }) => {
   if (!trabajo) return null;
@@ -39,9 +40,9 @@ const WorkPreviewCard = ({ trabajo }) => {
             <div className="flex items-center gap-2 mb-1">
               <h2 className="text-xl font-bold text-gray-800">{trabajo.nombre}</h2>
               {esDelivery && (
-                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                <Badge variant="success" size="xs" rounded>
                   Delivery
-                </span>
+                </Badge>
               )}
             </div>
             {trabajo.descripcion && (

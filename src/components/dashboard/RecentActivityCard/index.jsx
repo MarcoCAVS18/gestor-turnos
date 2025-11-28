@@ -5,6 +5,7 @@ import { Activity, Briefcase, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
+import { createSafeDate } from '../../../utils/time';
 import Card from '../../ui/Card';
 
 const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
@@ -12,11 +13,11 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
   const navigate = useNavigate();
 
   // Determinar límite según dispositivo
-  const [limite, setLimite] = React.useState(window.innerWidth >= 768 ? 4 : 2);
+  const [limite, setLimite] = React.useState(window.innerWidth >= 768 ? 5 : 2);
 
   React.useEffect(() => {
     const handleResize = () => {
-      setLimite(window.innerWidth >= 768 ? 4 : 2);
+      setLimite(window.innerWidth >= 768 ? 5 : 2);
     };
 
     window.addEventListener('resize', handleResize);
@@ -44,17 +45,17 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
   // Función para formatear fecha relativa - SIMPLIFICADA
   const formatearFechaRelativa = (fechaStr) => {
     try {
-      const fecha = new Date(fechaStr + 'T00:00:00');
+      const fecha = createSafeDate(fechaStr);
       const hoy = new Date();
       const ayer = new Date(hoy);
       ayer.setDate(hoy.getDate() - 1);
-      
+
       if (fecha.toDateString() === hoy.toDateString()) return 'Hoy';
       if (fecha.toDateString() === ayer.toDateString()) return 'Ayer';
-      
-      return fecha.toLocaleDateString('es-ES', { 
-        day: 'numeric', 
-        month: 'short' 
+
+      return fecha.toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'short'
       });
     } catch (error) {
       return fechaStr;

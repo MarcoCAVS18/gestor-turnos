@@ -1,9 +1,8 @@
-// src/components/stats/MonthlyProjection/index.jsx - REFACTORIZADO
-
 import React from 'react';
 import { TrendingUp } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
+import BaseStatsCard from '../../cards/base/BaseStatsCard'; // Import BaseStatsCard
 
 const MonthlyProjection = ({ totalGanado = 0, horasTrabajadas = 0 }) => {
   const colors = useThemeColors();
@@ -15,19 +14,22 @@ const MonthlyProjection = ({ totalGanado = 0, horasTrabajadas = 0 }) => {
   const gananciaProyectada = totalSeguro * 4.33;
   const horasProyectadas = horasSeguras * 4.33;
 
+  const isEmpty = totalSeguro === 0 && horasSeguras === 0;
+
   return (
-    <div className="bg-white rounded-xl shadow-md p-4">
-      <div className="flex items-center mb-3">
-        <TrendingUp size={18} style={{ color: colors.primary }} className="mr-2" />
-        <h3 className="font-semibold">Proyección mensual</h3>
-      </div>
-      
+    <BaseStatsCard
+      icon={TrendingUp}
+      title="Proyección mensual"
+      empty={isEmpty}
+      emptyMessage="No hay datos de actividad reciente"
+      emptyDescription="Registra turnos para ver tu proyección mensual"
+    >
       <div className="text-center">
         <p className="text-sm text-gray-600 mb-2">
           Si mantienes este ritmo durante todo el mes
         </p>
-        <p 
-          className="text-3xl font-bold" 
+        <p
+          className="text-3xl font-bold"
           style={{ color: colors.primary }}
         >
           {formatCurrency(gananciaProyectada)}
@@ -36,7 +38,7 @@ const MonthlyProjection = ({ totalGanado = 0, horasTrabajadas = 0 }) => {
           ~{horasProyectadas.toFixed(0)} horas
         </p>
       </div>
-    </div>
+    </BaseStatsCard>
   );
 };
 

@@ -4,8 +4,9 @@ import React from 'react';
 import { Clock, DollarSign, Timer } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import InfoTooltip from '../../ui/InfoTooltip'; 
+import InfoTooltip from '../../ui/InfoTooltip';
 import { determinarTipoTurno, getTipoTurnoLabel } from '../../../utils/shiftDetailsUtils';
+import { createSafeDate } from '../../../utils/time';
 
 const ShiftDetails = ({ turno, trabajo, badges }) => {
   const { calculatePayment, shiftRanges } = useApp();
@@ -138,7 +139,7 @@ const ShiftDetails = ({ turno, trabajo, badges }) => {
               </div>
               {turno.fechaFin && (
                 <div className="text-xs text-gray-300 mt-1">
-                  Termina: {new Date(turno.fechaFin + 'T00:00:00').toLocaleDateString('es-ES')}
+                  Termina: {createSafeDate(turno.fechaFin).toLocaleDateString('es-ES')}
                 </div>
               )}
             </div>

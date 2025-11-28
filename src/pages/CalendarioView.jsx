@@ -6,9 +6,10 @@ import { CalendarDays, Plus } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { fechaLocalAISO } from '../utils/calendarUtils';
+import { createSafeDate } from '../utils/time';
 import Calendario from '../components/calendar/Calendario';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
-import ModalTurno from '../components/modals/ModalTurno';
+import ModalTurno from '../components/modals/shift/ModalTurno';
 import Button from '../components/ui/Button';
 
 const CalendarioView = () => {
@@ -35,7 +36,7 @@ const CalendarioView = () => {
   
   // Función para formatear fecha
   const formatearFecha = (fechaStr) => {
-    const fecha = new Date(fechaStr + 'T00:00:00');
+    const fecha = createSafeDate(fechaStr);
     const hoy = new Date();
     const ayer = new Date(hoy);
     ayer.setDate(hoy.getDate() - 1);
@@ -125,7 +126,7 @@ const CalendarioView = () => {
         {/* Botón de agregar turno - solo si hay trabajos */}
         {hayTrabajos && fechaSeleccionada && (
           <Button
-            onClick={() => abrirModalNuevoTurno(new Date(fechaSeleccionada + 'T00:00:00'))}
+            onClick={() => abrirModalNuevoTurno(createSafeDate(fechaSeleccionada))}
             className="flex items-center space-x-2 shadow-sm hover:shadow-md"
             icon={Plus}
             themeColor={colors.primary}

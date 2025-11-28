@@ -1,21 +1,16 @@
 // src/components/stats/StatsProgressBar/index.jsx
-
 import React from 'react';
 import { Clock, DollarSign, Target } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
-const StatsProgressBar = ({ 
-  horasSemanales = 0,
-  metaHoras = 40,
-  gananciaTotal = 0,
-  className = '' 
-}) => {
+const StatsProgressBar = ({ className = '', datosActuales, weeklyHoursGoal }) => {
+  const { horasTrabajadas, totalGanado } = datosActuales;
   const colors = useThemeColors();
   
-  // Calcular porcentaje de progreso
-  const porcentaje = metaHoras > 0 ? (horasSemanales / metaHoras) * 100 : 0;
+  const metaHoras = weeklyHoursGoal || 40;
+  const porcentaje = metaHoras > 0 ? (horasTrabajadas / metaHoras) * 100 : 0;
   const porcentajeLimitado = Math.min(Math.max(porcentaje, 0), 100);
   
   const getColorProgreso = () => {
@@ -26,8 +21,8 @@ const StatsProgressBar = ({
   };
 
   return (
-    <Card className={className}>
-      <div className="space-y-4">
+    <Card className={`${className} ${!weeklyHoursGoal ? 'opacity-60' : ''} flex flex-col`}>
+      <div className="flex-1 flex flex-col justify-between">
         {/* Header */}
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-gray-800 flex items-center">
@@ -42,7 +37,7 @@ const StatsProgressBar = ({
         {/* Barra de progreso */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="font-medium">{horasSemanales.toFixed(1)} horas trabajadas</span>
+            <span className="font-medium">{horasTrabajadas.toFixed(1)} horas trabajadas</span>
             <span className="text-gray-500">{porcentajeLimitado.toFixed(1)}%</span>
           </div>
           
@@ -64,7 +59,7 @@ const StatsProgressBar = ({
             <div>
               <p className="text-xs text-gray-500">Horas restantes</p>
               <p className="font-medium">
-                {Math.max(0, metaHoras - horasSemanales).toFixed(1)}h
+                {Math.max(0, metaHoras - horasTrabajadas).toFixed(1)}h
               </p>
             </div>
           </div>
@@ -73,7 +68,7 @@ const StatsProgressBar = ({
             <DollarSign size={16} className="text-green-500 mr-2" />
             <div>
               <p className="text-xs text-gray-500">Ganancia total</p>
-              <p className="font-medium">{formatCurrency(gananciaTotal)}</p>
+              <p className="font-medium">{formatCurrency(totalGanado)}</p>
             </div>
           </div>
         </div>
