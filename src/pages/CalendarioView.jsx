@@ -6,9 +6,10 @@ import ***REMOVED*** CalendarDays, Plus ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../hooks/useThemeColors';
 import ***REMOVED*** fechaLocalAISO ***REMOVED*** from '../utils/calendarUtils';
+import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 import Calendario from '../components/calendar/Calendario';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
-import ModalTurno from '../components/modals/ModalTurno';
+import ModalTurno from '../components/modals/shift/ModalTurno';
 import Button from '../components/ui/Button';
 
 const CalendarioView = () => ***REMOVED***
@@ -35,7 +36,7 @@ const CalendarioView = () => ***REMOVED***
   
   // Función para formatear fecha
   const formatearFecha = (fechaStr) => ***REMOVED***
-    const fecha = new Date(fechaStr + 'T00:00:00');
+    const fecha = createSafeDate(fechaStr);
     const hoy = new Date();
     const ayer = new Date(hoy);
     ayer.setDate(hoy.getDate() - 1);
@@ -125,7 +126,7 @@ const CalendarioView = () => ***REMOVED***
         ***REMOVED***/* Botón de agregar turno - solo si hay trabajos */***REMOVED***
         ***REMOVED***hayTrabajos && fechaSeleccionada && (
           <Button
-            onClick=***REMOVED***() => abrirModalNuevoTurno(new Date(fechaSeleccionada + 'T00:00:00'))***REMOVED***
+            onClick=***REMOVED***() => abrirModalNuevoTurno(createSafeDate(fechaSeleccionada))***REMOVED***
             className="flex items-center space-x-2 shadow-sm hover:shadow-md"
             icon=***REMOVED***Plus***REMOVED***
             themeColor=***REMOVED***colors.primary***REMOVED***

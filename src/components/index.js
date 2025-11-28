@@ -17,8 +17,8 @@ export ***REMOVED*** default as LoadingWrapper ***REMOVED*** from './layout/Load
 
 // Card Components
 export ***REMOVED*** default as StatCard ***REMOVED*** from './cards/StatCard';
-export ***REMOVED*** default as TarjetaTrabajo ***REMOVED*** from './cards/TarjetaTrabajo';
-export ***REMOVED*** default as TarjetaTurno ***REMOVED*** from './cards/TarjetaTurno';
+export ***REMOVED*** default as TarjetaTrabajo ***REMOVED*** from './cards/work/TarjetaTrabajo';
+export ***REMOVED*** default as TarjetaTurno ***REMOVED*** from './cards/shift/TarjetaTurno';
 export ***REMOVED*** default as TrabajoCard ***REMOVED*** from './forms/TrabajoCard';
 
 // Work Components
@@ -30,12 +30,12 @@ export ***REMOVED*** default as ShiftDetails ***REMOVED*** from './shift/ShiftDe
 export ***REMOVED*** default as ShiftTypeBadge ***REMOVED*** from './shift/ShiftTypeBadge';
 
 // Form Components
-export ***REMOVED*** default as TrabajoForm ***REMOVED*** from './forms/TrabajoForm';
-export ***REMOVED*** default as TurnoForm ***REMOVED*** from './forms/TurnoForm';
+export ***REMOVED*** default as TrabajoForm ***REMOVED*** from './forms/work/TrabajoForm';
+export ***REMOVED*** default as TurnoForm ***REMOVED*** from './forms/shift/TurnoForm';
 
 // Modal Components
-export ***REMOVED*** default as ModalTrabajo ***REMOVED*** from './modals/ModalTrabajo';
-export ***REMOVED*** default as ModalTurno ***REMOVED*** from './modals/ModalTurno';
+export ***REMOVED*** default as ModalTrabajo ***REMOVED*** from './modals/work/ModalTrabajo';
+export ***REMOVED*** default as ModalTurno ***REMOVED*** from './modals/shift/ModalTurno';
 
 // Alert Components
 export ***REMOVED*** default as AlertaEliminacion ***REMOVED*** from './alerts/AlertaEliminacion';

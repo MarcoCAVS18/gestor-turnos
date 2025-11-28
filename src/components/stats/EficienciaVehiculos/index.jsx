@@ -4,7 +4,8 @@ import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Car, Fuel, Navigation, Clock ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
-import Card from '../../ui/Card';
+import BaseStatsCard from '../../cards/base/BaseStatsCard'; // Import BaseStatsCard
+import ***REMOVED*** calculateCostPerKm, calculateVehicleEarningsPerHour, findMostEfficientVehicle ***REMOVED*** from '../../../utils/statsCalculations'; // Import utility functions
 
 const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -38,41 +39,24 @@ const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***RE
 
   const vehiculos = Object.values(deliveryStats.estadisticasPorVehiculo);
 
-  if (vehiculos.length === 0) ***REMOVED***
-    return (
-      <Card>
-        <div className=***REMOVED***`text-center py-6 transition-opacity duration-1000 $***REMOVED***animacionActiva ? 'opacity-50' : 'opacity-100'***REMOVED***`***REMOVED***>
-          <Car size=***REMOVED***48***REMOVED*** className="mx-auto mb-4 text-gray-300" />
-          <h3 className="text-lg font-semibold text-gray-600 mb-2">
-            Sin datos de vehículos
-          </h3>
-          <p className="text-gray-500">
-            Los datos aparecerán al registrar turnos
-          </p>
-        </div>
-      </Card>
-    );
-  ***REMOVED***
+  const isEmpty = vehiculos.length === 0;
 
-  const vehiculoMasEficiente = vehiculos.reduce((mejor, actual) => ***REMOVED***
-    return actual.eficiencia > mejor.eficiencia ? actual : mejor;
-  ***REMOVED***, vehiculos[0]);
+  const vehiculoMasEficiente = findMostEfficientVehicle(vehiculos);
 
   return (
-    <Card>
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold flex items-center">
-          <Car size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-          Eficiencia por Vehículo
-        </h3>
-      </div>
-
+    <BaseStatsCard
+      title="Eficiencia por Vehículo"
+      icon=***REMOVED***Car***REMOVED***
+      empty=***REMOVED***isEmpty***REMOVED***
+      emptyMessage="Sin datos de vehículos"
+      emptyDescription="Los datos aparecerán al registrar turnos"
+    >
       <div className="space-y-3">
         ***REMOVED***vehiculos.map((vehiculo, index) => ***REMOVED***
           const color = getVehicleColor(vehiculo.nombre);
           const icon = getVehicleIcon(vehiculo.nombre);
-          const costoPorKm = vehiculo.totalKilometros > 0 ? vehiculo.totalGastos / vehiculo.totalKilometros : 0;
-          const gananciaPorHora = vehiculo.totalHoras > 0 ? vehiculo.totalGanado / vehiculo.totalHoras : 0;
+          const costoPorKm = calculateCostPerKm(vehiculo);
+          const gananciaPorHora = calculateVehicleEarningsPerHour(vehiculo);
           
           return (
             <div 
@@ -159,7 +143,7 @@ const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***RE
           </div>
         </div>
       </div>
-    </Card>
+    </BaseStatsCard>
   );
 ***REMOVED***;
 

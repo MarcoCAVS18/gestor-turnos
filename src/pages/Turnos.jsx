@@ -5,14 +5,17 @@ import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** useTurnManager ***REMOVED*** from '../hooks/useTurnManager';
 import ***REMOVED*** useDeleteManager ***REMOVED*** from '../hooks/useDeleteManager';
 import ***REMOVED*** useFilterTurnos ***REMOVED*** from '../hooks/useFilterTurnos';
+import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import ShiftsHeader from '../components/shifts/ShiftsHeader';
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
 import FiltrosTurnos from '../components/filters/FiltrosTurnos';
-import ModalTurno from '../components/modals/ModalTurno';
+import ModalTurno from '../components/modals/shift/ModalTurno';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 import WeeklyShiftsSection from '../components/shifts/WeeklyShiftsSection';
 import ***REMOVED*** generateShiftDetails ***REMOVED*** from '../utils/shiftDetailsUtils';
+
+import LoadingSpinner from '../components/ui/LoadingSpinner/LoadingSpinner';
 
 const WEEKS_PER_PAGE = 4; // Mostrar 4 semanas por página
 
@@ -63,7 +66,7 @@ const Turnos = () => ***REMOVED***
 
   // Función para obtener el lunes de una fecha
   const obtenerLunesDeLaSemana = (fecha) => ***REMOVED***
-    const date = new Date(fecha + 'T00:00:00');
+    const date = createSafeDate(fecha);
     const diaSemana = date.getDay();
     const diasHastaLunes = diaSemana === 0 ? -6 : -(diaSemana - 1);
     const lunes = new Date(date);
@@ -73,7 +76,7 @@ const Turnos = () => ***REMOVED***
 
   // Función para formatear el rango de semana
   const formatearRangoSemana = (fechaLunes) => ***REMOVED***
-    const lunes = new Date(fechaLunes + 'T00:00:00');
+    const lunes = createSafeDate(fechaLunes);
     const domingo = new Date(lunes);
     domingo.setDate(lunes.getDate() + 6);
 
@@ -244,9 +247,10 @@ const Turnos = () => ***REMOVED***
                 >
                   ***REMOVED***expanding ? (
                     <>
-                      <div 
-                        className="animate-spin rounded-full h-4 w-4 border-b-2"
+                      <LoadingSpinner 
+                        size="h-4 w-4"
                         style=***REMOVED******REMOVED*** borderColor: thematicColors?.base ***REMOVED******REMOVED***
+                        color="border-transparent" // Evita conflicto con el style
                       />
                       <span>Cargando...</span>
                     </>

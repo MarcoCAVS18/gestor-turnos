@@ -2,22 +2,14 @@
 
 import ***REMOVED*** useCallback ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+import ***REMOVED*** calculateShiftHours ***REMOVED*** from '../utils/time';
 
 export const useCalculations = () => ***REMOVED***
   const ***REMOVED*** trabajos, rangosTurnos, descuentoDefault ***REMOVED*** = useApp();
 
+  // Usar la utilidad centralizada
   const calcularHoras = useCallback((inicio, fin) => ***REMOVED***
-    const [horaIni, minIni] = inicio.split(':').map(n => parseInt(n));
-    const [horaFn, minFn] = fin.split(':').map(n => parseInt(n));
-
-    let inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFn * 60 + minFn;
-
-    if (finMinutos <= inicioMinutos) ***REMOVED***
-      finMinutos += 24 * 60;
-    ***REMOVED***
-
-    return (finMinutos - inicioMinutos) / 60;
+    return calculateShiftHours(inicio, fin);
   ***REMOVED***, []);
 
   const calcularPago = useCallback((turno) => ***REMOVED***
@@ -25,6 +17,10 @@ export const useCalculations = () => ***REMOVED***
     if (!trabajo) return ***REMOVED*** total: 0, totalConDescuento: 0, horas: 0 ***REMOVED***;
 
     const ***REMOVED*** horaInicio, horaFin ***REMOVED*** = turno;
+
+    // Usar la utilidad centralizada
+    const horas = calculateShiftHours(horaInicio, horaFin);
+
     const [horaIni, minIni] = horaInicio.split(':').map(n => parseInt(n));
     const [horaFn, minFn] = horaFin.split(':').map(n => parseInt(n));
 
@@ -34,9 +30,6 @@ export const useCalculations = () => ***REMOVED***
     if (finMinutos <= inicioMinutos) ***REMOVED***
       finMinutos += 24 * 60;
     ***REMOVED***
-
-    const totalMinutos = finMinutos - inicioMinutos;
-    const horas = totalMinutos / 60;
 
     const [year, month, day] = turno.fecha.split('-');
     const fecha = new Date(year, month - 1, day);

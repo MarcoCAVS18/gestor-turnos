@@ -3,6 +3,7 @@
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Filter, X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import Badge from '../../ui/Badge';
 import FiltroTrabajo from '../FiltroTrabajo';
 import FiltroDiasSemana from '../FiltroDiasSemana';
 import FiltroTipoTurno from '../FiltroTipoTurno';
@@ -102,40 +103,22 @@ const FiltrosTurnos = (***REMOVED*** onFiltersChange, activeFilters = ***REMOVED
           ***REMOVED***/* Resumen de filtros activos */***REMOVED***
           ***REMOVED***hasActiveFilters && (
             <div className="pt-3 border-t" style=***REMOVED******REMOVED*** borderColor: colors.transparent20 ***REMOVED******REMOVED***>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 items-center">
                 <span className="text-sm text-gray-600">Filtros activos:</span>
                 ***REMOVED***activeFilters.trabajo && activeFilters.trabajo !== 'todos' && (
-                  <span 
-                    className="px-2 py-1 rounded-full text-xs font-medium"
-                    style=***REMOVED******REMOVED*** 
-                      backgroundColor: colors.transparent20,
-                      color: colors.primary 
-                    ***REMOVED******REMOVED***
-                  >
+                  <Badge variant="info" size="xs" rounded>
                     Trabajo específico
-                  </span>
+                  </Badge>
                 )***REMOVED***
                 ***REMOVED***activeFilters.diasSemana && activeFilters.diasSemana.length > 0 && (
-                  <span 
-                    className="px-2 py-1 rounded-full text-xs font-medium"
-                    style=***REMOVED******REMOVED*** 
-                      backgroundColor: colors.transparent20,
-                      color: colors.primary 
-                    ***REMOVED******REMOVED***
-                  >
+                  <Badge variant="info" size="xs" rounded>
                     ***REMOVED***activeFilters.diasSemana.length***REMOVED*** días
-                  </span>
+                  </Badge>
                 )***REMOVED***
                 ***REMOVED***activeFilters.tipoTurno && activeFilters.tipoTurno !== 'todos' && (
-                  <span 
-                    className="px-2 py-1 rounded-full text-xs font-medium"
-                    style=***REMOVED******REMOVED*** 
-                      backgroundColor: colors.transparent20,
-                      color: colors.primary 
-                    ***REMOVED******REMOVED***
-                  >
+                  <Badge variant="info" size="xs" rounded>
                     Tipo: ***REMOVED***activeFilters.tipoTurno***REMOVED***
-                  </span>
+                  </Badge>
                 )***REMOVED***
               </div>
             </div>

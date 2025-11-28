@@ -6,7 +6,6 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
-import New from '../../ui/New';
 
 const SmokoSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
@@ -66,14 +65,9 @@ const SmokoSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMO
   ***REMOVED***;
 
   return (
-    <SettingsSection 
-      icon=***REMOVED***Coffee***REMOVED*** 
-      title=***REMOVED***
-        <div className="flex items-center gap-2">
-          <span>Smoko (Descansos)</span>
-          <New size="xs">NUEVO</New>
-        </div>
-      ***REMOVED***
+    <SettingsSection
+      icon=***REMOVED***Coffee***REMOVED***
+      title="Smoko (Descansos)"
     >
       <div className="space-y-6">
         ***REMOVED***/* Información explicativa */***REMOVED***
@@ -113,18 +107,18 @@ const SmokoSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMO
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Duración del descanso
               </label>
-              
-              ***REMOVED***/* Botones rápidos */***REMOVED***
-              <div className="grid grid-cols-4 gap-2 mb-4">
-                ***REMOVED***[15, 30, 45, 60].map(min => (
+
+              ***REMOVED***/* Botones rápidos con input personalizado */***REMOVED***
+              <div className="grid grid-cols-4 gap-2">
+                ***REMOVED***[15, 30, 45].map(min => (
                   <button
                     key=***REMOVED***min***REMOVED***
                     type="button"
                     onClick=***REMOVED***() => handleMinutesChange(min)***REMOVED***
                     className=***REMOVED***`
                       px-3 py-2 text-sm rounded-lg border transition-colors
-                      $***REMOVED***minutes === min 
-                        ? 'border-2 text-white' 
+                      $***REMOVED***minutes === min
+                        ? 'border-2 text-white'
                         : 'border-gray-300 text-gray-700 hover:bg-gray-50'
                       ***REMOVED***
                     `***REMOVED***
@@ -136,28 +130,24 @@ const SmokoSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMO
                     ***REMOVED***formatearTiempo(min)***REMOVED***
                   </button>
                 ))***REMOVED***
-              </div>
 
-              ***REMOVED***/* Input personalizado */***REMOVED***
-              <div className="flex items-center space-x-2">
-                <input
-                  type="number"
-                  value=***REMOVED***minutes***REMOVED***
-                  onChange=***REMOVED***(e) => handleMinutesChange(e.target.value)***REMOVED***
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
-                  style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
-                  min="5"
-                  max="120"
-                  placeholder="30"
-                />
-                <span className="text-sm text-gray-500 whitespace-nowrap">
-                  minutos
-                </span>
+                ***REMOVED***/* Input personalizado integrado con sufijo "min" */***REMOVED***
+                <div className="relative">
+                  <input
+                    type="number"
+                    value=***REMOVED***minutes***REMOVED***
+                    onChange=***REMOVED***(e) => handleMinutesChange(e.target.value)***REMOVED***
+                    className="w-full px-3 py-2 pr-10 text-sm text-center border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
+                    style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+                    min="5"
+                    max="120"
+                    placeholder="30"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none">
+                    min
+                  </span>
+                </div>
               </div>
-              
-              <p className="text-xs text-gray-500 mt-1">
-                Mínimo 5 minutos, máximo 2 horas
-              </p>
             </div>
           </div>
         )***REMOVED***
@@ -182,7 +172,6 @@ const SmokoSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMO
         <div className="text-xs text-gray-500 space-y-1 pt-2 border-t border-gray-100">
           <p>• El descanso se aplicará automáticamente a todos tus turnos</p>
           <p>• Podrás desactivar el descanso en turnos específicos si no lo tomaste</p>
-          <p>• Los cálculos de pago se ajustarán según el tiempo trabajado real</p>
         </div>
       </div>
     </SettingsSection>

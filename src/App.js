@@ -1,9 +1,10 @@
-// src/App.js
-
 import React from 'react';
-import ***REMOVED*** BrowserRouter as Router, Routes, Route, Navigate ***REMOVED*** from 'react-router-dom';
+import ***REMOVED*** BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from './contexts/AuthContext';
 import ***REMOVED*** AppProvider ***REMOVED*** from './contexts/AppContext';
+import ProtectedLayout from './components/layout/ProtectedLayout/ProtectedLayout';
+import LoadingSpinner from './components/ui/LoadingSpinner/LoadingSpinner';
+import useModalManager from './hooks/useModalManager';
 import './styles/animation.css';
 
 // Componentes de autenticación
@@ -24,32 +25,17 @@ import Ajustes from './pages/Ajustes';
 import TrabajoCompartido from './pages/TrabajoCompartido';
 
 // Modales
-import ModalTrabajo from './components/modals/ModalTrabajo';
-import ModalTurno from './components/modals/ModalTurno';
+import ModalTrabajo from './components/modals/work/ModalTrabajo';
+import ModalTurno from './components/modals/shift/ModalTurno';
 
-// Ruta protegida
-const PrivateRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** currentUser, loading ***REMOVED*** = useAuth();
-
-  if (loading) ***REMOVED***
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
-      </div>
-    );
-  ***REMOVED***
-
-  return currentUser ? children : <Navigate to="/login" replace />;
-***REMOVED***;
-
-// Ruta pública que permite acceso sin autenticación, pero redirige al login si es necesario
+// Ruta pública que permite acceso sin autenticación
 const PublicRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** loading ***REMOVED*** = useAuth();
 
   if (loading) ***REMOVED***
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+        <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
       </div>
     );
   ***REMOVED***
@@ -58,64 +44,22 @@ const PublicRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
 ***REMOVED***;
 
 // Layout general de la app
-function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
-  const [vistaActual, setVistaActual] = React.useState(currentView);
-  const [modalTrabajoAbierto, setModalTrabajoAbierto] = React.useState(false);
-  const [modalTurnoAbierto, setModalTurnoAbierto] = React.useState(false);
-  const [trabajoSeleccionado, setTrabajoSeleccionado] = React.useState(null);
-  const [turnoSeleccionado, setTurnoSeleccionado] = React.useState(null);
+function AppLayout() ***REMOVED***
+  const location = useLocation();
+  const vistaActual = location.pathname.substring(1); // Removes the leading '/'
 
-  React.useEffect(() => ***REMOVED***
-    setVistaActual(currentView);
-  ***REMOVED***, [currentView]);
-
-  const abrirModalNuevoTrabajo = () => ***REMOVED***
-    setTrabajoSeleccionado(null);
-    setModalTrabajoAbierto(true);
-  ***REMOVED***;
-
-  const abrirModalNuevoTurno = () => ***REMOVED***
-    setTurnoSeleccionado(null);
-    setModalTurnoAbierto(true);
-  ***REMOVED***;
-
-  const abrirModalEditarTrabajo = (trabajo) => ***REMOVED***
-    setTrabajoSeleccionado(trabajo);
-    setModalTrabajoAbierto(true);
-  ***REMOVED***;
-
-  const abrirModalEditarTurno = (turno) => ***REMOVED***
-    setTurnoSeleccionado(turno);
-    setModalTurnoAbierto(true);
-  ***REMOVED***;
-
-  const cerrarModalTrabajo = () => ***REMOVED***
-    setModalTrabajoAbierto(false);
-    setTrabajoSeleccionado(null);
-  ***REMOVED***;
-
-  const cerrarModalTurno = () => ***REMOVED***
-    setModalTurnoAbierto(false);
-    setTurnoSeleccionado(null);
-  ***REMOVED***;
-
-  const renderVista = () => ***REMOVED***
-    switch (vistaActual) ***REMOVED***
-      case 'trabajos':
-        return <Trabajos abrirModalEditarTrabajo=***REMOVED***abrirModalEditarTrabajo***REMOVED*** />;
-      case 'turnos':
-        return <Turnos abrirModalEditarTurno=***REMOVED***abrirModalEditarTurno***REMOVED*** />;
-      case 'estadisticas':
-        return <Estadisticas />;
-      case 'calendario':
-        return <CalendarioView />;
-      case 'ajustes':
-        return <Ajustes />;
-      case 'dashboard':
-      default:
-        return <Dashboard />;
-    ***REMOVED***
-  ***REMOVED***;
+  const ***REMOVED***
+    modalTrabajoAbierto,
+    modalTurnoAbierto,
+    trabajoSeleccionado,
+    turnoSeleccionado,
+    abrirModalNuevoTrabajo,
+    abrirModalNuevoTurno,
+    abrirModalEditarTrabajo,
+    abrirModalEditarTurno,
+    cerrarModalTrabajo,
+    cerrarModalTurno,
+  ***REMOVED*** = useModalManager();
 
   return (
     <div className="min-h-screen bg-gray-100 font-poppins">
@@ -123,7 +67,6 @@ function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
       <div className="md:hidden">
         <Header
           vistaActual=***REMOVED***vistaActual***REMOVED***
-          setVistaActual=***REMOVED***setVistaActual***REMOVED***
           abrirModalNuevoTrabajo=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
           abrirModalNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED***
         />
@@ -131,13 +74,11 @@ function AppLayout(***REMOVED*** currentView ***REMOVED***) ***REMOVED***
 
       ***REMOVED***/* Contenido principal */***REMOVED***
       <main className="max-w-md mx-auto px-4 pb-20 md:max-w-none md:ml-72 md:px-6 md:pb-6">
-        ***REMOVED***renderVista()***REMOVED***
+        <Outlet context=***REMOVED******REMOVED*** abrirModalEditarTrabajo, abrirModalEditarTurno ***REMOVED******REMOVED*** />
       </main>
 
       ***REMOVED***/* Navegación */***REMOVED***
       <Navegacion
-        vistaActual=***REMOVED***vistaActual***REMOVED***
-        setVistaActual=***REMOVED***setVistaActual***REMOVED***
         abrirModalNuevoTrabajo=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
         abrirModalNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED***
       />
@@ -165,7 +106,7 @@ function App() ***REMOVED***
   if (loading) ***REMOVED***
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+        <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
       </div>
     );
   ***REMOVED***
@@ -195,73 +136,17 @@ function App() ***REMOVED***
           ***REMOVED***
         />
 
-        ***REMOVED***/* Rutas protegidas con AppProvider aplicado solo una vez */***REMOVED***
-        <Route
-          path="/dashboard"
-          element=***REMOVED***
-            <PrivateRoute>
-              <AppProvider>
-                <AppLayout currentView="dashboard" />
-              </AppProvider>
-            </PrivateRoute>
-          ***REMOVED***
-        />
+        ***REMOVED***/* Rutas protegidas */***REMOVED***
+        <Route element=***REMOVED***<ProtectedLayout><AppLayout /></ProtectedLayout>***REMOVED***>
+          <Route path="/dashboard" element=***REMOVED***<Dashboard />***REMOVED*** />
+          <Route path="/trabajos" element=***REMOVED***<Trabajos />***REMOVED*** />
+          <Route path="/turnos" element=***REMOVED***<Turnos />***REMOVED*** />
+          <Route path="/estadisticas" element=***REMOVED***<Estadisticas />***REMOVED*** />
+          <Route path="/calendario" element=***REMOVED***<CalendarioView />***REMOVED*** />
+          <Route path="/ajustes" element=***REMOVED***<Ajustes />***REMOVED*** />
+        </Route>
 
-        <Route
-          path="/trabajos"
-          element=***REMOVED***
-            <PrivateRoute>
-              <AppProvider>
-                <AppLayout currentView="trabajos" />
-              </AppProvider>
-            </PrivateRoute>
-          ***REMOVED***
-        />
-
-        <Route
-          path="/turnos"
-          element=***REMOVED***
-            <PrivateRoute>
-              <AppProvider>
-                <AppLayout currentView="turnos" />
-              </AppProvider>
-            </PrivateRoute>
-          ***REMOVED***
-        />
-
-        <Route
-          path="/estadisticas"
-          element=***REMOVED***
-            <PrivateRoute>
-              <AppProvider>
-                <AppLayout currentView="estadisticas" />
-              </AppProvider>
-            </PrivateRoute>
-          ***REMOVED***
-        />
-
-        <Route
-          path="/calendario"
-          element=***REMOVED***
-            <PrivateRoute>
-              <AppProvider>
-                <AppLayout currentView="calendario" />
-              </AppProvider>
-            </PrivateRoute>
-          ***REMOVED***
-        />
-
-        <Route
-          path="/ajustes"
-          element=***REMOVED***
-            <PrivateRoute>
-              <AppProvider>
-                <AppLayout currentView="ajustes" />
-              </AppProvider>
-            </PrivateRoute>
-          ***REMOVED***
-        />
-
+        ***REMOVED***/* Redirecciones */***REMOVED***
         <Route path="/" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
         <Route path="*" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
       </Routes>

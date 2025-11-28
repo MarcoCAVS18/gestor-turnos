@@ -9,7 +9,7 @@ import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import './index.css';
 
-const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirModalNuevoTurno ***REMOVED***) => ***REMOVED***
+const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno ***REMOVED***) => ***REMOVED***
   const navigate = useNavigate();
   const location = useLocation();
   const ***REMOVED*** trabajos, trabajosDelivery ***REMOVED*** = useApp();
@@ -56,7 +56,6 @@ const Navegacion = (***REMOVED*** setVistaActual, abrirModalNuevoTrabajo, abrirM
     window.scrollTo(***REMOVED*** top: 0, behavior: 'smooth' ***REMOVED***);
     
     navigate(routes[view]);
-    setVistaActual(view);
   ***REMOVED***;
   
   const getActiveTextStyle = (vista) => ***REMOVED***

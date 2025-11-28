@@ -1,13 +1,14 @@
 import React, ***REMOVED*** forwardRef ***REMOVED*** from 'react';
 import ***REMOVED*** Calendar ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import TarjetaTurno from '../../cards/TarjetaTurno';
-import TarjetaTurnoDelivery from '../../cards/TarjetaTurnoDelivery';
+import TarjetaTurno from '../../cards/shift/TarjetaTurno';
+import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
+import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../utils/time';
 
 const DaySection = forwardRef((***REMOVED*** fecha, turnos, trabajos, onEditTurno, onDeleteTurno ***REMOVED***, ref) => ***REMOVED***
   const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
 
-  const fechaObj = new Date(fecha + 'T00:00:00');
+  const fechaObj = createSafeDate(fecha);
   const diaSemana = fechaObj.toLocaleDateString('es-ES', ***REMOVED*** weekday: 'long' ***REMOVED***);
   const fechaFormateada = fechaObj.toLocaleDateString('es-ES', ***REMOVED*** 
     day: 'numeric', 

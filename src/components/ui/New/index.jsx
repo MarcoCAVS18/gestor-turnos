@@ -25,6 +25,7 @@ const New = (***REMOVED***
     bg-red-500 text-white font-bold
     rounded-full uppercase tracking-wider
     transition-all duration-300 ease-out
+    select-none
     $***REMOVED***getSizeClasses()***REMOVED***
     $***REMOVED***className***REMOVED***
   `;
@@ -33,7 +34,7 @@ const New = (***REMOVED***
     hover:bg-red-600 hover:scale-110 hover:shadow-lg
     hover:shadow-red-500/30 hover:-translate-y-0.5
     active:scale-95 active:translate-y-0
-    cursor-pointer select-none
+    select-none
   ` : '';
 
   return (

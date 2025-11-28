@@ -1,7 +1,8 @@
 // src/components/other/Loader/index.jsx
 
-import React, ***REMOVED*** useEffect, useRef, useState ***REMOVED*** from 'react';
+import React, ***REMOVED*** useEffect, useRef ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
 import ***REMOVED*** gsap ***REMOVED*** from 'gsap';
 import './index.css';
 
@@ -9,19 +10,7 @@ const Loader = (***REMOVED*** size = 40, fullScreen = false, onAnimationComplete
   const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   const colorPrincipal = thematicColors?.base || '#EC4899';
   const svgRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Detectar si estamos en móvil
-  useEffect(() => ***REMOVED***
-    const checkMobile = () => ***REMOVED***
-      setIsMobile(window.innerWidth < 768);
-    ***REMOVED***;
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  ***REMOVED***, []);
+  const isMobile = useIsMobile();
 
   // Determinar las clases CSS apropiadas
   const getContainerClass = () => ***REMOVED***

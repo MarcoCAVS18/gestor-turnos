@@ -5,6 +5,7 @@ import ***REMOVED*** Activity, Briefcase, ArrowRight ***REMOVED*** from 'lucide-
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
+import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../utils/time';
 import Card from '../../ui/Card';
 
 const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurnos ***REMOVED***) => ***REMOVED***
@@ -12,11 +13,11 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
   const navigate = useNavigate();
 
   // Determinar límite según dispositivo
-  const [limite, setLimite] = React.useState(window.innerWidth >= 768 ? 4 : 2);
+  const [limite, setLimite] = React.useState(window.innerWidth >= 768 ? 5 : 2);
 
   React.useEffect(() => ***REMOVED***
     const handleResize = () => ***REMOVED***
-      setLimite(window.innerWidth >= 768 ? 4 : 2);
+      setLimite(window.innerWidth >= 768 ? 5 : 2);
     ***REMOVED***;
 
     window.addEventListener('resize', handleResize);
@@ -44,17 +45,17 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
   // Función para formatear fecha relativa - SIMPLIFICADA
   const formatearFechaRelativa = (fechaStr) => ***REMOVED***
     try ***REMOVED***
-      const fecha = new Date(fechaStr + 'T00:00:00');
+      const fecha = createSafeDate(fechaStr);
       const hoy = new Date();
       const ayer = new Date(hoy);
       ayer.setDate(hoy.getDate() - 1);
-      
+
       if (fecha.toDateString() === hoy.toDateString()) return 'Hoy';
       if (fecha.toDateString() === ayer.toDateString()) return 'Ayer';
-      
-      return fecha.toLocaleDateString('es-ES', ***REMOVED*** 
-        day: 'numeric', 
-        month: 'short' 
+
+      return fecha.toLocaleDateString('es-ES', ***REMOVED***
+        day: 'numeric',
+        month: 'short'
       ***REMOVED***);
     ***REMOVED*** catch (error) ***REMOVED***
       return fechaStr;
