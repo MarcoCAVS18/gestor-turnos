@@ -8,41 +8,23 @@ import Card from '../../ui/Card';
 
 const ProjectionCard = (***REMOVED*** proyeccionMensual, horasTrabajadas ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
-  const ***REMOVED*** turnos ***REMOVED*** = useApp();
+  const ***REMOVED*** calculateMonthlyStats ***REMOVED*** = useApp();
 
   if (proyeccionMensual <= 0) return null;
 
-  // Obtener datos del mes anterior
-  const obtenerDatosMesAnterior = () => ***REMOVED***
-    const ahora = new Date();
-    const mesAnterior = new Date(ahora.getFullYear(), ahora.getMonth() - 1, 1);
-    const inicioMesAnterior = new Date(mesAnterior.getFullYear(), mesAnterior.getMonth(), 1);
-    const finMesAnterior = new Date(mesAnterior.getFullYear(), mesAnterior.getMonth() + 1, 0, 23, 59, 59);
+  // Obtener datos del mes anterior usando la nueva función centralizada
+  const now = new Date();
+  const previousMonthStats = calculateMonthlyStats(now.getFullYear(), now.getMonth() - 1);
 
-    const turnosMesAnterior = turnos.filter(turno => ***REMOVED***
-      const fecha = turno.fecha?.toDate ? turno.fecha.toDate() : new Date(turno.fecha);
-      return fecha >= inicioMesAnterior && fecha <= finMesAnterior;
-    ***REMOVED***);
-
-    const totalGanado = turnosMesAnterior.reduce((sum, turno) => sum + (turno.ganancia || 0), 0);
-
-    return ***REMOVED***
-      existe: turnosMesAnterior.length > 0,
-      ganancia: totalGanado
-    ***REMOVED***;
-  ***REMOVED***;
-
-  const mesAnterior = obtenerDatosMesAnterior();
-  
   // Calcular diferencias
   const obtenerTextoComparacion = () => ***REMOVED***
-    if (!mesAnterior.existe) ***REMOVED***
+    if (previousMonthStats.shiftsCount === 0) ***REMOVED***
       return 'Tu primer mes registrado';
     ***REMOVED***
 
-    const diferencia = proyeccionMensual - mesAnterior.ganancia;
-    const porcentaje = ((diferencia / mesAnterior.ganancia) * 100).toFixed(1);
-    
+    const diferencia = proyeccionMensual - previousMonthStats.totalEarnings;
+    const porcentaje = ((diferencia / previousMonthStats.totalEarnings) * 100).toFixed(1);
+
     if (diferencia > 0) ***REMOVED***
       return `$***REMOVED***formatCurrency(Math.abs(diferencia))***REMOVED*** más que el mes anterior (+$***REMOVED***porcentaje***REMOVED***%)`;
     ***REMOVED*** else if (diferencia < 0) ***REMOVED***

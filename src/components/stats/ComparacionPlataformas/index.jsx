@@ -5,6 +5,13 @@ import ***REMOVED*** BarChart3, Package, Clock, DollarSign, TrendingUp ***REMOVE
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
+import ***REMOVED***
+  calculateAveragePerOrder,
+  calculateAveragePerHour,
+  calculateNetEarnings,
+  calculateEarningsPercentage,
+  sortPlatforms
+***REMOVED*** from '../../../utils/statsCalculations';
 
 const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -35,22 +42,14 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
     );
   ***REMOVED***
 
-  const plataformasConMetricas = plataformas.map(plataforma => ***REMOVED***
-    const promedioPorPedido = plataforma.totalPedidos > 0 ? plataforma.totalGanado / plataforma.totalPedidos : 0;
-    const promedioPorHora = plataforma.totalHoras > 0 ? plataforma.totalGanado / plataforma.totalHoras : 0;
-    const gananciaLiquida = plataforma.totalGanado - plataforma.totalGastos;
-    
-    return ***REMOVED***
-      ...plataforma,
-      promedioPorPedido,
-      promedioPorHora,
-      gananciaLiquida
-    ***REMOVED***;
-  ***REMOVED***);
+  const plataformasConMetricas = plataformas.map(plataforma => (***REMOVED***
+    ...plataforma,
+    promedioPorPedido: calculateAveragePerOrder(plataforma),
+    promedioPorHora: calculateAveragePerHour(plataforma),
+    gananciaLiquida: calculateNetEarnings(plataforma)
+  ***REMOVED***));
 
-  const plataformasOrdenadas = [...plataformasConMetricas].sort((a, b) => ***REMOVED***
-    return b[sortBy] - a[sortBy];
-  ***REMOVED***);
+  const plataformasOrdenadas = sortPlatforms(plataformasConMetricas, sortBy);
 
   const totalGeneral = plataformas.reduce((sum, p) => sum + p.totalGanado, 0);
 
@@ -121,7 +120,7 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
 
       <div className="space-y-3">
         ***REMOVED***plataformasOrdenadas.map((plataforma, index) => ***REMOVED***
-          const porcentajeGanancias = totalGeneral > 0 ? (plataforma.totalGanado / totalGeneral) * 100 : 0;
+          const porcentajeGanancias = calculateEarningsPercentage(plataforma, totalGeneral);
           const icon = getPlataformaIcon(plataforma.nombre);
           
           return (

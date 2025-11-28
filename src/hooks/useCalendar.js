@@ -1,6 +1,7 @@
 // src/hooks/useCalendar.js
 
 import ***REMOVED*** useState ***REMOVED*** from 'react';
+import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 
 export const useCalendar = () => ***REMOVED***
   const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
@@ -17,7 +18,7 @@ export const useCalendar = () => ***REMOVED***
 
   // Formatear fecha para mostrar
   const formatearFecha = (fechaStr) => ***REMOVED***
-    const fecha = new Date(fechaStr + 'T00:00:00');
+    const fecha = createSafeDate(fechaStr);
     return fecha.toLocaleDateString('es-ES', ***REMOVED***
       weekday: 'long',
       year: 'numeric',

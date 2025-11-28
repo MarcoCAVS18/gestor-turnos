@@ -1,11 +1,12 @@
 // src/hooks/useCalendarState.js
 
 import ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** 
-  crearFechaLocal, 
-  fechaLocalAISO, 
-  fechaEsHoy 
+import ***REMOVED***
+  crearFechaLocal,
+  fechaLocalAISO,
+  fechaEsHoy
 ***REMOVED*** from '../utils/calendarUtils';
+import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 
 export const useCalendarState = (turnos, onDiaSeleccionado) => ***REMOVED***
   const [fechaActual, setFechaActual] = useState(new Date());
@@ -52,7 +53,7 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => ***REMOVED***
         
         // Si no tiene fechaFin pero es nocturno, calcular si termina este día
         if (!turno.fechaFin && fechaPrincipal) ***REMOVED***
-          const fechaInicio = new Date(fechaPrincipal + 'T00:00:00');
+          const fechaInicio = createSafeDate(fechaPrincipal);
           const fechaFinCalculada = new Date(fechaInicio);
           fechaFinCalculada.setDate(fechaFinCalculada.getDate() + 1);
           const fechaFinStr = fechaFinCalculada.toISOString().split('T')[0];

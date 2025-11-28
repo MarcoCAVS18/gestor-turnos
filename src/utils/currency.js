@@ -35,3 +35,16 @@ export const formatCurrencyPrecise = (amount) => ***REMOVED***
     maximumFractionDigits: 2
   ***REMOVED***);
 ***REMOVED***;
+
+/**
+ * Formatea una cantidad con símbolo personalizado (retrocompatibilidad)
+ * @param ***REMOVED***number***REMOVED*** amount - Cantidad a formatear
+ * @param ***REMOVED***string***REMOVED*** symbol - Símbolo de moneda (default: '$')
+ * @returns ***REMOVED***string***REMOVED*** - Cantidad formateada
+ */
+export const formatCurrencyWithSymbol = (amount, symbol = '$') => ***REMOVED***
+  if (amount === null || amount === undefined || isNaN(amount)) ***REMOVED***
+    return `$***REMOVED***symbol***REMOVED***0.00`;
+  ***REMOVED***
+  return `$***REMOVED***symbol***REMOVED***$***REMOVED***Number(amount).toFixed(2)***REMOVED***`;
+***REMOVED***;

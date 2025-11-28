@@ -1,6 +1,7 @@
 // src/components/ui/Button/index.jsx
 
 import React from 'react';
+import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
 
 const Button = (***REMOVED*** 
   children, 
@@ -104,7 +105,7 @@ const Button = (***REMOVED***
       ***REMOVED***...props***REMOVED***
     >
       ***REMOVED***loading && (
-        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+        <LoadingSpinner size="h-4 w-4" color="border-white" className="mr-2" />
       )***REMOVED***
       ***REMOVED***Icon && !loading && <Icon className="mr-2 h-4 w-4" />***REMOVED***
       ***REMOVED***children***REMOVED***

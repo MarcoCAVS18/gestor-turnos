@@ -1,9 +1,10 @@
 // src/components/dashboard/ExportReportCard/index.jsx
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
-import ***REMOVED*** Download, FileText, Image ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Download, FileText, Image, FileSpreadsheet ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
+import New from '../../ui/New';
 
 const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -29,17 +30,19 @@ const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
 
   return (
     <Card variant="transparent" className="relative overflow-hidden">
-      ***REMOVED***/* Contenido principal */***REMOVED***
       <div className="flex items-center justify-between">
         ***REMOVED***/* Lado izquierdo: Texto y selector de formato */***REMOVED***
         <div className="flex-1 pr-4">
-          <h3 className="text-lg font-semibold mb-2 text-gray-800">Exportar Reporte</h3>
+          <div className="flex items-center gap-2 mb-2">
+            <h3 className="text-lg font-semibold text-gray-800">Exportar Reporte</h3>
+            <New size="xs" />
+          </div>
           <p className="text-sm text-gray-700 mb-4">
             Descargá un resumen completo de tus estadísticas, turnos y actividad
           </p>
-          
+
           ***REMOVED***/* Selector de formato */***REMOVED***
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <button
               onClick=***REMOVED***() => setSelectedFormat('pdf')***REMOVED***
               disabled=***REMOVED***isExporting***REMOVED***
@@ -53,7 +56,7 @@ const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
               <FileText size=***REMOVED***16***REMOVED*** />
               <span className="text-sm font-medium">PDF</span>
             </button>
-            
+
             <button
               onClick=***REMOVED***() => setSelectedFormat('png')***REMOVED***
               disabled=***REMOVED***isExporting***REMOVED***
@@ -66,6 +69,20 @@ const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
             >
               <Image size=***REMOVED***16***REMOVED*** />
               <span className="text-sm font-medium">PNG</span>
+            </button>
+
+            <button
+              onClick=***REMOVED***() => setSelectedFormat('xlsx')***REMOVED***
+              disabled=***REMOVED***isExporting***REMOVED***
+              className=***REMOVED***`flex items-center gap-2 px-4 py-2 rounded-lg transition-all $***REMOVED***
+                selectedFormat === 'xlsx'
+                  ? 'text-white shadow-md'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              ***REMOVED***`***REMOVED***
+              style=***REMOVED***selectedFormat === 'xlsx' ? ***REMOVED*** backgroundColor: colors.primary ***REMOVED*** : ***REMOVED******REMOVED******REMOVED***
+            >
+              <FileSpreadsheet size=***REMOVED***16***REMOVED*** />
+              <span className="text-sm font-medium">Excel</span>
             </button>
           </div>
         </div>
@@ -118,7 +135,6 @@ const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
         </div>
       </div>
 
-      ***REMOVED***/* Mensaje de estado */***REMOVED***
       ***REMOVED***isExporting && (
         <div className="mt-4 pt-4 border-t border-gray-300 animate-fadeIn">
           <div className="flex items-center justify-center gap-2 text-sm">
@@ -133,7 +149,6 @@ const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
         </div>
       )***REMOVED***
       
-      ***REMOVED***/* Estilos inline para las animaciones */***REMOVED***
       <style>***REMOVED***`
         @keyframes downloadAnimation ***REMOVED***
           0% ***REMOVED***

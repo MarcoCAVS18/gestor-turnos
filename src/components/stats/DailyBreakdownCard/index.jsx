@@ -1,80 +1,27 @@
-// src/components/stats/DailyBreakdownCard/index.jsx - REFACTORIZADO
-
 import React from 'react';
 import ***REMOVED*** Calendar, Clock, DollarSign ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
-import Card from '../../ui/Card';
+import BaseStatsCard from '../../cards/base/BaseStatsCard'; // Import BaseStatsCard
+import ***REMOVED*** calculateShiftHours, calculateShiftEarnings ***REMOVED*** from '../../../utils/statsCalculations'; // Import from statsCalculations
 
 const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED***, trabajos = [] ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
-  
+
   // Validar datos
   const datos = turnosPorDia && typeof turnosPorDia === 'object' ? turnosPorDia : ***REMOVED******REMOVED***;
   const trabajosValidos = Array.isArray(trabajos) ? trabajos : [];
-  
-  // Si no hay datos, mostrar estado vacío
-  if (Object.keys(datos).length === 0) ***REMOVED***
-    return (
-      <Card>
-        <h3 className="text-lg font-semibold mb-4 flex items-center">
-          <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-          Desglose Diario
-        </h3>
-        <div className="text-center py-8 text-gray-500">
-          <Calendar size=***REMOVED***48***REMOVED*** className="mx-auto mb-3 opacity-30" />
-          <p>No hay turnos registrados esta semana</p>
-          <p className="text-sm">Los turnos aparecerán aquí una vez que agregues algunos</p>
-        </div>
-      </Card>
-    );
-  ***REMOVED***
 
-  // Función para calcular horas de un turno
-  const calcularHoras = (turno) => ***REMOVED***
-    try ***REMOVED***
-      const [horaInicioH, horaInicioM] = turno.horaInicio.split(':').map(Number);
-      const [horaFinH, horaFinM] = turno.horaFin.split(':').map(Number);
-      
-      const inicio = horaInicioH + horaInicioM / 60;
-      let fin = horaFinH + horaFinM / 60;
-      
-      // Manejar turnos que cruzan medianoche
-      if (fin < inicio) fin += 24;
-      
-      return Math.max(0, fin - inicio);
-    ***REMOVED*** catch (error) ***REMOVED***
-      return 0;
-    ***REMOVED***
-  ***REMOVED***;
-
-  // Función para calcular ganancia de un turno
-  const calcularGanancia = (turno) => ***REMOVED***
-    try ***REMOVED***
-      const trabajo = trabajosValidos.find(t => t.id === turno.trabajoId);
-      if (!trabajo) return 0;
-
-      const horas = calcularHoras(turno);
-      const tarifa = trabajo.tarifaBase || trabajo.salario || 0;
-      const descuento = trabajo.descuento || 0;
-      
-      const gananciaBase = horas * tarifa;
-      const descuentoAmount = gananciaBase * (descuento / 100);
-      
-      return Math.max(0, gananciaBase - descuentoAmount);
-    ***REMOVED*** catch (error) ***REMOVED***
-      return 0;
-    ***REMOVED***
-  ***REMOVED***;
+  const isEmpty = Object.keys(datos).length === 0;
 
   // Formatear fecha
   const formatearFecha = (fecha) => ***REMOVED***
     try ***REMOVED***
       const date = new Date(fecha);
-      return date.toLocaleDateString('es-ES', ***REMOVED*** 
-        weekday: 'short', 
-        day: 'numeric', 
-        month: 'short' 
+      return date.toLocaleDateString('es-ES', ***REMOVED***
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short'
       ***REMOVED***);
     ***REMOVED*** catch (error) ***REMOVED***
       return fecha;
@@ -82,21 +29,22 @@ const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED
   ***REMOVED***;
 
   return (
-    <Card>
-      <h3 className="text-lg font-semibold mb-4 flex items-center">
-        <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-        Desglose Diario
-      </h3>
-      
+    <BaseStatsCard
+      title="Desglose Diario"
+      icon=***REMOVED***Calendar***REMOVED***
+      empty=***REMOVED***isEmpty***REMOVED***
+      emptyMessage="No hay turnos registrados esta semana"
+      emptyDescription="Los turnos aparecerán aquí una vez que agregues algunos"
+    >
       <div className="space-y-3">
         ***REMOVED***Object.entries(datos).map(([fecha, turnos]) => ***REMOVED***
-          const horasTotal = turnos.reduce((total, turno) => total + calcularHoras(turno), 0);
-          const gananciaTotal = turnos.reduce((total, turno) => total + calcularGanancia(turno), 0);
+          const horasTotal = turnos.reduce((total, turno) => total + calculateShiftHours(turno), 0);
+          const gananciaTotal = turnos.reduce((total, turno) => total + calculateShiftEarnings(turno, trabajosValidos), 0);
 
           return (
             <div key=***REMOVED***fecha***REMOVED*** className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center">
-                <div 
+                <div
                   className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
                   style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
                 >
@@ -111,7 +59,7 @@ const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED
                   </p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-4 text-sm">
                 <div className="flex items-center text-purple-600">
                   <Clock size=***REMOVED***14***REMOVED*** className="mr-1" />
@@ -126,7 +74,7 @@ const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED
           );
         ***REMOVED***)***REMOVED***
       </div>
-    </Card>
+    </BaseStatsCard>
   );
 ***REMOVED***;
 

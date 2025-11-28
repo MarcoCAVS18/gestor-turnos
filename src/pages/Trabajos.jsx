@@ -6,9 +6,9 @@ import LoadingWrapper from '../components/layout/LoadingWrapper';
 import ShareMessages from '../components/work/ShareMessages';
 import WorkHeader from '../components/work/WorkHeader';
 import WorkEmptyState from '../components/work/WorkEmptyState';
-import TarjetaTrabajo from '../components/cards/TarjetaTrabajo';
-import TarjetaDelivery from '../components/cards/TarjetaTrabajoDelivery';
-import ModalTrabajo from '../components/modals/ModalTrabajo';
+import TarjetaTrabajo from '../components/cards/work/TarjetaTrabajo';
+import TarjetaDelivery from '../components/cards/work/TarjetaTrabajoDelivery';
+import ModalTrabajo from '../components/modals/work/ModalTrabajo';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 import ***REMOVED*** generateWorkDetails ***REMOVED*** from '../utils/workUtils';
 

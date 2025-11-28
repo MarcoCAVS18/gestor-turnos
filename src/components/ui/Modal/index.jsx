@@ -1,8 +1,9 @@
 // src/components/ui/Modal/index.jsx
 
-import React, ***REMOVED*** useEffect, useState ***REMOVED*** from 'react';
+import React, ***REMOVED*** useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import Button from '../Button';
+import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
 
 const Modal = (***REMOVED***
   isOpen,
@@ -15,19 +16,7 @@ const Modal = (***REMOVED***
   showCloseButton = true,
   mobileFullScreen = false // Nueva prop para control móvil
 ***REMOVED***) => ***REMOVED***
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Detectar si estamos en móvil
-  useEffect(() => ***REMOVED***
-    const checkMobile = () => ***REMOVED***
-      setIsMobile(window.innerWidth < 768);
-    ***REMOVED***;
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => window.removeEventListener('resize', checkMobile);
-  ***REMOVED***, []);
+  const isMobile = useIsMobile();
 
   // Prevenir scroll del body cuando el modal está abierto
   useEffect(() => ***REMOVED***
