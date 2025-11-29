@@ -1,16 +1,16 @@
-// src/pages/CalendarioView.jsx - Versión mejorada
+// src/pages/CalendarioView.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** CalendarDays, Plus ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../hooks/useThemeColors';
+import PageHeader from '../components/layout/PageHeader';
 import ***REMOVED*** fechaLocalAISO ***REMOVED*** from '../utils/calendarUtils';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 import Calendario from '../components/calendar/Calendario';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ModalTurno from '../components/modals/shift/ModalTurno';
-import Button from '../components/ui/Button';
 
 const CalendarioView = () => ***REMOVED***
   const ***REMOVED*** turnosPorFecha, todosLosTrabajos, thematicColors ***REMOVED*** = useApp();
@@ -79,11 +79,6 @@ const CalendarioView = () => ***REMOVED***
   ***REMOVED***;
   
   // Animaciones
-  const headerVariants = ***REMOVED***
-    hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
-    visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.3 ***REMOVED*** ***REMOVED***
-  ***REMOVED***;
-
   const calendarVariants = ***REMOVED***
     hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
     visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.5, delay: 0.1 ***REMOVED*** ***REMOVED***
@@ -96,46 +91,18 @@ const CalendarioView = () => ***REMOVED***
   
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
-      ***REMOVED***/* Header consistente con otras páginas */***REMOVED***
-      <motion.div
-        className="flex justify-between items-center"
-        variants=***REMOVED***headerVariants***REMOVED***
-        initial="hidden"
-        animate="visible"
-      >
-        <div className="flex items-center space-x-3">
-          <div 
-            className="p-2 rounded-lg"
-            style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
-          >
-            <CalendarDays 
-              className="w-6 h-6" 
-              style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
-            />
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold">Calendario de Turnos</h1>
-            ***REMOVED***hayTrabajos && (
-              <p className="text-sm text-gray-600">
-                Visualiza y gestiona tus turnos por fecha
-              </p>
-            )***REMOVED***
-          </div>
-        </div>
-
-        ***REMOVED***/* Botón de agregar turno - solo si hay trabajos */***REMOVED***
-        ***REMOVED***hayTrabajos && fechaSeleccionada && (
-          <Button
-            onClick=***REMOVED***() => abrirModalNuevoTurno(createSafeDate(fechaSeleccionada))***REMOVED***
-            className="flex items-center space-x-2 shadow-sm hover:shadow-md"
-            icon=***REMOVED***Plus***REMOVED***
-            themeColor=***REMOVED***colors.primary***REMOVED***
-          >
-            <span className="hidden sm:inline">Nuevo Turno</span>
-            <span className="sm:hidden">Nuevo</span>
-          </Button>
-        )***REMOVED***
-      </motion.div>
+      <PageHeader
+        title="Calendario de Turnos"
+        subtitle=***REMOVED***hayTrabajos ? "Visualiza y gestiona tus turnos por fecha" : null***REMOVED***
+        icon=***REMOVED***CalendarDays***REMOVED***
+        action=***REMOVED***hayTrabajos && fechaSeleccionada && ***REMOVED***
+          onClick: () => abrirModalNuevoTurno(createSafeDate(fechaSeleccionada)),
+          icon: Plus,
+          label: "Nuevo Turno",
+          mobileLabel: "Nuevo",
+          themeColor: colors.primary,
+        ***REMOVED******REMOVED***
+      />
       
       ***REMOVED***/* Mostrar mensaje si no hay trabajos */***REMOVED***
       ***REMOVED***!hayTrabajos && (

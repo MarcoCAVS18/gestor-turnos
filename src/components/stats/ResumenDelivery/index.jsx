@@ -37,7 +37,7 @@ const ResumenDelivery = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVE
 
   if (deliveryStats.totalPedidos === 0) ***REMOVED***
     return (
-      <Card>
+      <Card variant="transparent">
         <div className=***REMOVED***`text-center py-6 transition-opacity duration-1000 $***REMOVED***animacionActiva ? 'opacity-50' : 'opacity-100'***REMOVED***`***REMOVED***>
           <Truck size=***REMOVED***32***REMOVED*** className="mx-auto mb-3 text-gray-300" />
           <h3 className="font-semibold text-gray-600 mb-1">Sin datos de delivery</h3>
@@ -48,7 +48,7 @@ const ResumenDelivery = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVE
   ***REMOVED***
 
   return (
-    <Card className='bg-white shadow-md p-6'>
+    <Card variant="transparent">
       <h3 className="text-lg font-semibold flex items-center mb-4">
         <Truck size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
         Resumen Delivery

@@ -1,7 +1,7 @@
 // src/pages/Estadisticas.jsx - Refactorizado con StatsContext
 
 import React from 'react';
-import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
+import PageHeader from '../components/layout/PageHeader';
 import ***REMOVED*** Truck, BarChart ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useStats ***REMOVED*** from '../contexts/StatsContext';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
@@ -55,50 +55,25 @@ const Estadisticas = () => ***REMOVED***
 
   const tieneDelivery = deliveryEnabled && deliveryStats.turnosRealizados > 0;
 
-  const headerVariants = ***REMOVED***
-    hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
-    visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.3 ***REMOVED*** ***REMOVED***
-  ***REMOVED***;
-
   return (
     <LoadingWrapper loading=***REMOVED***loading***REMOVED***>
       <div className="px-4 py-6 space-y-6">
 
-        <div className="lg:flex lg:justify-between lg:items-center">
-          <motion.div
-            className="flex justify-between items-center mb-4 lg:mb-0"
-            variants=***REMOVED***headerVariants***REMOVED***
-            initial="hidden"
-            animate="visible"
-          >
-            <div className="flex items-center space-x-3">
-              <div 
-                className="p-2 rounded-lg"
-                style=***REMOVED******REMOVED*** backgroundColor: thematicColors.transparent10 ***REMOVED******REMOVED***
-              >
-                <BarChart 
-                  className="w-6 h-6" 
-                  style=***REMOVED******REMOVED*** color: thematicColors.primary ***REMOVED******REMOVED***
-                />
-              </div>
-              <div>
-                <h1 className="text-xl font-semibold">Estadísticas</h1>
-                <p className="text-sm text-gray-600">
-                  Analiza tu rendimiento y proyecciones
-                </p>
-              </div>
+        <PageHeader
+          title="Estadísticas"
+          subtitle="Analiza tu rendimiento y proyecciones"
+          icon=***REMOVED***BarChart***REMOVED***
+          rightContent=***REMOVED***
+            <div className="lg:w-2/5 lg:max-w-md">
+              <WeekNavigator
+                offsetSemana=***REMOVED***offsetSemana***REMOVED***
+                onSemanaChange=***REMOVED***setOffsetSemana***REMOVED***
+                fechaInicio=***REMOVED***datosActuales.fechaInicio***REMOVED***
+                fechaFin=***REMOVED***datosActuales.fechaFin***REMOVED***
+              />
             </div>
-          </motion.div>
-
-          <div className="lg:w-2/5 lg:max-w-md">
-            <WeekNavigator
-              offsetSemana=***REMOVED***offsetSemana***REMOVED***
-              onSemanaChange=***REMOVED***setOffsetSemana***REMOVED***
-              fechaInicio=***REMOVED***datosActuales.fechaInicio***REMOVED***
-              fechaFin=***REMOVED***datosActuales.fechaFin***REMOVED***
-            />
-          </div>
-        </div>
+          ***REMOVED***
+        />
 
         ***REMOVED***/* LAYOUT RESPONSIVO PRINCIPAL */***REMOVED***
 
@@ -232,32 +207,22 @@ const Estadisticas = () => ***REMOVED***
         ***REMOVED***/* SECCIÓN DELIVERY - Solo si está habilitado */***REMOVED***
         ***REMOVED***tieneDelivery && (
           <>
-            ***REMOVED***/* Header de delivery */***REMOVED***
-            <div className="pt-8">
-              <div className="flex items-center justify-center mb-6">
-                <Truck className="mr-2" size=***REMOVED***20***REMOVED*** />
-                <h2 className="text-xl font-semibold">
-                  Estadísticas de Delivery
-                </h2>
-              </div>
-            </div>
+            <PageHeader
+              title="Estadísticas de Delivery"
+              subtitle="Analiza tus ganancias y eficiencia en repartos"
+              icon=***REMOVED***Truck***REMOVED***
+              className="pt-8"
+            />
 
             ***REMOVED***/* Layout responsivo para delivery */***REMOVED***
             <div className="space-y-6">
 
-              ***REMOVED***/* DESKTOP: Grid de 2 columnas para delivery */***REMOVED***
+              ***REMOVED***/* DESKTOP: Grid de 2x2 para delivery */***REMOVED***
               <div className="hidden lg:grid lg:grid-cols-2 lg:gap-6">
-                ***REMOVED***/* Columna 1: Resumen + Combustible */***REMOVED***
-                <div className="space-y-6">
-                  <ResumenDelivery deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
-                  <SeguimientoCombustible deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
-                </div>
-
-                ***REMOVED***/* Columna 2: Eficiencia + Plataformas */***REMOVED***
-                <div className="space-y-6">
-                  <EficienciaVehiculos deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
-                  <ComparacionPlataformas deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
-                </div>
+                <ResumenDelivery deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
+                <EficienciaVehiculos deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
+                <SeguimientoCombustible deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
+                <ComparacionPlataformas deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
               </div>
 
               ***REMOVED***/* MÓVIL: Stack vertical para delivery */***REMOVED***

@@ -146,11 +146,8 @@ const Turnos = () => ***REMOVED***
         <ShiftsHeader 
           hasShifts=***REMOVED***hayTurnos***REMOVED***
           allJobs=***REMOVED***allJobs***REMOVED***
-          sortedDays=***REMOVED***turnosPorSemana***REMOVED***
-          daysShown=***REMOVED***weeksShown***REMOVED***
           onNewShift=***REMOVED***abrirModalNuevo***REMOVED***
           thematicColors=***REMOVED***thematicColors***REMOVED***
-          daysPerPage=***REMOVED***WEEKS_PER_PAGE***REMOVED***
         />
 
         ***REMOVED***/* Sistema de filtros */***REMOVED***
