@@ -1,35 +1,66 @@
 // src/components/layout/PageHeader/index.jsx
 
 import React from 'react';
+import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import Button from '../../ui/Button';
 
-const PageHeader = (***REMOVED*** 
-  title, 
+const PageHeader = (***REMOVED***
+  icon: Icon,
+  title,
   subtitle,
   action,
-  className = '' 
+  rightContent,
+  className = '',
+  ...props
 ***REMOVED***) => ***REMOVED***
+  const colors = useThemeColors();
+
+  const headerVariants = ***REMOVED***
+    hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
+    visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.3 ***REMOVED*** ***REMOVED***
+  ***REMOVED***;
+
   return (
-    <div className=***REMOVED***`flex justify-between items-start mb-6 $***REMOVED***className***REMOVED***`***REMOVED***>
-      <div>
-        <h2 className="text-xl font-semibold text-gray-800">***REMOVED***title***REMOVED***</h2>
-        ***REMOVED***subtitle && (
-          <p className="text-sm text-gray-600 mt-1">***REMOVED***subtitle***REMOVED***</p>
+    <motion.div
+      className=***REMOVED***`flex justify-between items-center $***REMOVED***className***REMOVED***`***REMOVED***
+      variants=***REMOVED***headerVariants***REMOVED***
+      initial="hidden"
+      animate="visible"
+      ***REMOVED***...props***REMOVED***
+    >
+      <div className="flex items-center space-x-3">
+        ***REMOVED***Icon && (
+          <div
+            className="p-2 rounded-lg"
+            style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
+          >
+            <Icon
+              className="w-6 h-6"
+              style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
+            />
+          </div>
         )***REMOVED***
+        <div>
+          <h1 className="text-xl font-semibold">***REMOVED***title***REMOVED***</h1>
+          ***REMOVED***subtitle && (
+            <p className="text-sm text-gray-600">***REMOVED***subtitle***REMOVED***</p>
+          )***REMOVED***
+        </div>
       </div>
       
-      ***REMOVED***action && (
-        <Button 
+      ***REMOVED***rightContent ? rightContent : (action && (
+        <Button
           onClick=***REMOVED***action.onClick***REMOVED***
-          className="flex items-center gap-2"
+          className="flex items-center space-x-2 shadow-sm hover:shadow-md"
           icon=***REMOVED***action.icon***REMOVED***
-          variant=***REMOVED***action.variant || 'primary'***REMOVED***
-          size=***REMOVED***action.size || 'md'***REMOVED***
+          themeColor=***REMOVED***action.themeColor || colors.primary***REMOVED***
         >
-          ***REMOVED***action.label***REMOVED***
+          <span className="hidden sm:inline">***REMOVED***action.label***REMOVED***</span>
+          <span className="sm:hidden">***REMOVED***action.mobileLabel || 'Nuevo'***REMOVED***</span>
         </Button>
-      )***REMOVED***
-    </div>
+      ))***REMOVED***
+    </motion.div>
   );
 ***REMOVED***;
 

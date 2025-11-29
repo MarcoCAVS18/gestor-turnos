@@ -1,6 +1,6 @@
 // src/pages/TrabajoCompartido.jsx
 
-import React from 'react';
+import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** Share2, Plus, ArrowLeft, AlertCircle ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useSharedWork ***REMOVED*** from '../hooks/useSharedWork';
@@ -76,21 +76,28 @@ const TrabajoCompartido = () => ***REMOVED***
     );
   ***REMOVED***
 
+  const headerVariants = ***REMOVED***
+    hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
+    visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.3 ***REMOVED*** ***REMOVED***
+  ***REMOVED***;
+
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-6">
       ***REMOVED***/* Header */***REMOVED***
-      <Card className="text-center">
-        <Share2 size=***REMOVED***32***REMOVED*** className="mx-auto mb-3 text-blue-500" />
-        <h1 className="text-2xl font-bold mb-2">Trabajo Compartido</h1>
-        <p className="text-gray-600">Alguien compartió este trabajo contigo</p>
-        
-        ***REMOVED***/* Información adicional del enlace */***REMOVED***
-        ***REMOVED***tokenInfo && (
-          <div className="mt-4 text-xs text-gray-500">
-            <p>Usado ***REMOVED***tokenInfo.vecesUsado***REMOVED*** veces</p>
-          </div>
-        )***REMOVED***
-      </Card>
+      <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
+        <Card className="text-center">
+          <Share2 size=***REMOVED***32***REMOVED*** className="mx-auto mb-3 text-blue-500" />
+          <h1 className="text-2xl font-bold mb-2">Trabajo Compartido</h1>
+          <p className="text-gray-600">Alguien compartió este trabajo contigo</p>
+          
+          ***REMOVED***/* Información adicional del enlace */***REMOVED***
+          ***REMOVED***tokenInfo && (
+            <div className="mt-4 text-xs text-gray-500">
+              <p>Usado ***REMOVED***tokenInfo.vecesUsado***REMOVED*** veces</p>
+            </div>
+          )***REMOVED***
+        </Card>
+      </motion.div>
 
       ***REMOVED***/* Vista previa del trabajo */***REMOVED***
       ***REMOVED***trabajoCompartido && <WorkPreviewCard trabajo=***REMOVED***trabajoCompartido***REMOVED*** />***REMOVED***

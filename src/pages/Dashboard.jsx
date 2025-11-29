@@ -1,6 +1,6 @@
 // src/pages/Dashboard.jsx
 
-import React from 'react';
+import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** useDashboardStats ***REMOVED*** from '../hooks/useDashboardStats';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** generatePDFReport, generatePNGReport, generateXLSXReport ***REMOVED*** from '../services/exportService';
@@ -44,10 +44,17 @@ const Dashboard = () => ***REMOVED***
     );
   ***REMOVED***
 
+  const headerVariants = ***REMOVED***
+    hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
+    visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.3 ***REMOVED*** ***REMOVED***
+  ***REMOVED***;
+
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
       ***REMOVED***/* Welcome Card - siempre full width */***REMOVED***
-      <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
+      <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
+        <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
+      </motion.div>
 
       ***REMOVED***/* Layout responsivo principal */***REMOVED***
       <div className="space-y-6">

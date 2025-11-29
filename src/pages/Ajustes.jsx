@@ -2,7 +2,7 @@
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Settings ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../hooks/useThemeColors';
+import PageHeader from '../components/layout/PageHeader';
 import ProfileSection from '../components/settings/ProfileSection';
 import ProfilePhotoSection from '../components/settings/ProfilePhotoSection';
 import CustomizationSection from '../components/settings/CustomizationSection';
@@ -16,7 +16,6 @@ import DeliverySection from '../components/settings/DeliverySection';
 import SmokoSection from '../components/settings/SmokoSection';
 
 const Ajustes = () => ***REMOVED***
-  const colors = useThemeColors();
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -39,13 +38,11 @@ const Ajustes = () => ***REMOVED***
 
   return (
     <div className="px-4 py-6 space-y-6">
-      ***REMOVED***/* Título con icono */***REMOVED***
-      <div className="flex items-center space-x-3">
-        <div className="p-2 rounded-lg" style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***>
-          <Settings className="w-6 h-6" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
-        </div>
-        <h1 className="text-2xl font-semibold">Ajustes</h1>
-      </div>
+      <PageHeader
+        title="Ajustes"
+        subtitle="Personaliza tu experiencia y gestiona tu cuenta"
+        icon=***REMOVED***Settings***REMOVED***
+      />
 
       <NotificationBanner
         message=***REMOVED***message***REMOVED***
