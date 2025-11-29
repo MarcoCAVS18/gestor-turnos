@@ -4,6 +4,7 @@ import ***REMOVED*** Calendar, Clock, DollarSign ***REMOVED*** from 'lucide-reac
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import ***REMOVED*** formatHoursDecimal ***REMOVED*** from '../../../utils/time';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
+import Flex from '../../ui/Flex';
 
 const DailyDistribution = (***REMOVED*** datosActuales, loading, thematicColors ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** gananciaPorDia, totalGanado ***REMOVED*** = datosActuales;
@@ -28,19 +29,19 @@ const DailyDistribution = (***REMOVED*** datosActuales, loading, thematicColors 
                 <div className="grid grid-cols-4 gap-x-2 items-center">
                   <span className="text-sm font-medium text-gray-700 col-span-1 truncate">***REMOVED***dia***REMOVED***</span>
                   
-                  <div className="flex items-center justify-end col-span-1">
+                  <Flex variant="end" className="col-span-1">
                     <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1 flex-shrink-0" style=***REMOVED******REMOVED*** color: thematicColors?.primary ***REMOVED******REMOVED*** />
                     <span className="text-sm font-bold text-right" style=***REMOVED******REMOVED*** color: thematicColors?.primary ***REMOVED******REMOVED***>
                       ***REMOVED***formatCurrency(datos.ganancia)***REMOVED***
                     </span>
-                  </div>
+                  </Flex>
 
-                  <div className="flex items-center justify-end col-span-1">
+                  <Flex variant="end" className="col-span-1">
                     <Clock size=***REMOVED***14***REMOVED*** className="mr-1 text-gray-500 flex-shrink-0" />
                     <span className="text-sm text-gray-600 text-right whitespace-nowrap">
                       ***REMOVED***formatHoursDecimal(datos.horas)***REMOVED***
                     </span>
-                  </div>
+                  </Flex>
 
                   <div className="text-sm text-gray-500 text-right col-span-1 whitespace-nowrap">
                     ***REMOVED***datos.turnos***REMOVED*** turno***REMOVED***datos.turnos !== 1 ? 's' : ''***REMOVED***

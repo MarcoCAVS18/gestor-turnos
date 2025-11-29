@@ -7,6 +7,7 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../utils/time';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurnos ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -83,20 +84,21 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
   if (turnosRecientes.length === 0) ***REMOVED***
     return (
       <Card className="h-full">
-        <div className="flex items-center justify-between mb-4">
+        <Flex variant="between" className="mb-4">
           <h3 className="text-lg font-semibold flex items-center">
             <Activity size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
             Recientes
           </h3>
-        </div>
+        </Flex>
         
         <div className="text-center py-6">
-          <div 
-            className="p-3 rounded-full w-12 h-12 mx-auto mb-3 flex items-center justify-center"
+          <Flex
+            variant="center"
+            className="p-3 rounded-full w-12 h-12 mx-auto mb-3"
             style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
           >
             <Briefcase size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
-          </div>
+          </Flex>
           <p className="text-sm text-gray-600 mb-3">Sin turnos recientes</p>
           <button
             onClick=***REMOVED***() => navigate('/turnos')***REMOVED***
@@ -112,7 +114,7 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
 
   return (
     <Card className="h-full">
-      <div className="flex items-center justify-between mb-4">
+      <Flex variant="between" className="mb-4">
         <h3 className="text-lg font-semibold flex items-center">
           <Activity size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
           Recientes
@@ -123,7 +125,7 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
         >
           <ArrowRight size=***REMOVED***12***REMOVED*** />
         </button>
-      </div>
+      </Flex>
 
       <div className="space-y-3">
         ***REMOVED***turnosRecientes.map((turno, index) => ***REMOVED***
@@ -132,9 +134,9 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
           const fechaRelativa = formatearFechaRelativa(turno.fechaInicio || turno.fecha);
 
           return (
-            <div 
+            <Flex variant="between"
               key=***REMOVED***turno.id || index***REMOVED***
-              className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+              className="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
               onClick=***REMOVED***() => navigate('/turnos')***REMOVED***
             >
               <div className="flex items-center flex-1 min-w-0">
@@ -157,21 +159,21 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
                   ***REMOVED***formatCurrency(ganancia)***REMOVED***
                 </p>
               </div>
-            </div>
+            </Flex>
           );
         ***REMOVED***)***REMOVED***
       </div>
 
       ***REMOVED***/* Total simple */***REMOVED***
       <div className="mt-4 pt-3 border-t border-gray-200">
-        <div className="flex items-center justify-between">
+        <Flex variant="between">
           <span className="text-sm text-gray-600">Total reciente:</span>
           <span className="text-lg font-bold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
             ***REMOVED***formatCurrency(
               turnosRecientes.reduce((total, turno) => total + calcularGananciaDisplay(turno), 0)
             )***REMOVED***
           </span>
-        </div>
+        </Flex>
       </div>
     </Card>
   );

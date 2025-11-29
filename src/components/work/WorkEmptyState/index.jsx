@@ -3,21 +3,22 @@
 import React from 'react';
 import ***REMOVED*** Briefcase, Plus ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import Flex from '../../ui/Flex';
 
 const WorkEmptyState = (***REMOVED*** onNuevoTrabajo ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-      <div 
-        className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"
+      <Flex variant="center"
+        className="p-4 rounded-full w-20 h-20 mx-auto mb-4"
         style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
       >
         <Briefcase 
           className="w-10 h-10" 
           style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
         />
-      </div>
+      </Flex>
       <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay trabajos aún</h3>
       <p className="text-gray-500 mb-6 max-w-md mx-auto">
         Crea tu primer trabajo para empezar a registrar turnos y gestionar tus ingresos.

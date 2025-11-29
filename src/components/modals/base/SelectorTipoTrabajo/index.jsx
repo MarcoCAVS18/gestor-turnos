@@ -1,6 +1,7 @@
 import React from 'react';
 import ***REMOVED*** Briefcase, Truck, Clock, DollarSign, Package, Navigation ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
+import Flex from '../../../ui/Flex';
 
 const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***) => ***REMOVED***
   // Usar colores del contexto si no se pasan como prop
@@ -51,9 +52,9 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***)
         >
           <div className=***REMOVED***`flex items-start $***REMOVED***isMobile ? 'space-x-4' : 'space-x-4'***REMOVED***`***REMOVED***>
             <div className="flex-shrink-0">
-              <div 
+              <Flex variant="center" 
                 className=***REMOVED***`
-                  rounded-lg flex items-center justify-center transition-all duration-300
+                  rounded-lg transition-all duration-300
                   $***REMOVED***isMobile ? 'w-12 h-12' : 'w-10 h-10'***REMOVED***
                 `***REMOVED***
                 style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
@@ -61,7 +62,7 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***)
                 <Briefcase 
                   className=***REMOVED***`text-blue-500 group-hover:scale-110 transition-transform $***REMOVED***isMobile ? 'w-7 h-7' : 'w-6 h-6'***REMOVED***`***REMOVED*** 
                 />
-              </div>
+              </Flex>
             </div>
             <div className="flex-1">
               <h4 className=***REMOVED***`font-semibold mb-2 $***REMOVED***isMobile ? 'text-lg' : 'text-lg'***REMOVED***`***REMOVED***>
@@ -114,9 +115,9 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***)
         >
           <div className=***REMOVED***`flex items-start $***REMOVED***isMobile ? 'space-x-4' : 'space-x-4'***REMOVED***`***REMOVED***>
             <div className="flex-shrink-0">
-              <div 
+              <Flex variant="center"
                 className=***REMOVED***`
-                  rounded-lg flex items-center justify-center transition-all duration-300
+                  rounded-lg transition-all duration-300
                   $***REMOVED***isMobile ? 'w-12 h-12' : 'w-10 h-10'***REMOVED***
                 `***REMOVED***
                 style=***REMOVED******REMOVED*** backgroundColor: '#dcfce7' ***REMOVED******REMOVED***
@@ -124,7 +125,7 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***)
                 <Truck 
                   className=***REMOVED***`text-green-600 group-hover:scale-110 transition-transform $***REMOVED***isMobile ? 'w-7 h-7' : 'w-6 h-6'***REMOVED***`***REMOVED*** 
                 />
-              </div>
+              </Flex>
             </div>
             <div className="flex-1">
               <h4 className=***REMOVED***`font-semibold mb-2 $***REMOVED***isMobile ? 'text-lg' : 'text-lg'***REMOVED***`***REMOVED***>
@@ -159,12 +160,12 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***)
       >
         <div className="flex items-start space-x-3">
           <div className="flex-shrink-0">
-            <div 
-              className=***REMOVED***`rounded-full flex items-center justify-center $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***`***REMOVED***
+            <Flex variant="center" 
+              className=***REMOVED***`rounded-full $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***`***REMOVED***
               style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
             >
               <span className="text-white text-xs font-bold">💡</span>
-            </div>
+            </Flex>
           </div>
           <div>
             <p 

@@ -1,7 +1,8 @@
-// src/components/filters/FiltroDiasSemana/index.jsx - REFACTORIZADO
+// src/components/filters/FiltroDiasSemana/index.jsx
 
 import React from 'react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import Flex from '../../ui/Flex';
 
 const FiltroDiasSemana = (***REMOVED*** value, onChange ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -33,7 +34,7 @@ const FiltroDiasSemana = (***REMOVED*** value, onChange ***REMOVED***) => ***REM
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-2">
+      <Flex variant="between" className="mb-2">
         <label className="block text-sm font-medium text-gray-700">
           Días de la semana
         </label>
@@ -56,7 +57,7 @@ const FiltroDiasSemana = (***REMOVED*** value, onChange ***REMOVED***) => ***REM
             </button>
           )***REMOVED***
         </div>
-      </div>
+      </Flex>
       
       <div className="grid grid-cols-7 gap-1">
         ***REMOVED***diasSemana.map(dia => ***REMOVED***

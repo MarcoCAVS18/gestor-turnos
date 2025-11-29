@@ -7,6 +7,7 @@ import Badge from '../../../ui/Badge';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../../utils/currency';
+import Flex from '../../../ui/Flex';
 
 const TarjetaTurno = (props) => ***REMOVED***
   const ***REMOVED*** turno, trabajo ***REMOVED*** = props;
@@ -46,7 +47,7 @@ const TarjetaTurno = (props) => ***REMOVED***
 
         // Stats móvil - Ganancia destacada
         mobileStats: (
-          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+          <Flex variant="between" className="pt-2 border-t border-gray-100">
             <span className="text-sm text-gray-500">Ganancia estimada</span>
             <div className="flex items-center">
               <DollarSign size=***REMOVED***16***REMOVED*** className="mr-1" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
@@ -54,12 +55,12 @@ const TarjetaTurno = (props) => ***REMOVED***
                 ***REMOVED***formatCurrency(shiftData.totalWithDiscount)***REMOVED***
               </span>
             </div>
-          </div>
+          </Flex>
         ),
 
         // Stats desktop - Ganancia
         desktopStats: (
-          <div className="flex items-center justify-between">
+          <Flex variant="between">
             <span className="text-sm text-gray-500">Ganancia estimada</span>
             <div className="flex items-center">
               <DollarSign size=***REMOVED***16***REMOVED*** className="mr-1" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
@@ -67,7 +68,7 @@ const TarjetaTurno = (props) => ***REMOVED***
                 ***REMOVED***formatCurrency(shiftData.totalWithDiscount)***REMOVED***
               </span>
             </div>
-          </div>
+          </Flex>
         )
       ***REMOVED******REMOVED***
     </BaseShiftCard>

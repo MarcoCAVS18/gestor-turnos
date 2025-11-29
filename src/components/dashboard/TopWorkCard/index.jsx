@@ -4,6 +4,7 @@ import ***REMOVED*** Award ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const TopWorkCard = (***REMOVED*** trabajoMasRentable ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -16,7 +17,7 @@ const TopWorkCard = (***REMOVED*** trabajoMasRentable ***REMOVED***) => ***REMOV
         <Award size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
         Trabajo más rentable
       </h3>
-      <div className="flex items-center justify-between">
+      <Flex variant="between">
         <div className="flex items-center">
           <div 
             className="w-4 h-4 rounded-full mr-3"
@@ -37,7 +38,7 @@ const TopWorkCard = (***REMOVED*** trabajoMasRentable ***REMOVED***) => ***REMOV
         >
           ***REMOVED***formatCurrency(trabajoMasRentable.ganancia)***REMOVED***
         </p>
-      </div>
+      </Flex>
     </Card>
   );
 ***REMOVED***;

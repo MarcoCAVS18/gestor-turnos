@@ -1,7 +1,8 @@
-// src/components/calendar/CalendarDayCell/index.jsx - REFACTORIZADO
+// src/components/calendar/CalendarDayCell/index.jsx
 
 import React from 'react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import Flex from '../../ui/Flex';
 
 const CalendarDayCell = (***REMOVED***
   dia,
@@ -38,8 +39,8 @@ const CalendarDayCell = (***REMOVED***
       )***REMOVED***
 
       ***REMOVED***/* Contenedor para número del día */***REMOVED***
-      <div
-        className="rounded-full w-8 h-8 flex items-center justify-center transition-all duration-200"
+      <Flex variant="center"
+        className="rounded-full w-8 h-8 transition-all duration-200"
         style=***REMOVED******REMOVED***
           backgroundColor: esHoy
             ? colors.primary
@@ -57,7 +58,7 @@ const CalendarDayCell = (***REMOVED***
         ***REMOVED******REMOVED***
       >
         <span>***REMOVED***dia.dia***REMOVED***</span>
-      </div>
+      </Flex>
 
       ***REMOVED***/* Indicadores de turnos simplificados */***REMOVED***
       ***REMOVED***dia.tieneTurnos && (

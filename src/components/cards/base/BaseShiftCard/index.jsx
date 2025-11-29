@@ -10,6 +10,7 @@ import Badge from '../../../ui/Badge';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
 import ***REMOVED*** formatRelativeDate, createSafeDate ***REMOVED*** from '../../../../utils/time';
+import Flex from '../../../ui/Flex';
 
 const BaseShiftCard = (***REMOVED***
   turno,
@@ -111,42 +112,42 @@ const BaseShiftCard = (***REMOVED***
       >
         <div className="space-y-3">
           ***REMOVED***/* Header móvil: Solo nombre y acciones */***REMOVED***
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-3 flex-1 min-w-0">
+          <Flex variant="start-between">
+            <Flex variant="center" className="flex items-center space-x-3 flex-1 min-w-0">
               ***REMOVED***/* Avatar más pequeño */***REMOVED***
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+              <Flex variant="center"
+                className="rounded-lg w-8 h-8 text-white font-bold text-sm flex-shrink-0"
                 style=***REMOVED******REMOVED*** backgroundColor: colorTrabajo ***REMOVED******REMOVED***
               >
                 ***REMOVED***currentConfig.avatarContent || children?.avatarIcon***REMOVED***
-              </div>
+              </Flex>
 
               ***REMOVED***/* Nombre truncado */***REMOVED***
               <h3 className="font-semibold text-gray-800 truncate text-base">
                 ***REMOVED***trabajo.nombre***REMOVED***
               </h3>
-            </div>
+            </Flex>
 
             ***REMOVED***/* Solo menú de acciones */***REMOVED***
             ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
-          </div>
+          </Flex>
 
           ***REMOVED***/* Información principal en filas verticales */***REMOVED***
           <div className="space-y-2">
             ***REMOVED***/* Fila 1: Horario y duración */***REMOVED***
-            <div className="flex items-center justify-between">
-              <div className="flex items-center text-sm text-gray-600">
+            <Flex variant="between">
+              <Flex variant="center" className="text-sm text-gray-600">
                 <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
                 <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
-              </div>
+              </Flex>
               <div className="text-sm text-gray-600">
                 ***REMOVED***shiftData?.hours?.toFixed(1) || '0.0'***REMOVED***h
               </div>
-            </div>
+            </Flex>
 
             ***REMOVED***/* Fila 2: Fecha y badges en línea separada */***REMOVED***
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
+            <Flex variant="between">
+              <Flex variant="center" className="space-x-2">
                 ***REMOVED***fecha && (
                   <Badge variant="default" size="sm">
                     ***REMOVED***formatRelativeDate(fecha)***REMOVED***
@@ -156,11 +157,11 @@ const BaseShiftCard = (***REMOVED***
                 ***REMOVED***turno.cruzaMedianoche && (
                   <span className="text-blue-600 text-xs">🌙</span>
                 )***REMOVED***
-              </div>
+              </Flex>
 
               ***REMOVED***/* Badge adicional específico del tipo (ej: smoko) */***REMOVED***
               ***REMOVED***children?.mobileBadge***REMOVED***
-            </div>
+            </Flex>
 
             ***REMOVED***/* Fila 3: Contenido específico del tipo (pasado como children) */***REMOVED***
             ***REMOVED***children?.mobileStats***REMOVED***
@@ -192,10 +193,10 @@ const BaseShiftCard = (***REMOVED***
               ***REMOVED***/* Notas */***REMOVED***
               ***REMOVED***(turno.observaciones?.trim() || turno.descripcion?.trim() || turno.notas?.trim()) && (
                 <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-2">
+                  <Flex variant="center" className="gap-2 mb-2">
                     <MessageSquare size=***REMOVED***14***REMOVED*** className="text-gray-600" />
                     <span className="text-sm font-medium text-gray-700">Notas</span>
-                  </div>
+                  </Flex>
                   <p className="text-sm text-gray-600 leading-relaxed">
                     ***REMOVED***turno.observaciones?.trim() || turno.descripcion?.trim() || turno.notas?.trim()***REMOVED***
                   </p>
@@ -238,16 +239,16 @@ const BaseShiftCard = (***REMOVED***
     >
       <div className="space-y-3">
         ***REMOVED***/* Header desktop */***REMOVED***
-        <div className="flex items-start justify-between">
+        <Flex variant="start-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-3">
               ***REMOVED***/* Avatar del trabajo */***REMOVED***
-              <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold flex-shrink-0"
+              <Flex variant="center"
+                className="w-10 h-10 rounded-lg text-white font-bold flex-shrink-0"
                 style=***REMOVED******REMOVED*** backgroundColor: colorTrabajo ***REMOVED******REMOVED***
               >
                 ***REMOVED***currentConfig.avatarContent || children?.avatarIcon***REMOVED***
-              </div>
+              </Flex>
 
               ***REMOVED***/* Nombre del trabajo y badges */***REMOVED***
               <div className="flex-1 min-w-0">
@@ -262,11 +263,11 @@ const BaseShiftCard = (***REMOVED***
                 </div>
 
                 ***REMOVED***/* Información básica del turno con fecha integrada */***REMOVED***
-                <div className="flex items-center text-sm text-gray-600 gap-3 flex-wrap">
-                  <div className="flex items-center">
+                <Flex variant="center" className="text-sm text-gray-600 gap-3 flex-wrap">
+                  <Flex variant="center">
                     <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
                     <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
-                  </div>
+                  </Flex>
 
                   <span className="text-gray-300">•</span>
 
@@ -290,7 +291,7 @@ const BaseShiftCard = (***REMOVED***
                       <span className="text-blue-600 text-xs">🌙</span>
                     </>
                   )***REMOVED***
-                </div>
+                </Flex>
               </div>
             </div>
 
@@ -299,7 +300,7 @@ const BaseShiftCard = (***REMOVED***
           </div>
 
           ***REMOVED***/* Acciones desktop */***REMOVED***
-          <div className="flex items-center gap-2 ml-4">
+          <Flex variant="center" className="gap-2 ml-4">
             ***REMOVED***/* Botón de expansión */***REMOVED***
             ***REMOVED***hasAdditionalContent && (
               <button
@@ -317,8 +318,8 @@ const BaseShiftCard = (***REMOVED***
 
             ***REMOVED***/* Menú de acciones */***REMOVED***
             ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
-          </div>
-        </div>
+          </Flex>
+        </Flex>
 
         ***REMOVED***/* Contenido expandible desktop */***REMOVED***
         ***REMOVED***hasAdditionalContent && expanded && (
@@ -374,13 +375,13 @@ const BaseShiftCard = (***REMOVED***
 
         ***REMOVED***/* Indicador visual si hay contenido pero no está expandido */***REMOVED***
         ***REMOVED***hasAdditionalContent && !expanded && (
-          <div className="flex items-center justify-center pt-1">
-            <div className="flex space-x-1">
+          <Flex variant="center" className="pt-1">
+            <Flex className="space-x-1">
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-            </div>
-          </div>
+            </Flex>
+          </Flex>
         )***REMOVED***
       </div>
     </Card>

@@ -7,6 +7,7 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import InfoTooltip from '../../ui/InfoTooltip';
 import ***REMOVED*** determinarTipoTurno, getTipoTurnoLabel ***REMOVED*** from '../../../utils/shiftDetailsUtils';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../utils/time';
+import Flex from '../../ui/Flex';
 
 const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** calculatePayment, shiftRanges ***REMOVED*** = useApp();
@@ -204,8 +205,8 @@ const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***
       </div>
       
       ***REMOVED***/* GANANCIA CON TOOLTIP Y BADGES - RESPONSIVO */***REMOVED***
-      <div className="flex items-center justify-between">
-        <div className="flex items-center min-w-0">
+      <Flex variant="between">
+        <Flex className="min-w-0">
           <DollarSign 
             size=***REMOVED***14***REMOVED*** 
             className="mr-1 flex-shrink-0" 
@@ -225,15 +226,15 @@ const ShiftDetails = (***REMOVED*** turno, trabajo, badges ***REMOVED***) => ***
             position="top"
             className="flex-shrink-0"
           />
-        </div>
+        </Flex>
         
         ***REMOVED***/* BADGES RESPONSIVOS */***REMOVED***
         ***REMOVED***badges && (
-          <div className="flex items-center ml-2 min-w-0">
+          <Flex className="ml-2 min-w-0">
             ***REMOVED***badges***REMOVED***
-          </div>
+          </Flex>
         )***REMOVED***
-      </div>
+      </Flex>
 
       ***REMOVED***/* INFORMACIÓN ADICIONAL PARA MÓVIL */***REMOVED***
       ***REMOVED***turno.observaciones && (

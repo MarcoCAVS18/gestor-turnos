@@ -9,6 +9,7 @@ import BaseModal from '../../base/BaseModal';
 import PlatformSelector from '../../../delivery/PlatformSelector';
 import VehicleSelector from '../../../delivery/VehicleSelector';
 import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
+import Flex from '../../../ui/Flex';
 
 const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** addDeliveryJob, editDeliveryJob ***REMOVED*** = useApp();
@@ -325,10 +326,10 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
           ***REMOVED******REMOVED***
         >
           ***REMOVED***guardando ? (
-            <div className="flex items-center justify-center space-x-2">
+            <Flex variant="center" className="space-x-2">
               <LoadingSpinner size="h-4 w-4" color="border-white" />
               <span>Guardando...</span>
-            </div>
+            </Flex>
           ) : (
             trabajo ? 'Actualizar' : 'Crear'
           )***REMOVED***

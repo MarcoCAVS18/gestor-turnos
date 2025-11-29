@@ -7,6 +7,7 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
+import Flex from '../../ui/Flex';
 
 const NextShiftCard = (***REMOVED*** proximoTurno, formatearFecha ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** trabajos ***REMOVED*** = useApp();
@@ -24,7 +25,7 @@ const NextShiftCard = (***REMOVED*** proximoTurno, formatearFecha ***REMOVED***)
         <Star size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
         Próximo turno
       </h3>
-      <div className="flex items-center justify-between">
+      <Flex variant="between">
         <div>
           <p className="font-semibold text-gray-800">***REMOVED***trabajo.nombre***REMOVED***</p>
           <p className="text-sm text-gray-600">
@@ -40,7 +41,7 @@ const NextShiftCard = (***REMOVED*** proximoTurno, formatearFecha ***REMOVED***)
         >
           Ver
         </Button>
-      </div>
+      </Flex>
     </Card>
   );
 ***REMOVED***;

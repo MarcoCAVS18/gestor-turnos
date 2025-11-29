@@ -1,6 +1,7 @@
 // src/components/stats/WeeklyStatsGrid/index.jsx
 import React from 'react';
 import ***REMOVED*** DollarSign, Clock, Target, Activity ***REMOVED*** from 'lucide-react';
+import Flex from '../../ui/Flex';
 import Card from '../../ui/Card';
 import LoadingSpinner from '../../ui/LoadingSpinner/LoadingSpinner';
 
@@ -34,11 +35,10 @@ const WeeklyStatsGrid = (***REMOVED*** datosActuales, thematicColors, loading, c
           const Icon = stat.icon;
           return (
             <div key=***REMOVED***index***REMOVED*** className="text-center p-4 bg-gray-50 rounded-lg flex flex-col justify-center">
-              <div className="flex items-center justify-center mb-2">
-                <Icon size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-1" />
-                <span className="text-sm text-gray-600">***REMOVED***stat.label***REMOVED***</span>
-              </div>
-              <p className="text-2xl font-bold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
+                          <Flex variant="center" className="mb-2">
+                            <Icon size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: stat.color ***REMOVED******REMOVED*** className="mr-1" />
+                            <span className="text-sm text-gray-600">***REMOVED***stat.label***REMOVED***</span>
+                          </Flex>              <p className="text-2xl font-bold" style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***>
                 ***REMOVED***stat.value***REMOVED***
               </p>
             </div>

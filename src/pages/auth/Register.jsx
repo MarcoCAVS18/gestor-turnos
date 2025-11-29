@@ -6,6 +6,7 @@ import ***REMOVED*** useAuth ***REMOVED*** from '../../contexts/AuthContext';
 
 // Nueva importación estructurada
 import Button from '../../components/ui/Button';
+import Flex from '../../components/ui/Flex';
 
 const Register = () => ***REMOVED***
   const [displayName, setDisplayName] = useState('');
@@ -161,7 +162,7 @@ const Register = () => ***REMOVED***
       </div>
       
       ***REMOVED***/* Contenido del registro */***REMOVED***
-      <div className="fixed inset-0 z-20 bg-transparent flex items-center justify-center p-4">
+      <Flex variant="center" className="fixed inset-0 z-20 bg-transparent p-4">
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">
           <h2 className="text-2xl font-bold text-center mb-6">Crear una cuenta</h2>
           
@@ -326,7 +327,7 @@ const Register = () => ***REMOVED***
             </Link>
           </div>
         </div>
-      </div>
+      </Flex>
     </div>
   );
 ***REMOVED***;

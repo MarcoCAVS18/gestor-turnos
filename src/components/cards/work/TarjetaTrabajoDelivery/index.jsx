@@ -3,6 +3,7 @@
 import React from 'react';
 import ***REMOVED*** Package, Bike, Car, Truck, User ***REMOVED*** from 'lucide-react';
 import BaseWorkCard from '../../base/BaseWorkCard';
+import Flex from '../../../ui/Flex';
 
 const TarjetaTrabajoDelivery = (props) => ***REMOVED***
   const ***REMOVED*** trabajo ***REMOVED*** = props;
@@ -24,32 +25,32 @@ const TarjetaTrabajoDelivery = (props) => ***REMOVED***
       <div className="space-y-2">
         ***REMOVED***/* Plataforma */***REMOVED***
         ***REMOVED***trabajo?.plataforma && (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+          <Flex variant="between">
+            <Flex variant="center">
               <Package size=***REMOVED***14***REMOVED*** className="text-blue-500 mr-2" />
               <span className="text-sm text-gray-600">Plataforma:</span>
-            </div>
+            </Flex>
             <span className="text-sm font-medium">***REMOVED***trabajo.plataforma***REMOVED***</span>
-          </div>
+          </Flex>
         )***REMOVED***
 
         ***REMOVED***/* Vehículo */***REMOVED***
         ***REMOVED***trabajo?.vehiculo && (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+          <Flex variant="between">
+            <Flex variant="center">
               ***REMOVED***getVehicleIcon(trabajo.vehiculo)***REMOVED***
               <span className="text-sm text-gray-600 ml-2">Vehículo:</span>
-            </div>
+            </Flex>
             <span className="text-sm font-medium">***REMOVED***trabajo.vehiculo***REMOVED***</span>
-          </div>
+          </Flex>
         )***REMOVED***
 
         ***REMOVED***/* Información sobre ganancias variables */***REMOVED***
         <div className="mt-3 pt-3 border-t border-gray-100">
-          <div className="flex items-center text-sm text-gray-500 italic">
+          <Flex variant="center" className="text-sm text-gray-500 italic">
             <Package size=***REMOVED***14***REMOVED*** className="text-gray-400 mr-2" />
             <span>Ganancias variables por pedido</span>
-          </div>
+          </Flex>
         </div>
       </div>
     </BaseWorkCard>

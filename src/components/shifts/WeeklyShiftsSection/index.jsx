@@ -5,6 +5,7 @@ import ***REMOVED*** Calendar, TrendingUp ***REMOVED*** from 'lucide-react';
 import TarjetaTurno from '../../cards/shift/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
 import ***REMOVED*** formatTurnosCount ***REMOVED*** from '../../../utils/pluralization';
+import Flex from '../../ui/Flex';
 
 const WeeklyShiftsSection = (***REMOVED*** 
   rangoSemana, 
@@ -100,8 +101,8 @@ const WeeklyShiftsSection = (***REMOVED***
           borderBottomColor: thematicColors?.transparent20
         ***REMOVED******REMOVED***
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+        <Flex variant="between">
+          <Flex className="space-x-3">
             <Calendar 
               size=***REMOVED***20***REMOVED*** 
               style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***
@@ -113,24 +114,23 @@ const WeeklyShiftsSection = (***REMOVED***
               >
                 Semana ***REMOVED***rangoSemana***REMOVED***
               </h3>
-              ***REMOVED***/* ✅ AQUÍ ESTÁ EL CAMBIO PRINCIPAL */***REMOVED***
               <p className="text-sm text-gray-600">
                 ***REMOVED***formatTurnosCount(totalTurnos)***REMOVED***
               </p>
             </div>
-          </div>
+          </Flex>
 
           ***REMOVED***/* Estadísticas de la semana */***REMOVED***
           <div className="text-right">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <Flex className="space-x-2 text-sm text-gray-600">
               <TrendingUp size=***REMOVED***16***REMOVED*** />
               <span>$***REMOVED***estadisticasSemana.totalGanancias.toFixed(2)***REMOVED***</span>
-            </div>
+            </Flex>
             <p className="text-xs text-gray-500">
               ***REMOVED***estadisticasSemana.totalHoras.toFixed(1)***REMOVED***h trabajadas
             </p>
           </div>
-        </div>
+        </Flex>
       </div>
 
       ***REMOVED***/* Grid de turnos - 3 columnas con nuevos componentes */***REMOVED***
