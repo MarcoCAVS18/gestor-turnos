@@ -7,6 +7,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
+import Flex from '../../ui/Flex';
 
 const SessionSection = ({ onError, className = '' }) => {
   const { logout } = useAuth();
@@ -24,7 +25,7 @@ const SessionSection = ({ onError, className = '' }) => {
 
   return (
     <SettingsSection icon={LogOut} title="Sesión" className={className}>
-      <div className="flex-1 flex items-center justify-center">
+      <Flex variant="center" className="flex-1">
         <Button
           onClick={handleLogout}
           variant="outline"
@@ -34,7 +35,7 @@ const SessionSection = ({ onError, className = '' }) => {
         >
           Cerrar sesión
         </Button>
-      </div>
+      </Flex>
     </SettingsSection>
   );
 };

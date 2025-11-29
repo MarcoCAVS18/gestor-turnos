@@ -1,4 +1,4 @@
-// src/components/settings/DeliverySection/index.jsx - REFACTORIZADO
+// src/components/settings/DeliverySection/index.jsx 
 
 import React from 'react';
 import { Truck, Info } from 'lucide-react';
@@ -6,6 +6,8 @@ import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Switch from '../../ui/Switch';
+
+import Flex from '../../ui/Flex';
 
 const DeliverySection = ({ onError, onSuccess }) => {
   const { deliveryEnabled, savePreferences } = useApp();
@@ -25,7 +27,7 @@ const DeliverySection = ({ onError, onSuccess }) => {
     <SettingsSection icon={Truck} title="Trabajos de Delivery">
       <div className="space-y-4">
         {/* Toggle principal */}
-        <div className="flex items-center justify-between">
+        <Flex variant="between">
           <div className="flex-1">
             <p className="font-medium">Habilitar modo delivery</p>
             <p className="text-sm text-gray-500">
@@ -36,7 +38,7 @@ const DeliverySection = ({ onError, onSuccess }) => {
             checked={deliveryEnabled}
             onChange={handleToggle}
           />
-        </div>
+        </Flex>
         
         {/* Información cuando está activado */}
         {deliveryEnabled && (
@@ -47,7 +49,7 @@ const DeliverySection = ({ onError, onSuccess }) => {
               borderColor: colors.transparent20
             }}
           >
-            <div className="flex items-start">
+            <Flex variant="start">
               <Info size={16} className="mt-0.5 mr-2 flex-shrink-0" style={{ color: colors.primary }} />
               <div className="text-sm space-y-1">
                 <p className="font-medium" style={{ color: colors.primary }}>¿Cómo funciona?</p>
@@ -59,7 +61,7 @@ const DeliverySection = ({ onError, onSuccess }) => {
                   <li>• Soporta múltiples plataformas (Uber Eats, Doordash, Didi, etc.)</li>
                 </ul>
               </div>
-            </div>
+            </Flex>
           </div>
         )}
       </div>

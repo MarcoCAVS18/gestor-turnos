@@ -4,6 +4,7 @@ import React from 'react';
 import { Sun, Moon } from 'lucide-react';
 import BaseWorkCard from '../../base/BaseWorkCard';
 import { formatCurrency } from '../../../../utils/currency';
+import Flex from '../../../ui/Flex';
 
 const TarjetaTrabajo = (props) => {
   const { trabajo } = props;
@@ -18,23 +19,23 @@ const TarjetaTrabajo = (props) => {
       {/* Información de tarifas */}
       <div className="space-y-2">
         {/* Tarifa base */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
+        <Flex variant="between">
+          <Flex variant="center">
             <Sun size={14} className="text-yellow-500 mr-2" />
             <span className="text-sm text-gray-600">Tarifa base:</span>
-          </div>
+          </Flex>
           <span className="text-sm font-medium">{formatCurrency(tarifaBase)}/hora</span>
-        </div>
+        </Flex>
 
         {/* Tarifa nocturna si es diferente */}
         {tieneTarifaNocturna && (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+          <Flex variant="between">
+            <Flex variant="center">
               <Moon size={14} className="text-indigo-500 mr-2" />
               <span className="text-sm text-gray-600">Tarifa noche:</span>
-            </div>
+            </Flex>
             <span className="text-sm font-medium">{formatCurrency(tarifaNoche)}/hora</span>
-          </div>
+          </Flex>
         )}
 
         {/* Información adicional de tarifas si existen */}
@@ -42,16 +43,16 @@ const TarjetaTrabajo = (props) => {
           <div className="mt-3 pt-3 border-t border-gray-100">
             <div className="grid grid-cols-2 gap-2 text-xs">
               {trabajo.tarifas.sabado && trabajo.tarifas.sabado !== tarifaBase && (
-                <div className="flex justify-between">
+                <Flex justify="between">
                   <span className="text-gray-500">Sábado:</span>
                   <span className="font-medium">{formatCurrency(trabajo.tarifas.sabado)}/h</span>
-                </div>
+                </Flex>
               )}
               {trabajo.tarifas.domingo && trabajo.tarifas.domingo !== tarifaBase && (
-                <div className="flex justify-between">
+                <Flex justify="between">
                   <span className="text-gray-500">Domingo:</span>
                   <span className="font-medium">{formatCurrency(trabajo.tarifas.domingo)}/h</span>
-                </div>
+                </Flex>
               )}
             </div>
           </div>

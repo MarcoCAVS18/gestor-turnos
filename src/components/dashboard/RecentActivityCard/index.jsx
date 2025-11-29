@@ -7,6 +7,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import { createSafeDate } from '../../../utils/time';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
   const colors = useThemeColors();
@@ -83,20 +84,21 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
   if (turnosRecientes.length === 0) {
     return (
       <Card className="h-full">
-        <div className="flex items-center justify-between mb-4">
+        <Flex variant="between" className="mb-4">
           <h3 className="text-lg font-semibold flex items-center">
             <Activity size={20} style={{ color: colors.primary }} className="mr-2" />
             Recientes
           </h3>
-        </div>
+        </Flex>
         
         <div className="text-center py-6">
-          <div 
-            className="p-3 rounded-full w-12 h-12 mx-auto mb-3 flex items-center justify-center"
+          <Flex
+            variant="center"
+            className="p-3 rounded-full w-12 h-12 mx-auto mb-3"
             style={{ backgroundColor: colors.transparent10 }}
           >
             <Briefcase size={20} style={{ color: colors.primary }} />
-          </div>
+          </Flex>
           <p className="text-sm text-gray-600 mb-3">Sin turnos recientes</p>
           <button
             onClick={() => navigate('/turnos')}
@@ -112,7 +114,7 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
 
   return (
     <Card className="h-full">
-      <div className="flex items-center justify-between mb-4">
+      <Flex variant="between" className="mb-4">
         <h3 className="text-lg font-semibold flex items-center">
           <Activity size={20} style={{ color: colors.primary }} className="mr-2" />
           Recientes
@@ -123,7 +125,7 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
         >
           <ArrowRight size={12} />
         </button>
-      </div>
+      </Flex>
 
       <div className="space-y-3">
         {turnosRecientes.map((turno, index) => {
@@ -132,9 +134,9 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
           const fechaRelativa = formatearFechaRelativa(turno.fechaInicio || turno.fecha);
 
           return (
-            <div 
+            <Flex variant="between"
               key={turno.id || index}
-              className="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+              className="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
               onClick={() => navigate('/turnos')}
             >
               <div className="flex items-center flex-1 min-w-0">
@@ -157,21 +159,21 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
                   {formatCurrency(ganancia)}
                 </p>
               </div>
-            </div>
+            </Flex>
           );
         })}
       </div>
 
       {/* Total simple */}
       <div className="mt-4 pt-3 border-t border-gray-200">
-        <div className="flex items-center justify-between">
+        <Flex variant="between">
           <span className="text-sm text-gray-600">Total reciente:</span>
           <span className="text-lg font-bold" style={{ color: colors.primary }}>
             {formatCurrency(
               turnosRecientes.reduce((total, turno) => total + calcularGananciaDisplay(turno), 0)
             )}
           </span>
-        </div>
+        </Flex>
       </div>
     </Card>
   );

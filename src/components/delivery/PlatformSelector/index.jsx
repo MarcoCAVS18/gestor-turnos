@@ -3,6 +3,7 @@
 import React from 'react';
 import { DELIVERY_PLATFORMS_AUSTRALIA } from '../../../constants/delivery';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import Flex from '../../ui/Flex';
 
 const PlatformSelector = ({ selectedPlatform, onPlatformSelect }) => {
   const colors = useThemeColors();
@@ -29,8 +30,8 @@ const PlatformSelector = ({ selectedPlatform, onPlatformSelect }) => {
       {/* Indicador visual de la plataforma seleccionada */}
       {selectedPlatform && (
         <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-          <div 
-            className="w-6 h-6 rounded-full flex items-center justify-center mr-3"
+          <Flex variant="center"
+            className="w-6 h-6 rounded-full mr-3"
             style={{ 
               backgroundColor: DELIVERY_PLATFORMS_AUSTRALIA.find(p => p.nombre === selectedPlatform)?.color || '#6B7280' 
             }}
@@ -38,7 +39,7 @@ const PlatformSelector = ({ selectedPlatform, onPlatformSelect }) => {
             <span className="text-white font-bold text-xs">
               {selectedPlatform.charAt(0)}
             </span>
-          </div>
+          </Flex>
           <span className="text-sm text-gray-700 font-medium">
             {selectedPlatform}
           </span>

@@ -1,4 +1,4 @@
-// src/components/calendar/CalendarDaySummary/index.jsx - Actualizado con fecha
+// src/components/calendar/CalendarDaySummary/index.jsx
 
 import React from 'react';
 import { PlusCircle, Calendar, Clock, DollarSign } from 'lucide-react';
@@ -8,6 +8,7 @@ import TarjetaTurno from '../../cards/shift/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
+import Flex from '../../ui/Flex';
 
 const CalendarDaySummary = ({ 
   fechaSeleccionada, 
@@ -88,7 +89,7 @@ const CalendarDaySummary = ({
             className="px-4 py-3 border-b rounded-t-xl"
             style={{ backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' }}
           >
-            <div className="flex items-center justify-between">
+            <Flex variant="between" className="flex items-center">
               <div className="flex items-center">
                 <Calendar size={18} style={{ color: thematicColors?.base || '#EC4899' }} className="mr-2" />
                 <h3 className="font-semibold">
@@ -101,7 +102,7 @@ const CalendarDaySummary = ({
                 <DollarSign size={14} className="mr-1 text-green-500" />
                 <span className="font-medium">{formatCurrency(totalDia)}</span>
               </div>
-            </div>
+            </Flex>
           </div>
           
           {/* Grid de turnos - 3 columnas */}
@@ -113,7 +114,7 @@ const CalendarDaySummary = ({
               if (!trabajo) {
                 return (
                   <div key={turno.id} className="p-3 border border-gray-200 rounded-lg bg-gray-50">
-                    <div className="flex items-center justify-between">
+                    <Flex variant="between">
                       <div>
                         <p className="font-medium text-gray-600">Trabajo eliminado</p>
                         <p className="text-sm text-gray-500">
@@ -123,7 +124,7 @@ const CalendarDaySummary = ({
                       <span className="text-sm text-gray-400">
                         {turno.tipo === 'delivery' ? formatCurrency(turno.gananciaTotal || 0) : '--'}
                       </span>
-                    </div>
+                    </Flex>
                   </div>
                 );
               }

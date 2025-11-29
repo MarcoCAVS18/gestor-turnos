@@ -5,6 +5,7 @@ import { Calendar, TrendingUp } from 'lucide-react';
 import TarjetaTurno from '../../cards/shift/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
 import { formatTurnosCount } from '../../../utils/pluralization';
+import Flex from '../../ui/Flex';
 
 const WeeklyShiftsSection = ({ 
   rangoSemana, 
@@ -100,8 +101,8 @@ const WeeklyShiftsSection = ({
           borderBottomColor: thematicColors?.transparent20
         }}
       >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+        <Flex variant="between">
+          <Flex className="space-x-3">
             <Calendar 
               size={20} 
               style={{ color: thematicColors?.base }}
@@ -113,24 +114,23 @@ const WeeklyShiftsSection = ({
               >
                 Semana {rangoSemana}
               </h3>
-              {/* ✅ AQUÍ ESTÁ EL CAMBIO PRINCIPAL */}
               <p className="text-sm text-gray-600">
                 {formatTurnosCount(totalTurnos)}
               </p>
             </div>
-          </div>
+          </Flex>
 
           {/* Estadísticas de la semana */}
           <div className="text-right">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <Flex className="space-x-2 text-sm text-gray-600">
               <TrendingUp size={16} />
               <span>${estadisticasSemana.totalGanancias.toFixed(2)}</span>
-            </div>
+            </Flex>
             <p className="text-xs text-gray-500">
               {estadisticasSemana.totalHoras.toFixed(1)}h trabajadas
             </p>
           </div>
-        </div>
+        </Flex>
       </div>
 
       {/* Grid de turnos - 3 columnas con nuevos componentes */}

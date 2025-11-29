@@ -4,6 +4,7 @@ import { Award } from 'lucide-react';
 import { formatCurrency } from '../../../utils/currency';
 import { formatHoursDecimal } from '../../../utils/time';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
+import Flex from '../../ui/Flex';
 
 const MostProductiveDay = ({ datosActuales, loading, thematicColors, className = '' }) => {
   const diaMasProductivo = datosActuales?.diaMasProductivo;
@@ -20,7 +21,7 @@ const MostProductiveDay = ({ datosActuales, loading, thematicColors, className =
       className={className}
     >
       <div className="w-full">
-        <div className="flex items-center justify-between">
+        <Flex variant="between">
           <div>
             <p className="font-bold text-lg" style={{ color: thematicColors?.primary }}>
               {diaMasProductivo.dia}
@@ -34,7 +35,7 @@ const MostProductiveDay = ({ datosActuales, loading, thematicColors, className =
               {formatCurrency(diaMasProductivo.ganancia)}
             </p>
           </div>
-        </div>
+        </Flex>
       </div>
     </BaseStatsCard>
   );

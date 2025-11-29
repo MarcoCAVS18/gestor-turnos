@@ -2,12 +2,13 @@
 
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import BaseChart from '../../charts/BaseChart'; // Import BaseChart
+import BaseChart from '../../charts/BaseChart'; 
 import { useStats } from '../../../contexts/StatsContext';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { formatCurrency } from '../../../utils/currency';
 import { getRechartsConfig, CHART_CONFIGS as staticChartConfigs, PIE_CHART_COLORS } from '../../../config/chartConfig';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const InteractiveCharts = () => {
   const { datosActuales, weeklyEvolutionData, thematicColors } = useStats();
@@ -90,15 +91,15 @@ const InteractiveCharts = () => {
 
   return (
     <Card className="h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4 flex-shrink-0">
-        <div className="flex items-center">
+      <Flex variant="between" className="mb-4 flex-shrink-0">
+        <Flex>
           <CurrentIcon size={18} style={{ color: thematicColors.primary }} className="mr-2" />
           <div>
             <h4 className="font-medium">{currentChartConfig.title}</h4>
             <p className="text-xs text-gray-500">{currentChartConfig.subtitle}</p>
           </div>
-        </div>
-        <div className="flex items-center space-x-2">
+        </Flex>
+        <Flex className="space-x-2">
           <button onClick={prevChart} className="p-2 rounded transition-colors hover:bg-gray-100" style={{ color: thematicColors.primary }}>
             <ChevronLeft size={16} />
           </button>
@@ -110,13 +111,13 @@ const InteractiveCharts = () => {
           <button onClick={nextChart} className="p-2 rounded transition-colors hover:bg-gray-100" style={{ color: thematicColors.primary }}>
             <ChevronRight size={16} />
           </button>
-        </div>
-      </div>
+        </Flex>
+      </Flex>
       <div className="flex-1 bg-gray-50 rounded-lg p-2 min-h-0">
         {isEmptyOverall ? (
-          <div className="flex items-center justify-center h-full text-gray-500">
+          <Flex variant="center" className="h-full text-gray-500">
             <p>Sin datos para gráficos</p>
-          </div>
+          </Flex>
         ) : renderChart()}
       </div>
     </Card>

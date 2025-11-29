@@ -7,6 +7,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import InfoTooltip from '../../ui/InfoTooltip';
 import { determinarTipoTurno, getTipoTurnoLabel } from '../../../utils/shiftDetailsUtils';
 import { createSafeDate } from '../../../utils/time';
+import Flex from '../../ui/Flex';
 
 const ShiftDetails = ({ turno, trabajo, badges }) => {
   const { calculatePayment, shiftRanges } = useApp();
@@ -204,8 +205,8 @@ const ShiftDetails = ({ turno, trabajo, badges }) => {
       </div>
       
       {/* GANANCIA CON TOOLTIP Y BADGES - RESPONSIVO */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center min-w-0">
+      <Flex variant="between">
+        <Flex className="min-w-0">
           <DollarSign 
             size={14} 
             className="mr-1 flex-shrink-0" 
@@ -225,15 +226,15 @@ const ShiftDetails = ({ turno, trabajo, badges }) => {
             position="top"
             className="flex-shrink-0"
           />
-        </div>
+        </Flex>
         
         {/* BADGES RESPONSIVOS */}
         {badges && (
-          <div className="flex items-center ml-2 min-w-0">
+          <Flex className="ml-2 min-w-0">
             {badges}
-          </div>
+          </Flex>
         )}
-      </div>
+      </Flex>
 
       {/* INFORMACIÓN ADICIONAL PARA MÓVIL */}
       {turno.observaciones && (

@@ -5,6 +5,7 @@ import { Briefcase, Truck, Bike, Car, User, Package } from 'lucide-react';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 import Badge from '../../ui/Badge';
+import Flex from '../../ui/Flex';
 
 const WorkPreviewCard = ({ trabajo }) => {
   if (!trabajo) return null;
@@ -24,10 +25,10 @@ const WorkPreviewCard = ({ trabajo }) => {
 
   return (
     <Card>
-      <div className="flex items-start justify-between mb-4">
+      <Flex variant="start-between" className="mb-4">
         <div className="flex items-center">
-          <div 
-            className="w-12 h-12 rounded-lg flex items-center justify-center mr-4"
+          <Flex variant="center"
+            className="w-12 h-12 rounded-lg mr-4"
             style={{ backgroundColor: trabajo.color }}
           >
             {esDelivery ? (
@@ -35,65 +36,65 @@ const WorkPreviewCard = ({ trabajo }) => {
             ) : (
               <Briefcase className="h-6 w-6 text-white" />
             )}
-          </div>
+          </Flex>
           <div>
-            <div className="flex items-center gap-2 mb-1">
+            <Flex className="gap-2 mb-1">
               <h2 className="text-xl font-bold text-gray-800">{trabajo.nombre}</h2>
               {esDelivery && (
                 <Badge variant="success" size="xs" rounded>
                   Delivery
                 </Badge>
               )}
-            </div>
+            </Flex>
             {trabajo.descripcion && (
               <p className="text-gray-600 text-sm">{trabajo.descripcion}</p>
             )}
           </div>
         </div>
-      </div>
+      </Flex>
       
       {esDelivery ? (
         // Información específica para trabajos de delivery
         <div className="space-y-3">
           {trabajo.plataforma && (
-            <div className="flex items-center">
+            <Flex>
               <Package className="h-5 w-5 text-blue-500 mr-2" />
               <div>
                 <p className="text-sm text-gray-600">Plataforma</p>
                 <p className="font-semibold">{trabajo.plataforma}</p>
               </div>
-            </div>
+            </Flex>
           )}
           
           {trabajo.vehiculo && (
-            <div className="flex items-center">
+            <Flex>
               {getVehicleIcon(trabajo.vehiculo)}
               <div className="ml-2">
                 <p className="text-sm text-gray-600">Vehículo</p>
                 <p className="font-semibold">{trabajo.vehiculo}</p>
               </div>
-            </div>
+            </Flex>
           )}
           
-          <div className="flex items-center">
+          <Flex>
             <Package className="h-5 w-5 text-green-500 mr-2" />
             <div>
               <p className="text-sm text-gray-600">Tipo de trabajo</p>
               <p className="font-semibold">Ganancias variables por entrega</p>
             </div>
-          </div>
+          </Flex>
         </div>
       ) : (
         // Información para trabajos tradicionales
         <div className="space-y-3">
           {trabajo.tarifaBase && (
-            <div className="flex items-center">
+            <Flex>
               <Briefcase className="h-5 w-5 text-green-500 mr-2" />
               <div>
                 <p className="text-sm text-gray-600">Tarifa base</p>
                 <p className="font-semibold">{formatCurrency(trabajo.tarifaBase)}/hora</p>
               </div>
-            </div>
+            </Flex>
           )}
           
           {trabajo.tarifas && (

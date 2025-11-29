@@ -5,6 +5,7 @@ import { Download, FileText, Image, FileSpreadsheet } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import New from '../../ui/New';
+import Flex from '../../ui/Flex';
 
 const ExportReportCard = ({ onExport }) => {
   const colors = useThemeColors();
@@ -30,13 +31,13 @@ const ExportReportCard = ({ onExport }) => {
 
   return (
     <Card variant="transparent" className="relative overflow-hidden">
-      <div className="flex items-center justify-between">
+      <Flex variant="between">
         {/* Lado izquierdo: Texto y selector de formato */}
         <div className="flex-1 pr-4">
-          <div className="flex items-center gap-2 mb-2">
+          <Flex variant="center" className="gap-2 mb-2">
             <h3 className="text-lg font-semibold text-gray-800">Exportar Reporte</h3>
             <New size="xs" />
-          </div>
+          </Flex>
           <p className="text-sm text-gray-700 mb-4">
             Descargá un resumen completo de tus estadísticas, turnos y actividad
           </p>
@@ -109,7 +110,7 @@ const ExportReportCard = ({ onExport }) => {
             {!isExporting ? (
               <Download size={24} className="transition-colors" />
             ) : (
-              <div className="relative w-full h-full flex items-center justify-center">
+              <Flex variant="center" className="relative w-full h-full">
                 {/* Icono de descarga animado */}
                 <div 
                   className="absolute"
@@ -129,15 +130,15 @@ const ExportReportCard = ({ onExport }) => {
                     animation: 'spin 1s linear infinite'
                   }}
                 />
-              </div>
+              </Flex>
             )}
           </button>
         </div>
-      </div>
+      </Flex>
 
       {isExporting && (
         <div className="mt-4 pt-4 border-t border-gray-300 animate-fadeIn">
-          <div className="flex items-center justify-center gap-2 text-sm">
+          <Flex variant="center" className="gap-2 text-sm">
             <div 
               className="w-2 h-2 rounded-full animate-pulse"
               style={{ backgroundColor: colors.primary }}
@@ -145,7 +146,7 @@ const ExportReportCard = ({ onExport }) => {
             <span className="text-gray-800 font-medium">
               Generando tu reporte en {selectedFormat.toUpperCase()}...
             </span>
-          </div>
+          </Flex>
         </div>
       )}
       

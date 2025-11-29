@@ -1,9 +1,10 @@
-// src/components/cards/TarjetaTurnoDelivery/index.jsx - Refactorizado usando BaseShiftCard
+// src/components/cards/TarjetaTurnoDelivery/index.jsx
 
 import React from 'react';
 import { Package, DollarSign, Navigation, Truck } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import { formatCurrency } from '../../../../utils/currency';
+import Flex from '../../../ui/Flex';
 
 const TarjetaTurnoDelivery = (props) => {
   const { turno } = props;
@@ -43,58 +44,58 @@ const TarjetaTurnoDelivery = (props) => {
 
         // Stats móvil - Pedidos, km y ganancia
         mobileStats: (
-          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-            <div className="flex items-center space-x-4 text-sm text-gray-600">
+          <Flex variant="between" className="pt-2 border-t border-gray-100">
+            <Flex variant="center" className="space-x-4 text-sm text-gray-600">
               {shiftData.numeroPedidos > 0 && (
-                <div className="flex items-center">
+                <Flex variant="center">
                   <Package size={12} className="mr-1 text-blue-500" />
                   <span>{shiftData.numeroPedidos}</span>
-                </div>
+                </Flex>
               )}
 
               {shiftData.kilometros > 0 && (
-                <div className="flex items-center">
+                <Flex variant="center">
                   <Navigation size={12} className="mr-1 text-purple-500" />
                   <span>{shiftData.kilometros}km</span>
-                </div>
+                </Flex>
               )}
-            </div>
+            </Flex>
 
-            <div className="flex items-center">
+            <Flex variant="center">
               <DollarSign size={16} className="mr-1 text-green-600" />
               <span className="font-bold text-green-600 text-lg">
                 {formatCurrency(shiftData.totalWithDiscount)}
               </span>
-            </div>
-          </div>
+            </Flex>
+          </Flex>
         ),
 
         // Stats desktop - Pedidos, km y ganancia
         desktopStats: (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center text-sm text-gray-600 gap-4">
+          <Flex variant="between">
+            <Flex variant="center" className="text-sm text-gray-600 gap-4">
               {shiftData.numeroPedidos > 0 && (
-                <div className="flex items-center">
+                <Flex variant="center">
                   <Package size={14} className="mr-1 text-blue-500" />
                   <span>{shiftData.numeroPedidos}</span>
-                </div>
+                </Flex>
               )}
 
               {shiftData.kilometros > 0 && (
-                <div className="flex items-center">
+                <Flex variant="center">
                   <Navigation size={14} className="mr-1 text-purple-500" />
                   <span>{shiftData.kilometros} km</span>
-                </div>
+                </Flex>
               )}
-            </div>
+            </Flex>
 
-            <div className="flex items-center">
+            <Flex variant="center">
               <DollarSign size={16} className="mr-1 text-green-600" />
               <span className="text-lg font-semibold text-green-600">
                 {formatCurrency(shiftData.totalWithDiscount)}
               </span>
-            </div>
-          </div>
+            </Flex>
+          </Flex>
         ),
 
         // Contenido expandido - Detalles financieros
@@ -103,36 +104,36 @@ const TarjetaTurnoDelivery = (props) => {
             <div className="text-sm space-y-2">
               <div className="font-medium text-green-700 mb-2">Detalles Financieros</div>
 
-              <div className="flex justify-between">
+              <Flex justify="between">
                 <span className="text-green-600">Ganancia total:</span>
                 <span className="font-medium">{formatCurrency(shiftData.gananciaTotal)}</span>
-              </div>
+              </Flex>
 
               {shiftData.propinas > 0 && (
-                <div className="flex justify-between">
+                <Flex justify="between">
                   <span className="text-green-600">Propinas:</span>
                   <span className="font-medium">{formatCurrency(shiftData.propinas)}</span>
-                </div>
+                </Flex>
               )}
 
               {shiftData.gastos > 0 && (
-                <div className="flex justify-between">
+                <Flex justify="between">
                   <span className="text-green-600">Gastos combustible:</span>
                   <span className="font-medium">{formatCurrency(shiftData.gastos)}</span>
-                </div>
+                </Flex>
               )}
 
               {shiftData.numeroPedidos > 0 && (
-                <div className="flex justify-between text-green-600">
+                <Flex justify="between" className="text-green-600">
                   <span>Promedio/pedido:</span>
                   <span>{formatCurrency(shiftData.promedioPorPedido)}</span>
-                </div>
+                </Flex>
               )}
 
-              <div className="flex justify-between border-t border-green-200 pt-2">
+              <Flex justify="between" className="border-t border-green-200 pt-2">
                 <span className="font-semibold text-green-700">Ganancia neta:</span>
                 <span className="font-bold">{formatCurrency(shiftData.totalWithDiscount)}</span>
-              </div>
+              </Flex>
             </div>
           </div>
         )

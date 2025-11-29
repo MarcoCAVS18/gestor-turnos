@@ -92,10 +92,10 @@ const TrabajoDeliveryForm = ({ isOpen, onClose, onSubmit, trabajoId = null, init
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <Flex variant="center" className="fixed inset-0 bg-black bg-opacity-50 z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-sm max-h-[90vh] overflow-y-auto">
         <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
+          <Flex variant="between" className="mb-6">
             <h2 className="text-lg font-bold flex items-center">
               <Truck size={20} style={{ color: thematicColors?.base }} className="mr-2" />
               {trabajoId ? 'Editar' : 'Nuevo'} Turno
@@ -106,7 +106,7 @@ const TrabajoDeliveryForm = ({ isOpen, onClose, onSubmit, trabajoId = null, init
             >
               ×
             </button>
-          </div>
+          </Flex>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Fecha */}
@@ -146,10 +146,10 @@ const TrabajoDeliveryForm = ({ isOpen, onClose, onSubmit, trabajoId = null, init
 
             {/* Tiempo trabajado */}
             {horasTrabajadas > 0 && (
-              <div className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg flex items-center">
+              <Flex className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg">
                 <Clock size={14} className="mr-1" />
                 Tiempo: {formatHoursDecimal(horasTrabajadas)}
-              </div>
+              </Flex>
             )}
             
             {/* PLATAFORMA */}

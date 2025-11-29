@@ -6,6 +6,7 @@ import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useApp } from '../../../../contexts/AppContext';
 import { createSafeDate, calculateShiftHours } from '../../../../utils/time';
 import BaseForm, { FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses } from '../../base/BaseForm';
+import Flex from '../../../ui/Flex';
 
 const TurnoForm = ({
   turno,
@@ -276,8 +277,7 @@ const TurnoForm = ({
       }}
     >
       {/* Header con título y toggle customizado */}
-      <div className={`
-        flex items-center justify-between 
+      <Flex variant="between" className={`
         ${isMobile ? 'pb-2 border-b border-gray-200' : ''}
       `}>
         <div className="flex items-center flex-1">
@@ -328,7 +328,7 @@ const TurnoForm = ({
             {formData.tuvoDescanso ? 'Sí' : 'No'}
           </span>
         </label>
-      </div>
+      </Flex>
 
       {/* Información del cálculo - LAYOUT RESPONSIVO */}
       <div className={`
@@ -337,98 +337,98 @@ const TurnoForm = ({
         text-gray-600
       `}>
         {/* Tiempo programado */}
-        <div className={`
-          flex items-center justify-between p-2 rounded
+        <Flex variant="between" className={`
+          p-2 rounded
           ${isMobile ? 'bg-blue-50' : 'bg-gray-50'}
         `}>
           <div className="flex items-center">
-            <div className={`
-              rounded-full flex items-center justify-center mr-2
+            <Flex variant="center" className={`
+              rounded-full mr-2
               ${isMobile ? 'w-6 h-6 text-xs' : 'w-5 h-5 text-xs'}
             `}
             style={{ backgroundColor: colors.transparent20, color: colors.primary }}>
               <Clock size={isMobile ? 12 : 10} />
-            </div>
+            </Flex>
             <span className={isMobile ? 'text-sm' : 'text-xs'}>Tiempo programado:</span>
           </div>
           <span className={`font-semibold ${isMobile ? 'text-sm' : 'text-xs'}`}>
             {Math.floor(duracion.totalMinutos / 60)}h {duracion.totalMinutos % 60}min
           </span>
-        </div>
+        </Flex>
 
         {formData.tuvoDescanso ? (
           <>
             {/* Descanso configurado */}
-            <div className={`
-              flex items-center justify-between p-2 rounded
+            <Flex variant="between" className={`
+              p-2 rounded
               ${isMobile ? 'bg-orange-50' : 'bg-gray-50'}
             `}>
               <div className="flex items-center">
-                <div className={`
-                  rounded-full flex items-center justify-center mr-2
+                <Flex variant="center" className={`
+                  rounded-full mr-2
                   ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
                 `}
                 style={{ backgroundColor: '#FED7AA', color: '#EA580C' }}>
                   <Coffee size={isMobile ? 10 : 8} />
-                </div>
+                </Flex>
                 <span className={isMobile ? 'text-sm' : 'text-xs'}>Descanso configurado:</span>
               </div>
               <span className={`font-semibold ${isMobile ? 'text-sm' : 'text-xs'}`}>
                 {smokoMinutes} minutos
               </span>
-            </div>
+            </Flex>
 
             {/* Tiempo pagado */}
-            <div className={`
-              flex items-center justify-between p-2 rounded border
+            <Flex variant="between" className={`
+              p-2 rounded border
               ${isMobile ? 'bg-green-50 border-green-200' : 'bg-gray-50'}
             `}
             style={{ 
               backgroundColor: isMobile ? colors.transparent10 : undefined,
               borderColor: isMobile ? colors.transparent30 : undefined
             }}>
-              <div className="flex items-center">
-                <div className={`
-                  rounded-full flex items-center justify-center mr-2
+              <Flex variant="center">
+                <Flex variant="center" className={`
+                  rounded-full mr-2
                   ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
                 `}
                 style={{ backgroundColor: colors.primary, color: 'white' }}>
                   <span className={`font-bold ${isMobile ? 'text-xs' : 'text-[10px]'}`}>$</span>
-                </div>
+                </Flex>
                 <span className={`font-medium ${isMobile ? 'text-sm' : 'text-xs'}`}
                       style={{ color: colors.primary }}>
                   Tiempo pagado:
                 </span>
-              </div>
+              </Flex>
               <span className={`font-bold ${isMobile ? 'text-sm' : 'text-xs'}`}
                     style={{ color: colors.primary }}>
                 {duracion.horas}h {duracion.minutos}min
               </span>
-            </div>
+            </Flex>
           </>
         ) : (
           /* Sin descuento aplicado */
-          <div className={`
-            flex items-center justify-between p-2 rounded border
+          <Flex variant="between" className={`
+            p-2 rounded border
             ${isMobile ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'}
           `}
           style={{ 
             backgroundColor: isMobile ? colors.transparent10 : undefined,
             borderColor: isMobile ? colors.transparent30 : undefined
           }}>
-            <div className="flex items-center">
-              <div className={`
-                rounded-full flex items-center justify-center mr-2
+            <Flex variant="center">
+              <Flex variant="center" className={`
+                rounded-full mr-2
                 ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
               `}
               style={{ backgroundColor: colors.primary, color: 'white' }}>
                 <span className={`font-bold ${isMobile ? 'text-xs' : 'text-[10px]'}`}>$</span>
-              </div>
+              </Flex>
               <span className={`font-medium ${isMobile ? 'text-sm' : 'text-xs'}`}
                     style={{ color: colors.primary }}>
                 Tiempo pagado:
               </span>
-            </div>
+            </Flex>
             <div className="text-right">
               <div className={`font-bold ${isMobile ? 'text-sm' : 'text-xs'}`}
                    style={{ color: colors.primary }}>
@@ -438,7 +438,7 @@ const TurnoForm = ({
                 (sin descuento)
               </div>
             </div>
-          </div>
+          </Flex>
         )}
 
         {/* Mensaje informativo en móvil */}

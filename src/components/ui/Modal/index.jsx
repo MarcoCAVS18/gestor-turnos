@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 import Button from '../Button';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import Flex from '../ui/Flex';
 
 const Modal = ({
   isOpen,
@@ -85,8 +86,8 @@ const Modal = ({
       <div className={`${getModalClasses()} ${getSizeClasses()} ${className}`}>
         {/* Header */}
         {(title || showCloseButton) && (
-          <div className={`
-            flex items-center justify-between p-4 border-b border-gray-200
+          <Flex variant="between" className={`
+            p-4 border-b border-gray-200
             ${isMobile ? 'sticky top-0 bg-white z-10' : ''}
             ${isMobile && mobileFullScreen ? 'pt-6' : ''}
           `}>
@@ -106,7 +107,7 @@ const Modal = ({
                 <X size={isMobile ? 24 : 20} />
               </button>
             )}
-          </div>
+          </Flex>
         )}
         
         {/* Content */}

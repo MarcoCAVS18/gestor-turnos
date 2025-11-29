@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Calendar, Plus, Briefcase, ArrowRight } from 'lucide-react';
+import Flex from '../../ui/Flex';
 
 function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
   const handleGoToJobs = () => { 
@@ -11,15 +12,15 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
   if (allJobs.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-        <div 
-          className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center" 
+        <Flex variant="center"
+          className="p-4 rounded-full w-20 h-20 mx-auto mb-4" 
           style={{ backgroundColor: thematicColors?.transparent10 || 'rgba(255, 152, 0, 0.1)' }}
         >
           <Briefcase 
             className="w-10 h-10" 
             style={{ color: thematicColors?.base || '#FF9800' }} 
           />
-        </div>
+        </Flex>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
           Primero necesitas crear un trabajo
         </h3>
@@ -40,15 +41,15 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-      <div 
-        className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center" 
+      <Flex variant="center"
+        className="p-4 rounded-full w-20 h-20 mx-auto mb-4" 
         style={{ backgroundColor: thematicColors?.transparent10 }}
       >
         <Calendar 
           className="w-10 h-10" 
           style={{ color: thematicColors?.base }} 
         />
-      </div>
+      </Flex>
       <h3 className="text-lg font-semibold text-gray-900 mb-2">
         No hay turnos registrados
       </h3>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import Flex from '../../ui/Flex';
 import { getRechartsConfig, PIE_CHART_COLORS } from '../../../config/chartConfig';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 
@@ -32,9 +33,9 @@ const BaseChart = ({
   if (!data || data.length === 0) {
     // This empty state is simple; more complex empty states can be handled by the parent component
     return (
-      <div className="flex items-center justify-center h-full text-gray-500">
+      <Flex variant="center" className="h-full text-gray-500">
         <p>No hay datos para el gráfico.</p>
-      </div>
+      </Flex>
     );
   }
 
@@ -118,9 +119,9 @@ const BaseChart = ({
       //   );
       default:
         return (
-          <div className="flex items-center justify-center h-full text-gray-500">
+          <Flex variant="center" className="h-full text-gray-500">
             <p>Tipo de gráfico no soportado.</p>
-          </div>
+          </Flex>
         );
     }
   };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Briefcase, Truck, Clock, DollarSign, Package, Navigation } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
+import Flex from '../../../ui/Flex';
 
 const SelectorTipoTrabajo = ({ onSelectTipo, isMobile }) => {
   // Usar colores del contexto si no se pasan como prop
@@ -51,9 +52,9 @@ const SelectorTipoTrabajo = ({ onSelectTipo, isMobile }) => {
         >
           <div className={`flex items-start ${isMobile ? 'space-x-4' : 'space-x-4'}`}>
             <div className="flex-shrink-0">
-              <div 
+              <Flex variant="center" 
                 className={`
-                  rounded-lg flex items-center justify-center transition-all duration-300
+                  rounded-lg transition-all duration-300
                   ${isMobile ? 'w-12 h-12' : 'w-10 h-10'}
                 `}
                 style={{ backgroundColor: colors.transparent10 }}
@@ -61,7 +62,7 @@ const SelectorTipoTrabajo = ({ onSelectTipo, isMobile }) => {
                 <Briefcase 
                   className={`text-blue-500 group-hover:scale-110 transition-transform ${isMobile ? 'w-7 h-7' : 'w-6 h-6'}`} 
                 />
-              </div>
+              </Flex>
             </div>
             <div className="flex-1">
               <h4 className={`font-semibold mb-2 ${isMobile ? 'text-lg' : 'text-lg'}`}>
@@ -114,9 +115,9 @@ const SelectorTipoTrabajo = ({ onSelectTipo, isMobile }) => {
         >
           <div className={`flex items-start ${isMobile ? 'space-x-4' : 'space-x-4'}`}>
             <div className="flex-shrink-0">
-              <div 
+              <Flex variant="center"
                 className={`
-                  rounded-lg flex items-center justify-center transition-all duration-300
+                  rounded-lg transition-all duration-300
                   ${isMobile ? 'w-12 h-12' : 'w-10 h-10'}
                 `}
                 style={{ backgroundColor: '#dcfce7' }}
@@ -124,7 +125,7 @@ const SelectorTipoTrabajo = ({ onSelectTipo, isMobile }) => {
                 <Truck 
                   className={`text-green-600 group-hover:scale-110 transition-transform ${isMobile ? 'w-7 h-7' : 'w-6 h-6'}`} 
                 />
-              </div>
+              </Flex>
             </div>
             <div className="flex-1">
               <h4 className={`font-semibold mb-2 ${isMobile ? 'text-lg' : 'text-lg'}`}>
@@ -159,12 +160,12 @@ const SelectorTipoTrabajo = ({ onSelectTipo, isMobile }) => {
       >
         <div className="flex items-start space-x-3">
           <div className="flex-shrink-0">
-            <div 
-              className={`rounded-full flex items-center justify-center ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}`}
+            <Flex variant="center" 
+              className={`rounded-full ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}`}
               style={{ backgroundColor: colors.primary }}
             >
               <span className="text-white text-xs font-bold">💡</span>
-            </div>
+            </Flex>
           </div>
           <div>
             <p 

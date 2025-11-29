@@ -6,6 +6,8 @@ import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 
+import Flex from '../../ui/Flex';
+
 const GoalsSection = () => {
   // Usar el nombre correcto de la variable y función del contexto
   const { weeklyHoursGoal, updateWeeklyHoursGoal } = useApp();
@@ -49,7 +51,7 @@ const GoalsSection = () => {
           </label>
           
           {!editando ? (
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <Flex variant="between" className="p-3 bg-gray-50 rounded-lg">
               <div>
                 {weeklyHoursGoal ? (
                   <>
@@ -80,10 +82,10 @@ const GoalsSection = () => {
               >
                 {weeklyHoursGoal ? 'Editar' : 'Configurar'}
               </button>
-            </div>
+            </Flex>
           ) : (
             <div className="space-y-3">
-              <div className="flex items-center space-x-2">
+              <Flex className="space-x-2">
                 <input
                   type="number"
                   value={nuevaMeta}
@@ -96,9 +98,9 @@ const GoalsSection = () => {
                   style={{ '--tw-ring-color': colors.primary }}
                 />
                 <span className="text-sm text-gray-500">horas</span>
-              </div>
+              </Flex>
               
-              <div className="flex items-center space-x-2">
+              <Flex className="space-x-2">
                 <button
                   onClick={handleGuardar}
                   disabled={!nuevaMeta || parseFloat(nuevaMeta) <= 0}
@@ -146,7 +148,7 @@ const GoalsSection = () => {
                     Eliminar
                   </button>
                 )}
-              </div>
+              </Flex>
             </div>
           )}
         </div>

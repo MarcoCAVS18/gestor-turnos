@@ -2,8 +2,9 @@ import React from 'react';
 import { Calendar, Clock, DollarSign } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
-import BaseStatsCard from '../../cards/base/BaseStatsCard'; // Import BaseStatsCard
-import { calculateShiftHours, calculateShiftEarnings } from '../../../utils/statsCalculations'; // Import from statsCalculations
+import BaseStatsCard from '../../cards/base/BaseStatsCard';
+import { calculateShiftHours, calculateShiftEarnings } from '../../../utils/statsCalculations';
+import Flex from '../../ui/Flex';
 
 const DailyBreakdownCard = ({ turnosPorDia = {}, trabajos = [] }) => {
   const colors = useThemeColors();
@@ -42,14 +43,14 @@ const DailyBreakdownCard = ({ turnosPorDia = {}, trabajos = [] }) => {
           const gananciaTotal = turnos.reduce((total, turno) => total + calculateShiftEarnings(turno, trabajosValidos), 0);
 
           return (
-            <div key={fecha} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
+            <Flex variant="between" key={fecha} className="p-3 bg-gray-50 rounded-lg">
+              <Flex>
+                <Flex variant="center"
+                  className="w-10 h-10 rounded-full mr-3"
                   style={{ backgroundColor: colors.transparent10 }}
                 >
                   <Calendar size={16} style={{ color: colors.primary }} />
-                </div>
+                </Flex>
                 <div>
                   <p className="font-medium text-gray-800">
                     {formatearFecha(fecha)}
@@ -58,19 +59,19 @@ const DailyBreakdownCard = ({ turnosPorDia = {}, trabajos = [] }) => {
                     {turnos.length} turno{turnos.length !== 1 ? 's' : ''}
                   </p>
                 </div>
-              </div>
+              </Flex>
 
-              <div className="flex items-center space-x-4 text-sm">
-                <div className="flex items-center text-purple-600">
+              <Flex className="space-x-4 text-sm">
+                <Flex className="text-purple-600">
                   <Clock size={14} className="mr-1" />
                   <span>{horasTotal.toFixed(1)}h</span>
-                </div>
-                <div className="flex items-center text-green-600">
+                </Flex>
+                <Flex className="text-green-600">
                   <DollarSign size={14} className="mr-1" />
                   <span>{formatCurrency(gananciaTotal)}</span>
-                </div>
-              </div>
-            </div>
+                </Flex>
+              </Flex>
+            </Flex>
           );
         })}
       </div>

@@ -3,6 +3,7 @@
 import React from 'react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const StatCard = ({ 
   title, 
@@ -46,7 +47,7 @@ const StatCard = ({
       <div className={getSizeClasses()}>
         
         {/* Header con título e ícono */}
-        <div className="flex items-center justify-between mb-2">
+        <Flex variant="between" className="mb-2">
           <span className="text-sm text-gray-600">{title}</span>
           {Icon && (
             <Icon 
@@ -54,7 +55,7 @@ const StatCard = ({
               style={{ color: colors.primary }} 
             />
           )}
-        </div>
+        </Flex>
         
         {/* Valor principal */}
         <p 
@@ -65,7 +66,7 @@ const StatCard = ({
         </p>
         
         {/* Subtítulo y tendencia */}
-        <div className="flex items-center justify-between">
+        <Flex variant="between">
           {subtitle && (
             <span className="text-xs text-gray-500">{subtitle}</span>
           )}
@@ -84,7 +85,7 @@ const StatCard = ({
               </span>
             </div>
           )}
-        </div>
+        </Flex>
       </div>
     </Card>
   );

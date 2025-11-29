@@ -7,6 +7,7 @@ import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
+import Flex from '../../ui/Flex';
 
 const NextShiftCard = ({ proximoTurno, formatearFecha }) => {
   const { trabajos } = useApp();
@@ -24,7 +25,7 @@ const NextShiftCard = ({ proximoTurno, formatearFecha }) => {
         <Star size={20} style={{ color: colors.primary }} className="mr-2" />
         Próximo turno
       </h3>
-      <div className="flex items-center justify-between">
+      <Flex variant="between">
         <div>
           <p className="font-semibold text-gray-800">{trabajo.nombre}</p>
           <p className="text-sm text-gray-600">
@@ -40,7 +41,7 @@ const NextShiftCard = ({ proximoTurno, formatearFecha }) => {
         >
           Ver
         </Button>
-      </div>
+      </Flex>
     </Card>
   );
 };

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Github } from 'lucide-react';
+import Flex from '../../ui/Flex';
 
 const FooterSection = () => {
   return (
@@ -10,7 +11,7 @@ const FooterSection = () => {
         <span className="font-bold">Hecho por Marco :)</span>
       </p>
 
-      <div className="flex items-center justify-center gap-2 text-gray-300 text-sm">
+      <Flex variant="center" className="space-x-2 text-gray-300 text-sm">
         <span>Como lo estuve desarrollando? Mira:</span>
         <a
           href="https://github.com/MarcoCAVS18/gestor-turnos"
@@ -20,7 +21,7 @@ const FooterSection = () => {
         >
           <Github size={16} />
         </a>
-      </div>
+      </Flex>
     </div>
   );
 };

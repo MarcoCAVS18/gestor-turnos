@@ -1,8 +1,9 @@
 // src/components/cards/base/BaseStatsCard/index.jsx
 import React from 'react';
 import Card from '../../../ui/Card';
-import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner'; // Corrected path
+import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
+import Flex from '../../../ui/Flex';
 
 const BaseStatsCard = ({
   title,
@@ -26,11 +27,11 @@ const BaseStatsCard = ({
         </h3>
       )}
 
-      <div className="flex-1 flex items-center justify-center min-h-0">
+      <Flex variant="center" className="flex-1 min-h-0">
         {loading ? (
-          <div className="flex items-center justify-center py-8">
+          <Flex variant="center" className="py-8">
             <LoadingSpinner />
-          </div>
+          </Flex>
         ) : empty ? (
           <div className="text-center py-8 text-gray-500">
             {IconComponent && <IconComponent size={48} className="mx-auto mb-3 opacity-30" />}
@@ -42,7 +43,7 @@ const BaseStatsCard = ({
             {children}
           </div>
         )}
-      </div>
+      </Flex>
     </Card>
   );
 };

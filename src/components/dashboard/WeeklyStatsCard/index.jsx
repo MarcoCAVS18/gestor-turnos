@@ -4,6 +4,7 @@ import React from 'react';
 import { DollarSign, Clock, Target, Activity } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
+import Flex from '../../ui/Flex';
 
 const WeeklyStatsGrid = ({ datos = {} }) => {
   const colors = useThemeColors();
@@ -48,10 +49,10 @@ const WeeklyStatsGrid = ({ datos = {} }) => {
         const Icon = stat.icon;
         return (
           <div key={index} className="text-center p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center justify-center mb-2">
+            <Flex variant="center" className="mb-2">
               <Icon size={18} style={{ color: stat.color }} className="mr-1" />
               <span className="text-sm text-gray-600">{stat.label}</span>
-            </div>
+            </Flex>
             <p className="text-2xl font-bold" style={{ color: stat.color }}>
               {stat.value}
             </p>

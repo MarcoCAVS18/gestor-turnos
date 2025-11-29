@@ -4,6 +4,7 @@ import React from 'react';
 import { X } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import Flex from '../../ui/Flex';
 
 const FiltrosResumen = ({ filters, onRemoveFilter, onClearAll, estadisticas }) => {
   const { trabajos, trabajosDelivery } = useApp();
@@ -55,7 +56,7 @@ const FiltrosResumen = ({ filters, onRemoveFilter, onClearAll, estadisticas }) =
       }}
     >
       {/* Estadísticas */}
-      <div className="flex items-center justify-between text-sm">
+      <Flex variant="between" className="text-sm">
         <span style={{ color: colors.primary }} className="font-medium">
           Filtros activos: {estadisticas?.turnosFiltrados || 0} de {estadisticas?.totalTurnos || 0} turnos
         </span>
@@ -67,7 +68,7 @@ const FiltrosResumen = ({ filters, onRemoveFilter, onClearAll, estadisticas }) =
           <X size={12} />
           <span>Limpiar todo</span>
         </button>
-      </div>
+      </Flex>
 
       {/* Tags de filtros activos */}
       <div className="flex flex-wrap gap-2">
@@ -113,8 +114,8 @@ const FiltrosResumen = ({ filters, onRemoveFilter, onClearAll, estadisticas }) =
         )}
         
         {filters.tipoTurno !== 'todos' && (
-          <div 
-            className="flex items-center space-x-2 px-3 py-1 rounded-full text-sm"
+          <Flex variant="center" 
+            className="space-x-2 px-3 py-1 rounded-full text-sm"
             style={{ 
               backgroundColor: colors.transparent20,
               color: colors.primary 
@@ -127,7 +128,7 @@ const FiltrosResumen = ({ filters, onRemoveFilter, onClearAll, estadisticas }) =
             >
               <X size={14} />
             </button>
-          </div>
+          </Flex>
         )}
       </div>
     </div>

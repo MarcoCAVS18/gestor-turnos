@@ -1,6 +1,7 @@
 // src/components/stats/WeeklyStatsGrid/index.jsx
 import React from 'react';
 import { DollarSign, Clock, Target, Activity } from 'lucide-react';
+import Flex from '../../ui/Flex';
 import Card from '../../ui/Card';
 import LoadingSpinner from '../../ui/LoadingSpinner/LoadingSpinner';
 
@@ -34,11 +35,10 @@ const WeeklyStatsGrid = ({ datosActuales, thematicColors, loading, className = '
           const Icon = stat.icon;
           return (
             <div key={index} className="text-center p-4 bg-gray-50 rounded-lg flex flex-col justify-center">
-              <div className="flex items-center justify-center mb-2">
-                <Icon size={18} style={{ color: thematicColors?.base }} className="mr-1" />
-                <span className="text-sm text-gray-600">{stat.label}</span>
-              </div>
-              <p className="text-2xl font-bold" style={{ color: thematicColors?.base }}>
+                          <Flex variant="center" className="mb-2">
+                            <Icon size={18} style={{ color: stat.color }} className="mr-1" />
+                            <span className="text-sm text-gray-600">{stat.label}</span>
+                          </Flex>              <p className="text-2xl font-bold" style={{ color: thematicColors?.base }}>
                 {stat.value}
               </p>
             </div>

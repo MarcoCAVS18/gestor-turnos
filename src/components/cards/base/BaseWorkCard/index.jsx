@@ -1,5 +1,4 @@
 // src/components/cards/BaseWorkCard/index.jsx
-// Componente base unificado para TarjetaTrabajo y TarjetaTrabajoDelivery
 
 import React from 'react';
 import { Edit, Edit2, Trash2, Share2 } from 'lucide-react';
@@ -8,6 +7,7 @@ import WorkAvatar from '../../../work/WorkAvatar';
 import ActionsMenu from '../../../ui/ActionsMenu';
 import Badge from '../../../ui/Badge';
 import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
+import Flex from '../../../ui/Flex';
 
 const BaseWorkCard = ({
   trabajo,
@@ -81,7 +81,7 @@ const BaseWorkCard = ({
       hover={true}
       className={isSharing ? 'opacity-70' : ''}
     >
-      <div className="flex items-start justify-between">
+      <Flex variant="start-between">
         <div className="flex items-start flex-1 min-w-0">
           {/* Avatar del trabajo */}
           <WorkAvatar
@@ -123,17 +123,17 @@ const BaseWorkCard = ({
             <ActionsMenu actions={actions} />
           </div>
         )}
-      </div>
+      </Flex>
 
       {/* Indicador de estado compartiendo */}
       {isSharing && (
         <div className="mt-3 pt-3 border-t border-gray-200">
-          <div className="flex items-center justify-center">
-            <div className="flex items-center text-sm text-blue-600">
+          <Flex variant="center" className="pt-1">
+            <Flex variant="center"className="text-sm text-blue-600">
               <LoadingSpinner size="h-4 w-4" color="border-blue-600" className="mr-2" />
               Compartiendo...
-            </div>
-          </div>
+            </Flex>
+          </Flex>
         </div>
       )}
     </Card>

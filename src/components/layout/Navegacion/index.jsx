@@ -7,7 +7,11 @@ import { motion } from 'framer-motion';
 import { useApp } from '../../../contexts/AppContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+
+import Flex from '../../ui/Flex';
+
 import './index.css';
+
 
 const Navegacion = ({ abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
   const navigate = useNavigate();
@@ -232,13 +236,13 @@ const Navegacion = ({ abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
 
               {/* Overlay con ícono de editar al hacer hover */}
               {showPhotoEdit && (
-                <div
+                <Flex variant="center"
                   onClick={handleEditPhotoClick}
-                  className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center cursor-pointer transition-opacity"
+                  className="absolute inset-0 bg-black bg-opacity-50 cursor-pointer transition-opacity"
                   style={{ backgroundColor: colors.transparent50 }}
                 >
                   <Pencil className="text-white" size={20} />
-                </div>
+                </Flex>
               )}
             </div>
 

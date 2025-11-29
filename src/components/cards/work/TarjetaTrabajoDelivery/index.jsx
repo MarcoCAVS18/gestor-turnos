@@ -3,6 +3,7 @@
 import React from 'react';
 import { Package, Bike, Car, Truck, User } from 'lucide-react';
 import BaseWorkCard from '../../base/BaseWorkCard';
+import Flex from '../../../ui/Flex';
 
 const TarjetaTrabajoDelivery = (props) => {
   const { trabajo } = props;
@@ -24,32 +25,32 @@ const TarjetaTrabajoDelivery = (props) => {
       <div className="space-y-2">
         {/* Plataforma */}
         {trabajo?.plataforma && (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+          <Flex variant="between">
+            <Flex variant="center">
               <Package size={14} className="text-blue-500 mr-2" />
               <span className="text-sm text-gray-600">Plataforma:</span>
-            </div>
+            </Flex>
             <span className="text-sm font-medium">{trabajo.plataforma}</span>
-          </div>
+          </Flex>
         )}
 
         {/* Vehículo */}
         {trabajo?.vehiculo && (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
+          <Flex variant="between">
+            <Flex variant="center">
               {getVehicleIcon(trabajo.vehiculo)}
               <span className="text-sm text-gray-600 ml-2">Vehículo:</span>
-            </div>
+            </Flex>
             <span className="text-sm font-medium">{trabajo.vehiculo}</span>
-          </div>
+          </Flex>
         )}
 
         {/* Información sobre ganancias variables */}
         <div className="mt-3 pt-3 border-t border-gray-100">
-          <div className="flex items-center text-sm text-gray-500 italic">
+          <Flex variant="center" className="text-sm text-gray-500 italic">
             <Package size={14} className="text-gray-400 mr-2" />
             <span>Ganancias variables por pedido</span>
-          </div>
+          </Flex>
         </div>
       </div>
     </BaseWorkCard>

@@ -12,6 +12,7 @@ import {
   calculateEarningsPercentage,
   sortPlatforms
 } from '../../../utils/statsCalculations';
+import Flex from '../../ui/Flex';
 
 const ComparacionPlataformas = ({ deliveryStats }) => {
   const colors = useThemeColors();
@@ -67,12 +68,12 @@ const ComparacionPlataformas = ({ deliveryStats }) => {
 
   return (
     <Card>
-      <div className="flex items-center justify-between mb-4">
+      <Flex variant="between" className="mb-4">
         <h3 className="text-lg font-semibold flex items-center">
           <BarChart3 size={20} style={{ color: colors.primary }} className="mr-2" />
           Plataformas
         </h3>
-      </div>
+      </Flex>
 
       <div className="mb-3">
         <div className="flex gap-1 text-sm">
@@ -128,8 +129,8 @@ const ComparacionPlataformas = ({ deliveryStats }) => {
               key={plataforma.nombre}
               className={`p-3 rounded-lg border border-gray-200 transition-all duration-500 ${animacionActiva ? 'scale-105 shadow-md' : 'scale-100'}`}
             >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center">
+              <Flex variant="start-between" className="mb-2">
+                <Flex>
                   <span className="text-xl mr-2">{icon}</span>
                   <div>
                     <h4 className="font-semibold text-gray-900">
@@ -139,14 +140,14 @@ const ComparacionPlataformas = ({ deliveryStats }) => {
                       {plataforma.turnos} turnos
                     </p>
                   </div>
-                </div>
+                </Flex>
                 <div className="text-right">
                   <p className="text-lg font-bold" style={{ color: plataforma.color || colors.primary }}>
                     {formatCurrency(plataforma.totalGanado)}
                   </p>
                   <p className="text-sm text-gray-500">{porcentajeGanancias.toFixed(1)}%</p>
                 </div>
-              </div>
+              </Flex>
 
               <div className="mb-2">
                 <div className="w-full bg-gray-200 rounded-full h-2">
@@ -162,34 +163,34 @@ const ComparacionPlataformas = ({ deliveryStats }) => {
 
               <div className="grid grid-cols-4 gap-2 text-sm">
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <Package size={12} className="mr-1 text-blue-500" />
                     <span className="font-medium">{plataforma.totalPedidos}</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">pedidos</p>
                 </div>
                 
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <DollarSign size={12} className="mr-1 text-green-500" />
                     <span className="font-medium">{formatCurrency(plataforma.promedioPorPedido)}</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">/pedido</p>
                 </div>
                 
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <Clock size={12} className="mr-1 text-purple-500" />
                     <span className="font-medium">{formatCurrency(plataforma.promedioPorHora)}</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">/hora</p>
                 </div>
                 
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <TrendingUp size={12} className="mr-1 text-orange-500" />
                     <span className="font-medium">{formatCurrency(plataforma.totalPropinas)}</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">propinas</p>
                 </div>
               </div>

@@ -10,6 +10,7 @@ import Badge from '../../../ui/Badge';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { formatRelativeDate, createSafeDate } from '../../../../utils/time';
+import Flex from '../../../ui/Flex';
 
 const BaseShiftCard = ({
   turno,
@@ -111,42 +112,42 @@ const BaseShiftCard = ({
       >
         <div className="space-y-3">
           {/* Header móvil: Solo nombre y acciones */}
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-3 flex-1 min-w-0">
+          <Flex variant="start-between">
+            <Flex variant="center" className="flex items-center space-x-3 flex-1 min-w-0">
               {/* Avatar más pequeño */}
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+              <Flex variant="center"
+                className="rounded-lg w-8 h-8 text-white font-bold text-sm flex-shrink-0"
                 style={{ backgroundColor: colorTrabajo }}
               >
                 {currentConfig.avatarContent || children?.avatarIcon}
-              </div>
+              </Flex>
 
               {/* Nombre truncado */}
               <h3 className="font-semibold text-gray-800 truncate text-base">
                 {trabajo.nombre}
               </h3>
-            </div>
+            </Flex>
 
             {/* Solo menú de acciones */}
             {showActions && <ActionsMenu actions={actions} />}
-          </div>
+          </Flex>
 
           {/* Información principal en filas verticales */}
           <div className="space-y-2">
             {/* Fila 1: Horario y duración */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center text-sm text-gray-600">
+            <Flex variant="between">
+              <Flex variant="center" className="text-sm text-gray-600">
                 <Clock size={14} className="mr-1.5" />
                 <span>{turno.horaInicio} - {turno.horaFin}</span>
-              </div>
+              </Flex>
               <div className="text-sm text-gray-600">
                 {shiftData?.hours?.toFixed(1) || '0.0'}h
               </div>
-            </div>
+            </Flex>
 
             {/* Fila 2: Fecha y badges en línea separada */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
+            <Flex variant="between">
+              <Flex variant="center" className="space-x-2">
                 {fecha && (
                   <Badge variant="default" size="sm">
                     {formatRelativeDate(fecha)}
@@ -156,11 +157,11 @@ const BaseShiftCard = ({
                 {turno.cruzaMedianoche && (
                   <span className="text-blue-600 text-xs">🌙</span>
                 )}
-              </div>
+              </Flex>
 
               {/* Badge adicional específico del tipo (ej: smoko) */}
               {children?.mobileBadge}
-            </div>
+            </Flex>
 
             {/* Fila 3: Contenido específico del tipo (pasado como children) */}
             {children?.mobileStats}
@@ -192,10 +193,10 @@ const BaseShiftCard = ({
               {/* Notas */}
               {(turno.observaciones?.trim() || turno.descripcion?.trim() || turno.notas?.trim()) && (
                 <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-center gap-2 mb-2">
+                  <Flex variant="center" className="gap-2 mb-2">
                     <MessageSquare size={14} className="text-gray-600" />
                     <span className="text-sm font-medium text-gray-700">Notas</span>
-                  </div>
+                  </Flex>
                   <p className="text-sm text-gray-600 leading-relaxed">
                     {turno.observaciones?.trim() || turno.descripcion?.trim() || turno.notas?.trim()}
                   </p>
@@ -238,16 +239,16 @@ const BaseShiftCard = ({
     >
       <div className="space-y-3">
         {/* Header desktop */}
-        <div className="flex items-start justify-between">
+        <Flex variant="start-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-3">
               {/* Avatar del trabajo */}
-              <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold flex-shrink-0"
+              <Flex variant="center"
+                className="w-10 h-10 rounded-lg text-white font-bold flex-shrink-0"
                 style={{ backgroundColor: colorTrabajo }}
               >
                 {currentConfig.avatarContent || children?.avatarIcon}
-              </div>
+              </Flex>
 
               {/* Nombre del trabajo y badges */}
               <div className="flex-1 min-w-0">
@@ -262,11 +263,11 @@ const BaseShiftCard = ({
                 </div>
 
                 {/* Información básica del turno con fecha integrada */}
-                <div className="flex items-center text-sm text-gray-600 gap-3 flex-wrap">
-                  <div className="flex items-center">
+                <Flex variant="center" className="text-sm text-gray-600 gap-3 flex-wrap">
+                  <Flex variant="center">
                     <Clock size={14} className="mr-1.5" />
                     <span>{turno.horaInicio} - {turno.horaFin}</span>
-                  </div>
+                  </Flex>
 
                   <span className="text-gray-300">•</span>
 
@@ -290,7 +291,7 @@ const BaseShiftCard = ({
                       <span className="text-blue-600 text-xs">🌙</span>
                     </>
                   )}
-                </div>
+                </Flex>
               </div>
             </div>
 
@@ -299,7 +300,7 @@ const BaseShiftCard = ({
           </div>
 
           {/* Acciones desktop */}
-          <div className="flex items-center gap-2 ml-4">
+          <Flex variant="center" className="gap-2 ml-4">
             {/* Botón de expansión */}
             {hasAdditionalContent && (
               <button
@@ -317,8 +318,8 @@ const BaseShiftCard = ({
 
             {/* Menú de acciones */}
             {showActions && <ActionsMenu actions={actions} />}
-          </div>
-        </div>
+          </Flex>
+        </Flex>
 
         {/* Contenido expandible desktop */}
         {hasAdditionalContent && expanded && (
@@ -374,13 +375,13 @@ const BaseShiftCard = ({
 
         {/* Indicador visual si hay contenido pero no está expandido */}
         {hasAdditionalContent && !expanded && (
-          <div className="flex items-center justify-center pt-1">
-            <div className="flex space-x-1">
+          <Flex variant="center" className="pt-1">
+            <Flex className="space-x-1">
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
               <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-            </div>
-          </div>
+            </Flex>
+          </Flex>
         )}
       </div>
     </Card>

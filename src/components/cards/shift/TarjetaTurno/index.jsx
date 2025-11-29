@@ -7,6 +7,7 @@ import Badge from '../../../ui/Badge';
 import { useApp } from '../../../../contexts/AppContext';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../../utils/currency';
+import Flex from '../../../ui/Flex';
 
 const TarjetaTurno = (props) => {
   const { turno, trabajo } = props;
@@ -46,7 +47,7 @@ const TarjetaTurno = (props) => {
 
         // Stats móvil - Ganancia destacada
         mobileStats: (
-          <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+          <Flex variant="between" className="pt-2 border-t border-gray-100">
             <span className="text-sm text-gray-500">Ganancia estimada</span>
             <div className="flex items-center">
               <DollarSign size={16} className="mr-1" style={{ color: colors.primary }} />
@@ -54,12 +55,12 @@ const TarjetaTurno = (props) => {
                 {formatCurrency(shiftData.totalWithDiscount)}
               </span>
             </div>
-          </div>
+          </Flex>
         ),
 
         // Stats desktop - Ganancia
         desktopStats: (
-          <div className="flex items-center justify-between">
+          <Flex variant="between">
             <span className="text-sm text-gray-500">Ganancia estimada</span>
             <div className="flex items-center">
               <DollarSign size={16} className="mr-1" style={{ color: colors.primary }} />
@@ -67,7 +68,7 @@ const TarjetaTurno = (props) => {
                 {formatCurrency(shiftData.totalWithDiscount)}
               </span>
             </div>
-          </div>
+          </Flex>
         )
       }}
     </BaseShiftCard>

@@ -1,10 +1,11 @@
-// src/components/layout/Header/index.jsx - Header mejorado con logo grande
+// src/components/layout/Header/index.jsx
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Settings } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useAuth } from '../../../contexts/AuthContext';
+import Flex from '../../ui/Flex';
 
 const Header = ({ setVistaActual }) => {
   const { thematicColors } = useApp();
@@ -27,20 +28,20 @@ const Header = ({ setVistaActual }) => {
       style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
     >
       {/* Logo y título a la izquierda - clickeable */}
-      <div className="flex items-center flex-1">
+      <Flex className="flex-1">
         <button
           onClick={handleLogoClick}
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
         >
           {/* Logo SVG */}
-          <div className="w-14 h-14 flex items-center justify-center">
+          <Flex variant="center" className="w-14 h-14">
             <img
               src="/assets/SVG/logo.svg"
               alt="Logo"
               className="w-full h-full filter brightness-0 invert"
               style={{ filter: 'brightness(0) invert(1)' }}
             />
-          </div>
+          </Flex>
 
           {/* Título y subtítulo */}
           <div className="text-left">
@@ -52,7 +53,7 @@ const Header = ({ setVistaActual }) => {
             </p>
           </div>
         </button>
-      </div>
+      </Flex>
       
       {/* Botón de perfil/settings a la derecha */}
       <div className="flex gap-2">
@@ -63,9 +64,9 @@ const Header = ({ setVistaActual }) => {
         >
           {profilePhotoURL?.includes('logo.svg') ? (
             // Si es el logo por defecto, mostrar ícono de engranaje
-            <div className="w-10 h-10 flex items-center justify-center">
+            <Flex variant="center" className="w-10 h-10">
               <Settings className="h-6 w-6 text-white" />
-            </div>
+            </Flex>
           ) : (
             // Si tiene foto de perfil, mostrarla
             <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-lg">

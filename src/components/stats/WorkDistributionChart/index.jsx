@@ -3,6 +3,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const WorkDistributionChart = ({ distribucionTrabajos = [] }) => {
   // Validar que distribucionTrabajos sea un array
@@ -12,13 +13,13 @@ const WorkDistributionChart = ({ distribucionTrabajos = [] }) => {
     return (
       <Card>
         <h3 className="text-lg font-semibold mb-4">Distribución de Trabajos</h3>
-        <div className="h-64 flex items-center justify-center text-gray-500">
+        <Flex variant="center" className="h-64 text-gray-500">
           <div className="text-center">
             <div className="text-4xl mb-2">📊</div>
             <p>No hay datos para mostrar</p>
             <p className="text-sm">Agrega algunos turnos para ver la distribución</p>
           </div>
-        </div>
+        </Flex>
       </Card>
     );
   }

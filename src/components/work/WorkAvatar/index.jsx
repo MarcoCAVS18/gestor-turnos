@@ -1,6 +1,7 @@
-// src/components/work/WorkAvatar/index.jsx - Versión con validaciones defensivas
+// src/components/work/WorkAvatar/index.jsx 
 
 import React from 'react';
+import Flex from '../../ui/Flex';
 
 const WorkAvatar = ({ nombre, color, size = 'md' }) => {
   const sizes = {
@@ -18,14 +19,14 @@ const WorkAvatar = ({ nombre, color, size = 'md' }) => {
   const inicial = nombreSeguro.toString().charAt(0).toUpperCase() || 'T';
 
   return (
-    <div 
-      className={`${sizeSeguro} rounded-lg flex items-center justify-center`}
+    <Flex variant="center" 
+      className={`${sizeSeguro} rounded-lg`}
       style={{ backgroundColor: colorSeguro }}
     >
       <span className="text-white font-bold">
         {inicial}
       </span>
-    </div>
+    </Flex>
   );
 };
 

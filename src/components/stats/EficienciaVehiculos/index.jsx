@@ -4,8 +4,12 @@ import React, { useState } from 'react';
 import { Car, Fuel, Navigation, Clock } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
-import BaseStatsCard from '../../cards/base/BaseStatsCard'; // Import BaseStatsCard
-import { calculateCostPerKm, calculateVehicleEarningsPerHour, findMostEfficientVehicle } from '../../../utils/statsCalculations'; // Import utility functions
+import BaseStatsCard from '../../cards/base/BaseStatsCard'; 
+import { 
+  calculateCostPerKm,
+  calculateVehicleEarningsPerHour,
+  findMostEfficientVehicle } from '../../../utils/statsCalculations';
+import Flex from '../../ui/Flex';
 
 const EficienciaVehiculos = ({ deliveryStats }) => {
   const colors = useThemeColors();
@@ -63,7 +67,7 @@ const EficienciaVehiculos = ({ deliveryStats }) => {
               key={index}
               className={`p-3 rounded-lg border border-gray-200 transition-all duration-500 ${animacionActiva ? 'scale-105 shadow-md' : 'scale-100'}`}
             >
-              <div className="flex items-start justify-between mb-2">
+              <Flex variant="start-between" className="mb-2">
                 <div className="flex items-center">
                   <span className="text-xl mr-2">{icon}</span>
                   <div>
@@ -78,46 +82,46 @@ const EficienciaVehiculos = ({ deliveryStats }) => {
                     {formatCurrency(vehiculo.totalGanado)}
                   </p>
                 </div>
-              </div>
+              </Flex>
 
               <div className="grid grid-cols-3 gap-2 text-sm">
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <Navigation size={12} className="mr-1 text-purple-500" />
                     <span className="font-medium">{vehiculo.totalKilometros.toFixed(1)}</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">km</p>
                 </div>
                 
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <Fuel size={12} className="mr-1 text-red-500" />
                     <span className="font-medium">{formatCurrency(vehiculo.totalGastos)}</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">combustible</p>
                 </div>
                 
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <Clock size={12} className="mr-1 text-blue-500" />
                     <span className="font-medium">{formatCurrency(gananciaPorHora)}</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">/hora</p>
                 </div>
               </div>
 
               {vehiculo.totalGastos > 0 && (
                 <div className="mt-2 pt-2 border-t border-gray-100">
-                  <div className="flex justify-between items-center text-sm">
+                  <Flex variant="between" className="text-sm">
                     <span className="text-gray-600">Eficiencia:</span>
                     <span className="font-medium">
                       {vehiculo.eficiencia.toFixed(1)} km/peso • {formatCurrency(costoPorKm)}/km
                     </span>
-                  </div>
+                  </Flex>
                   
                   {vehiculo === vehiculoMasEficiente && (
                     <div className="text-xs text-green-600 mt-1">
-                      ⭐ Más eficiente
+                      Más eficiente
                     </div>
                   )}
                 </div>

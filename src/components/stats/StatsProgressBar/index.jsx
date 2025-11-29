@@ -4,6 +4,7 @@ import { Clock, DollarSign, Target } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const StatsProgressBar = ({ className = '', datosActuales, weeklyHoursGoal }) => {
   const { horasTrabajadas, totalGanado } = datosActuales;
@@ -24,7 +25,7 @@ const StatsProgressBar = ({ className = '', datosActuales, weeklyHoursGoal }) =>
     <Card className={`${className} ${!weeklyHoursGoal ? 'opacity-60' : ''} flex flex-col`}>
       <div className="flex-1 flex flex-col justify-between">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <Flex variant="between">
           <h3 className="font-semibold text-gray-800 flex items-center">
             <Target size={18} className="mr-2" style={{ color: colors.primary }} />
             Progreso Semanal
@@ -32,14 +33,14 @@ const StatsProgressBar = ({ className = '', datosActuales, weeklyHoursGoal }) =>
           <span className="text-sm text-gray-500">
             Meta: {metaHoras}h
           </span>
-        </div>
+        </Flex>
 
         {/* Barra de progreso */}
         <div className="space-y-2">
-          <div className="flex justify-between text-sm">
+          <Flex variant="between" className="text-sm">
             <span className="font-medium">{horasTrabajadas.toFixed(1)} horas trabajadas</span>
             <span className="text-gray-500">{porcentajeLimitado.toFixed(1)}%</span>
-          </div>
+          </Flex>
           
           <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
             <div
@@ -54,7 +55,7 @@ const StatsProgressBar = ({ className = '', datosActuales, weeklyHoursGoal }) =>
 
         {/* Stats adicionales */}
         <div className="grid grid-cols-2 gap-4 pt-2 border-t">
-          <div className="flex items-center">
+          <Flex>
             <Clock size={16} className="text-blue-500 mr-2" />
             <div>
               <p className="text-xs text-gray-500">Horas restantes</p>
@@ -62,21 +63,21 @@ const StatsProgressBar = ({ className = '', datosActuales, weeklyHoursGoal }) =>
                 {Math.max(0, metaHoras - horasTrabajadas).toFixed(1)}h
               </p>
             </div>
-          </div>
+          </Flex>
           
-          <div className="flex items-center">
+          <Flex>
             <DollarSign size={16} className="text-green-500 mr-2" />
             <div>
               <p className="text-xs text-gray-500">Ganancia total</p>
               <p className="font-medium">{formatCurrency(totalGanado)}</p>
             </div>
-          </div>
+          </Flex>
         </div>
 
         {porcentaje >= 100 && (
           <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
             <p className="text-sm text-green-700 font-medium">
-              🎉 ¡Meta cumplida! Has superado las {metaHoras} horas esta semana.
+              ¡Meta cumplida! Has superado las {metaHoras} horas esta semana.
             </p>
           </div>
         )}

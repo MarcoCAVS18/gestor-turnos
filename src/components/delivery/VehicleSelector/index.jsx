@@ -1,9 +1,10 @@
-// src/components/delivery/VehicleSelector/index.jsx - REFACTORIZADO
+// src/components/delivery/VehicleSelector/index.jsx
 
 import React from 'react';
 import { Check, Bike, Car, Truck, User } from 'lucide-react';
 import { DELIVERY_VEHICLES } from '../../../constants/delivery';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import Flex from '../../ui/Flex';
 
 const VehicleButton = ({ vehicle, isSelected, onClick, colors }) => {
   const getVehicleIcon = (vehicleId) => {
@@ -35,12 +36,12 @@ const VehicleButton = ({ vehicle, isSelected, onClick, colors }) => {
       {/* Layout horizontal para compactar */}
       <div className="flex items-center space-x-2">
         {/* Contenedor del ícono más pequeño */}
-        <div 
-          className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
+        <Flex variant="center" 
+          className="w-6 h-6 rounded flex-shrink-0"
           style={{ backgroundColor: vehicle.color + '20' }} 
         >
           <Icon size={14} style={{ color: vehicle.color }} />
-        </div>
+        </Flex>
         
         {/* Nombre del vehículo */}
         <p className="font-medium text-xs text-center leading-tight text-gray-800 truncate">
@@ -50,12 +51,12 @@ const VehicleButton = ({ vehicle, isSelected, onClick, colors }) => {
       
       {/* Check de selección más pequeño */}
       {isSelected && (
-        <div 
-          className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center shadow-sm"
+        <Flex variant="center"
+          className="absolute -top-1 -right-1 w-4 h-4 rounded-full shadow-sm"
           style={{ backgroundColor: colors.primary }}
         >
           <Check size={10} className="text-white" />
-        </div>
+        </Flex>
       )}
     </button>
   );

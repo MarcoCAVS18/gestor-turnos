@@ -6,6 +6,7 @@ import { X } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
+import Flex from '../../../ui/Flex';
 
 const BaseModal = ({
   isOpen,
@@ -51,8 +52,8 @@ const BaseModal = ({
   };
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+    <Flex variant="center"
+      className="fixed inset-0 bg-black bg-opacity-50 p-4"
       style={{ zIndex: modalConfig.zIndex }}
     >
       <div
@@ -67,9 +68,9 @@ const BaseModal = ({
       >
 
         {/* Header */}
-        <div
+        <Flex variant="between"
           className={`
-            sticky top-0 bg-white border-b flex justify-between items-center z-10
+            sticky top-0 bg-white border-b z-10
             ${isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'}
           `}
           style={{
@@ -109,7 +110,7 @@ const BaseModal = ({
           >
             <X size={isMobile ? 24 : 20} />
           </button>
-        </div>
+        </Flex>
 
         {/* Content con scroll optimizado */}
         <div className={`
@@ -134,12 +135,12 @@ const BaseModal = ({
 
         {/* Indicador de carga */}
         {loading && (
-          <div
-            className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center"
+          <Flex variant="center"
+            className="absolute inset-0 bg-black bg-opacity-30"
             style={{ zIndex: modalConfig.zIndex + 1 }}
           >
-            <div
-              className="bg-white rounded-lg p-4 flex items-center space-x-3"
+            <Flex
+              className="bg-white rounded-lg p-4 space-x-3"
               style={{
                 borderColor: colors.primary,
                 borderWidth: '2px'
@@ -155,11 +156,11 @@ const BaseModal = ({
               >
                 {loadingText}
               </span>
-            </div>
-          </div>
+            </Flex>
+          </Flex>
         )}
       </div>
-    </div>
+    </Flex>
   );
 };
 

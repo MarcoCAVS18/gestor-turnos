@@ -5,6 +5,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const ProjectionCard = ({ proyeccionMensual, horasTrabajadas }) => {
   const colors = useThemeColors();
@@ -43,7 +44,7 @@ const ProjectionCard = ({ proyeccionMensual, horasTrabajadas }) => {
       </div>
       
       {/* Content - Layout horizontal */}
-      <div className="flex items-center justify-between">
+      <Flex variant="between">
         {/* Texto izquierdo */}
         <div className="flex-1">
           <p className="text-sm text-gray-600 mb-1">
@@ -66,7 +67,7 @@ const ProjectionCard = ({ proyeccionMensual, horasTrabajadas }) => {
             ~{(horasTrabajadas * 4.33).toFixed(0)} horas
           </p>
         </div>
-      </div>
+      </Flex>
     </Card>
   );
 };

@@ -3,6 +3,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import Flex from '../../ui/Flex';
 
 const WeekNavigator = ({ offsetSemana = 0, onSemanaChange, fechaInicio, fechaFin }) => {
   const colors = useThemeColors();
@@ -32,7 +33,7 @@ const WeekNavigator = ({ offsetSemana = 0, onSemanaChange, fechaInicio, fechaFin
 
   return (
     <div className="bg-white rounded-xl shadow-md p-4">
-      <div className="flex items-center justify-between">
+      <Flex variant="between">
         <button
           onClick={() => cambiarSemana(offsetSemana - 1)}
           className="p-2 rounded-full transition-colors"
@@ -61,7 +62,7 @@ const WeekNavigator = ({ offsetSemana = 0, onSemanaChange, fechaInicio, fechaFin
         >
           <ChevronRight size={20} />
         </button>
-      </div>
+      </Flex>
     </div>
   );
 };
