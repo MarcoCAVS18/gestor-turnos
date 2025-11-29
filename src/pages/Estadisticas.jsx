@@ -1,7 +1,7 @@
 // src/pages/Estadisticas.jsx - Refactorizado con StatsContext
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import PageHeader from '../components/layout/PageHeader';
 import { Truck, BarChart } from 'lucide-react';
 import { useStats } from '../contexts/StatsContext';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
@@ -55,50 +55,25 @@ const Estadisticas = () => {
 
   const tieneDelivery = deliveryEnabled && deliveryStats.turnosRealizados > 0;
 
-  const headerVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
-  };
-
   return (
     <LoadingWrapper loading={loading}>
       <div className="px-4 py-6 space-y-6">
 
-        <div className="lg:flex lg:justify-between lg:items-center">
-          <motion.div
-            className="flex justify-between items-center mb-4 lg:mb-0"
-            variants={headerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <div className="flex items-center space-x-3">
-              <div 
-                className="p-2 rounded-lg"
-                style={{ backgroundColor: thematicColors.transparent10 }}
-              >
-                <BarChart 
-                  className="w-6 h-6" 
-                  style={{ color: thematicColors.primary }}
-                />
-              </div>
-              <div>
-                <h1 className="text-xl font-semibold">Estadísticas</h1>
-                <p className="text-sm text-gray-600">
-                  Analiza tu rendimiento y proyecciones
-                </p>
-              </div>
+        <PageHeader
+          title="Estadísticas"
+          subtitle="Analiza tu rendimiento y proyecciones"
+          icon={BarChart}
+          rightContent={
+            <div className="lg:w-2/5 lg:max-w-md">
+              <WeekNavigator
+                offsetSemana={offsetSemana}
+                onSemanaChange={setOffsetSemana}
+                fechaInicio={datosActuales.fechaInicio}
+                fechaFin={datosActuales.fechaFin}
+              />
             </div>
-          </motion.div>
-
-          <div className="lg:w-2/5 lg:max-w-md">
-            <WeekNavigator
-              offsetSemana={offsetSemana}
-              onSemanaChange={setOffsetSemana}
-              fechaInicio={datosActuales.fechaInicio}
-              fechaFin={datosActuales.fechaFin}
-            />
-          </div>
-        </div>
+          }
+        />
 
         {/* LAYOUT RESPONSIVO PRINCIPAL */}
 
@@ -232,32 +207,22 @@ const Estadisticas = () => {
         {/* SECCIÓN DELIVERY - Solo si está habilitado */}
         {tieneDelivery && (
           <>
-            {/* Header de delivery */}
-            <div className="pt-8">
-              <div className="flex items-center justify-center mb-6">
-                <Truck className="mr-2" size={20} />
-                <h2 className="text-xl font-semibold">
-                  Estadísticas de Delivery
-                </h2>
-              </div>
-            </div>
+            <PageHeader
+              title="Estadísticas de Delivery"
+              subtitle="Analiza tus ganancias y eficiencia en repartos"
+              icon={Truck}
+              className="pt-8"
+            />
 
             {/* Layout responsivo para delivery */}
             <div className="space-y-6">
 
-              {/* DESKTOP: Grid de 2 columnas para delivery */}
+              {/* DESKTOP: Grid de 2x2 para delivery */}
               <div className="hidden lg:grid lg:grid-cols-2 lg:gap-6">
-                {/* Columna 1: Resumen + Combustible */}
-                <div className="space-y-6">
-                  <ResumenDelivery deliveryStats={deliveryStats} />
-                  <SeguimientoCombustible deliveryStats={deliveryStats} />
-                </div>
-
-                {/* Columna 2: Eficiencia + Plataformas */}
-                <div className="space-y-6">
-                  <EficienciaVehiculos deliveryStats={deliveryStats} />
-                  <ComparacionPlataformas deliveryStats={deliveryStats} />
-                </div>
+                <ResumenDelivery deliveryStats={deliveryStats} />
+                <EficienciaVehiculos deliveryStats={deliveryStats} />
+                <SeguimientoCombustible deliveryStats={deliveryStats} />
+                <ComparacionPlataformas deliveryStats={deliveryStats} />
               </div>
 
               {/* MÓVIL: Stack vertical para delivery */}

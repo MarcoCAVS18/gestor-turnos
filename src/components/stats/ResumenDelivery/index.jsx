@@ -37,7 +37,7 @@ const ResumenDelivery = ({ deliveryStats }) => {
 
   if (deliveryStats.totalPedidos === 0) {
     return (
-      <Card>
+      <Card variant="transparent">
         <div className={`text-center py-6 transition-opacity duration-1000 ${animacionActiva ? 'opacity-50' : 'opacity-100'}`}>
           <Truck size={32} className="mx-auto mb-3 text-gray-300" />
           <h3 className="font-semibold text-gray-600 mb-1">Sin datos de delivery</h3>
@@ -48,7 +48,7 @@ const ResumenDelivery = ({ deliveryStats }) => {
   }
 
   return (
-    <Card className='bg-white shadow-md p-6'>
+    <Card variant="transparent">
       <h3 className="text-lg font-semibold flex items-center mb-4">
         <Truck size={20} style={{ color: colors.primary }} className="mr-2" />
         Resumen Delivery

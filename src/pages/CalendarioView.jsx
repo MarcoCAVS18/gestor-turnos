@@ -1,16 +1,16 @@
-// src/pages/CalendarioView.jsx - Versión mejorada
+// src/pages/CalendarioView.jsx
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CalendarDays, Plus } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
 import { useThemeColors } from '../hooks/useThemeColors';
+import PageHeader from '../components/layout/PageHeader';
 import { fechaLocalAISO } from '../utils/calendarUtils';
 import { createSafeDate } from '../utils/time';
 import Calendario from '../components/calendar/Calendario';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ModalTurno from '../components/modals/shift/ModalTurno';
-import Button from '../components/ui/Button';
 
 const CalendarioView = () => {
   const { turnosPorFecha, todosLosTrabajos, thematicColors } = useApp();
@@ -79,11 +79,6 @@ const CalendarioView = () => {
   };
   
   // Animaciones
-  const headerVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
-  };
-
   const calendarVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.1 } }
@@ -96,46 +91,18 @@ const CalendarioView = () => {
   
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
-      {/* Header consistente con otras páginas */}
-      <motion.div
-        className="flex justify-between items-center"
-        variants={headerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        <div className="flex items-center space-x-3">
-          <div 
-            className="p-2 rounded-lg"
-            style={{ backgroundColor: colors.transparent10 }}
-          >
-            <CalendarDays 
-              className="w-6 h-6" 
-              style={{ color: colors.primary }}
-            />
-          </div>
-          <div>
-            <h1 className="text-xl font-semibold">Calendario de Turnos</h1>
-            {hayTrabajos && (
-              <p className="text-sm text-gray-600">
-                Visualiza y gestiona tus turnos por fecha
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Botón de agregar turno - solo si hay trabajos */}
-        {hayTrabajos && fechaSeleccionada && (
-          <Button
-            onClick={() => abrirModalNuevoTurno(createSafeDate(fechaSeleccionada))}
-            className="flex items-center space-x-2 shadow-sm hover:shadow-md"
-            icon={Plus}
-            themeColor={colors.primary}
-          >
-            <span className="hidden sm:inline">Nuevo Turno</span>
-            <span className="sm:hidden">Nuevo</span>
-          </Button>
-        )}
-      </motion.div>
+      <PageHeader
+        title="Calendario de Turnos"
+        subtitle={hayTrabajos ? "Visualiza y gestiona tus turnos por fecha" : null}
+        icon={CalendarDays}
+        action={hayTrabajos && fechaSeleccionada && {
+          onClick: () => abrirModalNuevoTurno(createSafeDate(fechaSeleccionada)),
+          icon: Plus,
+          label: "Nuevo Turno",
+          mobileLabel: "Nuevo",
+          themeColor: colors.primary,
+        }}
+      />
       
       {/* Mostrar mensaje si no hay trabajos */}
       {!hayTrabajos && (

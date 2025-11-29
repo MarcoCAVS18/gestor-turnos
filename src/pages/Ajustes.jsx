@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Settings } from 'lucide-react';
-import { useThemeColors } from '../hooks/useThemeColors';
+import PageHeader from '../components/layout/PageHeader';
 import ProfileSection from '../components/settings/ProfileSection';
 import ProfilePhotoSection from '../components/settings/ProfilePhotoSection';
 import CustomizationSection from '../components/settings/CustomizationSection';
@@ -16,7 +16,6 @@ import DeliverySection from '../components/settings/DeliverySection';
 import SmokoSection from '../components/settings/SmokoSection';
 
 const Ajustes = () => {
-  const colors = useThemeColors();
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -39,13 +38,11 @@ const Ajustes = () => {
 
   return (
     <div className="px-4 py-6 space-y-6">
-      {/* Título con icono */}
-      <div className="flex items-center space-x-3">
-        <div className="p-2 rounded-lg" style={{ backgroundColor: colors.transparent10 }}>
-          <Settings className="w-6 h-6" style={{ color: colors.primary }} />
-        </div>
-        <h1 className="text-2xl font-semibold">Ajustes</h1>
-      </div>
+      <PageHeader
+        title="Ajustes"
+        subtitle="Personaliza tu experiencia y gestiona tu cuenta"
+        icon={Settings}
+      />
 
       <NotificationBanner
         message={message}

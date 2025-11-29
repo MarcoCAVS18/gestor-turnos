@@ -146,11 +146,8 @@ const Turnos = () => {
         <ShiftsHeader 
           hasShifts={hayTurnos}
           allJobs={allJobs}
-          sortedDays={turnosPorSemana}
-          daysShown={weeksShown}
           onNewShift={abrirModalNuevo}
           thematicColors={thematicColors}
-          daysPerPage={WEEKS_PER_PAGE}
         />
 
         {/* Sistema de filtros */}

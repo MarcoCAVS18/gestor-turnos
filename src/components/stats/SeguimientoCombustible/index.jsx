@@ -18,8 +18,8 @@ const SeguimientoCombustible = ({ deliveryStats }) => {
 
   if (totalGastos === 0) {
     return (
-      <Card>
-        <div className="text-center py-6">
+      <Card className="h-full flex flex-col justify-center items-center">
+        <div className="text-center">
           <Fuel size={32} className="mx-auto mb-3 text-gray-300" />
           <h3 className="font-semibold text-gray-600">Sin gastos de combustible</h3>
         </div>
