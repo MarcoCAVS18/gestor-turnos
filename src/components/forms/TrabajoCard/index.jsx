@@ -6,6 +6,7 @@ import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import ***REMOVED*** useShare ***REMOVED*** from '../../../hooks/useShare';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/helpers';
+import Flex from '../../ui/Flex';
 
 const TrabajoCard = (***REMOVED*** 
   trabajo, 
@@ -90,32 +91,32 @@ const TrabajoCard = (***REMOVED***
       ***REMOVED***/* Basic Info */***REMOVED***
       <div className="grid grid-cols-2 gap-4 text-sm">
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <Flex variant="between">
             <span className="text-gray-600">Tarifa base:</span>
             <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifaBase)***REMOVED***</span>
-          </div>
-          <div className="flex items-center justify-between">
+          </Flex>
+          <Flex variant="between">
             <span className="text-gray-600">Diurno:</span>
             <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas?.diurno || 0)***REMOVED***</span>
-          </div>
-          <div className="flex items-center justify-between">
+          </Flex>
+          <Flex variant="between">
             <span className="text-gray-600">Tarde:</span>
             <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas?.tarde || 0)***REMOVED***</span>
-          </div>
+          </Flex>
         </div>
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <Flex variant="between">
             <span className="text-gray-600">Noche:</span>
             <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas?.noche || 0)***REMOVED***</span>
-          </div>
-          <div className="flex items-center justify-between">
+          </Flex>
+          <Flex variant="between">
             <span className="text-gray-600">Sábado:</span>
             <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas?.sabado || 0)***REMOVED***</span>
-          </div>
-          <div className="flex items-center justify-between">
+          </Flex>
+          <Flex variant="between">
             <span className="text-gray-600">Domingo:</span>
             <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas?.domingo || 0)***REMOVED***</span>
-          </div>
+          </Flex>
         </div>
       </div>
       

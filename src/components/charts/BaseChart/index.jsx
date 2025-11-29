@@ -1,5 +1,6 @@
 import React from 'react';
 import ***REMOVED*** LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area ***REMOVED*** from 'recharts';
+import Flex from '../../ui/Flex';
 import ***REMOVED*** getRechartsConfig, PIE_CHART_COLORS ***REMOVED*** from '../../../config/chartConfig';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
@@ -32,9 +33,9 @@ const BaseChart = (***REMOVED***
   if (!data || data.length === 0) ***REMOVED***
     // This empty state is simple; more complex empty states can be handled by the parent component
     return (
-      <div className="flex items-center justify-center h-full text-gray-500">
+      <Flex variant="center" className="h-full text-gray-500">
         <p>No hay datos para el gráfico.</p>
-      </div>
+      </Flex>
     );
   ***REMOVED***
 
@@ -118,9 +119,9 @@ const BaseChart = (***REMOVED***
       //   );
       default:
         return (
-          <div className="flex items-center justify-center h-full text-gray-500">
+          <Flex variant="center" className="h-full text-gray-500">
             <p>Tipo de gráfico no soportado.</p>
-          </div>
+          </Flex>
         );
     ***REMOVED***
   ***REMOVED***;

@@ -12,6 +12,7 @@ import ***REMOVED***
   calculateEarningsPercentage,
   sortPlatforms
 ***REMOVED*** from '../../../utils/statsCalculations';
+import Flex from '../../ui/Flex';
 
 const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -67,12 +68,12 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
 
   return (
     <Card>
-      <div className="flex items-center justify-between mb-4">
+      <Flex variant="between" className="mb-4">
         <h3 className="text-lg font-semibold flex items-center">
           <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
           Plataformas
         </h3>
-      </div>
+      </Flex>
 
       <div className="mb-3">
         <div className="flex gap-1 text-sm">
@@ -128,8 +129,8 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
               key=***REMOVED***plataforma.nombre***REMOVED***
               className=***REMOVED***`p-3 rounded-lg border border-gray-200 transition-all duration-500 $***REMOVED***animacionActiva ? 'scale-105 shadow-md' : 'scale-100'***REMOVED***`***REMOVED***
             >
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center">
+              <Flex variant="start-between" className="mb-2">
+                <Flex>
                   <span className="text-xl mr-2">***REMOVED***icon***REMOVED***</span>
                   <div>
                     <h4 className="font-semibold text-gray-900">
@@ -139,14 +140,14 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
                       ***REMOVED***plataforma.turnos***REMOVED*** turnos
                     </p>
                   </div>
-                </div>
+                </Flex>
                 <div className="text-right">
                   <p className="text-lg font-bold" style=***REMOVED******REMOVED*** color: plataforma.color || colors.primary ***REMOVED******REMOVED***>
                     ***REMOVED***formatCurrency(plataforma.totalGanado)***REMOVED***
                   </p>
                   <p className="text-sm text-gray-500">***REMOVED***porcentajeGanancias.toFixed(1)***REMOVED***%</p>
                 </div>
-              </div>
+              </Flex>
 
               <div className="mb-2">
                 <div className="w-full bg-gray-200 rounded-full h-2">
@@ -162,34 +163,34 @@ const ComparacionPlataformas = (***REMOVED*** deliveryStats ***REMOVED***) => **
 
               <div className="grid grid-cols-4 gap-2 text-sm">
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <Package size=***REMOVED***12***REMOVED*** className="mr-1 text-blue-500" />
                     <span className="font-medium">***REMOVED***plataforma.totalPedidos***REMOVED***</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">pedidos</p>
                 </div>
                 
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <DollarSign size=***REMOVED***12***REMOVED*** className="mr-1 text-green-500" />
                     <span className="font-medium">***REMOVED***formatCurrency(plataforma.promedioPorPedido)***REMOVED***</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">/pedido</p>
                 </div>
                 
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <Clock size=***REMOVED***12***REMOVED*** className="mr-1 text-purple-500" />
                     <span className="font-medium">***REMOVED***formatCurrency(plataforma.promedioPorHora)***REMOVED***</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">/hora</p>
                 </div>
                 
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <TrendingUp size=***REMOVED***12***REMOVED*** className="mr-1 text-orange-500" />
                     <span className="font-medium">***REMOVED***formatCurrency(plataforma.totalPropinas)***REMOVED***</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">propinas</p>
                 </div>
               </div>

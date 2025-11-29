@@ -1,10 +1,11 @@
-// src/components/layout/Header/index.jsx - Header mejorado con logo grande
+// src/components/layout/Header/index.jsx
 
 import React from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Settings ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
+import Flex from '../../ui/Flex';
 
 const Header = (***REMOVED*** setVistaActual ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
@@ -27,20 +28,20 @@ const Header = (***REMOVED*** setVistaActual ***REMOVED***) => ***REMOVED***
       style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
     >
       ***REMOVED***/* Logo y título a la izquierda - clickeable */***REMOVED***
-      <div className="flex items-center flex-1">
+      <Flex className="flex-1">
         <button
           onClick=***REMOVED***handleLogoClick***REMOVED***
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
         >
           ***REMOVED***/* Logo SVG */***REMOVED***
-          <div className="w-14 h-14 flex items-center justify-center">
+          <Flex variant="center" className="w-14 h-14">
             <img
               src="/assets/SVG/logo.svg"
               alt="Logo"
               className="w-full h-full filter brightness-0 invert"
               style=***REMOVED******REMOVED*** filter: 'brightness(0) invert(1)' ***REMOVED******REMOVED***
             />
-          </div>
+          </Flex>
 
           ***REMOVED***/* Título y subtítulo */***REMOVED***
           <div className="text-left">
@@ -52,7 +53,7 @@ const Header = (***REMOVED*** setVistaActual ***REMOVED***) => ***REMOVED***
             </p>
           </div>
         </button>
-      </div>
+      </Flex>
       
       ***REMOVED***/* Botón de perfil/settings a la derecha */***REMOVED***
       <div className="flex gap-2">
@@ -63,9 +64,9 @@ const Header = (***REMOVED*** setVistaActual ***REMOVED***) => ***REMOVED***
         >
           ***REMOVED***profilePhotoURL?.includes('logo.svg') ? (
             // Si es el logo por defecto, mostrar ícono de engranaje
-            <div className="w-10 h-10 flex items-center justify-center">
+            <Flex variant="center" className="w-10 h-10">
               <Settings className="h-6 w-6 text-white" />
-            </div>
+            </Flex>
           ) : (
             // Si tiene foto de perfil, mostrarla
             <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-lg">

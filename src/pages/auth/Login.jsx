@@ -6,6 +6,7 @@ import ***REMOVED*** Mail, Lock, Eye, EyeOff ***REMOVED*** from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
+import Flex from '../../components/ui/Flex';
 
 const Login = () => ***REMOVED***
   const ***REMOVED*** login, loginWithGoogle ***REMOVED*** = useAuth();
@@ -94,7 +95,7 @@ const Login = () => ***REMOVED***
       </div>
       
       ***REMOVED***/* Contenido del login */***REMOVED***
-      <div className="fixed inset-0 z-20 bg-transparent flex items-center justify-center p-4">
+      <Flex variant="center" className="fixed inset-0 z-20 bg-transparent p-4">
         <Card className="w-full max-w-md shadow-2xl" padding="lg">
           <h1 className="text-2xl font-bold text-center mb-6">Iniciar sesión</h1>
           
@@ -201,7 +202,7 @@ const Login = () => ***REMOVED***
             </button>
           </div>
         </Card>
-      </div>
+      </Flex>
     </div>
   );
 ***REMOVED***;

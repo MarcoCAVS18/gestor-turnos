@@ -4,8 +4,12 @@ import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Car, Fuel, Navigation, Clock ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
-import BaseStatsCard from '../../cards/base/BaseStatsCard'; // Import BaseStatsCard
-import ***REMOVED*** calculateCostPerKm, calculateVehicleEarningsPerHour, findMostEfficientVehicle ***REMOVED*** from '../../../utils/statsCalculations'; // Import utility functions
+import BaseStatsCard from '../../cards/base/BaseStatsCard'; 
+import ***REMOVED*** 
+  calculateCostPerKm,
+  calculateVehicleEarningsPerHour,
+  findMostEfficientVehicle ***REMOVED*** from '../../../utils/statsCalculations';
+import Flex from '../../ui/Flex';
 
 const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -63,7 +67,7 @@ const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***RE
               key=***REMOVED***index***REMOVED***
               className=***REMOVED***`p-3 rounded-lg border border-gray-200 transition-all duration-500 $***REMOVED***animacionActiva ? 'scale-105 shadow-md' : 'scale-100'***REMOVED***`***REMOVED***
             >
-              <div className="flex items-start justify-between mb-2">
+              <Flex variant="start-between" className="mb-2">
                 <div className="flex items-center">
                   <span className="text-xl mr-2">***REMOVED***icon***REMOVED***</span>
                   <div>
@@ -78,46 +82,46 @@ const EficienciaVehiculos = (***REMOVED*** deliveryStats ***REMOVED***) => ***RE
                     ***REMOVED***formatCurrency(vehiculo.totalGanado)***REMOVED***
                   </p>
                 </div>
-              </div>
+              </Flex>
 
               <div className="grid grid-cols-3 gap-2 text-sm">
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <Navigation size=***REMOVED***12***REMOVED*** className="mr-1 text-purple-500" />
                     <span className="font-medium">***REMOVED***vehiculo.totalKilometros.toFixed(1)***REMOVED***</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">km</p>
                 </div>
                 
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <Fuel size=***REMOVED***12***REMOVED*** className="mr-1 text-red-500" />
                     <span className="font-medium">***REMOVED***formatCurrency(vehiculo.totalGastos)***REMOVED***</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">combustible</p>
                 </div>
                 
                 <div className="text-center p-2 bg-gray-50 rounded">
-                  <div className="flex items-center justify-center mb-1">
+                  <Flex variant="center" className="mb-1">
                     <Clock size=***REMOVED***12***REMOVED*** className="mr-1 text-blue-500" />
                     <span className="font-medium">***REMOVED***formatCurrency(gananciaPorHora)***REMOVED***</span>
-                  </div>
+                  </Flex>
                   <p className="text-xs text-gray-600">/hora</p>
                 </div>
               </div>
 
               ***REMOVED***vehiculo.totalGastos > 0 && (
                 <div className="mt-2 pt-2 border-t border-gray-100">
-                  <div className="flex justify-between items-center text-sm">
+                  <Flex variant="between" className="text-sm">
                     <span className="text-gray-600">Eficiencia:</span>
                     <span className="font-medium">
                       ***REMOVED***vehiculo.eficiencia.toFixed(1)***REMOVED*** km/peso • ***REMOVED***formatCurrency(costoPorKm)***REMOVED***/km
                     </span>
-                  </div>
+                  </Flex>
                   
                   ***REMOVED***vehiculo === vehiculoMasEficiente && (
                     <div className="text-xs text-green-600 mt-1">
-                      ⭐ Más eficiente
+                      Más eficiente
                     </div>
                   )***REMOVED***
                 </div>

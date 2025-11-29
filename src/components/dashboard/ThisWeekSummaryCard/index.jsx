@@ -5,6 +5,7 @@ import ***REMOVED*** Calendar, TrendingUp, Target, ArrowRight ***REMOVED*** from
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
+import Flex from '../../ui/Flex';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 
@@ -34,12 +35,12 @@ const ThisWeekSummaryCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
 
   return (
     <Card className="h-full">
-      <div className="flex items-center justify-between mb-4">
+      <Flex variant="between" className="mb-4">
         <h3 className="text-lg font-semibold flex items-center">
           <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
           Esta semana
         </h3>
-      </div>
+      </Flex>
 
       <div className="space-y-4">
         ***REMOVED***/* Ganancia principal */***REMOVED***
@@ -56,10 +57,10 @@ const ThisWeekSummaryCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
         ***REMOVED***/* Progreso de horas - Solo si hay meta */***REMOVED***
         ***REMOVED***tieneMetaHoras ? (
           <div className="space-y-2">
-            <div className="flex justify-between text-sm">
+            <Flex justify="between" className="text-sm">
               <span className="text-gray-600">Progreso</span>
               <span className="font-medium">***REMOVED***horasSemana.toFixed(1)***REMOVED***h / ***REMOVED***metaHoras***REMOVED***h</span>
-            </div>
+            </Flex>
 
             <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
               <div
@@ -74,10 +75,10 @@ const ThisWeekSummaryCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
         ) : (
           // Sin meta - Call to action SIMPLIFICADO
           <div className="text-center">
-            <div className="flex items-center justify-center mb-2">
+            <Flex variant="center" className="mb-2">
               <Target size=***REMOVED***16***REMOVED*** className="text-gray-400 mr-1" />
               <span className="text-lg font-semibold text-gray-700">***REMOVED***horasSemana.toFixed(1)***REMOVED***h</span>
-            </div>
+            </Flex>
             <div
               className="p-2 rounded-lg border border-dashed cursor-pointer hover:border-solid transition-all duration-200"
               style=***REMOVED******REMOVED***
@@ -93,16 +94,16 @@ const ThisWeekSummaryCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
                 Establecer una, te ayuda a mantener el rumbo
               </p>
 
-              <div className="flex items-center justify-center text-xs font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+              <Flex variant="center" className="text-xs font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
                 <span>Configurar</span>
                 <ArrowRight size=***REMOVED***10***REMOVED*** className="ml-1" />
-              </div>
+              </Flex>
             </div>
           </div>
         )***REMOVED***
 
         ***REMOVED***/* Stats básicas - Mostrar turnos realizados */***REMOVED***
-        <div className="flex justify-between text-sm">
+        <Flex justify="between" className=" text-sm">
           <div className="text-center">
             <p className="font-semibold text-gray-800">***REMOVED***turnosSemana***REMOVED***</p>
             <p className="text-xs text-gray-500">turnos</p>
@@ -119,17 +120,17 @@ const ThisWeekSummaryCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
             <p className="font-semibold text-gray-800">***REMOVED***horasSemana.toFixed(1)***REMOVED***h</p>
             <p className="text-xs text-gray-500">horas</p>
           </div>
-        </div>
+        </Flex>
 
         ***REMOVED***/* Mensaje motivacional */***REMOVED***
         ***REMOVED***totalSemana > 0 && tieneMetaHoras && (
           <div className="text-center p-2 rounded-lg" style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***>
-            <div className="flex items-center justify-center">
+            <Flex variant="center">
               <TrendingUp size=***REMOVED***12***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-1" />
               <p className="text-xs font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
                 ***REMOVED***progresoLimitado >= 75 ? '¡Excelente progreso!' : '¡Buen ritmo!'***REMOVED***
               </p>
-            </div>
+            </Flex>
           </div>
         )***REMOVED***
       </div>

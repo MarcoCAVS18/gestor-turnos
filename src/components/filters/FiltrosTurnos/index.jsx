@@ -7,6 +7,7 @@ import Badge from '../../ui/Badge';
 import FiltroTrabajo from '../FiltroTrabajo';
 import FiltroDiasSemana from '../FiltroDiasSemana';
 import FiltroTipoTurno from '../FiltroTipoTurno';
+import Flex from '../../ui/Flex';
 
 const FiltrosTurnos = (***REMOVED*** onFiltersChange, activeFilters = ***REMOVED******REMOVED*** ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -39,7 +40,7 @@ const FiltrosTurnos = (***REMOVED*** onFiltersChange, activeFilters = ***REMOVED
   return (
     <div className="mb-6">
       ***REMOVED***/* Botón para mostrar/ocultar filtros */***REMOVED***
-      <div className="flex items-center justify-between mb-4">
+      <Flex variant="between" className="mb-4">
         <button
           onClick=***REMOVED***() => setShowFilters(!showFilters)***REMOVED***
           className="flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors"
@@ -69,7 +70,7 @@ const FiltrosTurnos = (***REMOVED*** onFiltersChange, activeFilters = ***REMOVED
             <span>Limpiar</span>
           </button>
         )***REMOVED***
-      </div>
+      </Flex>
 
       ***REMOVED***/* Panel de filtros */***REMOVED***
       ***REMOVED***showFilters && (

@@ -1,4 +1,4 @@
-// src/components/settings/DeliverySection/index.jsx - REFACTORIZADO
+// src/components/settings/DeliverySection/index.jsx 
 
 import React from 'react';
 import ***REMOVED*** Truck, Info ***REMOVED*** from 'lucide-react';
@@ -6,6 +6,8 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Switch from '../../ui/Switch';
+
+import Flex from '../../ui/Flex';
 
 const DeliverySection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** deliveryEnabled, savePreferences ***REMOVED*** = useApp();
@@ -25,7 +27,7 @@ const DeliverySection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***R
     <SettingsSection icon=***REMOVED***Truck***REMOVED*** title="Trabajos de Delivery">
       <div className="space-y-4">
         ***REMOVED***/* Toggle principal */***REMOVED***
-        <div className="flex items-center justify-between">
+        <Flex variant="between">
           <div className="flex-1">
             <p className="font-medium">Habilitar modo delivery</p>
             <p className="text-sm text-gray-500">
@@ -36,7 +38,7 @@ const DeliverySection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***R
             checked=***REMOVED***deliveryEnabled***REMOVED***
             onChange=***REMOVED***handleToggle***REMOVED***
           />
-        </div>
+        </Flex>
         
         ***REMOVED***/* Información cuando está activado */***REMOVED***
         ***REMOVED***deliveryEnabled && (
@@ -47,7 +49,7 @@ const DeliverySection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***R
               borderColor: colors.transparent20
             ***REMOVED******REMOVED***
           >
-            <div className="flex items-start">
+            <Flex variant="start">
               <Info size=***REMOVED***16***REMOVED*** className="mt-0.5 mr-2 flex-shrink-0" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
               <div className="text-sm space-y-1">
                 <p className="font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>¿Cómo funciona?</p>
@@ -59,7 +61,7 @@ const DeliverySection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***R
                   <li>• Soporta múltiples plataformas (Uber Eats, Doordash, Didi, etc.)</li>
                 </ul>
               </div>
-            </div>
+            </Flex>
           </div>
         )***REMOVED***
       </div>

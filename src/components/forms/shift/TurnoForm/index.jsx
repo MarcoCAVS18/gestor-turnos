@@ -6,6 +6,7 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThe
 import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
 import ***REMOVED*** createSafeDate, calculateShiftHours ***REMOVED*** from '../../../../utils/time';
 import BaseForm, ***REMOVED*** FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses ***REMOVED*** from '../../base/BaseForm';
+import Flex from '../../../ui/Flex';
 
 const TurnoForm = (***REMOVED***
   turno,
@@ -276,8 +277,7 @@ const TurnoForm = (***REMOVED***
       ***REMOVED******REMOVED***
     >
       ***REMOVED***/* Header con título y toggle customizado */***REMOVED***
-      <div className=***REMOVED***`
-        flex items-center justify-between 
+      <Flex variant="between" className=***REMOVED***`
         $***REMOVED***isMobile ? 'pb-2 border-b border-gray-200' : ''***REMOVED***
       `***REMOVED***>
         <div className="flex items-center flex-1">
@@ -328,7 +328,7 @@ const TurnoForm = (***REMOVED***
             ***REMOVED***formData.tuvoDescanso ? 'Sí' : 'No'***REMOVED***
           </span>
         </label>
-      </div>
+      </Flex>
 
       ***REMOVED***/* Información del cálculo - LAYOUT RESPONSIVO */***REMOVED***
       <div className=***REMOVED***`
@@ -337,98 +337,98 @@ const TurnoForm = (***REMOVED***
         text-gray-600
       `***REMOVED***>
         ***REMOVED***/* Tiempo programado */***REMOVED***
-        <div className=***REMOVED***`
-          flex items-center justify-between p-2 rounded
+        <Flex variant="between" className=***REMOVED***`
+          p-2 rounded
           $***REMOVED***isMobile ? 'bg-blue-50' : 'bg-gray-50'***REMOVED***
         `***REMOVED***>
           <div className="flex items-center">
-            <div className=***REMOVED***`
-              rounded-full flex items-center justify-center mr-2
+            <Flex variant="center" className=***REMOVED***`
+              rounded-full mr-2
               $***REMOVED***isMobile ? 'w-6 h-6 text-xs' : 'w-5 h-5 text-xs'***REMOVED***
             `***REMOVED***
             style=***REMOVED******REMOVED*** backgroundColor: colors.transparent20, color: colors.primary ***REMOVED******REMOVED***>
               <Clock size=***REMOVED***isMobile ? 12 : 10***REMOVED*** />
-            </div>
+            </Flex>
             <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Tiempo programado:</span>
           </div>
           <span className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***>
             ***REMOVED***Math.floor(duracion.totalMinutos / 60)***REMOVED***h ***REMOVED***duracion.totalMinutos % 60***REMOVED***min
           </span>
-        </div>
+        </Flex>
 
         ***REMOVED***formData.tuvoDescanso ? (
           <>
             ***REMOVED***/* Descanso configurado */***REMOVED***
-            <div className=***REMOVED***`
-              flex items-center justify-between p-2 rounded
+            <Flex variant="between" className=***REMOVED***`
+              p-2 rounded
               $***REMOVED***isMobile ? 'bg-orange-50' : 'bg-gray-50'***REMOVED***
             `***REMOVED***>
               <div className="flex items-center">
-                <div className=***REMOVED***`
-                  rounded-full flex items-center justify-center mr-2
+                <Flex variant="center" className=***REMOVED***`
+                  rounded-full mr-2
                   $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***
                 `***REMOVED***
                 style=***REMOVED******REMOVED*** backgroundColor: '#FED7AA', color: '#EA580C' ***REMOVED******REMOVED***>
                   <Coffee size=***REMOVED***isMobile ? 10 : 8***REMOVED*** />
-                </div>
+                </Flex>
                 <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Descanso configurado:</span>
               </div>
               <span className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***>
                 ***REMOVED***smokoMinutes***REMOVED*** minutos
               </span>
-            </div>
+            </Flex>
 
             ***REMOVED***/* Tiempo pagado */***REMOVED***
-            <div className=***REMOVED***`
-              flex items-center justify-between p-2 rounded border
+            <Flex variant="between" className=***REMOVED***`
+              p-2 rounded border
               $***REMOVED***isMobile ? 'bg-green-50 border-green-200' : 'bg-gray-50'***REMOVED***
             `***REMOVED***
             style=***REMOVED******REMOVED*** 
               backgroundColor: isMobile ? colors.transparent10 : undefined,
               borderColor: isMobile ? colors.transparent30 : undefined
             ***REMOVED******REMOVED***>
-              <div className="flex items-center">
-                <div className=***REMOVED***`
-                  rounded-full flex items-center justify-center mr-2
+              <Flex variant="center">
+                <Flex variant="center" className=***REMOVED***`
+                  rounded-full mr-2
                   $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***
                 `***REMOVED***
                 style=***REMOVED******REMOVED*** backgroundColor: colors.primary, color: 'white' ***REMOVED******REMOVED***>
                   <span className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-xs' : 'text-[10px]'***REMOVED***`***REMOVED***>$</span>
-                </div>
+                </Flex>
                 <span className=***REMOVED***`font-medium $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
                       style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
                   Tiempo pagado:
                 </span>
-              </div>
+              </Flex>
               <span className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
                     style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
                 ***REMOVED***duracion.horas***REMOVED***h ***REMOVED***duracion.minutos***REMOVED***min
               </span>
-            </div>
+            </Flex>
           </>
         ) : (
           /* Sin descuento aplicado */
-          <div className=***REMOVED***`
-            flex items-center justify-between p-2 rounded border
+          <Flex variant="between" className=***REMOVED***`
+            p-2 rounded border
             $***REMOVED***isMobile ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED*** 
             backgroundColor: isMobile ? colors.transparent10 : undefined,
             borderColor: isMobile ? colors.transparent30 : undefined
           ***REMOVED******REMOVED***>
-            <div className="flex items-center">
-              <div className=***REMOVED***`
-                rounded-full flex items-center justify-center mr-2
+            <Flex variant="center">
+              <Flex variant="center" className=***REMOVED***`
+                rounded-full mr-2
                 $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***
               `***REMOVED***
               style=***REMOVED******REMOVED*** backgroundColor: colors.primary, color: 'white' ***REMOVED******REMOVED***>
                 <span className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-xs' : 'text-[10px]'***REMOVED***`***REMOVED***>$</span>
-              </div>
+              </Flex>
               <span className=***REMOVED***`font-medium $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
                     style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
                 Tiempo pagado:
               </span>
-            </div>
+            </Flex>
             <div className="text-right">
               <div className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
                    style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
@@ -438,7 +438,7 @@ const TurnoForm = (***REMOVED***
                 (sin descuento)
               </div>
             </div>
-          </div>
+          </Flex>
         )***REMOVED***
 
         ***REMOVED***/* Mensaje informativo en móvil */***REMOVED***

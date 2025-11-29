@@ -1,8 +1,10 @@
 // src/components/stats/WeeklyComparison/index.jsx
+
 import React from 'react';
 import ***REMOVED*** TrendingUp, TrendingDown, Minus ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const WeeklyComparison = (***REMOVED*** datosActuales, datosAnteriores, thematicColors, className = '' ***REMOVED***) => ***REMOVED***
   const horasActuales = datosActuales?.horasTrabajadas || 0;
@@ -61,7 +63,7 @@ const WeeklyComparison = (***REMOVED*** datosActuales, datosAnteriores, thematic
           const color = getColor(comp.cambio);
           
           return (
-            <div key=***REMOVED***index***REMOVED*** className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <Flex variant="between" key=***REMOVED***index***REMOVED*** className="p-3 bg-gray-50 rounded-lg">
               <div className="flex-1">
                 <span className="text-sm text-gray-600">***REMOVED***comp.label***REMOVED***</span>
                 ***REMOVED***comp.valorAbsoluto && (
@@ -74,7 +76,7 @@ const WeeklyComparison = (***REMOVED*** datosActuales, datosAnteriores, thematic
                 <Icono size=***REMOVED***16***REMOVED*** className="mr-1" />
                 <span className="text-sm font-medium">***REMOVED***comp.valor***REMOVED***</span>
               </div>
-            </div>
+            </Flex>
           );
         ***REMOVED***)***REMOVED***
       </div>

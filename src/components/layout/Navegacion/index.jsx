@@ -7,7 +7,11 @@ import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+
+import Flex from '../../ui/Flex';
+
 import './index.css';
+
 
 const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno ***REMOVED***) => ***REMOVED***
   const navigate = useNavigate();
@@ -232,13 +236,13 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
 
               ***REMOVED***/* Overlay con ícono de editar al hacer hover */***REMOVED***
               ***REMOVED***showPhotoEdit && (
-                <div
+                <Flex variant="center"
                   onClick=***REMOVED***handleEditPhotoClick***REMOVED***
-                  className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center cursor-pointer transition-opacity"
+                  className="absolute inset-0 bg-black bg-opacity-50 cursor-pointer transition-opacity"
                   style=***REMOVED******REMOVED*** backgroundColor: colors.transparent50 ***REMOVED******REMOVED***
                 >
                   <Pencil className="text-white" size=***REMOVED***20***REMOVED*** />
-                </div>
+                </Flex>
               )***REMOVED***
             </div>
 

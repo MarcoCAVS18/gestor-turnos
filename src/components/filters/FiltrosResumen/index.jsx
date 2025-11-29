@@ -4,6 +4,7 @@ import React from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import Flex from '../../ui/Flex';
 
 const FiltrosResumen = (***REMOVED*** filters, onRemoveFilter, onClearAll, estadisticas ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** trabajos, trabajosDelivery ***REMOVED*** = useApp();
@@ -55,7 +56,7 @@ const FiltrosResumen = (***REMOVED*** filters, onRemoveFilter, onClearAll, estad
       ***REMOVED******REMOVED***
     >
       ***REMOVED***/* Estadísticas */***REMOVED***
-      <div className="flex items-center justify-between text-sm">
+      <Flex variant="between" className="text-sm">
         <span style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="font-medium">
           Filtros activos: ***REMOVED***estadisticas?.turnosFiltrados || 0***REMOVED*** de ***REMOVED***estadisticas?.totalTurnos || 0***REMOVED*** turnos
         </span>
@@ -67,7 +68,7 @@ const FiltrosResumen = (***REMOVED*** filters, onRemoveFilter, onClearAll, estad
           <X size=***REMOVED***12***REMOVED*** />
           <span>Limpiar todo</span>
         </button>
-      </div>
+      </Flex>
 
       ***REMOVED***/* Tags de filtros activos */***REMOVED***
       <div className="flex flex-wrap gap-2">
@@ -113,8 +114,8 @@ const FiltrosResumen = (***REMOVED*** filters, onRemoveFilter, onClearAll, estad
         )***REMOVED***
         
         ***REMOVED***filters.tipoTurno !== 'todos' && (
-          <div 
-            className="flex items-center space-x-2 px-3 py-1 rounded-full text-sm"
+          <Flex variant="center" 
+            className="space-x-2 px-3 py-1 rounded-full text-sm"
             style=***REMOVED******REMOVED*** 
               backgroundColor: colors.transparent20,
               color: colors.primary 
@@ -127,7 +128,7 @@ const FiltrosResumen = (***REMOVED*** filters, onRemoveFilter, onClearAll, estad
             >
               <X size=***REMOVED***14***REMOVED*** />
             </button>
-          </div>
+          </Flex>
         )***REMOVED***
       </div>
     </div>

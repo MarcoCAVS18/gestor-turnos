@@ -5,6 +5,7 @@ import ***REMOVED*** Download, FileText, Image, FileSpreadsheet ***REMOVED*** fr
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import New from '../../ui/New';
+import Flex from '../../ui/Flex';
 
 const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -30,13 +31,13 @@ const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
 
   return (
     <Card variant="transparent" className="relative overflow-hidden">
-      <div className="flex items-center justify-between">
+      <Flex variant="between">
         ***REMOVED***/* Lado izquierdo: Texto y selector de formato */***REMOVED***
         <div className="flex-1 pr-4">
-          <div className="flex items-center gap-2 mb-2">
+          <Flex variant="center" className="gap-2 mb-2">
             <h3 className="text-lg font-semibold text-gray-800">Exportar Reporte</h3>
             <New size="xs" />
-          </div>
+          </Flex>
           <p className="text-sm text-gray-700 mb-4">
             Descargá un resumen completo de tus estadísticas, turnos y actividad
           </p>
@@ -109,7 +110,7 @@ const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
             ***REMOVED***!isExporting ? (
               <Download size=***REMOVED***24***REMOVED*** className="transition-colors" />
             ) : (
-              <div className="relative w-full h-full flex items-center justify-center">
+              <Flex variant="center" className="relative w-full h-full">
                 ***REMOVED***/* Icono de descarga animado */***REMOVED***
                 <div 
                   className="absolute"
@@ -129,15 +130,15 @@ const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
                     animation: 'spin 1s linear infinite'
                   ***REMOVED******REMOVED***
                 />
-              </div>
+              </Flex>
             )***REMOVED***
           </button>
         </div>
-      </div>
+      </Flex>
 
       ***REMOVED***isExporting && (
         <div className="mt-4 pt-4 border-t border-gray-300 animate-fadeIn">
-          <div className="flex items-center justify-center gap-2 text-sm">
+          <Flex variant="center" className="gap-2 text-sm">
             <div 
               className="w-2 h-2 rounded-full animate-pulse"
               style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
@@ -145,7 +146,7 @@ const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
             <span className="text-gray-800 font-medium">
               Generando tu reporte en ***REMOVED***selectedFormat.toUpperCase()***REMOVED***...
             </span>
-          </div>
+          </Flex>
         </div>
       )***REMOVED***
       

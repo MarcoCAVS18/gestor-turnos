@@ -7,6 +7,7 @@ import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
+import Flex from '../../ui/Flex';
 
 const SessionSection = (***REMOVED*** onError, className = '' ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** logout ***REMOVED*** = useAuth();
@@ -24,7 +25,7 @@ const SessionSection = (***REMOVED*** onError, className = '' ***REMOVED***) => 
 
   return (
     <SettingsSection icon=***REMOVED***LogOut***REMOVED*** title="Sesión" className=***REMOVED***className***REMOVED***>
-      <div className="flex-1 flex items-center justify-center">
+      <Flex variant="center" className="flex-1">
         <Button
           onClick=***REMOVED***handleLogout***REMOVED***
           variant="outline"
@@ -34,7 +35,7 @@ const SessionSection = (***REMOVED*** onError, className = '' ***REMOVED***) => 
         >
           Cerrar sesión
         </Button>
-      </div>
+      </Flex>
     </SettingsSection>
   );
 ***REMOVED***;

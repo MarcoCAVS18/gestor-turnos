@@ -6,6 +6,8 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 
+import Flex from '../../ui/Flex';
+
 const GoalsSection = () => ***REMOVED***
   // Usar el nombre correcto de la variable y función del contexto
   const ***REMOVED*** weeklyHoursGoal, updateWeeklyHoursGoal ***REMOVED*** = useApp();
@@ -49,7 +51,7 @@ const GoalsSection = () => ***REMOVED***
           </label>
           
           ***REMOVED***!editando ? (
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <Flex variant="between" className="p-3 bg-gray-50 rounded-lg">
               <div>
                 ***REMOVED***weeklyHoursGoal ? (
                   <>
@@ -80,10 +82,10 @@ const GoalsSection = () => ***REMOVED***
               >
                 ***REMOVED***weeklyHoursGoal ? 'Editar' : 'Configurar'***REMOVED***
               </button>
-            </div>
+            </Flex>
           ) : (
             <div className="space-y-3">
-              <div className="flex items-center space-x-2">
+              <Flex className="space-x-2">
                 <input
                   type="number"
                   value=***REMOVED***nuevaMeta***REMOVED***
@@ -96,9 +98,9 @@ const GoalsSection = () => ***REMOVED***
                   style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
                 />
                 <span className="text-sm text-gray-500">horas</span>
-              </div>
+              </Flex>
               
-              <div className="flex items-center space-x-2">
+              <Flex className="space-x-2">
                 <button
                   onClick=***REMOVED***handleGuardar***REMOVED***
                   disabled=***REMOVED***!nuevaMeta || parseFloat(nuevaMeta) <= 0***REMOVED***
@@ -146,7 +148,7 @@ const GoalsSection = () => ***REMOVED***
                     Eliminar
                   </button>
                 )***REMOVED***
-              </div>
+              </Flex>
             </div>
           )***REMOVED***
         </div>

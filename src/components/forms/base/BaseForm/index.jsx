@@ -3,6 +3,7 @@
 import React from 'react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
 import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
+import Flex from '../../../ui/Flex';
 
 /**
  * BaseForm - Componente base unificado para todos los formularios
@@ -93,10 +94,10 @@ const BaseForm = (***REMOVED***
             ***REMOVED******REMOVED***
           >
             ***REMOVED***loading ? (
-              <div className="flex items-center justify-center space-x-2">
+              <Flex variant="center" className="space-x-2">
                 <LoadingSpinner size="h-4 w-4" color="border-white" />
                 <span>Guardando...</span>
-              </div>
+              </Flex>
             ) : (
               finalSubmitText
             )***REMOVED***

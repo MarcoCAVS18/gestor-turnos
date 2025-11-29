@@ -4,6 +4,7 @@ import ***REMOVED*** useAuth ***REMOVED*** from './contexts/AuthContext';
 import ***REMOVED*** AppProvider ***REMOVED*** from './contexts/AppContext';
 import ProtectedLayout from './components/layout/ProtectedLayout/ProtectedLayout';
 import LoadingSpinner from './components/ui/LoadingSpinner/LoadingSpinner';
+import Flex from './components/ui/Flex';
 import useModalManager from './hooks/useModalManager';
 import './styles/animation.css';
 
@@ -34,9 +35,9 @@ const PublicRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
 
   if (loading) ***REMOVED***
     return (
-      <div className="flex items-center justify-center h-screen">
+      <Flex variant="center" className="h-screen">
         <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
-      </div>
+      </Flex>
     );
   ***REMOVED***
 
@@ -105,9 +106,9 @@ function App() ***REMOVED***
 
   if (loading) ***REMOVED***
     return (
-      <div className="flex items-center justify-center h-screen">
+      <Flex variant="center" className="h-screen">
         <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
-      </div>
+      </Flex>
     );
   ***REMOVED***
 

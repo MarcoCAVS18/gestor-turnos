@@ -7,6 +7,7 @@ import ***REMOVED*** auth ***REMOVED*** from '../../services/firebase';
 
 // Nueva importación estructurada
 import Button from '../../components/ui/Button';
+import Flex from '../../components/ui/Flex';
 
 const ResetPassword = () => ***REMOVED***
   const navigate = useNavigate();
@@ -112,7 +113,7 @@ const ResetPassword = () => ***REMOVED***
         </video>
       </div>
       
-      <div className="fixed inset-0 z-20 bg-transparent flex items-center justify-center p-4">
+      <Flex variant="center" className="fixed inset-0 z-20 bg-transparent p-4">
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">
           <h1 className="text-2xl font-bold text-center mb-2">Crear nueva contraseña</h1>
           <p className="text-center text-gray-600 mb-6">
@@ -204,7 +205,7 @@ const ResetPassword = () => ***REMOVED***
             </Button>
           </div>
         </div>
-      </div>
+      </Flex>
     </div>
   );
 ***REMOVED***;

@@ -1,4 +1,4 @@
-// src/pages/Turnos.jsx - MEJORADO con layout de 3 columnas y agrupación por semanas
+// src/pages/Turnos.jsx
 
 import React, ***REMOVED*** useState, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
@@ -14,6 +14,7 @@ import ModalTurno from '../components/modals/shift/ModalTurno';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 import WeeklyShiftsSection from '../components/shifts/WeeklyShiftsSection';
 import ***REMOVED*** generateShiftDetails ***REMOVED*** from '../utils/shiftDetailsUtils';
+import Flex from '../components/ui/Flex';
 
 import LoadingSpinner from '../components/ui/LoadingSpinner/LoadingSpinner';
 
@@ -167,14 +168,14 @@ const Turnos = () => ***REMOVED***
               borderLeftColor: thematicColors?.base 
             ***REMOVED******REMOVED***
           >
-            <div className="flex items-center justify-between">
+            <Flex variant="between">
               <span style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="font-medium">
                 Mostrando ***REMOVED***estadisticasFiltros.turnosFiltrados***REMOVED*** de ***REMOVED***estadisticasFiltros.totalTurnos***REMOVED*** turnos
               </span>
               <span className="text-gray-600">
                 ***REMOVED***turnosPorSemana.length***REMOVED*** semanas con turnos
               </span>
-            </div>
+            </Flex>
           </div>
         )***REMOVED***
 
@@ -188,12 +189,13 @@ const Turnos = () => ***REMOVED***
         ) : !hayTurnos && tieneMetrosDeFiltrosActivos ? (
           // Estado cuando hay filtros pero no resultados
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <div 
-              className="p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center"
+            <Flex 
+              variant="center" 
+              className="p-4 rounded-full w-20 h-20 mx-auto mb-4"
               style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent10 ***REMOVED******REMOVED***
             >
               <span className="text-2xl">🔍</span>
-            </div>
+            </Flex>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               No hay turnos que coincidan con los filtros
             </h3>
@@ -247,7 +249,7 @@ const Turnos = () => ***REMOVED***
                       <LoadingSpinner 
                         size="h-4 w-4"
                         style=***REMOVED******REMOVED*** borderColor: thematicColors?.base ***REMOVED******REMOVED***
-                        color="border-transparent" // Evita conflicto con el style
+                        color="border-transparent"
                       />
                       <span>Cargando...</span>
                     </>

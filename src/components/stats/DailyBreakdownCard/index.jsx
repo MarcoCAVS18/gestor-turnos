@@ -2,8 +2,9 @@ import React from 'react';
 import ***REMOVED*** Calendar, Clock, DollarSign ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
-import BaseStatsCard from '../../cards/base/BaseStatsCard'; // Import BaseStatsCard
-import ***REMOVED*** calculateShiftHours, calculateShiftEarnings ***REMOVED*** from '../../../utils/statsCalculations'; // Import from statsCalculations
+import BaseStatsCard from '../../cards/base/BaseStatsCard';
+import ***REMOVED*** calculateShiftHours, calculateShiftEarnings ***REMOVED*** from '../../../utils/statsCalculations';
+import Flex from '../../ui/Flex';
 
 const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED***, trabajos = [] ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -42,14 +43,14 @@ const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED
           const gananciaTotal = turnos.reduce((total, turno) => total + calculateShiftEarnings(turno, trabajosValidos), 0);
 
           return (
-            <div key=***REMOVED***fecha***REMOVED*** className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center">
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center mr-3"
+            <Flex variant="between" key=***REMOVED***fecha***REMOVED*** className="p-3 bg-gray-50 rounded-lg">
+              <Flex>
+                <Flex variant="center"
+                  className="w-10 h-10 rounded-full mr-3"
                   style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
                 >
                   <Calendar size=***REMOVED***16***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
-                </div>
+                </Flex>
                 <div>
                   <p className="font-medium text-gray-800">
                     ***REMOVED***formatearFecha(fecha)***REMOVED***
@@ -58,19 +59,19 @@ const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED
                     ***REMOVED***turnos.length***REMOVED*** turno***REMOVED***turnos.length !== 1 ? 's' : ''***REMOVED***
                   </p>
                 </div>
-              </div>
+              </Flex>
 
-              <div className="flex items-center space-x-4 text-sm">
-                <div className="flex items-center text-purple-600">
+              <Flex className="space-x-4 text-sm">
+                <Flex className="text-purple-600">
                   <Clock size=***REMOVED***14***REMOVED*** className="mr-1" />
                   <span>***REMOVED***horasTotal.toFixed(1)***REMOVED***h</span>
-                </div>
-                <div className="flex items-center text-green-600">
+                </Flex>
+                <Flex className="text-green-600">
                   <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1" />
                   <span>***REMOVED***formatCurrency(gananciaTotal)***REMOVED***</span>
-                </div>
-              </div>
-            </div>
+                </Flex>
+              </Flex>
+            </Flex>
           );
         ***REMOVED***)***REMOVED***
       </div>

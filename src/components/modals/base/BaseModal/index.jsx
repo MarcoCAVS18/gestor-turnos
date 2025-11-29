@@ -6,6 +6,7 @@ import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
 import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
+import Flex from '../../../ui/Flex';
 
 const BaseModal = (***REMOVED***
   isOpen,
@@ -51,8 +52,8 @@ const BaseModal = (***REMOVED***
   ***REMOVED***;
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4"
+    <Flex variant="center"
+      className="fixed inset-0 bg-black bg-opacity-50 p-4"
       style=***REMOVED******REMOVED*** zIndex: modalConfig.zIndex ***REMOVED******REMOVED***
     >
       <div
@@ -67,9 +68,9 @@ const BaseModal = (***REMOVED***
       >
 
         ***REMOVED***/* Header */***REMOVED***
-        <div
+        <Flex variant="between"
           className=***REMOVED***`
-            sticky top-0 bg-white border-b flex justify-between items-center z-10
+            sticky top-0 bg-white border-b z-10
             $***REMOVED***isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED***
@@ -109,7 +110,7 @@ const BaseModal = (***REMOVED***
           >
             <X size=***REMOVED***isMobile ? 24 : 20***REMOVED*** />
           </button>
-        </div>
+        </Flex>
 
         ***REMOVED***/* Content con scroll optimizado */***REMOVED***
         <div className=***REMOVED***`
@@ -134,12 +135,12 @@ const BaseModal = (***REMOVED***
 
         ***REMOVED***/* Indicador de carga */***REMOVED***
         ***REMOVED***loading && (
-          <div
-            className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center"
+          <Flex variant="center"
+            className="absolute inset-0 bg-black bg-opacity-30"
             style=***REMOVED******REMOVED*** zIndex: modalConfig.zIndex + 1 ***REMOVED******REMOVED***
           >
-            <div
-              className="bg-white rounded-lg p-4 flex items-center space-x-3"
+            <Flex
+              className="bg-white rounded-lg p-4 space-x-3"
               style=***REMOVED******REMOVED***
                 borderColor: colors.primary,
                 borderWidth: '2px'
@@ -155,11 +156,11 @@ const BaseModal = (***REMOVED***
               >
                 ***REMOVED***loadingText***REMOVED***
               </span>
-            </div>
-          </div>
+            </Flex>
+          </Flex>
         )***REMOVED***
       </div>
-    </div>
+    </Flex>
   );
 ***REMOVED***;
 

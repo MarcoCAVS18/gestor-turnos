@@ -1,4 +1,4 @@
-// src/components/calendar/CalendarDaySummary/index.jsx - Actualizado con fecha
+// src/components/calendar/CalendarDaySummary/index.jsx
 
 import React from 'react';
 import ***REMOVED*** PlusCircle, Calendar, Clock, DollarSign ***REMOVED*** from 'lucide-react';
@@ -8,6 +8,7 @@ import TarjetaTurno from '../../cards/shift/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
+import Flex from '../../ui/Flex';
 
 const CalendarDaySummary = (***REMOVED*** 
   fechaSeleccionada, 
@@ -88,7 +89,7 @@ const CalendarDaySummary = (***REMOVED***
             className="px-4 py-3 border-b rounded-t-xl"
             style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
           >
-            <div className="flex items-center justify-between">
+            <Flex variant="between" className="flex items-center">
               <div className="flex items-center">
                 <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
                 <h3 className="font-semibold">
@@ -101,7 +102,7 @@ const CalendarDaySummary = (***REMOVED***
                 <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1 text-green-500" />
                 <span className="font-medium">***REMOVED***formatCurrency(totalDia)***REMOVED***</span>
               </div>
-            </div>
+            </Flex>
           </div>
           
           ***REMOVED***/* Grid de turnos - 3 columnas */***REMOVED***
@@ -113,7 +114,7 @@ const CalendarDaySummary = (***REMOVED***
               if (!trabajo) ***REMOVED***
                 return (
                   <div key=***REMOVED***turno.id***REMOVED*** className="p-3 border border-gray-200 rounded-lg bg-gray-50">
-                    <div className="flex items-center justify-between">
+                    <Flex variant="between">
                       <div>
                         <p className="font-medium text-gray-600">Trabajo eliminado</p>
                         <p className="text-sm text-gray-500">
@@ -123,7 +124,7 @@ const CalendarDaySummary = (***REMOVED***
                       <span className="text-sm text-gray-400">
                         ***REMOVED***turno.tipo === 'delivery' ? formatCurrency(turno.gananciaTotal || 0) : '--'***REMOVED***
                       </span>
-                    </div>
+                    </Flex>
                   </div>
                 );
               ***REMOVED***

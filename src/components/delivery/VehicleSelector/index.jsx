@@ -1,9 +1,10 @@
-// src/components/delivery/VehicleSelector/index.jsx - REFACTORIZADO
+// src/components/delivery/VehicleSelector/index.jsx
 
 import React from 'react';
 import ***REMOVED*** Check, Bike, Car, Truck, User ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** DELIVERY_VEHICLES ***REMOVED*** from '../../../constants/delivery';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import Flex from '../../ui/Flex';
 
 const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick, colors ***REMOVED***) => ***REMOVED***
   const getVehicleIcon = (vehicleId) => ***REMOVED***
@@ -35,12 +36,12 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick, colors ***REM
       ***REMOVED***/* Layout horizontal para compactar */***REMOVED***
       <div className="flex items-center space-x-2">
         ***REMOVED***/* Contenedor del ícono más pequeño */***REMOVED***
-        <div 
-          className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
+        <Flex variant="center" 
+          className="w-6 h-6 rounded flex-shrink-0"
           style=***REMOVED******REMOVED*** backgroundColor: vehicle.color + '20' ***REMOVED******REMOVED*** 
         >
           <Icon size=***REMOVED***14***REMOVED*** style=***REMOVED******REMOVED*** color: vehicle.color ***REMOVED******REMOVED*** />
-        </div>
+        </Flex>
         
         ***REMOVED***/* Nombre del vehículo */***REMOVED***
         <p className="font-medium text-xs text-center leading-tight text-gray-800 truncate">
@@ -50,12 +51,12 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick, colors ***REM
       
       ***REMOVED***/* Check de selección más pequeño */***REMOVED***
       ***REMOVED***isSelected && (
-        <div 
-          className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center shadow-sm"
+        <Flex variant="center"
+          className="absolute -top-1 -right-1 w-4 h-4 rounded-full shadow-sm"
           style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
         >
           <Check size=***REMOVED***10***REMOVED*** className="text-white" />
-        </div>
+        </Flex>
       )***REMOVED***
     </button>
   );

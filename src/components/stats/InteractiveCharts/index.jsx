@@ -2,12 +2,13 @@
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** ChevronLeft, ChevronRight ***REMOVED*** from 'lucide-react';
-import BaseChart from '../../charts/BaseChart'; // Import BaseChart
+import BaseChart from '../../charts/BaseChart'; 
 import ***REMOVED*** useStats ***REMOVED*** from '../../../contexts/StatsContext';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import ***REMOVED*** getRechartsConfig, CHART_CONFIGS as staticChartConfigs, PIE_CHART_COLORS ***REMOVED*** from '../../../config/chartConfig';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const InteractiveCharts = () => ***REMOVED***
   const ***REMOVED*** datosActuales, weeklyEvolutionData, thematicColors ***REMOVED*** = useStats();
@@ -90,15 +91,15 @@ const InteractiveCharts = () => ***REMOVED***
 
   return (
     <Card className="h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4 flex-shrink-0">
-        <div className="flex items-center">
+      <Flex variant="between" className="mb-4 flex-shrink-0">
+        <Flex>
           <CurrentIcon size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors.primary ***REMOVED******REMOVED*** className="mr-2" />
           <div>
             <h4 className="font-medium">***REMOVED***currentChartConfig.title***REMOVED***</h4>
             <p className="text-xs text-gray-500">***REMOVED***currentChartConfig.subtitle***REMOVED***</p>
           </div>
-        </div>
-        <div className="flex items-center space-x-2">
+        </Flex>
+        <Flex className="space-x-2">
           <button onClick=***REMOVED***prevChart***REMOVED*** className="p-2 rounded transition-colors hover:bg-gray-100" style=***REMOVED******REMOVED*** color: thematicColors.primary ***REMOVED******REMOVED***>
             <ChevronLeft size=***REMOVED***16***REMOVED*** />
           </button>
@@ -110,13 +111,13 @@ const InteractiveCharts = () => ***REMOVED***
           <button onClick=***REMOVED***nextChart***REMOVED*** className="p-2 rounded transition-colors hover:bg-gray-100" style=***REMOVED******REMOVED*** color: thematicColors.primary ***REMOVED******REMOVED***>
             <ChevronRight size=***REMOVED***16***REMOVED*** />
           </button>
-        </div>
-      </div>
+        </Flex>
+      </Flex>
       <div className="flex-1 bg-gray-50 rounded-lg p-2 min-h-0">
         ***REMOVED***isEmptyOverall ? (
-          <div className="flex items-center justify-center h-full text-gray-500">
+          <Flex variant="center" className="h-full text-gray-500">
             <p>Sin datos para gráficos</p>
-          </div>
+          </Flex>
         ) : renderChart()***REMOVED***
       </div>
     </Card>

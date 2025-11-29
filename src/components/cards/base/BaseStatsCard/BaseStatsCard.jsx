@@ -2,6 +2,7 @@
 import React from 'react';
 import Card from '../../../ui/Card';
 import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
+import Flex from '../../../ui/Flex';
 
 /**
  * BaseStatsCard - A reusable wrapper for all statistics cards.
@@ -28,15 +29,15 @@ const BaseStatsCard = (***REMOVED***
   return (
     <Card className=***REMOVED***`flex flex-col $***REMOVED***className***REMOVED***`***REMOVED***>
       ***REMOVED***/* Card Header */***REMOVED***
-      <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-        <div className="flex items-center text-gray-700">
+      <Flex variant="between" className="pb-3 border-b border-gray-100">
+        <Flex variant="center" className="text-gray-700">
           ***REMOVED***icon && React.cloneElement(icon, ***REMOVED*** className: 'mr-2 h-5 w-5 text-gray-400' ***REMOVED***)***REMOVED***
           <h4 className="font-semibold text-sm">***REMOVED***title***REMOVED***</h4>
-        </div>
-      </div>
+        </Flex>
+      </Flex>
 
       ***REMOVED***/* Card Body */***REMOVED***
-      <div className="flex-1 flex items-center justify-center pt-4">
+      <Flex variant="center" className="flex-1 pt-4">
         ***REMOVED***loading ? (
           <LoadingSpinner />
         ) : empty ? (
@@ -48,7 +49,7 @@ const BaseStatsCard = (***REMOVED***
             ***REMOVED***children***REMOVED***
           </div>
         )***REMOVED***
-      </div>
+      </Flex>
     </Card>
   );
 ***REMOVED***;

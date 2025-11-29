@@ -6,6 +6,7 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
+import Flex from '../../ui/Flex';
 
 const SmokoSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
@@ -82,7 +83,7 @@ const SmokoSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMO
         </div>
 
         ***REMOVED***/* Toggle principal */***REMOVED***
-        <div className="flex items-center justify-between">
+        <Flex variant="between">
           <div className="flex-1">
             <p className="font-medium">Habilitar descuento de descansos</p>
             <p className="text-sm text-gray-500">
@@ -98,7 +99,7 @@ const SmokoSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMO
               style=***REMOVED******REMOVED*** accentColor: colors.primary ***REMOVED******REMOVED***
             />
           </label>
-        </div>
+        </Flex>
 
         ***REMOVED***/* Configuración de minutos - Solo visible si está habilitado */***REMOVED***
         ***REMOVED***enabled && (
