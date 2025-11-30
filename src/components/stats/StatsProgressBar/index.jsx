@@ -5,6 +5,7 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
+import ProgressBar from '../../ui/ProgressBar';
 
 const StatsProgressBar = (***REMOVED*** className = '', datosActuales, weeklyHoursGoal ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** horasTrabajadas, totalGanado ***REMOVED*** = datosActuales;
@@ -42,15 +43,11 @@ const StatsProgressBar = (***REMOVED*** className = '', datosActuales, weeklyHou
             <span className="text-gray-500">***REMOVED***porcentajeLimitado.toFixed(1)***REMOVED***%</span>
           </Flex>
           
-          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-500 ease-out"
-              style=***REMOVED******REMOVED***
-                width: `$***REMOVED***porcentajeLimitado***REMOVED***%`,
-                backgroundColor: getColorProgreso()
-              ***REMOVED******REMOVED***
-            />
-          </div>
+          <ProgressBar
+            value=***REMOVED***porcentajeLimitado***REMOVED***
+            color=***REMOVED***getColorProgreso()***REMOVED***
+            height="h-3"
+          />
         </div>
 
         ***REMOVED***/* Stats adicionales */***REMOVED***

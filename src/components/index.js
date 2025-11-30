@@ -8,6 +8,7 @@ export ***REMOVED*** default as Modal ***REMOVED*** from './ui/Modal';
 export ***REMOVED*** default as Card ***REMOVED*** from './ui/Card';
 export ***REMOVED*** default as ActionsMenu ***REMOVED*** from './ui/ActionsMenu';
 export ***REMOVED*** default as NotificationBanner ***REMOVED*** from './ui/NotificationBanner';
+export ***REMOVED*** default as ProgressBar ***REMOVED*** from './ui/ProgressBar';
 
 // Layout Components  
 export ***REMOVED*** default as Header ***REMOVED*** from './layout/Header';

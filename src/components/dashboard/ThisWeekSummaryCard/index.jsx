@@ -8,6 +8,7 @@ import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency'
 import Flex from '../../ui/Flex';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
+import ProgressBar from '../../ui/ProgressBar';
 
 const ThisWeekSummaryCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -31,6 +32,12 @@ const ThisWeekSummaryCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
   // Función para navegar a ajustes
   const irAjustes = () => ***REMOVED***
     navigate('/ajustes');
+  ***REMOVED***;
+
+  const getProgressBarColor = (progress) => ***REMOVED***
+    if (progress >= 75) return '#10B981';
+    if (progress >= 50) return colors.primary;
+    return '#F59E0B';
   ***REMOVED***;
 
   return (
@@ -57,20 +64,15 @@ const ThisWeekSummaryCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
         ***REMOVED***/* Progreso de horas - Solo si hay meta */***REMOVED***
         ***REMOVED***tieneMetaHoras ? (
           <div className="space-y-2">
-            <Flex justify="between" className="text-sm">
-              <span className="text-gray-600">Progreso</span>
+            <Flex variant="between" className="text-sm">
+              <span className="text-gray-600">Progreso: </span>
               <span className="font-medium">***REMOVED***horasSemana.toFixed(1)***REMOVED***h / ***REMOVED***metaHoras***REMOVED***h</span>
             </Flex>
 
-            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style=***REMOVED******REMOVED***
-                  width: `$***REMOVED***progresoLimitado***REMOVED***%`,
-                  backgroundColor: progresoLimitado >= 75 ? '#10B981' : progresoLimitado >= 50 ? colors.primary : '#F59E0B'
-                ***REMOVED******REMOVED***
-              />
-            </div>
+            <ProgressBar
+              value=***REMOVED***progresoLimitado***REMOVED***
+              color=***REMOVED***getProgressBarColor(progresoLimitado)***REMOVED***
+            />
           </div>
         ) : (
           // Sin meta - Call to action SIMPLIFICADO
@@ -103,7 +105,7 @@ const ThisWeekSummaryCard = (***REMOVED*** stats ***REMOVED***) => ***REMOVED***
         )***REMOVED***
 
         ***REMOVED***/* Stats básicas - Mostrar turnos realizados */***REMOVED***
-        <Flex justify="between" className=" text-sm">
+        <Flex variant="between" className=" text-sm">
           <div className="text-center">
             <p className="font-semibold text-gray-800">***REMOVED***turnosSemana***REMOVED***</p>
             <p className="text-xs text-gray-500">turnos</p>

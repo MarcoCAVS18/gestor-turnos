@@ -1,7 +1,6 @@
-// src/components/cards/TarjetaTurnoDelivery/index.jsx
-
+// src/components/cards/shift/TarjetaTurnoDelivery/index.jsx
 import React from 'react';
-import ***REMOVED*** Package, DollarSign, Navigation, Truck ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Package, Navigation, Truck ***REMOVED*** from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
@@ -37,12 +36,19 @@ const TarjetaTurnoDelivery = (props) => ***REMOVED***
   ***REMOVED***, [turno]);
 
   return (
-    <BaseShiftCard ***REMOVED***...props***REMOVED*** type="delivery" shiftData=***REMOVED***shiftData***REMOVED***>
+    <BaseShiftCard 
+      ***REMOVED***...props***REMOVED*** 
+      type="delivery" 
+      shiftData=***REMOVED***shiftData***REMOVED***
+      // Pasamos la ganancia a la Base para que la ponga abajo
+      earningValue=***REMOVED***shiftData.totalWithDiscount***REMOVED***
+      earningLabel="Ganancia Neta"
+    >
       ***REMOVED******REMOVED***
         // Avatar icon para delivery
         avatarIcon: <Truck size=***REMOVED***16***REMOVED*** />,
 
-        // Stats móvil - Pedidos, km y ganancia
+        // Stats móvil - Pedidos y km (SIN Ganancia, solo stats físicos)
         mobileStats: (
           <Flex variant="between" className="pt-2 border-t border-gray-100">
             <Flex variant="center" className="space-x-4 text-sm text-gray-600">
@@ -60,17 +66,10 @@ const TarjetaTurnoDelivery = (props) => ***REMOVED***
                 </Flex>
               )***REMOVED***
             </Flex>
-
-            <Flex variant="center">
-              <DollarSign size=***REMOVED***16***REMOVED*** className="mr-1 text-green-600" />
-              <span className="font-bold text-green-600 text-lg">
-                ***REMOVED***formatCurrency(shiftData.totalWithDiscount)***REMOVED***
-              </span>
-            </Flex>
           </Flex>
         ),
 
-        // Stats desktop - Pedidos, km y ganancia
+        // Stats desktop - Pedidos y km (SIN Ganancia)
         desktopStats: (
           <Flex variant="between">
             <Flex variant="center" className="text-sm text-gray-600 gap-4">
@@ -88,17 +87,10 @@ const TarjetaTurnoDelivery = (props) => ***REMOVED***
                 </Flex>
               )***REMOVED***
             </Flex>
-
-            <Flex variant="center">
-              <DollarSign size=***REMOVED***16***REMOVED*** className="mr-1 text-green-600" />
-              <span className="text-lg font-semibold text-green-600">
-                ***REMOVED***formatCurrency(shiftData.totalWithDiscount)***REMOVED***
-              </span>
-            </Flex>
           </Flex>
         ),
 
-        // Contenido expandido - Detalles financieros
+        // Contenido expandido - Detalles financieros (ORIGINAL RESTAURADO)
         expandedContent: (shiftData.propinas > 0 || shiftData.gastos > 0) && (
           <div className="bg-green-50 rounded-lg p-3">
             <div className="text-sm space-y-2">
@@ -131,8 +123,8 @@ const TarjetaTurnoDelivery = (props) => ***REMOVED***
               )***REMOVED***
 
               <Flex justify="between" className="border-t border-green-200 pt-2">
-                <span className="font-semibold text-green-700">Ganancia neta:</span>
-                <span className="font-bold">***REMOVED***formatCurrency(shiftData.totalWithDiscount)***REMOVED***</span>
+                <span className="font-semibold text-green-700 mr-2">Ganancia neta:</span>
+                <span className="font-bold text-green-700">***REMOVED***formatCurrency(shiftData.totalWithDiscount)***REMOVED***</span>
               </Flex>
             </div>
           </div>

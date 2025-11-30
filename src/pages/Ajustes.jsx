@@ -145,7 +145,6 @@ const Ajustes = () => ***REMOVED***
               onError=***REMOVED***handleError***REMOVED***
             />
           </div>
-
         </div>
       </div>
 
