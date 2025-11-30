@@ -50,7 +50,6 @@ const TarjetaTurno = (props) => {
           <Flex variant="between" className="pt-2 border-t border-gray-100">
             <span className="text-sm text-gray-500">Ganancia estimada</span>
             <div className="flex items-center">
-              <DollarSign size={16} className="mr-1" style={{ color: colors.primary }} />
               <span className="font-bold text-lg" style={{ color: colors.primary }}>
                 {formatCurrency(shiftData.totalWithDiscount)}
               </span>

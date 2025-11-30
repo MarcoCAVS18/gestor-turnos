@@ -71,15 +71,6 @@ const CalendarDaySummary = ({
         <h3 className="text-lg font-semibold">
           Turnos del día seleccionado
         </h3>
-        <Button
-          onClick={() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T12:00:00'))}
-          size="sm"
-          className="flex items-center gap-1"
-          icon={PlusCircle}
-          themeColor={thematicColors?.base}
-        >
-          Nuevo
-        </Button>
       </div>
       
       {turnosSegurosDia.length > 0 ? (

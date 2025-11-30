@@ -13,6 +13,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
+import ScrollToTop from './components/layout/ScrollToTop/index.jsx';
 
 // Componentes principales
 import Header from './components/layout/Header';
@@ -114,6 +115,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* Autenticación */}
         <Route path="/login" element={<Login />} />

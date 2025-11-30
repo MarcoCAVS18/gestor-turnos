@@ -113,7 +113,7 @@ const BaseShiftCard = ({
         <div className="space-y-3">
           {/* Header móvil: Solo nombre y acciones */}
           <Flex variant="start-between">
-            <Flex variant="center" className="flex items-center space-x-3 flex-1 min-w-0">
+            <Flex variant="start" className="items-start space-x-3 flex-1 min-w-0">
               {/* Avatar más pequeño */}
               <Flex variant="center"
                 className="rounded-lg w-8 h-8 text-white font-bold text-sm flex-shrink-0"

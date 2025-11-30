@@ -45,7 +45,7 @@ const BaseStatsCard = ({
             <p className="text-xs text-gray-500">{emptyText}</p>
           </div>
         ) : (
-          <div className="w-full h-full">
+          <div className="w-full h-full min-w-0">
             {children}
           </div>
         )}
