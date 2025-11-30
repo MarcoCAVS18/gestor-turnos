@@ -8,6 +8,7 @@ import { formatCurrency } from '../../../utils/currency';
 import Flex from '../../ui/Flex';
 import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
+import ProgressBar from '../../ui/ProgressBar';
 
 const ThisWeekSummaryCard = ({ stats }) => {
   const colors = useThemeColors();
@@ -31,6 +32,12 @@ const ThisWeekSummaryCard = ({ stats }) => {
   // Función para navegar a ajustes
   const irAjustes = () => {
     navigate('/ajustes');
+  };
+
+  const getProgressBarColor = (progress) => {
+    if (progress >= 75) return '#10B981';
+    if (progress >= 50) return colors.primary;
+    return '#F59E0B';
   };
 
   return (
@@ -57,20 +64,15 @@ const ThisWeekSummaryCard = ({ stats }) => {
         {/* Progreso de horas - Solo si hay meta */}
         {tieneMetaHoras ? (
           <div className="space-y-2">
-            <Flex justify="between" className="text-sm">
-              <span className="text-gray-600">Progreso</span>
+            <Flex variant="between" className="text-sm">
+              <span className="text-gray-600">Progreso: </span>
               <span className="font-medium">{horasSemana.toFixed(1)}h / {metaHoras}h</span>
             </Flex>
 
-            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{
-                  width: `${progresoLimitado}%`,
-                  backgroundColor: progresoLimitado >= 75 ? '#10B981' : progresoLimitado >= 50 ? colors.primary : '#F59E0B'
-                }}
-              />
-            </div>
+            <ProgressBar
+              value={progresoLimitado}
+              color={getProgressBarColor(progresoLimitado)}
+            />
           </div>
         ) : (
           // Sin meta - Call to action SIMPLIFICADO
@@ -103,7 +105,7 @@ const ThisWeekSummaryCard = ({ stats }) => {
         )}
 
         {/* Stats básicas - Mostrar turnos realizados */}
-        <Flex justify="between" className=" text-sm">
+        <Flex variant="between" className=" text-sm">
           <div className="text-center">
             <p className="font-semibold text-gray-800">{turnosSemana}</p>
             <p className="text-xs text-gray-500">turnos</p>

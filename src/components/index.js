@@ -8,6 +8,7 @@ export { default as Modal } from './ui/Modal';
 export { default as Card } from './ui/Card';
 export { default as ActionsMenu } from './ui/ActionsMenu';
 export { default as NotificationBanner } from './ui/NotificationBanner';
+export { default as ProgressBar } from './ui/ProgressBar';
 
 // Layout Components  
 export { default as Header } from './layout/Header';

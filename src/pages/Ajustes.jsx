@@ -145,7 +145,6 @@ const Ajustes = () => {
               onError={handleError}
             />
           </div>
-
         </div>
       </div>
 

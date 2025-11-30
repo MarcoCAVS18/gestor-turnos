@@ -13,6 +13,7 @@ import {
   sortPlatforms
 } from '../../../utils/statsCalculations';
 import Flex from '../../ui/Flex';
+import ProgressBar from '../../ui/ProgressBar';
 
 const ComparacionPlataformas = ({ deliveryStats }) => {
   const colors = useThemeColors();
@@ -150,15 +151,10 @@ const ComparacionPlataformas = ({ deliveryStats }) => {
               </Flex>
 
               <div className="mb-2">
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-500 ${animacionActiva ? 'animate-pulse' : ''}`}
-                    style={{ 
-                      width: `${porcentajeGanancias}%`,
-                      backgroundColor: plataforma.color || colors.primary
-                    }}
-                  />
-                </div>
+                <ProgressBar
+                  value={porcentajeGanancias}
+                  color={plataforma.color || colors.primary}
+                />
               </div>
 
               <div className="grid grid-cols-4 gap-2 text-sm">

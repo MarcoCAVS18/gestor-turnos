@@ -43,13 +43,13 @@ const TarjetaTrabajo = (props) => {
           <div className="mt-3 pt-3 border-t border-gray-100">
             <div className="grid grid-cols-2 gap-2 text-xs">
               {trabajo.tarifas.sabado && trabajo.tarifas.sabado !== tarifaBase && (
-                <Flex justify="between">
+                <Flex variant="between">
                   <span className="text-gray-500">Sábado:</span>
                   <span className="font-medium">{formatCurrency(trabajo.tarifas.sabado)}/h</span>
                 </Flex>
               )}
               {trabajo.tarifas.domingo && trabajo.tarifas.domingo !== tarifaBase && (
-                <Flex justify="between">
+                <Flex variant="between">
                   <span className="text-gray-500">Domingo:</span>
                   <span className="font-medium">{formatCurrency(trabajo.tarifas.domingo)}/h</span>
                 </Flex>

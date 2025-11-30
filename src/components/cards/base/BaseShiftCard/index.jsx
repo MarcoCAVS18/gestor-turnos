@@ -1,6 +1,4 @@
-// src/components/cards/BaseShiftCard/index.jsx
-// Componente base unificado para TarjetaTurno y TarjetaTurnoDelivery
-
+// src/components/cards/base/BaseShiftCard/index.jsx
 import React, { useState } from 'react';
 import { Edit, Edit2, Trash2, ChevronDown, ChevronUp, Clock, MessageSquare } from 'lucide-react';
 import Card from '../../../ui/Card';
@@ -23,11 +21,11 @@ const BaseShiftCard = ({
   showActions = true,
   variant = 'default',
   compact = false,
-  shiftData, // Datos calculados del turno (pasados desde el componente padre)
-  earningValue, // Nuevo prop para el valor de la ganancia
-  earningLabel, // Nuevo prop para la etiqueta de la ganancia
-  currencySymbol, // Nuevo prop para el símbolo de la moneda
-  children // Contenido específico del tipo de turno
+  shiftData, 
+  earningValue, 
+  earningLabel, 
+  currencySymbol, 
+  children 
 }) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile();
@@ -67,7 +65,7 @@ const BaseShiftCard = ({
     delivery: {
       editIcon: Edit2,
       defaultColor: '#10B981',
-      avatarContent: null // Delivery usa ícono de Truck
+      avatarContent: null 
     }
   };
 
@@ -82,7 +80,6 @@ const BaseShiftCard = ({
     (type === 'delivery' && (turno.propinas > 0 || turno.gastoCombustible > 0))
   );
 
-  // Configurar acciones del menú
   const actions = [
     {
       icon: currentConfig.editIcon,
@@ -105,6 +102,20 @@ const BaseShiftCard = ({
 
   const colorTrabajo = trabajo.color || trabajo.colorAvatar || currentConfig.defaultColor;
 
+  // Renderizado del Footer de Ganancia (Igual para Mobile y Desktop)
+  const renderEarningFooter = () => {
+    if (earningValue === undefined) return null;
+    
+    return (
+      <Flex variant="between" className="pt-2 border-t border-gray-100 mt-2">
+        <span className="text-sm text-gray-500 font-medium">{earningLabel || 'Ganancia'}</span>
+        <span className="text-lg font-bold text-green-600">
+          {formatCurrency(earningValue, currencySymbol)}
+        </span>
+      </Flex>
+    );
+  };
+
   // VERSION MÓVIL OPTIMIZADA
   if (isMobile) {
     return (
@@ -115,10 +126,10 @@ const BaseShiftCard = ({
         className="w-full"
       >
         <div className="space-y-3">
-          {/* Header móvil: Solo nombre y acciones */}
+          {/* Header móvil: Avatar + Nombre + Tag Turno */}
           <Flex variant="start-between">
-            <Flex variant="start" className="items-start space-x-3 flex-1 min-w-0">
-              {/* Avatar más pequeño */}
+            <Flex variant="start" className="items-center space-x-3 flex-1 min-w-0">
+              {/* Avatar */}
               <Flex variant="center"
                 className="rounded-lg w-8 h-8 text-white font-bold text-sm flex-shrink-0"
                 style={{ backgroundColor: colorTrabajo }}
@@ -126,25 +137,20 @@ const BaseShiftCard = ({
                 {currentConfig.avatarContent || children?.avatarIcon}
               </Flex>
 
-              {/* Nombre truncado */}
-              <h3 className="font-semibold text-gray-800 truncate text-base">
-                {trabajo.nombre}
-              </h3>
+              {/* Nombre y Tag Turno (JUNTOS) */}
+              <Flex className="gap-2 min-w-0 overflow-hidden">
+                <h3 className="font-semibold text-gray-800 truncate text-base">
+                  {trabajo.nombre}
+                </h3>
+                <ShiftTypeBadge turno={turno} size="sm" />
+              </Flex>
             </Flex>
 
-            {earningValue !== undefined && (
-              <div className="flex flex-col items-end mr-2 text-right">
-                <span className="text-xs text-gray-500">{earningLabel || 'Ganancia'}</span>
-                <span className="text-base font-semibold" style={{ color: colors.success }}>
-                  {formatCurrency(earningValue, currencySymbol)}
-                </span>
-              </div>
-            )}
-            {/* Solo menú de acciones */}
+            {/* Menú de acciones */}
             {showActions && <ActionsMenu actions={actions} />}
           </Flex>
 
-          {/* Información principal en filas verticales */}
+          {/* Información principal */}
           <div className="space-y-2">
             {/* Fila 1: Horario y duración */}
             <Flex variant="start">
@@ -152,33 +158,33 @@ const BaseShiftCard = ({
                 <Clock size={14} className="mr-1.5" />
                 <span>{turno.horaInicio} - {turno.horaFin}</span>
               </Flex>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-600 ml-2 border-l pl-2 border-gray-300">
                 {shiftData?.hours?.toFixed(1) || '0.0'}h
               </div>
             </Flex>
 
-            {/* Fila 2: Fecha y badges en línea separada */}
-            <Flex variant="between">
-              <Flex variant="center" className="space-x-2">
-                {fecha && (
-                  <Badge variant="default" size="sm">
-                    {formatRelativeDate(fecha)}
-                  </Badge>
-                )}
-                <ShiftTypeBadge turno={turno} size="sm" />
-                {turno.cruzaMedianoche && (
-                  <span className="text-blue-600 text-xs">🌙</span>
-                )}
-              </Flex>
-
-              {/* Badge adicional específico del tipo (ej: smoko) */}
+            {/* Fila 2: Fecha y Tag Smoko (JUNTOS) */}
+            <Flex variant="start" className="gap-2">
+              {fecha && (
+                <Badge variant="default" size="sm">
+                  {formatRelativeDate(fecha)}
+                </Badge>
+              )}
+              {/* Badge de Smoko al lado de la fecha */}
               {children?.mobileBadge}
+              
+              {turno.cruzaMedianoche && (
+                <span className="text-blue-600 text-xs ml-auto">🌙</span>
+              )}
             </Flex>
 
-            {/* Fila 3: Contenido específico del tipo (pasado como children) */}
+            {/* Fila 3: Contenido específico (Stats Delivery) */}
             {children?.mobileStats}
 
-            {/* Botón expandir si hay contenido adicional */}
+            {/* Fila 4: Ganancia (Footer Between) */}
+            {renderEarningFooter()}
+
+            {/* Botón expandir */}
             {hasAdditionalContent && (
               <button
                 onClick={toggleExpanded}
@@ -199,10 +205,9 @@ const BaseShiftCard = ({
             )}
           </div>
 
-          {/* Contenido expandible móvil */}
+          {/* Contenido expandible móvil (Estilos Originales) */}
           {hasAdditionalContent && expanded && (
             <div className="border-t pt-3 space-y-3">
-              {/* Notas */}
               {(turno.observaciones?.trim() || turno.descripcion?.trim() || turno.notas?.trim()) && (
                 <div className="bg-gray-50 rounded-lg p-3">
                   <Flex variant="center" className="gap-2 mb-2">
@@ -215,7 +220,6 @@ const BaseShiftCard = ({
                 </div>
               )}
 
-              {/* Turnos nocturnos */}
               {turno.cruzaMedianoche && (
                 <div className="bg-blue-50 rounded-lg p-3">
                   <span className="text-sm font-medium text-blue-700">Turno Nocturno</span>
@@ -232,7 +236,6 @@ const BaseShiftCard = ({
                 </div>
               )}
 
-              {/* Contenido adicional específico del tipo */}
               {children?.expandedContent}
             </div>
           )}
@@ -254,7 +257,7 @@ const BaseShiftCard = ({
         <Flex variant="start-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-3">
-              {/* Avatar del trabajo */}
+              {/* Avatar */}
               <Flex variant="center"
                 className="w-10 h-10 rounded-lg text-white font-bold flex-shrink-0"
                 style={{ backgroundColor: colorTrabajo }}
@@ -262,41 +265,37 @@ const BaseShiftCard = ({
                 {currentConfig.avatarContent || children?.avatarIcon}
               </Flex>
 
-              {/* Nombre del trabajo y badges */}
+              {/* Info */}
               <div className="flex-1 min-w-0">
+                {/* Nombre + Tag Turno (JUNTOS) */}
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <h3 className="font-semibold text-gray-800 truncate min-w-0">
                     {trabajo.nombre}
                   </h3>
                   <ShiftTypeBadge turno={turno} size="sm" />
-
-                  {/* Badge adicional específico del tipo */}
-                  {children?.desktopBadge}
                 </div>
 
-                {/* Información básica del turno con fecha integrada */}
                 <Flex variant="start" className="text-sm text-gray-600 gap-3 flex-wrap">
                   <Flex variant="center">
                     <Clock size={14} className="mr-1.5" />
                     <span>{turno.horaInicio} - {turno.horaFin}</span>
                   </Flex>
-
                   <span className="text-gray-300">•</span>
-
-                  {/* Mostrar tiempo trabajado */}
                   <span>{shiftData?.hours?.toFixed(1) || '0.0'}h</span>
-
-                  {/* Fecha como texto simple */}
+                  
                   {fecha && (
                     <>
                       <span className="text-gray-300">•</span>
-                      <span className="text-xs text-gray-500">
-                        {formatRelativeDate(fecha)}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500">
+                          {formatRelativeDate(fecha)}
+                        </span>
+                        {/* Tag Smoko al lado de la fecha */}
+                        {children?.desktopBadge}
+                      </div>
                     </>
                   )}
 
-                  {/* Indicador nocturno */}
                   {turno.cruzaMedianoche && (
                     <>
                       <span className="text-gray-300">•</span>
@@ -307,21 +306,14 @@ const BaseShiftCard = ({
               </div>
             </div>
 
-            {/* Contenido específico del tipo (stats y ganancia) */}
             {children?.desktopStats}
+
+            {/* Ganancia Footer (Desktop) */}
+            {renderEarningFooter()}
           </div>
 
           {/* Acciones desktop */}
-          <Flex variant="center" className="gap-2 ml-4">
-            {earningValue !== undefined && (
-              <div className="flex flex-col items-end mr-2">
-                <span className="text-sm text-gray-500">{earningLabel || 'Ganancia'}</span>
-                <span className="text-lg font-semibold" style={{ color: colors.success }}>
-                  {formatCurrency(earningValue, currencySymbol)}
-                </span>
-              </div>
-            )}
-            {/* Botón de expansión */}
+          <Flex variant="center" className="gap-2 ml-4 self-start">
             {hasAdditionalContent && (
               <button
                 onClick={toggleExpanded}
@@ -336,15 +328,13 @@ const BaseShiftCard = ({
               </button>
             )}
 
-            {/* Menú de acciones */}
             {showActions && <ActionsMenu actions={actions} />}
           </Flex>
         </Flex>
 
-        {/* Contenido expandible desktop */}
+        {/* Contenido expandible desktop (Estilos Originales) */}
         {hasAdditionalContent && expanded && (
           <div className="border-t pt-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
-            {/* Solo mostrar notas/observaciones */}
             {(turno.observaciones?.trim() || turno.descripcion?.trim() || turno.notas?.trim()) && (
               <div className="bg-gray-50 rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-2">
@@ -356,8 +346,7 @@ const BaseShiftCard = ({
                 </p>
               </div>
             )}
-
-            {/* Información adicional para turnos nocturnos */}
+            
             {turno.cruzaMedianoche && (
               <div className="bg-blue-50 rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
@@ -376,10 +365,8 @@ const BaseShiftCard = ({
               </div>
             )}
 
-            {/* Contenido adicional específico del tipo */}
             {children?.expandedContent}
 
-            {/* Información de fechas */}
             {turno.fechaCreacion && (
               <div className="text-xs text-gray-500 border-t pt-2">
                 Creado: {new Date(turno.fechaCreacion.seconds * 1000 || turno.fechaCreacion).toLocaleDateString('es-ES', {
@@ -393,7 +380,6 @@ const BaseShiftCard = ({
           </div>
         )}
 
-        {/* Indicador visual si hay contenido pero no está expandido */}
         {hasAdditionalContent && !expanded && (
           <Flex variant="center" className="pt-1">
             <Flex className="space-x-1">

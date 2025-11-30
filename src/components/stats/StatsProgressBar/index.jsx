@@ -5,6 +5,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
+import ProgressBar from '../../ui/ProgressBar';
 
 const StatsProgressBar = ({ className = '', datosActuales, weeklyHoursGoal }) => {
   const { horasTrabajadas, totalGanado } = datosActuales;
@@ -42,15 +43,11 @@ const StatsProgressBar = ({ className = '', datosActuales, weeklyHoursGoal }) =>
             <span className="text-gray-500">{porcentajeLimitado.toFixed(1)}%</span>
           </Flex>
           
-          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all duration-500 ease-out"
-              style={{
-                width: `${porcentajeLimitado}%`,
-                backgroundColor: getColorProgreso()
-              }}
-            />
-          </div>
+          <ProgressBar
+            value={porcentajeLimitado}
+            color={getColorProgreso()}
+            height="h-3"
+          />
         </div>
 
         {/* Stats adicionales */}
