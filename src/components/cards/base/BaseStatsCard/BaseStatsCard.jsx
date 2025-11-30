@@ -45,7 +45,7 @@ const BaseStatsCard = (***REMOVED***
             <p className="text-xs text-gray-500">***REMOVED***emptyText***REMOVED***</p>
           </div>
         ) : (
-          <div className="w-full h-full">
+          <div className="w-full h-full min-w-0">
             ***REMOVED***children***REMOVED***
           </div>
         )***REMOVED***

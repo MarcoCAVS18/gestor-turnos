@@ -71,15 +71,6 @@ const CalendarDaySummary = (***REMOVED***
         <h3 className="text-lg font-semibold">
           Turnos del día seleccionado
         </h3>
-        <Button
-          onClick=***REMOVED***() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
-          size="sm"
-          className="flex items-center gap-1"
-          icon=***REMOVED***PlusCircle***REMOVED***
-          themeColor=***REMOVED***thematicColors?.base***REMOVED***
-        >
-          Nuevo
-        </Button>
       </div>
       
       ***REMOVED***turnosSegurosDia.length > 0 ? (
