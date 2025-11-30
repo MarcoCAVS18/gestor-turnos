@@ -1,6 +1,8 @@
 // src/pages/Dashboard.jsx
 
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
+import ***REMOVED*** LayoutDashboard ***REMOVED*** from 'lucide-react';
+import PageHeader from '../components/layout/PageHeader';
 import ***REMOVED*** useDashboardStats ***REMOVED*** from '../hooks/useDashboardStats';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** generatePDFReport, generatePNGReport, generateXLSXReport ***REMOVED*** from '../services/exportService';
@@ -50,11 +52,13 @@ const Dashboard = () => ***REMOVED***
   ***REMOVED***;
 
   return (
-    <div className="px-4 py-6 pb-32 space-y-6">
-      ***REMOVED***/* Welcome Card - siempre full width */***REMOVED***
-      <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
-        <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
-      </motion.div>
+    <div className="px-4 py-6 space-y-6">
+      <PageHeader
+        title="Dashboard"
+        subtitle="Una vista general de tu actividad y progreso."
+        icon=***REMOVED***LayoutDashboard***REMOVED***
+      />
+
 
       ***REMOVED***/* Layout responsivo principal */***REMOVED***
       <div className="space-y-6">
@@ -65,10 +69,12 @@ const Dashboard = () => ***REMOVED***
           ***REMOVED***/* CONTENEDOR 1: Stats + Acciones (4 columnas) */***REMOVED***
           <div className="lg:col-span-4 space-y-6">
             ***REMOVED***/* QuickStatsGrid maneja su propio layout desktop */***REMOVED***
+            <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
+              <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
+            </motion.div>
             <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
 
-            ***REMOVED***/* Acciones rápidas debajo */***REMOVED***
-            <QuickActionsCard />
+
           </div>
 
           ***REMOVED***/* CONTENEDOR 2: Esta semana vertical (1 columna) */***REMOVED***
@@ -80,6 +86,9 @@ const Dashboard = () => ***REMOVED***
         ***REMOVED***/* MÓVIL: Stack vertical */***REMOVED***
         <div className="block lg:hidden space-y-4">
           ***REMOVED***/* QuickStatsGrid maneja su propio layout móvil 2x2 */***REMOVED***
+          <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
+            <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
+          </motion.div>
           <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
 
           ***REMOVED***/* Esta semana */***REMOVED***
@@ -101,28 +110,35 @@ const Dashboard = () => ***REMOVED***
           </div>
 
           ***REMOVED***/* Columna Derecha: Grilla anidada de 2 columnas + fila inferior */***REMOVED***
-          <div className="lg:col-span-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              ***REMOVED***/* Columna anidada 1: Favoritos y Más Rentable */***REMOVED***
-              <div className="space-y-6">
-                <FavoriteWorksCard trabajosFavoritos=***REMOVED***stats.trabajosFavoritos***REMOVED*** />
-                <TopWorkCard trabajoMasRentable=***REMOVED***stats.trabajoMasRentable***REMOVED*** />
-              </div>
-              ***REMOVED***/* Columna anidada 2: Próximo Turno y Exportar */***REMOVED***
-              <div className="space-y-6">
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+              ***REMOVED***/* Top Left: Favorite Works */***REMOVED***
+              <FavoriteWorksCard trabajosFavoritos=***REMOVED***stats.trabajosFavoritos***REMOVED*** className="flex-grow" />
+
+              ***REMOVED***/* Top Right: Export Report Card + Next Shift Card */***REMOVED***
+              <div className="flex flex-col gap-6">
                 <NextShiftCard
                   proximoTurno=***REMOVED***stats.proximoTurno***REMOVED***
                   formatearFecha=***REMOVED***stats.formatearFecha***REMOVED***
                 />
-                <ExportReportCard onExport=***REMOVED***handleExport***REMOVED*** />
+                <ExportReportCard onExport=***REMOVED***handleExport***REMOVED*** className="flex-grow" />
               </div>
-              ***REMOVED***/* Fila inferior para Proyección */***REMOVED***
-              <div className="md:col-span-2">
-                <ProjectionCard
-                  proyeccionMensual=***REMOVED***stats.proyeccionMensual***REMOVED***
-                  horasTrabajadas=***REMOVED***stats.horasTrabajadas***REMOVED***
-                />
-              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+              ***REMOVED***/* Bottom Left: Top Work */***REMOVED***
+              <TopWorkCard trabajoMasRentable=***REMOVED***stats.trabajoMasRentable***REMOVED*** className="flex-grow" />
+
+              ***REMOVED***/* Bottom Right: Quick Actions */***REMOVED***
+              <QuickActionsCard className="flex-grow" />
+            </div>
+
+            ***REMOVED***/* Fila inferior para Proyección */***REMOVED***
+            <div>
+              <ProjectionCard
+                proyeccionMensual=***REMOVED***stats.proyeccionMensual***REMOVED***
+                horasTrabajadas=***REMOVED***stats.horasTrabajadas***REMOVED***
+              />
             </div>
           </div>
         </div>

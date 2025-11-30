@@ -102,7 +102,7 @@ const CalendarioView = () => ***REMOVED***
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
       <PageHeader
-        title="Calendario de Turnos"
+        title="Calendario"
         subtitle=***REMOVED***hayTrabajos ? "Visualiza y gestiona tus turnos por fecha" : null***REMOVED***
         icon=***REMOVED***CalendarDays***REMOVED***
         action=***REMOVED***hayTrabajos && fechaSeleccionada && ***REMOVED***

@@ -10,6 +10,7 @@ import Badge from '../../../ui/Badge';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
 import ***REMOVED*** formatRelativeDate, createSafeDate ***REMOVED*** from '../../../../utils/time';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
 
 const BaseShiftCard = (***REMOVED***
@@ -23,6 +24,9 @@ const BaseShiftCard = (***REMOVED***
   variant = 'default',
   compact = false,
   shiftData, // Datos calculados del turno (pasados desde el componente padre)
+  earningValue, // Nuevo prop para el valor de la ganancia
+  earningLabel, // Nuevo prop para la etiqueta de la ganancia
+  currencySymbol, // Nuevo prop para el símbolo de la moneda
   children // Contenido específico del tipo de turno
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -128,6 +132,14 @@ const BaseShiftCard = (***REMOVED***
               </h3>
             </Flex>
 
+            ***REMOVED***earningValue !== undefined && (
+              <div className="flex flex-col items-end mr-2 text-right">
+                <span className="text-xs text-gray-500">***REMOVED***earningLabel || 'Ganancia'***REMOVED***</span>
+                <span className="text-base font-semibold" style=***REMOVED******REMOVED*** color: colors.success ***REMOVED******REMOVED***>
+                  ***REMOVED***formatCurrency(earningValue, currencySymbol)***REMOVED***
+                </span>
+              </div>
+            )***REMOVED***
             ***REMOVED***/* Solo menú de acciones */***REMOVED***
             ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
           </Flex>
@@ -135,8 +147,8 @@ const BaseShiftCard = (***REMOVED***
           ***REMOVED***/* Información principal en filas verticales */***REMOVED***
           <div className="space-y-2">
             ***REMOVED***/* Fila 1: Horario y duración */***REMOVED***
-            <Flex variant="between">
-              <Flex variant="center" className="text-sm text-gray-600">
+            <Flex variant="start">
+              <Flex variant="start" className="text-sm text-gray-600">
                 <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
                 <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
               </Flex>
@@ -263,7 +275,7 @@ const BaseShiftCard = (***REMOVED***
                 </div>
 
                 ***REMOVED***/* Información básica del turno con fecha integrada */***REMOVED***
-                <Flex variant="center" className="text-sm text-gray-600 gap-3 flex-wrap">
+                <Flex variant="start" className="text-sm text-gray-600 gap-3 flex-wrap">
                   <Flex variant="center">
                     <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
                     <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
@@ -301,6 +313,14 @@ const BaseShiftCard = (***REMOVED***
 
           ***REMOVED***/* Acciones desktop */***REMOVED***
           <Flex variant="center" className="gap-2 ml-4">
+            ***REMOVED***earningValue !== undefined && (
+              <div className="flex flex-col items-end mr-2">
+                <span className="text-sm text-gray-500">***REMOVED***earningLabel || 'Ganancia'***REMOVED***</span>
+                <span className="text-lg font-semibold" style=***REMOVED******REMOVED*** color: colors.success ***REMOVED******REMOVED***>
+                  ***REMOVED***formatCurrency(earningValue, currencySymbol)***REMOVED***
+                </span>
+              </div>
+            )***REMOVED***
             ***REMOVED***/* Botón de expansión */***REMOVED***
             ***REMOVED***hasAdditionalContent && (
               <button

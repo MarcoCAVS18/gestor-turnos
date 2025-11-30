@@ -4,7 +4,8 @@ import React from 'react';
 import ***REMOVED*** useTrabajos ***REMOVED*** from '../hooks/useTrabajos';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import ShareMessages from '../components/work/ShareMessages';
-import WorkHeader from '../components/work/WorkHeader';
+import PageHeader from '../components/layout/PageHeader'; // Added import
+import ***REMOVED*** Briefcase, Plus ***REMOVED*** from 'lucide-react'; // Added icons
 import WorkEmptyState from '../components/work/WorkEmptyState';
 import TarjetaTrabajo from '../components/cards/work/TarjetaTrabajo';
 import TarjetaDelivery from '../components/cards/work/TarjetaTrabajoDelivery';
@@ -41,9 +42,11 @@ const Trabajos = () => ***REMOVED***
         <ShareMessages messages=***REMOVED***messages***REMOVED*** />
 
         ***REMOVED***/* Header */***REMOVED***
-        <WorkHeader 
-          todosLosTrabajos=***REMOVED***todosLosTrabajos***REMOVED***
-          onNuevoTrabajo=***REMOVED***abrirModalNuevo***REMOVED***
+        <PageHeader
+          title="Trabajos"
+          subtitle="Administra tus diferentes trabajos o empleos."
+          icon=***REMOVED***Briefcase***REMOVED***
+          action=***REMOVED******REMOVED*** onClick: abrirModalNuevo, icon: Plus, label: 'Nuevo Trabajo' ***REMOVED******REMOVED***
         />
 
         ***REMOVED***/* Contenido principal */***REMOVED***

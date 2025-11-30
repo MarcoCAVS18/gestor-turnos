@@ -105,27 +105,27 @@ const TarjetaTurnoDelivery = (props) => ***REMOVED***
               <div className="font-medium text-green-700 mb-2">Detalles Financieros</div>
 
               <Flex justify="between">
-                <span className="text-green-600">Ganancia total:</span>
+                <span className="text-green-600 mr-2">Ganancia total:</span>
                 <span className="font-medium">***REMOVED***formatCurrency(shiftData.gananciaTotal)***REMOVED***</span>
               </Flex>
 
               ***REMOVED***shiftData.propinas > 0 && (
                 <Flex justify="between">
-                  <span className="text-green-600">Propinas:</span>
+                  <span className="text-green-600 mr-2">Propinas:</span>
                   <span className="font-medium">***REMOVED***formatCurrency(shiftData.propinas)***REMOVED***</span>
                 </Flex>
               )***REMOVED***
 
               ***REMOVED***shiftData.gastos > 0 && (
                 <Flex justify="between">
-                  <span className="text-green-600">Gastos combustible:</span>
+                  <span className="text-green-600 mr-2">Gastos combustible:</span>
                   <span className="font-medium">***REMOVED***formatCurrency(shiftData.gastos)***REMOVED***</span>
                 </Flex>
               )***REMOVED***
 
               ***REMOVED***shiftData.numeroPedidos > 0 && (
                 <Flex justify="between" className="text-green-600">
-                  <span>Promedio/pedido:</span>
+                  <span className='mr-2'>Promedio/pedido:</span>
                   <span>***REMOVED***formatCurrency(shiftData.promedioPorPedido)***REMOVED***</span>
                 </Flex>
               )***REMOVED***
