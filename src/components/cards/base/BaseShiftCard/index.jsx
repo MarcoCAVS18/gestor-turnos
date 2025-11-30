@@ -1,6 +1,4 @@
-// src/components/cards/BaseShiftCard/index.jsx
-// Componente base unificado para TarjetaTurno y TarjetaTurnoDelivery
-
+// src/components/cards/base/BaseShiftCard/index.jsx
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Edit, Edit2, Trash2, ChevronDown, ChevronUp, Clock, MessageSquare ***REMOVED*** from 'lucide-react';
 import Card from '../../../ui/Card';
@@ -23,11 +21,11 @@ const BaseShiftCard = (***REMOVED***
   showActions = true,
   variant = 'default',
   compact = false,
-  shiftData, // Datos calculados del turno (pasados desde el componente padre)
-  earningValue, // Nuevo prop para el valor de la ganancia
-  earningLabel, // Nuevo prop para la etiqueta de la ganancia
-  currencySymbol, // Nuevo prop para el símbolo de la moneda
-  children // Contenido específico del tipo de turno
+  shiftData, 
+  earningValue, 
+  earningLabel, 
+  currencySymbol, 
+  children 
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const isMobile = useIsMobile();
@@ -67,7 +65,7 @@ const BaseShiftCard = (***REMOVED***
     delivery: ***REMOVED***
       editIcon: Edit2,
       defaultColor: '#10B981',
-      avatarContent: null // Delivery usa ícono de Truck
+      avatarContent: null 
     ***REMOVED***
   ***REMOVED***;
 
@@ -82,7 +80,6 @@ const BaseShiftCard = (***REMOVED***
     (type === 'delivery' && (turno.propinas > 0 || turno.gastoCombustible > 0))
   );
 
-  // Configurar acciones del menú
   const actions = [
     ***REMOVED***
       icon: currentConfig.editIcon,
@@ -105,6 +102,20 @@ const BaseShiftCard = (***REMOVED***
 
   const colorTrabajo = trabajo.color || trabajo.colorAvatar || currentConfig.defaultColor;
 
+  // Renderizado del Footer de Ganancia (Igual para Mobile y Desktop)
+  const renderEarningFooter = () => ***REMOVED***
+    if (earningValue === undefined) return null;
+    
+    return (
+      <Flex variant="between" className="pt-2 border-t border-gray-100 mt-2">
+        <span className="text-sm text-gray-500 font-medium">***REMOVED***earningLabel || 'Ganancia'***REMOVED***</span>
+        <span className="text-lg font-bold text-green-600">
+          ***REMOVED***formatCurrency(earningValue, currencySymbol)***REMOVED***
+        </span>
+      </Flex>
+    );
+  ***REMOVED***;
+
   // VERSION MÓVIL OPTIMIZADA
   if (isMobile) ***REMOVED***
     return (
@@ -115,10 +126,10 @@ const BaseShiftCard = (***REMOVED***
         className="w-full"
       >
         <div className="space-y-3">
-          ***REMOVED***/* Header móvil: Solo nombre y acciones */***REMOVED***
+          ***REMOVED***/* Header móvil: Avatar + Nombre + Tag Turno */***REMOVED***
           <Flex variant="start-between">
-            <Flex variant="start" className="items-start space-x-3 flex-1 min-w-0">
-              ***REMOVED***/* Avatar más pequeño */***REMOVED***
+            <Flex variant="start" className="items-center space-x-3 flex-1 min-w-0">
+              ***REMOVED***/* Avatar */***REMOVED***
               <Flex variant="center"
                 className="rounded-lg w-8 h-8 text-white font-bold text-sm flex-shrink-0"
                 style=***REMOVED******REMOVED*** backgroundColor: colorTrabajo ***REMOVED******REMOVED***
@@ -126,25 +137,20 @@ const BaseShiftCard = (***REMOVED***
                 ***REMOVED***currentConfig.avatarContent || children?.avatarIcon***REMOVED***
               </Flex>
 
-              ***REMOVED***/* Nombre truncado */***REMOVED***
-              <h3 className="font-semibold text-gray-800 truncate text-base">
-                ***REMOVED***trabajo.nombre***REMOVED***
-              </h3>
+              ***REMOVED***/* Nombre y Tag Turno (JUNTOS) */***REMOVED***
+              <Flex className="gap-2 min-w-0 overflow-hidden">
+                <h3 className="font-semibold text-gray-800 truncate text-base">
+                  ***REMOVED***trabajo.nombre***REMOVED***
+                </h3>
+                <ShiftTypeBadge turno=***REMOVED***turno***REMOVED*** size="sm" />
+              </Flex>
             </Flex>
 
-            ***REMOVED***earningValue !== undefined && (
-              <div className="flex flex-col items-end mr-2 text-right">
-                <span className="text-xs text-gray-500">***REMOVED***earningLabel || 'Ganancia'***REMOVED***</span>
-                <span className="text-base font-semibold" style=***REMOVED******REMOVED*** color: colors.success ***REMOVED******REMOVED***>
-                  ***REMOVED***formatCurrency(earningValue, currencySymbol)***REMOVED***
-                </span>
-              </div>
-            )***REMOVED***
-            ***REMOVED***/* Solo menú de acciones */***REMOVED***
+            ***REMOVED***/* Menú de acciones */***REMOVED***
             ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
           </Flex>
 
-          ***REMOVED***/* Información principal en filas verticales */***REMOVED***
+          ***REMOVED***/* Información principal */***REMOVED***
           <div className="space-y-2">
             ***REMOVED***/* Fila 1: Horario y duración */***REMOVED***
             <Flex variant="start">
@@ -152,33 +158,33 @@ const BaseShiftCard = (***REMOVED***
                 <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
                 <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
               </Flex>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-600 ml-2 border-l pl-2 border-gray-300">
                 ***REMOVED***shiftData?.hours?.toFixed(1) || '0.0'***REMOVED***h
               </div>
             </Flex>
 
-            ***REMOVED***/* Fila 2: Fecha y badges en línea separada */***REMOVED***
-            <Flex variant="between">
-              <Flex variant="center" className="space-x-2">
-                ***REMOVED***fecha && (
-                  <Badge variant="default" size="sm">
-                    ***REMOVED***formatRelativeDate(fecha)***REMOVED***
-                  </Badge>
-                )***REMOVED***
-                <ShiftTypeBadge turno=***REMOVED***turno***REMOVED*** size="sm" />
-                ***REMOVED***turno.cruzaMedianoche && (
-                  <span className="text-blue-600 text-xs">🌙</span>
-                )***REMOVED***
-              </Flex>
-
-              ***REMOVED***/* Badge adicional específico del tipo (ej: smoko) */***REMOVED***
+            ***REMOVED***/* Fila 2: Fecha y Tag Smoko (JUNTOS) */***REMOVED***
+            <Flex variant="start" className="gap-2">
+              ***REMOVED***fecha && (
+                <Badge variant="default" size="sm">
+                  ***REMOVED***formatRelativeDate(fecha)***REMOVED***
+                </Badge>
+              )***REMOVED***
+              ***REMOVED***/* Badge de Smoko al lado de la fecha */***REMOVED***
               ***REMOVED***children?.mobileBadge***REMOVED***
+              
+              ***REMOVED***turno.cruzaMedianoche && (
+                <span className="text-blue-600 text-xs ml-auto">🌙</span>
+              )***REMOVED***
             </Flex>
 
-            ***REMOVED***/* Fila 3: Contenido específico del tipo (pasado como children) */***REMOVED***
+            ***REMOVED***/* Fila 3: Contenido específico (Stats Delivery) */***REMOVED***
             ***REMOVED***children?.mobileStats***REMOVED***
 
-            ***REMOVED***/* Botón expandir si hay contenido adicional */***REMOVED***
+            ***REMOVED***/* Fila 4: Ganancia (Footer Between) */***REMOVED***
+            ***REMOVED***renderEarningFooter()***REMOVED***
+
+            ***REMOVED***/* Botón expandir */***REMOVED***
             ***REMOVED***hasAdditionalContent && (
               <button
                 onClick=***REMOVED***toggleExpanded***REMOVED***
@@ -199,10 +205,9 @@ const BaseShiftCard = (***REMOVED***
             )***REMOVED***
           </div>
 
-          ***REMOVED***/* Contenido expandible móvil */***REMOVED***
+          ***REMOVED***/* Contenido expandible móvil (Estilos Originales) */***REMOVED***
           ***REMOVED***hasAdditionalContent && expanded && (
             <div className="border-t pt-3 space-y-3">
-              ***REMOVED***/* Notas */***REMOVED***
               ***REMOVED***(turno.observaciones?.trim() || turno.descripcion?.trim() || turno.notas?.trim()) && (
                 <div className="bg-gray-50 rounded-lg p-3">
                   <Flex variant="center" className="gap-2 mb-2">
@@ -215,7 +220,6 @@ const BaseShiftCard = (***REMOVED***
                 </div>
               )***REMOVED***
 
-              ***REMOVED***/* Turnos nocturnos */***REMOVED***
               ***REMOVED***turno.cruzaMedianoche && (
                 <div className="bg-blue-50 rounded-lg p-3">
                   <span className="text-sm font-medium text-blue-700">Turno Nocturno</span>
@@ -232,7 +236,6 @@ const BaseShiftCard = (***REMOVED***
                 </div>
               )***REMOVED***
 
-              ***REMOVED***/* Contenido adicional específico del tipo */***REMOVED***
               ***REMOVED***children?.expandedContent***REMOVED***
             </div>
           )***REMOVED***
@@ -254,7 +257,7 @@ const BaseShiftCard = (***REMOVED***
         <Flex variant="start-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-3">
-              ***REMOVED***/* Avatar del trabajo */***REMOVED***
+              ***REMOVED***/* Avatar */***REMOVED***
               <Flex variant="center"
                 className="w-10 h-10 rounded-lg text-white font-bold flex-shrink-0"
                 style=***REMOVED******REMOVED*** backgroundColor: colorTrabajo ***REMOVED******REMOVED***
@@ -262,41 +265,37 @@ const BaseShiftCard = (***REMOVED***
                 ***REMOVED***currentConfig.avatarContent || children?.avatarIcon***REMOVED***
               </Flex>
 
-              ***REMOVED***/* Nombre del trabajo y badges */***REMOVED***
+              ***REMOVED***/* Info */***REMOVED***
               <div className="flex-1 min-w-0">
+                ***REMOVED***/* Nombre + Tag Turno (JUNTOS) */***REMOVED***
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <h3 className="font-semibold text-gray-800 truncate min-w-0">
                     ***REMOVED***trabajo.nombre***REMOVED***
                   </h3>
                   <ShiftTypeBadge turno=***REMOVED***turno***REMOVED*** size="sm" />
-
-                  ***REMOVED***/* Badge adicional específico del tipo */***REMOVED***
-                  ***REMOVED***children?.desktopBadge***REMOVED***
                 </div>
 
-                ***REMOVED***/* Información básica del turno con fecha integrada */***REMOVED***
                 <Flex variant="start" className="text-sm text-gray-600 gap-3 flex-wrap">
                   <Flex variant="center">
                     <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
                     <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
                   </Flex>
-
                   <span className="text-gray-300">•</span>
-
-                  ***REMOVED***/* Mostrar tiempo trabajado */***REMOVED***
                   <span>***REMOVED***shiftData?.hours?.toFixed(1) || '0.0'***REMOVED***h</span>
-
-                  ***REMOVED***/* Fecha como texto simple */***REMOVED***
+                  
                   ***REMOVED***fecha && (
                     <>
                       <span className="text-gray-300">•</span>
-                      <span className="text-xs text-gray-500">
-                        ***REMOVED***formatRelativeDate(fecha)***REMOVED***
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500">
+                          ***REMOVED***formatRelativeDate(fecha)***REMOVED***
+                        </span>
+                        ***REMOVED***/* Tag Smoko al lado de la fecha */***REMOVED***
+                        ***REMOVED***children?.desktopBadge***REMOVED***
+                      </div>
                     </>
                   )***REMOVED***
 
-                  ***REMOVED***/* Indicador nocturno */***REMOVED***
                   ***REMOVED***turno.cruzaMedianoche && (
                     <>
                       <span className="text-gray-300">•</span>
@@ -307,21 +306,14 @@ const BaseShiftCard = (***REMOVED***
               </div>
             </div>
 
-            ***REMOVED***/* Contenido específico del tipo (stats y ganancia) */***REMOVED***
             ***REMOVED***children?.desktopStats***REMOVED***
+
+            ***REMOVED***/* Ganancia Footer (Desktop) */***REMOVED***
+            ***REMOVED***renderEarningFooter()***REMOVED***
           </div>
 
           ***REMOVED***/* Acciones desktop */***REMOVED***
-          <Flex variant="center" className="gap-2 ml-4">
-            ***REMOVED***earningValue !== undefined && (
-              <div className="flex flex-col items-end mr-2">
-                <span className="text-sm text-gray-500">***REMOVED***earningLabel || 'Ganancia'***REMOVED***</span>
-                <span className="text-lg font-semibold" style=***REMOVED******REMOVED*** color: colors.success ***REMOVED******REMOVED***>
-                  ***REMOVED***formatCurrency(earningValue, currencySymbol)***REMOVED***
-                </span>
-              </div>
-            )***REMOVED***
-            ***REMOVED***/* Botón de expansión */***REMOVED***
+          <Flex variant="center" className="gap-2 ml-4 self-start">
             ***REMOVED***hasAdditionalContent && (
               <button
                 onClick=***REMOVED***toggleExpanded***REMOVED***
@@ -336,15 +328,13 @@ const BaseShiftCard = (***REMOVED***
               </button>
             )***REMOVED***
 
-            ***REMOVED***/* Menú de acciones */***REMOVED***
             ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
           </Flex>
         </Flex>
 
-        ***REMOVED***/* Contenido expandible desktop */***REMOVED***
+        ***REMOVED***/* Contenido expandible desktop (Estilos Originales) */***REMOVED***
         ***REMOVED***hasAdditionalContent && expanded && (
           <div className="border-t pt-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
-            ***REMOVED***/* Solo mostrar notas/observaciones */***REMOVED***
             ***REMOVED***(turno.observaciones?.trim() || turno.descripcion?.trim() || turno.notas?.trim()) && (
               <div className="bg-gray-50 rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-2">
@@ -356,8 +346,7 @@ const BaseShiftCard = (***REMOVED***
                 </p>
               </div>
             )***REMOVED***
-
-            ***REMOVED***/* Información adicional para turnos nocturnos */***REMOVED***
+            
             ***REMOVED***turno.cruzaMedianoche && (
               <div className="bg-blue-50 rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
@@ -376,10 +365,8 @@ const BaseShiftCard = (***REMOVED***
               </div>
             )***REMOVED***
 
-            ***REMOVED***/* Contenido adicional específico del tipo */***REMOVED***
             ***REMOVED***children?.expandedContent***REMOVED***
 
-            ***REMOVED***/* Información de fechas */***REMOVED***
             ***REMOVED***turno.fechaCreacion && (
               <div className="text-xs text-gray-500 border-t pt-2">
                 Creado: ***REMOVED***new Date(turno.fechaCreacion.seconds * 1000 || turno.fechaCreacion).toLocaleDateString('es-ES', ***REMOVED***
@@ -393,7 +380,6 @@ const BaseShiftCard = (***REMOVED***
           </div>
         )***REMOVED***
 
-        ***REMOVED***/* Indicador visual si hay contenido pero no está expandido */***REMOVED***
         ***REMOVED***hasAdditionalContent && !expanded && (
           <Flex variant="center" className="pt-1">
             <Flex className="space-x-1">
