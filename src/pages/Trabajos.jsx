@@ -4,7 +4,8 @@ import React from 'react';
 import { useTrabajos } from '../hooks/useTrabajos';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import ShareMessages from '../components/work/ShareMessages';
-import WorkHeader from '../components/work/WorkHeader';
+import PageHeader from '../components/layout/PageHeader'; // Added import
+import { Briefcase, Plus } from 'lucide-react'; // Added icons
 import WorkEmptyState from '../components/work/WorkEmptyState';
 import TarjetaTrabajo from '../components/cards/work/TarjetaTrabajo';
 import TarjetaDelivery from '../components/cards/work/TarjetaTrabajoDelivery';
@@ -41,9 +42,11 @@ const Trabajos = () => {
         <ShareMessages messages={messages} />
 
         {/* Header */}
-        <WorkHeader 
-          todosLosTrabajos={todosLosTrabajos}
-          onNuevoTrabajo={abrirModalNuevo}
+        <PageHeader
+          title="Trabajos"
+          subtitle="Administra tus diferentes trabajos o empleos."
+          icon={Briefcase}
+          action={{ onClick: abrirModalNuevo, icon: Plus, label: 'Nuevo Trabajo' }}
         />
 
         {/* Contenido principal */}

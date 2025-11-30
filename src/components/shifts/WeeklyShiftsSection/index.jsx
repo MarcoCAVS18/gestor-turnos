@@ -1,7 +1,7 @@
 // src/components/shifts/WeeklyShiftsSection/index.jsx
 
 import React from 'react';
-import { Calendar, TrendingUp } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import TarjetaTurno from '../../cards/shift/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
 import { formatTurnosCount } from '../../../utils/pluralization';
@@ -123,11 +123,10 @@ const WeeklyShiftsSection = ({
           {/* Estadísticas de la semana */}
           <div className="text-right">
             <Flex className="space-x-2 text-sm text-gray-600">
-              <TrendingUp size={16} />
               <span>${estadisticasSemana.totalGanancias.toFixed(2)}</span>
             </Flex>
             <p className="text-xs text-gray-500">
-              {estadisticasSemana.totalHoras.toFixed(1)}h trabajadas
+              {estadisticasSemana.totalHoras.toFixed(1)}h
             </p>
           </div>
         </Flex>

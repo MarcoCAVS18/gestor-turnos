@@ -7,7 +7,8 @@ import { useDeleteManager } from '../hooks/useDeleteManager';
 import { useFilterTurnos } from '../hooks/useFilterTurnos';
 import { createSafeDate } from '../utils/time';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
-import ShiftsHeader from '../components/shifts/ShiftsHeader';
+import PageHeader from '../components/layout/PageHeader'; // Added import
+import { List, Plus } from 'lucide-react'; // Added icons
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
 import FiltrosTurnos from '../components/filters/FiltrosTurnos';
 import ModalTurno from '../components/modals/shift/ModalTurno';
@@ -142,13 +143,12 @@ const Turnos = () => {
   return (
     <LoadingWrapper loading={loading}>
       {/* Contenedor principal con espaciado mejorado */}
-      <div className="px-4 py-6 pb-32 space-y-6">
-        {/* Header con título y botón de acción */}
-        <ShiftsHeader 
-          hasShifts={hayTurnos}
-          allJobs={allJobs}
-          onNewShift={abrirModalNuevo}
-          thematicColors={thematicColors}
+      <div className="px-4 py-6 space-y-6">
+        <PageHeader
+          title="Turnos"
+          subtitle="Gestiona y visualiza tus turnos registrados."
+          icon={List}
+          action={{ onClick: abrirModalNuevo, icon: Plus, label: 'Nuevo Turno' }}
         />
 
         {/* Sistema de filtros */}

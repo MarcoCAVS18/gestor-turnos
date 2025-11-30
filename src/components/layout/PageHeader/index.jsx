@@ -44,12 +44,12 @@ const PageHeader = ({
   // Variantes para el contenedor del botón
   const buttonWrapperVariants = {
     expanded: { 
-      width: "auto",
-      transition: { type: "spring", stiffness: 300, damping: 30 }
+      width: "120px", 
+      transition: { type: "spring", stiffness: 100, damping: 10 } // Adjusted spring values
     },
     collapsed: { 
-      width: "44px", // Ancho fijo del botón circular (ajustar según tu UI)
-      transition: { type: "spring", stiffness: 300, damping: 30 }
+      width: "44px", 
+      transition: { type: "spring", stiffness: 100, damping: 10 } // Adjusted spring values
     }
   };
 
@@ -57,18 +57,14 @@ const PageHeader = ({
 
   return (
     <motion.div
-      className={`flex justify-between items-center gap-4 ${className}`}
+      className={`flex items-center space-x-4 ${className}`} // Removed justify-between and gap, added space-x
       variants={headerVariants}
       initial="hidden"
       animate="visible"
       {...props}
     >
-      {/* TEXT CONTAINER:
-         - flex-1: Toma todo el espacio disponible.
-         - min-w-0: CRUCIAL. Permite que el flex item se encoja más allá de su contenido 
-           (necesario para que truncate funcione).
-      */}
-      <div className="flex items-center space-x-3 flex-1 min-w-0">
+      {/* TEXT CONTAINER */}
+      <div className="flex items-center space-x-3 flex-grow"> {/* Changed flex-1 to flex-grow */}
         {Icon && (
           <div 
             className="flex-shrink-0 p-2 rounded-lg transition-colors" 
@@ -77,12 +73,12 @@ const PageHeader = ({
             <Icon className="w-6 h-6" style={{ color: colors.primary }} />
           </div>
         )}
-        <div className="min-w-0 flex flex-col justify-center min-h-[3.25rem]">
-          <h1 className="text-xl font-semibold truncate pr-2 leading-tight">
+        <div className="flex flex-col justify-center min-h-[3.25rem]">
+          <h1 className="text-xl font-semibold leading-tight">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-sm text-gray-600 pr-2 leading-snug whitespace-normal line-clamp-2">
+            <p className="text-sm text-gray-600 leading-snug">
               {subtitle}
             </p>
           )}
@@ -91,25 +87,23 @@ const PageHeader = ({
       
       {rightContent ? rightContent : (action && (
         <motion.div
-          layout // Ayuda a Framer Motion a manejar el layout externo
+          // Removed layout prop
           initial="expanded"
           animate={isCollapsed ? 'collapsed' : 'expanded'}
           variants={buttonWrapperVariants}
           className="flex-shrink-0 overflow-hidden relative flex justify-end"
+          style={{ minWidth: '120px' }} // Reserve max space for the button
         >
           <Button
             onClick={action.onClick}
             icon={action.icon}
             themeColor={action.themeColor || colors.primary}
             className={`flex items-center justify-center shadow-sm hover:shadow-md h-[44px] whitespace-nowrap`}
-            // Animamos los estilos inline para mayor suavidad
             style={{ 
               borderRadius: isCollapsed ? '50%' : '12px', 
-              // En Framer Motion es mejor no animar padding con clases, sino con style si es dinámico
               paddingLeft: isCollapsed ? '0' : '1rem',
               paddingRight: isCollapsed ? '0' : '1rem',
-              width: isCollapsed ? '44px' : 'auto', // Asegura que el botón llene el wrapper o se ajuste
-              transition: 'all 1s ease-in-out' // Transición CSS para propiedades no manejadas por motion wrapper
+              width: isCollapsed ? '44px' : 'auto', // Re-added width
             }}
           >
             <AnimatePresence mode="wait">
@@ -119,7 +113,7 @@ const PageHeader = ({
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: "auto" }}
                   exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: 0.4 }}
+                  transition={{ duration: 0.2 }}
                   className="ml-2 overflow-hidden block"
                 >
                   <span className="hidden sm:inline">{action.label}</span>

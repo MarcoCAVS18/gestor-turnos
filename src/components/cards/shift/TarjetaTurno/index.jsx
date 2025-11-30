@@ -1,7 +1,6 @@
-// src/components/cards/TarjetaTurno/index.jsx - Refactorizado usando BaseShiftCard
-
+// src/components/cards/TarjetaTurno/index.jsx 
 import React from 'react';
-import { DollarSign, Coffee } from 'lucide-react';
+import {  Coffee } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Badge from '../../../ui/Badge';
 import { useApp } from '../../../../contexts/AppContext';
@@ -11,7 +10,7 @@ import Flex from '../../../ui/Flex';
 
 const TarjetaTurno = (props) => {
   const { turno, trabajo } = props;
-  const { calculatePayment, smokoEnabled } = useApp();
+  const { calculatePayment, smokoEnabled, currencySymbol } = useApp(); // Get currencySymbol from context
   const colors = useThemeColors();
 
   // Calcular información del turno
@@ -30,7 +29,14 @@ const TarjetaTurno = (props) => {
   }, [turno, trabajo, calculatePayment]);
 
   return (
-    <BaseShiftCard {...props} type="traditional" shiftData={shiftData}>
+    <BaseShiftCard
+      {...props}
+      type="traditional"
+      shiftData={shiftData}
+      earningValue={shiftData.totalWithDiscount}
+      earningLabel={'Ganancia estimada'}
+      currencySymbol={currencySymbol}
+    >
       {{
         // Badge de Smoko - Solo mostrar si está aplicado
         mobileBadge: smokoEnabled && shiftData.smokoApplied && (
@@ -45,29 +51,25 @@ const TarjetaTurno = (props) => {
           </Badge>
         ),
 
-        // Stats móvil - Ganancia destacada
-        mobileStats: (
-          <Flex variant="between" className="pt-2 border-t border-gray-100">
-            <span className="text-sm text-gray-500">Ganancia estimada</span>
-            <div className="flex items-center">
-              <span className="font-bold text-lg" style={{ color: colors.primary }}>
-                {formatCurrency(shiftData.totalWithDiscount)}
-              </span>
-            </div>
-          </Flex>
-        ),
+        // mobileStats and desktopStats will no longer display earnings here.
+        // They are handled by BaseShiftCard directly now.
 
-        // Stats desktop - Ganancia
-        desktopStats: (
-          <Flex variant="between">
-            <span className="text-sm text-gray-500">Ganancia estimada</span>
-            <div className="flex items-center">
-              <DollarSign size={16} className="mr-1" style={{ color: colors.primary }} />
-              <span className="font-semibold text-lg" style={{ color: colors.primary }}>
-                {formatCurrency(shiftData.totalWithDiscount)}
+        // Contenido expandido
+        expandedContent: (
+          <div className="bg-gray-50 rounded-lg p-3 text-sm space-y-2">
+            {smokoEnabled && shiftData.smokoApplied && (
+              <Flex justify="between">
+                <span className="text-gray-600 mr-2">Descuento Smoko:</span>
+                <span className="font-medium text-red-500">-{shiftData.smokoMinutes}min</span>
+              </Flex>
+            )}
+            <Flex justify="between" className="pt-2 border-t border-gray-200">
+              <span className="font-semibold text-gray-700 mr-2">Ganancia neta:</span>
+              <span className="font-bold" style={{ color: colors.primary }}>
+                {formatCurrency(shiftData.totalWithDiscount, currencySymbol)}
               </span>
-            </div>
-          </Flex>
+            </Flex>
+          </div>
         )
       }}
     </BaseShiftCard>

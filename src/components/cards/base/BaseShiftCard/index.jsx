@@ -10,6 +10,7 @@ import Badge from '../../../ui/Badge';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { formatRelativeDate, createSafeDate } from '../../../../utils/time';
+import { formatCurrency } from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
 
 const BaseShiftCard = ({
@@ -23,6 +24,9 @@ const BaseShiftCard = ({
   variant = 'default',
   compact = false,
   shiftData, // Datos calculados del turno (pasados desde el componente padre)
+  earningValue, // Nuevo prop para el valor de la ganancia
+  earningLabel, // Nuevo prop para la etiqueta de la ganancia
+  currencySymbol, // Nuevo prop para el símbolo de la moneda
   children // Contenido específico del tipo de turno
 }) => {
   const colors = useThemeColors();
@@ -128,6 +132,14 @@ const BaseShiftCard = ({
               </h3>
             </Flex>
 
+            {earningValue !== undefined && (
+              <div className="flex flex-col items-end mr-2 text-right">
+                <span className="text-xs text-gray-500">{earningLabel || 'Ganancia'}</span>
+                <span className="text-base font-semibold" style={{ color: colors.success }}>
+                  {formatCurrency(earningValue, currencySymbol)}
+                </span>
+              </div>
+            )}
             {/* Solo menú de acciones */}
             {showActions && <ActionsMenu actions={actions} />}
           </Flex>
@@ -135,8 +147,8 @@ const BaseShiftCard = ({
           {/* Información principal en filas verticales */}
           <div className="space-y-2">
             {/* Fila 1: Horario y duración */}
-            <Flex variant="between">
-              <Flex variant="center" className="text-sm text-gray-600">
+            <Flex variant="start">
+              <Flex variant="start" className="text-sm text-gray-600">
                 <Clock size={14} className="mr-1.5" />
                 <span>{turno.horaInicio} - {turno.horaFin}</span>
               </Flex>
@@ -263,7 +275,7 @@ const BaseShiftCard = ({
                 </div>
 
                 {/* Información básica del turno con fecha integrada */}
-                <Flex variant="center" className="text-sm text-gray-600 gap-3 flex-wrap">
+                <Flex variant="start" className="text-sm text-gray-600 gap-3 flex-wrap">
                   <Flex variant="center">
                     <Clock size={14} className="mr-1.5" />
                     <span>{turno.horaInicio} - {turno.horaFin}</span>
@@ -301,6 +313,14 @@ const BaseShiftCard = ({
 
           {/* Acciones desktop */}
           <Flex variant="center" className="gap-2 ml-4">
+            {earningValue !== undefined && (
+              <div className="flex flex-col items-end mr-2">
+                <span className="text-sm text-gray-500">{earningLabel || 'Ganancia'}</span>
+                <span className="text-lg font-semibold" style={{ color: colors.success }}>
+                  {formatCurrency(earningValue, currencySymbol)}
+                </span>
+              </div>
+            )}
             {/* Botón de expansión */}
             {hasAdditionalContent && (
               <button

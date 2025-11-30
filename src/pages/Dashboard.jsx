@@ -1,6 +1,8 @@
 // src/pages/Dashboard.jsx
 
 import { motion } from 'framer-motion';
+import { LayoutDashboard } from 'lucide-react';
+import PageHeader from '../components/layout/PageHeader';
 import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useApp } from '../contexts/AppContext';
 import { generatePDFReport, generatePNGReport, generateXLSXReport } from '../services/exportService';
@@ -50,11 +52,13 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="px-4 py-6 pb-32 space-y-6">
-      {/* Welcome Card - siempre full width */}
-      <motion.div variants={headerVariants} initial="hidden" animate="visible">
-        <WelcomeCard totalGanado={stats.totalGanado} />
-      </motion.div>
+    <div className="px-4 py-6 space-y-6">
+      <PageHeader
+        title="Dashboard"
+        subtitle="Una vista general de tu actividad y progreso."
+        icon={LayoutDashboard}
+      />
+
 
       {/* Layout responsivo principal */}
       <div className="space-y-6">
@@ -65,10 +69,12 @@ const Dashboard = () => {
           {/* CONTENEDOR 1: Stats + Acciones (4 columnas) */}
           <div className="lg:col-span-4 space-y-6">
             {/* QuickStatsGrid maneja su propio layout desktop */}
+            <motion.div variants={headerVariants} initial="hidden" animate="visible">
+              <WelcomeCard totalGanado={stats.totalGanado} />
+            </motion.div>
             <QuickStatsGrid stats={stats} />
 
-            {/* Acciones rápidas debajo */}
-            <QuickActionsCard />
+
           </div>
 
           {/* CONTENEDOR 2: Esta semana vertical (1 columna) */}
@@ -80,6 +86,9 @@ const Dashboard = () => {
         {/* MÓVIL: Stack vertical */}
         <div className="block lg:hidden space-y-4">
           {/* QuickStatsGrid maneja su propio layout móvil 2x2 */}
+          <motion.div variants={headerVariants} initial="hidden" animate="visible">
+            <WelcomeCard totalGanado={stats.totalGanado} />
+          </motion.div>
           <QuickStatsGrid stats={stats} />
 
           {/* Esta semana */}
@@ -101,28 +110,35 @@ const Dashboard = () => {
           </div>
 
           {/* Columna Derecha: Grilla anidada de 2 columnas + fila inferior */}
-          <div className="lg:col-span-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Columna anidada 1: Favoritos y Más Rentable */}
-              <div className="space-y-6">
-                <FavoriteWorksCard trabajosFavoritos={stats.trabajosFavoritos} />
-                <TopWorkCard trabajoMasRentable={stats.trabajoMasRentable} />
-              </div>
-              {/* Columna anidada 2: Próximo Turno y Exportar */}
-              <div className="space-y-6">
+          <div className="lg:col-span-4 flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+              {/* Top Left: Favorite Works */}
+              <FavoriteWorksCard trabajosFavoritos={stats.trabajosFavoritos} className="flex-grow" />
+
+              {/* Top Right: Export Report Card + Next Shift Card */}
+              <div className="flex flex-col gap-6">
                 <NextShiftCard
                   proximoTurno={stats.proximoTurno}
                   formatearFecha={stats.formatearFecha}
                 />
-                <ExportReportCard onExport={handleExport} />
+                <ExportReportCard onExport={handleExport} className="flex-grow" />
               </div>
-              {/* Fila inferior para Proyección */}
-              <div className="md:col-span-2">
-                <ProjectionCard
-                  proyeccionMensual={stats.proyeccionMensual}
-                  horasTrabajadas={stats.horasTrabajadas}
-                />
-              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
+              {/* Bottom Left: Top Work */}
+              <TopWorkCard trabajoMasRentable={stats.trabajoMasRentable} className="flex-grow" />
+
+              {/* Bottom Right: Quick Actions */}
+              <QuickActionsCard className="flex-grow" />
+            </div>
+
+            {/* Fila inferior para Proyección */}
+            <div>
+              <ProjectionCard
+                proyeccionMensual={stats.proyeccionMensual}
+                horasTrabajadas={stats.horasTrabajadas}
+              />
             </div>
           </div>
         </div>

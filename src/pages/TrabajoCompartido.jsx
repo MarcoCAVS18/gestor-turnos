@@ -1,6 +1,5 @@
 // src/pages/TrabajoCompartido.jsx
 
-import { motion } from 'framer-motion';
 import { Share2, Plus, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSharedWork } from '../hooks/useSharedWork';
@@ -9,9 +8,10 @@ import WorkPreviewCard from '../components/shared/WorkPreviewCard';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Loader from '../components/other/Loader';
+import PageHeader from '../components/layout/PageHeader'; // Added import
 
 const TrabajoCompartido = () => {
-  const { trabajoCompartido, cargando, error, agregando, agregarTrabajo, tokenInfo } = useSharedWork();
+  const { trabajoCompartido, cargando, error, agregando, agregarTrabajo } = useSharedWork();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -76,29 +76,13 @@ const TrabajoCompartido = () => {
     );
   }
 
-  const headerVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
-  };
-
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-6">
-      {/* Header */}
-      <motion.div variants={headerVariants} initial="hidden" animate="visible">
-        <Card className="text-center">
-          <Share2 size={32} className="mx-auto mb-3 text-blue-500" />
-          <h1 className="text-2xl font-bold mb-2">Trabajo Compartido</h1>
-          <p className="text-gray-600">Alguien compartió este trabajo contigo</p>
-          
-          {/* Información adicional del enlace */}
-          {tokenInfo && (
-            <div className="mt-4 text-xs text-gray-500">
-              <p>Usado {tokenInfo.vecesUsado} veces</p>
-            </div>
-          )}
-        </Card>
-      </motion.div>
-
+      <PageHeader
+        title="Trabajo Compartido"
+        subtitle="Detalles del trabajo compartido contigo."
+        icon={Share2}
+      />
       {/* Vista previa del trabajo */}
       {trabajoCompartido && <WorkPreviewCard trabajo={trabajoCompartido} />}
 

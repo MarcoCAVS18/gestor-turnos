@@ -102,7 +102,7 @@ const CalendarioView = () => {
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
       <PageHeader
-        title="Calendario de Turnos"
+        title="Calendario"
         subtitle={hayTrabajos ? "Visualiza y gestiona tus turnos por fecha" : null}
         icon={CalendarDays}
         action={hayTrabajos && fechaSeleccionada && {
