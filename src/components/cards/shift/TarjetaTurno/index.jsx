@@ -1,7 +1,6 @@
-// src/components/cards/TarjetaTurno/index.jsx - Refactorizado usando BaseShiftCard
-
+// src/components/cards/TarjetaTurno/index.jsx 
 import React from 'react';
-import ***REMOVED*** DollarSign, Coffee ***REMOVED*** from 'lucide-react';
+import ***REMOVED***  Coffee ***REMOVED*** from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Badge from '../../../ui/Badge';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
@@ -11,7 +10,7 @@ import Flex from '../../../ui/Flex';
 
 const TarjetaTurno = (props) => ***REMOVED***
   const ***REMOVED*** turno, trabajo ***REMOVED*** = props;
-  const ***REMOVED*** calculatePayment, smokoEnabled ***REMOVED*** = useApp();
+  const ***REMOVED*** calculatePayment, smokoEnabled, currencySymbol ***REMOVED*** = useApp(); // Get currencySymbol from context
   const colors = useThemeColors();
 
   // Calcular información del turno
@@ -30,7 +29,14 @@ const TarjetaTurno = (props) => ***REMOVED***
   ***REMOVED***, [turno, trabajo, calculatePayment]);
 
   return (
-    <BaseShiftCard ***REMOVED***...props***REMOVED*** type="traditional" shiftData=***REMOVED***shiftData***REMOVED***>
+    <BaseShiftCard
+      ***REMOVED***...props***REMOVED***
+      type="traditional"
+      shiftData=***REMOVED***shiftData***REMOVED***
+      earningValue=***REMOVED***shiftData.totalWithDiscount***REMOVED***
+      earningLabel=***REMOVED***'Ganancia estimada'***REMOVED***
+      currencySymbol=***REMOVED***currencySymbol***REMOVED***
+    >
       ***REMOVED******REMOVED***
         // Badge de Smoko - Solo mostrar si está aplicado
         mobileBadge: smokoEnabled && shiftData.smokoApplied && (
@@ -45,29 +51,25 @@ const TarjetaTurno = (props) => ***REMOVED***
           </Badge>
         ),
 
-        // Stats móvil - Ganancia destacada
-        mobileStats: (
-          <Flex variant="between" className="pt-2 border-t border-gray-100">
-            <span className="text-sm text-gray-500">Ganancia estimada</span>
-            <div className="flex items-center">
-              <span className="font-bold text-lg" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                ***REMOVED***formatCurrency(shiftData.totalWithDiscount)***REMOVED***
-              </span>
-            </div>
-          </Flex>
-        ),
+        // mobileStats and desktopStats will no longer display earnings here.
+        // They are handled by BaseShiftCard directly now.
 
-        // Stats desktop - Ganancia
-        desktopStats: (
-          <Flex variant="between">
-            <span className="text-sm text-gray-500">Ganancia estimada</span>
-            <div className="flex items-center">
-              <DollarSign size=***REMOVED***16***REMOVED*** className="mr-1" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
-              <span className="font-semibold text-lg" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                ***REMOVED***formatCurrency(shiftData.totalWithDiscount)***REMOVED***
+        // Contenido expandido
+        expandedContent: (
+          <div className="bg-gray-50 rounded-lg p-3 text-sm space-y-2">
+            ***REMOVED***smokoEnabled && shiftData.smokoApplied && (
+              <Flex justify="between">
+                <span className="text-gray-600 mr-2">Descuento Smoko:</span>
+                <span className="font-medium text-red-500">-***REMOVED***shiftData.smokoMinutes***REMOVED***min</span>
+              </Flex>
+            )***REMOVED***
+            <Flex justify="between" className="pt-2 border-t border-gray-200">
+              <span className="font-semibold text-gray-700 mr-2">Ganancia neta:</span>
+              <span className="font-bold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                ***REMOVED***formatCurrency(shiftData.totalWithDiscount, currencySymbol)***REMOVED***
               </span>
-            </div>
-          </Flex>
+            </Flex>
+          </div>
         )
       ***REMOVED******REMOVED***
     </BaseShiftCard>

@@ -34,7 +34,7 @@ const ExportReportCard = (***REMOVED*** onExport ***REMOVED***) => ***REMOVED***
       <Flex variant="between">
         ***REMOVED***/* Lado izquierdo: Texto y selector de formato */***REMOVED***
         <div className="flex-1 pr-4">
-          <Flex variant="center" className="gap-2 mb-2">
+          <Flex variant="start" className="gap-2 mb-2">
             <h3 className="text-lg font-semibold text-gray-800">Exportar Reporte</h3>
             <New size="xs" />
           </Flex>

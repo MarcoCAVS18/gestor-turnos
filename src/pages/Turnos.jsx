@@ -7,7 +7,8 @@ import ***REMOVED*** useDeleteManager ***REMOVED*** from '../hooks/useDeleteMana
 import ***REMOVED*** useFilterTurnos ***REMOVED*** from '../hooks/useFilterTurnos';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
-import ShiftsHeader from '../components/shifts/ShiftsHeader';
+import PageHeader from '../components/layout/PageHeader'; // Added import
+import ***REMOVED*** List, Plus ***REMOVED*** from 'lucide-react'; // Added icons
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
 import FiltrosTurnos from '../components/filters/FiltrosTurnos';
 import ModalTurno from '../components/modals/shift/ModalTurno';
@@ -142,13 +143,12 @@ const Turnos = () => ***REMOVED***
   return (
     <LoadingWrapper loading=***REMOVED***loading***REMOVED***>
       ***REMOVED***/* Contenedor principal con espaciado mejorado */***REMOVED***
-      <div className="px-4 py-6 pb-32 space-y-6">
-        ***REMOVED***/* Header con título y botón de acción */***REMOVED***
-        <ShiftsHeader 
-          hasShifts=***REMOVED***hayTurnos***REMOVED***
-          allJobs=***REMOVED***allJobs***REMOVED***
-          onNewShift=***REMOVED***abrirModalNuevo***REMOVED***
-          thematicColors=***REMOVED***thematicColors***REMOVED***
+      <div className="px-4 py-6 space-y-6">
+        <PageHeader
+          title="Turnos"
+          subtitle="Gestiona y visualiza tus turnos registrados."
+          icon=***REMOVED***List***REMOVED***
+          action=***REMOVED******REMOVED*** onClick: abrirModalNuevo, icon: Plus, label: 'Nuevo Turno' ***REMOVED******REMOVED***
         />
 
         ***REMOVED***/* Sistema de filtros */***REMOVED***
