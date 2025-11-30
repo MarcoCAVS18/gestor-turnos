@@ -12,6 +12,7 @@ import WeeklyComparison from '../components/stats/WeeklyComparison';
 import DailyDistribution from '../components/stats/DailyDistribution';
 import ShiftTypeStats from '../components/stats/ShiftTypeStats';
 import InteractiveCharts from '../components/stats/InteractiveCharts';
+import ***REMOVED*** useIsMobile ***REMOVED*** from '../hooks/useIsMobile'; // Importar hook
 import MostProductiveDay from '../components/stats/MostProductiveDay';
 
 // NUEVAS IMPORTACIONES - Cards de Smoko
@@ -24,56 +25,59 @@ import SeguimientoCombustible from '../components/stats/SeguimientoCombustible';
 import ComparacionPlataformas from '../components/stats/ComparacionPlataformas';
 
 const Estadisticas = () => ***REMOVED***
-
   const ***REMOVED***
-
     loading,
-
     datosActuales,
-
     datosAnteriores,
-
     offsetSemana,
-
     setOffsetSemana,
-
     deliveryEnabled,
-
     deliveryStats,
-
     weeklyHoursGoal,
-
     thematicColors,
-
     smokoEnabled,
-
     smokoMinutes,
-
   ***REMOVED*** = useStats();
 
-  
+  const isMobile = useIsMobile(); // Usar hook
 
   const tieneDelivery = deliveryEnabled && deliveryStats.turnosRealizados > 0;
+
+  // Crear componente WeekNavigator para reutilizar
+  const weekNavigatorComponent = (
+    <WeekNavigator
+      offsetSemana=***REMOVED***offsetSemana***REMOVED***
+      onSemanaChange=***REMOVED***setOffsetSemana***REMOVED***
+      fechaInicio=***REMOVED***datosActuales.fechaInicio***REMOVED***
+      fechaFin=***REMOVED***datosActuales.fechaFin***REMOVED***
+    />
+  );
 
   return (
     <LoadingWrapper loading=***REMOVED***loading***REMOVED***>
       <div className="px-4 py-6 space-y-6">
-
         <PageHeader
           title="Estadísticas"
           subtitle="Analiza tu rendimiento y proyecciones"
           icon=***REMOVED***BarChart***REMOVED***
           rightContent=***REMOVED***
-            <div className="lg:w-2/5 lg:max-w-md">
-              <WeekNavigator
-                offsetSemana=***REMOVED***offsetSemana***REMOVED***
-                onSemanaChange=***REMOVED***setOffsetSemana***REMOVED***
-                fechaInicio=***REMOVED***datosActuales.fechaInicio***REMOVED***
-                fechaFin=***REMOVED***datosActuales.fechaFin***REMOVED***
-              />
-            </div>
+            !isMobile ? (
+              <div className="lg:w-2/5 lg:max-w-md">***REMOVED***weekNavigatorComponent***REMOVED***</div>
+            ) : undefined
           ***REMOVED***
         />
+
+        ***REMOVED***isMobile && (
+          <div className="lg:hidden -mt-4">
+            <WeekNavigator
+              offsetSemana=***REMOVED***offsetSemana***REMOVED***
+              onSemanaChange=***REMOVED***setOffsetSemana***REMOVED***
+              fechaInicio=***REMOVED***datosActuales.fechaInicio***REMOVED***
+              fechaFin=***REMOVED***datosActuales.fechaFin***REMOVED***
+              variant="transparent"
+            />
+          </div>
+        )***REMOVED***
 
         ***REMOVED***/* LAYOUT RESPONSIVO PRINCIPAL */***REMOVED***
 

@@ -12,8 +12,10 @@ import Calendario from '../components/calendar/Calendario';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ModalTurno from '../components/modals/shift/ModalTurno';
 
+import Loader from '../components/other/Loader';
+
 const CalendarioView = () => ***REMOVED***
-  const ***REMOVED*** turnosPorFecha, todosLosTrabajos, thematicColors ***REMOVED*** = useApp();
+  const ***REMOVED*** turnosPorFecha, todosLosTrabajos, thematicColors, loading ***REMOVED*** = useApp();
   const colors = useThemeColors();
   
   // Estados para el calendario
@@ -27,6 +29,14 @@ const CalendarioView = () => ***REMOVED***
     const fechaHoyStr = fechaLocalAISO(hoy);
     setFechaSeleccionada(fechaHoyStr);
   ***REMOVED***, []);
+
+  if (loading) ***REMOVED***
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
+  ***REMOVED***
   
   // Validar que tenemos trabajos antes de mostrar funcionalidades
   const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
