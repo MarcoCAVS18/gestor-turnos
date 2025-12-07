@@ -1,5 +1,5 @@
 // src/components/cards/base/BaseShiftCard/index.jsx
-import React from 'react';
+import React, { useRef } from 'react';
 import { Edit, Edit2, Trash2, Clock, Info } from 'lucide-react';
 
 import Card from '../../../ui/Card';
@@ -31,6 +31,7 @@ const BaseShiftCard = ({
 }) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile();
+  const cardWrapperRef = useRef(null);
 
   if (!turno) {
     return (
@@ -99,14 +100,15 @@ const BaseShiftCard = ({
     );
   };
 
-  if (isMobile) {
-    return (
-      <Card
-        variant={variant}
-        hover={true}
-        padding="sm"
-        className="w-full"
-      >
+  const cardContent = (
+    <Card
+      variant={variant}
+      hover={true}
+      padding={isMobile ? "sm" : (compact ? 'sm' : 'md')}
+      className={isMobile ? "w-full" : ""}
+      shadow={compact ? 'sm' : 'md'}
+    >
+      {isMobile ? (
         <div className="space-y-3">
           <Flex variant="start-between">
             <Flex variant="start" className="items-center space-x-3 flex-1 min-w-0">
@@ -126,7 +128,7 @@ const BaseShiftCard = ({
             </Flex>
 
             <div className="flex items-center gap-2">
-                <ShiftDetailsPopover turno={turno} shiftData={shiftData}>
+                <ShiftDetailsPopover turno={turno} shiftData={shiftData} anchorRef={cardWrapperRef}>
                     <Info size={18} className="cursor-pointer text-gray-400 hover:text-gray-600" />
                 </ShiftDetailsPopover>
                 {showActions && <ActionsMenu actions={actions} />}
@@ -158,87 +160,80 @@ const BaseShiftCard = ({
             </Flex>
 
             {children?.mobileStats}
-
             {renderEarningFooter()}
-
           </div>
         </div>
-      </Card>
-    );
-  }
-
-  // VERSION DESKTOP
-  return (
-    <Card
-      variant={variant}
-      hover={true}
-      shadow={compact ? 'sm' : 'md'}
-      padding={compact ? 'sm' : 'md'}
-    >
-      <div className="space-y-3">
-        <Flex variant="start-between">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-3">
-              <Flex variant="center"
-                className="w-10 h-10 rounded-lg text-white font-bold flex-shrink-0"
-                style={{ backgroundColor: colorTrabajo }}
-              >
-                {currentConfig.avatarContent || children?.avatarIcon}
-              </Flex>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <h3 className="font-semibold text-gray-800 truncate min-w-0">
-                    {trabajo.nombre}
-                  </h3>
-                  <ShiftTypeBadge turno={turno} size="sm" />
-                </div>
-
-                <Flex variant="start" className="text-sm text-gray-600 gap-3 flex-wrap">
-                  <Flex variant="center">
-                    <Clock size={14} className="mr-1.5" />
-                    <span>{turno.horaInicio} - {turno.horaFin}</span>
-                  </Flex>
-                  <span className="text-gray-300">•</span>
-                  <span>{shiftData?.hours?.toFixed(1) || '0.0'}h</span>
-                  
-                  {fecha && (
-                    <>
-                      <span className="text-gray-300">•</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500">
-                          {formatRelativeDate(fecha)}
-                        </span>
-                        {children?.desktopBadge}
-                      </div>
-                    </>
-                  )}
-
-                  {turno.cruzaMedianoche && (
-                    <>
-                      <span className="text-gray-300">•</span>
-                      <span className="text-blue-600 text-xs">🌙</span>
-                    </>
-                  )}
+      ) : (
+        <div className="space-y-3">
+          <Flex variant="start-between">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 mb-3">
+                <Flex variant="center"
+                  className="w-10 h-10 rounded-lg text-white font-bold flex-shrink-0"
+                  style={{ backgroundColor: colorTrabajo }}
+                >
+                  {currentConfig.avatarContent || children?.avatarIcon}
                 </Flex>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <h3 className="font-semibold text-gray-800 truncate min-w-0">
+                      {trabajo.nombre}
+                    </h3>
+                    <ShiftTypeBadge turno={turno} size="sm" />
+                  </div>
+
+                  <Flex variant="start" className="text-sm text-gray-600 gap-3 flex-wrap">
+                    <Flex variant="center">
+                      <Clock size={14} className="mr-1.5" />
+                      <span>{turno.horaInicio} - {turno.horaFin}</span>
+                    </Flex>
+                    <span className="text-gray-300">•</span>
+                    <span>{shiftData?.hours?.toFixed(1) || '0.0'}h</span>
+                    
+                    {fecha && (
+                      <>
+                        <span className="text-gray-300">•</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500">
+                            {formatRelativeDate(fecha)}
+                          </span>
+                          {children?.desktopBadge}
+                        </div>
+                      </>
+                    )}
+
+                    {turno.cruzaMedianoche && (
+                      <>
+                        <span className="text-gray-300">•</span>
+                        <span className="text-blue-600 text-xs">🌙</span>
+                      </>
+                    )}
+                  </Flex>
+                </div>
               </div>
+
+              {children?.desktopStats}
+              {renderEarningFooter()}
             </div>
 
-            {children?.desktopStats}
-
-            {renderEarningFooter()}
-          </div>
-
-          <Flex variant="center" className="gap-2 ml-4 self-start">
-            <ShiftDetailsPopover turno={turno} shiftData={shiftData}>
-                <Info size={18} className="cursor-pointer text-gray-400 hover:text-gray-600" />
-            </ShiftDetailsPopover>
-            {showActions && <ActionsMenu actions={actions} />}
+            <Flex variant="center" className="gap-2 ml-4 self-start">
+              <ShiftDetailsPopover turno={turno} shiftData={shiftData} anchorRef={cardWrapperRef}>
+                  <Info size={18} className="cursor-pointer text-gray-400 hover:text-gray-600" />
+              </ShiftDetailsPopover>
+              {showActions && <ActionsMenu actions={actions} />}
+            </Flex>
           </Flex>
-        </Flex>
-      </div>
+        </div>
+      )}
     </Card>
   );
+
+  return (
+    <div ref={cardWrapperRef} className="w-full">
+      {cardContent}
+    </div>
+  )
 };
 
 export default BaseShiftCard;

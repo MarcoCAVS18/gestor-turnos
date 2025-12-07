@@ -1,4 +1,5 @@
-// src/components/cards/TarjetaTurno/index.jsx 
+// src/components/cards/shift/TarjetaTurno/index.jsx 
+
 import React from 'react';
 import {  Coffee, DollarSign } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
@@ -9,12 +10,12 @@ import Flex from '../../../ui/Flex';
 
 const TarjetaTurno = (props) => {
   const { turno, trabajo } = props;
-  const { calculatePayment, smokoEnabled, currencySymbol } = useApp(); // Get currencySymbol from context
+  const { calculatePayment, smokoEnabled, currencySymbol } = useApp(); 
 
   // Calcular información del turno
   const shiftData = React.useMemo(() => {
     if (!turno || !trabajo) {
-      return { hours: 0, totalWithDiscount: 0, appliedRates: {} };
+      return { hours: 0, totalWithDiscount: 0 };
     }
 
     const result = calculatePayment(turno);
@@ -22,32 +23,9 @@ const TarjetaTurno = (props) => {
       hours: result.hours || 0,
       totalWithDiscount: result.totalWithDiscount || 0,
       smokoApplied: result.smokoApplied || false,
-      smokoMinutes: result.smokoMinutes || 0,
-      appliedRates: result.appliedRates || {}
+      smokoMinutes: result.smokoMinutes || 0
     };
   }, [turno, trabajo, calculatePayment]);
-
-  const renderAppliedRates = () => {
-    const rates = Object.entries(shiftData.appliedRates);
-    if (rates.length === 0) {
-      if (trabajo && trabajo.tarifaBase > 0) {
-        return <span>{formatCurrency(trabajo.tarifaBase, currencySymbol)} x hora</span>;
-      }
-      return null;
-    }
-
-    if (rates.length === 1) {
-      return <span>{formatCurrency(rates[0][1], currencySymbol)} x hora</span>;
-    }
-
-    // Compact format for multiple rates
-    const rateValues = rates.map(([, rate]) => Math.round(rate));
-    const uniqueRateValues = [...new Set(rateValues)];
-
-    return <span>{uniqueRateValues.join(' / ')} x hora</span>;
-  };
-  
-  const hasRatesToShow = Object.keys(shiftData.appliedRates).length > 0 || (trabajo && trabajo.tarifaBase > 0);
 
   return (
     <BaseShiftCard
@@ -55,7 +33,7 @@ const TarjetaTurno = (props) => {
       type="traditional"
       shiftData={shiftData}
       earningValue={shiftData.totalWithDiscount}
-      earningLabel={'Ganancia estimada'}
+      earningLabel={'Ganancia Estimada'}
       currencySymbol={currencySymbol}
     >
       {{
@@ -72,20 +50,20 @@ const TarjetaTurno = (props) => {
           </Badge>
         ),
 
-        mobileStats: hasRatesToShow && (
+        mobileStats: trabajo.tarifaBase > 0 && (
           <Flex variant="start" className="pt-2 border-t border-gray-100 mt-2">
             <Flex variant="center" className="text-sm text-gray-600">
               <DollarSign size={12} className="mr-1 text-green-500" />
-              {renderAppliedRates()}
+              <span>{formatCurrency(trabajo.tarifaBase, currencySymbol)}/hr</span>
             </Flex>
           </Flex>
         ),
 
-        desktopStats: hasRatesToShow && (
+        desktopStats: trabajo.tarifaBase > 0 && (
           <Flex variant="start" className="mb-2">
             <Flex variant="center" className="text-sm text-gray-600">
               <DollarSign size={14} className="mr-1 text-green-500" />
-              {renderAppliedRates()}
+              <span>{formatCurrency(trabajo.tarifaBase, currencySymbol)}/hr</span>
             </Flex>
           </Flex>
         ),

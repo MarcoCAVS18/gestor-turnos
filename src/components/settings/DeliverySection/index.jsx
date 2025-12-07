@@ -29,7 +29,7 @@ const DeliverySection = ({ onError, onSuccess }) => {
         {/* Toggle principal */}
         <Flex variant="between">
           <div className="flex-1">
-            <p className="font-medium">Habilitar modo delivery</p>
+            <p className="font-medium">{deliveryEnabled ? 'Deshabilitar modo delivery' : 'Habilitar modo delivery'}</p>
             <p className="text-sm text-gray-500">
               Permite registrar trabajos de reparto con ganancias variables
             </p>

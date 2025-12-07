@@ -2,7 +2,7 @@ import React from 'react';
 import Popover from '../../ui/Popover';
 import { formatCurrency } from '../../../utils/currency';
 
-const ShiftDetailsPopover = ({ turno, shiftData, children }) => {
+const ShiftDetailsPopover = ({ turno, shiftData, children, anchorRef }) => {
   const formatCreationDate = (timestamp) => {
     if (!timestamp || typeof timestamp.seconds !== 'number') return '';
     try {
@@ -32,7 +32,7 @@ const ShiftDetailsPopover = ({ turno, shiftData, children }) => {
   }
 
   const content = (
-    <div className="w-60">
+    <div>
       {hasNotes && (
         <div className="mb-3 pb-2 border-b border-gray-100">
           <p className="font-semibold text-gray-700">Notas:</p>
@@ -74,8 +74,10 @@ const ShiftDetailsPopover = ({ turno, shiftData, children }) => {
         content={content} 
         title="Más información" 
         footer={footerContent}
-        position="top"
+        position="bottom-start"
         trigger="click"
+        anchorRef={anchorRef}
+        fullWidth
     >
       {children}
     </Popover>
