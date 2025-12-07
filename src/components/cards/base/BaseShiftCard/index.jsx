@@ -1,5 +1,5 @@
 // src/components/cards/base/BaseShiftCard/index.jsx
-import React from 'react';
+import React, ***REMOVED*** useRef ***REMOVED*** from 'react';
 import ***REMOVED*** Edit, Edit2, Trash2, Clock, Info ***REMOVED*** from 'lucide-react';
 
 import Card from '../../../ui/Card';
@@ -31,6 +31,7 @@ const BaseShiftCard = (***REMOVED***
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const isMobile = useIsMobile();
+  const cardWrapperRef = useRef(null);
 
   if (!turno) ***REMOVED***
     return (
@@ -99,14 +100,15 @@ const BaseShiftCard = (***REMOVED***
     );
   ***REMOVED***;
 
-  if (isMobile) ***REMOVED***
-    return (
-      <Card
-        variant=***REMOVED***variant***REMOVED***
-        hover=***REMOVED***true***REMOVED***
-        padding="sm"
-        className="w-full"
-      >
+  const cardContent = (
+    <Card
+      variant=***REMOVED***variant***REMOVED***
+      hover=***REMOVED***true***REMOVED***
+      padding=***REMOVED***isMobile ? "sm" : (compact ? 'sm' : 'md')***REMOVED***
+      className=***REMOVED***isMobile ? "w-full" : ""***REMOVED***
+      shadow=***REMOVED***compact ? 'sm' : 'md'***REMOVED***
+    >
+      ***REMOVED***isMobile ? (
         <div className="space-y-3">
           <Flex variant="start-between">
             <Flex variant="start" className="items-center space-x-3 flex-1 min-w-0">
@@ -126,7 +128,7 @@ const BaseShiftCard = (***REMOVED***
             </Flex>
 
             <div className="flex items-center gap-2">
-                <ShiftDetailsPopover turno=***REMOVED***turno***REMOVED*** shiftData=***REMOVED***shiftData***REMOVED***>
+                <ShiftDetailsPopover turno=***REMOVED***turno***REMOVED*** shiftData=***REMOVED***shiftData***REMOVED*** anchorRef=***REMOVED***cardWrapperRef***REMOVED***>
                     <Info size=***REMOVED***18***REMOVED*** className="cursor-pointer text-gray-400 hover:text-gray-600" />
                 </ShiftDetailsPopover>
                 ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
@@ -158,87 +160,80 @@ const BaseShiftCard = (***REMOVED***
             </Flex>
 
             ***REMOVED***children?.mobileStats***REMOVED***
-
             ***REMOVED***renderEarningFooter()***REMOVED***
-
           </div>
         </div>
-      </Card>
-    );
-  ***REMOVED***
-
-  // VERSION DESKTOP
-  return (
-    <Card
-      variant=***REMOVED***variant***REMOVED***
-      hover=***REMOVED***true***REMOVED***
-      shadow=***REMOVED***compact ? 'sm' : 'md'***REMOVED***
-      padding=***REMOVED***compact ? 'sm' : 'md'***REMOVED***
-    >
-      <div className="space-y-3">
-        <Flex variant="start-between">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-3">
-              <Flex variant="center"
-                className="w-10 h-10 rounded-lg text-white font-bold flex-shrink-0"
-                style=***REMOVED******REMOVED*** backgroundColor: colorTrabajo ***REMOVED******REMOVED***
-              >
-                ***REMOVED***currentConfig.avatarContent || children?.avatarIcon***REMOVED***
-              </Flex>
-
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1 flex-wrap">
-                  <h3 className="font-semibold text-gray-800 truncate min-w-0">
-                    ***REMOVED***trabajo.nombre***REMOVED***
-                  </h3>
-                  <ShiftTypeBadge turno=***REMOVED***turno***REMOVED*** size="sm" />
-                </div>
-
-                <Flex variant="start" className="text-sm text-gray-600 gap-3 flex-wrap">
-                  <Flex variant="center">
-                    <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
-                    <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
-                  </Flex>
-                  <span className="text-gray-300">•</span>
-                  <span>***REMOVED***shiftData?.hours?.toFixed(1) || '0.0'***REMOVED***h</span>
-                  
-                  ***REMOVED***fecha && (
-                    <>
-                      <span className="text-gray-300">•</span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-500">
-                          ***REMOVED***formatRelativeDate(fecha)***REMOVED***
-                        </span>
-                        ***REMOVED***children?.desktopBadge***REMOVED***
-                      </div>
-                    </>
-                  )***REMOVED***
-
-                  ***REMOVED***turno.cruzaMedianoche && (
-                    <>
-                      <span className="text-gray-300">•</span>
-                      <span className="text-blue-600 text-xs">🌙</span>
-                    </>
-                  )***REMOVED***
+      ) : (
+        <div className="space-y-3">
+          <Flex variant="start-between">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 mb-3">
+                <Flex variant="center"
+                  className="w-10 h-10 rounded-lg text-white font-bold flex-shrink-0"
+                  style=***REMOVED******REMOVED*** backgroundColor: colorTrabajo ***REMOVED******REMOVED***
+                >
+                  ***REMOVED***currentConfig.avatarContent || children?.avatarIcon***REMOVED***
                 </Flex>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <h3 className="font-semibold text-gray-800 truncate min-w-0">
+                      ***REMOVED***trabajo.nombre***REMOVED***
+                    </h3>
+                    <ShiftTypeBadge turno=***REMOVED***turno***REMOVED*** size="sm" />
+                  </div>
+
+                  <Flex variant="start" className="text-sm text-gray-600 gap-3 flex-wrap">
+                    <Flex variant="center">
+                      <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
+                      <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
+                    </Flex>
+                    <span className="text-gray-300">•</span>
+                    <span>***REMOVED***shiftData?.hours?.toFixed(1) || '0.0'***REMOVED***h</span>
+                    
+                    ***REMOVED***fecha && (
+                      <>
+                        <span className="text-gray-300">•</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500">
+                            ***REMOVED***formatRelativeDate(fecha)***REMOVED***
+                          </span>
+                          ***REMOVED***children?.desktopBadge***REMOVED***
+                        </div>
+                      </>
+                    )***REMOVED***
+
+                    ***REMOVED***turno.cruzaMedianoche && (
+                      <>
+                        <span className="text-gray-300">•</span>
+                        <span className="text-blue-600 text-xs">🌙</span>
+                      </>
+                    )***REMOVED***
+                  </Flex>
+                </div>
               </div>
+
+              ***REMOVED***children?.desktopStats***REMOVED***
+              ***REMOVED***renderEarningFooter()***REMOVED***
             </div>
 
-            ***REMOVED***children?.desktopStats***REMOVED***
-
-            ***REMOVED***renderEarningFooter()***REMOVED***
-          </div>
-
-          <Flex variant="center" className="gap-2 ml-4 self-start">
-            <ShiftDetailsPopover turno=***REMOVED***turno***REMOVED*** shiftData=***REMOVED***shiftData***REMOVED***>
-                <Info size=***REMOVED***18***REMOVED*** className="cursor-pointer text-gray-400 hover:text-gray-600" />
-            </ShiftDetailsPopover>
-            ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
+            <Flex variant="center" className="gap-2 ml-4 self-start">
+              <ShiftDetailsPopover turno=***REMOVED***turno***REMOVED*** shiftData=***REMOVED***shiftData***REMOVED*** anchorRef=***REMOVED***cardWrapperRef***REMOVED***>
+                  <Info size=***REMOVED***18***REMOVED*** className="cursor-pointer text-gray-400 hover:text-gray-600" />
+              </ShiftDetailsPopover>
+              ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
+            </Flex>
           </Flex>
-        </Flex>
-      </div>
+        </div>
+      )***REMOVED***
     </Card>
   );
+
+  return (
+    <div ref=***REMOVED***cardWrapperRef***REMOVED*** className="w-full">
+      ***REMOVED***cardContent***REMOVED***
+    </div>
+  )
 ***REMOVED***;
 
 export default BaseShiftCard;
