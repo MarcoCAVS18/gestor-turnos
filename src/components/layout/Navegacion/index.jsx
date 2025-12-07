@@ -407,5 +407,4 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
     </>
   );
 ***REMOVED***;
-
 export default Navegacion;

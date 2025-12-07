@@ -1,5 +1,3 @@
-// src/pages/Turnos.jsx
-
 import React, ***REMOVED*** useState, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** useTurnManager ***REMOVED*** from '../hooks/useTurnManager';
@@ -8,7 +6,7 @@ import ***REMOVED*** useFilterTurnos ***REMOVED*** from '../hooks/useFilterTurno
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import PageHeader from '../components/layout/PageHeader'; // Added import
-import ***REMOVED*** List, Plus ***REMOVED*** from 'lucide-react'; // Added icons
+import ***REMOVED*** List, Plus, ChevronDown, ChevronUp ***REMOVED*** from 'lucide-react'; // Added icons
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
 import FiltrosTurnos from '../components/filters/FiltrosTurnos';
 import ModalTurno from '../components/modals/shift/ModalTurno';
@@ -120,7 +118,6 @@ const Turnos = () => ***REMOVED***
 
   const semanasParaMostrar = turnosPorSemana.slice(0, weeksShown);
   const hayMasSemanas = turnosPorSemana.length > weeksShown;
-  const semanasRestantes = turnosPorSemana.length - weeksShown;
   const hayTurnos = turnosPorSemana.length > 0;
 
   const handleShowMoreWeeks = () => ***REMOVED***
@@ -128,7 +125,7 @@ const Turnos = () => ***REMOVED***
     setTimeout(() => ***REMOVED***
       setWeeksShown(prev => Math.min(prev + WEEKS_PER_PAGE, turnosPorSemana.length));
       setExpanding(false);
-    ***REMOVED***, 150);
+    ***REMOVED***, 300);
   ***REMOVED***;
 
   const handleShowLessWeeks = () => ***REMOVED***
@@ -238,25 +235,24 @@ const Turnos = () => ***REMOVED***
                 <button
                   onClick=***REMOVED***handleShowMoreWeeks***REMOVED***
                   disabled=***REMOVED***expanding***REMOVED***
-                  className="relative z-10 flex items-center space-x-2 px-6 py-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+                  className="relative z-10 flex items-center space-x-2 px-6 py-3 rounded-full font-medium text-white transition-all hover:shadow-lg disabled:opacity-50"
                   style=***REMOVED******REMOVED*** 
-                    borderColor: thematicColors?.transparent20,
-                    color: thematicColors?.base
+                    backgroundColor: thematicColors?.base
                   ***REMOVED******REMOVED***
                 >
                   ***REMOVED***expanding ? (
                     <>
                       <LoadingSpinner 
-                        size="h-4 w-4"
-                        style=***REMOVED******REMOVED*** borderColor: thematicColors?.base ***REMOVED******REMOVED***
+                        size="h-5 w-5"
+                        style=***REMOVED******REMOVED*** borderColor: 'white' ***REMOVED******REMOVED***
                         color="border-transparent"
                       />
                       <span>Cargando...</span>
                     </>
                   ) : (
                     <>
-                      <span>👁️</span>
-                      <span>Ver ***REMOVED***Math.min(WEEKS_PER_PAGE, semanasRestantes)***REMOVED*** semanas más</span>
+                      <ChevronDown size=***REMOVED***20***REMOVED*** />
+                      <span>Ver más semanas</span>
                     </>
                   )***REMOVED***
                 </button>
@@ -267,9 +263,9 @@ const Turnos = () => ***REMOVED***
               <div className="flex justify-center py-4">
                 <button
                   onClick=***REMOVED***handleShowLessWeeks***REMOVED***
-                  className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 rounded-full hover:bg-gray-100 transition-colors"
                 >
-                  <span>↑</span>
+                  <ChevronUp size=***REMOVED***18***REMOVED*** />
                   <span>Mostrar menos</span>
                 </button>
               </div>

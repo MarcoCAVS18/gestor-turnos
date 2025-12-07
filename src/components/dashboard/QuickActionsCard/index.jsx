@@ -6,14 +6,14 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
-const QuickActionsCard = () => ***REMOVED***
+const QuickActionsCard = (***REMOVED*** className ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const navigate = useNavigate();
 
   return (
-    <Card>
+    <Card className=***REMOVED***`$***REMOVED***className***REMOVED*** flex flex-col`***REMOVED***>
       <h3 className="text-lg font-semibold mb-4">Acciones rápidas</h3>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 flex-grow items-center">
         <Button
           onClick=***REMOVED***() => navigate('/turnos')***REMOVED***
           variant="outline"

@@ -113,7 +113,7 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
   ***REMOVED***
 
   return (
-    <Card className="h-full">
+    <Card className="h-full flex flex-col">
       <Flex variant="between" className="mb-4">
         <h3 className="text-lg font-semibold flex items-center">
           <Activity size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
@@ -127,7 +127,7 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
         </button>
       </Flex>
 
-      <div className="space-y-3">
+      <div className="space-y-3 flex-grow">
         ***REMOVED***turnosRecientes.map((turno, index) => ***REMOVED***
           const trabajo = getTrabajo(turno.trabajoId);
           const ganancia = calcularGananciaDisplay(turno);

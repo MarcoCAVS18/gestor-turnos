@@ -14,6 +14,7 @@ import FooterSection from '../components/settings/FooterSection';
 import NotificationBanner from '../components/ui/NotificationBanner';
 import DeliverySection from '../components/settings/DeliverySection';
 import SmokoSection from '../components/settings/SmokoSection';
+import ChangeLog from '../components/changelog/ChangeLog';
 
 const Ajustes = () => ***REMOVED***
   const [message, setMessage] = useState('');
@@ -145,6 +146,7 @@ const Ajustes = () => ***REMOVED***
               onError=***REMOVED***handleError***REMOVED***
             />
           </div>
+          <ChangeLog />
         </div>
       </div>
 

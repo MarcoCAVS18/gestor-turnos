@@ -2,7 +2,6 @@
 import React from 'react';
 import ***REMOVED*** Package, Navigation, Truck ***REMOVED*** from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
-import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
 
 const TarjetaTurnoDelivery = (props) => ***REMOVED***
@@ -90,45 +89,8 @@ const TarjetaTurnoDelivery = (props) => ***REMOVED***
           </Flex>
         ),
 
-        // Contenido expandido - Detalles financieros (ORIGINAL RESTAURADO)
-        expandedContent: (shiftData.propinas > 0 || shiftData.gastos > 0) && (
-          <div className="bg-green-50 rounded-lg p-3">
-            <div className="text-sm space-y-2">
-              <div className="font-medium text-green-700 mb-2">Detalles Financieros</div>
-
-              <Flex justify="between">
-                <span className="text-green-600 mr-2">Ganancia total:</span>
-                <span className="font-medium">***REMOVED***formatCurrency(shiftData.gananciaTotal)***REMOVED***</span>
-              </Flex>
-
-              ***REMOVED***shiftData.propinas > 0 && (
-                <Flex justify="between">
-                  <span className="text-green-600 mr-2">Propinas:</span>
-                  <span className="font-medium">***REMOVED***formatCurrency(shiftData.propinas)***REMOVED***</span>
-                </Flex>
-              )***REMOVED***
-
-              ***REMOVED***shiftData.gastos > 0 && (
-                <Flex justify="between">
-                  <span className="text-green-600 mr-2">Gastos combustible:</span>
-                  <span className="font-medium">***REMOVED***formatCurrency(shiftData.gastos)***REMOVED***</span>
-                </Flex>
-              )***REMOVED***
-
-              ***REMOVED***shiftData.numeroPedidos > 0 && (
-                <Flex justify="between" className="text-green-600">
-                  <span className='mr-2'>Promedio/pedido:</span>
-                  <span>***REMOVED***formatCurrency(shiftData.promedioPorPedido)***REMOVED***</span>
-                </Flex>
-              )***REMOVED***
-
-              <Flex justify="between" className="border-t border-green-200 pt-2">
-                <span className="font-semibold text-green-700 mr-2">Ganancia neta:</span>
-                <span className="font-bold text-green-700">***REMOVED***formatCurrency(shiftData.totalWithDiscount)***REMOVED***</span>
-              </Flex>
-            </div>
-          </div>
-        )
+        // Contenido expandido - Detalles financieros en Popover
+        
       ***REMOVED******REMOVED***
     </BaseShiftCard>
   );
