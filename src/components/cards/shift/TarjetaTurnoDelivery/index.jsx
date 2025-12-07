@@ -2,7 +2,6 @@
 import React from 'react';
 import { Package, Navigation, Truck } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
-import { formatCurrency } from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
 
 const TarjetaTurnoDelivery = (props) => {
@@ -90,45 +89,8 @@ const TarjetaTurnoDelivery = (props) => {
           </Flex>
         ),
 
-        // Contenido expandido - Detalles financieros (ORIGINAL RESTAURADO)
-        expandedContent: (shiftData.propinas > 0 || shiftData.gastos > 0) && (
-          <div className="bg-green-50 rounded-lg p-3">
-            <div className="text-sm space-y-2">
-              <div className="font-medium text-green-700 mb-2">Detalles Financieros</div>
-
-              <Flex justify="between">
-                <span className="text-green-600 mr-2">Ganancia total:</span>
-                <span className="font-medium">{formatCurrency(shiftData.gananciaTotal)}</span>
-              </Flex>
-
-              {shiftData.propinas > 0 && (
-                <Flex justify="between">
-                  <span className="text-green-600 mr-2">Propinas:</span>
-                  <span className="font-medium">{formatCurrency(shiftData.propinas)}</span>
-                </Flex>
-              )}
-
-              {shiftData.gastos > 0 && (
-                <Flex justify="between">
-                  <span className="text-green-600 mr-2">Gastos combustible:</span>
-                  <span className="font-medium">{formatCurrency(shiftData.gastos)}</span>
-                </Flex>
-              )}
-
-              {shiftData.numeroPedidos > 0 && (
-                <Flex justify="between" className="text-green-600">
-                  <span className='mr-2'>Promedio/pedido:</span>
-                  <span>{formatCurrency(shiftData.promedioPorPedido)}</span>
-                </Flex>
-              )}
-
-              <Flex justify="between" className="border-t border-green-200 pt-2">
-                <span className="font-semibold text-green-700 mr-2">Ganancia neta:</span>
-                <span className="font-bold text-green-700">{formatCurrency(shiftData.totalWithDiscount)}</span>
-              </Flex>
-            </div>
-          </div>
-        )
+        // Contenido expandido - Detalles financieros en Popover
+        
       }}
     </BaseShiftCard>
   );

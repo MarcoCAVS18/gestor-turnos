@@ -1,5 +1,3 @@
-// src/pages/Turnos.jsx
-
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { useTurnManager } from '../hooks/useTurnManager';
@@ -8,7 +6,7 @@ import { useFilterTurnos } from '../hooks/useFilterTurnos';
 import { createSafeDate } from '../utils/time';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import PageHeader from '../components/layout/PageHeader'; // Added import
-import { List, Plus } from 'lucide-react'; // Added icons
+import { List, Plus, ChevronDown, ChevronUp } from 'lucide-react'; // Added icons
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
 import FiltrosTurnos from '../components/filters/FiltrosTurnos';
 import ModalTurno from '../components/modals/shift/ModalTurno';
@@ -120,7 +118,6 @@ const Turnos = () => {
 
   const semanasParaMostrar = turnosPorSemana.slice(0, weeksShown);
   const hayMasSemanas = turnosPorSemana.length > weeksShown;
-  const semanasRestantes = turnosPorSemana.length - weeksShown;
   const hayTurnos = turnosPorSemana.length > 0;
 
   const handleShowMoreWeeks = () => {
@@ -128,7 +125,7 @@ const Turnos = () => {
     setTimeout(() => {
       setWeeksShown(prev => Math.min(prev + WEEKS_PER_PAGE, turnosPorSemana.length));
       setExpanding(false);
-    }, 150);
+    }, 300);
   };
 
   const handleShowLessWeeks = () => {
@@ -238,25 +235,24 @@ const Turnos = () => {
                 <button
                   onClick={handleShowMoreWeeks}
                   disabled={expanding}
-                  className="relative z-10 flex items-center space-x-2 px-6 py-3 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+                  className="relative z-10 flex items-center space-x-2 px-6 py-3 rounded-full font-medium text-white transition-all hover:shadow-lg disabled:opacity-50"
                   style={{ 
-                    borderColor: thematicColors?.transparent20,
-                    color: thematicColors?.base
+                    backgroundColor: thematicColors?.base
                   }}
                 >
                   {expanding ? (
                     <>
                       <LoadingSpinner 
-                        size="h-4 w-4"
-                        style={{ borderColor: thematicColors?.base }}
+                        size="h-5 w-5"
+                        style={{ borderColor: 'white' }}
                         color="border-transparent"
                       />
                       <span>Cargando...</span>
                     </>
                   ) : (
                     <>
-                      <span>👁️</span>
-                      <span>Ver {Math.min(WEEKS_PER_PAGE, semanasRestantes)} semanas más</span>
+                      <ChevronDown size={20} />
+                      <span>Ver más semanas</span>
                     </>
                   )}
                 </button>
@@ -267,9 +263,9 @@ const Turnos = () => {
               <div className="flex justify-center py-4">
                 <button
                   onClick={handleShowLessWeeks}
-                  className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 rounded-full hover:bg-gray-100 transition-colors"
                 >
-                  <span>↑</span>
+                  <ChevronUp size={18} />
                   <span>Mostrar menos</span>
                 </button>
               </div>

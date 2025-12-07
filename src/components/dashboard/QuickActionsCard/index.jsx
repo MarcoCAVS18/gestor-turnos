@@ -6,14 +6,14 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
-const QuickActionsCard = () => {
+const QuickActionsCard = ({ className }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
 
   return (
-    <Card>
+    <Card className={`${className} flex flex-col`}>
       <h3 className="text-lg font-semibold mb-4">Acciones rápidas</h3>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 flex-grow items-center">
         <Button
           onClick={() => navigate('/turnos')}
           variant="outline"

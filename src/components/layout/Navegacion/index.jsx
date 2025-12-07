@@ -407,5 +407,4 @@ const Navegacion = ({ abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
     </>
   );
 };
-
 export default Navegacion;

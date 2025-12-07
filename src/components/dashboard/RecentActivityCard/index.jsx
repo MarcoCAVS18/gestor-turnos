@@ -113,7 +113,7 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
   }
 
   return (
-    <Card className="h-full">
+    <Card className="h-full flex flex-col">
       <Flex variant="between" className="mb-4">
         <h3 className="text-lg font-semibold flex items-center">
           <Activity size={20} style={{ color: colors.primary }} className="mr-2" />
@@ -127,7 +127,7 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
         </button>
       </Flex>
 
-      <div className="space-y-3">
+      <div className="space-y-3 flex-grow">
         {turnosRecientes.map((turno, index) => {
           const trabajo = getTrabajo(turno.trabajoId);
           const ganancia = calcularGananciaDisplay(turno);

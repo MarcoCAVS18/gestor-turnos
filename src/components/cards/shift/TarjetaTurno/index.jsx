@@ -1,22 +1,20 @@
 // src/components/cards/TarjetaTurno/index.jsx 
 import React from 'react';
-import {  Coffee } from 'lucide-react';
+import {  Coffee, DollarSign } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Badge from '../../../ui/Badge';
 import { useApp } from '../../../../contexts/AppContext';
-import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
 
 const TarjetaTurno = (props) => {
   const { turno, trabajo } = props;
   const { calculatePayment, smokoEnabled, currencySymbol } = useApp(); // Get currencySymbol from context
-  const colors = useThemeColors();
 
   // Calcular información del turno
   const shiftData = React.useMemo(() => {
     if (!turno || !trabajo) {
-      return { hours: 0, totalWithDiscount: 0 };
+      return { hours: 0, totalWithDiscount: 0, appliedRates: {} };
     }
 
     const result = calculatePayment(turno);
@@ -24,9 +22,32 @@ const TarjetaTurno = (props) => {
       hours: result.hours || 0,
       totalWithDiscount: result.totalWithDiscount || 0,
       smokoApplied: result.smokoApplied || false,
-      smokoMinutes: result.smokoMinutes || 0
+      smokoMinutes: result.smokoMinutes || 0,
+      appliedRates: result.appliedRates || {}
     };
   }, [turno, trabajo, calculatePayment]);
+
+  const renderAppliedRates = () => {
+    const rates = Object.entries(shiftData.appliedRates);
+    if (rates.length === 0) {
+      if (trabajo && trabajo.tarifaBase > 0) {
+        return <span>{formatCurrency(trabajo.tarifaBase, currencySymbol)} x hora</span>;
+      }
+      return null;
+    }
+
+    if (rates.length === 1) {
+      return <span>{formatCurrency(rates[0][1], currencySymbol)} x hora</span>;
+    }
+
+    // Compact format for multiple rates
+    const rateValues = rates.map(([, rate]) => Math.round(rate));
+    const uniqueRateValues = [...new Set(rateValues)];
+
+    return <span>{uniqueRateValues.join(' / ')} x hora</span>;
+  };
+  
+  const hasRatesToShow = Object.keys(shiftData.appliedRates).length > 0 || (trabajo && trabajo.tarifaBase > 0);
 
   return (
     <BaseShiftCard
@@ -51,26 +72,23 @@ const TarjetaTurno = (props) => {
           </Badge>
         ),
 
-        // mobileStats and desktopStats will no longer display earnings here.
-        // They are handled by BaseShiftCard directly now.
-
-        // Contenido expandido
-        expandedContent: (
-          <div className="bg-gray-50 rounded-lg p-3 text-sm space-y-2">
-            {smokoEnabled && shiftData.smokoApplied && (
-              <Flex justify="between">
-                <span className="text-gray-600 mr-2">Descuento Smoko:</span>
-                <span className="font-medium text-red-500">-{shiftData.smokoMinutes}min</span>
-              </Flex>
-            )}
-            <Flex justify="between" className="pt-2 border-t border-gray-200">
-              <span className="font-semibold text-gray-700 mr-2">Ganancia neta:</span>
-              <span className="font-bold" style={{ color: colors.primary }}>
-                {formatCurrency(shiftData.totalWithDiscount, currencySymbol)}
-              </span>
+        mobileStats: hasRatesToShow && (
+          <Flex variant="start" className="pt-2 border-t border-gray-100 mt-2">
+            <Flex variant="center" className="text-sm text-gray-600">
+              <DollarSign size={12} className="mr-1 text-green-500" />
+              {renderAppliedRates()}
             </Flex>
-          </div>
-        )
+          </Flex>
+        ),
+
+        desktopStats: hasRatesToShow && (
+          <Flex variant="start" className="mb-2">
+            <Flex variant="center" className="text-sm text-gray-600">
+              <DollarSign size={14} className="mr-1 text-green-500" />
+              {renderAppliedRates()}
+            </Flex>
+          </Flex>
+        ),
       }}
     </BaseShiftCard>
   );

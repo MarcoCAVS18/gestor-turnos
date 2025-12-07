@@ -109,36 +109,28 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* Columna Derecha: Grilla anidada de 2 columnas + fila inferior */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
-              {/* Top Left: Favorite Works */}
-              <FavoriteWorksCard trabajosFavoritos={stats.trabajosFavoritos} className="flex-grow" />
-
-              {/* Top Right: Export Report Card + Next Shift Card */}
-              <div className="flex flex-col gap-6">
+          {/* Columna Derecha: Reorganizada en 2 columnas */}
+          <div className="lg:col-span-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Columna Izquierda */}
+              <div className="space-y-6 flex flex-col">
+                <FavoriteWorksCard trabajosFavoritos={stats.trabajosFavoritos} />
+                <TopWorkCard trabajoMasRentable={stats.trabajoMasRentable} />
+                <ProjectionCard
+                  proyeccionMensual={stats.proyeccionMensual}
+                  horasTrabajadas={stats.horasTrabajadas}
+                  className="flex-grow"
+                />
+              </div>
+              {/* Columna Derecha */}
+              <div className="space-y-6 flex flex-col">
                 <NextShiftCard
                   proximoTurno={stats.proximoTurno}
                   formatearFecha={stats.formatearFecha}
                 />
-                <ExportReportCard onExport={handleExport} className="flex-grow" />
+                <ExportReportCard onExport={handleExport} />
+                <QuickActionsCard className="flex-grow" />
               </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
-              {/* Bottom Left: Top Work */}
-              <TopWorkCard trabajoMasRentable={stats.trabajoMasRentable} className="flex-grow" />
-
-              {/* Bottom Right: Quick Actions */}
-              <QuickActionsCard className="flex-grow" />
-            </div>
-
-            {/* Fila inferior para Proyección */}
-            <div>
-              <ProjectionCard
-                proyeccionMensual={stats.proyeccionMensual}
-                horasTrabajadas={stats.horasTrabajadas}
-              />
             </div>
           </div>
         </div>

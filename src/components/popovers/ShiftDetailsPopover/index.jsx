@@ -1,0 +1,85 @@
+import React from 'react';
+import Popover from '../../ui/Popover';
+import { formatCurrency } from '../../../utils/currency';
+
+const ShiftDetailsPopover = ({ turno, shiftData, children }) => {
+  const formatCreationDate = (timestamp) => {
+    if (!timestamp || typeof timestamp.seconds !== 'number') return '';
+    try {
+      const date = new Date(timestamp.seconds * 1000);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${day}/${month}/${year} ${hours}:${minutes}`;
+    } catch (e) {
+      console.error("Error formatting creation date:", e);
+      return '';
+    }
+  };
+
+  const hasNotes = turno.notas?.trim();
+  const isDelivery = turno.tipo === 'delivery';
+
+  // Determine if there is any content to show in the popover
+  const hasContent = hasNotes || 
+                     (isDelivery && shiftData && (shiftData.gananciaTotal > 0 || shiftData.propinas > 0 || shiftData.gastos > 0)) ||
+                     (!isDelivery && shiftData && (shiftData.smokoApplied || shiftData.totalWithDiscount));
+
+  if (!hasContent) {
+      return <>{children}</>;
+  }
+
+  const content = (
+    <div className="w-60">
+      {hasNotes && (
+        <div className="mb-3 pb-2 border-b border-gray-100">
+          <p className="font-semibold text-gray-700">Notas:</p>
+          <p className="text-sm text-gray-600 break-words">{turno.notas}</p>
+        </div>
+      )}
+
+      {isDelivery && shiftData ? (
+        <div>
+            <p className="font-semibold text-gray-700 mb-1">Detalles Financieros:</p>
+            <div className='text-sm text-gray-600 space-y-1'>
+                <div className="flex justify-between"><span>Ganancia Bruta:</span> <span>{formatCurrency(shiftData.gananciaTotal)}</span></div>
+                {shiftData.propinas > 0 && <div className="flex justify-between"><span>Propinas:</span> <span>{formatCurrency(shiftData.propinas)}</span></div>}
+                {shiftData.gastos > 0 && <div className="flex justify-between"><span>Gastos:</span> <span className='text-red-500'>-{formatCurrency(shiftData.gastos)}</span></div>}
+                <div className="flex justify-between font-bold pt-1 border-t mt-1 border-gray-200"><span>Ganancia Neta:</span> <span className='text-green-600'>{formatCurrency(shiftData.totalWithDiscount)}</span></div>
+            </div>
+        </div>
+      ) : shiftData ? (
+        <div className="space-y-2">
+          {shiftData.smokoApplied && (
+            <div className="flex justify-between">
+              <span className="font-semibold text-gray-700">Descuento Smoko:</span>
+              <span className="text-sm text-red-600">-{shiftData.smokoMinutes} min</span>
+            </div>
+          )}
+          <div className="flex justify-between items-center pt-1 border-t mt-1 border-gray-200">
+            <span className="font-semibold text-gray-700">Ganancia neta:</span>
+            <span className="text-lg text-green-600 font-bold">{formatCurrency(shiftData.totalWithDiscount || 0)}</span>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+
+  const footerContent = turno.fechaCreacion ? `Creado: ${formatCreationDate(turno.fechaCreacion)}` : '';
+
+  return (
+    <Popover 
+        content={content} 
+        title="Más información" 
+        footer={footerContent}
+        position="top"
+        trigger="click"
+    >
+      {children}
+    </Popover>
+  );
+};
+
+export default ShiftDetailsPopover;
