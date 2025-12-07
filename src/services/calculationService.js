@@ -44,7 +44,8 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     hours: 0,
     tips: 0,
     isDelivery: false,
-    breakdown: ***REMOVED*** diurno: 0, tarde: 0, noche: 0, sabado: 0, domingo: 0 ***REMOVED***
+    breakdown: ***REMOVED*** diurno: 0, tarde: 0, noche: 0, sabado: 0, domingo: 0 ***REMOVED***,
+    appliedRates: ***REMOVED******REMOVED***
   ***REMOVED***;
 
   // Si es un turno de delivery, devuelve las ganancias totales directamente
@@ -56,14 +57,15 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
       hours,
       tips: shift.propinas || 0,
       isDelivery: true,
-      breakdown: ***REMOVED*** delivery: shift.gananciaTotal || 0 ***REMOVED***
+      breakdown: ***REMOVED*** delivery: shift.gananciaTotal || 0 ***REMOVED***,
+      appliedRates: ***REMOVED*** 'delivery': shift.gananciaPorHora || (shift.gananciaTotal / hours) || 0 ***REMOVED***
     ***REMOVED***;
   ***REMOVED***
 
   const ***REMOVED*** horaInicio, horaFin, fechaInicio, cruzaMedianoche = false, tuvoDescanso = true ***REMOVED*** = shift;
 
   if (!horaInicio || !horaFin || !fechaInicio) ***REMOVED***
-    return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false ***REMOVED***;
+    return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false, appliedRates: ***REMOVED******REMOVED*** ***REMOVED***;
   ***REMOVED***
 
   const [startHour, startMin] = horaInicio.split(':').map(n => parseInt(n));
@@ -91,13 +93,16 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
 
   let total = 0;
   let breakdown = ***REMOVED*** diurno: 0, tarde: 0, noche: 0, sabado: 0, domingo: 0 ***REMOVED***;
+  let appliedRates = ***REMOVED******REMOVED***;
 
   if (dayOfWeek === 0) ***REMOVED*** // Domingo
     total = hours * job.tarifas.domingo;
     breakdown.domingo = total;
+    appliedRates['domingo'] = job.tarifas.domingo;
   ***REMOVED*** else if (dayOfWeek === 6) ***REMOVED*** // Sábado
     total = hours * job.tarifas.sabado;
     breakdown.sabado = total;
+    appliedRates['sabado'] = job.tarifas.sabado;
   ***REMOVED*** else ***REMOVED***
     const ranges = shiftRanges || ***REMOVED***
       dayStart: 6, dayEnd: 14,
@@ -128,6 +133,8 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
         rate = job.tarifas.noche;
         rateType = 'noche';
       ***REMOVED***
+      
+      if(rate > 0) appliedRates[rateType] = rate;
 
       const ratePerMinute = rate / 60;
       total += ratePerMinute;
@@ -144,6 +151,7 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     tips: 0,
     isDelivery: false,
     breakdown,
+    appliedRates,
     isNightShift: cruzaMedianoche || false,
     smokoApplied: smokoEnabled && tuvoDescanso && totalMinutes > smokoMinutes,
     smokoMinutes: smokoEnabled && tuvoDescanso ? smokoMinutes : 0,

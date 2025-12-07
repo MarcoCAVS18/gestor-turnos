@@ -109,36 +109,28 @@ const Dashboard = () => ***REMOVED***
             />
           </div>
 
-          ***REMOVED***/* Columna Derecha: Grilla anidada de 2 columnas + fila inferior */***REMOVED***
-          <div className="lg:col-span-4 flex flex-col gap-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
-              ***REMOVED***/* Top Left: Favorite Works */***REMOVED***
-              <FavoriteWorksCard trabajosFavoritos=***REMOVED***stats.trabajosFavoritos***REMOVED*** className="flex-grow" />
-
-              ***REMOVED***/* Top Right: Export Report Card + Next Shift Card */***REMOVED***
-              <div className="flex flex-col gap-6">
+          ***REMOVED***/* Columna Derecha: Reorganizada en 2 columnas */***REMOVED***
+          <div className="lg:col-span-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              ***REMOVED***/* Columna Izquierda */***REMOVED***
+              <div className="space-y-6 flex flex-col">
+                <FavoriteWorksCard trabajosFavoritos=***REMOVED***stats.trabajosFavoritos***REMOVED*** />
+                <TopWorkCard trabajoMasRentable=***REMOVED***stats.trabajoMasRentable***REMOVED*** />
+                <ProjectionCard
+                  proyeccionMensual=***REMOVED***stats.proyeccionMensual***REMOVED***
+                  horasTrabajadas=***REMOVED***stats.horasTrabajadas***REMOVED***
+                  className="flex-grow"
+                />
+              </div>
+              ***REMOVED***/* Columna Derecha */***REMOVED***
+              <div className="space-y-6 flex flex-col">
                 <NextShiftCard
                   proximoTurno=***REMOVED***stats.proximoTurno***REMOVED***
                   formatearFecha=***REMOVED***stats.formatearFecha***REMOVED***
                 />
-                <ExportReportCard onExport=***REMOVED***handleExport***REMOVED*** className="flex-grow" />
+                <ExportReportCard onExport=***REMOVED***handleExport***REMOVED*** />
+                <QuickActionsCard className="flex-grow" />
               </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow">
-              ***REMOVED***/* Bottom Left: Top Work */***REMOVED***
-              <TopWorkCard trabajoMasRentable=***REMOVED***stats.trabajoMasRentable***REMOVED*** className="flex-grow" />
-
-              ***REMOVED***/* Bottom Right: Quick Actions */***REMOVED***
-              <QuickActionsCard className="flex-grow" />
-            </div>
-
-            ***REMOVED***/* Fila inferior para Proyección */***REMOVED***
-            <div>
-              <ProjectionCard
-                proyeccionMensual=***REMOVED***stats.proyeccionMensual***REMOVED***
-                horasTrabajadas=***REMOVED***stats.horasTrabajadas***REMOVED***
-              />
             </div>
           </div>
         </div>

@@ -41,7 +41,7 @@ export const DeliveryProvider = (***REMOVED*** children ***REMOVED***) => ***REM
   const addDeliveryJob = useCallback(async (newJob) => ***REMOVED***
     if (!currentUser) throw new Error("Usuario no autenticado");
     try ***REMOVED***
-      return await firebaseService.addDeliveryJob(currentUser.uid, newJob);
+      return await firebaseService.addJob(currentUser.uid, newJob, true);
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al agregar trabajo de delivery: ' + err.message);
       throw err;
@@ -51,7 +51,7 @@ export const DeliveryProvider = (***REMOVED*** children ***REMOVED***) => ***REM
   const editDeliveryJob = useCallback(async (id, updatedData) => ***REMOVED***
     if (!currentUser) throw new Error("Usuario no autenticado");
     try ***REMOVED***
-      await firebaseService.editDeliveryJob(currentUser.uid, id, updatedData);
+      await firebaseService.editJob(currentUser.uid, id, updatedData, true);
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al editar trabajo de delivery: ' + err.message);
       throw err;
@@ -61,7 +61,7 @@ export const DeliveryProvider = (***REMOVED*** children ***REMOVED***) => ***REM
   const deleteDeliveryJob = useCallback(async (id) => ***REMOVED***
     if (!currentUser) throw new Error("Usuario no autenticado");
     try ***REMOVED***
-      await firebaseService.deleteDeliveryJob(currentUser.uid, id);
+      await firebaseService.deleteJob(currentUser.uid, id, true);
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al eliminar trabajo de delivery: ' + err.message);
       throw err;
@@ -72,7 +72,7 @@ export const DeliveryProvider = (***REMOVED*** children ***REMOVED***) => ***REM
   const addDeliveryShift = useCallback(async (newShift) => ***REMOVED***
     if (!currentUser) throw new Error("Usuario no autenticado");
     try ***REMOVED***
-      return await firebaseService.addDeliveryShift(currentUser.uid, newShift);
+      return await firebaseService.addShift(currentUser.uid, newShift, true);
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al agregar turno de delivery: ' + err.message);
       throw err;
@@ -82,7 +82,7 @@ export const DeliveryProvider = (***REMOVED*** children ***REMOVED***) => ***REM
   const editDeliveryShift = useCallback(async (id, updatedData) => ***REMOVED***
     if (!currentUser) throw new Error("Usuario no autenticado");
     try ***REMOVED***
-      await firebaseService.editDeliveryShift(currentUser.uid, id, updatedData);
+      await firebaseService.editShift(currentUser.uid, id, updatedData, true);
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al editar turno de delivery: ' + err.message);
       throw err;
@@ -92,7 +92,7 @@ export const DeliveryProvider = (***REMOVED*** children ***REMOVED***) => ***REM
   const deleteDeliveryShift = useCallback(async (id) => ***REMOVED***
     if (!currentUser) throw new Error("Usuario no autenticado");
     try ***REMOVED***
-      await firebaseService.deleteDeliveryShift(currentUser.uid, id);
+      await firebaseService.deleteShift(currentUser.uid, id, true);
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al eliminar turno de delivery: ' + err.message);
       throw err;
