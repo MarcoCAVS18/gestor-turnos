@@ -1,4 +1,5 @@
-// src/components/cards/TarjetaTurno/index.jsx 
+// src/components/cards/shift/TarjetaTurno/index.jsx 
+
 import React from 'react';
 import ***REMOVED***  Coffee, DollarSign ***REMOVED*** from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
@@ -9,12 +10,12 @@ import Flex from '../../../ui/Flex';
 
 const TarjetaTurno = (props) => ***REMOVED***
   const ***REMOVED*** turno, trabajo ***REMOVED*** = props;
-  const ***REMOVED*** calculatePayment, smokoEnabled, currencySymbol ***REMOVED*** = useApp(); // Get currencySymbol from context
+  const ***REMOVED*** calculatePayment, smokoEnabled, currencySymbol ***REMOVED*** = useApp(); 
 
   // Calcular información del turno
   const shiftData = React.useMemo(() => ***REMOVED***
     if (!turno || !trabajo) ***REMOVED***
-      return ***REMOVED*** hours: 0, totalWithDiscount: 0, appliedRates: ***REMOVED******REMOVED*** ***REMOVED***;
+      return ***REMOVED*** hours: 0, totalWithDiscount: 0 ***REMOVED***;
     ***REMOVED***
 
     const result = calculatePayment(turno);
@@ -22,32 +23,9 @@ const TarjetaTurno = (props) => ***REMOVED***
       hours: result.hours || 0,
       totalWithDiscount: result.totalWithDiscount || 0,
       smokoApplied: result.smokoApplied || false,
-      smokoMinutes: result.smokoMinutes || 0,
-      appliedRates: result.appliedRates || ***REMOVED******REMOVED***
+      smokoMinutes: result.smokoMinutes || 0
     ***REMOVED***;
   ***REMOVED***, [turno, trabajo, calculatePayment]);
-
-  const renderAppliedRates = () => ***REMOVED***
-    const rates = Object.entries(shiftData.appliedRates);
-    if (rates.length === 0) ***REMOVED***
-      if (trabajo && trabajo.tarifaBase > 0) ***REMOVED***
-        return <span>***REMOVED***formatCurrency(trabajo.tarifaBase, currencySymbol)***REMOVED*** x hora</span>;
-      ***REMOVED***
-      return null;
-    ***REMOVED***
-
-    if (rates.length === 1) ***REMOVED***
-      return <span>***REMOVED***formatCurrency(rates[0][1], currencySymbol)***REMOVED*** x hora</span>;
-    ***REMOVED***
-
-    // Compact format for multiple rates
-    const rateValues = rates.map(([, rate]) => Math.round(rate));
-    const uniqueRateValues = [...new Set(rateValues)];
-
-    return <span>***REMOVED***uniqueRateValues.join(' / ')***REMOVED*** x hora</span>;
-  ***REMOVED***;
-  
-  const hasRatesToShow = Object.keys(shiftData.appliedRates).length > 0 || (trabajo && trabajo.tarifaBase > 0);
 
   return (
     <BaseShiftCard
@@ -55,7 +33,7 @@ const TarjetaTurno = (props) => ***REMOVED***
       type="traditional"
       shiftData=***REMOVED***shiftData***REMOVED***
       earningValue=***REMOVED***shiftData.totalWithDiscount***REMOVED***
-      earningLabel=***REMOVED***'Ganancia estimada'***REMOVED***
+      earningLabel=***REMOVED***'Ganancia Estimada'***REMOVED***
       currencySymbol=***REMOVED***currencySymbol***REMOVED***
     >
       ***REMOVED******REMOVED***
@@ -72,20 +50,20 @@ const TarjetaTurno = (props) => ***REMOVED***
           </Badge>
         ),
 
-        mobileStats: hasRatesToShow && (
+        mobileStats: trabajo.tarifaBase > 0 && (
           <Flex variant="start" className="pt-2 border-t border-gray-100 mt-2">
             <Flex variant="center" className="text-sm text-gray-600">
               <DollarSign size=***REMOVED***12***REMOVED*** className="mr-1 text-green-500" />
-              ***REMOVED***renderAppliedRates()***REMOVED***
+              <span>***REMOVED***formatCurrency(trabajo.tarifaBase, currencySymbol)***REMOVED***/hr</span>
             </Flex>
           </Flex>
         ),
 
-        desktopStats: hasRatesToShow && (
+        desktopStats: trabajo.tarifaBase > 0 && (
           <Flex variant="start" className="mb-2">
             <Flex variant="center" className="text-sm text-gray-600">
               <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1 text-green-500" />
-              ***REMOVED***renderAppliedRates()***REMOVED***
+              <span>***REMOVED***formatCurrency(trabajo.tarifaBase, currencySymbol)***REMOVED***/hr</span>
             </Flex>
           </Flex>
         ),

@@ -2,7 +2,7 @@ import React from 'react';
 import Popover from '../../ui/Popover';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 
-const ShiftDetailsPopover = (***REMOVED*** turno, shiftData, children ***REMOVED***) => ***REMOVED***
+const ShiftDetailsPopover = (***REMOVED*** turno, shiftData, children, anchorRef ***REMOVED***) => ***REMOVED***
   const formatCreationDate = (timestamp) => ***REMOVED***
     if (!timestamp || typeof timestamp.seconds !== 'number') return '';
     try ***REMOVED***
@@ -32,7 +32,7 @@ const ShiftDetailsPopover = (***REMOVED*** turno, shiftData, children ***REMOVED
   ***REMOVED***
 
   const content = (
-    <div className="w-60">
+    <div>
       ***REMOVED***hasNotes && (
         <div className="mb-3 pb-2 border-b border-gray-100">
           <p className="font-semibold text-gray-700">Notas:</p>
@@ -74,8 +74,10 @@ const ShiftDetailsPopover = (***REMOVED*** turno, shiftData, children ***REMOVED
         content=***REMOVED***content***REMOVED*** 
         title="Más información" 
         footer=***REMOVED***footerContent***REMOVED***
-        position="top"
+        position="bottom-start"
         trigger="click"
+        anchorRef=***REMOVED***anchorRef***REMOVED***
+        fullWidth
     >
       ***REMOVED***children***REMOVED***
     </Popover>

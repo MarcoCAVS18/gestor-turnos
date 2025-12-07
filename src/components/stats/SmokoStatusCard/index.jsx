@@ -1,25 +1,36 @@
 // src/components/stats/SmokoStatusCard/index.jsx
 import React from 'react';
+import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Coffee ***REMOVED*** from 'lucide-react';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
+import WavyText from '../../ui/WavyText';
 
 const SmokoStatusCard = (***REMOVED*** smokoEnabled, loading, thematicColors, className = '' ***REMOVED***) => ***REMOVED***
+  const navigate = useNavigate();
+  const statusText = smokoEnabled ? 'ACTIVADO' : 'DESACTIVADO';
+
+  const handleClick = () => ***REMOVED***
+    navigate('/ajustes');
+  ***REMOVED***;
+
   return (
-    <BaseStatsCard
-      icon=***REMOVED***Coffee***REMOVED***
-      title="Descanso"
-      loading=***REMOVED***loading***REMOVED***
-      className=***REMOVED***className***REMOVED***
-    >
-      <div className="text-center w-full">
-        <p
-          className=***REMOVED***`text-3xl font-bold $***REMOVED***smokoEnabled ? '' : 'text-gray-500'***REMOVED***`***REMOVED***
-          style=***REMOVED***smokoEnabled ? ***REMOVED*** color: thematicColors?.primary ***REMOVED*** : ***REMOVED******REMOVED******REMOVED***
-        >
-          ***REMOVED***smokoEnabled ? 'ACTIVADO' : 'DESACTIVADO'***REMOVED***
-        </p>
-      </div>
-    </BaseStatsCard>
+    <div onClick=***REMOVED***handleClick***REMOVED*** className=***REMOVED***`$***REMOVED***className***REMOVED*** cursor-pointer`***REMOVED***>
+      <BaseStatsCard
+        icon=***REMOVED***Coffee***REMOVED***
+        title="Descanso"
+        loading=***REMOVED***loading***REMOVED***
+      >
+        <div className="text-center w-full">
+          <div className="text-3xl font-bold">
+            ***REMOVED***smokoEnabled ? (
+              <WavyText text=***REMOVED***statusText***REMOVED*** color=***REMOVED***thematicColors?.base***REMOVED*** />
+            ) : (
+              <span className="text-gray-500">***REMOVED***statusText***REMOVED***</span>
+            )***REMOVED***
+          </div>
+        </div>
+      </BaseStatsCard>
+    </div>
   );
 ***REMOVED***;
 
