@@ -1,4 +1,5 @@
 // src/components/cards/base/BaseShiftCard/index.jsx
+
 import React, { useRef } from 'react';
 import { Edit, Edit2, Trash2, Clock, Info } from 'lucide-react';
 
@@ -11,7 +12,7 @@ import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { formatRelativeDate } from '../../../../utils/time';
 import { formatCurrency } from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
-import ShiftDetailsPopover from '../../../popovers/ShiftDetailsPopover';
+import ShiftDetailsPopover from '../../../shifts/ShiftDetailsPopover';
 
 const BaseShiftCard = ({
   turno,
@@ -31,6 +32,7 @@ const BaseShiftCard = ({
 }) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile();
+  // Referencia para el ancho completo del popover
   const cardWrapperRef = useRef(null);
 
   if (!turno) {
@@ -109,6 +111,7 @@ const BaseShiftCard = ({
       shadow={compact ? 'sm' : 'md'}
     >
       {isMobile ? (
+        // ============= VISTA MOBILE =============
         <div className="space-y-3">
           <Flex variant="start-between">
             <Flex variant="start" className="items-center space-x-3 flex-1 min-w-0">
@@ -128,9 +131,17 @@ const BaseShiftCard = ({
             </Flex>
 
             <div className="flex items-center gap-2">
-                <ShiftDetailsPopover turno={turno} shiftData={shiftData} anchorRef={cardWrapperRef}>
+                {/* Popover con nuevo diseño */}
+                <ShiftDetailsPopover 
+                    turno={turno} 
+                    shiftData={shiftData} 
+                    anchorRef={cardWrapperRef}
+                    position="top"
+                    fullWidth={true}
+                >
                     <Info size={18} className="cursor-pointer text-gray-400 hover:text-gray-600" />
                 </ShiftDetailsPopover>
+                
                 {showActions && <ActionsMenu actions={actions} />}
             </div>
           </Flex>
@@ -146,6 +157,7 @@ const BaseShiftCard = ({
               </div>
             </Flex>
 
+            {/* RESTAURADO: Badges y fecha en Mobile */}
             <Flex variant="start" className="gap-2">
               {fecha && (
                 <Badge variant="default" size="sm">
@@ -159,11 +171,14 @@ const BaseShiftCard = ({
               )}
             </Flex>
 
+            {/* RESTAURADO: Stats adicionales en Mobile (ej. km, pedidos) */}
             {children?.mobileStats}
+            
             {renderEarningFooter()}
           </div>
         </div>
       ) : (
+        // ============= VISTA DESKTOP =============
         <div className="space-y-3">
           <Flex variant="start-between">
             <div className="flex-1 min-w-0">
@@ -191,6 +206,7 @@ const BaseShiftCard = ({
                     <span className="text-gray-300">•</span>
                     <span>{shiftData?.hours?.toFixed(1) || '0.0'}h</span>
                     
+                    {/* RESTAURADO: Fecha y Badges en Desktop */}
                     {fecha && (
                       <>
                         <span className="text-gray-300">•</span>
@@ -213,14 +229,24 @@ const BaseShiftCard = ({
                 </div>
               </div>
 
+              {/* RESTAURADO: Stats adicionales en Desktop */}
               {children?.desktopStats}
+              
               {renderEarningFooter()}
             </div>
 
             <Flex variant="center" className="gap-2 ml-4 self-start">
-              <ShiftDetailsPopover turno={turno} shiftData={shiftData} anchorRef={cardWrapperRef}>
+              {/* Popover con nuevo diseño */}
+              <ShiftDetailsPopover 
+                  turno={turno} 
+                  shiftData={shiftData} 
+                  anchorRef={cardWrapperRef}
+                  position="top"
+                  fullWidth={true}
+              >
                   <Info size={18} className="cursor-pointer text-gray-400 hover:text-gray-600" />
               </ShiftDetailsPopover>
+              
               {showActions && <ActionsMenu actions={actions} />}
             </Flex>
           </Flex>
@@ -230,7 +256,7 @@ const BaseShiftCard = ({
   );
 
   return (
-    <div ref={cardWrapperRef} className="w-full">
+    <div ref={cardWrapperRef} className="w-full relative">
       {cardContent}
     </div>
   )
