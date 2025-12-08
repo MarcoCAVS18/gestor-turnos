@@ -1,4 +1,5 @@
 // src/components/cards/base/BaseShiftCard/index.jsx
+
 import React, ***REMOVED*** useRef ***REMOVED*** from 'react';
 import ***REMOVED*** Edit, Edit2, Trash2, Clock, Info ***REMOVED*** from 'lucide-react';
 
@@ -11,7 +12,7 @@ import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobi
 import ***REMOVED*** formatRelativeDate ***REMOVED*** from '../../../../utils/time';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
-import ShiftDetailsPopover from '../../../popovers/ShiftDetailsPopover';
+import ShiftDetailsPopover from '../../../shifts/ShiftDetailsPopover';
 
 const BaseShiftCard = (***REMOVED***
   turno,
@@ -31,6 +32,7 @@ const BaseShiftCard = (***REMOVED***
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const isMobile = useIsMobile();
+  // Referencia para el ancho completo del popover
   const cardWrapperRef = useRef(null);
 
   if (!turno) ***REMOVED***
@@ -109,6 +111,7 @@ const BaseShiftCard = (***REMOVED***
       shadow=***REMOVED***compact ? 'sm' : 'md'***REMOVED***
     >
       ***REMOVED***isMobile ? (
+        // ============= VISTA MOBILE =============
         <div className="space-y-3">
           <Flex variant="start-between">
             <Flex variant="start" className="items-center space-x-3 flex-1 min-w-0">
@@ -128,9 +131,17 @@ const BaseShiftCard = (***REMOVED***
             </Flex>
 
             <div className="flex items-center gap-2">
-                <ShiftDetailsPopover turno=***REMOVED***turno***REMOVED*** shiftData=***REMOVED***shiftData***REMOVED*** anchorRef=***REMOVED***cardWrapperRef***REMOVED***>
+                ***REMOVED***/* Popover con nuevo diseño */***REMOVED***
+                <ShiftDetailsPopover 
+                    turno=***REMOVED***turno***REMOVED*** 
+                    shiftData=***REMOVED***shiftData***REMOVED*** 
+                    anchorRef=***REMOVED***cardWrapperRef***REMOVED***
+                    position="top"
+                    fullWidth=***REMOVED***true***REMOVED***
+                >
                     <Info size=***REMOVED***18***REMOVED*** className="cursor-pointer text-gray-400 hover:text-gray-600" />
                 </ShiftDetailsPopover>
+                
                 ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
             </div>
           </Flex>
@@ -146,6 +157,7 @@ const BaseShiftCard = (***REMOVED***
               </div>
             </Flex>
 
+            ***REMOVED***/* RESTAURADO: Badges y fecha en Mobile */***REMOVED***
             <Flex variant="start" className="gap-2">
               ***REMOVED***fecha && (
                 <Badge variant="default" size="sm">
@@ -159,11 +171,14 @@ const BaseShiftCard = (***REMOVED***
               )***REMOVED***
             </Flex>
 
+            ***REMOVED***/* RESTAURADO: Stats adicionales en Mobile (ej. km, pedidos) */***REMOVED***
             ***REMOVED***children?.mobileStats***REMOVED***
+            
             ***REMOVED***renderEarningFooter()***REMOVED***
           </div>
         </div>
       ) : (
+        // ============= VISTA DESKTOP =============
         <div className="space-y-3">
           <Flex variant="start-between">
             <div className="flex-1 min-w-0">
@@ -191,6 +206,7 @@ const BaseShiftCard = (***REMOVED***
                     <span className="text-gray-300">•</span>
                     <span>***REMOVED***shiftData?.hours?.toFixed(1) || '0.0'***REMOVED***h</span>
                     
+                    ***REMOVED***/* RESTAURADO: Fecha y Badges en Desktop */***REMOVED***
                     ***REMOVED***fecha && (
                       <>
                         <span className="text-gray-300">•</span>
@@ -213,14 +229,24 @@ const BaseShiftCard = (***REMOVED***
                 </div>
               </div>
 
+              ***REMOVED***/* RESTAURADO: Stats adicionales en Desktop */***REMOVED***
               ***REMOVED***children?.desktopStats***REMOVED***
+              
               ***REMOVED***renderEarningFooter()***REMOVED***
             </div>
 
             <Flex variant="center" className="gap-2 ml-4 self-start">
-              <ShiftDetailsPopover turno=***REMOVED***turno***REMOVED*** shiftData=***REMOVED***shiftData***REMOVED*** anchorRef=***REMOVED***cardWrapperRef***REMOVED***>
+              ***REMOVED***/* Popover con nuevo diseño */***REMOVED***
+              <ShiftDetailsPopover 
+                  turno=***REMOVED***turno***REMOVED*** 
+                  shiftData=***REMOVED***shiftData***REMOVED*** 
+                  anchorRef=***REMOVED***cardWrapperRef***REMOVED***
+                  position="top"
+                  fullWidth=***REMOVED***true***REMOVED***
+              >
                   <Info size=***REMOVED***18***REMOVED*** className="cursor-pointer text-gray-400 hover:text-gray-600" />
               </ShiftDetailsPopover>
+              
               ***REMOVED***showActions && <ActionsMenu actions=***REMOVED***actions***REMOVED*** />***REMOVED***
             </Flex>
           </Flex>
@@ -230,7 +256,7 @@ const BaseShiftCard = (***REMOVED***
   );
 
   return (
-    <div ref=***REMOVED***cardWrapperRef***REMOVED*** className="w-full">
+    <div ref=***REMOVED***cardWrapperRef***REMOVED*** className="w-full relative">
       ***REMOVED***cardContent***REMOVED***
     </div>
   )
