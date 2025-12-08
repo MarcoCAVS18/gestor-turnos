@@ -2,7 +2,15 @@ import React from 'react';
 import Popover from '../../ui/Popover';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 
-const ShiftDetailsPopover = (***REMOVED*** turno, shiftData, children, anchorRef ***REMOVED***) => ***REMOVED***
+const ShiftDetailsPopover = (***REMOVED*** 
+  turno, 
+  shiftData, 
+  children, 
+  anchorRef,
+  // Nuevas props con valores por defecto para el nuevo diseño
+  position = 'top', 
+  fullWidth = true
+***REMOVED***) => ***REMOVED***
   const formatCreationDate = (timestamp) => ***REMOVED***
     if (!timestamp || typeof timestamp.seconds !== 'number') return '';
     try ***REMOVED***
@@ -74,10 +82,10 @@ const ShiftDetailsPopover = (***REMOVED*** turno, shiftData, children, anchorRef
         content=***REMOVED***content***REMOVED*** 
         title="Más información" 
         footer=***REMOVED***footerContent***REMOVED***
-        position="bottom-start"
+        position=***REMOVED***position***REMOVED***    // Usa la prop (por defecto 'top')
         trigger="click"
-        anchorRef=***REMOVED***anchorRef***REMOVED***
-        fullWidth
+        anchorRef=***REMOVED***anchorRef***REMOVED***  // Importante: usa la referencia de la tarjeta completa
+        fullWidth=***REMOVED***fullWidth***REMOVED***  // Usa la prop (por defecto true)
     >
       ***REMOVED***children***REMOVED***
     </Popover>

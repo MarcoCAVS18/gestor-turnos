@@ -1,12 +1,12 @@
-// src/components/settings/PreferencesSection/index.jsx - REFACTORIZADO
+// src/components/settings/PreferencesSection/index.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** Clock ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Info, Receipt ***REMOVED*** from 'lucide-react'; // Cambié el icono a Wallet o Receipt para que tenga más sentido con "Pagos"
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
-import InfoTooltip from '../../ui/InfoTooltip';
+import Popover from '../../ui/Popover'; // Importamos el Popover
 
 const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
@@ -15,18 +15,20 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => *
   ***REMOVED*** = useApp();
   
   const colors = useThemeColors();
-  const [descuentoDefault, setDescuentoDefault] = useState(defaultDiscount);
+  const [impuestoDefault, setImpuestoDefault] = useState(defaultDiscount);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => ***REMOVED***
-    setDescuentoDefault(defaultDiscount);
+    setImpuestoDefault(defaultDiscount);
   ***REMOVED***, [defaultDiscount]);
 
   const handleSave = async () => ***REMOVED***
     try ***REMOVED***
       setLoading(true);
-      await savePreferences(***REMOVED*** descuentoDefault ***REMOVED***);
-      onSuccess?.('Configuración guardada correctamente');
+      // Mantenemos la key 'defaultDiscount' o 'descuentoDefault' para compatibilidad con el backend/contexto
+      // aunque visualmente le llamemos impuestos.
+      await savePreferences(***REMOVED*** descuentoDefault: impuestoDefault ***REMOVED***);
+      onSuccess?.('Configuración de impuestos guardada correctamente');
     ***REMOVED*** catch (error) ***REMOVED***
       onError?.('Error al guardar ajustes: ' + error.message);
     ***REMOVED*** finally ***REMOVED***
@@ -34,47 +36,80 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => *
     ***REMOVED***
   ***REMOVED***;
 
+  const popoverContent = (
+    <div className="p-2 max-w-xs">
+      <p className="text-sm text-gray-600 mb-2">
+        Este porcentaje representa la <strong>retención</strong> que la empresa deduce de tu pago bruto antes de depositarte.
+      </p>
+      <ul className="text-xs text-gray-500 list-disc pl-4 space-y-1">
+        <li>Impuestos (Tax)</li>
+        <li>Seguridad Social</li>
+        <li>Otras deducciones obligatorias</li>
+      </ul>
+      <p className="text-xs text-gray-400 mt-3 border-t pt-2">
+        * El 15% es un valor común para contratos casuales, pero deberías verificar tu caso específico.
+      </p>
+    </div>
+  );
+
   return (
-    <SettingsSection icon=***REMOVED***Clock***REMOVED*** title="Configuración de trabajo">
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <label className="block text-sm font-medium text-gray-700">
-            Porcentaje de descuento
-          </label>
-          <InfoTooltip 
-            content="El 15% es el cálculo promedio para empleados con contrato casual. Este descuento se aplicará por defecto a todos tus turnos."
-            position="top"
-            size="sm"
-          />
+    <SettingsSection icon=***REMOVED***Receipt***REMOVED*** title="Configuración de Pagos e Impuestos">
+      <div className="space-y-5">
+
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-semibold text-gray-700">
+              Porcentaje de Impuestos / Deducciones
+            </label>
+            
+            ***REMOVED***/* Implementación del Popover */***REMOVED***
+            <Popover 
+              content=***REMOVED***popoverContent***REMOVED*** 
+              title="¿Qué son estos impuestos?"
+              position="top"
+              trigger="click"
+            >
+              <button className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors focus:outline-none">
+                <Info size=***REMOVED***14***REMOVED*** />
+                <span>¿Qué debo poner aquí?</span>
+              </button>
+            </Popover>
+          </div>
+
+          <div className="relative">
+            <div className="flex rounded-md shadow-sm">
+              <input
+                type="number"
+                min="0"
+                max="100"
+                step="0.5"
+                value=***REMOVED***impuestoDefault***REMOVED***
+                onChange=***REMOVED***(e) => setImpuestoDefault(Number(e.target.value))***REMOVED***
+                className="flex-1 px-3 py-2.5 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all text-gray-900 font-medium"
+                style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary, borderColor: loading ? 'transparent' : '' ***REMOVED******REMOVED***
+                placeholder="Ej: 15"
+              />
+              <span className="inline-flex items-center px-4 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 font-medium">
+                %
+              </span>
+            </div>
+            <p className="mt-2 text-xs text-gray-500">
+              Este valor se aplicará automáticamente a los nuevos trabajos, pero podrás ajustarlo individualmente si es necesario.
+            </p>
+          </div>
         </div>
-        <div className="flex rounded-md shadow-sm">
-          <input
-            type="number"
-            min="0"
-            max="100"
-            value=***REMOVED***descuentoDefault***REMOVED***
-            onChange=***REMOVED***(e) => setDescuentoDefault(Number(e.target.value))***REMOVED***
-            className="flex-1 px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 transition-colors"
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
-            placeholder="15"
-          />
-          <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-            %
-          </span>
-        </div>
-        <p className="mt-1 text-sm text-gray-500">
-          Podrás modificarlo más adelante para cada trabajo específico.
-        </p>
         
-        <Button
-          onClick=***REMOVED***handleSave***REMOVED***
-          disabled=***REMOVED***loading***REMOVED***
-          loading=***REMOVED***loading***REMOVED***
-          className="w-full mt-4"
-          themeColor=***REMOVED***colors.primary***REMOVED***
-        >
-          Guardar cambios
-        </Button>
+        <div className="pt-2">
+          <Button
+            onClick=***REMOVED***handleSave***REMOVED***
+            disabled=***REMOVED***loading***REMOVED***
+            loading=***REMOVED***loading***REMOVED***
+            className="w-full sm:w-auto"
+            themeColor=***REMOVED***colors.primary***REMOVED***
+          >
+            Guardar Preferencias
+          </Button>
+        </div>
       </div>
     </SettingsSection>
   );
