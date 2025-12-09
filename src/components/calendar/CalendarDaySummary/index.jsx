@@ -1,7 +1,7 @@
 // src/components/calendar/CalendarDaySummary/index.jsx
 
 import React from 'react';
-import ***REMOVED*** PlusCircle, Calendar, Clock, DollarSign ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** PlusCircle, Calendar, Clock, DollarSign, SearchX ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import TarjetaTurno from '../../cards/shift/TarjetaTurno';
@@ -14,7 +14,9 @@ const CalendarDaySummary = (***REMOVED***
   fechaSeleccionada, 
   turnos, 
   formatearFecha, 
-  onNuevoTurno 
+  onNuevoTurno,
+  onEdit,
+  onDelete
 ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** todosLosTrabajos, calculatePayment, thematicColors ***REMOVED*** = useApp();
 
@@ -130,9 +132,9 @@ const CalendarDaySummary = (***REMOVED***
                   <TarjetaComponent
                     turno=***REMOVED***turno***REMOVED***
                     trabajo=***REMOVED***trabajo***REMOVED***
-                    fecha=***REMOVED***fechaSeleccionada***REMOVED*** // NUEVA: Pasar la fecha seleccionada
-                    onEdit=***REMOVED***() => ***REMOVED******REMOVED******REMOVED*** 
-                    onDelete=***REMOVED***() => ***REMOVED******REMOVED******REMOVED***
+                    fecha=***REMOVED***fechaSeleccionada***REMOVED***
+                    onEdit=***REMOVED***() => onEdit(turno)***REMOVED***
+                    onDelete=***REMOVED***() => onDelete(turno.id)***REMOVED***
                     variant="compact"
                   />
                 </div>
@@ -142,13 +144,13 @@ const CalendarDaySummary = (***REMOVED***
         </Card>
       ) : (
         <Card className="text-center py-6">
-          <Calendar size=***REMOVED***48***REMOVED*** className="mx-auto mb-4 text-gray-300" />
+          <SearchX size=***REMOVED***48***REMOVED*** className="mx-auto mb-4 text-gray-300" />
           <p className="text-gray-500 mb-4">
             No hay turnos para ***REMOVED***formatearFecha ? formatearFecha(fechaSeleccionada) : 'esta fecha'***REMOVED***
           </p>
           <Button
             onClick=***REMOVED***() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 mx-auto"
             icon=***REMOVED***PlusCircle***REMOVED***
             themeColor=***REMOVED***thematicColors?.base***REMOVED***
           >

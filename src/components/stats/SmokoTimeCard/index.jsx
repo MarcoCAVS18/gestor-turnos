@@ -17,7 +17,7 @@ const SmokoTimeCard = (***REMOVED*** smokoMinutes, smokoEnabled, loading, themat
     <div onClick=***REMOVED***handleClick***REMOVED*** className=***REMOVED***`$***REMOVED***className***REMOVED*** cursor-pointer`***REMOVED***>
       <BaseStatsCard
         icon=***REMOVED***Clock***REMOVED***
-        title="Tiempo de Descanso"
+        title="Tiempo"
         loading=***REMOVED***loading***REMOVED***
         empty=***REMOVED***!smokoEnabled***REMOVED***
         emptyText="Los descansos no están activados."

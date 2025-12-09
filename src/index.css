@@ -104,13 +104,7 @@ input[type="date"]:focus ***REMOVED***
     gap: 16px;
   ***REMOVED***
 
-  .mobile-form .grid-cols-2 ***REMOVED***
-    grid-template-columns: 1fr;
-  ***REMOVED***
 
-  .mobile-form .grid-cols-3 ***REMOVED***
-    grid-template-columns: 1fr;
-  ***REMOVED***
 
   /* Selectores de color más grandes */
   .mobile-form .color-selector button ***REMOVED***

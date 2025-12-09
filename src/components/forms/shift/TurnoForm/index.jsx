@@ -194,7 +194,7 @@ const TurnoForm = (***REMOVED***
       </FormSection>
 
       ***REMOVED***/* CONTENEDOR DE FECHAS RESPONSIVO */***REMOVED***
-      <FormGrid columns=***REMOVED***2***REMOVED*** isMobile=***REMOVED***isMobile***REMOVED***>
+      <FormGrid columns=***REMOVED***2***REMOVED***>
         ***REMOVED***/* Fecha de inicio */***REMOVED***
         <FormField>
           <FormLabel icon=***REMOVED***Calendar***REMOVED***>Fecha de inicio</FormLabel>
@@ -229,7 +229,7 @@ const TurnoForm = (***REMOVED***
       </FormGrid>
 
       ***REMOVED***/* CONTENEDOR DE HORAS RESPONSIVO */***REMOVED***
-      <FormGrid columns=***REMOVED***2***REMOVED*** isMobile=***REMOVED***isMobile***REMOVED***>
+      <FormGrid columns=***REMOVED***2***REMOVED***>
         ***REMOVED***/* Hora de inicio */***REMOVED***
         <FormField>
           <FormLabel icon=***REMOVED***Clock***REMOVED***>Hora de inicio</FormLabel>

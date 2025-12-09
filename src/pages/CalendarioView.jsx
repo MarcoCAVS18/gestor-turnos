@@ -11,23 +11,38 @@ import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 import Calendario from '../components/calendar/Calendario';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ModalTurno from '../components/modals/shift/ModalTurno';
+import ***REMOVED*** useTurnManager ***REMOVED*** from '../hooks/useTurnManager';
+import ***REMOVED*** useDeleteManager ***REMOVED*** from '../hooks/useDeleteManager';
+import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 
 import Loader from '../components/other/Loader';
 
 const CalendarioView = () => ***REMOVED***
-  const ***REMOVED*** turnosPorFecha, todosLosTrabajos, thematicColors, loading ***REMOVED*** = useApp();
+  const ***REMOVED*** turnosPorFecha, todosLosTrabajos, thematicColors, loading, eliminarTurno ***REMOVED*** = useApp();
   const colors = useThemeColors();
   
-  // Estados para el calendario
   const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [fechaInicialModal, setFechaInicialModal] = useState(null);
+
+  const ***REMOVED*** 
+    modalAbierto, 
+    turnoSeleccionado, 
+    fechaInicial,
+    abrirModalEditar,
+    abrirModalConFecha,
+    cerrarModal 
+  ***REMOVED*** = useTurnManager();
   
-  // Seleccionar automáticamente el día actual al cargar
+  const ***REMOVED*** 
+    showDeleteModal,
+    deleting,
+    startDeletion,
+    cancelDeletion,
+    confirmDeletion
+  ***REMOVED*** = useDeleteManager(eliminarTurno);
+  
   useEffect(() => ***REMOVED***
     const hoy = new Date();
-    const fechaHoyStr = fechaLocalAISO(hoy);
-    setFechaSeleccionada(fechaHoyStr);
+    setFechaSeleccionada(fechaLocalAISO(hoy));
   ***REMOVED***, []);
 
   if (loading) ***REMOVED***
@@ -38,57 +53,34 @@ const CalendarioView = () => ***REMOVED***
     );
   ***REMOVED***
   
-  // Validar que tenemos trabajos antes de mostrar funcionalidades
   const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
-  
-  // Obtener los turnos para la fecha seleccionada
   const turnosSeleccionados = fechaSeleccionada ? turnosPorFecha[fechaSeleccionada] || [] : [];
   
-  // Función para formatear fecha
   const formatearFecha = (fechaStr) => ***REMOVED***
     const fecha = createSafeDate(fechaStr);
     const hoy = new Date();
     const ayer = new Date(hoy);
     ayer.setDate(hoy.getDate() - 1);
     
-    // Comparar fechas
-    if (fecha.toDateString() === hoy.toDateString()) ***REMOVED***
-      return 'Hoy';
-    ***REMOVED*** else if (fecha.toDateString() === ayer.toDateString()) ***REMOVED***
-      return 'Ayer';
-    ***REMOVED*** else ***REMOVED***
-      return fecha.toLocaleDateString('es-ES', ***REMOVED***
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      ***REMOVED***);
-    ***REMOVED***
-  ***REMOVED***;
-
-  // Función para seleccionar día en el calendario
-  const seleccionarDia = (fecha) => ***REMOVED***
-    // Convertir fecha a string formato YYYY-MM-DD
-    const year = fecha.getFullYear();
-    const month = String(fecha.getMonth() + 1).padStart(2, '0');
-    const day = String(fecha.getDate()).padStart(2, '0');
-    const fechaStr = `$***REMOVED***year***REMOVED***-$***REMOVED***month***REMOVED***-$***REMOVED***day***REMOVED***`;
+    if (fecha.toDateString() === hoy.toDateString()) return 'Hoy';
+    if (fecha.toDateString() === ayer.toDateString()) return 'Ayer';
     
-    setFechaSeleccionada(fechaStr);
+    return fecha.toLocaleDateString('es-ES', ***REMOVED***
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    ***REMOVED***);
   ***REMOVED***;
 
-  // Función mejorada para abrir modal con fecha
-  const abrirModalNuevoTurno = (fecha) => ***REMOVED***
-    setFechaInicialModal(fecha); 
-    setModalAbierto(true);
+  const seleccionarDia = (fecha) => ***REMOVED***
+    setFechaSeleccionada(fechaLocalAISO(fecha));
   ***REMOVED***;
 
-  const cerrarModal = () => ***REMOVED***
-    setModalAbierto(false);
-    setFechaInicialModal(null);
+  const onNuevoTurno = (fecha) => ***REMOVED***
+    abrirModalConFecha(fecha);
   ***REMOVED***;
   
-  // Animaciones
   const calendarVariants = ***REMOVED***
     hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
     visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.5, delay: 0.1 ***REMOVED*** ***REMOVED***
@@ -106,7 +98,7 @@ const CalendarioView = () => ***REMOVED***
         subtitle=***REMOVED***hayTrabajos ? "Visualiza y gestiona tus turnos por fecha" : null***REMOVED***
         icon=***REMOVED***CalendarDays***REMOVED***
         action=***REMOVED***hayTrabajos && fechaSeleccionada && ***REMOVED***
-          onClick: () => abrirModalNuevoTurno(createSafeDate(fechaSeleccionada)),
+          onClick: () => onNuevoTurno(createSafeDate(fechaSeleccionada)),
           icon: Plus,
           label: "Nuevo Turno",
           mobileLabel: "Nuevo",
@@ -114,7 +106,6 @@ const CalendarioView = () => ***REMOVED***
         ***REMOVED******REMOVED***
       />
       
-      ***REMOVED***/* Mostrar mensaje si no hay trabajos */***REMOVED***
       ***REMOVED***!hayTrabajos && (
         <motion.div
           className="mb-4 p-4 rounded-lg border"
@@ -131,7 +122,6 @@ const CalendarioView = () => ***REMOVED***
         </motion.div>
       )***REMOVED***
       
-      ***REMOVED***/* Calendario SIN CalendarSummary */***REMOVED***
       <motion.div
         variants=***REMOVED***calendarVariants***REMOVED***
         initial="hidden"
@@ -140,7 +130,6 @@ const CalendarioView = () => ***REMOVED***
         <Calendario onDiaSeleccionado=***REMOVED***seleccionarDia***REMOVED*** />
       </motion.div>
       
-      ***REMOVED***/* Resumen del día seleccionado */***REMOVED***
       <motion.div
         variants=***REMOVED***detailsVariants***REMOVED***
         initial="hidden"
@@ -150,18 +139,27 @@ const CalendarioView = () => ***REMOVED***
           fechaSeleccionada=***REMOVED***fechaSeleccionada***REMOVED***
           turnos=***REMOVED***turnosSeleccionados***REMOVED***
           formatearFecha=***REMOVED***formatearFecha***REMOVED***
-          onNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED***
+          onNuevoTurno=***REMOVED***onNuevoTurno***REMOVED***
+          onEdit=***REMOVED***abrirModalEditar***REMOVED***
+          onDelete=***REMOVED***startDeletion***REMOVED***
         />
       </motion.div>
       
-      ***REMOVED***/* Modal para crear/editar turnos */***REMOVED***
       <ModalTurno 
         isOpen=***REMOVED***modalAbierto***REMOVED*** 
         onClose=***REMOVED***cerrarModal***REMOVED*** 
-        fechaInicial=***REMOVED***fechaInicialModal***REMOVED***
+        turno=***REMOVED***turnoSeleccionado***REMOVED***
+        fechaInicial=***REMOVED***fechaInicial***REMOVED***
+      />
+      
+      <AlertaEliminacion
+        visible=***REMOVED***showDeleteModal***REMOVED***
+        onCancel=***REMOVED***cancelDeletion***REMOVED***
+        onConfirm=***REMOVED***confirmDeletion***REMOVED***
+        eliminando=***REMOVED***deleting***REMOVED***
+        tipo="turno"
       />
     </div>
   );
 ***REMOVED***;
-
 export default CalendarioView;

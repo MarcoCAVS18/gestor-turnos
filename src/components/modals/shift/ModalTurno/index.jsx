@@ -1,6 +1,7 @@
 // src/components/modals/shift/ModalTurno/index.jsx - Refactorizado con BaseModal
 
 import React, ***REMOVED*** useState, useEffect, useMemo, useId ***REMOVED*** from 'react';
+import ***REMOVED*** Pen, Plus ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../../utils/time';
@@ -152,6 +153,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
       isOpen=***REMOVED***isOpen***REMOVED***
       onClose=***REMOVED***manejarCerrar***REMOVED***
       title=***REMOVED***titulo***REMOVED***
+      icon=***REMOVED***turno ? Pen : Plus***REMOVED***
       subtitle=***REMOVED***subtituloFinal || undefined***REMOVED***
       loading=***REMOVED***loading***REMOVED***
       maxWidth="md"
