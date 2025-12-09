@@ -12,6 +12,7 @@ const BaseModal = (***REMOVED***
   isOpen,
   onClose,
   title,
+  icon: Icon,
   subtitle,
   loading = false,
   maxWidth = 'lg', // 'sm' | 'md' | 'lg' | 'xl'
@@ -80,12 +81,19 @@ const BaseModal = (***REMOVED***
           ***REMOVED******REMOVED***
         >
           <div className="flex-1 pr-4 min-w-0">
-            <h2
-              className=***REMOVED***`font-semibold truncate $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
-              style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
-            >
-              ***REMOVED***title***REMOVED***
-            </h2>
+            ***REMOVED***typeof title === 'string' ? (
+              <div className="flex items-center">
+                ***REMOVED***Icon && <Icon className="mr-2 h-5 w-5" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />***REMOVED***
+                <h2
+                  className=***REMOVED***`font-semibold truncate $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
+                  style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
+                >
+                  ***REMOVED***title***REMOVED***
+                </h2>
+              </div>
+            ) : (
+              title
+            )***REMOVED***
 
             ***REMOVED***/* Subtitle opcional */***REMOVED***
             ***REMOVED***subtitle && (
@@ -138,7 +146,7 @@ const BaseModal = (***REMOVED***
               $***REMOVED***isMobile ? 'flex flex-col-reverse gap-2' : 'flex justify-end gap-3'***REMOVED***
             `***REMOVED***>
               <Button
-                variant="secondary"
+                variant="outline"
                 onClick=***REMOVED***onCancel***REMOVED***
                 disabled=***REMOVED***loading***REMOVED***
                 isMobile=***REMOVED***isMobile***REMOVED***

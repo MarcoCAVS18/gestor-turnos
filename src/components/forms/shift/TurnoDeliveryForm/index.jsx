@@ -188,7 +188,7 @@ const TurnoDeliveryForm = (***REMOVED***
       </FormSection>
 
       ***REMOVED***/* CONTENEDOR DE HORAS RESPONSIVO */***REMOVED***
-      <FormGrid columns=***REMOVED***2***REMOVED*** isMobile=***REMOVED***isMobile***REMOVED***>
+      <FormGrid columns=***REMOVED***2***REMOVED***>
         <FormField>
           <FormLabel icon=***REMOVED***Clock***REMOVED***>Hora de inicio</FormLabel>
           <input
@@ -217,7 +217,7 @@ const TurnoDeliveryForm = (***REMOVED***
       </FormGrid>
 
       ***REMOVED***/* GANANCIAS RESPONSIVAS */***REMOVED***
-      <FormGrid columns=***REMOVED***2***REMOVED*** isMobile=***REMOVED***isMobile***REMOVED***>
+      <FormGrid columns=***REMOVED***2***REMOVED***>
         <FormField>
           <FormLabel icon=***REMOVED***DollarSign***REMOVED***>Ganancia total *</FormLabel>
           <input
@@ -248,7 +248,7 @@ const TurnoDeliveryForm = (***REMOVED***
       </FormGrid>
 
       ***REMOVED***/* DATOS ADICIONALES RESPONSIVOS */***REMOVED***
-      <FormGrid columns=***REMOVED***2***REMOVED*** isMobile=***REMOVED***isMobile***REMOVED***>
+      <FormGrid columns=***REMOVED***2***REMOVED***>
         <FormField>
           <FormLabel icon=***REMOVED***Package***REMOVED***>Número de pedidos</FormLabel>
           <input

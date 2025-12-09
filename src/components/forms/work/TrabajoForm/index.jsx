@@ -7,7 +7,7 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThe
 import ***REMOVED*** VALIDATION_RULES ***REMOVED*** from '../../../../constants/validation';
 import ***REMOVED*** PREDEFINED_COLORS ***REMOVED*** from '../../../../constants/colors';
 import ThemeInput from '../../../ui/ThemeInput';
-import BaseForm, ***REMOVED*** FormSection, FormLabel, FormError ***REMOVED*** from '../../base/BaseForm';
+import BaseForm, ***REMOVED*** FormSection, FormGrid, FormLabel, FormError ***REMOVED*** from '../../base/BaseForm';
 
 const TrabajoForm = (***REMOVED*** 
   id,
@@ -201,11 +201,10 @@ const TrabajoForm = (***REMOVED***
 
       ***REMOVED***/* Tarifas específicas */***REMOVED***
       <FormSection>
-        <label className="flex items-center text-sm font-medium text-gray-700 mb-3">
-          <Clock className="mr-2 h-4 w-4" />
+        <FormLabel icon=***REMOVED***Clock***REMOVED***>
           Tarifas por tipo de turno *
-        </label>
-        <div className=***REMOVED***`grid $***REMOVED***isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-4'***REMOVED***`***REMOVED***>
+        </FormLabel>
+        <FormGrid columns=***REMOVED***2***REMOVED***>
           ***REMOVED***Object.entries(***REMOVED***
             diurno: 'Diurno',
             tarde: 'Tarde',
@@ -237,7 +236,7 @@ const TrabajoForm = (***REMOVED***
               )***REMOVED***
             </div>
           ))***REMOVED***
-        </div>
+        </FormGrid>
       </FormSection>
 
       ***REMOVED***/* Descripción */***REMOVED***

@@ -30,7 +30,8 @@ const PageHeader = (***REMOVED***
     ***REMOVED*** else ***REMOVED***
       setIsExpanded(true);
     ***REMOVED***
-  ***REMOVED***, [isMobile, action]); 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  ***REMOVED***, []); 
 
   // Variantes para la entrada del Header completo
   const headerVariants = ***REMOVED***

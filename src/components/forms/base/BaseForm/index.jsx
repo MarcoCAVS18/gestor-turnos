@@ -86,9 +86,9 @@ export const FormSection = (***REMOVED*** children, className = '' ***REMOVED***
  * FormGrid - Componente auxiliar para grids responsivos
  * Maneja automáticamente el layout móvil/desktop
  */
-export const FormGrid = (***REMOVED*** children, columns = 2, isMobile = false, className = '' ***REMOVED***) => (
+export const FormGrid = (***REMOVED*** children, columns = 2, className = '' ***REMOVED***) => (
   <div className="w-full">
-    <div className=***REMOVED***`grid gap-4 $***REMOVED***isMobile ? 'grid-cols-1' : `grid-cols-$***REMOVED***columns***REMOVED***`***REMOVED*** $***REMOVED***className***REMOVED***`***REMOVED***>
+    <div className=***REMOVED***`grid grid-cols-$***REMOVED***columns***REMOVED*** gap-4 $***REMOVED***className***REMOVED***`***REMOVED***>
       ***REMOVED***children***REMOVED***
     </div>
   </div>

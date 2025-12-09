@@ -1,7 +1,7 @@
 // ModalTrabajoDelivery - Refactorizado con BaseModal
 
 import ***REMOVED*** useCallback, useEffect, useState ***REMOVED*** from 'react';
-import ***REMOVED*** Truck ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Pen, Plus ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
@@ -44,12 +44,8 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
     <BaseModal
       isOpen=***REMOVED***isOpen***REMOVED***
       onClose=***REMOVED***manejarCerrar***REMOVED***
-      title=***REMOVED***
-        <div className="flex items-center">
-          <Truck size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-          <span>***REMOVED***trabajo ? 'Editar' : 'Nuevo'***REMOVED*** Trabajo Delivery</span>
-        </div>
-      ***REMOVED***
+      title=***REMOVED***trabajo ? 'Editar Trabajo Delivery' : 'Nuevo Trabajo Delivery'***REMOVED***
+      icon=***REMOVED***trabajo ? Pen : Plus***REMOVED***
       loading=***REMOVED***loading***REMOVED***
       loadingText="Guardando..."
       showFooter=***REMOVED***true***REMOVED***
