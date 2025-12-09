@@ -1,6 +1,6 @@
 // src/pages/CalendarioView.jsx
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
+import React, ***REMOVED*** useState, useMemo, useCallback ***REMOVED*** from 'react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** CalendarDays, Plus ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
@@ -14,14 +14,20 @@ import ModalTurno from '../components/modals/shift/ModalTurno';
 import ***REMOVED*** useTurnManager ***REMOVED*** from '../hooks/useTurnManager';
 import ***REMOVED*** useDeleteManager ***REMOVED*** from '../hooks/useDeleteManager';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
-
 import Loader from '../components/other/Loader';
 
 const CalendarioView = () => ***REMOVED***
   const ***REMOVED*** turnosPorFecha, todosLosTrabajos, thematicColors, loading, eliminarTurno ***REMOVED*** = useApp();
   const colors = useThemeColors();
   
-  const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
+  const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
+  
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(fechaLocalAISO(createSafeDate(new Date())));
+
+  const turnosSeleccionados = useMemo(() => 
+    fechaSeleccionada ? (turnosPorFecha[fechaSeleccionada] || []) : [], 
+    [turnosPorFecha, fechaSeleccionada]
+  );
 
   const ***REMOVED*** 
     modalAbierto, 
@@ -34,44 +40,56 @@ const CalendarioView = () => ***REMOVED***
   
   const ***REMOVED*** 
     showDeleteModal,
+    itemToDelete, // NEW: Get itemToDelete for summary
     deleting,
     startDeletion,
     cancelDeletion,
     confirmDeletion
   ***REMOVED*** = useDeleteManager(eliminarTurno);
   
-  useEffect(() => ***REMOVED***
-    const hoy = new Date();
-    setFechaSeleccionada(fechaLocalAISO(hoy));
-  ***REMOVED***, []);
-
-  if (loading) ***REMOVED***
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader />
-      </div>
-    );
-  ***REMOVED***
-  
-  const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
-  const turnosSeleccionados = fechaSeleccionada ? turnosPorFecha[fechaSeleccionada] || [] : [];
-  
-  const formatearFecha = (fechaStr) => ***REMOVED***
+  const formatearFecha = useCallback((fechaStr) => ***REMOVED***
     const fecha = createSafeDate(fechaStr);
+    
+    // Explicitly check for invalid date object
+    if (isNaN(fecha.getTime())) ***REMOVED***
+      console.error('Invalid Date object created by createSafeDate for input:', fechaStr);
+      return 'Fecha no válida'; // Fallback for genuinely invalid dates
+    ***REMOVED***
+    
     const hoy = new Date();
     const ayer = new Date(hoy);
     ayer.setDate(hoy.getDate() - 1);
     
-    if (fecha.toDateString() === hoy.toDateString()) return 'Hoy';
-    if (fecha.toDateString() === ayer.toDateString()) return 'Ayer';
-    
-    return fecha.toLocaleDateString('es-ES', ***REMOVED***
+    const baseFormattedDate = fecha.toLocaleDateString('es-ES', ***REMOVED***
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     ***REMOVED***);
-  ***REMOVED***;
+
+    if (fecha.toDateString() === hoy.toDateString()) ***REMOVED***
+      return `Hoy, $***REMOVED***baseFormattedDate***REMOVED***`;
+    ***REMOVED***
+    if (fecha.toDateString() === ayer.toDateString()) ***REMOVED***
+      return `Ayer, $***REMOVED***baseFormattedDate***REMOVED***`;
+    ***REMOVED***
+    
+    return baseFormattedDate;
+  ***REMOVED***, []);
+  
+  // NEW: Format itemToDelete for summary display
+  const detallesEliminacion = useMemo(() => ***REMOVED***
+    if (!itemToDelete) return [];
+    
+    const trabajo = todosLosTrabajos.find(t => t.id === itemToDelete.trabajoId);
+    const nombreTrabajo = trabajo ? trabajo.nombre : 'Trabajo desconocido';
+    
+    return [
+      `Turno de $***REMOVED***nombreTrabajo***REMOVED***`,
+      `Fecha: $***REMOVED***formatearFecha(itemToDelete.fechaInicio)***REMOVED***`,
+      `Horario: $***REMOVED***itemToDelete.horaInicio***REMOVED*** - $***REMOVED***itemToDelete.horaFin***REMOVED***`
+    ];
+  ***REMOVED***, [itemToDelete, todosLosTrabajos, formatearFecha]);
 
   const seleccionarDia = (fecha) => ***REMOVED***
     setFechaSeleccionada(fechaLocalAISO(fecha));
@@ -93,6 +111,7 @@ const CalendarioView = () => ***REMOVED***
   
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
+      ***REMOVED***loading && <Loader />***REMOVED***
       <PageHeader
         title="Calendario"
         subtitle=***REMOVED***hayTrabajos ? "Visualiza y gestiona tus turnos por fecha" : null***REMOVED***
@@ -158,6 +177,7 @@ const CalendarioView = () => ***REMOVED***
         onConfirm=***REMOVED***confirmDeletion***REMOVED***
         eliminando=***REMOVED***deleting***REMOVED***
         tipo="turno"
+        detalles=***REMOVED***detallesEliminacion***REMOVED*** // NEW: Pass formatted details
       />
     </div>
   );

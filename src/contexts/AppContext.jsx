@@ -53,6 +53,7 @@ export const useApp = () => ***REMOVED***
 
     // Re-create combined properties that existed in the old context
     todosLosTrabajos: allTrabajos,
+    eliminarTurno: data.deleteShift,
 
     // For backward compatibility, some components might still be using old names.
     // We can provide aliases here if needed. For example:

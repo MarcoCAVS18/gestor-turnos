@@ -1,9 +1,11 @@
 // src/components/calendar/CalendarDaySummary/index.jsx
 
-import React from 'react';
+import React, ***REMOVED*** useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** PlusCircle, Calendar, Clock, DollarSign, SearchX ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
+import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
+import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../utils/time';
 import TarjetaTurno from '../../cards/shift/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
 import Card from '../../ui/Card';
@@ -19,6 +21,7 @@ const CalendarDaySummary = (***REMOVED***
   onDelete
 ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** todosLosTrabajos, calculatePayment, thematicColors ***REMOVED*** = useApp();
+  const isMobile = useIsMobile();
 
   // Función para calcular total del día
   const calcularTotalDia = (turnosList) => ***REMOVED***
@@ -47,21 +50,31 @@ const CalendarDaySummary = (***REMOVED***
     return todosLosTrabajos.find(t => t && t.id === trabajoId) || null;
   ***REMOVED***;
 
-  // Validar que tenemos fecha seleccionada
-  if (!fechaSeleccionada) ***REMOVED***
-    return (
-      <Card className="mt-6">
-        <div className="text-center py-8">
-          <h3 className="text-lg font-semibold text-gray-600 mb-2">
-            Selecciona un día
-          </h3>
-          <p className="text-gray-500">
-            Haz clic en cualquier día del calendario para ver los turnos
-          </p>
-        </div>
-      </Card>
-    );
-  ***REMOVED***
+  const shortFormattedDate = useMemo(() => ***REMOVED***
+    if (!fechaSeleccionada) return '';
+
+    const dateObj = createSafeDate(fechaSeleccionada);
+    
+    const hoy = new Date();
+    const ayer = new Date(hoy);
+    ayer.setDate(hoy.getDate() - 1);
+    
+    let prefix = '';
+    if (dateObj.toDateString() === hoy.toDateString()) ***REMOVED***
+        prefix = 'Hoy, ';
+    ***REMOVED*** else if (dateObj.toDateString() === ayer.toDateString()) ***REMOVED***
+        prefix = 'Ayer, ';
+    ***REMOVED***
+
+    const formatted = dateObj.toLocaleDateString('es-ES', ***REMOVED***
+      month: 'short',
+      day: 'numeric'
+    ***REMOVED***);
+    
+    return prefix + formatted;
+  ***REMOVED***, [fechaSeleccionada]);
+
+
 
   // Validar y filtrar turnos
   const turnosSegurosDia = Array.isArray(turnos) ? turnos.filter(turno => turno && turno.id) : [];
@@ -86,7 +99,7 @@ const CalendarDaySummary = (***REMOVED***
               <div className="flex items-center">
                 <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
                 <h3 className="font-semibold">
-                  ***REMOVED***formatearFecha ? formatearFecha(fechaSeleccionada) : fechaSeleccionada***REMOVED***
+                  ***REMOVED***isMobile ? shortFormattedDate : (formatearFecha ? formatearFecha(fechaSeleccionada) : fechaSeleccionada)***REMOVED***
                 </h3>
               </div>
               <div className="flex items-center text-sm">
@@ -134,7 +147,7 @@ const CalendarDaySummary = (***REMOVED***
                     trabajo=***REMOVED***trabajo***REMOVED***
                     fecha=***REMOVED***fechaSeleccionada***REMOVED***
                     onEdit=***REMOVED***() => onEdit(turno)***REMOVED***
-                    onDelete=***REMOVED***() => onDelete(turno.id)***REMOVED***
+                    onDelete=***REMOVED***() => onDelete(turno)***REMOVED***
                     variant="compact"
                   />
                 </div>
@@ -146,7 +159,17 @@ const CalendarDaySummary = (***REMOVED***
         <Card className="text-center py-6">
           <SearchX size=***REMOVED***48***REMOVED*** className="mx-auto mb-4 text-gray-300" />
           <p className="text-gray-500 mb-4">
-            No hay turnos para ***REMOVED***formatearFecha ? formatearFecha(fechaSeleccionada) : 'esta fecha'***REMOVED***
+            No hay turnos para ***REMOVED***
+              formatearFecha ? (
+                (() => ***REMOVED***
+                  const formattedDate = formatearFecha(fechaSeleccionada);
+                  if (formattedDate.startsWith('Hoy') || formattedDate.startsWith('Ayer')) ***REMOVED***
+                    return formattedDate;
+                  ***REMOVED***
+                  return `el $***REMOVED***formattedDate***REMOVED***`;
+                ***REMOVED***)()
+              ) : 'esta fecha'
+            ***REMOVED***
           </p>
           <Button
             onClick=***REMOVED***() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
