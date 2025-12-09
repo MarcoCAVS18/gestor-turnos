@@ -13,7 +13,12 @@
  */
 export const createSafeDate = (dateString) => ***REMOVED***
   if (!dateString) return new Date();
-  return new Date(dateString + 'T00:00:00');
+  const date = new Date(dateString + 'T00:00:00');
+  if (isNaN(date.getTime())) ***REMOVED***
+    console.warn("createSafeDate received an unparseable dateString:", dateString);
+    return new Date(); 
+  ***REMOVED***
+  return date;
 ***REMOVED***;
 
 /**

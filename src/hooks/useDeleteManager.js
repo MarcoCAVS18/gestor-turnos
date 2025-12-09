@@ -22,7 +22,7 @@ export const useDeleteManager = (deleteFunction) => ***REMOVED***
     
     setDeleting(true);
     try ***REMOVED***
-      await deleteFunction(itemToDelete);
+      await deleteFunction(itemToDelete.id);
       setShowDeleteModal(false);
       setItemToDelete(null);
     ***REMOVED*** catch (error) ***REMOVED***
@@ -34,7 +34,7 @@ export const useDeleteManager = (deleteFunction) => ***REMOVED***
 
   return ***REMOVED***
     showDeleteModal,
-    itemToDelete,
+    itemToDelete, // Return itemToDelete for summary display
     deleting,
     startDeletion,
     cancelDeletion,
