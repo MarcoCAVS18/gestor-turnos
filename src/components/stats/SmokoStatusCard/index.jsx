@@ -7,7 +7,7 @@ import WavyText from '../../ui/WavyText';
 
 const SmokoStatusCard = ({ smokoEnabled, loading, thematicColors, className = '' }) => {
   const navigate = useNavigate();
-  const statusText = smokoEnabled ? 'ACTIVADO' : 'DESACTIVADO';
+  const statusText = smokoEnabled ? 'ACTIVO' : 'DESACTIVO';
 
   const handleClick = () => {
     navigate('/ajustes');
@@ -21,7 +21,7 @@ const SmokoStatusCard = ({ smokoEnabled, loading, thematicColors, className = ''
         loading={loading}
       >
         <div className="text-center w-full">
-          <div className="text-3xl font-bold">
+          <div className="text-4xl font-bold">
             {smokoEnabled ? (
               <WavyText text={statusText} color={thematicColors?.base} />
             ) : (

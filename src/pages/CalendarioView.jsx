@@ -11,23 +11,38 @@ import { createSafeDate } from '../utils/time';
 import Calendario from '../components/calendar/Calendario';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ModalTurno from '../components/modals/shift/ModalTurno';
+import { useTurnManager } from '../hooks/useTurnManager';
+import { useDeleteManager } from '../hooks/useDeleteManager';
+import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
 
 import Loader from '../components/other/Loader';
 
 const CalendarioView = () => {
-  const { turnosPorFecha, todosLosTrabajos, thematicColors, loading } = useApp();
+  const { turnosPorFecha, todosLosTrabajos, thematicColors, loading, eliminarTurno } = useApp();
   const colors = useThemeColors();
   
-  // Estados para el calendario
   const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [fechaInicialModal, setFechaInicialModal] = useState(null);
+
+  const { 
+    modalAbierto, 
+    turnoSeleccionado, 
+    fechaInicial,
+    abrirModalEditar,
+    abrirModalConFecha,
+    cerrarModal 
+  } = useTurnManager();
   
-  // Seleccionar automáticamente el día actual al cargar
+  const { 
+    showDeleteModal,
+    deleting,
+    startDeletion,
+    cancelDeletion,
+    confirmDeletion
+  } = useDeleteManager(eliminarTurno);
+  
   useEffect(() => {
     const hoy = new Date();
-    const fechaHoyStr = fechaLocalAISO(hoy);
-    setFechaSeleccionada(fechaHoyStr);
+    setFechaSeleccionada(fechaLocalAISO(hoy));
   }, []);
 
   if (loading) {
@@ -38,57 +53,34 @@ const CalendarioView = () => {
     );
   }
   
-  // Validar que tenemos trabajos antes de mostrar funcionalidades
   const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
-  
-  // Obtener los turnos para la fecha seleccionada
   const turnosSeleccionados = fechaSeleccionada ? turnosPorFecha[fechaSeleccionada] || [] : [];
   
-  // Función para formatear fecha
   const formatearFecha = (fechaStr) => {
     const fecha = createSafeDate(fechaStr);
     const hoy = new Date();
     const ayer = new Date(hoy);
     ayer.setDate(hoy.getDate() - 1);
     
-    // Comparar fechas
-    if (fecha.toDateString() === hoy.toDateString()) {
-      return 'Hoy';
-    } else if (fecha.toDateString() === ayer.toDateString()) {
-      return 'Ayer';
-    } else {
-      return fecha.toLocaleDateString('es-ES', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-    }
-  };
-
-  // Función para seleccionar día en el calendario
-  const seleccionarDia = (fecha) => {
-    // Convertir fecha a string formato YYYY-MM-DD
-    const year = fecha.getFullYear();
-    const month = String(fecha.getMonth() + 1).padStart(2, '0');
-    const day = String(fecha.getDate()).padStart(2, '0');
-    const fechaStr = `${year}-${month}-${day}`;
+    if (fecha.toDateString() === hoy.toDateString()) return 'Hoy';
+    if (fecha.toDateString() === ayer.toDateString()) return 'Ayer';
     
-    setFechaSeleccionada(fechaStr);
+    return fecha.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
 
-  // Función mejorada para abrir modal con fecha
-  const abrirModalNuevoTurno = (fecha) => {
-    setFechaInicialModal(fecha); 
-    setModalAbierto(true);
+  const seleccionarDia = (fecha) => {
+    setFechaSeleccionada(fechaLocalAISO(fecha));
   };
 
-  const cerrarModal = () => {
-    setModalAbierto(false);
-    setFechaInicialModal(null);
+  const onNuevoTurno = (fecha) => {
+    abrirModalConFecha(fecha);
   };
   
-  // Animaciones
   const calendarVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.1 } }
@@ -106,7 +98,7 @@ const CalendarioView = () => {
         subtitle={hayTrabajos ? "Visualiza y gestiona tus turnos por fecha" : null}
         icon={CalendarDays}
         action={hayTrabajos && fechaSeleccionada && {
-          onClick: () => abrirModalNuevoTurno(createSafeDate(fechaSeleccionada)),
+          onClick: () => onNuevoTurno(createSafeDate(fechaSeleccionada)),
           icon: Plus,
           label: "Nuevo Turno",
           mobileLabel: "Nuevo",
@@ -114,7 +106,6 @@ const CalendarioView = () => {
         }}
       />
       
-      {/* Mostrar mensaje si no hay trabajos */}
       {!hayTrabajos && (
         <motion.div
           className="mb-4 p-4 rounded-lg border"
@@ -131,7 +122,6 @@ const CalendarioView = () => {
         </motion.div>
       )}
       
-      {/* Calendario SIN CalendarSummary */}
       <motion.div
         variants={calendarVariants}
         initial="hidden"
@@ -140,7 +130,6 @@ const CalendarioView = () => {
         <Calendario onDiaSeleccionado={seleccionarDia} />
       </motion.div>
       
-      {/* Resumen del día seleccionado */}
       <motion.div
         variants={detailsVariants}
         initial="hidden"
@@ -150,18 +139,27 @@ const CalendarioView = () => {
           fechaSeleccionada={fechaSeleccionada}
           turnos={turnosSeleccionados}
           formatearFecha={formatearFecha}
-          onNuevoTurno={abrirModalNuevoTurno}
+          onNuevoTurno={onNuevoTurno}
+          onEdit={abrirModalEditar}
+          onDelete={startDeletion}
         />
       </motion.div>
       
-      {/* Modal para crear/editar turnos */}
       <ModalTurno 
         isOpen={modalAbierto} 
         onClose={cerrarModal} 
-        fechaInicial={fechaInicialModal}
+        turno={turnoSeleccionado}
+        fechaInicial={fechaInicial}
+      />
+      
+      <AlertaEliminacion
+        visible={showDeleteModal}
+        onCancel={cancelDeletion}
+        onConfirm={confirmDeletion}
+        eliminando={deleting}
+        tipo="turno"
       />
     </div>
   );
 };
-
 export default CalendarioView;

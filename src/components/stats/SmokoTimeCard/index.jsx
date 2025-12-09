@@ -17,7 +17,7 @@ const SmokoTimeCard = ({ smokoMinutes, smokoEnabled, loading, thematicColors, cl
     <div onClick={handleClick} className={`${className} cursor-pointer`}>
       <BaseStatsCard
         icon={Clock}
-        title="Tiempo de Descanso"
+        title="Tiempo"
         loading={loading}
         empty={!smokoEnabled}
         emptyText="Los descansos no están activados."

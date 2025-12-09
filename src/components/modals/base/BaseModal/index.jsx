@@ -12,6 +12,7 @@ const BaseModal = ({
   isOpen,
   onClose,
   title,
+  icon: Icon,
   subtitle,
   loading = false,
   maxWidth = 'lg', // 'sm' | 'md' | 'lg' | 'xl'
@@ -80,12 +81,19 @@ const BaseModal = ({
           }}
         >
           <div className="flex-1 pr-4 min-w-0">
-            <h2
-              className={`font-semibold truncate ${isMobile ? 'text-lg' : 'text-xl'}`}
-              style={{ color: colors.primary }}
-            >
-              {title}
-            </h2>
+            {typeof title === 'string' ? (
+              <div className="flex items-center">
+                {Icon && <Icon className="mr-2 h-5 w-5" style={{ color: colors.primary }} />}
+                <h2
+                  className={`font-semibold truncate ${isMobile ? 'text-lg' : 'text-xl'}`}
+                  style={{ color: colors.primary }}
+                >
+                  {title}
+                </h2>
+              </div>
+            ) : (
+              title
+            )}
 
             {/* Subtitle opcional */}
             {subtitle && (
@@ -138,7 +146,7 @@ const BaseModal = ({
               ${isMobile ? 'flex flex-col-reverse gap-2' : 'flex justify-end gap-3'}
             `}>
               <Button
-                variant="secondary"
+                variant="outline"
                 onClick={onCancel}
                 disabled={loading}
                 isMobile={isMobile}

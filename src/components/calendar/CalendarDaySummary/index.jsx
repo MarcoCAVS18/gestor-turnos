@@ -1,7 +1,7 @@
 // src/components/calendar/CalendarDaySummary/index.jsx
 
 import React from 'react';
-import { PlusCircle, Calendar, Clock, DollarSign } from 'lucide-react';
+import { PlusCircle, Calendar, Clock, DollarSign, SearchX } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { formatCurrency } from '../../../utils/currency';
 import TarjetaTurno from '../../cards/shift/TarjetaTurno';
@@ -14,7 +14,9 @@ const CalendarDaySummary = ({
   fechaSeleccionada, 
   turnos, 
   formatearFecha, 
-  onNuevoTurno 
+  onNuevoTurno,
+  onEdit,
+  onDelete
 }) => {
   const { todosLosTrabajos, calculatePayment, thematicColors } = useApp();
 
@@ -130,9 +132,9 @@ const CalendarDaySummary = ({
                   <TarjetaComponent
                     turno={turno}
                     trabajo={trabajo}
-                    fecha={fechaSeleccionada} // NUEVA: Pasar la fecha seleccionada
-                    onEdit={() => {}} 
-                    onDelete={() => {}}
+                    fecha={fechaSeleccionada}
+                    onEdit={() => onEdit(turno)}
+                    onDelete={() => onDelete(turno.id)}
                     variant="compact"
                   />
                 </div>
@@ -142,13 +144,13 @@ const CalendarDaySummary = ({
         </Card>
       ) : (
         <Card className="text-center py-6">
-          <Calendar size={48} className="mx-auto mb-4 text-gray-300" />
+          <SearchX size={48} className="mx-auto mb-4 text-gray-300" />
           <p className="text-gray-500 mb-4">
             No hay turnos para {formatearFecha ? formatearFecha(fechaSeleccionada) : 'esta fecha'}
           </p>
           <Button
             onClick={() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T12:00:00'))}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 mx-auto"
             icon={PlusCircle}
             themeColor={thematicColors?.base}
           >

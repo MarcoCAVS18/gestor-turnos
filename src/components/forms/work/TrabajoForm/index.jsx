@@ -7,7 +7,7 @@ import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { VALIDATION_RULES } from '../../../../constants/validation';
 import { PREDEFINED_COLORS } from '../../../../constants/colors';
 import ThemeInput from '../../../ui/ThemeInput';
-import BaseForm, { FormSection, FormLabel, FormError } from '../../base/BaseForm';
+import BaseForm, { FormSection, FormGrid, FormLabel, FormError } from '../../base/BaseForm';
 
 const TrabajoForm = ({ 
   id,
@@ -201,11 +201,10 @@ const TrabajoForm = ({
 
       {/* Tarifas específicas */}
       <FormSection>
-        <label className="flex items-center text-sm font-medium text-gray-700 mb-3">
-          <Clock className="mr-2 h-4 w-4" />
+        <FormLabel icon={Clock}>
           Tarifas por tipo de turno *
-        </label>
-        <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-4'}`}>
+        </FormLabel>
+        <FormGrid columns={2}>
           {Object.entries({
             diurno: 'Diurno',
             tarde: 'Tarde',
@@ -237,7 +236,7 @@ const TrabajoForm = ({
               )}
             </div>
           ))}
-        </div>
+        </FormGrid>
       </FormSection>
 
       {/* Descripción */}

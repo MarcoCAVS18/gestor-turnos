@@ -1,6 +1,7 @@
 // src/components/modals/work/ModalTrabajo/index.jsx - Refactorizado con BaseModal
 
 import React, { useState, useEffect, useId } from 'react';
+import { Pen, Plus } from 'lucide-react';
 import { useApp } from '../../../../contexts/AppContext';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 import BaseModal from '../../base/BaseModal';
@@ -89,6 +90,7 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
       isOpen={isOpen}
       onClose={manejarCerrar}
       title={trabajo ? 'Editar Trabajo' : 'Nuevo Trabajo'}
+      icon={trabajo ? Pen : Plus}
       loading={loading}
       maxWidth="lg"
       showActions={!mostrarSelector}

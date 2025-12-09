@@ -104,13 +104,7 @@ input[type="date"]:focus {
     gap: 16px;
   }
 
-  .mobile-form .grid-cols-2 {
-    grid-template-columns: 1fr;
-  }
 
-  .mobile-form .grid-cols-3 {
-    grid-template-columns: 1fr;
-  }
 
   /* Selectores de color más grandes */
   .mobile-form .color-selector button {
