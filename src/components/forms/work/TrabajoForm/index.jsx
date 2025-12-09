@@ -1,7 +1,7 @@
 // src/components/forms/work/TrabajoForm/index.jsx - REFACTORIZADO CON BaseForm
 
 import React, { useState, useEffect } from 'react';
-import { Briefcase, DollarSign, Palette, FileText } from 'lucide-react';
+import { Briefcase, DollarSign, Palette, FileText, Clock } from 'lucide-react';
 import { useFormValidation } from '../../../../hooks/useFormValidation';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { VALIDATION_RULES } from '../../../../constants/validation';
@@ -10,10 +10,9 @@ import ThemeInput from '../../../ui/ThemeInput';
 import BaseForm, { FormSection, FormLabel, FormError } from '../../base/BaseForm';
 
 const TrabajoForm = ({ 
+  id,
   trabajo, 
   onSubmit, 
-  onCancel, 
-  loading, 
   isMobile 
 }) => {
   const colors = useThemeColors();
@@ -28,7 +27,8 @@ const TrabajoForm = ({
       tarde: '',
       noche: '',
       sabado: '',
-      domingo: ''
+      domingo: '',
+      feriados: ''
     }
   });
 
@@ -39,7 +39,8 @@ const TrabajoForm = ({
     'tarifas.tarde': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
     'tarifas.noche': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
     'tarifas.sabado': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
-    'tarifas.domingo': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber]
+    'tarifas.domingo': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
+    'tarifas.feriados': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber]
   };
 
   const { errors, validateForm, handleFieldChange } = useFormValidation(validationRules);
@@ -56,7 +57,8 @@ const TrabajoForm = ({
           tarde: trabajo.tarifas?.tarde?.toString() || '',
           noche: trabajo.tarifas?.noche?.toString() || '',
           sabado: trabajo.tarifas?.sabado?.toString() || '',
-          domingo: trabajo.tarifas?.domingo?.toString() || ''
+          domingo: trabajo.tarifas?.domingo?.toString() || '',
+          feriados: trabajo.tarifas?.feriados?.toString() || ''
         }
       });
     } else {
@@ -96,7 +98,8 @@ const TrabajoForm = ({
       'tarifas.tarde': formData.tarifas.tarde,
       'tarifas.noche': formData.tarifas.noche,
       'tarifas.sabado': formData.tarifas.sabado,
-      'tarifas.domingo': formData.tarifas.domingo
+      'tarifas.domingo': formData.tarifas.domingo,
+      'tarifas.feriados': formData.tarifas.feriados
     };
 
     if (!validateForm(flatFormData)) return;
@@ -109,7 +112,8 @@ const TrabajoForm = ({
         tarde: parseFloat(formData.tarifas.tarde),
         noche: parseFloat(formData.tarifas.noche),
         sabado: parseFloat(formData.tarifas.sabado),
-        domingo: parseFloat(formData.tarifas.domingo)
+        domingo: parseFloat(formData.tarifas.domingo),
+        feriados: parseFloat(formData.tarifas.feriados)
       }
     };
 
@@ -118,12 +122,9 @@ const TrabajoForm = ({
 
   return (
     <BaseForm
+      id={id}
       onSubmit={handleSubmit}
-      onCancel={onCancel}
-      loading={loading}
       isMobile={isMobile}
-      isEditing={!!trabajo}
-      submitText={trabajo ? 'Guardar Cambios' : 'Crear Trabajo'}
     >
       {/* Nombre de la empresa */}
       <FormSection>
@@ -200,7 +201,8 @@ const TrabajoForm = ({
 
       {/* Tarifas específicas */}
       <FormSection>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="flex items-center text-sm font-medium text-gray-700 mb-3">
+          <Clock className="mr-2 h-4 w-4" />
           Tarifas por tipo de turno *
         </label>
         <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-4'}`}>
@@ -209,7 +211,8 @@ const TrabajoForm = ({
             tarde: 'Tarde',
             noche: 'Nocturno',
             sabado: 'Sábado',
-            domingo: 'Domingo'
+            domingo: 'Domingo',
+            feriados: 'Feriados'
           }).map(([tipo, label]) => (
             <div key={tipo}>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -254,27 +257,6 @@ const TrabajoForm = ({
           }}
         />
       </FormSection>
-
-      {/* Vista previa del color seleccionado */}
-      {formData.color && (
-        <div
-          className={`rounded-lg p-4 border-l-4 ${isMobile ? 'mt-4' : 'mt-2'}`}
-          style={{
-            borderLeftColor: formData.color,
-            backgroundColor: `${formData.color}10`
-          }}
-        >
-          <div className="flex items-center space-x-3">
-            <div
-              className="w-4 h-4 rounded-full"
-              style={{ backgroundColor: formData.color }}
-            />
-            <span className="text-sm text-gray-700">
-              Vista previa: {formData.nombre || 'Nuevo trabajo'} con este color
-            </span>
-          </div>
-        </div>
-      )}
     </BaseForm>
   );
 };

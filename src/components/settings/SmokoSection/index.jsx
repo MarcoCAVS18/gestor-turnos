@@ -1,4 +1,4 @@
-// src/components/settings/SmokoSection/index.jsx - SIMPLIFICADO
+// src/components/settings/SmokoSection/index.jsx -
 
 import React, { useState, useEffect } from 'react';
 import { Coffee, Save } from 'lucide-react';
@@ -26,7 +26,6 @@ const SmokoSection = ({ onError, onSuccess }) => {
     setMinutes(smokoMinutes);
   }, [smokoEnabled, smokoMinutes]);
 
-  // Detectar cambios
   useEffect(() => {
     const cambiosDetectados = enabled !== smokoEnabled || minutes !== smokoMinutes;
     setHasChanges(cambiosDetectados);
@@ -43,12 +42,10 @@ const SmokoSection = ({ onError, onSuccess }) => {
   const handleGuardar = async () => {
     try {
       setGuardando(true);
-      
       await savePreferences({ 
         smokoEnabled: enabled,
         smokoMinutes: enabled ? minutes : 0
       });
-      
       onSuccess?.('Configuración de descansos guardada correctamente');
     } catch (error) {
       onError?.('Error al guardar configuración de descansos: ' + error.message);
@@ -62,7 +59,7 @@ const SmokoSection = ({ onError, onSuccess }) => {
     const horas = Math.floor(mins / 60);
     const minutosRestantes = mins % 60;
     if (minutosRestantes === 0) return `${horas}h`;
-    return `${horas}h ${minutosRestantes}min`;
+    return `${horas}h ${minutosRestantes}m`;
   };
 
   return (
@@ -71,80 +68,84 @@ const SmokoSection = ({ onError, onSuccess }) => {
       title="Smoko (Descansos)"
     >
       <div className="space-y-6">
-        {/* Información explicativa */}
         <div 
           className="p-3 rounded-lg"
           style={{ backgroundColor: colors.transparent5 }}
         >
           <p className="text-sm" style={{ color: colors.primary }}>
             <strong>¿Qué es esto?</strong> Configura el tiempo de descanso no pagado 
-            que se descontará automáticamente de tus turnos para obtener cálculos más precisos.
+            que se descontará automáticamente de tus turnos.
           </p>
         </div>
 
-        {/* Toggle principal */}
         <Flex variant="between">
-          <div className="flex-1">
-            <p className="font-medium">Habilitar descuento de descansos</p>
+          <div className="flex-1 pr-4">
+            <p className="font-medium text-gray-900">Habilitar descuento</p>
             <p className="text-sm text-gray-500">
-              Los turnos se calcularán descontando el tiempo de descanso
+              Descontar tiempo de descanso automáticamente
             </p>
           </div>
-          <label className="flex items-center cursor-pointer">
+          <label className="flex items-center cursor-pointer relative">
             <input
               type="checkbox"
               checked={enabled}
               onChange={(e) => handleToggle(e.target.checked)}
-              className="rounded w-4 h-4 mr-2"
-              style={{ accentColor: colors.primary }}
+              className="sr-only peer"
             />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
           </label>
         </Flex>
 
-        {/* Configuración de minutos - Solo visible si está habilitado */}
         {enabled && (
-          <div className="space-y-4 pt-4 border-t border-gray-200">
+          <div className="space-y-4 pt-4 border-t border-gray-200 animate-in fade-in slide-in-from-top-2 duration-200">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Duración del descanso
               </label>
 
-              {/* Botones rápidos con input personalizado */}
-              <div className="grid grid-cols-4 gap-2">
+              {/* GRID RESPONSIVO: 2 columnas en móvil, 4 en desktop */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[15, 30, 45].map(min => (
                   <button
                     key={min}
                     type="button"
                     onClick={() => handleMinutesChange(min)}
+                    // h-12 fija la altura para igualar al input
                     className={`
-                      px-3 py-2 text-sm rounded-lg border transition-colors
+                      relative h-12 w-full text-sm font-medium rounded-lg border transition-all
+                      flex items-center justify-center
                       ${minutes === min
-                        ? 'border-2 text-white'
-                        : 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                        ? 'border-2 text-white shadow-sm'
+                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
                       }
                     `}
                     style={{
                       backgroundColor: minutes === min ? colors.primary : 'transparent',
-                      borderColor: minutes === min ? colors.primary : '#D1D5DB'
+                      borderColor: minutes === min ? colors.primary : undefined
                     }}
                   >
                     {formatearTiempo(min)}
                   </button>
                 ))}
 
-                {/* Input personalizado integrado con sufijo "min" */}
-                <div className="relative">
+                {/* INPUT PERSONALIZADO */}
+                <div className="relative h-12 w-full">
                   <input
                     type="number"
                     value={minutes}
                     onChange={(e) => handleMinutesChange(e.target.value)}
-                    className="w-full px-3 py-2 pr-10 text-sm text-center border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
-                    style={{ '--tw-ring-color': colors.primary }}
+                    // pb-4 levanta el texto del input para dejar espacio a "min" abajo
+                    className="block w-full h-full px-2 pt-1 pb-4 text-center border rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-0 transition-colors bg-white font-medium text-gray-900"
+                    style={{ 
+                      borderColor: [15, 30, 45].includes(minutes) ? '#E5E7EB' : colors.primary,
+                      '--tw-ring-color': colors.primary 
+                    }}
                     min="5"
                     max="120"
-                    placeholder="30"
+                    placeholder="--"
                   />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 pointer-events-none">
+                  {/* Etiqueta "min" en la parte inferior */}
+                  <span className="absolute bottom-1.5 left-0 right-0 text-[10px] font-medium text-gray-400 text-center pointer-events-none uppercase tracking-wide">
                     min
                   </span>
                 </div>
@@ -153,7 +154,6 @@ const SmokoSection = ({ onError, onSuccess }) => {
           </div>
         )}
 
-        {/* Botón de guardar - Solo si hay cambios */}
         {hasChanges && (
           <div className="pt-4 border-t border-gray-200">
             <Button
@@ -161,19 +161,13 @@ const SmokoSection = ({ onError, onSuccess }) => {
               disabled={guardando}
               loading={guardando}
               icon={Save}
-              className="w-full"
+              className="w-full sm:w-auto" // Botón full width en móvil
               themeColor={colors.primary}
             >
               {guardando ? 'Guardando...' : 'Guardar cambios'}
             </Button>
           </div>
         )}
-
-        {/* Información adicional */}
-        <div className="text-xs text-gray-500 space-y-1 pt-2 border-t border-gray-100">
-          <p>• El descanso se aplicará automáticamente a todos tus turnos</p>
-          <p>• Podrás desactivar el descanso en turnos específicos si no lo tomaste</p>
-        </div>
       </div>
     </SettingsSection>
   );

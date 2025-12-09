@@ -6,8 +6,6 @@ import Card from '../../../ui/Card';
 import WorkAvatar from '../../../work/WorkAvatar';
 import ActionsMenu from '../../../ui/ActionsMenu';
 import Badge from '../../../ui/Badge';
-import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
-import Flex from '../../../ui/Flex';
 
 const BaseWorkCard = ({
   trabajo,
@@ -81,61 +79,45 @@ const BaseWorkCard = ({
       hover={true}
       className={isSharing ? 'opacity-70' : ''}
     >
-      <Flex variant="start-between">
-        <div className="flex items-start flex-1 min-w-0">
-          {/* Avatar del trabajo */}
+      <div className="flex items-center">
+        {/* Columna 1: Avatar */}
+        <div className="flex-shrink-0">
           <WorkAvatar
             nombre={nombreTrabajo}
             color={colorTrabajo}
             size="lg"
           />
-
-          <div className="flex-1 ml-4 min-w-0">
-            {/* Nombre del trabajo y badge */}
-            <div className="flex items-center gap-2 mb-2">
-              <h3 className="font-semibold text-gray-800 truncate">
-                {nombreTrabajo}
-              </h3>
-
-              {/* Badge del tipo */}
-              <Badge
-                variant={currentConfig.badge.variant}
-                size="xs"
-                rounded
-              >
-                {currentConfig.badge.label}
-              </Badge>
-            </div>
-
-            {/* Descripción */}
-            <p className="text-gray-600 text-sm mb-3 leading-relaxed italic">
-              {descripcion}
-            </p>
-
-            {/* Contenido personalizado (tarifas para traditional, plataforma/vehículo para delivery) */}
-            {children}
-          </div>
         </div>
 
-        {/* Menú de acciones */}
+        {/* Columna 2: Título, Badge y Descripción */}
+        <div className="flex-1 ml-4 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold text-gray-800 truncate">
+              {nombreTrabajo}
+            </h3>
+            <Badge
+              variant={currentConfig.badge.variant}
+              size="xs"
+              rounded
+            >
+              {currentConfig.badge.label}
+            </Badge>
+          </div>
+          <p className="text-gray-600 text-sm leading-relaxed italic">
+            {descripcion}
+          </p>
+        </div>
+
+        {/* Columna 3: Acciones */}
         {showActions && (
           <div className="ml-4 flex-shrink-0">
             <ActionsMenu actions={actions} />
           </div>
         )}
-      </Flex>
+      </div>
 
-      {/* Indicador de estado compartiendo */}
-      {isSharing && (
-        <div className="mt-3 pt-3 border-t border-gray-200">
-          <Flex variant="center" className="pt-1">
-            <Flex variant="center"className="text-sm text-blue-600">
-              <LoadingSpinner size="h-4 w-4" color="border-blue-600" className="mr-2" />
-              Compartiendo...
-            </Flex>
-          </Flex>
-        </div>
-      )}
+      {/* Contenido Personalizado (Tarifas) */}
+      {children && <div className="mt-4 border-t border-gray-200 pt-4">{children}</div>}
     </Card>
   );
 };

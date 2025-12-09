@@ -15,7 +15,7 @@ const SettingsSection = ({
         <Icon className="h-5 w-5 text-gray-500 mr-2" />
         <h2 className="text-lg font-semibold">{title}</h2>
       </div>
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1">
         {children}
       </div>
     </Card>

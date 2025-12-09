@@ -18,15 +18,6 @@ export const useShare = () => {
 
       await compartirTrabajoNativo(currentUser.uid, trabajo);
 
-      setMessages(prev => ({
-        ...prev,
-        [trabajo.id]: 'Trabajo compartido exitosamente'
-      }));
-
-      setTimeout(() => {
-        setMessages(prev => ({ ...prev, [trabajo.id]: '' }));
-      }, 3000);
-
     } catch (error) {
       setMessages(prev => ({
         ...prev,

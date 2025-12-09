@@ -1,7 +1,10 @@
 // src/pages/Dashboard.jsx
 
+import React from 'react';
 import { motion } from 'framer-motion';
 import { LayoutDashboard } from 'lucide-react';
+// import { useNavigate } from 'react-router-dom'; // Descomenta cuando tengas la ruta
+
 import PageHeader from '../components/layout/PageHeader';
 import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useApp } from '../contexts/AppContext';
@@ -19,11 +22,19 @@ import QuickActionsCard from '../components/dashboard/QuickActionsCard';
 import ExportReportCard from '../components/dashboard/ExportReportCard';
 import FooterSection from '../components/settings/FooterSection';
 
+// Importamos la nueva tarjeta de anuncio
+import FeatureAnnouncementCard from '../components/dashboard/FeatureAnnouncementCard';
+
 const Dashboard = () => {
   const { loading, calculatePayment } = useApp();
   const stats = useDashboardStats();
+  // const navigate = useNavigate();
 
-  // Función para manejar la exportación
+  const handleNavigateToLiveMode = () => {
+    console.log("Navegando al nuevo Modo Live...");
+    // navigate('/live'); // Aquí irás a tu nueva página de navegación completa
+  };
+
   const handleExport = async (format) => {
     try {
       if (format === 'pdf') {
@@ -59,48 +70,48 @@ const Dashboard = () => {
         icon={LayoutDashboard}
       />
 
-
-      {/* Layout responsivo principal */}
       <div className="space-y-6">
 
-        {/* DESKTOP: Grid de 3 columnas principales */}
+        {/* --- SECCIÓN DESKTOP --- */}
         <div className="hidden lg:grid lg:grid-cols-5 lg:gap-6">
-
-          {/* CONTENEDOR 1: Stats + Acciones (4 columnas) */}
           <div className="lg:col-span-4 space-y-6">
-            {/* QuickStatsGrid maneja su propio layout desktop */}
+            
+            {/* Feature Announcement Card: Hero Element */}
+            <motion.div variants={headerVariants} initial="hidden" animate="visible">
+                <FeatureAnnouncementCard onClick={handleNavigateToLiveMode} />
+            </motion.div>
+
             <motion.div variants={headerVariants} initial="hidden" animate="visible">
               <WelcomeCard totalGanado={stats.totalGanado} />
             </motion.div>
+            
             <QuickStatsGrid stats={stats} />
-
-
           </div>
 
-          {/* CONTENEDOR 2: Esta semana vertical (1 columna) */}
           <div className="lg:col-span-1">
             <ThisWeekSummaryCard stats={stats} />
           </div>
         </div>
 
-        {/* MÓVIL: Stack vertical */}
+        {/* --- SECCIÓN MÓVIL --- */}
         <div className="block lg:hidden space-y-4">
-          {/* QuickStatsGrid maneja su propio layout móvil 2x2 */}
+          
+          {/* Feature Announcement Card: Hero Element Mobile */}
+          <motion.div variants={headerVariants} initial="hidden" animate="visible">
+              <FeatureAnnouncementCard onClick={handleNavigateToLiveMode} />
+          </motion.div>
+
           <motion.div variants={headerVariants} initial="hidden" animate="visible">
             <WelcomeCard totalGanado={stats.totalGanado} />
           </motion.div>
+          
           <QuickStatsGrid stats={stats} />
-
-          {/* Esta semana */}
           <ThisWeekSummaryCard stats={stats} />
-
-          {/* Acciones rápidas */}
-          <QuickActionsCard />
         </div>
 
-        {/* Segunda fila: Reorganizada con grilla anidada que ahora incluye Proyección */}
+        {/* --- FILA INFERIOR (Común) --- */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:items-start">
-          {/* Columna Izquierda: Actividad Reciente */}
+          {/* Actividad Reciente */}
           <div className="lg:col-span-1 h-full">
             <RecentActivityCard
               stats={stats}
@@ -109,10 +120,9 @@ const Dashboard = () => {
             />
           </div>
 
-          {/* Columna Derecha: Reorganizada en 2 columnas */}
+          {/* Grillas de datos */}
           <div className="lg:col-span-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Columna Izquierda */}
               <div className="space-y-6 flex flex-col">
                 <FavoriteWorksCard trabajosFavoritos={stats.trabajosFavoritos} />
                 <TopWorkCard trabajoMasRentable={stats.trabajoMasRentable} />
@@ -122,7 +132,6 @@ const Dashboard = () => {
                   className="flex-grow"
                 />
               </div>
-              {/* Columna Derecha */}
               <div className="space-y-6 flex flex-col">
                 <NextShiftCard
                   proximoTurno={stats.proximoTurno}
@@ -136,7 +145,6 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Footer */}
       <div className="flex justify-center mt-8">
         <FooterSection />
       </div>

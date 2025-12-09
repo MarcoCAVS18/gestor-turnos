@@ -1,4 +1,4 @@
-// src/components/filters/FiltroTrabajo/index.jsx - REFACTORIZADO
+// src/components/filters/FiltroTrabajo/index.jsx
 
 import React from 'react';
 import { Briefcase, Truck } from 'lucide-react';
@@ -21,22 +21,6 @@ const FiltroTrabajo = ({ value, onChange }) => {
         Filtrar por trabajo
       </label>
       <div className="relative">
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
-          style={{ '--tw-ring-color': colors.primary }}
-        >
-          <option value="todos">Todos los trabajos</option>
-          {todosLosTrabajos.map(trabajo => (
-            <option key={trabajo.id} value={trabajo.id}>
-              {trabajo.nombre}
-              {trabajo.tipo === 'delivery' ? ' (Delivery)' : ''}
-            </option>
-          ))}
-        </select>
-        
-        {/* Icono decorativo */}
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
           {value !== 'todos' ? (
             (() => {
@@ -51,13 +35,26 @@ const FiltroTrabajo = ({ value, onChange }) => {
             <Briefcase size={16} className="text-gray-400" />
           )}
         </div>
-        
-        {/* Ajustar padding para el icono */}
-        <style jsx>{`
-          select {
-            padding-left: 2.5rem;
-          }
-        `}</style>
+
+        <select
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={`
+            w-full py-2 pr-8 border border-gray-300 rounded-lg 
+            bg-white text-sm focus:outline-none focus:ring-2 focus:border-transparent 
+            transition-colors
+            pl-10 /* ESTO REEMPLAZA AL STYLE JSX */
+          `}
+          style={{ '--tw-ring-color': colors.primary }}
+        >
+          <option value="todos">Todos los trabajos</option>
+          {todosLosTrabajos.map(trabajo => (
+            <option key={trabajo.id} value={trabajo.id}>
+              {trabajo.nombre}
+              {trabajo.tipo === 'delivery' ? ' (Delivery)' : ''}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );

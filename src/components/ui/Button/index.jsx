@@ -1,119 +1,111 @@
-// src/components/ui/Button/index.jsx
-
 import React from 'react';
-import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Button = ({
   children,
   onClick,
-  variant = 'primary',
-  size = 'md',
+  icon: Icon,
   className = '',
+  style = {},
+  themeColor,
+  variant = 'primary', // 'primary' | 'ghost' | 'outline'
+  size = 'md',         // 'sm' | 'md' | 'lg'
+  collapsed = false,   // Controla la animación de colapso
   disabled = false,
   loading = false,
-  icon: Icon,
-  themeColor = '#EC4899',
-  style: propStyle,
   ...props
 }) => {
-  const getVariantClasses = () => {
-    const base = 'inline-flex items-center justify-center font-medium transition-all duration-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2';
-
-    const variants = {
-      primary: `${base} text-white shadow-sm hover:shadow-md`,
-      outline: `${base} border bg-transparent hover:bg-opacity-10`,
-      ghost: `${base} bg-transparent hover:bg-opacity-10`,
-      secondary: `${base} border border-gray-300 bg-white text-gray-700 hover:bg-gray-50`,
-      danger: `${base} bg-red-500 text-white hover:bg-red-600 focus:ring-red-500`
-    };
-
-    return variants[variant] || variants.primary;
+  const isGhost = variant === 'ghost';
+  const isOutline = variant === 'outline';
+  
+  // Mapa de alturas fijas
+  const heightMap = {
+    sm: '32px',
+    md: '44px',
+    lg: '52px'
   };
 
-  const getSizeClasses = () => {
-    const sizes = {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2 text-sm',
-      lg: 'px-6 py-3 text-base'
-    };
-    return sizes[size] || sizes.md;
+  // Mapa de tamaños de fuente (RESTITUIDO)
+  const fontSizeClasses = {
+    sm: 'text-xs',
+    md: 'text-sm',
+    lg: 'text-base'
   };
+  
+  const currentHeight = heightMap[size] || heightMap.md;
+  const currentFontSize = fontSizeClasses[size] || fontSizeClasses.md;
+  const mainColor = themeColor || '#EC4899'; 
 
-  const getStyles = () => {
-    const styles = {
-      primary: {
-        backgroundColor: themeColor,
-        borderColor: themeColor,
-        '--tw-ring-color': themeColor
-      },
-      outline: {
-        borderColor: themeColor,
-        color: themeColor,
-        '--tw-ring-color': themeColor
-      },
-      ghost: {
-        color: themeColor,
-        '--tw-ring-color': themeColor
-      }
-    };
-
-    return styles[variant] || styles.primary;
-  };
-
-  const getHoverColor = (baseColor) => {
-    const hex = baseColor.replace('#', '');
-    const r = parseInt(hex.substr(0, 2), 16);
-    const g = parseInt(hex.substr(2, 2), 16);
-    const b = parseInt(hex.substr(4, 2), 16);
-
-    const darkerR = Math.max(0, r - 40);
-    const darkerG = Math.max(0, g - 40);
-    const darkerB = Math.max(0, b - 40);
-
-    return `#${darkerR.toString(16).padStart(2, '0')}${darkerG.toString(16).padStart(2, '0')}${darkerB.toString(16).padStart(2, '0')}`;
-  };
-
-  const handleMouseEnter = (e) => {
-    if (disabled || loading) return;
-
-    if (variant === 'primary') {
-      e.target.style.backgroundColor = getHoverColor(themeColor);
-    } else if (variant === 'outline') {
-      e.target.style.backgroundColor = `${themeColor}1A`;
-    }
-  };
-
-  const handleMouseLeave = (e) => {
-    if (disabled || loading) return;
-
-    if (variant === 'primary') {
-      e.target.style.backgroundColor = themeColor;
-    } else if (variant === 'outline') {
-      e.target.style.backgroundColor = 'transparent';
-    }
+  const dynamicStyles = {
+    ...style,
+    height: currentHeight,
+    backgroundColor: (isGhost || isOutline) ? 'transparent' : mainColor,
+    color: (isGhost || isOutline) ? mainColor : 'white',
+    border: isOutline ? `1px solid ${mainColor}` : 'none',
+    minWidth: collapsed ? currentHeight : 'auto',
+    // Ajustamos padding para cuando es pequeño
+    padding: collapsed ? 0 : (size === 'sm' ? '0 0.75rem' : '0 1rem'),
+    borderRadius: collapsed ? '9999px' : '12px',
   };
 
   return (
-    <button
-      className={`${getVariantClasses()} ${getSizeClasses()} ${className} ${disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-        }`}
-      style={{ ...getStyles(), ...propStyle }}
-      onClick={disabled || loading ? undefined : onClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+    <motion.button
+      layout
+      onClick={onClick}
       disabled={disabled || loading}
+      initial={false}
+      // Agregamos currentFontSize aquí para asegurar que se aplique la clase de texto
+      className={`relative flex items-center justify-center overflow-hidden transition-all 
+        ${currentFontSize} font-medium
+        ${isGhost ? 'hover:bg-gray-100/10' : 'shadow-sm hover:shadow-md'} 
+        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+        ${className}`}
+      style={dynamicStyles}
+      transition={{
+        layout: { duration: 0.4, type: "spring", bounce: 0, stiffness: 300, damping: 30 }
+      }}
       {...props}
     >
-      {loading && (
-        <LoadingSpinner size="h-4 w-4" color="border-white" className="mr-2" />
-      )}
-      {Icon && !loading && (
-        <Icon
-          className={`h-5 w-5 ${children ? 'mr-0' : ''}`} 
-        />
+      <motion.div 
+        layout 
+        className="flex items-center justify-center"
+        // Redujimos el gap para el tamaño small
+        style={{ gap: collapsed ? 0 : (size === 'sm' ? '0.25rem' : '0.5rem') }}
+      >
+        <AnimatePresence mode="popLayout" initial={false}>
+          {!collapsed && children && (
+            <motion.span
+              layout="position"
+              // Animación ajustada: entra desde la izquierda, SALE hacia la derecha (x: 10)
+              initial={{ opacity: 0, width: 0, x: -10 }}
+              animate={{ opacity: 1, width: "auto", x: 0 }}
+              exit={{ opacity: 0, width: 0, x: 10 }} 
+              transition={{
+                opacity: { duration: 0.2 },
+                width: { duration: 0.3 }
+              }}
+              className="whitespace-nowrap"
+            >
+              {children}
+            </motion.span>
+          )}
+        </AnimatePresence>
+
+        {(loading || Icon) && (
+          <motion.div layout className="flex items-center justify-center">
+            {loading ? (
+              <svg className="animate-spin" width={size === 'sm' ? 14 : 20} height={size === 'sm' ? 14 : 20} viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              </svg>
+            ) : (
+              // Icono ligeramente más pequeño para size="sm"
+              <Icon size={size === 'sm' ? 16 : 20} strokeWidth={2.5} />
+            )}
+          </motion.div>
         )}
-      {children}
-    </button>
+      </motion.div>
+    </motion.button>
   );
 };
 

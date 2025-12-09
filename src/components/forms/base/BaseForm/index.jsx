@@ -1,48 +1,29 @@
 // src/components/forms/base/BaseForm/index.jsx
 
 import React from 'react';
-import { useThemeColors } from '../../../../hooks/useThemeColors';
-import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
-import Flex from '../../../ui/Flex';
 
 /**
  * BaseForm - Componente base unificado para todos los formularios
  *
  * Características:
  * - Estructura de formulario consistente
- * - Botones responsivos de Cancelar/Guardar
  * - Estilos móviles optimizados (previene zoom en iOS)
- * - Soporte para estados de loading
  * - Grid responsivo integrado
  *
  * @param {Object} props
+ * @param {string} props.id - ID del formulario para enlazar con botones externos
  * @param {Function} props.onSubmit - Función a ejecutar al enviar el formulario
- * @param {Function} props.onCancel - Función a ejecutar al cancelar
- * @param {boolean} props.loading - Estado de carga
  * @param {boolean} props.isMobile - Si está en vista móvil
- * @param {string} props.submitText - Texto del botón de enviar (default: "Guardar")
- * @param {string} props.cancelText - Texto del botón de cancelar (default: "Cancelar")
- * @param {boolean} props.isEditing - Si está editando (cambia texto a "Actualizar")
  * @param {ReactNode} props.children - Contenido del formulario
  * @param {string} props.className - Clases adicionales para el contenedor
  */
 const BaseForm = ({
+  id,
   onSubmit,
-  onCancel,
-  loading = false,
   isMobile = false,
-  submitText,
-  cancelText = 'Cancelar',
-  isEditing = false,
   children,
   className = ''
 }) => {
-  const colors = useThemeColors();
-
-  // Determinar texto del botón de enviar
-  const defaultSubmitText = isEditing ? 'Actualizar' : 'Guardar';
-  const finalSubmitText = submitText || defaultSubmitText;
-
   return (
     <div
       className={`w-full ${isMobile ? 'mobile-form' : ''} ${className}`}
@@ -51,58 +32,9 @@ const BaseForm = ({
         overflowX: 'hidden'
       }}
     >
-      <form onSubmit={onSubmit} className="space-y-4 w-full">
+      <form id={id} onSubmit={onSubmit} className="space-y-4 w-full">
         {/* Contenido del formulario */}
         {children}
-
-        {/* Botones de acción */}
-        <div className={`
-          w-full pt-6
-          ${isMobile ? 'flex flex-col space-y-4 px-0' : 'flex space-x-3'}
-        `}>
-          <button
-            type="button"
-            onClick={onCancel}
-            disabled={loading}
-            className={`
-              border border-gray-300 bg-white text-gray-700 hover:bg-gray-50
-              text-sm font-medium rounded-lg transition-colors disabled:opacity-50
-              ${isMobile ? 'py-4 px-4 w-full order-2' : 'flex-1 py-2 px-4'}
-            `}
-          >
-            {cancelText}
-          </button>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`
-              text-white rounded-lg hover:opacity-90 text-sm font-medium
-              disabled:opacity-50 transition-colors
-              ${isMobile ? 'py-4 px-4 w-full order-1' : 'flex-1 py-2 px-4'}
-            `}
-            style={{ backgroundColor: colors.primary }}
-            onMouseEnter={(e) => {
-              if (!loading) {
-                e.target.style.backgroundColor = colors.primaryDark;
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!loading) {
-                e.target.style.backgroundColor = colors.primary;
-              }
-            }}
-          >
-            {loading ? (
-              <Flex variant="center" className="space-x-2">
-                <LoadingSpinner size="h-4 w-4" color="border-white" />
-                <span>Guardando...</span>
-              </Flex>
-            ) : (
-              finalSubmitText
-            )}
-          </button>
-        </div>
       </form>
 
       {/* Estilos adicionales para móvil - previene zoom en iOS */}

@@ -1,32 +1,26 @@
-// src/components/dashboard/RecentActivityCard/index.jsx - Versión Simplificada
+// src/components/dashboard/RecentActivityCard/index.jsx
 
-import React from 'react';
-import { Activity, Briefcase, ArrowRight } from 'lucide-react';
+import React, { useMemo } from 'react';
+import { Activity, Briefcase, ChevronRight } from 'lucide-react'; // Cambiamos ArrowRight por ChevronRight
 import { useNavigate } from 'react-router-dom';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import { useIsMobile } from '../../../hooks/useIsMobile'; // Importamos el hook
 import { formatCurrency } from '../../../utils/currency';
 import { createSafeDate } from '../../../utils/time';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
+import Button from '../../ui/Button'; // Importamos el componente Button
 
 const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
+  const isMobile = useIsMobile(); // Hook para detectar móvil
 
-  // Determinar límite según dispositivo
-  const [limite, setLimite] = React.useState(window.innerWidth >= 768 ? 5 : 2);
+  // Definir límite de forma reactiva (mucho más limpio que el useEffect anterior)
+  const limite = isMobile ? 2 : 5;
 
-  React.useEffect(() => {
-    const handleResize = () => {
-      setLimite(window.innerWidth >= 768 ? 5 : 2);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Obtener turnos recientes con límite responsivo
-  const turnosRecientes = React.useMemo(() => {
+  // Obtener turnos recientes
+  const turnosRecientes = useMemo(() => {
     if (!Array.isArray(todosLosTurnos)) return [];
     
     return todosLosTurnos
@@ -43,7 +37,7 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
     return todosLosTrabajos?.find(t => t.id === trabajoId);
   };
 
-  // Función para formatear fecha relativa - SIMPLIFICADA
+  // Función para formatear fecha relativa
   const formatearFechaRelativa = (fechaStr) => {
     try {
       const fecha = createSafeDate(fechaStr);
@@ -63,7 +57,7 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
     }
   };
 
-  // Calcular ganancia del turno - SIMPLIFICADO
+  // Calcular ganancia del turno
   const calcularGananciaDisplay = (turno) => {
     if (turno.tipo === 'delivery') {
       return turno.gananciaTotal || 0;
@@ -72,7 +66,6 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
     const trabajo = getTrabajo(turno.trabajoId);
     if (!trabajo) return 0;
     
-    // Cálculo básico de horas * tarifa
     const [horaIni, minIni] = turno.horaInicio.split(':').map(Number);
     const [horaFin, minFin] = turno.horaFin.split(':').map(Number);
     let horas = (horaFin + minFin/60) - (horaIni + minIni/60);
@@ -81,11 +74,12 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
     return horas * (trabajo.tarifaBase || 0);
   };
 
+  // Estado vacío
   if (turnosRecientes.length === 0) {
     return (
       <Card className="h-full">
         <Flex variant="between" className="mb-4">
-          <h3 className="text-lg font-semibold flex items-center">
+          <h3 className="text-base font-semibold flex items-center text-gray-800">
             <Activity size={20} style={{ color: colors.primary }} className="mr-2" />
             Recientes
           </h3>
@@ -100,13 +94,14 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
             <Briefcase size={20} style={{ color: colors.primary }} />
           </Flex>
           <p className="text-sm text-gray-600 mb-3">Sin turnos recientes</p>
-          <button
+          <Button
             onClick={() => navigate('/turnos')}
-            className="text-white px-3 py-1.5 rounded-lg text-xs transition-colors hover:opacity-90"
-            style={{ backgroundColor: colors.primary }}
+            size="sm"
+            variant="primary"
+            themeColor={colors.primary}
           >
             Agregar turno
-          </button>
+          </Button>
         </div>
       </Card>
     );
@@ -114,17 +109,24 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
 
   return (
     <Card className="h-full flex flex-col">
-      <Flex variant="between" className="mb-4">
-        <h3 className="text-lg font-semibold flex items-center">
-          <Activity size={20} style={{ color: colors.primary }} className="mr-2" />
-          Recientes
+      {/* Header con botón animado "Ver todos" */}
+      <Flex variant="between" className="mb-4 flex-nowrap gap-3">
+        <h3 className="text-base font-semibold flex items-center text-gray-800 truncate">
+          <Activity size={20} style={{ color: colors.primary }} className="mr-2 flex-shrink-0" />
+          <span className="truncate">Recientes</span>
         </h3>
-        <button
+        
+        <Button
           onClick={() => navigate('/turnos')}
-          className="text-xs text-gray-500 hover:text-gray-700 flex items-center"
+          size="sm"
+          variant="ghost"
+          collapsed={isMobile} // Se colapsa en móvil igual que FavoriteWorks
+          className="flex-shrink-0 flex items-center whitespace-nowrap"
+          themeColor={colors.primary}
+          icon={ChevronRight}
         >
-          <ArrowRight size={12} />
-        </button>
+          Ver todos
+        </Button>
       </Flex>
 
       <div className="space-y-3 flex-grow">
@@ -136,7 +138,7 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
           return (
             <Flex variant="between"
               key={turno.id || index}
-              className="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+              className="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer group"
               onClick={() => navigate('/turnos')}
             >
               <div className="flex items-center flex-1 min-w-0">

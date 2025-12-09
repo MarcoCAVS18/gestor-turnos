@@ -41,7 +41,7 @@ const TarjetaTrabajo = (props) => {
         {/* Información adicional de tarifas si existen */}
         {trabajo?.tarifas && (
           <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="grid grid-cols-3 gap-2 text-xs">
               {trabajo.tarifas.sabado && trabajo.tarifas.sabado !== tarifaBase && (
                 <Flex variant="between">
                   <span className="text-gray-500">Sábado:</span>
@@ -52,6 +52,12 @@ const TarjetaTrabajo = (props) => {
                 <Flex variant="between">
                   <span className="text-gray-500">Domingo:</span>
                   <span className="font-medium">{formatCurrency(trabajo.tarifas.domingo)}/h</span>
+                </Flex>
+              )}
+              {trabajo.tarifas.feriados && trabajo.tarifas.feriados !== tarifaBase && (
+                <Flex variant="between">
+                  <span className="text-gray-500">Feriados:</span>
+                  <span className="font-medium">{formatCurrency(trabajo.tarifas.feriados)}/h</span>
                 </Flex>
               )}
             </div>

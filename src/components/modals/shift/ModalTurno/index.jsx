@@ -1,6 +1,6 @@
 // src/components/modals/shift/ModalTurno/index.jsx - Refactorizado con BaseModal
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useId } from 'react';
 import { useApp } from '../../../../contexts/AppContext';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { createSafeDate } from '../../../../utils/time';
@@ -22,6 +22,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
   const [formularioTipo, setFormularioTipo] = useState('tradicional');
   const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
+  const formId = useId();
 
   // Combinar todos los trabajos para el selector
   const todosLosTrabajos = useMemo(() => {
@@ -94,7 +95,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
           await editDeliveryShift(turno.id, datosFinales);
         } else {
           await addDeliveryShift(datosFinales);
-        }
+        } 
       } else {
         if (turno) {
           await editShift(turno.id, datosFinales);
@@ -153,32 +154,32 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
       title={titulo}
       subtitle={subtituloFinal || undefined}
       loading={loading}
-      loadingText="Guardando turno..."
-      showFooter={true}
       maxWidth="md"
+      showActions={true}
+      onCancel={manejarCerrar}
+      formId={formId}
+      saveText={turno ? 'Guardar Cambios' : 'Crear Turno'}
     >
       {formularioTipo === 'delivery' ? (
         <TurnoDeliveryForm
+          id={formId}
           turno={turno}
           trabajoId={trabajoSeleccionadoId}
           trabajos={todosLosTrabajos}
           onSubmit={manejarGuardado}
-          onCancel={manejarCerrar}
           onTrabajoChange={manejarCambioTrabajo}
           isMobile={isMobile}
-          loading={loading}
           fechaInicial={fechaInicial}
         />
       ) : (
         <TurnoForm
+          id={formId}
           turno={turno}
           trabajoId={trabajoSeleccionadoId}
           trabajos={todosLosTrabajos}
           onSubmit={manejarGuardado}
-          onCancel={manejarCerrar}
           onTrabajoChange={manejarCambioTrabajo}
           isMobile={isMobile}
-          loading={loading}
           fechaInicial={fechaInicial}
         />
       )}

@@ -153,34 +153,6 @@ const SelectorTipoTrabajo = ({ onSelectTipo, isMobile }) => {
         </button>
       </div>
 
-      {/* Consejo informativo */}
-      <div 
-        className={`p-4 rounded-lg ${isMobile ? 'mt-6' : 'mt-6'}`}
-        style={{ backgroundColor: colors.transparent10 }}
-      >
-        <div className="flex items-start space-x-3">
-          <div className="flex-shrink-0">
-            <Flex variant="center" 
-              className={`rounded-full ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}`}
-              style={{ backgroundColor: colors.primary }}
-            >
-              <span className="text-white text-xs font-bold">💡</span>
-            </Flex>
-          </div>
-          <div>
-            <p 
-              className={`font-medium mb-1 ${isMobile ? 'text-base' : 'text-sm'}`}
-              style={{ color: colors.primary }}
-            >
-              Consejo
-            </p>
-            <p className={`${isMobile ? 'text-sm leading-relaxed' : 'text-sm'} text-gray-700`}>
-              Puedes tener trabajos de ambos tipos en tu perfil. Cada uno se adaptará a sus características específicas para un mejor control de tus ingresos.
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Botón de ayuda en móvil */}
       {isMobile && (
         <div className="text-center pt-4">

@@ -59,11 +59,7 @@ export const useSharedWork = () => {
       }
       
       // Navegar a la lista de trabajos
-      navigate('/trabajos', { 
-        state: { 
-          message: `Trabajo "${trabajoCompartido.trabajoData.nombre}" agregado exitosamente` 
-        } 
-      });
+      navigate('/trabajos');
       
     } catch (err) {
       setError('Error al agregar el trabajo: ' + err.message);

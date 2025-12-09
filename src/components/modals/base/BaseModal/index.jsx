@@ -5,8 +5,8 @@ import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
-import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
 import Flex from '../../../ui/Flex';
+import Button from '../../../ui/Button';
 
 const BaseModal = ({
   isOpen,
@@ -14,11 +14,13 @@ const BaseModal = ({
   title,
   subtitle,
   loading = false,
-  loadingText = 'Guardando...',
-  showFooter = false,
-  footerText = 'Desliza hacia abajo para cerrar',
   maxWidth = 'lg', // 'sm' | 'md' | 'lg' | 'xl'
-  children
+  children,
+  showActions = false,
+  onCancel,
+  saveText = 'Guardar',
+  cancelText = 'Cancelar',
+  formId,
 }) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile();
@@ -63,7 +65,7 @@ const BaseModal = ({
             ? 'h-full max-w-none rounded-none'
             : `${maxWidthClasses[maxWidth]} max-h-[90vh] rounded-xl`
           }
-          ${isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'}
+          ${isMobile ? 'overflow-hidden flex flex-col' : ''}
         `}
       >
 
@@ -114,50 +116,47 @@ const BaseModal = ({
 
         {/* Content con scroll optimizado */}
         <div className={`
-          ${isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'}
+          ${isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4 overflow-y-auto'}
         `}>
           {children}
         </div>
-
-        {/* Footer fijo en móvil (opcional) */}
-        {isMobile && showFooter && !loading && (
+        
+        {/* Actions Footer */}
+        {showActions && (
           <div
-            className="sticky bottom-0 bg-white border-t p-4"
-            style={{
-              borderTopColor: colors.transparent20
-            }}
+            className={`
+              border-t
+              ${isMobile
+                ? 'sticky bottom-0 bg-white p-4'
+                : 'p-4 mt-auto'
+              }
+            `}
+            style={{ borderTopColor: colors.transparent20 }}
           >
-            <div className="text-xs text-gray-500 text-center">
-              {footerText}
+            <div className={`
+              w-full
+              ${isMobile ? 'flex flex-col-reverse gap-2' : 'flex justify-end gap-3'}
+            `}>
+              <Button
+                variant="secondary"
+                onClick={onCancel}
+                disabled={loading}
+                isMobile={isMobile}
+                className={isMobile ? '' : 'flex-none'}
+              >
+                {cancelText}
+              </Button>
+              <Button
+                type="submit"
+                form={formId}
+                loading={loading}
+                isMobile={isMobile}
+                className={isMobile ? '' : 'flex-none'}
+              >
+                {saveText}
+              </Button>
             </div>
           </div>
-        )}
-
-        {/* Indicador de carga */}
-        {loading && (
-          <Flex variant="center"
-            className="absolute inset-0 bg-black bg-opacity-30"
-            style={{ zIndex: modalConfig.zIndex + 1 }}
-          >
-            <Flex
-              className="bg-white rounded-lg p-4 space-x-3"
-              style={{
-                borderColor: colors.primary,
-                borderWidth: '2px'
-              }}
-            >
-              <LoadingSpinner 
-                style={{ borderColor: colors.primary }}
-                color="border-transparent"
-              />
-              <span
-                className="font-medium"
-                style={{ color: colors.primary }}
-              >
-                {loadingText}
-              </span>
-            </Flex>
-          </Flex>
         )}
       </div>
     </Flex>

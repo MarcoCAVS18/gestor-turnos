@@ -1,6 +1,5 @@
-// src/components/layout/PageHeader/index.jsx
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import Button from '../../ui/Button';
@@ -16,55 +15,41 @@ const PageHeader = ({
 }) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile();
-  // Iniciamos expanded en true por defecto
   const [isExpanded, setIsExpanded] = useState(true);
 
   useEffect(() => {
-    // Si estamos en mobile y hay una acción, activamos el timer
+    // Al montarse (después del loader), si es mobile y hay acción:
     if (isMobile && action) {
-      // Reiniciamos a expandido por si cambiamos de vista y volvemos
-      setIsExpanded(true);
+      setIsExpanded(true); // Aseguramos que empiece expandido
       
       const timer = setTimeout(() => {
-        setIsExpanded(false);
-      }, 2000); // 2 segundos es un tiempo de lectura estándar
+        setIsExpanded(false); // Colapsa a los 2 segundos
+      }, 2000);
 
       return () => clearTimeout(timer);
     } else {
-      // En desktop siempre expandido
       setIsExpanded(true);
     }
-  }, [isMobile, action]); // Dependencias limpias
+  }, [isMobile, action]); 
 
+  // Variantes para la entrada del Header completo
   const headerVariants = {
     hidden: { opacity: 0, y: -20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
-  };
-
-  // Variantes para el contenedor del botón
-  const buttonWrapperVariants = {
-    expanded: { 
-      width: "120px", 
-      transition: { type: "spring", stiffness: 100, damping: 10 } // Adjusted spring values
-    },
-    collapsed: { 
-      width: "44px", 
-      transition: { type: "spring", stiffness: 100, damping: 10 } // Adjusted spring values
-    }
   };
 
   const isCollapsed = isMobile && !isExpanded;
 
   return (
     <motion.div
-      className={`flex items-center space-x-4 ${className}`} // Removed justify-between and gap, added space-x
+      className={`flex items-center space-x-4 ${className}`}
       variants={headerVariants}
       initial="hidden"
       animate="visible"
       {...props}
     >
-      {/* TEXT CONTAINER */}
-      <div className="flex items-center space-x-3 flex-grow"> {/* Changed flex-1 to flex-grow */}
+      {/* TEXT CONTAINER (Intacto) */}
+      <div className="flex items-center space-x-3 flex-grow">
         {Icon && (
           <div 
             className="flex-shrink-0 p-2 rounded-lg transition-colors" 
@@ -85,44 +70,21 @@ const PageHeader = ({
         </div>
       </div>
       
+      {/* ACTION BUTTON */}
       {rightContent ? rightContent : (action && (
-        <motion.div
-          // Removed layout prop
-          initial="expanded"
-          animate={isCollapsed ? 'collapsed' : 'expanded'}
-          variants={buttonWrapperVariants}
-          className="flex-shrink-0 overflow-hidden relative flex justify-end"
-          style={{ minWidth: '120px' }} // Reserve max space for the button
-        >
+        // Quitamos las animaciones del wrapper padre para evitar conflictos.
+        // El Button maneja su propio tamaño.
+        <div className="flex-shrink-0 flex justify-end">
           <Button
             onClick={action.onClick}
             icon={action.icon}
             themeColor={action.themeColor || colors.primary}
-            className={`flex items-center justify-center shadow-sm hover:shadow-md h-[44px] whitespace-nowrap`}
-            style={{ 
-              borderRadius: isCollapsed ? '50%' : '12px', 
-              paddingLeft: isCollapsed ? '0' : '1rem',
-              paddingRight: isCollapsed ? '0' : '1rem',
-              width: isCollapsed ? '44px' : 'auto', // Re-added width
-            }}
+            collapsed={isCollapsed} // Pasamos el estado al botón
           >
-            <AnimatePresence mode="wait">
-              {!isCollapsed && (
-                <motion.span
-                  key="label"
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: "auto" }}
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="ml-2 overflow-hidden block"
-                >
-                  <span className="hidden sm:inline">{action.label}</span>
-                  <span className="sm:hidden">{action.mobileLabel || 'Nuevo'}</span>
-                </motion.span>
-              )}
-            </AnimatePresence>
+            <span className="hidden sm:inline">{action.label}</span>
+            <span className="sm:hidden">{action.mobileLabel || 'Nuevo'}</span>
           </Button>
-        </motion.div>
+        </div>
       ))}
     </motion.div>
   );

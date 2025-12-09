@@ -1,6 +1,6 @@
 // src/components/modals/work/ModalTrabajo/index.jsx - Refactorizado con BaseModal
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useId } from 'react';
 import { useApp } from '../../../../contexts/AppContext';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 import BaseModal from '../../base/BaseModal';
@@ -14,6 +14,7 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
   const [mostrarSelector, setMostrarSelector] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [loading, setLoading] = useState(false);
+  const formId = useId();
 
   // Determinar si mostrar selector
   useEffect(() => {
@@ -89,9 +90,11 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
       onClose={manejarCerrar}
       title={trabajo ? 'Editar Trabajo' : 'Nuevo Trabajo'}
       loading={loading}
-      loadingText="Guardando..."
-      showFooter={!mostrarSelector}
       maxWidth="lg"
+      showActions={!mostrarSelector}
+      onCancel={manejarCerrar}
+      formId={formId}
+      saveText={trabajo ? 'Guardar Cambios' : 'Crear Trabajo'}
     >
       {mostrarSelector ? (
         <SelectorTipoTrabajo
@@ -100,10 +103,9 @@ const ModalTrabajo = ({ isOpen, onClose, trabajo }) => {
         />
       ) : (
         <TrabajoForm
+          id={formId}
           trabajo={trabajo}
           onSubmit={manejarGuardado}
-          onCancel={manejarCerrar}
-          loading={loading}
           isMobile={isMobile}
         />
       )}

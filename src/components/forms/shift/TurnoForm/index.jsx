@@ -9,14 +9,13 @@ import BaseForm, { FormSection, FormGrid, FormField, FormLabel, FormError, getIn
 import Flex from '../../../ui/Flex';
 
 const TurnoForm = ({
+  id,
   turno,
   trabajoId,
   trabajos = [],
   onSubmit,
-  onCancel,
   onTrabajoChange,
   isMobile = false,
-  loading = false,
   fechaInicial
 }) => {
   const colors = useThemeColors();
@@ -155,12 +154,9 @@ const TurnoForm = ({
 
   return (
     <BaseForm
+      id={id}
       onSubmit={handleSubmit}
-      onCancel={onCancel}
-      loading={loading}
       isMobile={isMobile}
-      isEditing={!!turno}
-      submitText={turno ? 'Actualizar Turno' : 'Crear Turno'}
     >
       {/* Selección de trabajo */}
       <FormSection>
@@ -439,13 +435,6 @@ const TurnoForm = ({
               </div>
             </div>
           </Flex>
-        )}
-
-        {/* Mensaje informativo en móvil */}
-        {isMobile && (
-          <div className="mt-3 p-2 bg-gray-50 rounded text-xs text-gray-600 text-center">
-            💡 El descuento se aplica automáticamente según tu configuración
-          </div>
         )}
       </div>
     </div>

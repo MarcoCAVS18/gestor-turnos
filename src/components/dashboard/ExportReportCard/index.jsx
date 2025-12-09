@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Download, FileText, Image, FileSpreadsheet } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
-import New from '../../ui/New';
 import Flex from '../../ui/Flex';
 
 const ExportReportCard = ({ onExport }) => {
@@ -36,7 +35,6 @@ const ExportReportCard = ({ onExport }) => {
         <div className="flex-1 pr-4">
           <Flex variant="start" className="gap-2 mb-2">
             <h3 className="text-lg font-semibold text-gray-800">Exportar Reporte</h3>
-            <New size="xs" />
           </Flex>
           <p className="text-sm text-gray-700 mb-4">
             Descargá un resumen completo de tus estadísticas, turnos y actividad

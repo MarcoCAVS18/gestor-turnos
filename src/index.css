@@ -66,20 +66,6 @@ input[type="date"]:focus {
   overflow-x: hidden;
 }
 
-/* Específico para grids en modales pequeños */
-@media (max-width: 640px) {
-  .grid-cols-2 {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .grid-cols-3 {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-}
-
-
 /* Optimizaciones para formularios móviles */
 @media (max-width: 767px) {
   /* Inputs más grandes en móvil */

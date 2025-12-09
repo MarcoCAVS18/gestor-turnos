@@ -6,14 +6,13 @@ import { useThemeColors } from '../../../../hooks/useThemeColors';
 import BaseForm, { FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses } from '../../base/BaseForm';
 
 const TurnoDeliveryForm = ({
+  id,
   turno,
   trabajoId,
   trabajos = [],
   onSubmit,
-  onCancel,
   onTrabajoChange,
   isMobile = false,
-  loading = false,
   fechaInicial
 }) => {
   const colors = useThemeColors();
@@ -135,12 +134,9 @@ const TurnoDeliveryForm = ({
 
   return (
     <BaseForm
+      id={id}
       onSubmit={handleSubmit}
-      onCancel={onCancel}
-      loading={loading}
       isMobile={isMobile}
-      isEditing={!!turno}
-      submitText={turno ? 'Actualizar Turno' : 'Crear Turno'}
     >
       {/* Selección de trabajo (unificada) */}
       <FormSection>

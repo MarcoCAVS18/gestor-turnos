@@ -1,10 +1,11 @@
 // src/components/dashboard/QuickActionsCard/index.jsx
 
 import { useNavigate } from 'react-router-dom';
-import { Plus, Briefcase } from 'lucide-react';
+import { Plus, Briefcase, Zap } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
+import New from '../../ui/New';
 
 const QuickActionsCard = ({ className }) => {
   const colors = useThemeColors();
@@ -12,8 +13,11 @@ const QuickActionsCard = ({ className }) => {
 
   return (
     <Card className={`${className} flex flex-col`}>
-      <h3 className="text-lg font-semibold mb-4">Acciones rápidas</h3>
-      <div className="grid grid-cols-2 gap-3 flex-grow items-center">
+      <h3 className="text-lg font-semibold mb-4 flex items-center">
+        <Zap size={20} style={{ color: colors.primary }} className="mr-2" />
+        Acciones rápidas
+      </h3>
+      <div className="grid grid-cols-2 gap-2 flex-grow items-center">
         <Button
           onClick={() => navigate('/turnos')}
           variant="outline"
@@ -31,6 +35,16 @@ const QuickActionsCard = ({ className }) => {
           themeColor={colors.primary}
         >
           Nuevo trabajo
+        </Button>
+        <Button
+          onClick={() => {
+          }}
+          variant="solid"
+          className="col-span-2 flex items-center justify-center gap-2"
+          themeColor={colors.primary}
+        >
+          Modo Live - Clock in and Clock out
+          <New />
         </Button>
       </div>
     </Card>
