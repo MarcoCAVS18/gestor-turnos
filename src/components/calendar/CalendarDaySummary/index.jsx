@@ -1,9 +1,11 @@
 // src/components/calendar/CalendarDaySummary/index.jsx
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { PlusCircle, Calendar, Clock, DollarSign, SearchX } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { formatCurrency } from '../../../utils/currency';
+import { useIsMobile } from '../../../hooks/useIsMobile';
+import { createSafeDate } from '../../../utils/time';
 import TarjetaTurno from '../../cards/shift/TarjetaTurno';
 import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
 import Card from '../../ui/Card';
@@ -19,6 +21,7 @@ const CalendarDaySummary = ({
   onDelete
 }) => {
   const { todosLosTrabajos, calculatePayment, thematicColors } = useApp();
+  const isMobile = useIsMobile();
 
   // Función para calcular total del día
   const calcularTotalDia = (turnosList) => {
@@ -47,21 +50,31 @@ const CalendarDaySummary = ({
     return todosLosTrabajos.find(t => t && t.id === trabajoId) || null;
   };
 
-  // Validar que tenemos fecha seleccionada
-  if (!fechaSeleccionada) {
-    return (
-      <Card className="mt-6">
-        <div className="text-center py-8">
-          <h3 className="text-lg font-semibold text-gray-600 mb-2">
-            Selecciona un día
-          </h3>
-          <p className="text-gray-500">
-            Haz clic en cualquier día del calendario para ver los turnos
-          </p>
-        </div>
-      </Card>
-    );
-  }
+  const shortFormattedDate = useMemo(() => {
+    if (!fechaSeleccionada) return '';
+
+    const dateObj = createSafeDate(fechaSeleccionada);
+    
+    const hoy = new Date();
+    const ayer = new Date(hoy);
+    ayer.setDate(hoy.getDate() - 1);
+    
+    let prefix = '';
+    if (dateObj.toDateString() === hoy.toDateString()) {
+        prefix = 'Hoy, ';
+    } else if (dateObj.toDateString() === ayer.toDateString()) {
+        prefix = 'Ayer, ';
+    }
+
+    const formatted = dateObj.toLocaleDateString('es-ES', {
+      month: 'short',
+      day: 'numeric'
+    });
+    
+    return prefix + formatted;
+  }, [fechaSeleccionada]);
+
+
 
   // Validar y filtrar turnos
   const turnosSegurosDia = Array.isArray(turnos) ? turnos.filter(turno => turno && turno.id) : [];
@@ -86,7 +99,7 @@ const CalendarDaySummary = ({
               <div className="flex items-center">
                 <Calendar size={18} style={{ color: thematicColors?.base || '#EC4899' }} className="mr-2" />
                 <h3 className="font-semibold">
-                  {formatearFecha ? formatearFecha(fechaSeleccionada) : fechaSeleccionada}
+                  {isMobile ? shortFormattedDate : (formatearFecha ? formatearFecha(fechaSeleccionada) : fechaSeleccionada)}
                 </h3>
               </div>
               <div className="flex items-center text-sm">
@@ -134,7 +147,7 @@ const CalendarDaySummary = ({
                     trabajo={trabajo}
                     fecha={fechaSeleccionada}
                     onEdit={() => onEdit(turno)}
-                    onDelete={() => onDelete(turno.id)}
+                    onDelete={() => onDelete(turno)}
                     variant="compact"
                   />
                 </div>
@@ -146,7 +159,17 @@ const CalendarDaySummary = ({
         <Card className="text-center py-6">
           <SearchX size={48} className="mx-auto mb-4 text-gray-300" />
           <p className="text-gray-500 mb-4">
-            No hay turnos para {formatearFecha ? formatearFecha(fechaSeleccionada) : 'esta fecha'}
+            No hay turnos para {
+              formatearFecha ? (
+                (() => {
+                  const formattedDate = formatearFecha(fechaSeleccionada);
+                  if (formattedDate.startsWith('Hoy') || formattedDate.startsWith('Ayer')) {
+                    return formattedDate;
+                  }
+                  return `el ${formattedDate}`;
+                })()
+              ) : 'esta fecha'
+            }
           </p>
           <Button
             onClick={() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T12:00:00'))}

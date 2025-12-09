@@ -1,6 +1,6 @@
 // src/pages/CalendarioView.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { CalendarDays, Plus } from 'lucide-react';
 import { useApp } from '../contexts/AppContext';
@@ -14,14 +14,20 @@ import ModalTurno from '../components/modals/shift/ModalTurno';
 import { useTurnManager } from '../hooks/useTurnManager';
 import { useDeleteManager } from '../hooks/useDeleteManager';
 import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
-
 import Loader from '../components/other/Loader';
 
 const CalendarioView = () => {
   const { turnosPorFecha, todosLosTrabajos, thematicColors, loading, eliminarTurno } = useApp();
   const colors = useThemeColors();
   
-  const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
+  const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
+  
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(fechaLocalAISO(createSafeDate(new Date())));
+
+  const turnosSeleccionados = useMemo(() => 
+    fechaSeleccionada ? (turnosPorFecha[fechaSeleccionada] || []) : [], 
+    [turnosPorFecha, fechaSeleccionada]
+  );
 
   const { 
     modalAbierto, 
@@ -34,44 +40,56 @@ const CalendarioView = () => {
   
   const { 
     showDeleteModal,
+    itemToDelete, // NEW: Get itemToDelete for summary
     deleting,
     startDeletion,
     cancelDeletion,
     confirmDeletion
   } = useDeleteManager(eliminarTurno);
   
-  useEffect(() => {
-    const hoy = new Date();
-    setFechaSeleccionada(fechaLocalAISO(hoy));
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader />
-      </div>
-    );
-  }
-  
-  const hayTrabajos = todosLosTrabajos && todosLosTrabajos.length > 0;
-  const turnosSeleccionados = fechaSeleccionada ? turnosPorFecha[fechaSeleccionada] || [] : [];
-  
-  const formatearFecha = (fechaStr) => {
+  const formatearFecha = useCallback((fechaStr) => {
     const fecha = createSafeDate(fechaStr);
+    
+    // Explicitly check for invalid date object
+    if (isNaN(fecha.getTime())) {
+      console.error('Invalid Date object created by createSafeDate for input:', fechaStr);
+      return 'Fecha no válida'; // Fallback for genuinely invalid dates
+    }
+    
     const hoy = new Date();
     const ayer = new Date(hoy);
     ayer.setDate(hoy.getDate() - 1);
     
-    if (fecha.toDateString() === hoy.toDateString()) return 'Hoy';
-    if (fecha.toDateString() === ayer.toDateString()) return 'Ayer';
-    
-    return fecha.toLocaleDateString('es-ES', {
+    const baseFormattedDate = fecha.toLocaleDateString('es-ES', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
-  };
+
+    if (fecha.toDateString() === hoy.toDateString()) {
+      return `Hoy, ${baseFormattedDate}`;
+    }
+    if (fecha.toDateString() === ayer.toDateString()) {
+      return `Ayer, ${baseFormattedDate}`;
+    }
+    
+    return baseFormattedDate;
+  }, []);
+  
+  // NEW: Format itemToDelete for summary display
+  const detallesEliminacion = useMemo(() => {
+    if (!itemToDelete) return [];
+    
+    const trabajo = todosLosTrabajos.find(t => t.id === itemToDelete.trabajoId);
+    const nombreTrabajo = trabajo ? trabajo.nombre : 'Trabajo desconocido';
+    
+    return [
+      `Turno de ${nombreTrabajo}`,
+      `Fecha: ${formatearFecha(itemToDelete.fechaInicio)}`,
+      `Horario: ${itemToDelete.horaInicio} - ${itemToDelete.horaFin}`
+    ];
+  }, [itemToDelete, todosLosTrabajos, formatearFecha]);
 
   const seleccionarDia = (fecha) => {
     setFechaSeleccionada(fechaLocalAISO(fecha));
@@ -93,6 +111,7 @@ const CalendarioView = () => {
   
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
+      {loading && <Loader />}
       <PageHeader
         title="Calendario"
         subtitle={hayTrabajos ? "Visualiza y gestiona tus turnos por fecha" : null}
@@ -158,6 +177,7 @@ const CalendarioView = () => {
         onConfirm={confirmDeletion}
         eliminando={deleting}
         tipo="turno"
+        detalles={detallesEliminacion} // NEW: Pass formatted details
       />
     </div>
   );
