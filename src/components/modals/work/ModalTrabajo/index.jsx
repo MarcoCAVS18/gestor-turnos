@@ -1,6 +1,6 @@
 // src/components/modals/work/ModalTrabajo/index.jsx - Refactorizado con BaseModal
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
+import React, ***REMOVED*** useState, useEffect, useId ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
 import BaseModal from '../../base/BaseModal';
@@ -14,6 +14,7 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
   const [mostrarSelector, setMostrarSelector] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
   const [loading, setLoading] = useState(false);
+  const formId = useId();
 
   // Determinar si mostrar selector
   useEffect(() => ***REMOVED***
@@ -89,9 +90,11 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
       onClose=***REMOVED***manejarCerrar***REMOVED***
       title=***REMOVED***trabajo ? 'Editar Trabajo' : 'Nuevo Trabajo'***REMOVED***
       loading=***REMOVED***loading***REMOVED***
-      loadingText="Guardando..."
-      showFooter=***REMOVED***!mostrarSelector***REMOVED***
       maxWidth="lg"
+      showActions=***REMOVED***!mostrarSelector***REMOVED***
+      onCancel=***REMOVED***manejarCerrar***REMOVED***
+      formId=***REMOVED***formId***REMOVED***
+      saveText=***REMOVED***trabajo ? 'Guardar Cambios' : 'Crear Trabajo'***REMOVED***
     >
       ***REMOVED***mostrarSelector ? (
         <SelectorTipoTrabajo
@@ -100,10 +103,9 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
         />
       ) : (
         <TrabajoForm
+          id=***REMOVED***formId***REMOVED***
           trabajo=***REMOVED***trabajo***REMOVED***
           onSubmit=***REMOVED***manejarGuardado***REMOVED***
-          onCancel=***REMOVED***manejarCerrar***REMOVED***
-          loading=***REMOVED***loading***REMOVED***
           isMobile=***REMOVED***isMobile***REMOVED***
         />
       )***REMOVED***

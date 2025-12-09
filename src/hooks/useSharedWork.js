@@ -59,11 +59,7 @@ export const useSharedWork = () => ***REMOVED***
       ***REMOVED***
       
       // Navegar a la lista de trabajos
-      navigate('/trabajos', ***REMOVED*** 
-        state: ***REMOVED*** 
-          message: `Trabajo "$***REMOVED***trabajoCompartido.trabajoData.nombre***REMOVED***" agregado exitosamente` 
-        ***REMOVED*** 
-      ***REMOVED***);
+      navigate('/trabajos');
       
     ***REMOVED*** catch (err) ***REMOVED***
       setError('Error al agregar el trabajo: ' + err.message);

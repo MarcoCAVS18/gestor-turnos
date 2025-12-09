@@ -1,7 +1,7 @@
 // src/components/forms/work/TrabajoForm/index.jsx - REFACTORIZADO CON BaseForm
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** Briefcase, DollarSign, Palette, FileText ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Briefcase, DollarSign, Palette, FileText, Clock ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useFormValidation ***REMOVED*** from '../../../../hooks/useFormValidation';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
 import ***REMOVED*** VALIDATION_RULES ***REMOVED*** from '../../../../constants/validation';
@@ -10,10 +10,9 @@ import ThemeInput from '../../../ui/ThemeInput';
 import BaseForm, ***REMOVED*** FormSection, FormLabel, FormError ***REMOVED*** from '../../base/BaseForm';
 
 const TrabajoForm = (***REMOVED*** 
+  id,
   trabajo, 
   onSubmit, 
-  onCancel, 
-  loading, 
   isMobile 
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -28,7 +27,8 @@ const TrabajoForm = (***REMOVED***
       tarde: '',
       noche: '',
       sabado: '',
-      domingo: ''
+      domingo: '',
+      feriados: ''
     ***REMOVED***
   ***REMOVED***);
 
@@ -39,7 +39,8 @@ const TrabajoForm = (***REMOVED***
     'tarifas.tarde': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
     'tarifas.noche': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
     'tarifas.sabado': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
-    'tarifas.domingo': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber]
+    'tarifas.domingo': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
+    'tarifas.feriados': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber]
   ***REMOVED***;
 
   const ***REMOVED*** errors, validateForm, handleFieldChange ***REMOVED*** = useFormValidation(validationRules);
@@ -56,7 +57,8 @@ const TrabajoForm = (***REMOVED***
           tarde: trabajo.tarifas?.tarde?.toString() || '',
           noche: trabajo.tarifas?.noche?.toString() || '',
           sabado: trabajo.tarifas?.sabado?.toString() || '',
-          domingo: trabajo.tarifas?.domingo?.toString() || ''
+          domingo: trabajo.tarifas?.domingo?.toString() || '',
+          feriados: trabajo.tarifas?.feriados?.toString() || ''
         ***REMOVED***
       ***REMOVED***);
     ***REMOVED*** else ***REMOVED***
@@ -96,7 +98,8 @@ const TrabajoForm = (***REMOVED***
       'tarifas.tarde': formData.tarifas.tarde,
       'tarifas.noche': formData.tarifas.noche,
       'tarifas.sabado': formData.tarifas.sabado,
-      'tarifas.domingo': formData.tarifas.domingo
+      'tarifas.domingo': formData.tarifas.domingo,
+      'tarifas.feriados': formData.tarifas.feriados
     ***REMOVED***;
 
     if (!validateForm(flatFormData)) return;
@@ -109,7 +112,8 @@ const TrabajoForm = (***REMOVED***
         tarde: parseFloat(formData.tarifas.tarde),
         noche: parseFloat(formData.tarifas.noche),
         sabado: parseFloat(formData.tarifas.sabado),
-        domingo: parseFloat(formData.tarifas.domingo)
+        domingo: parseFloat(formData.tarifas.domingo),
+        feriados: parseFloat(formData.tarifas.feriados)
       ***REMOVED***
     ***REMOVED***;
 
@@ -118,12 +122,9 @@ const TrabajoForm = (***REMOVED***
 
   return (
     <BaseForm
+      id=***REMOVED***id***REMOVED***
       onSubmit=***REMOVED***handleSubmit***REMOVED***
-      onCancel=***REMOVED***onCancel***REMOVED***
-      loading=***REMOVED***loading***REMOVED***
       isMobile=***REMOVED***isMobile***REMOVED***
-      isEditing=***REMOVED***!!trabajo***REMOVED***
-      submitText=***REMOVED***trabajo ? 'Guardar Cambios' : 'Crear Trabajo'***REMOVED***
     >
       ***REMOVED***/* Nombre de la empresa */***REMOVED***
       <FormSection>
@@ -200,7 +201,8 @@ const TrabajoForm = (***REMOVED***
 
       ***REMOVED***/* Tarifas específicas */***REMOVED***
       <FormSection>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
+        <label className="flex items-center text-sm font-medium text-gray-700 mb-3">
+          <Clock className="mr-2 h-4 w-4" />
           Tarifas por tipo de turno *
         </label>
         <div className=***REMOVED***`grid $***REMOVED***isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-2 gap-4'***REMOVED***`***REMOVED***>
@@ -209,7 +211,8 @@ const TrabajoForm = (***REMOVED***
             tarde: 'Tarde',
             noche: 'Nocturno',
             sabado: 'Sábado',
-            domingo: 'Domingo'
+            domingo: 'Domingo',
+            feriados: 'Feriados'
           ***REMOVED***).map(([tipo, label]) => (
             <div key=***REMOVED***tipo***REMOVED***>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -254,27 +257,6 @@ const TrabajoForm = (***REMOVED***
           ***REMOVED******REMOVED***
         />
       </FormSection>
-
-      ***REMOVED***/* Vista previa del color seleccionado */***REMOVED***
-      ***REMOVED***formData.color && (
-        <div
-          className=***REMOVED***`rounded-lg p-4 border-l-4 $***REMOVED***isMobile ? 'mt-4' : 'mt-2'***REMOVED***`***REMOVED***
-          style=***REMOVED******REMOVED***
-            borderLeftColor: formData.color,
-            backgroundColor: `$***REMOVED***formData.color***REMOVED***10`
-          ***REMOVED******REMOVED***
-        >
-          <div className="flex items-center space-x-3">
-            <div
-              className="w-4 h-4 rounded-full"
-              style=***REMOVED******REMOVED*** backgroundColor: formData.color ***REMOVED******REMOVED***
-            />
-            <span className="text-sm text-gray-700">
-              Vista previa: ***REMOVED***formData.nombre || 'Nuevo trabajo'***REMOVED*** con este color
-            </span>
-          </div>
-        </div>
-      )***REMOVED***
     </BaseForm>
   );
 ***REMOVED***;

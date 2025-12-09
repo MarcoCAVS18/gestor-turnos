@@ -1,4 +1,4 @@
-// src/components/filters/FiltroTrabajo/index.jsx - REFACTORIZADO
+// src/components/filters/FiltroTrabajo/index.jsx
 
 import React from 'react';
 import ***REMOVED*** Briefcase, Truck ***REMOVED*** from 'lucide-react';
@@ -21,22 +21,6 @@ const FiltroTrabajo = (***REMOVED*** value, onChange ***REMOVED***) => ***REMOVE
         Filtrar por trabajo
       </label>
       <div className="relative">
-        <select
-          value=***REMOVED***value***REMOVED***
-          onChange=***REMOVED***(e) => onChange(e.target.value)***REMOVED***
-          className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:border-transparent transition-colors"
-          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
-        >
-          <option value="todos">Todos los trabajos</option>
-          ***REMOVED***todosLosTrabajos.map(trabajo => (
-            <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
-              ***REMOVED***trabajo.nombre***REMOVED***
-              ***REMOVED***trabajo.tipo === 'delivery' ? ' (Delivery)' : ''***REMOVED***
-            </option>
-          ))***REMOVED***
-        </select>
-        
-        ***REMOVED***/* Icono decorativo */***REMOVED***
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
           ***REMOVED***value !== 'todos' ? (
             (() => ***REMOVED***
@@ -51,13 +35,26 @@ const FiltroTrabajo = (***REMOVED*** value, onChange ***REMOVED***) => ***REMOVE
             <Briefcase size=***REMOVED***16***REMOVED*** className="text-gray-400" />
           )***REMOVED***
         </div>
-        
-        ***REMOVED***/* Ajustar padding para el icono */***REMOVED***
-        <style jsx>***REMOVED***`
-          select ***REMOVED***
-            padding-left: 2.5rem;
-          ***REMOVED***
-        `***REMOVED***</style>
+
+        <select
+          value=***REMOVED***value***REMOVED***
+          onChange=***REMOVED***(e) => onChange(e.target.value)***REMOVED***
+          className=***REMOVED***`
+            w-full py-2 pr-8 border border-gray-300 rounded-lg 
+            bg-white text-sm focus:outline-none focus:ring-2 focus:border-transparent 
+            transition-colors
+            pl-10 /* ESTO REEMPLAZA AL STYLE JSX */
+          `***REMOVED***
+          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+        >
+          <option value="todos">Todos los trabajos</option>
+          ***REMOVED***todosLosTrabajos.map(trabajo => (
+            <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
+              ***REMOVED***trabajo.nombre***REMOVED***
+              ***REMOVED***trabajo.tipo === 'delivery' ? ' (Delivery)' : ''***REMOVED***
+            </option>
+          ))***REMOVED***
+        </select>
       </div>
     </div>
   );

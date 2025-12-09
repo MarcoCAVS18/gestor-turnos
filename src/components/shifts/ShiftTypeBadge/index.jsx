@@ -45,9 +45,9 @@ const ShiftTypeBadge = (***REMOVED*** tipoTurno, turno, size = 'sm' ***REMOVED**
         bgColor: TURN_TYPE_COLORS.Domingo + '20'
       ***REMOVED***,
       delivery: ***REMOVED***
-        color: '#10B981', // Verde para delivery
+        color: '#e8a7f8ff',
         label: 'Delivery',
-        bgColor: '#10B98120'
+        bgColor: '#6329a5b1'
       ***REMOVED***,
       mixto: ***REMOVED***
         color: '#6B7280',

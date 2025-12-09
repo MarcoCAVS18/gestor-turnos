@@ -1,7 +1,10 @@
 // src/pages/Dashboard.jsx
 
+import React from 'react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** LayoutDashboard ***REMOVED*** from 'lucide-react';
+// import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom'; // Descomenta cuando tengas la ruta
+
 import PageHeader from '../components/layout/PageHeader';
 import ***REMOVED*** useDashboardStats ***REMOVED*** from '../hooks/useDashboardStats';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
@@ -19,11 +22,19 @@ import QuickActionsCard from '../components/dashboard/QuickActionsCard';
 import ExportReportCard from '../components/dashboard/ExportReportCard';
 import FooterSection from '../components/settings/FooterSection';
 
+// Importamos la nueva tarjeta de anuncio
+import FeatureAnnouncementCard from '../components/dashboard/FeatureAnnouncementCard';
+
 const Dashboard = () => ***REMOVED***
   const ***REMOVED*** loading, calculatePayment ***REMOVED*** = useApp();
   const stats = useDashboardStats();
+  // const navigate = useNavigate();
 
-  // Función para manejar la exportación
+  const handleNavigateToLiveMode = () => ***REMOVED***
+    console.log("Navegando al nuevo Modo Live...");
+    // navigate('/live'); // Aquí irás a tu nueva página de navegación completa
+  ***REMOVED***;
+
   const handleExport = async (format) => ***REMOVED***
     try ***REMOVED***
       if (format === 'pdf') ***REMOVED***
@@ -59,48 +70,48 @@ const Dashboard = () => ***REMOVED***
         icon=***REMOVED***LayoutDashboard***REMOVED***
       />
 
-
-      ***REMOVED***/* Layout responsivo principal */***REMOVED***
       <div className="space-y-6">
 
-        ***REMOVED***/* DESKTOP: Grid de 3 columnas principales */***REMOVED***
+        ***REMOVED***/* --- SECCIÓN DESKTOP --- */***REMOVED***
         <div className="hidden lg:grid lg:grid-cols-5 lg:gap-6">
-
-          ***REMOVED***/* CONTENEDOR 1: Stats + Acciones (4 columnas) */***REMOVED***
           <div className="lg:col-span-4 space-y-6">
-            ***REMOVED***/* QuickStatsGrid maneja su propio layout desktop */***REMOVED***
+            
+            ***REMOVED***/* Feature Announcement Card: Hero Element */***REMOVED***
+            <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
+                <FeatureAnnouncementCard onClick=***REMOVED***handleNavigateToLiveMode***REMOVED*** />
+            </motion.div>
+
             <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
               <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
             </motion.div>
+            
             <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
-
-
           </div>
 
-          ***REMOVED***/* CONTENEDOR 2: Esta semana vertical (1 columna) */***REMOVED***
           <div className="lg:col-span-1">
             <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** />
           </div>
         </div>
 
-        ***REMOVED***/* MÓVIL: Stack vertical */***REMOVED***
+        ***REMOVED***/* --- SECCIÓN MÓVIL --- */***REMOVED***
         <div className="block lg:hidden space-y-4">
-          ***REMOVED***/* QuickStatsGrid maneja su propio layout móvil 2x2 */***REMOVED***
+          
+          ***REMOVED***/* Feature Announcement Card: Hero Element Mobile */***REMOVED***
+          <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
+              <FeatureAnnouncementCard onClick=***REMOVED***handleNavigateToLiveMode***REMOVED*** />
+          </motion.div>
+
           <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
             <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
           </motion.div>
+          
           <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
-
-          ***REMOVED***/* Esta semana */***REMOVED***
           <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** />
-
-          ***REMOVED***/* Acciones rápidas */***REMOVED***
-          <QuickActionsCard />
         </div>
 
-        ***REMOVED***/* Segunda fila: Reorganizada con grilla anidada que ahora incluye Proyección */***REMOVED***
+        ***REMOVED***/* --- FILA INFERIOR (Común) --- */***REMOVED***
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:items-start">
-          ***REMOVED***/* Columna Izquierda: Actividad Reciente */***REMOVED***
+          ***REMOVED***/* Actividad Reciente */***REMOVED***
           <div className="lg:col-span-1 h-full">
             <RecentActivityCard
               stats=***REMOVED***stats***REMOVED***
@@ -109,10 +120,9 @@ const Dashboard = () => ***REMOVED***
             />
           </div>
 
-          ***REMOVED***/* Columna Derecha: Reorganizada en 2 columnas */***REMOVED***
+          ***REMOVED***/* Grillas de datos */***REMOVED***
           <div className="lg:col-span-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              ***REMOVED***/* Columna Izquierda */***REMOVED***
               <div className="space-y-6 flex flex-col">
                 <FavoriteWorksCard trabajosFavoritos=***REMOVED***stats.trabajosFavoritos***REMOVED*** />
                 <TopWorkCard trabajoMasRentable=***REMOVED***stats.trabajoMasRentable***REMOVED*** />
@@ -122,7 +132,6 @@ const Dashboard = () => ***REMOVED***
                   className="flex-grow"
                 />
               </div>
-              ***REMOVED***/* Columna Derecha */***REMOVED***
               <div className="space-y-6 flex flex-col">
                 <NextShiftCard
                   proximoTurno=***REMOVED***stats.proximoTurno***REMOVED***
@@ -136,7 +145,6 @@ const Dashboard = () => ***REMOVED***
         </div>
       </div>
 
-      ***REMOVED***/* Footer */***REMOVED***
       <div className="flex justify-center mt-8">
         <FooterSection />
       </div>

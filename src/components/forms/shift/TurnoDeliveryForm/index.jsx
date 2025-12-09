@@ -6,14 +6,13 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThe
 import BaseForm, ***REMOVED*** FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses ***REMOVED*** from '../../base/BaseForm';
 
 const TurnoDeliveryForm = (***REMOVED***
+  id,
   turno,
   trabajoId,
   trabajos = [],
   onSubmit,
-  onCancel,
   onTrabajoChange,
   isMobile = false,
-  loading = false,
   fechaInicial
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -135,12 +134,9 @@ const TurnoDeliveryForm = (***REMOVED***
 
   return (
     <BaseForm
+      id=***REMOVED***id***REMOVED***
       onSubmit=***REMOVED***handleSubmit***REMOVED***
-      onCancel=***REMOVED***onCancel***REMOVED***
-      loading=***REMOVED***loading***REMOVED***
       isMobile=***REMOVED***isMobile***REMOVED***
-      isEditing=***REMOVED***!!turno***REMOVED***
-      submitText=***REMOVED***turno ? 'Actualizar Turno' : 'Crear Turno'***REMOVED***
     >
       ***REMOVED***/* Selección de trabajo (unificada) */***REMOVED***
       <FormSection>
