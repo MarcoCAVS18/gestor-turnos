@@ -1,6 +1,6 @@
 // src/components/modals/shift/ModalTurno/index.jsx - Refactorizado con BaseModal
 
-import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react';
+import React, ***REMOVED*** useState, useEffect, useMemo, useId ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../../utils/time';
@@ -22,6 +22,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
   const [formularioTipo, setFormularioTipo] = useState('tradicional');
   const [loading, setLoading] = useState(false);
   const isMobile = useIsMobile();
+  const formId = useId();
 
   // Combinar todos los trabajos para el selector
   const todosLosTrabajos = useMemo(() => ***REMOVED***
@@ -94,7 +95,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
           await editDeliveryShift(turno.id, datosFinales);
         ***REMOVED*** else ***REMOVED***
           await addDeliveryShift(datosFinales);
-        ***REMOVED***
+        ***REMOVED*** 
       ***REMOVED*** else ***REMOVED***
         if (turno) ***REMOVED***
           await editShift(turno.id, datosFinales);
@@ -153,32 +154,32 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
       title=***REMOVED***titulo***REMOVED***
       subtitle=***REMOVED***subtituloFinal || undefined***REMOVED***
       loading=***REMOVED***loading***REMOVED***
-      loadingText="Guardando turno..."
-      showFooter=***REMOVED***true***REMOVED***
       maxWidth="md"
+      showActions=***REMOVED***true***REMOVED***
+      onCancel=***REMOVED***manejarCerrar***REMOVED***
+      formId=***REMOVED***formId***REMOVED***
+      saveText=***REMOVED***turno ? 'Guardar Cambios' : 'Crear Turno'***REMOVED***
     >
       ***REMOVED***formularioTipo === 'delivery' ? (
         <TurnoDeliveryForm
+          id=***REMOVED***formId***REMOVED***
           turno=***REMOVED***turno***REMOVED***
           trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
           trabajos=***REMOVED***todosLosTrabajos***REMOVED***
           onSubmit=***REMOVED***manejarGuardado***REMOVED***
-          onCancel=***REMOVED***manejarCerrar***REMOVED***
           onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
           isMobile=***REMOVED***isMobile***REMOVED***
-          loading=***REMOVED***loading***REMOVED***
           fechaInicial=***REMOVED***fechaInicial***REMOVED***
         />
       ) : (
         <TurnoForm
+          id=***REMOVED***formId***REMOVED***
           turno=***REMOVED***turno***REMOVED***
           trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
           trabajos=***REMOVED***todosLosTrabajos***REMOVED***
           onSubmit=***REMOVED***manejarGuardado***REMOVED***
-          onCancel=***REMOVED***manejarCerrar***REMOVED***
           onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
           isMobile=***REMOVED***isMobile***REMOVED***
-          loading=***REMOVED***loading***REMOVED***
           fechaInicial=***REMOVED***fechaInicial***REMOVED***
         />
       )***REMOVED***

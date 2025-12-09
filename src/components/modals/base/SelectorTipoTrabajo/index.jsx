@@ -153,34 +153,6 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***)
         </button>
       </div>
 
-      ***REMOVED***/* Consejo informativo */***REMOVED***
-      <div 
-        className=***REMOVED***`p-4 rounded-lg $***REMOVED***isMobile ? 'mt-6' : 'mt-6'***REMOVED***`***REMOVED***
-        style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
-      >
-        <div className="flex items-start space-x-3">
-          <div className="flex-shrink-0">
-            <Flex variant="center" 
-              className=***REMOVED***`rounded-full $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***`***REMOVED***
-              style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
-            >
-              <span className="text-white text-xs font-bold">💡</span>
-            </Flex>
-          </div>
-          <div>
-            <p 
-              className=***REMOVED***`font-medium mb-1 $***REMOVED***isMobile ? 'text-base' : 'text-sm'***REMOVED***`***REMOVED***
-              style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
-            >
-              Consejo
-            </p>
-            <p className=***REMOVED***`$***REMOVED***isMobile ? 'text-sm leading-relaxed' : 'text-sm'***REMOVED*** text-gray-700`***REMOVED***>
-              Puedes tener trabajos de ambos tipos en tu perfil. Cada uno se adaptará a sus características específicas para un mejor control de tus ingresos.
-            </p>
-          </div>
-        </div>
-      </div>
-
       ***REMOVED***/* Botón de ayuda en móvil */***REMOVED***
       ***REMOVED***isMobile && (
         <div className="text-center pt-4">

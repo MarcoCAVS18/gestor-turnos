@@ -18,15 +18,6 @@ export const useShare = () => ***REMOVED***
 
       await compartirTrabajoNativo(currentUser.uid, trabajo);
 
-      setMessages(prev => (***REMOVED***
-        ...prev,
-        [trabajo.id]: 'Trabajo compartido exitosamente'
-      ***REMOVED***));
-
-      setTimeout(() => ***REMOVED***
-        setMessages(prev => (***REMOVED*** ...prev, [trabajo.id]: '' ***REMOVED***));
-      ***REMOVED***, 3000);
-
     ***REMOVED*** catch (error) ***REMOVED***
       setMessages(prev => (***REMOVED***
         ...prev,

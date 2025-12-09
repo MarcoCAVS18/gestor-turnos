@@ -130,13 +130,13 @@ const Loader = (***REMOVED*** size = 40, fullScreen = false, onAnimationComplete
           strokeWidth="4"
           strokeLinecap="round"
           strokeLinejoin="round"
-          transform="scale(1, -1) translate(0, -620)" 
+          transform="rotate(180, 421, 358) scale(1, -1) translate(0, -620)" 
         />
 
         ***REMOVED***/* Círculos con posición ajustada para ser visibles */***REMOVED***
-        <circle className="circle" cx="547" cy="80" r="45" fill=***REMOVED***colorPrincipal***REMOVED*** />
-        <circle className="circle" cx="422" cy="80" r="45" fill=***REMOVED***colorPrincipal***REMOVED*** />
-        <circle className="circle" cx="297" cy="80" r="45" fill=***REMOVED***colorPrincipal***REMOVED*** />
+        <circle className="circle" cx="547" cy="250" r="45" fill=***REMOVED***colorPrincipal***REMOVED*** />
+        <circle className="circle" cx="422" cy="250" r="45" fill=***REMOVED***colorPrincipal***REMOVED*** />
+        <circle className="circle" cx="297" cy="250" r="45" fill=***REMOVED***colorPrincipal***REMOVED*** />
       </svg>
     </div>
   );

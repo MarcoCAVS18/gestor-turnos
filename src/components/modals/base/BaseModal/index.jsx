@@ -5,8 +5,8 @@ import React, ***REMOVED*** useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
-import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
 import Flex from '../../../ui/Flex';
+import Button from '../../../ui/Button';
 
 const BaseModal = (***REMOVED***
   isOpen,
@@ -14,11 +14,13 @@ const BaseModal = (***REMOVED***
   title,
   subtitle,
   loading = false,
-  loadingText = 'Guardando...',
-  showFooter = false,
-  footerText = 'Desliza hacia abajo para cerrar',
   maxWidth = 'lg', // 'sm' | 'md' | 'lg' | 'xl'
-  children
+  children,
+  showActions = false,
+  onCancel,
+  saveText = 'Guardar',
+  cancelText = 'Cancelar',
+  formId,
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const isMobile = useIsMobile();
@@ -63,7 +65,7 @@ const BaseModal = (***REMOVED***
             ? 'h-full max-w-none rounded-none'
             : `$***REMOVED***maxWidthClasses[maxWidth]***REMOVED*** max-h-[90vh] rounded-xl`
           ***REMOVED***
-          $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : 'overflow-y-auto'***REMOVED***
+          $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : ''***REMOVED***
         `***REMOVED***
       >
 
@@ -114,50 +116,47 @@ const BaseModal = (***REMOVED***
 
         ***REMOVED***/* Content con scroll optimizado */***REMOVED***
         <div className=***REMOVED***`
-          $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4'***REMOVED***
+          $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4 overflow-y-auto'***REMOVED***
         `***REMOVED***>
           ***REMOVED***children***REMOVED***
         </div>
-
-        ***REMOVED***/* Footer fijo en móvil (opcional) */***REMOVED***
-        ***REMOVED***isMobile && showFooter && !loading && (
+        
+        ***REMOVED***/* Actions Footer */***REMOVED***
+        ***REMOVED***showActions && (
           <div
-            className="sticky bottom-0 bg-white border-t p-4"
-            style=***REMOVED******REMOVED***
-              borderTopColor: colors.transparent20
-            ***REMOVED******REMOVED***
+            className=***REMOVED***`
+              border-t
+              $***REMOVED***isMobile
+                ? 'sticky bottom-0 bg-white p-4'
+                : 'p-4 mt-auto'
+              ***REMOVED***
+            `***REMOVED***
+            style=***REMOVED******REMOVED*** borderTopColor: colors.transparent20 ***REMOVED******REMOVED***
           >
-            <div className="text-xs text-gray-500 text-center">
-              ***REMOVED***footerText***REMOVED***
+            <div className=***REMOVED***`
+              w-full
+              $***REMOVED***isMobile ? 'flex flex-col-reverse gap-2' : 'flex justify-end gap-3'***REMOVED***
+            `***REMOVED***>
+              <Button
+                variant="secondary"
+                onClick=***REMOVED***onCancel***REMOVED***
+                disabled=***REMOVED***loading***REMOVED***
+                isMobile=***REMOVED***isMobile***REMOVED***
+                className=***REMOVED***isMobile ? '' : 'flex-none'***REMOVED***
+              >
+                ***REMOVED***cancelText***REMOVED***
+              </Button>
+              <Button
+                type="submit"
+                form=***REMOVED***formId***REMOVED***
+                loading=***REMOVED***loading***REMOVED***
+                isMobile=***REMOVED***isMobile***REMOVED***
+                className=***REMOVED***isMobile ? '' : 'flex-none'***REMOVED***
+              >
+                ***REMOVED***saveText***REMOVED***
+              </Button>
             </div>
           </div>
-        )***REMOVED***
-
-        ***REMOVED***/* Indicador de carga */***REMOVED***
-        ***REMOVED***loading && (
-          <Flex variant="center"
-            className="absolute inset-0 bg-black bg-opacity-30"
-            style=***REMOVED******REMOVED*** zIndex: modalConfig.zIndex + 1 ***REMOVED******REMOVED***
-          >
-            <Flex
-              className="bg-white rounded-lg p-4 space-x-3"
-              style=***REMOVED******REMOVED***
-                borderColor: colors.primary,
-                borderWidth: '2px'
-              ***REMOVED******REMOVED***
-            >
-              <LoadingSpinner 
-                style=***REMOVED******REMOVED*** borderColor: colors.primary ***REMOVED******REMOVED***
-                color="border-transparent"
-              />
-              <span
-                className="font-medium"
-                style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
-              >
-                ***REMOVED***loadingText***REMOVED***
-              </span>
-            </Flex>
-          </Flex>
         )***REMOVED***
       </div>
     </Flex>

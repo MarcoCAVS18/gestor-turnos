@@ -6,8 +6,6 @@ import Card from '../../../ui/Card';
 import WorkAvatar from '../../../work/WorkAvatar';
 import ActionsMenu from '../../../ui/ActionsMenu';
 import Badge from '../../../ui/Badge';
-import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
-import Flex from '../../../ui/Flex';
 
 const BaseWorkCard = (***REMOVED***
   trabajo,
@@ -81,61 +79,45 @@ const BaseWorkCard = (***REMOVED***
       hover=***REMOVED***true***REMOVED***
       className=***REMOVED***isSharing ? 'opacity-70' : ''***REMOVED***
     >
-      <Flex variant="start-between">
-        <div className="flex items-start flex-1 min-w-0">
-          ***REMOVED***/* Avatar del trabajo */***REMOVED***
+      <div className="flex items-center">
+        ***REMOVED***/* Columna 1: Avatar */***REMOVED***
+        <div className="flex-shrink-0">
           <WorkAvatar
             nombre=***REMOVED***nombreTrabajo***REMOVED***
             color=***REMOVED***colorTrabajo***REMOVED***
             size="lg"
           />
-
-          <div className="flex-1 ml-4 min-w-0">
-            ***REMOVED***/* Nombre del trabajo y badge */***REMOVED***
-            <div className="flex items-center gap-2 mb-2">
-              <h3 className="font-semibold text-gray-800 truncate">
-                ***REMOVED***nombreTrabajo***REMOVED***
-              </h3>
-
-              ***REMOVED***/* Badge del tipo */***REMOVED***
-              <Badge
-                variant=***REMOVED***currentConfig.badge.variant***REMOVED***
-                size="xs"
-                rounded
-              >
-                ***REMOVED***currentConfig.badge.label***REMOVED***
-              </Badge>
-            </div>
-
-            ***REMOVED***/* Descripción */***REMOVED***
-            <p className="text-gray-600 text-sm mb-3 leading-relaxed italic">
-              ***REMOVED***descripcion***REMOVED***
-            </p>
-
-            ***REMOVED***/* Contenido personalizado (tarifas para traditional, plataforma/vehículo para delivery) */***REMOVED***
-            ***REMOVED***children***REMOVED***
-          </div>
         </div>
 
-        ***REMOVED***/* Menú de acciones */***REMOVED***
+        ***REMOVED***/* Columna 2: Título, Badge y Descripción */***REMOVED***
+        <div className="flex-1 ml-4 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold text-gray-800 truncate">
+              ***REMOVED***nombreTrabajo***REMOVED***
+            </h3>
+            <Badge
+              variant=***REMOVED***currentConfig.badge.variant***REMOVED***
+              size="xs"
+              rounded
+            >
+              ***REMOVED***currentConfig.badge.label***REMOVED***
+            </Badge>
+          </div>
+          <p className="text-gray-600 text-sm leading-relaxed italic">
+            ***REMOVED***descripcion***REMOVED***
+          </p>
+        </div>
+
+        ***REMOVED***/* Columna 3: Acciones */***REMOVED***
         ***REMOVED***showActions && (
           <div className="ml-4 flex-shrink-0">
             <ActionsMenu actions=***REMOVED***actions***REMOVED*** />
           </div>
         )***REMOVED***
-      </Flex>
+      </div>
 
-      ***REMOVED***/* Indicador de estado compartiendo */***REMOVED***
-      ***REMOVED***isSharing && (
-        <div className="mt-3 pt-3 border-t border-gray-200">
-          <Flex variant="center" className="pt-1">
-            <Flex variant="center"className="text-sm text-blue-600">
-              <LoadingSpinner size="h-4 w-4" color="border-blue-600" className="mr-2" />
-              Compartiendo...
-            </Flex>
-          </Flex>
-        </div>
-      )***REMOVED***
+      ***REMOVED***/* Contenido Personalizado (Tarifas) */***REMOVED***
+      ***REMOVED***children && <div className="mt-4 border-t border-gray-200 pt-4">***REMOVED***children***REMOVED***</div>***REMOVED***
     </Card>
   );
 ***REMOVED***;

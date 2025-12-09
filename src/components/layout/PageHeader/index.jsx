@@ -1,6 +1,5 @@
-// src/components/layout/PageHeader/index.jsx
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** motion, AnimatePresence ***REMOVED*** from 'framer-motion';
+import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
 import Button from '../../ui/Button';
@@ -16,55 +15,41 @@ const PageHeader = (***REMOVED***
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const isMobile = useIsMobile();
-  // Iniciamos expanded en true por defecto
   const [isExpanded, setIsExpanded] = useState(true);
 
   useEffect(() => ***REMOVED***
-    // Si estamos en mobile y hay una acción, activamos el timer
+    // Al montarse (después del loader), si es mobile y hay acción:
     if (isMobile && action) ***REMOVED***
-      // Reiniciamos a expandido por si cambiamos de vista y volvemos
-      setIsExpanded(true);
+      setIsExpanded(true); // Aseguramos que empiece expandido
       
       const timer = setTimeout(() => ***REMOVED***
-        setIsExpanded(false);
-      ***REMOVED***, 2000); // 2 segundos es un tiempo de lectura estándar
+        setIsExpanded(false); // Colapsa a los 2 segundos
+      ***REMOVED***, 2000);
 
       return () => clearTimeout(timer);
     ***REMOVED*** else ***REMOVED***
-      // En desktop siempre expandido
       setIsExpanded(true);
     ***REMOVED***
-  ***REMOVED***, [isMobile, action]); // Dependencias limpias
+  ***REMOVED***, [isMobile, action]); 
 
+  // Variantes para la entrada del Header completo
   const headerVariants = ***REMOVED***
     hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
     visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.3 ***REMOVED*** ***REMOVED***
-  ***REMOVED***;
-
-  // Variantes para el contenedor del botón
-  const buttonWrapperVariants = ***REMOVED***
-    expanded: ***REMOVED*** 
-      width: "120px", 
-      transition: ***REMOVED*** type: "spring", stiffness: 100, damping: 10 ***REMOVED*** // Adjusted spring values
-    ***REMOVED***,
-    collapsed: ***REMOVED*** 
-      width: "44px", 
-      transition: ***REMOVED*** type: "spring", stiffness: 100, damping: 10 ***REMOVED*** // Adjusted spring values
-    ***REMOVED***
   ***REMOVED***;
 
   const isCollapsed = isMobile && !isExpanded;
 
   return (
     <motion.div
-      className=***REMOVED***`flex items-center space-x-4 $***REMOVED***className***REMOVED***`***REMOVED*** // Removed justify-between and gap, added space-x
+      className=***REMOVED***`flex items-center space-x-4 $***REMOVED***className***REMOVED***`***REMOVED***
       variants=***REMOVED***headerVariants***REMOVED***
       initial="hidden"
       animate="visible"
       ***REMOVED***...props***REMOVED***
     >
-      ***REMOVED***/* TEXT CONTAINER */***REMOVED***
-      <div className="flex items-center space-x-3 flex-grow"> ***REMOVED***/* Changed flex-1 to flex-grow */***REMOVED***
+      ***REMOVED***/* TEXT CONTAINER (Intacto) */***REMOVED***
+      <div className="flex items-center space-x-3 flex-grow">
         ***REMOVED***Icon && (
           <div 
             className="flex-shrink-0 p-2 rounded-lg transition-colors" 
@@ -85,44 +70,21 @@ const PageHeader = (***REMOVED***
         </div>
       </div>
       
+      ***REMOVED***/* ACTION BUTTON */***REMOVED***
       ***REMOVED***rightContent ? rightContent : (action && (
-        <motion.div
-          // Removed layout prop
-          initial="expanded"
-          animate=***REMOVED***isCollapsed ? 'collapsed' : 'expanded'***REMOVED***
-          variants=***REMOVED***buttonWrapperVariants***REMOVED***
-          className="flex-shrink-0 overflow-hidden relative flex justify-end"
-          style=***REMOVED******REMOVED*** minWidth: '120px' ***REMOVED******REMOVED*** // Reserve max space for the button
-        >
+        // Quitamos las animaciones del wrapper padre para evitar conflictos.
+        // El Button maneja su propio tamaño.
+        <div className="flex-shrink-0 flex justify-end">
           <Button
             onClick=***REMOVED***action.onClick***REMOVED***
             icon=***REMOVED***action.icon***REMOVED***
             themeColor=***REMOVED***action.themeColor || colors.primary***REMOVED***
-            className=***REMOVED***`flex items-center justify-center shadow-sm hover:shadow-md h-[44px] whitespace-nowrap`***REMOVED***
-            style=***REMOVED******REMOVED*** 
-              borderRadius: isCollapsed ? '50%' : '12px', 
-              paddingLeft: isCollapsed ? '0' : '1rem',
-              paddingRight: isCollapsed ? '0' : '1rem',
-              width: isCollapsed ? '44px' : 'auto', // Re-added width
-            ***REMOVED******REMOVED***
+            collapsed=***REMOVED***isCollapsed***REMOVED*** // Pasamos el estado al botón
           >
-            <AnimatePresence mode="wait">
-              ***REMOVED***!isCollapsed && (
-                <motion.span
-                  key="label"
-                  initial=***REMOVED******REMOVED*** opacity: 0, width: 0 ***REMOVED******REMOVED***
-                  animate=***REMOVED******REMOVED*** opacity: 1, width: "auto" ***REMOVED******REMOVED***
-                  exit=***REMOVED******REMOVED*** opacity: 0, width: 0 ***REMOVED******REMOVED***
-                  transition=***REMOVED******REMOVED*** duration: 0.2 ***REMOVED******REMOVED***
-                  className="ml-2 overflow-hidden block"
-                >
-                  <span className="hidden sm:inline">***REMOVED***action.label***REMOVED***</span>
-                  <span className="sm:hidden">***REMOVED***action.mobileLabel || 'Nuevo'***REMOVED***</span>
-                </motion.span>
-              )***REMOVED***
-            </AnimatePresence>
+            <span className="hidden sm:inline">***REMOVED***action.label***REMOVED***</span>
+            <span className="sm:hidden">***REMOVED***action.mobileLabel || 'Nuevo'***REMOVED***</span>
           </Button>
-        </motion.div>
+        </div>
       ))***REMOVED***
     </motion.div>
   );
