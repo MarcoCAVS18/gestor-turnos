@@ -11,6 +11,7 @@ import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
+import ***REMOVED*** getShiftGrossEarnings ***REMOVED*** from '../../../utils/shiftUtils';
 
 const CalendarDaySummary = (***REMOVED*** 
   fechaSeleccionada, 
@@ -32,7 +33,7 @@ const CalendarDaySummary = (***REMOVED***
       
       try ***REMOVED***
         if (turno.tipo === 'delivery') ***REMOVED***
-          return total + (turno.gananciaTotal || 0);
+          return total + getShiftGrossEarnings(turno);
         ***REMOVED*** else ***REMOVED***
           const resultado = calculatePayment ? calculatePayment(turno) : ***REMOVED*** totalWithDiscount: 0 ***REMOVED***;
           return total + (resultado.totalWithDiscount || resultado.totalConDescuento || 0);

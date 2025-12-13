@@ -1,4 +1,4 @@
-// src/components/forms/shift/TurnoDeliveryForm/index.jsx - REFACTORIZADO CON BaseForm
+// src/components/forms/shift/TurnoDeliveryForm/index.jsx
 
 import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
 import ***REMOVED*** Truck, Calendar, Clock, DollarSign, Package, Navigation, Fuel, Heart ***REMOVED*** from 'lucide-react';
@@ -23,7 +23,7 @@ const TurnoDeliveryForm = (***REMOVED***
     fechaInicio: '',
     horaInicio: '',
     horaFin: '',
-    gananciaTotal: '',
+    gananciaBase: '',
     propinas: '',
     numeroPedidos: '',
     kilometros: '',
@@ -55,7 +55,7 @@ const TurnoDeliveryForm = (***REMOVED***
         fechaInicio: turno.fechaInicio || turno.fecha || '',
         horaInicio: turno.horaInicio || '',
         horaFin: turno.horaFin || '',
-        gananciaTotal: turno.gananciaTotal?.toString() || '',
+        gananciaBase: (turno.gananciaBase ?? turno.gananciaTotal)?.toString() || '',
         propinas: turno.propinas?.toString() || '',
         numeroPedidos: turno.numeroPedidos?.toString() || '',
         kilometros: turno.kilometros?.toString() || '',
@@ -92,8 +92,8 @@ const TurnoDeliveryForm = (***REMOVED***
     if (!formData.horaFin) ***REMOVED***
       newErrors.horaFin = 'La hora de fin es requerida';
     ***REMOVED***
-    if (!formData.gananciaTotal || parseFloat(formData.gananciaTotal) <= 0) ***REMOVED***
-      newErrors.gananciaTotal = 'La ganancia total es requerida y debe ser mayor a 0';
+    if (!formData.gananciaBase || parseFloat(formData.gananciaBase) <= 0) ***REMOVED***
+      newErrors.gananciaBase = 'La ganancia (sin propinas) es requerida y debe ser mayor a 0';
     ***REMOVED***
 
     setErrors(newErrors);
@@ -106,7 +106,7 @@ const TurnoDeliveryForm = (***REMOVED***
       // Convertir strings a números y asegurar que combustible sea 0 si no aplica
       const dataToSubmit = ***REMOVED***
         ...formData,
-        gananciaTotal: parseFloat(formData.gananciaTotal) || 0,
+        gananciaBase: parseFloat(formData.gananciaBase) || 0,
         propinas: parseFloat(formData.propinas) || 0,
         numeroPedidos: parseInt(formData.numeroPedidos) || 0,
         kilometros: parseFloat(formData.kilometros) || 0,
@@ -219,18 +219,18 @@ const TurnoDeliveryForm = (***REMOVED***
       ***REMOVED***/* GANANCIAS RESPONSIVAS */***REMOVED***
       <FormGrid columns=***REMOVED***2***REMOVED***>
         <FormField>
-          <FormLabel icon=***REMOVED***DollarSign***REMOVED***>Ganancia total *</FormLabel>
+          <FormLabel icon=***REMOVED***DollarSign***REMOVED***>Ganancia (sin propinas)</FormLabel>
           <input
             type="number"
             step="0.01"
-            value=***REMOVED***formData.gananciaTotal***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('gananciaTotal', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile, errors.gananciaTotal)***REMOVED***
+            value=***REMOVED***formData.gananciaBase***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('gananciaBase', e.target.value)***REMOVED***
+            className=***REMOVED***getInputClasses(isMobile, errors.gananciaBase)***REMOVED***
             style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
             placeholder="0.00"
             required
           />
-          <FormError error=***REMOVED***errors.gananciaTotal***REMOVED*** />
+          <FormError error=***REMOVED***errors.gananciaBase***REMOVED*** />
         </FormField>
 
         <FormField>

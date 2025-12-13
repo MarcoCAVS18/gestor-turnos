@@ -32,7 +32,7 @@ const ShiftDetailsPopover = (***REMOVED***
 
   // Determine if there is any content to show in the popover
   const hasContent = hasNotes || 
-                     (isDelivery && shiftData && (shiftData.gananciaTotal > 0 || shiftData.propinas > 0 || shiftData.gastos > 0)) ||
+                     (isDelivery && shiftData && (shiftData.gananciaTotal > 0 || shiftData.gananciaBase > 0 || shiftData.propinas > 0 || shiftData.gastos > 0)) ||
                      (!isDelivery && shiftData && (shiftData.smokoApplied || shiftData.totalWithDiscount));
 
   if (!hasContent) ***REMOVED***
@@ -49,26 +49,68 @@ const ShiftDetailsPopover = (***REMOVED***
       )***REMOVED***
 
       ***REMOVED***isDelivery && shiftData ? (
-        <div>
-            <p className="font-semibold text-gray-700 mb-1">Detalles Financieros:</p>
-            <div className='text-sm text-gray-600 space-y-1'>
-                <div className="flex justify-between"><span>Ganancia Bruta:</span> <span>***REMOVED***formatCurrency(shiftData.gananciaTotal)***REMOVED***</span></div>
-                ***REMOVED***shiftData.propinas > 0 && <div className="flex justify-between"><span>Propinas:</span> <span>***REMOVED***formatCurrency(shiftData.propinas)***REMOVED***</span></div>***REMOVED***
-                ***REMOVED***shiftData.gastos > 0 && <div className="flex justify-between"><span>Gastos:</span> <span className='text-red-500'>-***REMOVED***formatCurrency(shiftData.gastos)***REMOVED***</span></div>***REMOVED***
-                <div className="flex justify-between font-bold pt-1 border-t mt-1 border-gray-200"><span>Ganancia Neta:</span> <span className='text-green-600'>***REMOVED***formatCurrency(shiftData.totalWithDiscount)***REMOVED***</span></div>
+        (() => ***REMOVED***
+          const gananciaBruta = shiftData.gananciaBase ?? 0;
+          const propinas = shiftData.propinas || 0;
+          const gastos = shiftData.gastos || 0;
+          const gananciaNeta = (shiftData.gananciaTotal || 0) - gastos;
+
+          return (
+            <div>
+              <p className="font-semibold text-gray-700 mb-1">Detalles Financieros:</p>
+              <div className='text-sm text-gray-600 space-y-1'>
+                <div className="flex justify-between"><span>Ganancia Bruta:</span> <span>***REMOVED***formatCurrency(gananciaBruta)***REMOVED***</span></div>
+                ***REMOVED***propinas > 0 && <div className="flex justify-between"><span>Propinas:</span> <span>***REMOVED***formatCurrency(propinas)***REMOVED***</span></div>***REMOVED***
+                ***REMOVED***gastos > 0 && <div className="flex justify-between"><span>Gastos:</span> <span className='text-red-500'>-***REMOVED***formatCurrency(gastos)***REMOVED***</span></div>***REMOVED***
+                <div className="flex justify-between font-bold pt-1 border-t mt-1 border-gray-200"><span>Ganancia Neta:</span> <span className='text-green-600'>***REMOVED***formatCurrency(gananciaNeta)***REMOVED***</span></div>
+              </div>
             </div>
-        </div>
+          );
+        ***REMOVED***)()
       ) : shiftData ? (
-        <div className="space-y-2">
-          ***REMOVED***shiftData.smokoApplied && (
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Descuento Smoko:</span>
-              <span className="text-sm text-red-600">-***REMOVED***shiftData.smokoMinutes***REMOVED*** min</span>
+        <div className="space-y-2 text-sm">
+          ***REMOVED***shiftData.hoursBreakdown &&
+            Object.entries(shiftData.hoursBreakdown)
+              .filter(([, hours]) => hours > 0)
+              .map(([type, hours]) => (
+                <div key=***REMOVED***type***REMOVED*** className="flex justify-between text-gray-600">
+                  <span>
+                    ***REMOVED***hours.toFixed(2)***REMOVED***hs en ***REMOVED***type.charAt(0).toUpperCase() + type.slice(1)***REMOVED***
+                  </span>
+                  <span>
+                    ***REMOVED***formatCurrency(shiftData.breakdown[type] || 0)***REMOVED***
+                  </span>
+                </div>
+              ))***REMOVED***
+
+          <div className="pt-1 border-t border-gray-100" />
+
+          <div className="flex justify-between font-semibold">
+            <span>Ganancia Bruta</span>
+            <span>***REMOVED***formatCurrency(shiftData.total || 0)***REMOVED***</span>
+          </div>
+
+          ***REMOVED***shiftData.defaultDiscount > 0 && (
+            <div className="flex justify-between text-red-500">
+              <span>Descuento (***REMOVED***shiftData.defaultDiscount***REMOVED***%)</span>
+              <span>
+                -***REMOVED***formatCurrency((shiftData.total || 0) * (shiftData.defaultDiscount / 100))***REMOVED***
+              </span>
             </div>
           )***REMOVED***
-          <div className="flex justify-between items-center pt-1 border-t mt-1 border-gray-200">
-            <span className="font-semibold text-gray-700">Ganancia neta:</span>
-            <span className="text-lg text-green-600 font-bold">***REMOVED***formatCurrency(shiftData.totalWithDiscount || 0)***REMOVED***</span>
+
+          ***REMOVED***shiftData.smokoApplied && (
+            <div className="flex justify-between text-red-500">
+              <span>Descanso Smoko</span>
+              <span>-***REMOVED***shiftData.smokoMinutes***REMOVED*** min</span>
+            </div>
+          )***REMOVED***
+          
+          <div className="flex justify-between items-center font-bold text-base pt-1 border-t border-gray-200">
+            <span className="text-gray-700">Ganancia neta</span>
+            <span className="text-green-600">
+              ***REMOVED***formatCurrency(shiftData.totalWithDiscount || 0)***REMOVED***
+            </span>
           </div>
         </div>
       ) : null***REMOVED***
