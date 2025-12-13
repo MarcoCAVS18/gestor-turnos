@@ -253,11 +253,18 @@ export const addShift = async (userUid, newShift, isDelivery = false) => ***REMO
   ***REMOVED***;
 
   if (isDelivery) ***REMOVED***
+    const gananciaBase = newShift.gananciaBase || 0;
+    const propinas = newShift.propinas || 0;
+    const gananciaTotal = gananciaBase + propinas;
+    const gastoCombustible = newShift.gastoCombustible || 0;
+    
     shiftData = ***REMOVED***
       ...shiftData,
       tipo: 'delivery',
-      gananciaBase: (newShift.gananciaTotal || 0) - (newShift.propinas || 0),
-      gananciaNeta: (newShift.gananciaTotal || 0) - (newShift.gastoCombustible || 0),
+      gananciaBase: gananciaBase,
+      propinas: propinas,
+      gananciaTotal: gananciaTotal,
+      gananciaNeta: gananciaTotal - gastoCombustible,
     ***REMOVED***;
   ***REMOVED***
 
@@ -285,10 +292,17 @@ export const editShift = (userUid, id, updatedData, isDelivery = false) => ***RE
   ***REMOVED***;
 
   if (isDelivery) ***REMOVED***
+    const gananciaBase = updatedData.gananciaBase || 0;
+    const propinas = updatedData.propinas || 0;
+    const gananciaTotal = gananciaBase + propinas;
+    const gastoCombustible = updatedData.gastoCombustible || 0;
+
     dataWithMetadata = ***REMOVED***
       ...dataWithMetadata,
-      gananciaBase: (updatedData.gananciaTotal || 0) - (updatedData.propinas || 0),
-      gananciaNeta: (updatedData.gananciaTotal || 0) - (updatedData.gastoCombustible || 0),
+      gananciaBase: gananciaBase,
+      propinas: propinas,
+      gananciaTotal: gananciaTotal,
+      gananciaNeta: gananciaTotal - gastoCombustible,
     ***REMOVED***;
   ***REMOVED***
 

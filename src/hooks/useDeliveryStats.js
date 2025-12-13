@@ -2,6 +2,7 @@
 
 import ***REMOVED*** useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+import ***REMOVED*** getShiftGrossEarnings ***REMOVED*** from '../utils/shiftUtils';
 
 export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
   const ***REMOVED*** trabajosDelivery, turnosDelivery ***REMOVED*** = useApp();
@@ -84,14 +85,13 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
         return;
       ***REMOVED***
       
-      // Sumar totales usando los campos correctos del turno de delivery
-      const gananciaBase = turno.gananciaTotal || 0;
+      const gananciaTurno = getShiftGrossEarnings(turno);
       const propinas = turno.propinas || 0;
       const pedidos = turno.numeroPedidos || 0;
       const kilometros = turno.kilometros || 0;
       const gastos = turno.gastoCombustible || 0;
       
-      totalGanado += gananciaBase;
+      totalGanado += gananciaTurno;
       totalPropinas += propinas;
       totalPedidos += pedidos;
       totalKilometros += kilometros;
@@ -117,7 +117,7 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
         ***REMOVED***;
       ***REMOVED***
       
-      estadisticasPorDia[turno.fecha].ganancia += gananciaBase;
+      estadisticasPorDia[turno.fecha].ganancia += gananciaTurno;
       estadisticasPorDia[turno.fecha].propinas += propinas;
       estadisticasPorDia[turno.fecha].pedidos += pedidos;
       estadisticasPorDia[turno.fecha].kilometros += kilometros;
@@ -145,7 +145,7 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
         ***REMOVED***;
       ***REMOVED***
       
-      turnosPorPlataforma[plataforma].totalGanado += gananciaBase;
+      turnosPorPlataforma[plataforma].totalGanado += gananciaTurno;
       turnosPorPlataforma[plataforma].totalPedidos += pedidos;
       turnosPorPlataforma[plataforma].totalPropinas += propinas;
       turnosPorPlataforma[plataforma].totalHoras += horas;
@@ -168,7 +168,7 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
         ***REMOVED***;
       ***REMOVED***
       
-      estadisticasPorVehiculo[vehiculo].totalGanado += gananciaBase;
+      estadisticasPorVehiculo[vehiculo].totalGanado += gananciaTurno;
       estadisticasPorVehiculo[vehiculo].totalPedidos += pedidos;
       estadisticasPorVehiculo[vehiculo].totalKilometros += kilometros;
       estadisticasPorVehiculo[vehiculo].totalGastos += gastos;
@@ -209,7 +209,8 @@ export const useDeliveryStats = (periodo = 'mes') => ***REMOVED***
     let mejorGananciaTurno = 0;
     
     turnosPeriodo.forEach(turno => ***REMOVED***
-      const gananciaLiquida = (turno.gananciaTotal || 0) - (turno.gastoCombustible || 0);
+      const gananciaBruta = getShiftGrossEarnings(turno);
+      const gananciaLiquida = gananciaBruta - (turno.gastoCombustible || 0);
       if (gananciaLiquida > mejorGananciaTurno) ***REMOVED***
         mejorGananciaTurno = gananciaLiquida;
         mejorTurno = ***REMOVED***

@@ -3,6 +3,7 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import * as XLSX from 'xlsx-js-style';
+import ***REMOVED*** getShiftGrossEarnings ***REMOVED*** from '../utils/shiftUtils';
 
 // Función para formatear moneda
 const formatCurrency = (amount) => ***REMOVED***
@@ -205,7 +206,7 @@ const calcularGananciaCorrecta = (turno, trabajo, calculatePayment) => ***REMOVE
   if (!turno || !trabajo) return 0;
 
   if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') ***REMOVED***
-    return turno.gananciaTotal || 0;
+    return getShiftGrossEarnings(turno);
   ***REMOVED***
 
   if (typeof calculatePayment === 'function') ***REMOVED***
@@ -414,11 +415,8 @@ export const generateXLSXReport = async (stats, turnos, trabajos, calculatePayme
     ***REMOVED*** wch: 20 ***REMOVED***
   ];
 
-  if (!wsResumen['!merges']) wsResumen['!merges'] = [];
-  wsResumen['!merges'].push(
-    ***REMOVED*** s: ***REMOVED*** c: 0, r: 0 ***REMOVED***, e: ***REMOVED*** c: 1, r: 0 ***REMOVED*** ***REMOVED***,
-    ***REMOVED*** s: ***REMOVED*** c: 0, r: 1 ***REMOVED***, e: ***REMOVED*** c: 1, r: 1 ***REMOVED*** ***REMOVED***
-  );
+  combinarCeldas(wsResumen, 'A1:B1');
+  combinarCeldas(wsResumen, 'A2:B2');
 
   XLSX.utils.book_append_sheet(workbook, wsResumen, 'Resumen');
 
@@ -445,23 +443,18 @@ export const generateXLSXReport = async (stats, turnos, trabajos, calculatePayme
 
     const esDelivery = turno.tipo === 'delivery' || trabajo.tipo === 'delivery';
 
-    let ganancia = 0;
+    const ganancia = calcularGananciaCorrecta(turno, trabajo, calculatePayment);
     let horas = 0;
     let breakdown = null;
 
     if (esDelivery) ***REMOVED***
-      ganancia = turno.gananciaTotal || 0;
       horas = parseFloat(calculateHours(turno.horaInicio, turno.horaFin));
+    ***REMOVED*** else if (typeof calculatePayment === 'function') ***REMOVED***
+      const resultado = calculatePayment(turno);
+      horas = resultado.hours || 0;
+      breakdown = resultado.breakdown || null;
     ***REMOVED*** else ***REMOVED***
-      if (typeof calculatePayment === 'function') ***REMOVED***
-        const resultado = calculatePayment(turno);
-        ganancia = resultado.totalWithDiscount || 0;
-        horas = resultado.hours || 0;
-        breakdown = resultado.breakdown || null;
-      ***REMOVED*** else ***REMOVED***
-        horas = parseFloat(calculateHours(turno.horaInicio, turno.horaFin));
-        ganancia = horas * (trabajo.tarifaBase || 0);
-      ***REMOVED***
+      horas = parseFloat(calculateHours(turno.horaInicio, turno.horaFin));
     ***REMOVED***
 
     const turnoBase = ***REMOVED***
@@ -658,6 +651,42 @@ export const generateXLSXReport = async (stats, turnos, trabajos, calculatePayme
 
     const wsMes = XLSX.utils.aoa_to_sheet(mesData);
 
+    // Aplicar estilos y combinar celdas
+    aplicarEstilo(wsMes, 'A1', estilos.encabezadoPrincipal);
+    combinarCeldas(wsMes, 'A1:V1');
+
+    let filaActual = 3; // Inicia después del título y espacio
+    aplicarEstilo(wsMes, `A$***REMOVED***filaActual***REMOVED***`, estilos.subtitulo);
+    combinarCeldas(wsMes, `A$***REMOVED***filaActual***REMOVED***:D$***REMOVED***filaActual***REMOVED***`);
+
+    filaActual += 1;
+    aplicarEstiloRango(wsMes, `A$***REMOVED***filaActual***REMOVED***`, `B$***REMOVED***filaActual + 6***REMOVED***`, estilos.etiqueta);
+    aplicarEstiloRango(wsMes, `C$***REMOVED***filaActual***REMOVED***`, `D$***REMOVED***filaActual + 6***REMOVED***`, estilos.valor);
+
+    if (delivery.length > 0) ***REMOVED***
+      aplicarEstiloRango(wsMes, `A$***REMOVED***filaActual + 7***REMOVED***`, `B$***REMOVED***filaActual + 10***REMOVED***`, estilos.etiqueta);
+      aplicarEstiloRango(wsMes, `C$***REMOVED***filaActual + 7***REMOVED***`, `D$***REMOVED***filaActual + 10***REMOVED***`, estilos.valor);
+      filaActual += 12;
+    ***REMOVED*** else ***REMOVED***
+      filaActual += 8;
+    ***REMOVED***
+
+    if (tradicionales.length > 0) ***REMOVED***
+      aplicarEstilo(wsMes, `A$***REMOVED***filaActual***REMOVED***`, estilos.encabezadoPrincipal);
+      combinarCeldas(wsMes, `A$***REMOVED***filaActual***REMOVED***:S$***REMOVED***filaActual***REMOVED***`);
+      filaActual += 2;
+      aplicarEstiloRango(wsMes, `A$***REMOVED***filaActual***REMOVED***`, `S$***REMOVED***filaActual***REMOVED***`, estilos.encabezadoTabla);
+      filaActual += tradicionales.length + 1;
+    ***REMOVED***
+
+    if (delivery.length > 0) ***REMOVED***
+      if(tradicionales.length > 0) filaActual += 1;
+      aplicarEstilo(wsMes, `A$***REMOVED***filaActual***REMOVED***`, estilos.encabezadoPrincipal);
+      combinarCeldas(wsMes, `A$***REMOVED***filaActual***REMOVED***:V$***REMOVED***filaActual***REMOVED***`);
+      filaActual += 2;
+      aplicarEstiloRango(wsMes, `A$***REMOVED***filaActual***REMOVED***`, `V$***REMOVED***filaActual***REMOVED***`, estilos.encabezadoTabla);
+    ***REMOVED***
+    
     wsMes['!cols'] = [
       ***REMOVED*** wch: 15 ***REMOVED***,
       ***REMOVED*** wch: 12 ***REMOVED***,
@@ -740,7 +769,14 @@ export const generateTXTReport = async (stats, turnos, trabajos) => ***REMOVED**
 
     const fechaFormato = formatDate(turno.fechaInicio || turno.fecha);
     const horas = calculateHours(turno.horaInicio, turno.horaFin);
-    const ganancia = turno.ganancia || 0;
+    let ganancia = 0;
+    if (turno.tipo === 'delivery') ***REMOVED***
+      ganancia = getShiftGrossEarnings(turno);
+    ***REMOVED*** else ***REMOVED***
+      // For non-delivery shifts, we can't be sure without calculatePayment.
+      // We'll use gananciaTotal if it exists.
+      ganancia = turno.gananciaTotal || 0;
+    ***REMOVED***
 
     const fechaPad = fechaFormato.padEnd(12, ' ');
     const trabajoPad = trabajo.nombre.substring(0, 24).padEnd(25, ' ');
