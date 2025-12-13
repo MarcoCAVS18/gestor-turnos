@@ -3,6 +3,7 @@ import React from 'react';
 import { Package, Navigation, Truck } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Flex from '../../../ui/Flex';
+import { getShiftGrossEarnings } from '../../../../utils/shiftUtils';
 
 const TarjetaTurnoDelivery = (props) => {
   const { turno } = props;
@@ -19,8 +20,9 @@ const TarjetaTurnoDelivery = (props) => {
     let horas = (horaF + minF / 60) - (horaI + minI / 60);
     if (horas < 0) horas += 24;
 
-    const gananciaNeta = (turno.gananciaTotal || 0) - (turno.gastoCombustible || 0);
-    const promedioPorPedido = turno.numeroPedidos > 0 ? (turno.gananciaTotal || 0) / turno.numeroPedidos : 0;
+    const gananciaBruta = getShiftGrossEarnings(turno);
+    const gananciaNeta = gananciaBruta - (turno.gastoCombustible || 0);
+    const promedioPorPedido = turno.numeroPedidos > 0 ? gananciaBruta / turno.numeroPedidos : 0;
 
     return {
       hours: horas,
@@ -29,7 +31,8 @@ const TarjetaTurnoDelivery = (props) => {
       kilometros: turno.kilometros || 0,
       propinas: turno.propinas || 0,
       gastos: turno.gastoCombustible || 0,
-      gananciaTotal: turno.gananciaTotal || 0,
+      gananciaTotal: gananciaBruta,
+      gananciaBase: turno.gananciaBase ?? gananciaBruta - (turno.propinas || 0),
       promedioPorPedido
     };
   }, [turno]);

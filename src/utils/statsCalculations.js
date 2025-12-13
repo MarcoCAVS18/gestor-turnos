@@ -226,16 +226,6 @@ export const calculateNetEarnings = (plataforma) => {
 };
 
 /**
- * Calculates the percentage of total earnings a platform contributes.
- * @param {object} plataforma - The platform object.
- * @param {number} totalGeneral - The total earnings across all platforms.
- * @returns {number} - Percentage of total earnings.
- */
-export const calculateEarningsPercentage = (plataforma, totalGeneral) => {
-  return totalGeneral > 0 ? (plataforma.totalGanado / totalGeneral) * 100 : 0;
-};
-
-/**
  * Sorts an array of platforms based on a specified key.
  * @param {array} plataformas - Array of platform objects.
  * @param {string} sortBy - The key to sort by.

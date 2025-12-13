@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { calculateWeeklyStats } from '../utils/statsCalculations';
+import { getShiftGrossEarnings } from '../utils/shiftUtils';
 
 export const useCombinedStats = ({
   periodo = 'mes',
@@ -116,13 +117,13 @@ export const useCombinedStats = ({
         return;
       }
 
-      const gananciaBase = turno.gananciaTotal || 0;
+      const gananciaTurno = getShiftGrossEarnings(turno);
       const propinas = turno.propinas || 0;
       const pedidos = turno.numeroPedidos || 0;
       const kilometros = turno.kilometros || 0;
       const gastos = turno.gastoCombustible || 0;
 
-      totalGanado += gananciaBase;
+      totalGanado += gananciaTurno;
       totalPropinas += propinas;
       totalPedidos += pedidos;
       totalKilometros += kilometros;
@@ -146,7 +147,7 @@ export const useCombinedStats = ({
         };
       }
 
-      estadisticasPorDia[turno.fecha].ganancia += gananciaBase;
+      estadisticasPorDia[turno.fecha].ganancia += gananciaTurno;
       estadisticasPorDia[turno.fecha].propinas += propinas;
       estadisticasPorDia[turno.fecha].pedidos += pedidos;
       estadisticasPorDia[turno.fecha].kilometros += kilometros;
@@ -173,7 +174,7 @@ export const useCombinedStats = ({
         };
       }
 
-      turnosPorPlataforma[plataforma].totalGanado += gananciaBase;
+      turnosPorPlataforma[plataforma].totalGanado += gananciaTurno;
       turnosPorPlataforma[plataforma].totalPedidos += pedidos;
       turnosPorPlataforma[plataforma].totalPropinas += propinas;
       turnosPorPlataforma[plataforma].totalHoras += horas;
@@ -195,7 +196,7 @@ export const useCombinedStats = ({
         };
       }
 
-      estadisticasPorVehiculo[vehiculo].totalGanado += gananciaBase;
+      estadisticasPorVehiculo[vehiculo].totalGanado += gananciaTurno;
       estadisticasPorVehiculo[vehiculo].totalPedidos += pedidos;
       estadisticasPorVehiculo[vehiculo].totalKilometros += kilometros;
       estadisticasPorVehiculo[vehiculo].totalGastos += gastos;
@@ -233,8 +234,8 @@ export const useCombinedStats = ({
     let mejorGananciaTurno = 0;
 
     turnosPeriodo.forEach((turno) => {
-      const gananciaLiquida =
-        (turno.gananciaTotal || 0) - (turno.gastoCombustible || 0);
+      const gananciaBruta = getShiftGrossEarnings(turno);
+      const gananciaLiquida = gananciaBruta - (turno.gastoCombustible || 0);
       if (gananciaLiquida > mejorGananciaTurno) {
         mejorGananciaTurno = gananciaLiquida;
         mejorTurno = {

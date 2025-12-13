@@ -1,4 +1,5 @@
 // src/services/calculationService.js
+import { getShiftGrossEarnings } from '../utils/shiftUtils';
 import { determinarTipoTurno } from '../utils/shiftDetailsUtils';
 import { createSafeDate } from '../utils/time';
 import { getMonthRange } from '../utils/time';
@@ -51,14 +52,15 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
   // Si es un turno de delivery, devuelve las ganancias totales directamente
   if (shift.type === 'delivery' || shift.tipo === 'delivery') {
     const hours = calculateHours(shift.horaInicio, shift.horaFin);
+    const grossEarnings = getShiftGrossEarnings(shift);
     return {
-      total: shift.gananciaTotal || 0,
-      totalWithDiscount: shift.gananciaTotal || 0,
+      total: grossEarnings,
+      totalWithDiscount: grossEarnings,
       hours,
       tips: shift.propinas || 0,
       isDelivery: true,
-      breakdown: { delivery: shift.gananciaTotal || 0 },
-      appliedRates: { 'delivery': shift.gananciaPorHora || (shift.gananciaTotal / hours) || 0 }
+      breakdown: { delivery: grossEarnings },
+      appliedRates: { 'delivery': shift.gananciaPorHora || (grossEarnings / hours) || 0 }
     };
   }
 
@@ -142,6 +144,13 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     }
   }
 
+  const hoursBreakdown = {};
+  Object.keys(breakdown).forEach(rateType => {
+    if (breakdown[rateType] > 0 && appliedRates[rateType] > 0) {
+      hoursBreakdown[rateType] = breakdown[rateType] / appliedRates[rateType];
+    }
+  });
+
   const totalWithDiscount = total * (1 - defaultDiscount / 100);
 
   return {
@@ -151,6 +160,7 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     tips: 0,
     isDelivery: false,
     breakdown,
+    hoursBreakdown,
     appliedRates,
     isNightShift: cruzaMedianoche || false,
     smokoApplied: smokoEnabled && tuvoDescanso && totalMinutes > smokoMinutes,
@@ -169,7 +179,8 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
 export const calculateDailyTotal = (dailyShifts, calculatePaymentFn) => {
   return dailyShifts.reduce((total, shift) => {
     if (shift.type === 'delivery') {
-      const netEarnings = (shift.gananciaTotal || 0) - (shift.gastoCombustible || 0);
+      const grossEarnings = getShiftGrossEarnings(shift);
+      const netEarnings = grossEarnings - (shift.gastoCombustible || 0);
       return {
         hours: total.hours, // Las horas de delivery se calculan por separado si es necesario
         total: total.total + netEarnings
@@ -211,7 +222,7 @@ export const calculateMonthlyStats = (year, month, turnos, turnosDelivery, calcu
 
   monthlyShifts.forEach(shift => {
     if (shift.type === 'delivery' || shift.tipo === 'delivery') {
-      totalEarnings += shift.gananciaTotal || 0;
+      totalEarnings += getShiftGrossEarnings(shift);
       totalTips += shift.propinas || 0;
       totalDeliveries += shift.numeroPedidos || 0;
       totalKilometers += shift.kilometros || 0;
@@ -462,93 +473,92 @@ export const calculateDeliveryStats = ({ trabajosDelivery, turnosDelivery, perio
         return;
       }
       
-      const gananciaBase = turno.gananciaTotal || 0;
-      const propinas = turno.propinas || 0;
-      const pedidos = turno.numeroPedidos || 0;
-      const kilometros = turno.kilometros || 0;
-      const gastos = turno.gastoCombustible || 0;
-      
-      totalGanado += gananciaBase;
-      totalPropinas += propinas;
-      totalPedidos += pedidos;
-      totalKilometros += kilometros;
-      totalGastos += gastos;
-      
-      const [horaIni, minIni] = turno.horaInicio.split(':').map(Number);
-      const [horaFin, minFin] = turno.horaFin.split(':').map(Number);
-      let horas = (horaFin + minFin/60) - (horaIni + minIni/60);
-      if (horas < 0) horas += 24;
-      totalHoras += horas;
-      
-      if (!estadisticasPorDia[turno.fecha]) {
-        estadisticasPorDia[turno.fecha] = {
-          ganancia: 0,
-          propinas: 0,
-          pedidos: 0,
-          kilometros: 0,
-          gastos: 0,
-          horas: 0,
-          turnos: []
-        };
-      }
-      
-      estadisticasPorDia[turno.fecha].ganancia += gananciaBase;
-      estadisticasPorDia[turno.fecha].propinas += propinas;
-      estadisticasPorDia[turno.fecha].pedidos += pedidos;
-      estadisticasPorDia[turno.fecha].kilometros += kilometros;
-      estadisticasPorDia[turno.fecha].gastos += gastos;
-      estadisticasPorDia[turno.fecha].horas += horas;
-      estadisticasPorDia[turno.fecha].turnos.push({
-        ...turno,
-        trabajo,
-        horas
-      });
-      
-      const plataforma = trabajo.plataforma || trabajo.nombre;
-      if (!turnosPorPlataforma[plataforma]) {
-        turnosPorPlataforma[plataforma] = {
-          nombre: trabajo.nombre,
-          color: trabajo.colorAvatar || trabajo.color || '#10B981',
-          totalGanado: 0,
-          totalPedidos: 0,
-          totalPropinas: 0,
-          totalHoras: 0,
-          totalKilometros: 0,
-          totalGastos: 0,
-          turnos: 0
-        };
-      }
-      
-      turnosPorPlataforma[plataforma].totalGanado += gananciaBase;
-      turnosPorPlataforma[plataforma].totalPedidos += pedidos;
-      turnosPorPlataforma[plataforma].totalPropinas += propinas;
-      turnosPorPlataforma[plataforma].totalHoras += horas;
-      turnosPorPlataforma[plataforma].totalKilometros += kilometros;
-      turnosPorPlataforma[plataforma].totalGastos += gastos;
-      turnosPorPlataforma[plataforma].turnos += 1;
-      
-      const vehiculo = trabajo.vehiculo || 'No especificado';
-      if (!estadisticasPorVehiculo[vehiculo]) {
-        estadisticasPorVehiculo[vehiculo] = {
-          nombre: vehiculo,
-          totalGanado: 0,
-          totalPedidos: 0,
-          totalKilometros: 0,
-          totalGastos: 0,
-          totalHoras: 0,
-          turnos: 0,
-          eficiencia: 0 
-        };
-      }
-      
-      estadisticasPorVehiculo[vehiculo].totalGanado += gananciaBase;
-      estadisticasPorVehiculo[vehiculo].totalPedidos += pedidos;
-      estadisticasPorVehiculo[vehiculo].totalKilometros += kilometros;
-      estadisticasPorVehiculo[vehiculo].totalGastos += gastos;
-      estadisticasPorVehiculo[vehiculo].totalHoras += horas;
-      estadisticasPorVehiculo[vehiculo].turnos += 1;
-    });
-    
+            const gananciaTurno = getShiftGrossEarnings(turno);
+            const propinas = turno.propinas || 0;
+            const pedidos = turno.numeroPedidos || 0;
+            const kilometros = turno.kilometros || 0;
+            const gastos = turno.gastoCombustible || 0;
+            
+            totalGanado += gananciaTurno;
+            totalPropinas += propinas;
+            totalPedidos += pedidos;
+            totalKilometros += kilometros;
+            totalGastos += gastos;
+            
+            const [horaIni, minIni] = turno.horaInicio.split(':').map(Number);
+            const [horaFin, minFin] = turno.horaFin.split(':').map(Number);
+            let horas = (horaFin + minFin/60) - (horaIni + minIni/60);
+            if (horas < 0) horas += 24;
+            totalHoras += horas;
+            
+            if (!estadisticasPorDia[turno.fecha]) {
+              estadisticasPorDia[turno.fecha] = {
+                ganancia: 0,
+                propinas: 0,
+                pedidos: 0,
+                kilometros: 0,
+                gastos: 0,
+                horas: 0,
+                turnos: []
+              };
+            }
+            
+            estadisticasPorDia[turno.fecha].ganancia += gananciaTurno;
+            estadisticasPorDia[turno.fecha].propinas += propinas;
+            estadisticasPorDia[turno.fecha].pedidos += pedidos;
+            estadisticasPorDia[turno.fecha].kilometros += kilometros;
+            estadisticasPorDia[turno.fecha].gastos += gastos;
+            estadisticasPorDia[turno.fecha].horas += horas;
+            estadisticasPorDia[turno.fecha].turnos.push({
+              ...turno,
+              trabajo,
+              horas
+            });
+            
+            const plataforma = trabajo.plataforma || trabajo.nombre;
+            if (!turnosPorPlataforma[plataforma]) {
+              turnosPorPlataforma[plataforma] = {
+                nombre: trabajo.nombre,
+                color: trabajo.colorAvatar || trabajo.color || '#10B981',
+                totalGanado: 0,
+                totalPedidos: 0,
+                totalPropinas: 0,
+                totalHoras: 0,
+                totalKilometros: 0,
+                totalGastos: 0,
+                turnos: 0
+              };
+            }
+            
+            turnosPorPlataforma[plataforma].totalGanado += gananciaTurno;
+            turnosPorPlataforma[plataforma].totalPedidos += pedidos;
+            turnosPorPlataforma[plataforma].totalPropinas += propinas;
+            turnosPorPlataforma[plataforma].totalHoras += horas;
+            turnosPorPlataforma[plataforma].totalKilometros += kilometros;
+            turnosPorPlataforma[plataforma].totalGastos += gastos;
+            turnosPorPlataforma[plataforma].turnos += 1;
+            
+            const vehiculo = trabajo.vehiculo || 'No especificado';
+            if (!estadisticasPorVehiculo[vehiculo]) {
+              estadisticasPorVehiculo[vehiculo] = {
+                nombre: vehiculo,
+                totalGanado: 0,
+                totalPedidos: 0,
+                totalKilometros: 0,
+                totalGastos: 0,
+                totalHoras: 0,
+                turnos: 0,
+                eficiencia: 0 
+              };
+            }
+            
+            estadisticasPorVehiculo[vehiculo].totalGanado += gananciaTurno;
+            estadisticasPorVehiculo[vehiculo].totalPedidos += pedidos;
+            estadisticasPorVehiculo[vehiculo].totalKilometros += kilometros;
+            estadisticasPorVehiculo[vehiculo].totalGastos += gastos;
+            estadisticasPorVehiculo[vehiculo].totalHoras += horas;
+            estadisticasPorVehiculo[vehiculo].turnos += 1;
+          });    
     Object.values(estadisticasPorVehiculo).forEach(vehiculo => {
       if (vehiculo.totalGastos > 0) {
         vehiculo.eficiencia = vehiculo.totalKilometros / vehiculo.totalGastos;
@@ -579,7 +589,8 @@ export const calculateDeliveryStats = ({ trabajosDelivery, turnosDelivery, perio
     let mejorGananciaTurno = 0;
     
     turnosPeriodo.forEach(turno => {
-      const gananciaLiquida = (turno.gananciaTotal || 0) - (turno.gastoCombustible || 0);
+      const gananciaBruta = getShiftGrossEarnings(turno);
+      const gananciaLiquida = gananciaBruta - (turno.gastoCombustible || 0);
       if (gananciaLiquida > mejorGananciaTurno) {
         mejorGananciaTurno = gananciaLiquida;
         mejorTurno = {

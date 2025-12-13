@@ -10,7 +10,7 @@ import Flex from '../../../ui/Flex';
 
 const TarjetaTurno = (props) => {
   const { turno, trabajo } = props;
-  const { calculatePayment, smokoEnabled, currencySymbol } = useApp(); 
+  const { calculatePayment, smokoEnabled, currencySymbol, defaultDiscount } = useApp(); 
 
   // Calcular información del turno
   const shiftData = React.useMemo(() => {
@@ -19,13 +19,8 @@ const TarjetaTurno = (props) => {
     }
 
     const result = calculatePayment(turno);
-    return {
-      hours: result.hours || 0,
-      totalWithDiscount: result.totalWithDiscount || 0,
-      smokoApplied: result.smokoApplied || false,
-      smokoMinutes: result.smokoMinutes || 0
-    };
-  }, [turno, trabajo, calculatePayment]);
+    return { ...result, defaultDiscount };
+  }, [turno, trabajo, calculatePayment, defaultDiscount]);
 
   return (
     <BaseShiftCard

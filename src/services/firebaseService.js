@@ -253,11 +253,18 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
   };
 
   if (isDelivery) {
+    const gananciaBase = newShift.gananciaBase || 0;
+    const propinas = newShift.propinas || 0;
+    const gananciaTotal = gananciaBase + propinas;
+    const gastoCombustible = newShift.gastoCombustible || 0;
+    
     shiftData = {
       ...shiftData,
       tipo: 'delivery',
-      gananciaBase: (newShift.gananciaTotal || 0) - (newShift.propinas || 0),
-      gananciaNeta: (newShift.gananciaTotal || 0) - (newShift.gastoCombustible || 0),
+      gananciaBase: gananciaBase,
+      propinas: propinas,
+      gananciaTotal: gananciaTotal,
+      gananciaNeta: gananciaTotal - gastoCombustible,
     };
   }
 
@@ -285,10 +292,17 @@ export const editShift = (userUid, id, updatedData, isDelivery = false) => {
   };
 
   if (isDelivery) {
+    const gananciaBase = updatedData.gananciaBase || 0;
+    const propinas = updatedData.propinas || 0;
+    const gananciaTotal = gananciaBase + propinas;
+    const gastoCombustible = updatedData.gastoCombustible || 0;
+
     dataWithMetadata = {
       ...dataWithMetadata,
-      gananciaBase: (updatedData.gananciaTotal || 0) - (updatedData.propinas || 0),
-      gananciaNeta: (updatedData.gananciaTotal || 0) - (updatedData.gastoCombustible || 0),
+      gananciaBase: gananciaBase,
+      propinas: propinas,
+      gananciaTotal: gananciaTotal,
+      gananciaNeta: gananciaTotal - gastoCombustible,
     };
   }
 

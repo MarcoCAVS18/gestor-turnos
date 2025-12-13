@@ -32,7 +32,7 @@ const ShiftDetailsPopover = ({
 
   // Determine if there is any content to show in the popover
   const hasContent = hasNotes || 
-                     (isDelivery && shiftData && (shiftData.gananciaTotal > 0 || shiftData.propinas > 0 || shiftData.gastos > 0)) ||
+                     (isDelivery && shiftData && (shiftData.gananciaTotal > 0 || shiftData.gananciaBase > 0 || shiftData.propinas > 0 || shiftData.gastos > 0)) ||
                      (!isDelivery && shiftData && (shiftData.smokoApplied || shiftData.totalWithDiscount));
 
   if (!hasContent) {
@@ -49,26 +49,68 @@ const ShiftDetailsPopover = ({
       )}
 
       {isDelivery && shiftData ? (
-        <div>
-            <p className="font-semibold text-gray-700 mb-1">Detalles Financieros:</p>
-            <div className='text-sm text-gray-600 space-y-1'>
-                <div className="flex justify-between"><span>Ganancia Bruta:</span> <span>{formatCurrency(shiftData.gananciaTotal)}</span></div>
-                {shiftData.propinas > 0 && <div className="flex justify-between"><span>Propinas:</span> <span>{formatCurrency(shiftData.propinas)}</span></div>}
-                {shiftData.gastos > 0 && <div className="flex justify-between"><span>Gastos:</span> <span className='text-red-500'>-{formatCurrency(shiftData.gastos)}</span></div>}
-                <div className="flex justify-between font-bold pt-1 border-t mt-1 border-gray-200"><span>Ganancia Neta:</span> <span className='text-green-600'>{formatCurrency(shiftData.totalWithDiscount)}</span></div>
+        (() => {
+          const gananciaBruta = shiftData.gananciaBase ?? 0;
+          const propinas = shiftData.propinas || 0;
+          const gastos = shiftData.gastos || 0;
+          const gananciaNeta = (shiftData.gananciaTotal || 0) - gastos;
+
+          return (
+            <div>
+              <p className="font-semibold text-gray-700 mb-1">Detalles Financieros:</p>
+              <div className='text-sm text-gray-600 space-y-1'>
+                <div className="flex justify-between"><span>Ganancia Bruta:</span> <span>{formatCurrency(gananciaBruta)}</span></div>
+                {propinas > 0 && <div className="flex justify-between"><span>Propinas:</span> <span>{formatCurrency(propinas)}</span></div>}
+                {gastos > 0 && <div className="flex justify-between"><span>Gastos:</span> <span className='text-red-500'>-{formatCurrency(gastos)}</span></div>}
+                <div className="flex justify-between font-bold pt-1 border-t mt-1 border-gray-200"><span>Ganancia Neta:</span> <span className='text-green-600'>{formatCurrency(gananciaNeta)}</span></div>
+              </div>
             </div>
-        </div>
+          );
+        })()
       ) : shiftData ? (
-        <div className="space-y-2">
-          {shiftData.smokoApplied && (
-            <div className="flex justify-between">
-              <span className="font-semibold text-gray-700">Descuento Smoko:</span>
-              <span className="text-sm text-red-600">-{shiftData.smokoMinutes} min</span>
+        <div className="space-y-2 text-sm">
+          {shiftData.hoursBreakdown &&
+            Object.entries(shiftData.hoursBreakdown)
+              .filter(([, hours]) => hours > 0)
+              .map(([type, hours]) => (
+                <div key={type} className="flex justify-between text-gray-600">
+                  <span>
+                    {hours.toFixed(2)}hs en {type.charAt(0).toUpperCase() + type.slice(1)}
+                  </span>
+                  <span>
+                    {formatCurrency(shiftData.breakdown[type] || 0)}
+                  </span>
+                </div>
+              ))}
+
+          <div className="pt-1 border-t border-gray-100" />
+
+          <div className="flex justify-between font-semibold">
+            <span>Ganancia Bruta</span>
+            <span>{formatCurrency(shiftData.total || 0)}</span>
+          </div>
+
+          {shiftData.defaultDiscount > 0 && (
+            <div className="flex justify-between text-red-500">
+              <span>Descuento ({shiftData.defaultDiscount}%)</span>
+              <span>
+                -{formatCurrency((shiftData.total || 0) * (shiftData.defaultDiscount / 100))}
+              </span>
             </div>
           )}
-          <div className="flex justify-between items-center pt-1 border-t mt-1 border-gray-200">
-            <span className="font-semibold text-gray-700">Ganancia neta:</span>
-            <span className="text-lg text-green-600 font-bold">{formatCurrency(shiftData.totalWithDiscount || 0)}</span>
+
+          {shiftData.smokoApplied && (
+            <div className="flex justify-between text-red-500">
+              <span>Descanso Smoko</span>
+              <span>-{shiftData.smokoMinutes} min</span>
+            </div>
+          )}
+          
+          <div className="flex justify-between items-center font-bold text-base pt-1 border-t border-gray-200">
+            <span className="text-gray-700">Ganancia neta</span>
+            <span className="text-green-600">
+              {formatCurrency(shiftData.totalWithDiscount || 0)}
+            </span>
           </div>
         </div>
       ) : null}

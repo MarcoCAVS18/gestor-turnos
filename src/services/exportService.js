@@ -3,6 +3,7 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import * as XLSX from 'xlsx-js-style';
+import { getShiftGrossEarnings } from '../utils/shiftUtils';
 
 // Función para formatear moneda
 const formatCurrency = (amount) => {
@@ -205,7 +206,7 @@ const calcularGananciaCorrecta = (turno, trabajo, calculatePayment) => {
   if (!turno || !trabajo) return 0;
 
   if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') {
-    return turno.gananciaTotal || 0;
+    return getShiftGrossEarnings(turno);
   }
 
   if (typeof calculatePayment === 'function') {
@@ -414,11 +415,8 @@ export const generateXLSXReport = async (stats, turnos, trabajos, calculatePayme
     { wch: 20 }
   ];
 
-  if (!wsResumen['!merges']) wsResumen['!merges'] = [];
-  wsResumen['!merges'].push(
-    { s: { c: 0, r: 0 }, e: { c: 1, r: 0 } },
-    { s: { c: 0, r: 1 }, e: { c: 1, r: 1 } }
-  );
+  combinarCeldas(wsResumen, 'A1:B1');
+  combinarCeldas(wsResumen, 'A2:B2');
 
   XLSX.utils.book_append_sheet(workbook, wsResumen, 'Resumen');
 
@@ -445,23 +443,18 @@ export const generateXLSXReport = async (stats, turnos, trabajos, calculatePayme
 
     const esDelivery = turno.tipo === 'delivery' || trabajo.tipo === 'delivery';
 
-    let ganancia = 0;
+    const ganancia = calcularGananciaCorrecta(turno, trabajo, calculatePayment);
     let horas = 0;
     let breakdown = null;
 
     if (esDelivery) {
-      ganancia = turno.gananciaTotal || 0;
       horas = parseFloat(calculateHours(turno.horaInicio, turno.horaFin));
+    } else if (typeof calculatePayment === 'function') {
+      const resultado = calculatePayment(turno);
+      horas = resultado.hours || 0;
+      breakdown = resultado.breakdown || null;
     } else {
-      if (typeof calculatePayment === 'function') {
-        const resultado = calculatePayment(turno);
-        ganancia = resultado.totalWithDiscount || 0;
-        horas = resultado.hours || 0;
-        breakdown = resultado.breakdown || null;
-      } else {
-        horas = parseFloat(calculateHours(turno.horaInicio, turno.horaFin));
-        ganancia = horas * (trabajo.tarifaBase || 0);
-      }
+      horas = parseFloat(calculateHours(turno.horaInicio, turno.horaFin));
     }
 
     const turnoBase = {
@@ -658,6 +651,42 @@ export const generateXLSXReport = async (stats, turnos, trabajos, calculatePayme
 
     const wsMes = XLSX.utils.aoa_to_sheet(mesData);
 
+    // Aplicar estilos y combinar celdas
+    aplicarEstilo(wsMes, 'A1', estilos.encabezadoPrincipal);
+    combinarCeldas(wsMes, 'A1:V1');
+
+    let filaActual = 3; // Inicia después del título y espacio
+    aplicarEstilo(wsMes, `A${filaActual}`, estilos.subtitulo);
+    combinarCeldas(wsMes, `A${filaActual}:D${filaActual}`);
+
+    filaActual += 1;
+    aplicarEstiloRango(wsMes, `A${filaActual}`, `B${filaActual + 6}`, estilos.etiqueta);
+    aplicarEstiloRango(wsMes, `C${filaActual}`, `D${filaActual + 6}`, estilos.valor);
+
+    if (delivery.length > 0) {
+      aplicarEstiloRango(wsMes, `A${filaActual + 7}`, `B${filaActual + 10}`, estilos.etiqueta);
+      aplicarEstiloRango(wsMes, `C${filaActual + 7}`, `D${filaActual + 10}`, estilos.valor);
+      filaActual += 12;
+    } else {
+      filaActual += 8;
+    }
+
+    if (tradicionales.length > 0) {
+      aplicarEstilo(wsMes, `A${filaActual}`, estilos.encabezadoPrincipal);
+      combinarCeldas(wsMes, `A${filaActual}:S${filaActual}`);
+      filaActual += 2;
+      aplicarEstiloRango(wsMes, `A${filaActual}`, `S${filaActual}`, estilos.encabezadoTabla);
+      filaActual += tradicionales.length + 1;
+    }
+
+    if (delivery.length > 0) {
+      if(tradicionales.length > 0) filaActual += 1;
+      aplicarEstilo(wsMes, `A${filaActual}`, estilos.encabezadoPrincipal);
+      combinarCeldas(wsMes, `A${filaActual}:V${filaActual}`);
+      filaActual += 2;
+      aplicarEstiloRango(wsMes, `A${filaActual}`, `V${filaActual}`, estilos.encabezadoTabla);
+    }
+    
     wsMes['!cols'] = [
       { wch: 15 },
       { wch: 12 },
@@ -740,7 +769,14 @@ export const generateTXTReport = async (stats, turnos, trabajos) => {
 
     const fechaFormato = formatDate(turno.fechaInicio || turno.fecha);
     const horas = calculateHours(turno.horaInicio, turno.horaFin);
-    const ganancia = turno.ganancia || 0;
+    let ganancia = 0;
+    if (turno.tipo === 'delivery') {
+      ganancia = getShiftGrossEarnings(turno);
+    } else {
+      // For non-delivery shifts, we can't be sure without calculatePayment.
+      // We'll use gananciaTotal if it exists.
+      ganancia = turno.gananciaTotal || 0;
+    }
 
     const fechaPad = fechaFormato.padEnd(12, ' ');
     const trabajoPad = trabajo.nombre.substring(0, 24).padEnd(25, ' ');
