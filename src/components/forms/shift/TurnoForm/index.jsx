@@ -1,7 +1,7 @@
 // src/components/forms/shift/TurnoForm/index.jsx - REFACTORIZADO CON BaseForm
 
 import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
-import ***REMOVED*** Briefcase, Calendar, Clock, FileText, Coffee ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Briefcase, Calendar, Clock, FileText, Coffee, Pencil, Check ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
 import ***REMOVED*** createSafeDate, calculateShiftHours ***REMOVED*** from '../../../../utils/time';
@@ -30,8 +30,11 @@ const TurnoForm = (***REMOVED***
     cruzaMedianoche: false,
     fechaFin: '',
     tuvoDescanso: true, // NUEVO - por defecto asume que tuvo descanso
+    descansoMinutos: smokoMinutes, // NUEVO - editable
     notas: ''
   ***REMOVED***);
+
+  const [isEditingDescanso, setIsEditingDescanso] = useState(false);
 
   const [errors, setErrors] = useState(***REMOVED******REMOVED***);
 
@@ -44,8 +47,10 @@ const TurnoForm = (***REMOVED***
 
     // Aplicar descuento de smoko si está habilitado
     let minutosReales = totalMinutos;
-    if (smokoEnabled && formData.tuvoDescanso && totalMinutos > smokoMinutes) ***REMOVED***
-      minutosReales = totalMinutos - smokoMinutes;
+    const descanso = formData.descansoMinutos || 0;
+
+    if (smokoEnabled && formData.tuvoDescanso && totalMinutos > descanso) ***REMOVED***
+      minutosReales = totalMinutos - descanso;
     ***REMOVED***
 
     return ***REMOVED***
@@ -53,9 +58,10 @@ const TurnoForm = (***REMOVED***
       minutosReales,
       horas: Math.floor(minutosReales / 60),
       minutos: minutosReales % 60,
-      smokoAplicado: smokoEnabled && formData.tuvoDescanso && totalMinutos > smokoMinutes
+      smokoAplicado: smokoEnabled && formData.tuvoDescanso && totalMinutos > descanso,
+      minutosDescontados: descanso
     ***REMOVED***;
-  ***REMOVED***, [formData.horaInicio, formData.horaFin, formData.tuvoDescanso, smokoEnabled, smokoMinutes]);
+  ***REMOVED***, [formData.horaInicio, formData.horaFin, formData.tuvoDescanso, smokoEnabled, formData.descansoMinutos]);
 
   const duracion = calcularDuracionTurno();
 
@@ -134,20 +140,23 @@ const TurnoForm = (***REMOVED***
         horaFin: turno.horaFin || '',
         cruzaMedianoche: turno.cruzaMedianoche || false,
         fechaFin: turno.fechaFin || '',
-        tuvoDescanso: turno.tuvoDescanso !== undefined ? turno.tuvoDescanso : true, // NUEVO
+        tuvoDescanso: turno.tuvoDescanso !== undefined ? turno.tuvoDescanso : true,
+        descansoMinutos: turno.descansoMinutos !== undefined ? turno.descansoMinutos : smokoMinutes,
         notas: turno.notas || ''
       ***REMOVED***);
-    ***REMOVED*** else if (fechaInicial) ***REMOVED***
-      const fechaStr = fechaInicial instanceof Date 
-        ? fechaInicial.toISOString().split('T')[0] 
-        : fechaInicial;
+    ***REMOVED*** else ***REMOVED***
+      const fechaStr = fechaInicial 
+        ? (fechaInicial instanceof Date ? fechaInicial.toISOString().split('T')[0] : fechaInicial)
+        : new Date().toISOString().split('T')[0];
+
       setFormData(prev => (***REMOVED*** 
         ...prev, 
         fechaInicio: fechaStr,
-        tuvoDescanso: true // NUEVO - por defecto en turnos nuevos
+        tuvoDescanso: true,
+        descansoMinutos: smokoMinutes
       ***REMOVED***));
     ***REMOVED***
-  ***REMOVED***, [turno, fechaInicial]);
+  ***REMOVED***, [turno, fechaInicial, smokoMinutes]);
 
   const trabajosTradicionales = trabajos.filter(t => t.tipo !== 'delivery');
   const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
@@ -196,7 +205,7 @@ const TurnoForm = (***REMOVED***
       ***REMOVED***/* CONTENEDOR DE FECHAS RESPONSIVO */***REMOVED***
       <FormGrid columns=***REMOVED***2***REMOVED***>
         ***REMOVED***/* Fecha de inicio */***REMOVED***
-        <FormField>
+        <FormField className=***REMOVED***!formData.cruzaMedianoche ? 'col-span-2' : ''***REMOVED***>
           <FormLabel icon=***REMOVED***Calendar***REMOVED***>Fecha de inicio</FormLabel>
           <input
             type="date"
@@ -260,7 +269,7 @@ const TurnoForm = (***REMOVED***
       </FormGrid>
 
 ***REMOVED***/* NUEVA SECCIÓN: DESCANSO (SMOKO) - OPTIMIZADA PARA MÓVIL */***REMOVED***
-***REMOVED***smokoEnabled && duracion && duracion.totalMinutos > smokoMinutes && (
+***REMOVED***smokoEnabled && duracion && duracion.totalMinutos > 0 && (
   <div className="w-full">
     <div 
       className=***REMOVED***`
@@ -354,11 +363,8 @@ const TurnoForm = (***REMOVED***
 
         ***REMOVED***formData.tuvoDescanso ? (
           <>
-            ***REMOVED***/* Descanso configurado */***REMOVED***
-            <Flex variant="between" className=***REMOVED***`
-              p-2 rounded
-              $***REMOVED***isMobile ? 'bg-orange-50' : 'bg-gray-50'***REMOVED***
-            `***REMOVED***>
+            ***REMOVED***/* Descanso configurado (AHORA EDITABLE CON CLIC) */***REMOVED***
+            <Flex variant="between" className=***REMOVED***`p-2 rounded items-center $***REMOVED***isMobile ? 'bg-orange-50' : 'bg-gray-50'***REMOVED***`***REMOVED***>
               <div className="flex items-center">
                 <Flex variant="center" className=***REMOVED***`
                   rounded-full mr-2
@@ -367,11 +373,34 @@ const TurnoForm = (***REMOVED***
                 style=***REMOVED******REMOVED*** backgroundColor: '#FED7AA', color: '#EA580C' ***REMOVED******REMOVED***>
                   <Coffee size=***REMOVED***isMobile ? 10 : 8***REMOVED*** />
                 </Flex>
-                <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Descanso configurado:</span>
+                <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Descanso:</span>
               </div>
-              <span className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***>
-                ***REMOVED***smokoMinutes***REMOVED*** minutos
-              </span>
+
+              ***REMOVED***isEditingDescanso ? (
+                <div className="flex items-center">
+                  <input
+                    type="number"
+                    value=***REMOVED***formData.descansoMinutos***REMOVED***
+                    onChange=***REMOVED***(e) => handleInputChange('descansoMinutos', e.target.value === '' ? 0 : parseInt(e.target.value, 10))***REMOVED***
+                    className=***REMOVED***`$***REMOVED***getInputClasses(isMobile)***REMOVED*** py-1 px-2 w-20 text-center font-semibold`***REMOVED***
+                    style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+                    autoFocus
+                    onBlur=***REMOVED***() => setIsEditingDescanso(false)***REMOVED***
+                  />
+                  <button type="button" onClick=***REMOVED***() => setIsEditingDescanso(false)***REMOVED*** className="ml-2 text-green-600">
+                    <Check size=***REMOVED***18***REMOVED*** />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <span className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***>
+                    ***REMOVED***formData.descansoMinutos***REMOVED*** minutos
+                  </span>
+                  <button type="button" onClick=***REMOVED***() => setIsEditingDescanso(true)***REMOVED*** className="ml-2 text-gray-500 hover:text-gray-700">
+                    <Pencil size=***REMOVED***14***REMOVED*** />
+                  </button>
+                </div>
+              )***REMOVED***
             </Flex>
 
             ***REMOVED***/* Tiempo pagado */***REMOVED***
