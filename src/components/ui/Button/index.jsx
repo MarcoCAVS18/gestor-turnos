@@ -15,10 +15,15 @@ const Button = ({
   disabled = false,
   loading = false,
   iconPosition = 'right',
+  animatedChevron = false, // Prop para forzar animación
   ...props
 }) => {
-  const isGhost = variant === 'ghost';
+  // Tratamos 'ghost-animated' igual que 'ghost' para estilos base
+  const isGhost = variant === 'ghost' || variant === 'ghost-animated';
   const isOutline = variant === 'outline';
+  
+  // Activar animación si es la variante específica o si se pasa la prop explícita
+  const shouldAnimateIcon = animatedChevron || variant === 'ghost-animated';
   
   const heightMap = { sm: '32px', md: '44px', lg: '52px' };
   const fontSizeClasses = { sm: 'text-xs', md: 'text-sm', lg: 'text-base' };
@@ -38,9 +43,19 @@ const Button = ({
     borderRadius: collapsed ? '9999px' : '12px',
   };
 
-  // Lógica para renderizar el ícono o el spinner
   const renderIcon = () => (
-    <motion.div layout className="flex items-center justify-center">
+    <motion.div 
+      layout 
+      className="flex items-center justify-center"
+      // Aplicamos la animación de rebote si corresponde y no está cargando
+      animate={shouldAnimateIcon && !loading ? { x: [0, 3, 0] } : {}}
+      transition={shouldAnimateIcon && !loading ? { 
+        duration: 1.5, 
+        repeat: Infinity, 
+        ease: "easeInOut",
+        repeatDelay: 0.5 
+      } : {}}
+    >
       {loading ? (
         <svg className="animate-spin" width={size === 'sm' ? 14 : 20} height={size === 'sm' ? 14 : 20} viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
@@ -70,10 +85,8 @@ const Button = ({
       <motion.div 
         layout 
         className="flex items-center justify-center"
-        // Invertimos el orden visual usando flex-row-reverse si es necesario, o simplemente condicionales abajo
         style={{ gap: collapsed ? 0 : (size === 'sm' ? '0.25rem' : '0.5rem') }}
       >
-        {/* Renderizar ícono A LA IZQUIERDA si corresponde */}
         {iconPosition === 'left' && (loading || Icon) && renderIcon()}
 
         <AnimatePresence mode="popLayout" initial={false}>
@@ -91,7 +104,6 @@ const Button = ({
           )}
         </AnimatePresence>
 
-        {/* Renderizar ícono A LA DERECHA (default) si corresponde */}
         {iconPosition === 'right' && (loading || Icon) && renderIcon()}
       </motion.div>
     </motion.button>

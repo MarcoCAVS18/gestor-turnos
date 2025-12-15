@@ -46,9 +46,9 @@ const WelcomeCard = ({ totalGanado, isFeatureVisible = false, className }) => {
             </div>
             
             <div>
-              <p className="text-xs text-gray-500 mb-1">Ganado total</p>
+              <p className="text-xs text-gray-500 pt-4 mb-1">Ganado total</p>
               <p 
-                className="text-2xl font-bold"
+                className="text-4xl font-bold"
                 style={{ color: colors.primary }}
               >
                 {formatCurrency(totalGanado)}

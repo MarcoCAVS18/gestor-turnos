@@ -86,7 +86,13 @@ const Dashboard = () => {
               </motion.div>
               
               <div className="lg:col-span-4 h-full">
-                <QuickStatsGrid stats={stats} className="h-full" />
+                {/* MODIFICADO: Se pasan los datos crudos para la vista detallada */}
+                <QuickStatsGrid 
+                  stats={stats} 
+                  todosLosTurnos={stats.todosLosTurnos}
+                  todosLosTrabajos={stats.todosLosTrabajos}
+                  className="h-full" 
+                />
               </div>
               <div className="lg:col-span-1 h-full">
                 <ThisWeekSummaryCard stats={stats} className="h-full" />
@@ -100,7 +106,12 @@ const Dashboard = () => {
               </motion.div>
       
               <div className="lg:col-span-4 lg:row-start-2">
-                <QuickStatsGrid stats={stats} />
+                {/* MODIFICADO: Se pasan los datos crudos para la vista detallada */}
+                <QuickStatsGrid 
+                  stats={stats} 
+                  todosLosTurnos={stats.todosLosTurnos}
+                  todosLosTrabajos={stats.todosLosTrabajos}
+                />
               </div>
 
               <div className="lg:col-span-1 lg:col-start-5 lg:row-start-1 lg:row-span-2 h-full">
@@ -120,7 +131,14 @@ const Dashboard = () => {
           <motion.div variants={headerVariants} initial="hidden" animate="visible">
             <WelcomeCard totalGanado={stats.totalGanado} />
           </motion.div>
-          <QuickStatsGrid stats={stats} />
+          
+          {/* MODIFICADO: Se pasan los datos crudos para la vista detallada */}
+          <QuickStatsGrid 
+            stats={stats} 
+            todosLosTurnos={stats.todosLosTurnos}
+            todosLosTrabajos={stats.todosLosTrabajos}
+          />
+          
           <ThisWeekSummaryCard stats={stats} />
         </div>
 

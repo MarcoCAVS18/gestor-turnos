@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3, ChevronRight } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import { useIsMobile } from '../../../hooks/useIsMobile'; // Importamos el hook
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
@@ -11,7 +11,7 @@ import Flex from '../../ui/Flex';
 const FavoriteWorksCard = ({ trabajosFavoritos }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
-  const isMobile = useIsMobile(); // Detectamos si es móvil
+  const isMobile = useIsMobile();
 
   if (trabajosFavoritos.length === 0) return null;
 
@@ -26,12 +26,13 @@ const FavoriteWorksCard = ({ trabajosFavoritos }) => {
         <Button
           onClick={() => navigate('/estadisticas')}
           size="sm"
-          variant="ghost"
-          // Activamos la animación de colapso en móvil
+          variant="ghost" 
+          animatedChevron 
           collapsed={isMobile}
-          className="flex-shrink-0 flex items-center whitespace-nowrap"
+          className="flex-shrink-0 whitespace-nowrap text-gray-400 hover:text-gray-600"
           themeColor={colors.primary}
-          icon={ChevronRight} // Pasamos el icono como prop para que Button lo maneje en la animación
+          icon={ChevronRight}
+          iconPosition="right"
         >
           Ver más
         </Button>

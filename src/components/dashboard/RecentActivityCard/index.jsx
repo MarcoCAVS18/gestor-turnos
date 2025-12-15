@@ -1,23 +1,23 @@
 // src/components/dashboard/RecentActivityCard/index.jsx
 
 import React, { useMemo } from 'react';
-import { Activity, Briefcase, ChevronRight } from 'lucide-react'; // Cambiamos ArrowRight por ChevronRight
+import { Activity, Briefcase, ChevronRight } from 'lucide-react'; 
 import { useNavigate } from 'react-router-dom';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import { useIsMobile } from '../../../hooks/useIsMobile'; // Importamos el hook
+import { useIsMobile } from '../../../hooks/useIsMobile'; 
 import { formatCurrency } from '../../../utils/currency';
 import { createSafeDate } from '../../../utils/time';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
-import Button from '../../ui/Button'; // Importamos el componente Button
+import Button from '../../ui/Button'; 
 
 const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
-  const isMobile = useIsMobile(); // Hook para detectar móvil
+  const isMobile = useIsMobile(); 
 
   // Definir límite de forma reactiva (mucho más limpio que el useEffect anterior)
-  const limite = isMobile ? 2 : 5;
+  const limite = isMobile ? 2 : 6;
 
   // Obtener turnos recientes
   const turnosRecientes = useMemo(() => {
@@ -109,7 +109,6 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
 
   return (
     <Card className="h-full flex flex-col">
-      {/* Header con botón animado "Ver todos" */}
       <Flex variant="between" className="mb-4 flex-nowrap gap-3">
         <h3 className="text-base font-semibold flex items-center text-gray-800 truncate">
           <Activity size={20} style={{ color: colors.primary }} className="mr-2 flex-shrink-0" />
@@ -117,13 +116,15 @@ const RecentActivityCard = ({ stats, todosLosTrabajos, todosLosTurnos }) => {
         </h3>
         
         <Button
-          onClick={() => navigate('/turnos')}
+          onClick={() => navigate('/estadisticas')}
           size="sm"
-          variant="ghost"
-          collapsed={isMobile} // Se colapsa en móvil igual que FavoriteWorks
-          className="flex-shrink-0 flex items-center whitespace-nowrap"
+          variant="ghost" 
+          animatedChevron 
+          collapsed={isMobile}
+          className="flex-shrink-0 whitespace-nowrap text-gray-400 hover:text-gray-600"
           themeColor={colors.primary}
           icon={ChevronRight}
+          iconPosition="right"
         >
           Ver todos
         </Button>
