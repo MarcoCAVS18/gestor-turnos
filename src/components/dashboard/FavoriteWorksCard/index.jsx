@@ -1,9 +1,11 @@
+// src/components/dashboard/FavoriteWorksCard/index.jsx
 import React from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** BarChart3, ChevronRight ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
+import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../constants/delivery'; // Importamos las plataformas
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
@@ -12,6 +14,23 @@ const FavoriteWorksCard = (***REMOVED*** trabajosFavoritos ***REMOVED***) => ***
   const colors = useThemeColors();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+
+  // Función auxiliar para obtener el color correcto del trabajo
+  const getJobColor = (trabajo) => ***REMOVED***
+    // 1. Si es trabajo tradicional, tiene su color propio
+    if (trabajo.color) return trabajo.color;
+
+    // 2. Si es delivery, buscamos el color de la plataforma seleccionada
+    if (trabajo.plataforma) ***REMOVED***
+      const platform = DELIVERY_PLATFORMS_AUSTRALIA.find(
+        p => p.nombre === trabajo.plataforma
+      );
+      if (platform) return platform.color;
+    ***REMOVED***
+
+    // 3. Fallback: colorAvatar o gris por defecto
+    return trabajo.colorAvatar || '#9CA3AF';
+  ***REMOVED***;
 
   if (trabajosFavoritos.length === 0) return null;
 
@@ -45,10 +64,13 @@ const FavoriteWorksCard = (***REMOVED*** trabajosFavoritos ***REMOVED***) => ***
               <span className="text-sm font-semibold text-gray-400 mr-3 flex-shrink-0">
                 #***REMOVED***index + 1***REMOVED***
               </span>
+              
+              ***REMOVED***/* Círculo indicador de color usando la nueva función */***REMOVED***
               <div 
                 className="w-3 h-3 rounded-full mr-3 flex-shrink-0"
-                style=***REMOVED******REMOVED*** backgroundColor: trabajoInfo.trabajo.color ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** backgroundColor: getJobColor(trabajoInfo.trabajo) ***REMOVED******REMOVED***
               />
+              
               <div className="min-w-0">
                 <p className="font-medium text-gray-800 truncate">
                   ***REMOVED***trabajoInfo.trabajo.nombre***REMOVED***

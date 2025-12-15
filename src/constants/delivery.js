@@ -24,7 +24,7 @@ export const DELIVERY_PLATFORMS_AUSTRALIA = [
   ***REMOVED***
     id: 'pedidos_ya',
     nombre: 'Pedidos Ya',
-    color: '#000000'
+    color: '#af2d2dff'
   ***REMOVED***,
   ***REMOVED***
     id: 'didi',
