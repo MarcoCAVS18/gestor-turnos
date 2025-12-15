@@ -69,12 +69,15 @@ const FeatureAnnouncementCard = (***REMOVED*** onClick, className ***REMOVED***)
                     e.stopPropagation();
                     onClick?.();
                 ***REMOVED******REMOVED***
+                variant='solid'
                 className="bg-white border-none font-semibold shadow-md active:scale-95 transition-transform hover:bg-gray-50"
-                // Forzamos el texto del botón a ser del color primario para mantener consistencia
-                style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
+                themeColor=***REMOVED***colors.primary***REMOVED***
             >
               Probar ahora
             </Button>
+
+          
+
           </div>
         </div>
 

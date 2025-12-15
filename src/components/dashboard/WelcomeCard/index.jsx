@@ -46,9 +46,9 @@ const WelcomeCard = (***REMOVED*** totalGanado, isFeatureVisible = false, classN
             </div>
             
             <div>
-              <p className="text-xs text-gray-500 mb-1">Ganado total</p>
+              <p className="text-xs text-gray-500 pt-4 mb-1">Ganado total</p>
               <p 
-                className="text-2xl font-bold"
+                className="text-4xl font-bold"
                 style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
               >
                 ***REMOVED***formatCurrency(totalGanado)***REMOVED***

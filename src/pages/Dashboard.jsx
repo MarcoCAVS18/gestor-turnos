@@ -86,7 +86,13 @@ const Dashboard = () => ***REMOVED***
               </motion.div>
               
               <div className="lg:col-span-4 h-full">
-                <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** className="h-full" />
+                ***REMOVED***/* MODIFICADO: Se pasan los datos crudos para la vista detallada */***REMOVED***
+                <QuickStatsGrid 
+                  stats=***REMOVED***stats***REMOVED*** 
+                  todosLosTurnos=***REMOVED***stats.todosLosTurnos***REMOVED***
+                  todosLosTrabajos=***REMOVED***stats.todosLosTrabajos***REMOVED***
+                  className="h-full" 
+                />
               </div>
               <div className="lg:col-span-1 h-full">
                 <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** className="h-full" />
@@ -100,7 +106,12 @@ const Dashboard = () => ***REMOVED***
               </motion.div>
       
               <div className="lg:col-span-4 lg:row-start-2">
-                <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
+                ***REMOVED***/* MODIFICADO: Se pasan los datos crudos para la vista detallada */***REMOVED***
+                <QuickStatsGrid 
+                  stats=***REMOVED***stats***REMOVED*** 
+                  todosLosTurnos=***REMOVED***stats.todosLosTurnos***REMOVED***
+                  todosLosTrabajos=***REMOVED***stats.todosLosTrabajos***REMOVED***
+                />
               </div>
 
               <div className="lg:col-span-1 lg:col-start-5 lg:row-start-1 lg:row-span-2 h-full">
@@ -120,7 +131,14 @@ const Dashboard = () => ***REMOVED***
           <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
             <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
           </motion.div>
-          <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
+          
+          ***REMOVED***/* MODIFICADO: Se pasan los datos crudos para la vista detallada */***REMOVED***
+          <QuickStatsGrid 
+            stats=***REMOVED***stats***REMOVED*** 
+            todosLosTurnos=***REMOVED***stats.todosLosTurnos***REMOVED***
+            todosLosTrabajos=***REMOVED***stats.todosLosTrabajos***REMOVED***
+          />
+          
           <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** />
         </div>
 
