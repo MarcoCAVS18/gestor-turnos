@@ -15,6 +15,11 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import ScrollToTop from './components/layout/ScrollToTop/index.jsx';
 
+// Legal Pages
+import PrivacyPolicy from './pages/legal/PrivacyPolicy';
+import TermsOfService from './pages/legal/TermsOfService';
+import DeleteAccount from './pages/legal/DeleteAccount';
+
 // Componentes principales
 import Header from './components/layout/Header';
 import Navegacion from './components/layout/Navegacion';
@@ -122,6 +127,11 @@ function App() ***REMOVED***
         <Route path="/register" element=***REMOVED***<Register />***REMOVED*** />
         <Route path="/forgot-password" element=***REMOVED***<ForgotPassword />***REMOVED*** />
         <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />
+
+        ***REMOVED***/* Legal Pages */***REMOVED***
+        <Route path="/privacy" element=***REMOVED***<PrivacyPolicy />***REMOVED*** />
+        <Route path="/terms" element=***REMOVED***<TermsOfService />***REMOVED*** />
+        <Route path="/delete-account" element=***REMOVED***<DeleteAccount />***REMOVED*** />
 
         ***REMOVED***/* RUTA ESPECIAL para trabajos compartidos - ACCESO PÚBLICO */***REMOVED***
         <Route

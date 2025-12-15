@@ -6,7 +6,7 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import ***REMOVED*** generateColorVariations ***REMOVED*** from '../../../utils/colorUtils'; // Importamos tu utilidad de colores
 import Button from '../../ui/Button';
 
-const FeatureAnnouncementCard = (***REMOVED*** onClick ***REMOVED***) => ***REMOVED***
+const FeatureAnnouncementCard = (***REMOVED*** onClick, className ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   
   // Generamos una paleta rica basada en tu color primario actual
@@ -23,7 +23,7 @@ const FeatureAnnouncementCard = (***REMOVED*** onClick ***REMOVED***) => ***REMO
 
   return (
     <div 
-      className="relative overflow-hidden rounded-3xl transition-all hover:shadow-lg group cursor-pointer"
+      className=***REMOVED***`relative overflow-hidden rounded-3xl transition-all hover:shadow-lg group cursor-pointer $***REMOVED***className***REMOVED***`***REMOVED***
       onClick=***REMOVED***onClick***REMOVED***
       style=***REMOVED******REMOVED***
         // AQUÍ ESTÁ LA MAGIA:
@@ -43,7 +43,7 @@ const FeatureAnnouncementCard = (***REMOVED*** onClick ***REMOVED***) => ***REMO
         style=***REMOVED******REMOVED*** backgroundColor: palette.dark ***REMOVED******REMOVED*** 
       />
 
-      <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between gap-6">
+      <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between gap-6 h-full">
         
         ***REMOVED***/* Lado Izquierdo: Contenido de texto */***REMOVED***
         <div className="flex-1 space-y-4">

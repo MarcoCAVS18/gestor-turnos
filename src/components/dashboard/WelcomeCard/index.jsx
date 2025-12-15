@@ -7,7 +7,7 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 
-const WelcomeCard = (***REMOVED*** totalGanado ***REMOVED***) => ***REMOVED***
+const WelcomeCard = (***REMOVED*** totalGanado, isFeatureVisible = false, className ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
   const ***REMOVED*** userEmoji ***REMOVED*** = useApp();
   const colors = useThemeColors();
@@ -31,48 +31,52 @@ const WelcomeCard = (***REMOVED*** totalGanado ***REMOVED***) => ***REMOVED***
   ***REMOVED***;
 
   return (
-    <Card>
-      ***REMOVED***/* MÓVIL: Layout vertical centrado */***REMOVED***
-      <div className="block sm:hidden text-center space-y-4">
-        <div>
-          <h1 className="text-xl font-bold text-gray-800">
-            ***REMOVED***getSaludo()***REMOVED*** ***REMOVED***userName && `$***REMOVED***userName***REMOVED*** `***REMOVED******REMOVED***userEmoji***REMOVED***
-          </h1>
-          <p className="text-gray-600 text-sm mt-2">
-            Acá tienes un resumen de tu actividad
-          </p>
-        </div>
-        
-        <div>
-          <p className="text-xs text-gray-500 mb-1">Ganado total</p>
-          <p 
-            className="text-2xl font-bold"
-            style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
-          >
-            ***REMOVED***formatCurrency(totalGanado)***REMOVED***
-          </p>
-        </div>
-      </div>
+    <Card className=***REMOVED***className***REMOVED***>
+      <div className="flex flex-col h-full">
+        <div className="my-auto">
+          ***REMOVED***/* Layout vertical (Móvil o cuando la feature es visible) */***REMOVED***
+          <div className=***REMOVED***`$***REMOVED***isFeatureVisible ? 'block' : 'block sm:hidden'***REMOVED*** text-center space-y-4`***REMOVED***>
+            <div>
+              <h1 className="text-xl font-bold text-gray-800">
+                ***REMOVED***getSaludo()***REMOVED*** ***REMOVED***userName && `$***REMOVED***userName***REMOVED*** `***REMOVED******REMOVED***userEmoji***REMOVED***
+              </h1>
+              <p className="text-gray-600 text-sm mt-2">
+                Acá tienes un resumen de tu actividad
+              </p>
+            </div>
+            
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Ganado total</p>
+              <p 
+                className="text-2xl font-bold"
+                style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
+              >
+                ***REMOVED***formatCurrency(totalGanado)***REMOVED***
+              </p>
+            </div>
+          </div>
 
-      ***REMOVED***/* TABLET Y DESKTOP: Layout horizontal original */***REMOVED***
-      <div className="hidden sm:flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">
-            ***REMOVED***getSaludo()***REMOVED*** ***REMOVED***userName && `$***REMOVED***userName***REMOVED*** `***REMOVED******REMOVED***userEmoji***REMOVED***
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Acá tienes un resumen<br />
-            de tu actividad
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-gray-500">Ganado total</p>
-          <p 
-            className="text-2xl font-bold"
-            style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
-          >
-            ***REMOVED***formatCurrency(totalGanado)***REMOVED***
-          </p>
+          ***REMOVED***/* Layout horizontal (Tablet/Desktop sin feature) */***REMOVED***
+          <div className=***REMOVED***`$***REMOVED***isFeatureVisible ? 'hidden' : 'hidden sm:flex'***REMOVED*** items-center justify-between`***REMOVED***>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800">
+                ***REMOVED***getSaludo()***REMOVED*** ***REMOVED***userName && `$***REMOVED***userName***REMOVED*** `***REMOVED******REMOVED***userEmoji***REMOVED***
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Acá tienes un resumen<br />
+                de tu actividad
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-gray-500">Ganado total</p>
+              <p 
+                className="text-2xl font-bold"
+                style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
+              >
+                ***REMOVED***formatCurrency(totalGanado)***REMOVED***
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </Card>
