@@ -25,6 +25,8 @@ import FooterSection from '../components/settings/FooterSection';
 // Importamos la nueva tarjeta de anuncio
 import FeatureAnnouncementCard from '../components/dashboard/FeatureAnnouncementCard';
 
+import Flex from '../components/ui/Flex';
+
 const Dashboard = () => ***REMOVED***
   const ***REMOVED*** loading, calculatePayment ***REMOVED*** = useApp();
   const stats = useDashboardStats();
@@ -53,9 +55,9 @@ const Dashboard = () => ***REMOVED***
 
   if (loading) ***REMOVED***
     return (
-      <div className="flex justify-center items-center h-screen">
+      <Flex variant="center" className="h-screen">
         <Loader />
-      </div>
+      </Flex>
     );
   ***REMOVED***
 
@@ -178,9 +180,9 @@ const Dashboard = () => ***REMOVED***
         </div>
       </div>
 
-      <div className="flex justify-center mt-8">
+      <Flex variant="end">
         <FooterSection />
-      </div>
+      </Flex>
     </div>
   );
 ***REMOVED***;
