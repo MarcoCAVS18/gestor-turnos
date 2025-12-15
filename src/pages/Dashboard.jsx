@@ -1,9 +1,9 @@
 // src/pages/Dashboard.jsx
 
-import React from 'react';
+import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** LayoutDashboard ***REMOVED*** from 'lucide-react';
-// import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom'; // Descomenta cuando tengas la ruta
+// import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom'; // Descomentamos cuando tengamos la ruta
 
 import PageHeader from '../components/layout/PageHeader';
 import ***REMOVED*** useDashboardStats ***REMOVED*** from '../hooks/useDashboardStats';
@@ -29,10 +29,12 @@ const Dashboard = () => ***REMOVED***
   const ***REMOVED*** loading, calculatePayment ***REMOVED*** = useApp();
   const stats = useDashboardStats();
   // const navigate = useNavigate();
+  // eslint-disable-next-line no-unused-vars
+  const [showFeatureAnnouncement, setShowFeatureAnnouncement] = useState(true);
 
   const handleNavigateToLiveMode = () => ***REMOVED***
     console.log("Navegando al nuevo Modo Live...");
-    // navigate('/live'); // Aquí irás a tu nueva página de navegación completa
+    // navigate('/live'); // Aquí iremos a la página de navegación completa
   ***REMOVED***;
 
   const handleExport = async (format) => ***REMOVED***
@@ -71,40 +73,53 @@ const Dashboard = () => ***REMOVED***
       />
 
       <div className="space-y-6">
+        ***REMOVED***/* --- SECCIÓN SUPERIOR DESKTOP --- */***REMOVED***
+        <div className="hidden lg:grid lg:grid-cols-5 lg:auto-rows-max lg:gap-6">
+          ***REMOVED***showFeatureAnnouncement ? (
+            <>
+              ***REMOVED***/* --- CON FEATURE --- */***REMOVED***
+              <motion.div className="lg:col-span-4 h-full" variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
+                <FeatureAnnouncementCard onClick=***REMOVED***handleNavigateToLiveMode***REMOVED*** className="h-full" />
+              </motion.div>
+              <motion.div className="lg:col-span-1 h-full" variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
+                <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** isFeatureVisible=***REMOVED***true***REMOVED*** className="h-full" />
+              </motion.div>
+              
+              <div className="lg:col-span-4 h-full">
+                <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** className="h-full" />
+              </div>
+              <div className="lg:col-span-1 h-full">
+                <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** className="h-full" />
+              </div>
+            </>
+          ) : (
+            <>
+              ***REMOVED***/* --- SIN FEATURE --- */***REMOVED***
+              <motion.div className="lg:col-span-4" variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
+                <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
+              </motion.div>
+      
+              <div className="lg:col-span-4 lg:row-start-2">
+                <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
+              </div>
 
-        ***REMOVED***/* --- SECCIÓN DESKTOP --- */***REMOVED***
-        <div className="hidden lg:grid lg:grid-cols-5 lg:gap-6">
-          <div className="lg:col-span-4 space-y-6">
-            
-            ***REMOVED***/* Feature Announcement Card: Hero Element */***REMOVED***
-            <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
-                <FeatureAnnouncementCard onClick=***REMOVED***handleNavigateToLiveMode***REMOVED*** />
-            </motion.div>
-
-            <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
-              <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
-            </motion.div>
-            
-            <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
-          </div>
-
-          <div className="lg:col-span-1">
-            <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** />
-          </div>
+              <div className="lg:col-span-1 lg:col-start-5 lg:row-start-1 lg:row-span-2 h-full">
+                <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** className="h-full"/>
+              </div>
+            </>
+          )***REMOVED***
         </div>
 
         ***REMOVED***/* --- SECCIÓN MÓVIL --- */***REMOVED***
         <div className="block lg:hidden space-y-4">
-          
-          ***REMOVED***/* Feature Announcement Card: Hero Element Mobile */***REMOVED***
-          <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
+          ***REMOVED***showFeatureAnnouncement && (
+            <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
               <FeatureAnnouncementCard onClick=***REMOVED***handleNavigateToLiveMode***REMOVED*** />
-          </motion.div>
-
+            </motion.div>
+          )***REMOVED***
           <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
             <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
           </motion.div>
-          
           <QuickStatsGrid stats=***REMOVED***stats***REMOVED*** />
           <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** />
         </div>
@@ -126,16 +141,16 @@ const Dashboard = () => ***REMOVED***
               <div className="space-y-6 flex flex-col">
                 <FavoriteWorksCard trabajosFavoritos=***REMOVED***stats.trabajosFavoritos***REMOVED*** />
                 <TopWorkCard trabajoMasRentable=***REMOVED***stats.trabajoMasRentable***REMOVED*** />
-                <ProjectionCard
-                  proyeccionMensual=***REMOVED***stats.proyeccionMensual***REMOVED***
-                  horasTrabajadas=***REMOVED***stats.horasTrabajadas***REMOVED***
-                  className="flex-grow"
-                />
-              </div>
-              <div className="space-y-6 flex flex-col">
                 <NextShiftCard
                   proximoTurno=***REMOVED***stats.proximoTurno***REMOVED***
                   formatearFecha=***REMOVED***stats.formatearFecha***REMOVED***
+                />
+              </div>
+              <div className="space-y-6 flex flex-col">
+                  <ProjectionCard
+                  proyeccionMensual=***REMOVED***stats.proyeccionMensual***REMOVED***
+                  horasTrabajadas=***REMOVED***stats.horasTrabajadas***REMOVED***
+                  className="flex-grow"
                 />
                 <ExportReportCard onExport=***REMOVED***handleExport***REMOVED*** />
                 <QuickActionsCard className="flex-grow" />

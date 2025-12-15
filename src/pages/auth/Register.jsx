@@ -2,11 +2,15 @@
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Link, useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
+import ***REMOVED*** Eye, EyeOff ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../contexts/AuthContext';
 
 // Nueva importación estructurada
 import Button from '../../components/ui/Button';
 import Flex from '../../components/ui/Flex';
+import Logo from '../../components/icons/Logo';
+
+import GoogleIcon from '../../components/icons/GoogleIcon';
 
 const Register = () => ***REMOVED***
   const [displayName, setDisplayName] = useState('');
@@ -15,6 +19,7 @@ const Register = () => ***REMOVED***
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const ***REMOVED*** signup, loginWithGoogle ***REMOVED*** = useAuth();
   const navigate = useNavigate();
@@ -130,9 +135,9 @@ const Register = () => ***REMOVED***
     ***REMOVED***
   ***REMOVED***;
 
-  const handleGoogleSignup = async () => ***REMOVED***
+  const handleGoogleRegister = async () => ***REMOVED***
     try ***REMOVED***
-      setLoading(true);
+      setGoogleLoading(true);
       setError('');
       await loginWithGoogle();
       
@@ -140,7 +145,7 @@ const Register = () => ***REMOVED***
       navigate(redirectTo);
     ***REMOVED*** catch (error) ***REMOVED***
       setError('Error al registrarse con Google: ' + error.message);
-      setLoading(false);
+      setGoogleLoading(false);
     ***REMOVED***
   ***REMOVED***;
 
@@ -162,9 +167,13 @@ const Register = () => ***REMOVED***
       </div>
       
       ***REMOVED***/* Contenido del registro */***REMOVED***
-      <Flex variant="center" className="fixed inset-0 z-20 bg-transparent p-4">
+      <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4">
+        <Logo />
+        <div className="text-center text-white mb-4">
+          <h1 className="text-4xl font-bold mb-2">GestAPP</h1>
+          <p className="text-lg">Gestiona tus turnos de trabajo fácilmente.</p>
+        </div>
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">
-          <h2 className="text-2xl font-bold text-center mb-6">Crear una cuenta</h2>
           
           ***REMOVED***error && (
             <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
@@ -239,7 +248,7 @@ const Register = () => ***REMOVED***
                   onClick=***REMOVED***() => setShowPassword(!showPassword)***REMOVED***
                   className="absolute right-3 top-2.5 text-gray-500"
                 >
-                  ***REMOVED***showPassword ? "Ocultar" : "Mostrar"***REMOVED***
+                  ***REMOVED***showPassword ? <EyeOff size=***REMOVED***20***REMOVED*** /> : <Eye size=***REMOVED***20***REMOVED*** />***REMOVED***
                 </button>
               </div>
               
@@ -266,6 +275,7 @@ const Register = () => ***REMOVED***
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                 Confirmar contraseña
               </label>
+              <div className="relative">
               <input
                 id="confirmPassword"
                 type=***REMOVED***showPassword ? "text" : "password"***REMOVED***
@@ -277,6 +287,14 @@ const Register = () => ***REMOVED***
                 placeholder="Confirma tu contraseña"
                 required
               />
+                <button 
+                  type="button"
+                  onClick=***REMOVED***() => setShowPassword(!showPassword)***REMOVED***
+                  className="absolute right-3 top-2.5 text-gray-500"
+                >
+                  ***REMOVED***showPassword ? <EyeOff size=***REMOVED***20***REMOVED*** /> : <Eye size=***REMOVED***20***REMOVED*** />***REMOVED***
+                </button>
+              </div>
               ***REMOVED***!passwordsMatch && confirmPassword && (
                 <p className="mt-1 text-xs text-red-500">
                   Las contraseñas no coinciden
@@ -303,19 +321,16 @@ const Register = () => ***REMOVED***
             </div>
           </div>
           
-          <button 
-            onClick=***REMOVED***handleGoogleSignup***REMOVED***
-            disabled=***REMOVED***loading***REMOVED***
-            className="w-full flex items-center justify-center bg-black hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-md mb-6"
+          <Button
+            onClick=***REMOVED***handleGoogleRegister***REMOVED***
+            loading=***REMOVED***googleLoading***REMOVED***
+            variant="secondary"
+            className="w-full mb-4"
+            icon=***REMOVED***GoogleIcon***REMOVED***
+            iconPosition="left"
           >
-            <svg className="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-              <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z" />
-              <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z" />
-              <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z" />
-              <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z" />
-            </svg>
             Registrarse con Google
-          </button>
+          </Button>
           
           <div className="text-center">
             <p className="text-gray-600 mb-2">¿Ya tienes una cuenta?</p>

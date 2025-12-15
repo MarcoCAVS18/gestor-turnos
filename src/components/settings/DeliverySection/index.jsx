@@ -52,7 +52,7 @@ const DeliverySection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***R
             <Flex variant="start">
               <Info size=***REMOVED***16***REMOVED*** className="mt-0.5 mr-2 flex-shrink-0" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
               <div className="text-sm space-y-1">
-                <p className="font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>¿Cómo funciona?</p>
+                <p className="font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***><strong>¿Cómo funciona?</strong></p>
                 <ul className="space-y-1 text-gray-600">
                   <li>• Los trabajos de delivery no requieren tarifa por hora</li>
                   <li>• Registra tus ganancias totales por cada turno</li>
