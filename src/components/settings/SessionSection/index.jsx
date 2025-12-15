@@ -1,13 +1,12 @@
-// src/components/settings/SessionSection/index.jsx - REFACTORIZADO
+// src/components/settings/SessionSection/index.jsx
 
 import React from 'react';
 import { LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
-import Flex from '../../ui/Flex';
 
 const SessionSection = ({ onError, className = '' }) => {
   const { logout } = useAuth();
@@ -25,7 +24,7 @@ const SessionSection = ({ onError, className = '' }) => {
 
   return (
     <SettingsSection icon={LogOut} title="Sesión" className={className}>
-      <Flex variant="center" className="flex-1">
+      <div className="flex flex-col items-center justify-center flex-1 w-full gap-3 mt-4">
         <Button
           onClick={handleLogout}
           variant="outline"
@@ -35,7 +34,14 @@ const SessionSection = ({ onError, className = '' }) => {
         >
           Cerrar sesión
         </Button>
-      </Flex>
+
+        <Link 
+          to="/delete-account"
+          className="text-xs text-gray-400 hover:text-gray-600 hover:underline transition-colors mt-1"
+        >
+          Eliminar cuenta
+        </Link>
+      </div>
     </SettingsSection>
   );
 };
