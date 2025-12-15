@@ -1,3 +1,5 @@
+// src/pages/legal/DeleteAccount.jsx
+
 import React from 'react';
 
 const DeleteAccount = () => ***REMOVED***
