@@ -15,8 +15,8 @@ const ProjectionCard = ({ proyeccionMensual, horasTrabajadas, className }) => {
   const renderContent = () => {
     if (proyeccionMensual <= 0) {
       return (
-        <Link to="/turnos" className="block hover:bg-gray-50 rounded-lg p-4 transition-colors">
-          <Flex variant="center" className="text-center flex-col">
+        <Link to="/turnos" className="block w-full hover:bg-gray-50 rounded-lg p-4 transition-colors">
+          <Flex variant="center" className="flex-col">
             <PlusCircle size={32} className="mb-2" style={{ color: colors.primary }} />
             <p className="font-semibold text-gray-700">Comienza a ver tu proyección mensual</p>
             <p className="text-sm text-gray-500">Agrega nuevos turnos este mes para calcularla.</p>

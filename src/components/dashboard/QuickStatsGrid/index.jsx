@@ -1,4 +1,4 @@
-// src/components/dashboard/QuickStatsGrid/index.jsx - Versión corregida
+// src/components/dashboard/QuickStatsGrid/index.jsx 
 
 import React from 'react';
 import { Briefcase, Calendar, Clock, Target } from 'lucide-react';
@@ -9,18 +9,22 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle }) => {
   const { thematicColors } = useApp();
   
   return (
-    <Card className="p-4 text-center">
-      <div className="flex flex-col items-center">
-        <Icon size={20} className="mb-2" style={{ color: thematicColors?.base }} />
-        <span className="text-sm text-gray-600 font-medium mb-1">{label}</span>
-        <p className="text-2xl font-bold text-gray-800 mb-1">{value}</p>
-        <p className="text-xs text-gray-500">{subtitle}</p>
+    <Card className="p-4 text-center h-full">
+      <div className="flex flex-col h-full">
+        <div className="my-auto">
+          <div className="flex flex-col items-center">
+            <Icon size={20} className="mb-2" style={{ color: thematicColors?.base }} />
+            <span className="text-sm text-gray-600 font-medium mb-1">{label}</span>
+            <p className="text-2xl font-bold text-gray-800 mb-1">{value}</p>
+            <p className="text-xs text-gray-500">{subtitle}</p>
+          </div>
+        </div>
       </div>
     </Card>
   );
 };
 
-const QuickStatsGrid = ({ stats }) => {
+const QuickStatsGrid = ({ stats, className }) => {
   const { trabajos, trabajosDelivery } = useApp();
   
   const totalTrabajos = trabajos.length + trabajosDelivery.length;
@@ -55,7 +59,7 @@ const QuickStatsGrid = ({ stats }) => {
   return (
     <>
       {/* DESKTOP: Grid normal 4 columnas CON GAP */}
-      <div className="hidden lg:grid lg:grid-cols-4 gap-6">
+      <div className={`hidden lg:grid lg:grid-cols-4 gap-6 ${className}`}>
         {statsData.map((stat, index) => (
           <QuickStatCard key={index} {...stat} />
         ))}

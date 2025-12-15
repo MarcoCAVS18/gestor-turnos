@@ -1,9 +1,9 @@
 // src/pages/Dashboard.jsx
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { LayoutDashboard } from 'lucide-react';
-// import { useNavigate } from 'react-router-dom'; // Descomenta cuando tengas la ruta
+// import { useNavigate } from 'react-router-dom'; // Descomentamos cuando tengamos la ruta
 
 import PageHeader from '../components/layout/PageHeader';
 import { useDashboardStats } from '../hooks/useDashboardStats';
@@ -29,10 +29,12 @@ const Dashboard = () => {
   const { loading, calculatePayment } = useApp();
   const stats = useDashboardStats();
   // const navigate = useNavigate();
+  // eslint-disable-next-line no-unused-vars
+  const [showFeatureAnnouncement, setShowFeatureAnnouncement] = useState(true);
 
   const handleNavigateToLiveMode = () => {
     console.log("Navegando al nuevo Modo Live...");
-    // navigate('/live'); // Aquí irás a tu nueva página de navegación completa
+    // navigate('/live'); // Aquí iremos a la página de navegación completa
   };
 
   const handleExport = async (format) => {
@@ -71,40 +73,53 @@ const Dashboard = () => {
       />
 
       <div className="space-y-6">
+        {/* --- SECCIÓN SUPERIOR DESKTOP --- */}
+        <div className="hidden lg:grid lg:grid-cols-5 lg:auto-rows-max lg:gap-6">
+          {showFeatureAnnouncement ? (
+            <>
+              {/* --- CON FEATURE --- */}
+              <motion.div className="lg:col-span-4 h-full" variants={headerVariants} initial="hidden" animate="visible">
+                <FeatureAnnouncementCard onClick={handleNavigateToLiveMode} className="h-full" />
+              </motion.div>
+              <motion.div className="lg:col-span-1 h-full" variants={headerVariants} initial="hidden" animate="visible">
+                <WelcomeCard totalGanado={stats.totalGanado} isFeatureVisible={true} className="h-full" />
+              </motion.div>
+              
+              <div className="lg:col-span-4 h-full">
+                <QuickStatsGrid stats={stats} className="h-full" />
+              </div>
+              <div className="lg:col-span-1 h-full">
+                <ThisWeekSummaryCard stats={stats} className="h-full" />
+              </div>
+            </>
+          ) : (
+            <>
+              {/* --- SIN FEATURE --- */}
+              <motion.div className="lg:col-span-4" variants={headerVariants} initial="hidden" animate="visible">
+                <WelcomeCard totalGanado={stats.totalGanado} />
+              </motion.div>
+      
+              <div className="lg:col-span-4 lg:row-start-2">
+                <QuickStatsGrid stats={stats} />
+              </div>
 
-        {/* --- SECCIÓN DESKTOP --- */}
-        <div className="hidden lg:grid lg:grid-cols-5 lg:gap-6">
-          <div className="lg:col-span-4 space-y-6">
-            
-            {/* Feature Announcement Card: Hero Element */}
-            <motion.div variants={headerVariants} initial="hidden" animate="visible">
-                <FeatureAnnouncementCard onClick={handleNavigateToLiveMode} />
-            </motion.div>
-
-            <motion.div variants={headerVariants} initial="hidden" animate="visible">
-              <WelcomeCard totalGanado={stats.totalGanado} />
-            </motion.div>
-            
-            <QuickStatsGrid stats={stats} />
-          </div>
-
-          <div className="lg:col-span-1">
-            <ThisWeekSummaryCard stats={stats} />
-          </div>
+              <div className="lg:col-span-1 lg:col-start-5 lg:row-start-1 lg:row-span-2 h-full">
+                <ThisWeekSummaryCard stats={stats} className="h-full"/>
+              </div>
+            </>
+          )}
         </div>
 
         {/* --- SECCIÓN MÓVIL --- */}
         <div className="block lg:hidden space-y-4">
-          
-          {/* Feature Announcement Card: Hero Element Mobile */}
-          <motion.div variants={headerVariants} initial="hidden" animate="visible">
+          {showFeatureAnnouncement && (
+            <motion.div variants={headerVariants} initial="hidden" animate="visible">
               <FeatureAnnouncementCard onClick={handleNavigateToLiveMode} />
-          </motion.div>
-
+            </motion.div>
+          )}
           <motion.div variants={headerVariants} initial="hidden" animate="visible">
             <WelcomeCard totalGanado={stats.totalGanado} />
           </motion.div>
-          
           <QuickStatsGrid stats={stats} />
           <ThisWeekSummaryCard stats={stats} />
         </div>
@@ -126,16 +141,16 @@ const Dashboard = () => {
               <div className="space-y-6 flex flex-col">
                 <FavoriteWorksCard trabajosFavoritos={stats.trabajosFavoritos} />
                 <TopWorkCard trabajoMasRentable={stats.trabajoMasRentable} />
-                <ProjectionCard
-                  proyeccionMensual={stats.proyeccionMensual}
-                  horasTrabajadas={stats.horasTrabajadas}
-                  className="flex-grow"
-                />
-              </div>
-              <div className="space-y-6 flex flex-col">
                 <NextShiftCard
                   proximoTurno={stats.proximoTurno}
                   formatearFecha={stats.formatearFecha}
+                />
+              </div>
+              <div className="space-y-6 flex flex-col">
+                  <ProjectionCard
+                  proyeccionMensual={stats.proyeccionMensual}
+                  horasTrabajadas={stats.horasTrabajadas}
+                  className="flex-grow"
                 />
                 <ExportReportCard onExport={handleExport} />
                 <QuickActionsCard className="flex-grow" />

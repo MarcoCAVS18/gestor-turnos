@@ -7,7 +7,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
-const WelcomeCard = ({ totalGanado }) => {
+const WelcomeCard = ({ totalGanado, isFeatureVisible = false, className }) => {
   const { currentUser } = useAuth();
   const { userEmoji } = useApp();
   const colors = useThemeColors();
@@ -31,48 +31,52 @@ const WelcomeCard = ({ totalGanado }) => {
   };
 
   return (
-    <Card>
-      {/* MÓVIL: Layout vertical centrado */}
-      <div className="block sm:hidden text-center space-y-4">
-        <div>
-          <h1 className="text-xl font-bold text-gray-800">
-            {getSaludo()} {userName && `${userName} `}{userEmoji}
-          </h1>
-          <p className="text-gray-600 text-sm mt-2">
-            Acá tienes un resumen de tu actividad
-          </p>
-        </div>
-        
-        <div>
-          <p className="text-xs text-gray-500 mb-1">Ganado total</p>
-          <p 
-            className="text-2xl font-bold"
-            style={{ color: colors.primary }}
-          >
-            {formatCurrency(totalGanado)}
-          </p>
-        </div>
-      </div>
+    <Card className={className}>
+      <div className="flex flex-col h-full">
+        <div className="my-auto">
+          {/* Layout vertical (Móvil o cuando la feature es visible) */}
+          <div className={`${isFeatureVisible ? 'block' : 'block sm:hidden'} text-center space-y-4`}>
+            <div>
+              <h1 className="text-xl font-bold text-gray-800">
+                {getSaludo()} {userName && `${userName} `}{userEmoji}
+              </h1>
+              <p className="text-gray-600 text-sm mt-2">
+                Acá tienes un resumen de tu actividad
+              </p>
+            </div>
+            
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Ganado total</p>
+              <p 
+                className="text-2xl font-bold"
+                style={{ color: colors.primary }}
+              >
+                {formatCurrency(totalGanado)}
+              </p>
+            </div>
+          </div>
 
-      {/* TABLET Y DESKTOP: Layout horizontal original */}
-      <div className="hidden sm:flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">
-            {getSaludo()} {userName && `${userName} `}{userEmoji}
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Acá tienes un resumen<br />
-            de tu actividad
-          </p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm text-gray-500">Ganado total</p>
-          <p 
-            className="text-2xl font-bold"
-            style={{ color: colors.primary }}
-          >
-            {formatCurrency(totalGanado)}
-          </p>
+          {/* Layout horizontal (Tablet/Desktop sin feature) */}
+          <div className={`${isFeatureVisible ? 'hidden' : 'hidden sm:flex'} items-center justify-between`}>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-800">
+                {getSaludo()} {userName && `${userName} `}{userEmoji}
+              </h1>
+              <p className="text-gray-600 mt-1">
+                Acá tienes un resumen<br />
+                de tu actividad
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-gray-500">Ganado total</p>
+              <p 
+                className="text-2xl font-bold"
+                style={{ color: colors.primary }}
+              >
+                {formatCurrency(totalGanado)}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </Card>

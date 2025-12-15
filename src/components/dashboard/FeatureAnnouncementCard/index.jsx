@@ -6,7 +6,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import { generateColorVariations } from '../../../utils/colorUtils'; // Importamos tu utilidad de colores
 import Button from '../../ui/Button';
 
-const FeatureAnnouncementCard = ({ onClick }) => {
+const FeatureAnnouncementCard = ({ onClick, className }) => {
   const colors = useThemeColors();
   
   // Generamos una paleta rica basada en tu color primario actual
@@ -23,7 +23,7 @@ const FeatureAnnouncementCard = ({ onClick }) => {
 
   return (
     <div 
-      className="relative overflow-hidden rounded-3xl transition-all hover:shadow-lg group cursor-pointer"
+      className={`relative overflow-hidden rounded-3xl transition-all hover:shadow-lg group cursor-pointer ${className}`}
       onClick={onClick}
       style={{
         // AQUÍ ESTÁ LA MAGIA:
@@ -43,7 +43,7 @@ const FeatureAnnouncementCard = ({ onClick }) => {
         style={{ backgroundColor: palette.dark }} 
       />
 
-      <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between gap-6">
+      <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between gap-6 h-full">
         
         {/* Lado Izquierdo: Contenido de texto */}
         <div className="flex-1 space-y-4">

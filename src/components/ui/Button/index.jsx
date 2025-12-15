@@ -1,3 +1,4 @@
+// src/components/ui/Button.jsx
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -8,29 +9,19 @@ const Button = ({
   className = '',
   style = {},
   themeColor,
-  variant = 'primary', // 'primary' | 'ghost' | 'outline'
-  size = 'md',         // 'sm' | 'md' | 'lg'
-  collapsed = false,   // Controla la animación de colapso
+  variant = 'primary',
+  size = 'md',
+  collapsed = false,
   disabled = false,
   loading = false,
+  iconPosition = 'right',
   ...props
 }) => {
   const isGhost = variant === 'ghost';
   const isOutline = variant === 'outline';
   
-  // Mapa de alturas fijas
-  const heightMap = {
-    sm: '32px',
-    md: '44px',
-    lg: '52px'
-  };
-
-  // Mapa de tamaños de fuente (RESTITUIDO)
-  const fontSizeClasses = {
-    sm: 'text-xs',
-    md: 'text-sm',
-    lg: 'text-base'
-  };
+  const heightMap = { sm: '32px', md: '44px', lg: '52px' };
+  const fontSizeClasses = { sm: 'text-xs', md: 'text-sm', lg: 'text-base' };
   
   const currentHeight = heightMap[size] || heightMap.md;
   const currentFontSize = fontSizeClasses[size] || fontSizeClasses.md;
@@ -43,10 +34,23 @@ const Button = ({
     color: (isGhost || isOutline) ? mainColor : 'white',
     border: isOutline ? `1px solid ${mainColor}` : 'none',
     minWidth: collapsed ? currentHeight : 'auto',
-    // Ajustamos padding para cuando es pequeño
     padding: collapsed ? 0 : (size === 'sm' ? '0 0.75rem' : '0 1rem'),
     borderRadius: collapsed ? '9999px' : '12px',
   };
+
+  // Lógica para renderizar el ícono o el spinner
+  const renderIcon = () => (
+    <motion.div layout className="flex items-center justify-center">
+      {loading ? (
+        <svg className="animate-spin" width={size === 'sm' ? 14 : 20} height={size === 'sm' ? 14 : 20} viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+        </svg>
+      ) : (
+        <Icon size={size === 'sm' ? 16 : 20} strokeWidth={2.5} />
+      )}
+    </motion.div>
+  );
 
   return (
     <motion.button
@@ -54,56 +58,41 @@ const Button = ({
       onClick={onClick}
       disabled={disabled || loading}
       initial={false}
-      // Agregamos currentFontSize aquí para asegurar que se aplique la clase de texto
       className={`relative flex items-center justify-center overflow-hidden transition-all 
         ${currentFontSize} font-medium
         ${isGhost ? 'hover:bg-gray-100/10' : 'shadow-sm hover:shadow-md'} 
         ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
         ${className}`}
       style={dynamicStyles}
-      transition={{
-        layout: { duration: 0.4, type: "spring", bounce: 0, stiffness: 300, damping: 30 }
-      }}
+      transition={{ layout: { duration: 0.4, type: "spring", bounce: 0, stiffness: 300, damping: 30 } }}
       {...props}
     >
       <motion.div 
         layout 
         className="flex items-center justify-center"
-        // Redujimos el gap para el tamaño small
+        // Invertimos el orden visual usando flex-row-reverse si es necesario, o simplemente condicionales abajo
         style={{ gap: collapsed ? 0 : (size === 'sm' ? '0.25rem' : '0.5rem') }}
       >
+        {/* Renderizar ícono A LA IZQUIERDA si corresponde */}
+        {iconPosition === 'left' && (loading || Icon) && renderIcon()}
+
         <AnimatePresence mode="popLayout" initial={false}>
           {!collapsed && children && (
             <motion.span
               layout="position"
-              // Animación ajustada: entra desde la izquierda, SALE hacia la derecha (x: 10)
               initial={{ opacity: 0, width: 0, x: -10 }}
               animate={{ opacity: 1, width: "auto", x: 0 }}
               exit={{ opacity: 0, width: 0, x: 10 }} 
-              transition={{
-                opacity: { duration: 0.2 },
-                width: { duration: 0.3 }
-              }}
-              className="whitespace-nowrap"
+              transition={{ opacity: { duration: 0.2 }, width: { duration: 0.3 } }}
+              className="whitespace-nowrap flex items-center"
             >
               {children}
             </motion.span>
           )}
         </AnimatePresence>
 
-        {(loading || Icon) && (
-          <motion.div layout className="flex items-center justify-center">
-            {loading ? (
-              <svg className="animate-spin" width={size === 'sm' ? 14 : 20} height={size === 'sm' ? 14 : 20} viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-              </svg>
-            ) : (
-              // Icono ligeramente más pequeño para size="sm"
-              <Icon size={size === 'sm' ? 16 : 20} strokeWidth={2.5} />
-            )}
-          </motion.div>
-        )}
+        {/* Renderizar ícono A LA DERECHA (default) si corresponde */}
+        {iconPosition === 'right' && (loading || Icon) && renderIcon()}
       </motion.div>
     </motion.button>
   );

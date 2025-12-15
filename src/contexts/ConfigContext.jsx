@@ -18,6 +18,7 @@ export const ConfigProvider = ({ children }) => {
   const [primaryColor, setPrimaryColor] = useState('#EC4899');
   const [userEmoji, setUserEmoji] = useState('😊');
   const [defaultDiscount, setDefaultDiscount] = useState(15);
+  const [impuestosPorTrabajo, setImpuestosPorTrabajo] = useState({});
   const [weeklyHoursGoal, setWeeklyHoursGoal] = useState(null);
   const [deliveryEnabled, setDeliveryEnabled] = useState(false);
   const [smokoEnabled, setSmokoEnabled] = useState(false);
@@ -41,6 +42,7 @@ export const ConfigProvider = ({ children }) => {
             setPrimaryColor(settings.colorPrincipal);
             setUserEmoji(settings.emojiUsuario);
             setDefaultDiscount(settings.descuentoDefault);
+            setImpuestosPorTrabajo(settings.impuestosPorTrabajo || {});
             setWeeklyHoursGoal(settings.metaHorasSemanales);
             setDeliveryEnabled(settings.deliveryEnabled);
             setSmokoEnabled(settings.smokoEnabled || false);
@@ -73,6 +75,7 @@ export const ConfigProvider = ({ children }) => {
       if (preferences.colorPrincipal !== undefined) setPrimaryColor(preferences.colorPrincipal);
       if (preferences.emojiUsuario !== undefined) setUserEmoji(preferences.emojiUsuario);
       if (preferences.descuentoDefault !== undefined) setDefaultDiscount(preferences.descuentoDefault);
+      if (preferences.impuestosPorTrabajo !== undefined) setImpuestosPorTrabajo(preferences.impuestosPorTrabajo);
       if (preferences.rangosTurnos !== undefined) setShiftRanges(preferences.rangosTurnos);
       if (preferences.deliveryEnabled !== undefined) setDeliveryEnabled(preferences.deliveryEnabled);
       if (preferences.metaHorasSemanales !== undefined) setWeeklyHoursGoal(preferences.metaHorasSemanales);
@@ -94,6 +97,7 @@ export const ConfigProvider = ({ children }) => {
     primaryColor,
     userEmoji,
     defaultDiscount,
+    impuestosPorTrabajo,
     weeklyHoursGoal,
     deliveryEnabled,
     smokoEnabled,
