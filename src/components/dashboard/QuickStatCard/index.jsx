@@ -1,23 +1,127 @@
-// src/components/dashboard/QuickStatCard/index.jsx
-import React from 'react';
-import Card from '../../ui/Card';
-import { useApp } from '../../../contexts/AppContext';
+import React, { useState } from 'react';
+import { ArrowLeft, ChevronDown, Store, Bike } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import Card from '../../ui/Card'; // Ajusta la ruta según tu estructura
 
-const QuickStatCard = ({ icon: Icon, label, value, subtitle }) => {
-  const { thematicColors } = useApp();
-  
+const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, type }) => {
+  const [showDetails, setShowDetails] = useState(false);
+
+  const variants = {
+    initial: { opacity: 0, scale: 0.9, filter: 'blur(4px)' },
+    animate: { opacity: 1, scale: 1, filter: 'blur(0px)' },
+    exit: { opacity: 0, scale: 1.1, filter: 'blur(4px)' }
+  };
+
   return (
-    <Card className="p-4 text-center h-full">
-      <div className="flex flex-col h-full">
-        <div className="my-auto">
-          <div className="flex flex-col items-center">
-            <Icon size={20} className="mb-2" style={{ color: thematicColors?.base }} />
-            <span className="text-sm text-gray-600 font-medium mb-1">{label}</span>
-            <p className="text-2xl font-bold text-gray-800 mb-1">{value}</p>
-            <p className="text-xs text-gray-500">{subtitle}</p>
-          </div>
-        </div>
-      </div>
+    <Card 
+      // CLAVE: 'h-full' para llenar la celda del grid. 
+      // 'min-h-[160px]' mantiene la altura base que te gustaba.
+      className="p-0 h-full min-h-[160px] relative overflow-hidden cursor-pointer group hover:shadow-lg transition-all duration-300 border-b-4 select-none"
+      style={{ borderBottomColor: showDetails ? 'transparent' : color }}
+      onClick={() => setShowDetails(!showDetails)}
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {!showDetails ? (
+          // --- VISTA PRINCIPAL ---
+          <motion.div
+            key="summary"
+            variants={variants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.2 }}
+            // Padding reducido en móvil (p-2) vs escritorio (p-4)
+            className="absolute inset-0 flex flex-col items-center justify-center p-2 md:p-4 text-center"
+          >
+            {/* flex-grow asegura que el contenido se centre verticalmente aunque la tarjeta sea muy alta */}
+            <div className="flex-grow flex flex-col items-center justify-center w-full">
+              {/* Círculo del icono responsive */}
+              <div className="p-2 md:p-3 rounded-full bg-gray-50 group-hover:bg-gray-100 transition-colors mb-1 md:mb-2">
+                <Icon className="w-5 h-5 md:w-6 md:h-6 transition-transform group-hover:scale-110 duration-300" style={{ color: color }} />
+              </div>
+              
+              <div className="flex flex-col items-center">
+                <span className="text-xs md:text-sm text-gray-500 font-medium block">{label}</span>
+                {/* Texto más pequeño en móvil (xl) para que no rompa, grande en desktop (3xl) */}
+                <p className="text-xl md:text-3xl font-black text-gray-800 tracking-tight leading-tight my-0.5 md:my-0">
+                  {value}
+                </p>
+                <p className="text-[10px] md:text-xs text-gray-400 font-medium uppercase tracking-wide">
+                  {subtitle}
+                </p>
+              </div>
+            </div>
+
+            {/* "Ver más" pegado al fondo */}
+            <div className="mt-auto pt-1 flex flex-col items-center opacity-60 group-hover:opacity-100 transition-opacity">
+               <span className="text-[9px] md:text-[10px] text-gray-400 font-medium mb-0.5">Ver más</span>
+               <ChevronDown size={12} className="text-gray-400 animate-bounce md:w-[14px] md:h-[14px]" />
+            </div>
+          </motion.div>
+        ) : (
+          // --- VISTA DETALLADA ---
+          <motion.div
+            key="details"
+            variants={variants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.2 }}
+            className="absolute inset-0 bg-gray-50 flex flex-col p-2 md:p-4 text-center"
+          >
+            <div className="flex items-center justify-between mb-2 pb-1 md:pb-2 border-b border-gray-200/50 shrink-0">
+              <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider w-full text-center pl-4">Detalles</span>
+              <ArrowLeft size={14} className="text-gray-400 absolute left-2 md:left-4 cursor-pointer hover:text-gray-600 md:w-[16px] md:h-[16px]" />
+            </div>
+
+            {/* Contenedor scrollable por si el contenido excede la altura */}
+            <div className="flex-grow flex flex-col justify-center items-center gap-2 w-full overflow-y-auto no-scrollbar">
+              {type === 'jobs' ? (
+                <>
+                  <div className="w-full flex items-center justify-between bg-white p-1.5 md:p-2 rounded-lg shadow-sm border border-gray-100">
+                    <div className="flex items-center gap-1.5 md:gap-2">
+                      <Store className="w-3 h-3 md:w-[14px] md:h-[14px] text-blue-500" />
+                      <span className="text-[10px] md:text-xs text-gray-600 font-medium">Tradicionales</span>
+                    </div>
+                    <span className="text-xs md:text-sm font-bold text-gray-800">{details.traditional}</span>
+                  </div>
+                  <div className="w-full bg-white p-1.5 md:p-2 rounded-lg shadow-sm border border-gray-100">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-1.5 md:gap-2">
+                        <Bike className="w-3 h-3 md:w-[14px] md:h-[14px] text-orange-500" />
+                        <span className="text-[10px] md:text-xs text-gray-600 font-medium">Delivery</span>
+                      </div>
+                      <span className="text-xs md:text-sm font-bold text-gray-800">{details.delivery}</span>
+                    </div>
+                    {details.platforms.length > 0 && (
+                      <div className="flex flex-wrap gap-1 justify-center mt-1 pt-1 border-t border-gray-50">
+                        {details.platforms.slice(0, 3).map((p, i) => (
+                          <span key={i} className="text-[9px] md:text-[10px] bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded-full border border-orange-100 max-w-[70px] truncate">
+                            {p}
+                          </span>
+                        ))}
+                         {details.platforms.length > 3 && (
+                           <span className="text-[9px] text-gray-400">+{details.platforms.length - 3}</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                details.map((item, idx) => (
+                  <div key={idx} className="w-full flex items-center justify-between bg-white p-1.5 md:p-2.5 rounded-lg shadow-sm border border-gray-100">
+                    <div className="flex items-center gap-1.5 md:gap-2">
+                      {item.icon && <item.icon className="w-3 h-3 md:w-[14px] md:h-[14px]" style={{ color: item.iconColor || '#9ca3af' }} />}
+                      <span className="text-[10px] md:text-xs text-gray-600 font-medium truncate max-w-[80px] md:max-w-none text-left">{item.label}</span>
+                    </div>
+                    <span className="text-xs md:text-sm font-bold text-gray-800 whitespace-nowrap">{item.value}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   );
 };
