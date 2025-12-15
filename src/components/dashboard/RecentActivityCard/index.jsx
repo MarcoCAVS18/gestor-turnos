@@ -1,23 +1,23 @@
 // src/components/dashboard/RecentActivityCard/index.jsx
 
 import React, ***REMOVED*** useMemo ***REMOVED*** from 'react';
-import ***REMOVED*** Activity, Briefcase, ChevronRight ***REMOVED*** from 'lucide-react'; // Cambiamos ArrowRight por ChevronRight
+import ***REMOVED*** Activity, Briefcase, ChevronRight ***REMOVED*** from 'lucide-react'; 
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
-import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile'; // Importamos el hook
+import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile'; 
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../utils/time';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
-import Button from '../../ui/Button'; // Importamos el componente Button
+import Button from '../../ui/Button'; 
 
 const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurnos ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const navigate = useNavigate();
-  const isMobile = useIsMobile(); // Hook para detectar móvil
+  const isMobile = useIsMobile(); 
 
   // Definir límite de forma reactiva (mucho más limpio que el useEffect anterior)
-  const limite = isMobile ? 2 : 5;
+  const limite = isMobile ? 2 : 6;
 
   // Obtener turnos recientes
   const turnosRecientes = useMemo(() => ***REMOVED***
@@ -109,7 +109,6 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
 
   return (
     <Card className="h-full flex flex-col">
-      ***REMOVED***/* Header con botón animado "Ver todos" */***REMOVED***
       <Flex variant="between" className="mb-4 flex-nowrap gap-3">
         <h3 className="text-base font-semibold flex items-center text-gray-800 truncate">
           <Activity size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2 flex-shrink-0" />
@@ -117,13 +116,15 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
         </h3>
         
         <Button
-          onClick=***REMOVED***() => navigate('/turnos')***REMOVED***
+          onClick=***REMOVED***() => navigate('/estadisticas')***REMOVED***
           size="sm"
-          variant="ghost"
-          collapsed=***REMOVED***isMobile***REMOVED*** // Se colapsa en móvil igual que FavoriteWorks
-          className="flex-shrink-0 flex items-center whitespace-nowrap"
+          variant="ghost" 
+          animatedChevron 
+          collapsed=***REMOVED***isMobile***REMOVED***
+          className="flex-shrink-0 whitespace-nowrap text-gray-400 hover:text-gray-600"
           themeColor=***REMOVED***colors.primary***REMOVED***
           icon=***REMOVED***ChevronRight***REMOVED***
+          iconPosition="right"
         >
           Ver todos
         </Button>

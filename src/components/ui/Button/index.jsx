@@ -15,10 +15,15 @@ const Button = (***REMOVED***
   disabled = false,
   loading = false,
   iconPosition = 'right',
+  animatedChevron = false, // Prop para forzar animación
   ...props
 ***REMOVED***) => ***REMOVED***
-  const isGhost = variant === 'ghost';
+  // Tratamos 'ghost-animated' igual que 'ghost' para estilos base
+  const isGhost = variant === 'ghost' || variant === 'ghost-animated';
   const isOutline = variant === 'outline';
+  
+  // Activar animación si es la variante específica o si se pasa la prop explícita
+  const shouldAnimateIcon = animatedChevron || variant === 'ghost-animated';
   
   const heightMap = ***REMOVED*** sm: '32px', md: '44px', lg: '52px' ***REMOVED***;
   const fontSizeClasses = ***REMOVED*** sm: 'text-xs', md: 'text-sm', lg: 'text-base' ***REMOVED***;
@@ -38,9 +43,19 @@ const Button = (***REMOVED***
     borderRadius: collapsed ? '9999px' : '12px',
   ***REMOVED***;
 
-  // Lógica para renderizar el ícono o el spinner
   const renderIcon = () => (
-    <motion.div layout className="flex items-center justify-center">
+    <motion.div 
+      layout 
+      className="flex items-center justify-center"
+      // Aplicamos la animación de rebote si corresponde y no está cargando
+      animate=***REMOVED***shouldAnimateIcon && !loading ? ***REMOVED*** x: [0, 3, 0] ***REMOVED*** : ***REMOVED******REMOVED******REMOVED***
+      transition=***REMOVED***shouldAnimateIcon && !loading ? ***REMOVED*** 
+        duration: 1.5, 
+        repeat: Infinity, 
+        ease: "easeInOut",
+        repeatDelay: 0.5 
+      ***REMOVED*** : ***REMOVED******REMOVED******REMOVED***
+    >
       ***REMOVED***loading ? (
         <svg className="animate-spin" width=***REMOVED***size === 'sm' ? 14 : 20***REMOVED*** height=***REMOVED***size === 'sm' ? 14 : 20***REMOVED*** viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
@@ -70,10 +85,8 @@ const Button = (***REMOVED***
       <motion.div 
         layout 
         className="flex items-center justify-center"
-        // Invertimos el orden visual usando flex-row-reverse si es necesario, o simplemente condicionales abajo
         style=***REMOVED******REMOVED*** gap: collapsed ? 0 : (size === 'sm' ? '0.25rem' : '0.5rem') ***REMOVED******REMOVED***
       >
-        ***REMOVED***/* Renderizar ícono A LA IZQUIERDA si corresponde */***REMOVED***
         ***REMOVED***iconPosition === 'left' && (loading || Icon) && renderIcon()***REMOVED***
 
         <AnimatePresence mode="popLayout" initial=***REMOVED***false***REMOVED***>
@@ -91,7 +104,6 @@ const Button = (***REMOVED***
           )***REMOVED***
         </AnimatePresence>
 
-        ***REMOVED***/* Renderizar ícono A LA DERECHA (default) si corresponde */***REMOVED***
         ***REMOVED***iconPosition === 'right' && (loading || Icon) && renderIcon()***REMOVED***
       </motion.div>
     </motion.button>
