@@ -24,7 +24,7 @@ export const DELIVERY_PLATFORMS_AUSTRALIA = [
   {
     id: 'pedidos_ya',
     nombre: 'Pedidos Ya',
-    color: '#000000'
+    color: '#af2d2dff'
   },
   {
     id: 'didi',
