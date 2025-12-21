@@ -16,7 +16,7 @@ const BaseStatsCard = (***REMOVED***
   className = ''
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
-  const primaryColor = colors ? colors.primary : '#000000';
+  const primaryColor = colors ? colors.primary : '#121212';
 
   return (
     <Card className=***REMOVED***`flex flex-col $***REMOVED***className***REMOVED***`***REMOVED***>

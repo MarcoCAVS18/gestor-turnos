@@ -7,7 +7,7 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
-const ProfileSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
+const ProfileSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser, updateUserName ***REMOVED*** = useAuth();
   const colors = useThemeColors();
   const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
@@ -28,7 +28,7 @@ const ProfileSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***RE
   ***REMOVED***;
 
   return (
-    <SettingsSection icon=***REMOVED***User***REMOVED*** title="Perfil">
+    <SettingsSection icon=***REMOVED***User***REMOVED*** title="Perfil" className=***REMOVED***className***REMOVED***>
       <div className="space-y-4">
         ***REMOVED***/* Email y Nombre en la misma línea en desktop */***REMOVED***
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

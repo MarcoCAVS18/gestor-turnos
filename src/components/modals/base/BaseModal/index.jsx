@@ -20,8 +20,10 @@ const BaseModal = (***REMOVED***
   showActions = false,
   onCancel,
   saveText = 'Guardar',
+  saveLoadingText,
   cancelText = 'Cancelar',
   formId,
+  isSaveDisabled = false, // Nueva prop
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const isMobile = useIsMobile();
@@ -40,6 +42,21 @@ const BaseModal = (***REMOVED***
   ***REMOVED***, [isOpen]);
 
   if (!isOpen) return null;
+
+  // Generar texto de carga por defecto
+  const generateLoadingText = (text) => ***REMOVED***
+    if (text.endsWith('ar')) ***REMOVED***
+      return text.slice(0, -2) + 'ando...';
+    ***REMOVED***
+    if (text.endsWith('er') || text.endsWith('ir')) ***REMOVED***
+      return text.slice(0, -2) + 'iendo...';
+    ***REMOVED***
+    // Casos especiales
+    if (text.toLowerCase().includes('crear')) return 'Creando...';
+    return `$***REMOVED***text***REMOVED***...`;
+  ***REMOVED***;
+
+  const finalSaveLoadingText = saveLoadingText || generateLoadingText(saveText);
 
   // Configurar tamaño máximo según prop
   const maxWidthClasses = ***REMOVED***
@@ -158,6 +175,8 @@ const BaseModal = (***REMOVED***
                 type="submit"
                 form=***REMOVED***formId***REMOVED***
                 loading=***REMOVED***loading***REMOVED***
+                loadingText=***REMOVED***finalSaveLoadingText***REMOVED***
+                disabled=***REMOVED***loading || isSaveDisabled***REMOVED*** // Usar la nueva prop
                 isMobile=***REMOVED***isMobile***REMOVED***
                 className=***REMOVED***isMobile ? '' : 'flex-none'***REMOVED***
               >

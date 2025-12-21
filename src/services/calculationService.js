@@ -66,6 +66,9 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
 
   const ***REMOVED*** horaInicio, horaFin, fechaInicio, cruzaMedianoche = false, tuvoDescanso = true ***REMOVED*** = shift;
 
+  // Prioriza el descanso específico del turno, si no, usa el global.
+  const finalSmokoMinutes = shift.descansoMinutos ?? smokoMinutes;
+
   if (!horaInicio || !horaFin || !fechaInicio) ***REMOVED***
     return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false, appliedRates: ***REMOVED******REMOVED*** ***REMOVED***;
   ***REMOVED***
@@ -84,8 +87,8 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
 
   const totalMinutes = endMinutes - startMinutes;
   let workingMinutes = totalMinutes;
-  if (smokoEnabled && tuvoDescanso && totalMinutes > smokoMinutes) ***REMOVED***
-    workingMinutes = totalMinutes - smokoMinutes;
+  if (smokoEnabled && tuvoDescanso && totalMinutes > finalSmokoMinutes) ***REMOVED***
+    workingMinutes = totalMinutes - finalSmokoMinutes;
   ***REMOVED***
 
   const hours = workingMinutes / 60;
@@ -163,8 +166,8 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     hoursBreakdown,
     appliedRates,
     isNightShift: cruzaMedianoche || false,
-    smokoApplied: smokoEnabled && tuvoDescanso && totalMinutes > smokoMinutes,
-    smokoMinutes: smokoEnabled && tuvoDescanso ? smokoMinutes : 0,
+    smokoApplied: smokoEnabled && tuvoDescanso && totalMinutes > finalSmokoMinutes,
+    smokoMinutes: smokoEnabled && tuvoDescanso ? finalSmokoMinutes : 0,
     totalMinutesWorked: workingMinutes,
     totalMinutesScheduled: totalMinutes
   ***REMOVED***;

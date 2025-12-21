@@ -53,7 +53,7 @@ const ForgotPassword = () => ***REMOVED***
   ***REMOVED***;
 
   return (
-    <div className="fixed inset-0 overflow-hidden">
+    <div className="fixed inset-0">
       ***REMOVED***/* Video de fondo */***REMOVED***
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
@@ -70,7 +70,7 @@ const ForgotPassword = () => ***REMOVED***
       </div>
       
       ***REMOVED***/* Contenido de recuperación */***REMOVED***
-      <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4">
+      <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-12 overflow-y-auto">
         <Logo />
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">
           <h1 className="text-2xl font-bold text-center mb-2">Recuperar contraseña</h1>

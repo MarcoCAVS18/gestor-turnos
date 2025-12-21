@@ -12,12 +12,13 @@ const TurnoDeliveryForm = (***REMOVED***
   trabajos = [],
   onSubmit,
   onTrabajoChange,
+  onDirtyChange,
   isMobile = false,
   fechaInicial
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
 
-  // Estados del formulario
+  const [initialFormData, setInitialFormData] = useState(null);
   const [formData, setFormData] = useState(***REMOVED***
     trabajoId: trabajoId || '',
     fechaInicio: '',
@@ -33,7 +34,27 @@ const TurnoDeliveryForm = (***REMOVED***
 
   const [errors, setErrors] = useState(***REMOVED******REMOVED***);
 
-  // Función para determinar si el vehículo necesita combustible
+  useEffect(() => ***REMOVED***
+    if (!initialFormData || !onDirtyChange) return;
+
+    if (turno) ***REMOVED***
+      const isDirty =
+        formData.trabajoId !== initialFormData.trabajoId ||
+        formData.fechaInicio !== initialFormData.fechaInicio ||
+        formData.horaInicio !== initialFormData.horaInicio ||
+        formData.horaFin !== initialFormData.horaFin ||
+        String(formData.gananciaBase) !== String(initialFormData.gananciaBase) ||
+        String(formData.propinas) !== String(initialFormData.propinas) ||
+        String(formData.numeroPedidos) !== String(initialFormData.numeroPedidos) ||
+        String(formData.kilometros) !== String(initialFormData.kilometros) ||
+        String(formData.gastoCombustible) !== String(initialFormData.gastoCombustible) ||
+        formData.observaciones !== initialFormData.observaciones;
+      onDirtyChange(isDirty);
+    ***REMOVED*** else ***REMOVED***
+      onDirtyChange(true);
+    ***REMOVED***
+  ***REMOVED***, [formData, initialFormData, onDirtyChange, turno]);
+
   const vehiculoNecesitaCombustible = useCallback((vehiculo) => ***REMOVED***
     if (!vehiculo) return false;
     const vehiculoLower = vehiculo.toLowerCase();
@@ -43,14 +64,13 @@ const TurnoDeliveryForm = (***REMOVED***
            vehiculoLower.includes('coche');
   ***REMOVED***, []);
 
-  // Obtener el trabajo seleccionado y verificar si necesita combustible
   const trabajoSeleccionado = trabajos.find(t => t.id === formData.trabajoId);
   const mostrarCombustible = trabajoSeleccionado ? vehiculoNecesitaCombustible(trabajoSeleccionado.vehiculo) : true;
 
-  // Inicializar formulario
   useEffect(() => ***REMOVED***
+    let initialData;
     if (turno) ***REMOVED***
-      setFormData(***REMOVED***
+      initialData = ***REMOVED***
         trabajoId: turno.trabajoId || '',
         fechaInicio: turno.fechaInicio || turno.fecha || '',
         horaInicio: turno.horaInicio || '',
@@ -61,16 +81,28 @@ const TurnoDeliveryForm = (***REMOVED***
         kilometros: turno.kilometros?.toString() || '',
         gastoCombustible: turno.gastoCombustible?.toString() || '',
         observaciones: turno.observaciones || ''
-      ***REMOVED***);
-    ***REMOVED*** else if (fechaInicial) ***REMOVED***
+      ***REMOVED***;
+    ***REMOVED*** else ***REMOVED***
       const fechaStr = fechaInicial instanceof Date 
         ? fechaInicial.toISOString().split('T')[0] 
         : fechaInicial;
-      setFormData(prev => (***REMOVED*** ...prev, fechaInicio: fechaStr ***REMOVED***));
+      initialData = ***REMOVED***
+        trabajoId: trabajoId || '',
+        fechaInicio: fechaStr,
+        horaInicio: '',
+        horaFin: '',
+        gananciaBase: '',
+        propinas: '',
+        numeroPedidos: '',
+        kilometros: '',
+        gastoCombustible: '',
+        observaciones: ''
+      ***REMOVED***;
     ***REMOVED***
-  ***REMOVED***, [turno, fechaInicial]);
+    setFormData(initialData);
+    setInitialFormData(initialData);
+  ***REMOVED***, [turno, trabajoId, fechaInicial]);
 
-  // Limpiar gastos de combustible cuando se selecciona un vehículo que no lo necesita
   useEffect(() => ***REMOVED***
     if (!mostrarCombustible && formData.gastoCombustible) ***REMOVED***
       setFormData(prev => (***REMOVED*** ...prev, gastoCombustible: '' ***REMOVED***));
@@ -103,7 +135,6 @@ const TurnoDeliveryForm = (***REMOVED***
   const handleSubmit = (e) => ***REMOVED***
     e.preventDefault();
     if (validarFormulario()) ***REMOVED***
-      // Convertir strings a números y asegurar que combustible sea 0 si no aplica
       const dataToSubmit = ***REMOVED***
         ...formData,
         gananciaBase: parseFloat(formData.gananciaBase) || 0,
@@ -122,13 +153,11 @@ const TurnoDeliveryForm = (***REMOVED***
       setErrors(prev => (***REMOVED*** ...prev, [field]: undefined ***REMOVED***));
     ***REMOVED***
 
-    // Notificar cambio de trabajo al componente padre
     if (field === 'trabajoId') ***REMOVED***
       onTrabajoChange?.(value);
     ***REMOVED***
   ***REMOVED***, [errors, onTrabajoChange]);
 
-  // Filtrar y agrupar trabajos para el selector
   const trabajosTradicionales = trabajos.filter(t => t.tipo !== 'delivery');
   const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
 
@@ -138,7 +167,6 @@ const TurnoDeliveryForm = (***REMOVED***
       onSubmit=***REMOVED***handleSubmit***REMOVED***
       isMobile=***REMOVED***isMobile***REMOVED***
     >
-      ***REMOVED***/* Selección de trabajo (unificada) */***REMOVED***
       <FormSection>
         <FormLabel icon=***REMOVED***Truck***REMOVED***>Trabajo</FormLabel>
         <select
@@ -173,7 +201,6 @@ const TurnoDeliveryForm = (***REMOVED***
         <FormError error=***REMOVED***errors.trabajoId***REMOVED*** />
       </FormSection>
 
-      ***REMOVED***/* Fecha de trabajo */***REMOVED***
       <FormSection>
         <FormLabel icon=***REMOVED***Calendar***REMOVED***>Fecha del turno</FormLabel>
         <input
@@ -187,7 +214,6 @@ const TurnoDeliveryForm = (***REMOVED***
         <FormError error=***REMOVED***errors.fechaInicio***REMOVED*** />
       </FormSection>
 
-      ***REMOVED***/* CONTENEDOR DE HORAS RESPONSIVO */***REMOVED***
       <FormGrid columns=***REMOVED***2***REMOVED***>
         <FormField>
           <FormLabel icon=***REMOVED***Clock***REMOVED***>Hora de inicio</FormLabel>
@@ -216,7 +242,6 @@ const TurnoDeliveryForm = (***REMOVED***
         </FormField>
       </FormGrid>
 
-      ***REMOVED***/* GANANCIAS RESPONSIVAS */***REMOVED***
       <FormGrid columns=***REMOVED***2***REMOVED***>
         <FormField>
           <FormLabel icon=***REMOVED***DollarSign***REMOVED***>Ganancia (sin propinas)</FormLabel>
@@ -247,7 +272,6 @@ const TurnoDeliveryForm = (***REMOVED***
         </FormField>
       </FormGrid>
 
-      ***REMOVED***/* DATOS ADICIONALES RESPONSIVOS */***REMOVED***
       <FormGrid columns=***REMOVED***2***REMOVED***>
         <FormField>
           <FormLabel icon=***REMOVED***Package***REMOVED***>Número de pedidos</FormLabel>
@@ -277,7 +301,6 @@ const TurnoDeliveryForm = (***REMOVED***
         </FormField>
       </FormGrid>
 
-      ***REMOVED***/* Gastos de combustible - SOLO SI EL VEHÍCULO LO REQUIERE */***REMOVED***
       ***REMOVED***mostrarCombustible && (
         <FormSection>
           <FormLabel icon=***REMOVED***Fuel***REMOVED***>Gastos de combustible</FormLabel>
@@ -294,7 +317,6 @@ const TurnoDeliveryForm = (***REMOVED***
         </FormSection>
       )***REMOVED***
 
-      ***REMOVED***/* Observaciones */***REMOVED***
       <FormSection>
         <FormLabel>Notas (opcional)</FormLabel>
         <textarea

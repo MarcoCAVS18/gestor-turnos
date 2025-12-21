@@ -47,7 +47,7 @@ const TarjetaTrabajoDelivery = (props) => ***REMOVED***
 
         ***REMOVED***/* Información sobre ganancias variables */***REMOVED***
         <div className="mt-3 pt-3 border-t border-gray-100">
-          <Flex variant="center" className="text-sm text-gray-500 italic">
+          <Flex variant="center" className="text-xs text-gray-500 italic">
             <Package size=***REMOVED***14***REMOVED*** className="text-gray-400 mr-2" />
             <span>Ganancias variables por pedido</span>
           </Flex>
