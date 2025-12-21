@@ -8,7 +8,7 @@ import SettingsSection from '../SettingsSection';
 
 import Flex from '../../ui/Flex';
 
-const GoalsSection = () => ***REMOVED***
+const GoalsSection = (***REMOVED*** className ***REMOVED***) => ***REMOVED***
   // Usar el nombre correcto de la variable y función del contexto
   const ***REMOVED*** weeklyHoursGoal, updateWeeklyHoursGoal ***REMOVED*** = useApp();
   const colors = useThemeColors();
@@ -43,7 +43,7 @@ const GoalsSection = () => ***REMOVED***
   ***REMOVED***;
 
   return (
-    <SettingsSection icon=***REMOVED***Target***REMOVED*** title="Metas Semanales">
+    <SettingsSection icon=***REMOVED***Target***REMOVED*** title="Metas Semanales" className=***REMOVED***className***REMOVED***>
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">

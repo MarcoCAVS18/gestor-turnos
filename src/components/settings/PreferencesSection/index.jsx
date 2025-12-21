@@ -10,7 +10,7 @@ import Button from '../../ui/Button';
 import Popover from '../../ui/Popover';
 import WorkAvatar from '../../work/WorkAvatar';
 
-const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
+const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
     defaultDiscount,
     impuestosPorTrabajo, // viene del context
@@ -81,7 +81,7 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => *
   );
 
   return (
-    <SettingsSection icon=***REMOVED***Receipt***REMOVED*** title="Configuración de Pagos e Impuestos">
+    <SettingsSection icon=***REMOVED***Receipt***REMOVED*** title="Configuración de Pagos e Impuestos" className=***REMOVED***className***REMOVED***>
       <div className="space-y-5">
 
         <div>

@@ -4,7 +4,7 @@ export const DELIVERY_PLATFORMS_AUSTRALIA = [
   ***REMOVED***
     id: 'uber_eats',
     nombre: 'Uber Eats',
-    color: '#000000'
+    color: '#121212'
   ***REMOVED***,
   ***REMOVED***
     id: 'menulog',

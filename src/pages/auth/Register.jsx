@@ -150,7 +150,7 @@ const Register = () => ***REMOVED***
   ***REMOVED***;
 
   return (
-    <div className="fixed inset-0 overflow-hidden">
+    <div className="fixed inset-0">
       ***REMOVED***/* Video de fondo */***REMOVED***
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
@@ -167,7 +167,7 @@ const Register = () => ***REMOVED***
       </div>
       
       ***REMOVED***/* Contenido del registro */***REMOVED***
-      <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4">
+      <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-12 overflow-y-auto">
         <Logo />
         <div className="text-center text-white mb-4">
           <h1 className="text-4xl font-bold mb-2">GestAPP</h1>
@@ -328,6 +328,8 @@ const Register = () => ***REMOVED***
             className="w-full mb-4"
             icon=***REMOVED***GoogleIcon***REMOVED***
             iconPosition="left"
+            bgColor="#121212"
+            textColor="white"
           >
             Registrarse con Google
           </Button>

@@ -22,15 +22,14 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
   const [trabajoSeleccionadoId, setTrabajoSeleccionadoId] = useState(trabajoId || '');
   const [formularioTipo, setFormularioTipo] = useState('tradicional');
   const [loading, setLoading] = useState(false);
+  const [isFormDirty, setIsFormDirty] = useState(false);
   const isMobile = useIsMobile();
   const formId = useId();
 
-  // Combinar todos los trabajos para el selector
   const todosLosTrabajos = useMemo(() => ***REMOVED***
     return [...trabajos, ...trabajosDelivery];
   ***REMOVED***, [trabajos, trabajosDelivery]);
 
-  // Determinar el tipo de formulario basado en el trabajo
   useEffect(() => ***REMOVED***
     if (turno?.tipo === 'delivery') ***REMOVED***
       setFormularioTipo('delivery');
@@ -55,12 +54,12 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
     ***REMOVED***
   ***REMOVED***, [trabajoSeleccionadoId, todosLosTrabajos, turno, formularioTipo]);
 
-  // Reset cuando se abre/cierra el modal
   useEffect(() => ***REMOVED***
     if (!isOpen) ***REMOVED***
       setTrabajoSeleccionadoId('');
       setFormularioTipo('tradicional');
       setLoading(false);
+      setIsFormDirty(false);
     ***REMOVED*** else if (turno) ***REMOVED***
       setTrabajoSeleccionadoId(turno.trabajoId || '');
     ***REMOVED*** else if (trabajoId) ***REMOVED***
@@ -72,7 +71,6 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
     try ***REMOVED***
       setLoading(true);
 
-      // Si fechaInicial está disponible y no hay turno (es nuevo), usar fechaInicial
       let datosFinales = ***REMOVED*** ...datosTurno ***REMOVED***;
 
       if (fechaInicial && !turno) ***REMOVED***
@@ -121,16 +119,15 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
     setTrabajoSeleccionadoId('');
     setFormularioTipo('tradicional');
     setLoading(false);
+    setIsFormDirty(false);
     onClose();
   ***REMOVED***;
 
   if (!isOpen) return null;
 
-  // Construir título
   const titulo = turno ? 'Editar Turno' : 'Nuevo Turno';
   const subtitulo = formularioTipo === 'delivery' ? '• Delivery' : null;
 
-  // Formatear fecha inicial si existe
   let fechaSubtitle = null;
   if (fechaInicial && !turno) ***REMOVED***
     fechaSubtitle = fechaInicial instanceof Date
@@ -161,6 +158,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
       onCancel=***REMOVED***manejarCerrar***REMOVED***
       formId=***REMOVED***formId***REMOVED***
       saveText=***REMOVED***turno ? 'Guardar Cambios' : 'Crear Turno'***REMOVED***
+      isSaveDisabled=***REMOVED***turno ? !isFormDirty : false***REMOVED***
     >
       ***REMOVED***formularioTipo === 'delivery' ? (
         <TurnoDeliveryForm
@@ -170,6 +168,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
           trabajos=***REMOVED***todosLosTrabajos***REMOVED***
           onSubmit=***REMOVED***manejarGuardado***REMOVED***
           onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
+          onDirtyChange=***REMOVED***setIsFormDirty***REMOVED***
           isMobile=***REMOVED***isMobile***REMOVED***
           fechaInicial=***REMOVED***fechaInicial***REMOVED***
         />
@@ -181,6 +180,7 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
           trabajos=***REMOVED***todosLosTrabajos***REMOVED***
           onSubmit=***REMOVED***manejarGuardado***REMOVED***
           onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
+          onDirtyChange=***REMOVED***setIsFormDirty***REMOVED***
           isMobile=***REMOVED***isMobile***REMOVED***
           fechaInicial=***REMOVED***fechaInicial***REMOVED***
         />

@@ -45,7 +45,7 @@ const TurnRange = (***REMOVED*** title, icon: Icon, iconColor, children, colors 
   );
 ***REMOVED***;
 
-const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
+const TurnRangeSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
     shiftRanges,
     savePreferences
@@ -141,7 +141,7 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***
   ***REMOVED***;
 
   return (
-    <SettingsSection icon=***REMOVED***Clock***REMOVED*** title="Rangos de Turnos">
+    <SettingsSection icon=***REMOVED***Clock***REMOVED*** title="Rangos de Turnos" className=***REMOVED***className***REMOVED***>
       <p className="text-sm text-gray-600 mb-4">
         Configura los rangos de horarios para la detección automática de tipos de turno.
         Los tags de turnos existentes se actualizarán automáticamente.

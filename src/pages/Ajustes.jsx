@@ -14,6 +14,7 @@ import FooterSection from '../components/settings/FooterSection';
 import NotificationBanner from '../components/ui/NotificationBanner';
 import DeliverySection from '../components/settings/DeliverySection';
 import SmokoSection from '../components/settings/SmokoSection';
+import IntegrationsBanner from '../components/settings/IntegrationsBanner';
 
 const Ajustes = () => ***REMOVED***
   const [message, setMessage] = useState('');
@@ -67,26 +68,31 @@ const Ajustes = () => ***REMOVED***
             ***REMOVED***/* PRIMERA FILA: 3 columnas con contenedores verticales */***REMOVED***
             <div className="grid grid-cols-3 gap-6">
               ***REMOVED***/* CONTENEDOR 1: Foto de perfil + Perfil + Objetivos + Configuración de trabajo */***REMOVED***
-              <div className="space-y-6 h-full">
+              <div className="flex flex-col gap-6 h-full">
                 <ProfilePhotoSection
+                  className="flex-grow"
                   onError=***REMOVED***handleError***REMOVED***
                   onSuccess=***REMOVED***handleSuccess***REMOVED***
                 />
                 <ProfileSection
+                  className="flex-grow"
                   onError=***REMOVED***handleError***REMOVED***
                   onSuccess=***REMOVED***handleSuccess***REMOVED***
                 />
-                <GoalsSection />
+                <GoalsSection className="flex-grow" />
                 <PreferencesSection
+                  className="flex-grow"
                   onError=***REMOVED***handleError***REMOVED***
                   onSuccess=***REMOVED***handleSuccess***REMOVED***
                 />
               </div>
 
-              ***REMOVED***/* CONTENEDOR 2: Personalización + Smoko + Sesión */***REMOVED***
-              <div className="flex flex-col gap-3 h-full">
-                <CustomizationSection />
+              ***REMOVED***/* CONTENEDOR 2: Banner de Integraciones + Personalización + Smoko + Sesión */***REMOVED***
+              <div className="flex flex-col gap-6 h-full">
+                <IntegrationsBanner className="flex-grow" />
+                <CustomizationSection className="flex-grow" />
                 <SmokoSection
+                  className="flex-grow"
                   onError=***REMOVED***handleError***REMOVED***
                   onSuccess=***REMOVED***handleSuccess***REMOVED***
                 />
@@ -97,9 +103,14 @@ const Ajustes = () => ***REMOVED***
               </div>
 
               ***REMOVED***/* CONTENEDOR 3: Delivery + Rango de Turnos */***REMOVED***
-              <div className="space-y-6 h-full">
-                <DeliverySection />
+              <div className="flex flex-col gap-6 h-full">
+                <DeliverySection
+                  className="flex-grow"
+                  onError=***REMOVED***handleError***REMOVED***
+                  onSuccess=***REMOVED***handleSuccess***REMOVED***
+                />
                 <TurnRangeSection
+                  className="flex-grow"
                   onError=***REMOVED***handleError***REMOVED***
                   onSuccess=***REMOVED***handleSuccess***REMOVED***
                 />
@@ -110,6 +121,7 @@ const Ajustes = () => ***REMOVED***
 
           ***REMOVED***/* MÓVIL: Stack vertical */***REMOVED***
           <div className="block lg:hidden space-y-6">
+            <IntegrationsBanner />
             <ProfilePhotoSection
               onError=***REMOVED***handleError***REMOVED***
               onSuccess=***REMOVED***handleSuccess***REMOVED***

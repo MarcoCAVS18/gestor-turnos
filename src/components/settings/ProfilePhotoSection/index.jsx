@@ -7,7 +7,7 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
-const ProfilePhotoSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => ***REMOVED***
+const ProfilePhotoSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** profilePhotoURL, updateProfilePhoto, removeProfilePhoto ***REMOVED*** = useAuth();
   const colors = useThemeColors();
   const [loading, setLoading] = useState(false);
@@ -66,7 +66,7 @@ const ProfilePhotoSection = (***REMOVED*** onError, onSuccess ***REMOVED***) => 
   const isDefaultPhoto = profilePhotoURL?.includes('logo.svg');
 
   return (
-    <SettingsSection icon=***REMOVED***Camera***REMOVED*** title="Foto de perfil">
+    <SettingsSection icon=***REMOVED***Camera***REMOVED*** title="Foto de perfil" className=***REMOVED***className***REMOVED***>
       <div className="space-y-4">
         ***REMOVED***/* Vista previa de la foto */***REMOVED***
         <div className="flex items-center gap-6">

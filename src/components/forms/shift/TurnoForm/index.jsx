@@ -15,13 +15,14 @@ const TurnoForm = (***REMOVED***
   trabajos = [],
   onSubmit,
   onTrabajoChange,
+  onDirtyChange, // Nueva prop
   isMobile = false,
   fechaInicial
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const ***REMOVED*** smokoEnabled, smokoMinutes ***REMOVED*** = useApp(); // NUEVO
 
-  // Estados del formulario - ACTUALIZADO
+  const [initialFormData, setInitialFormData] = useState(null);
   const [formData, setFormData] = useState(***REMOVED***
     trabajoId: trabajoId || '',
     fechaInicio: '',
@@ -35,8 +36,28 @@ const TurnoForm = (***REMOVED***
   ***REMOVED***);
 
   const [isEditingDescanso, setIsEditingDescanso] = useState(false);
-
   const [errors, setErrors] = useState(***REMOVED******REMOVED***);
+
+  // Efecto para detectar si el formulario está "sucio" (modificado)
+  useEffect(() => ***REMOVED***
+    if (!initialFormData || !onDirtyChange) return;
+
+    // Solo se considera sucio si es un turno existente
+    if (turno) ***REMOVED***
+      const isDirty =
+        formData.trabajoId !== initialFormData.trabajoId ||
+        formData.fechaInicio !== initialFormData.fechaInicio ||
+        formData.horaInicio !== initialFormData.horaInicio ||
+        formData.horaFin !== initialFormData.horaFin ||
+        formData.tuvoDescanso !== initialFormData.tuvoDescanso ||
+        Number(formData.descansoMinutos) !== Number(initialFormData.descansoMinutos) ||
+        formData.notas !== initialFormData.notas;
+      onDirtyChange(isDirty);
+    ***REMOVED*** else ***REMOVED***
+      onDirtyChange(true); // Para nuevos turnos, el botón siempre está activo
+    ***REMOVED***
+  ***REMOVED***, [formData, initialFormData, onDirtyChange, turno]);
+
 
   // Función para calcular duración del turno - USANDO UTILIDAD CENTRALIZADA
   const calcularDuracionTurno = useCallback(() => ***REMOVED***
@@ -132,8 +153,9 @@ const TurnoForm = (***REMOVED***
 
   // Inicializar formulario - ACTUALIZADO
   useEffect(() => ***REMOVED***
+    let initialData;
     if (turno) ***REMOVED***
-      setFormData(***REMOVED***
+      initialData = ***REMOVED***
         trabajoId: turno.trabajoId || '',
         fechaInicio: turno.fechaInicio || turno.fecha || '',
         horaInicio: turno.horaInicio || '',
@@ -143,20 +165,27 @@ const TurnoForm = (***REMOVED***
         tuvoDescanso: turno.tuvoDescanso !== undefined ? turno.tuvoDescanso : true,
         descansoMinutos: turno.descansoMinutos !== undefined ? turno.descansoMinutos : smokoMinutes,
         notas: turno.notas || ''
-      ***REMOVED***);
+      ***REMOVED***;
     ***REMOVED*** else ***REMOVED***
       const fechaStr = fechaInicial 
         ? (fechaInicial instanceof Date ? fechaInicial.toISOString().split('T')[0] : fechaInicial)
         : new Date().toISOString().split('T')[0];
 
-      setFormData(prev => (***REMOVED*** 
-        ...prev, 
+      initialData = ***REMOVED***
+        trabajoId: trabajoId || '',
         fechaInicio: fechaStr,
+        horaInicio: '',
+        horaFin: '',
+        cruzaMedianoche: false,
+        fechaFin: '',
         tuvoDescanso: true,
-        descansoMinutos: smokoMinutes
-      ***REMOVED***));
+        descansoMinutos: smokoMinutes,
+        notas: ''
+      ***REMOVED***;
     ***REMOVED***
-  ***REMOVED***, [turno, fechaInicial, smokoMinutes]);
+    setFormData(initialData);
+    setInitialFormData(initialData);
+  ***REMOVED***, [turno, trabajoId, fechaInicial, smokoMinutes]);
 
   const trabajosTradicionales = trabajos.filter(t => t.tipo !== 'delivery');
   const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');

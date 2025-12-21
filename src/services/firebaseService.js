@@ -29,12 +29,12 @@ const getUserSubcollections = (userUid) => ***REMOVED***
   ***REMOVED***;
 ***REMOVED***;
 
-const createIncrementalSubscription = (query, setData, errorCallback, sortComparator) => ***REMOVED***
+const createIncrementalSubscription = (query, setData, errorCallback, sortComparator, dataTransform = (d) => d) => ***REMOVED***
     return onSnapshot(query, ***REMOVED*** includeMetadataChanges: true ***REMOVED***, (snapshot) => ***REMOVED***
         setData((currentData) => ***REMOVED***
             let updatedData = [...(currentData || [])];
             snapshot.docChanges().forEach((change) => ***REMOVED***
-                const docData = ***REMOVED*** id: change.doc.id, ...change.doc.data() ***REMOVED***;
+                const docData = dataTransform(***REMOVED*** id: change.doc.id, ...change.doc.data() ***REMOVED***);
                 const index = updatedData.findIndex((t) => t.id === docData.id);
 
                 if (change.type === 'added') ***REMOVED***
@@ -143,11 +143,14 @@ export const subscribeToNormalData = (userUid, ***REMOVED*** setTrabajos, setTur
   );
 
   const turnosQuery = query(collections.turnosRef, orderBy('fechaCreacion', 'desc'));
-  unsubscribes.push(onSnapshot(turnosQuery, snapshot => ***REMOVED***
-      const data = snapshot.docs.map(doc => (***REMOVED*** id: doc.id, ...doc.data() ***REMOVED***));
-      data.sort((a, b) => new Date(b.fechaInicio || b.fecha) - new Date(a.fechaInicio || a.fecha));
-      setTurnos(data);
-  ***REMOVED***, err => setError('Error al cargar turnos: ' + err.message)));
+  unsubscribes.push(
+    createIncrementalSubscription(
+      turnosQuery,
+      setTurnos,
+      (error) => setError(error),
+      (a, b) => new Date(b.fechaInicio || b.fecha) - new Date(a.fechaInicio || a.fecha)
+    )
+  );
 
   return () => unsubscribes.forEach(unsub => unsub());
 ***REMOVED***;
@@ -168,10 +171,15 @@ export const subscribeToDeliveryData = (userUid, ***REMOVED*** setTrabajosDelive
   );
 
   const turnosDeliveryQuery = query(collections.turnosDeliveryRef, orderBy('fecha', 'desc'));
-  unsubscribes.push(onSnapshot(turnosDeliveryQuery, snapshot => ***REMOVED***
-      const data = snapshot.docs.map(doc => (***REMOVED*** id: doc.id, ...doc.data(), type: 'delivery' ***REMOVED***));
-      setTurnosDelivery(data);
-  ***REMOVED***, err => setError('Error al cargar turnos de delivery: ' + err.message)));
+  unsubscribes.push(
+    createIncrementalSubscription(
+      turnosDeliveryQuery,
+      setTurnosDelivery,
+      (error) => setError(error),
+      (a, b) => new Date(b.fecha) - new Date(a.fecha),
+      (d) => (***REMOVED*** ...d, type: 'delivery' ***REMOVED***)
+    )
+  );
 
   return () => unsubscribes.forEach(unsub => unsub());
 ***REMOVED***;
