@@ -7,7 +7,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
-const ProfilePhotoSection = ({ onError, onSuccess }) => {
+const ProfilePhotoSection = ({ onError, onSuccess, className }) => {
   const { profilePhotoURL, updateProfilePhoto, removeProfilePhoto } = useAuth();
   const colors = useThemeColors();
   const [loading, setLoading] = useState(false);
@@ -66,7 +66,7 @@ const ProfilePhotoSection = ({ onError, onSuccess }) => {
   const isDefaultPhoto = profilePhotoURL?.includes('logo.svg');
 
   return (
-    <SettingsSection icon={Camera} title="Foto de perfil">
+    <SettingsSection icon={Camera} title="Foto de perfil" className={className}>
       <div className="space-y-4">
         {/* Vista previa de la foto */}
         <div className="flex items-center gap-6">

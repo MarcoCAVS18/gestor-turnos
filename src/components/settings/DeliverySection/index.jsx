@@ -9,7 +9,7 @@ import Switch from '../../ui/Switch';
 
 import Flex from '../../ui/Flex';
 
-const DeliverySection = ({ onError, onSuccess }) => {
+const DeliverySection = ({ onError, onSuccess, className }) => {
   const { deliveryEnabled, savePreferences } = useApp();
   const colors = useThemeColors();
   
@@ -24,7 +24,7 @@ const DeliverySection = ({ onError, onSuccess }) => {
   };
 
   return (
-    <SettingsSection icon={Truck} title="Trabajos de Delivery">
+    <SettingsSection icon={Truck} title="Trabajos de Delivery" className={className}>
       <div className="space-y-4">
         {/* Toggle principal */}
         <Flex variant="between">

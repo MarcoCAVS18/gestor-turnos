@@ -24,23 +24,21 @@ const SessionSection = ({ onError, className = '' }) => {
 
   return (
     <SettingsSection icon={LogOut} title="Sesión" className={className}>
-      <div className="flex flex-col items-center justify-center flex-1 w-full gap-3 mt-4">
+      <div className="flex flex-row items-center justify-between flex-1 w-full mt-4">
+        <Link 
+          to="/delete-account"
+          className="text-xs text-gray-400 hover:text-gray-600 hover:underline transition-colors"
+        >
+          Eliminar cuenta
+        </Link>
         <Button
           onClick={handleLogout}
           variant="outline"
-          className="w-full max-w-xs flex items-center justify-center gap-2"
           icon={LogOut}
           themeColor={colors.primary}
         >
           Cerrar sesión
         </Button>
-
-        <Link 
-          to="/delete-account"
-          className="text-xs text-gray-400 hover:text-gray-600 hover:underline transition-colors mt-1"
-        >
-          Eliminar cuenta
-        </Link>
       </div>
     </SettingsSection>
   );

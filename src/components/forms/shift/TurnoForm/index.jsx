@@ -15,13 +15,14 @@ const TurnoForm = ({
   trabajos = [],
   onSubmit,
   onTrabajoChange,
+  onDirtyChange, // Nueva prop
   isMobile = false,
   fechaInicial
 }) => {
   const colors = useThemeColors();
   const { smokoEnabled, smokoMinutes } = useApp(); // NUEVO
 
-  // Estados del formulario - ACTUALIZADO
+  const [initialFormData, setInitialFormData] = useState(null);
   const [formData, setFormData] = useState({
     trabajoId: trabajoId || '',
     fechaInicio: '',
@@ -35,8 +36,28 @@ const TurnoForm = ({
   });
 
   const [isEditingDescanso, setIsEditingDescanso] = useState(false);
-
   const [errors, setErrors] = useState({});
+
+  // Efecto para detectar si el formulario está "sucio" (modificado)
+  useEffect(() => {
+    if (!initialFormData || !onDirtyChange) return;
+
+    // Solo se considera sucio si es un turno existente
+    if (turno) {
+      const isDirty =
+        formData.trabajoId !== initialFormData.trabajoId ||
+        formData.fechaInicio !== initialFormData.fechaInicio ||
+        formData.horaInicio !== initialFormData.horaInicio ||
+        formData.horaFin !== initialFormData.horaFin ||
+        formData.tuvoDescanso !== initialFormData.tuvoDescanso ||
+        Number(formData.descansoMinutos) !== Number(initialFormData.descansoMinutos) ||
+        formData.notas !== initialFormData.notas;
+      onDirtyChange(isDirty);
+    } else {
+      onDirtyChange(true); // Para nuevos turnos, el botón siempre está activo
+    }
+  }, [formData, initialFormData, onDirtyChange, turno]);
+
 
   // Función para calcular duración del turno - USANDO UTILIDAD CENTRALIZADA
   const calcularDuracionTurno = useCallback(() => {
@@ -132,8 +153,9 @@ const TurnoForm = ({
 
   // Inicializar formulario - ACTUALIZADO
   useEffect(() => {
+    let initialData;
     if (turno) {
-      setFormData({
+      initialData = {
         trabajoId: turno.trabajoId || '',
         fechaInicio: turno.fechaInicio || turno.fecha || '',
         horaInicio: turno.horaInicio || '',
@@ -143,20 +165,27 @@ const TurnoForm = ({
         tuvoDescanso: turno.tuvoDescanso !== undefined ? turno.tuvoDescanso : true,
         descansoMinutos: turno.descansoMinutos !== undefined ? turno.descansoMinutos : smokoMinutes,
         notas: turno.notas || ''
-      });
+      };
     } else {
       const fechaStr = fechaInicial 
         ? (fechaInicial instanceof Date ? fechaInicial.toISOString().split('T')[0] : fechaInicial)
         : new Date().toISOString().split('T')[0];
 
-      setFormData(prev => ({ 
-        ...prev, 
+      initialData = {
+        trabajoId: trabajoId || '',
         fechaInicio: fechaStr,
+        horaInicio: '',
+        horaFin: '',
+        cruzaMedianoche: false,
+        fechaFin: '',
         tuvoDescanso: true,
-        descansoMinutos: smokoMinutes
-      }));
+        descansoMinutos: smokoMinutes,
+        notas: ''
+      };
     }
-  }, [turno, fechaInicial, smokoMinutes]);
+    setFormData(initialData);
+    setInitialFormData(initialData);
+  }, [turno, trabajoId, fechaInicial, smokoMinutes]);
 
   const trabajosTradicionales = trabajos.filter(t => t.tipo !== 'delivery');
   const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');

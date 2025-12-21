@@ -8,7 +8,7 @@ import SettingsSection from '../SettingsSection';
 
 import Flex from '../../ui/Flex';
 
-const GoalsSection = () => {
+const GoalsSection = ({ className }) => {
   // Usar el nombre correcto de la variable y función del contexto
   const { weeklyHoursGoal, updateWeeklyHoursGoal } = useApp();
   const colors = useThemeColors();
@@ -43,7 +43,7 @@ const GoalsSection = () => {
   };
 
   return (
-    <SettingsSection icon={Target} title="Metas Semanales">
+    <SettingsSection icon={Target} title="Metas Semanales" className={className}>
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">

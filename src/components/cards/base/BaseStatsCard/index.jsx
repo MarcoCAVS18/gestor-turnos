@@ -16,7 +16,7 @@ const BaseStatsCard = ({
   className = ''
 }) => {
   const colors = useThemeColors();
-  const primaryColor = colors ? colors.primary : '#000000';
+  const primaryColor = colors ? colors.primary : '#121212';
 
   return (
     <Card className={`flex flex-col ${className}`}>

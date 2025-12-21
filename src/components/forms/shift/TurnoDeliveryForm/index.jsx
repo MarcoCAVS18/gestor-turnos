@@ -12,12 +12,13 @@ const TurnoDeliveryForm = ({
   trabajos = [],
   onSubmit,
   onTrabajoChange,
+  onDirtyChange,
   isMobile = false,
   fechaInicial
 }) => {
   const colors = useThemeColors();
 
-  // Estados del formulario
+  const [initialFormData, setInitialFormData] = useState(null);
   const [formData, setFormData] = useState({
     trabajoId: trabajoId || '',
     fechaInicio: '',
@@ -33,7 +34,27 @@ const TurnoDeliveryForm = ({
 
   const [errors, setErrors] = useState({});
 
-  // Función para determinar si el vehículo necesita combustible
+  useEffect(() => {
+    if (!initialFormData || !onDirtyChange) return;
+
+    if (turno) {
+      const isDirty =
+        formData.trabajoId !== initialFormData.trabajoId ||
+        formData.fechaInicio !== initialFormData.fechaInicio ||
+        formData.horaInicio !== initialFormData.horaInicio ||
+        formData.horaFin !== initialFormData.horaFin ||
+        String(formData.gananciaBase) !== String(initialFormData.gananciaBase) ||
+        String(formData.propinas) !== String(initialFormData.propinas) ||
+        String(formData.numeroPedidos) !== String(initialFormData.numeroPedidos) ||
+        String(formData.kilometros) !== String(initialFormData.kilometros) ||
+        String(formData.gastoCombustible) !== String(initialFormData.gastoCombustible) ||
+        formData.observaciones !== initialFormData.observaciones;
+      onDirtyChange(isDirty);
+    } else {
+      onDirtyChange(true);
+    }
+  }, [formData, initialFormData, onDirtyChange, turno]);
+
   const vehiculoNecesitaCombustible = useCallback((vehiculo) => {
     if (!vehiculo) return false;
     const vehiculoLower = vehiculo.toLowerCase();
@@ -43,14 +64,13 @@ const TurnoDeliveryForm = ({
            vehiculoLower.includes('coche');
   }, []);
 
-  // Obtener el trabajo seleccionado y verificar si necesita combustible
   const trabajoSeleccionado = trabajos.find(t => t.id === formData.trabajoId);
   const mostrarCombustible = trabajoSeleccionado ? vehiculoNecesitaCombustible(trabajoSeleccionado.vehiculo) : true;
 
-  // Inicializar formulario
   useEffect(() => {
+    let initialData;
     if (turno) {
-      setFormData({
+      initialData = {
         trabajoId: turno.trabajoId || '',
         fechaInicio: turno.fechaInicio || turno.fecha || '',
         horaInicio: turno.horaInicio || '',
@@ -61,16 +81,28 @@ const TurnoDeliveryForm = ({
         kilometros: turno.kilometros?.toString() || '',
         gastoCombustible: turno.gastoCombustible?.toString() || '',
         observaciones: turno.observaciones || ''
-      });
-    } else if (fechaInicial) {
+      };
+    } else {
       const fechaStr = fechaInicial instanceof Date 
         ? fechaInicial.toISOString().split('T')[0] 
         : fechaInicial;
-      setFormData(prev => ({ ...prev, fechaInicio: fechaStr }));
+      initialData = {
+        trabajoId: trabajoId || '',
+        fechaInicio: fechaStr,
+        horaInicio: '',
+        horaFin: '',
+        gananciaBase: '',
+        propinas: '',
+        numeroPedidos: '',
+        kilometros: '',
+        gastoCombustible: '',
+        observaciones: ''
+      };
     }
-  }, [turno, fechaInicial]);
+    setFormData(initialData);
+    setInitialFormData(initialData);
+  }, [turno, trabajoId, fechaInicial]);
 
-  // Limpiar gastos de combustible cuando se selecciona un vehículo que no lo necesita
   useEffect(() => {
     if (!mostrarCombustible && formData.gastoCombustible) {
       setFormData(prev => ({ ...prev, gastoCombustible: '' }));
@@ -103,7 +135,6 @@ const TurnoDeliveryForm = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validarFormulario()) {
-      // Convertir strings a números y asegurar que combustible sea 0 si no aplica
       const dataToSubmit = {
         ...formData,
         gananciaBase: parseFloat(formData.gananciaBase) || 0,
@@ -122,13 +153,11 @@ const TurnoDeliveryForm = ({
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
 
-    // Notificar cambio de trabajo al componente padre
     if (field === 'trabajoId') {
       onTrabajoChange?.(value);
     }
   }, [errors, onTrabajoChange]);
 
-  // Filtrar y agrupar trabajos para el selector
   const trabajosTradicionales = trabajos.filter(t => t.tipo !== 'delivery');
   const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
 
@@ -138,7 +167,6 @@ const TurnoDeliveryForm = ({
       onSubmit={handleSubmit}
       isMobile={isMobile}
     >
-      {/* Selección de trabajo (unificada) */}
       <FormSection>
         <FormLabel icon={Truck}>Trabajo</FormLabel>
         <select
@@ -173,7 +201,6 @@ const TurnoDeliveryForm = ({
         <FormError error={errors.trabajoId} />
       </FormSection>
 
-      {/* Fecha de trabajo */}
       <FormSection>
         <FormLabel icon={Calendar}>Fecha del turno</FormLabel>
         <input
@@ -187,7 +214,6 @@ const TurnoDeliveryForm = ({
         <FormError error={errors.fechaInicio} />
       </FormSection>
 
-      {/* CONTENEDOR DE HORAS RESPONSIVO */}
       <FormGrid columns={2}>
         <FormField>
           <FormLabel icon={Clock}>Hora de inicio</FormLabel>
@@ -216,7 +242,6 @@ const TurnoDeliveryForm = ({
         </FormField>
       </FormGrid>
 
-      {/* GANANCIAS RESPONSIVAS */}
       <FormGrid columns={2}>
         <FormField>
           <FormLabel icon={DollarSign}>Ganancia (sin propinas)</FormLabel>
@@ -247,7 +272,6 @@ const TurnoDeliveryForm = ({
         </FormField>
       </FormGrid>
 
-      {/* DATOS ADICIONALES RESPONSIVOS */}
       <FormGrid columns={2}>
         <FormField>
           <FormLabel icon={Package}>Número de pedidos</FormLabel>
@@ -277,7 +301,6 @@ const TurnoDeliveryForm = ({
         </FormField>
       </FormGrid>
 
-      {/* Gastos de combustible - SOLO SI EL VEHÍCULO LO REQUIERE */}
       {mostrarCombustible && (
         <FormSection>
           <FormLabel icon={Fuel}>Gastos de combustible</FormLabel>
@@ -294,7 +317,6 @@ const TurnoDeliveryForm = ({
         </FormSection>
       )}
 
-      {/* Observaciones */}
       <FormSection>
         <FormLabel>Notas (opcional)</FormLabel>
         <textarea

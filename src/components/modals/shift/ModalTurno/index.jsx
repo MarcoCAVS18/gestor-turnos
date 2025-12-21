@@ -22,15 +22,14 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
   const [trabajoSeleccionadoId, setTrabajoSeleccionadoId] = useState(trabajoId || '');
   const [formularioTipo, setFormularioTipo] = useState('tradicional');
   const [loading, setLoading] = useState(false);
+  const [isFormDirty, setIsFormDirty] = useState(false);
   const isMobile = useIsMobile();
   const formId = useId();
 
-  // Combinar todos los trabajos para el selector
   const todosLosTrabajos = useMemo(() => {
     return [...trabajos, ...trabajosDelivery];
   }, [trabajos, trabajosDelivery]);
 
-  // Determinar el tipo de formulario basado en el trabajo
   useEffect(() => {
     if (turno?.tipo === 'delivery') {
       setFormularioTipo('delivery');
@@ -55,12 +54,12 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
     }
   }, [trabajoSeleccionadoId, todosLosTrabajos, turno, formularioTipo]);
 
-  // Reset cuando se abre/cierra el modal
   useEffect(() => {
     if (!isOpen) {
       setTrabajoSeleccionadoId('');
       setFormularioTipo('tradicional');
       setLoading(false);
+      setIsFormDirty(false);
     } else if (turno) {
       setTrabajoSeleccionadoId(turno.trabajoId || '');
     } else if (trabajoId) {
@@ -72,7 +71,6 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
     try {
       setLoading(true);
 
-      // Si fechaInicial está disponible y no hay turno (es nuevo), usar fechaInicial
       let datosFinales = { ...datosTurno };
 
       if (fechaInicial && !turno) {
@@ -121,16 +119,15 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
     setTrabajoSeleccionadoId('');
     setFormularioTipo('tradicional');
     setLoading(false);
+    setIsFormDirty(false);
     onClose();
   };
 
   if (!isOpen) return null;
 
-  // Construir título
   const titulo = turno ? 'Editar Turno' : 'Nuevo Turno';
   const subtitulo = formularioTipo === 'delivery' ? '• Delivery' : null;
 
-  // Formatear fecha inicial si existe
   let fechaSubtitle = null;
   if (fechaInicial && !turno) {
     fechaSubtitle = fechaInicial instanceof Date
@@ -161,6 +158,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
       onCancel={manejarCerrar}
       formId={formId}
       saveText={turno ? 'Guardar Cambios' : 'Crear Turno'}
+      isSaveDisabled={turno ? !isFormDirty : false}
     >
       {formularioTipo === 'delivery' ? (
         <TurnoDeliveryForm
@@ -170,6 +168,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
           trabajos={todosLosTrabajos}
           onSubmit={manejarGuardado}
           onTrabajoChange={manejarCambioTrabajo}
+          onDirtyChange={setIsFormDirty}
           isMobile={isMobile}
           fechaInicial={fechaInicial}
         />
@@ -181,6 +180,7 @@ const ModalTurno = ({ isOpen, onClose, turno, trabajoId, fechaInicial }) => {
           trabajos={todosLosTrabajos}
           onSubmit={manejarGuardado}
           onTrabajoChange={manejarCambioTrabajo}
+          onDirtyChange={setIsFormDirty}
           isMobile={isMobile}
           fechaInicial={fechaInicial}
         />

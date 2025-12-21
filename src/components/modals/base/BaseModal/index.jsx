@@ -20,8 +20,10 @@ const BaseModal = ({
   showActions = false,
   onCancel,
   saveText = 'Guardar',
+  saveLoadingText,
   cancelText = 'Cancelar',
   formId,
+  isSaveDisabled = false, // Nueva prop
 }) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile();
@@ -40,6 +42,21 @@ const BaseModal = ({
   }, [isOpen]);
 
   if (!isOpen) return null;
+
+  // Generar texto de carga por defecto
+  const generateLoadingText = (text) => {
+    if (text.endsWith('ar')) {
+      return text.slice(0, -2) + 'ando...';
+    }
+    if (text.endsWith('er') || text.endsWith('ir')) {
+      return text.slice(0, -2) + 'iendo...';
+    }
+    // Casos especiales
+    if (text.toLowerCase().includes('crear')) return 'Creando...';
+    return `${text}...`;
+  };
+
+  const finalSaveLoadingText = saveLoadingText || generateLoadingText(saveText);
 
   // Configurar tamaño máximo según prop
   const maxWidthClasses = {
@@ -158,6 +175,8 @@ const BaseModal = ({
                 type="submit"
                 form={formId}
                 loading={loading}
+                loadingText={finalSaveLoadingText}
+                disabled={loading || isSaveDisabled} // Usar la nueva prop
                 isMobile={isMobile}
                 className={isMobile ? '' : 'flex-none'}
               >

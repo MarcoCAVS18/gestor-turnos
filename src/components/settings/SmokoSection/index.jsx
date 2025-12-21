@@ -8,7 +8,7 @@ import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 
-const SmokoSection = ({ onError, onSuccess }) => {
+const SmokoSection = ({ onError, onSuccess, className }) => {
   const { 
     smokoEnabled = false, 
     smokoMinutes = 30,
@@ -66,6 +66,7 @@ const SmokoSection = ({ onError, onSuccess }) => {
     <SettingsSection
       icon={Coffee}
       title="Smoko (Descansos)"
+      className={className}
     >
       <div className="space-y-6">
         <div 

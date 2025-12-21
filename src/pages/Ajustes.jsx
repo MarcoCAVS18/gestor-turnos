@@ -14,6 +14,7 @@ import FooterSection from '../components/settings/FooterSection';
 import NotificationBanner from '../components/ui/NotificationBanner';
 import DeliverySection from '../components/settings/DeliverySection';
 import SmokoSection from '../components/settings/SmokoSection';
+import IntegrationsBanner from '../components/settings/IntegrationsBanner';
 
 const Ajustes = () => {
   const [message, setMessage] = useState('');
@@ -67,26 +68,31 @@ const Ajustes = () => {
             {/* PRIMERA FILA: 3 columnas con contenedores verticales */}
             <div className="grid grid-cols-3 gap-6">
               {/* CONTENEDOR 1: Foto de perfil + Perfil + Objetivos + Configuración de trabajo */}
-              <div className="space-y-6 h-full">
+              <div className="flex flex-col gap-6 h-full">
                 <ProfilePhotoSection
+                  className="flex-grow"
                   onError={handleError}
                   onSuccess={handleSuccess}
                 />
                 <ProfileSection
+                  className="flex-grow"
                   onError={handleError}
                   onSuccess={handleSuccess}
                 />
-                <GoalsSection />
+                <GoalsSection className="flex-grow" />
                 <PreferencesSection
+                  className="flex-grow"
                   onError={handleError}
                   onSuccess={handleSuccess}
                 />
               </div>
 
-              {/* CONTENEDOR 2: Personalización + Smoko + Sesión */}
-              <div className="flex flex-col gap-3 h-full">
-                <CustomizationSection />
+              {/* CONTENEDOR 2: Banner de Integraciones + Personalización + Smoko + Sesión */}
+              <div className="flex flex-col gap-6 h-full">
+                <IntegrationsBanner className="flex-grow" />
+                <CustomizationSection className="flex-grow" />
                 <SmokoSection
+                  className="flex-grow"
                   onError={handleError}
                   onSuccess={handleSuccess}
                 />
@@ -97,9 +103,14 @@ const Ajustes = () => {
               </div>
 
               {/* CONTENEDOR 3: Delivery + Rango de Turnos */}
-              <div className="space-y-6 h-full">
-                <DeliverySection />
+              <div className="flex flex-col gap-6 h-full">
+                <DeliverySection
+                  className="flex-grow"
+                  onError={handleError}
+                  onSuccess={handleSuccess}
+                />
                 <TurnRangeSection
+                  className="flex-grow"
                   onError={handleError}
                   onSuccess={handleSuccess}
                 />
@@ -110,6 +121,7 @@ const Ajustes = () => {
 
           {/* MÓVIL: Stack vertical */}
           <div className="block lg:hidden space-y-6">
+            <IntegrationsBanner />
             <ProfilePhotoSection
               onError={handleError}
               onSuccess={handleSuccess}

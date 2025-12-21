@@ -7,7 +7,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
-const ProfileSection = ({ onError, onSuccess }) => {
+const ProfileSection = ({ onError, onSuccess, className }) => {
   const { currentUser, updateUserName } = useAuth();
   const colors = useThemeColors();
   const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
@@ -28,7 +28,7 @@ const ProfileSection = ({ onError, onSuccess }) => {
   };
 
   return (
-    <SettingsSection icon={User} title="Perfil">
+    <SettingsSection icon={User} title="Perfil" className={className}>
       <div className="space-y-4">
         {/* Email y Nombre en la misma línea en desktop */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

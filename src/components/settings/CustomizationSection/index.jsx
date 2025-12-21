@@ -52,7 +52,7 @@ const CustomizationSection = () => {
   };
 
   return (
-    <Card className="mb-6 flex flex-col">
+    <Card className="flex flex-col">
       <div className="flex items-center mb-4">
         <Settings className="h-5 w-5 text-gray-500 mr-2" />
         <h2 className="text-lg font-semibold">Personalización</h2>

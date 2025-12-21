@@ -29,12 +29,12 @@ const getUserSubcollections = (userUid) => {
   };
 };
 
-const createIncrementalSubscription = (query, setData, errorCallback, sortComparator) => {
+const createIncrementalSubscription = (query, setData, errorCallback, sortComparator, dataTransform = (d) => d) => {
     return onSnapshot(query, { includeMetadataChanges: true }, (snapshot) => {
         setData((currentData) => {
             let updatedData = [...(currentData || [])];
             snapshot.docChanges().forEach((change) => {
-                const docData = { id: change.doc.id, ...change.doc.data() };
+                const docData = dataTransform({ id: change.doc.id, ...change.doc.data() });
                 const index = updatedData.findIndex((t) => t.id === docData.id);
 
                 if (change.type === 'added') {
@@ -143,11 +143,14 @@ export const subscribeToNormalData = (userUid, { setTrabajos, setTurnos, setErro
   );
 
   const turnosQuery = query(collections.turnosRef, orderBy('fechaCreacion', 'desc'));
-  unsubscribes.push(onSnapshot(turnosQuery, snapshot => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      data.sort((a, b) => new Date(b.fechaInicio || b.fecha) - new Date(a.fechaInicio || a.fecha));
-      setTurnos(data);
-  }, err => setError('Error al cargar turnos: ' + err.message)));
+  unsubscribes.push(
+    createIncrementalSubscription(
+      turnosQuery,
+      setTurnos,
+      (error) => setError(error),
+      (a, b) => new Date(b.fechaInicio || b.fecha) - new Date(a.fechaInicio || a.fecha)
+    )
+  );
 
   return () => unsubscribes.forEach(unsub => unsub());
 };
@@ -168,10 +171,15 @@ export const subscribeToDeliveryData = (userUid, { setTrabajosDelivery, setTurno
   );
 
   const turnosDeliveryQuery = query(collections.turnosDeliveryRef, orderBy('fecha', 'desc'));
-  unsubscribes.push(onSnapshot(turnosDeliveryQuery, snapshot => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data(), type: 'delivery' }));
-      setTurnosDelivery(data);
-  }, err => setError('Error al cargar turnos de delivery: ' + err.message)));
+  unsubscribes.push(
+    createIncrementalSubscription(
+      turnosDeliveryQuery,
+      setTurnosDelivery,
+      (error) => setError(error),
+      (a, b) => new Date(b.fecha) - new Date(a.fecha),
+      (d) => ({ ...d, type: 'delivery' })
+    )
+  );
 
   return () => unsubscribes.forEach(unsub => unsub());
 };
