@@ -1,7 +1,7 @@
 // src/components/settings/PreferencesSection/index.jsx
 
 import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react';
-import ***REMOVED*** Info, Receipt ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Info, Receipt, Check ***REMOVED*** from 'lucide-react'; // Agregamos Check
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** useTrabajos ***REMOVED*** from '../../../hooks/useTrabajos';
@@ -19,28 +19,59 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
   const ***REMOVED*** trabajos ***REMOVED*** = useTrabajos();
   
   const colors = useThemeColors();
-  const [impuestoDefault, setImpuestoDefault] = useState(defaultDiscount);
+  
+  // Estados de datos
+  const [impuestoDefault, setImpuestoDefault] = useState(defaultDiscount || 0);
   const [impuestosLocales, setImpuestosLocales] = useState(***REMOVED******REMOVED***);
-  const [loading, setLoading] = useState(false);
   const [showMultiRate, setShowMultiRate] = useState(false);
+
+  // Estados de UI/Feedback
+  const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const traditionalJobs = useMemo(() => 
     (trabajos || []).filter(t => t.tipo === 'tradicional'),
     [trabajos]
   );
 
+  // Inicializar estado local cuando cambia el contexto (carga inicial)
   useEffect(() => ***REMOVED***
-    setImpuestoDefault(defaultDiscount);
+    setImpuestoDefault(defaultDiscount || 0);
   ***REMOVED***, [defaultDiscount]);
   
   useEffect(() => ***REMOVED***
     const initialImpuestos = ***REMOVED******REMOVED***;
     traditionalJobs.forEach(job => ***REMOVED***
+      // La lógica de inicialización debe ser consistente
       initialImpuestos[job.id] = impuestosPorTrabajo[job.id] ?? defaultDiscount ?? 0;
     ***REMOVED***);
     setImpuestosLocales(initialImpuestos);
   ***REMOVED***, [traditionalJobs, impuestosPorTrabajo, defaultDiscount]);
 
+  // Efecto para detectar cambios (Dirty Checking)
+  useEffect(() => ***REMOVED***
+    // 1. Verificar si el default cambió
+    const defaultChanged = impuestoDefault !== (defaultDiscount || 0);
+
+    // 2. Verificar si algún impuesto específico cambió
+    const localesChanged = traditionalJobs.some(job => ***REMOVED***
+      const valorOriginal = impuestosPorTrabajo[job.id] ?? defaultDiscount ?? 0;
+      const valorActual = impuestosLocales[job.id];
+      // Comparamos valores (usamos == para ser tolerantes con strings/numbers si pasara, 
+      // aunque aquí forzamos number en el input)
+      return valorOriginal !== valorActual;
+    ***REMOVED***);
+
+    const isDirty = defaultChanged || localesChanged;
+    setHasChanges(isDirty);
+
+    // Si el usuario vuelve a editar, ocultamos el mensaje de éxito
+    if (isDirty && showSuccess) ***REMOVED***
+      setShowSuccess(false);
+    ***REMOVED***
+
+  ***REMOVED***, [impuestoDefault, impuestosLocales, defaultDiscount, impuestosPorTrabajo, traditionalJobs, showSuccess]);
 
   const handleImpuestoLocalChange = (jobId, value) => ***REMOVED***
     setImpuestosLocales(prev => (***REMOVED***
@@ -56,7 +87,17 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
         descuentoDefault: impuestoDefault,
         impuestosPorTrabajo: impuestosLocales
       ***REMOVED***);
+      
+      // Mostrar éxito
+      setShowSuccess(true);
+      setHasChanges(false); // Asumimos guardado exitoso
       onSuccess?.('Configuración de impuestos guardada correctamente');
+
+      // Ocultar mensaje de éxito después de 3s
+      setTimeout(() => ***REMOVED***
+        setShowSuccess(false);
+      ***REMOVED***, 3000);
+
     ***REMOVED*** catch (error) ***REMOVED***
       onError?.('Error al guardar ajustes: ' + error.message);
     ***REMOVED*** finally ***REMOVED***
@@ -127,7 +168,7 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
         </div>
 
         ***REMOVED***showMultiRate && traditionalJobs.length > 1 && (
-          <div className="space-y-4 pt-4 border-t">
+          <div className="space-y-4 pt-4 border-t animate-in fade-in slide-in-from-top-2">
             <h3 className="text-md font-semibold text-gray-800">Impuestos por Trabajo</h3>
             ***REMOVED***traditionalJobs.map(job => (
               <div key=***REMOVED***job.id***REMOVED*** className="flex items-center gap-4">
@@ -141,9 +182,9 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
                     min="0"
                     max="100"
                     step="0.5"
-                    value=***REMOVED***impuestosLocales[job.id] || ''***REMOVED***
+                    value=***REMOVED***impuestosLocales[job.id] || 0***REMOVED***
                     onChange=***REMOVED***(e) => handleImpuestoLocalChange(job.id, Number(e.target.value))***REMOVED***
-                    className="w-24 px-2 py-1.5 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-opacity-50"
+                    className="w-24 px-2 py-1.5 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 text-center"
                     style=***REMOVED******REMOVED***'--tw-ring-color': colors.primary***REMOVED******REMOVED***
                     placeholder="Ej: 15"
                   />
@@ -157,12 +198,15 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
         <div className="pt-4 flex flex-wrap items-center gap-4">
           <Button
             onClick=***REMOVED***handleSave***REMOVED***
-            disabled=***REMOVED***loading***REMOVED***
+            disabled=***REMOVED***loading || !hasChanges***REMOVED***
             loading=***REMOVED***loading***REMOVED***
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto min-w-[180px]"
             themeColor=***REMOVED***colors.primary***REMOVED***
+            icon=***REMOVED***showSuccess ? Check : undefined***REMOVED***
           >
-            Guardar Preferencias
+            ***REMOVED***loading ? 'Guardando...' : 
+             showSuccess ? 'Guardado correctamente' :
+             hasChanges ? 'Guardar Preferencias' : 'Sin cambios'***REMOVED***
           </Button>
 
           ***REMOVED***traditionalJobs.length > 1 && (

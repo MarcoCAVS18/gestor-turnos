@@ -3,6 +3,7 @@ import ***REMOVED*** getShiftGrossEarnings ***REMOVED*** from '../utils/shiftUti
 import ***REMOVED*** determinarTipoTurno ***REMOVED*** from '../utils/shiftDetailsUtils';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 import ***REMOVED*** getMonthRange ***REMOVED*** from '../utils/time';
+import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../constants/delivery';
 
 /**
  * Calcula las horas trabajadas entre una hora de inicio y fin.
@@ -520,9 +521,10 @@ export const calculateDeliveryStats = (***REMOVED*** trabajosDelivery, turnosDel
             
             const plataforma = trabajo.plataforma || trabajo.nombre;
             if (!turnosPorPlataforma[plataforma]) ***REMOVED***
+              const platformData = DELIVERY_PLATFORMS_AUSTRALIA.find(p => p.nombre === plataforma);
               turnosPorPlataforma[plataforma] = ***REMOVED***
-                nombre: trabajo.nombre,
-                color: trabajo.colorAvatar || trabajo.color || '#10B981',
+                nombre: plataforma,
+                color: platformData?.color || '#10B981',
                 totalGanado: 0,
                 totalPedidos: 0,
                 totalPropinas: 0,

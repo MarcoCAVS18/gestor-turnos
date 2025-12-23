@@ -1,6 +1,6 @@
 // src/components/layout/Navegacion/index.jsx
 
-import React, ***REMOVED*** useState, useRef ***REMOVED*** from 'react';
+import React, ***REMOVED*** useState, useRef, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle, Pencil ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
@@ -19,11 +19,25 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
   const ***REMOVED*** trabajos, trabajosDelivery ***REMOVED*** = useApp();
   const ***REMOVED*** profilePhotoURL, updateProfilePhoto ***REMOVED*** = useAuth();
   const colors = useThemeColors();
+  const [isPhotoLoading, setIsPhotoLoading] = useState(false);
 
   // Estado para el tooltip
   const [showTooltip, setShowTooltip] = useState(false);
   const [showPhotoEdit, setShowPhotoEdit] = useState(false);
   const fileInputRef = useRef(null);
+
+  useEffect(() => ***REMOVED***
+    const handleLoadingStart = () => setIsPhotoLoading(true);
+    const handleLoadingEnd = () => setIsPhotoLoading(false);
+
+    window.addEventListener('profile-photo-loading-start', handleLoadingStart);
+    window.addEventListener('profile-photo-loading-end', handleLoadingEnd);
+
+    return () => ***REMOVED***
+      window.removeEventListener('profile-photo-loading-start', handleLoadingStart);
+      window.removeEventListener('profile-photo-loading-end', handleLoadingEnd);
+    ***REMOVED***;
+  ***REMOVED***, []);
   
   const getCurrentView = () => ***REMOVED***
     const path = location.pathname;
@@ -118,11 +132,13 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
     const file = event.target.files?.[0];
     if (!file) return;
 
+    window.dispatchEvent(new CustomEvent('profile-photo-loading-start'));
     try ***REMOVED***
       await updateProfilePhoto(file);
     ***REMOVED*** catch (error) ***REMOVED***
       console.error('Error al actualizar foto:', error);
     ***REMOVED*** finally ***REMOVED***
+      window.dispatchEvent(new CustomEvent('profile-photo-loading-end'));
       if (fileInputRef.current) ***REMOVED***
         fileInputRef.current.value = '';
       ***REMOVED***
@@ -226,7 +242,7 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
                   profilePhotoURL?.includes('logo.svg')
                     ? 'object-contain p-2 filter brightness-0 invert'
                     : 'object-cover'
-                ***REMOVED***`***REMOVED***
+                ***REMOVED*** $***REMOVED***isPhotoLoading && !profilePhotoURL?.includes('logo.svg') ? 'opacity-70 blur-sm' : ''***REMOVED***`***REMOVED***
                 style=***REMOVED***
                   profilePhotoURL?.includes('logo.svg')
                     ? ***REMOVED*** filter: 'brightness(0) invert(1)' ***REMOVED***

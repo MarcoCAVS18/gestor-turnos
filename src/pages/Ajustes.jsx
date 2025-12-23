@@ -1,6 +1,5 @@
 // src/pages/Ajustes.jsx
 
-import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** Settings ***REMOVED*** from 'lucide-react';
 import PageHeader from '../components/layout/PageHeader';
 import ProfileSection from '../components/settings/ProfileSection';
@@ -11,50 +10,17 @@ import GoalsSection from '../components/settings/GoalsSection';
 import PreferencesSection from '../components/settings/PreferencesSection';
 import SessionSection from '../components/settings/SessionSection';
 import FooterSection from '../components/settings/FooterSection';
-import NotificationBanner from '../components/ui/NotificationBanner';
 import DeliverySection from '../components/settings/DeliverySection';
 import SmokoSection from '../components/settings/SmokoSection';
 import IntegrationsBanner from '../components/settings/IntegrationsBanner';
 
 const Ajustes = () => ***REMOVED***
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-
-  const handleSuccess = (msg) => ***REMOVED***
-    setMessage(msg);
-    setError('');
-    setTimeout(() => setMessage(''), 4000);
-  ***REMOVED***;
-
-  const handleError = (err) => ***REMOVED***
-    setError(err);
-    setMessage('');
-    setTimeout(() => setError(''), 6000);
-  ***REMOVED***;
-
-  const clearMessages = () => ***REMOVED***
-    setMessage('');
-    setError('');
-  ***REMOVED***;
-
   return (
     <div className="px-4 py-6 space-y-6">
       <PageHeader
         title="Ajustes"
         subtitle="Personaliza tu experiencia y gestiona tu cuenta"
         icon=***REMOVED***Settings***REMOVED***
-      />
-
-      <NotificationBanner
-        message=***REMOVED***message***REMOVED***
-        type="success"
-        onClose=***REMOVED***clearMessages***REMOVED***
-      />
-
-      <NotificationBanner
-        message=***REMOVED***error***REMOVED***
-        type="error"
-        onClose=***REMOVED***clearMessages***REMOVED***
       />
 
       ***REMOVED***/* CONTENEDOR PRINCIPAL CON ALTURA COMPLETA */***REMOVED***
@@ -71,19 +37,13 @@ const Ajustes = () => ***REMOVED***
               <div className="flex flex-col gap-6 h-full">
                 <ProfilePhotoSection
                   className="flex-grow"
-                  onError=***REMOVED***handleError***REMOVED***
-                  onSuccess=***REMOVED***handleSuccess***REMOVED***
                 />
                 <ProfileSection
                   className="flex-grow"
-                  onError=***REMOVED***handleError***REMOVED***
-                  onSuccess=***REMOVED***handleSuccess***REMOVED***
                 />
                 <GoalsSection className="flex-grow" />
                 <PreferencesSection
                   className="flex-grow"
-                  onError=***REMOVED***handleError***REMOVED***
-                  onSuccess=***REMOVED***handleSuccess***REMOVED***
                 />
               </div>
 
@@ -93,12 +53,9 @@ const Ajustes = () => ***REMOVED***
                 <CustomizationSection className="flex-grow" />
                 <SmokoSection
                   className="flex-grow"
-                  onError=***REMOVED***handleError***REMOVED***
-                  onSuccess=***REMOVED***handleSuccess***REMOVED***
                 />
                 <SessionSection
                   className="flex-grow"
-                  onError=***REMOVED***handleError***REMOVED***
                 />
               </div>
 
@@ -106,13 +63,9 @@ const Ajustes = () => ***REMOVED***
               <div className="flex flex-col gap-6 h-full">
                 <DeliverySection
                   className="flex-grow"
-                  onError=***REMOVED***handleError***REMOVED***
-                  onSuccess=***REMOVED***handleSuccess***REMOVED***
                 />
                 <TurnRangeSection
                   className="flex-grow"
-                  onError=***REMOVED***handleError***REMOVED***
-                  onSuccess=***REMOVED***handleSuccess***REMOVED***
                 />
               </div>
             </div>
@@ -123,13 +76,9 @@ const Ajustes = () => ***REMOVED***
           <div className="block lg:hidden space-y-6">
             <IntegrationsBanner />
             <ProfilePhotoSection
-              onError=***REMOVED***handleError***REMOVED***
-              onSuccess=***REMOVED***handleSuccess***REMOVED***
             />
 
             <ProfileSection
-              onError=***REMOVED***handleError***REMOVED***
-              onSuccess=***REMOVED***handleSuccess***REMOVED***
             />
 
             <CustomizationSection />
@@ -137,24 +86,17 @@ const Ajustes = () => ***REMOVED***
             <DeliverySection />
 
             <SmokoSection
-              onError=***REMOVED***handleError***REMOVED***
-              onSuccess=***REMOVED***handleSuccess***REMOVED***
             />
 
             <GoalsSection />
 
             <TurnRangeSection
-              onError=***REMOVED***handleError***REMOVED***
-              onSuccess=***REMOVED***handleSuccess***REMOVED***
             />
 
             <PreferencesSection
-              onError=***REMOVED***handleError***REMOVED***
-              onSuccess=***REMOVED***handleSuccess***REMOVED***
             />
 
             <SessionSection
-              onError=***REMOVED***handleError***REMOVED***
             />
           </div>
         </div>

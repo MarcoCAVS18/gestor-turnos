@@ -1,7 +1,8 @@
 // src/components/delivery/VehicleSelector/index.jsx
 
 import React from 'react';
-import ***REMOVED*** Check, Bike, Car, Truck, User ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Check, Bike, Car, User ***REMOVED*** from 'lucide-react';
+import MotorbikeIcon from '../../icons/MotorbikeIcon';
 import ***REMOVED*** DELIVERY_VEHICLES ***REMOVED*** from '../../../constants/delivery';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import Flex from '../../ui/Flex';
@@ -10,7 +11,7 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick, colors ***REM
   const getVehicleIcon = (vehicleId) => ***REMOVED***
     const icons = ***REMOVED***
       'bicicleta': Bike,
-      'moto': Truck, 
+      'moto': MotorbikeIcon, 
       'auto': Car,
       'a_pie': User
     ***REMOVED***;

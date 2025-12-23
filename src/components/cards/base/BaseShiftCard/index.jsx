@@ -13,6 +13,8 @@ import ***REMOVED*** formatRelativeDate ***REMOVED*** from '../../../../utils/ti
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
 import ShiftDetailsPopover from '../../../shifts/ShiftDetailsPopover';
+import WorkAvatar from '../../../work/WorkAvatar';
+import ***REMOVED*** DELIVERY_VEHICLES, DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../../constants/delivery';
 
 const BaseShiftCard = (***REMOVED***
   turno,
@@ -62,12 +64,10 @@ const BaseShiftCard = (***REMOVED***
     traditional: ***REMOVED***
       editIcon: Edit,
       defaultColor: colors.primary,
-      avatarContent: trabajo.nombre?.charAt(0)?.toUpperCase() || 'T'
     ***REMOVED***,
     delivery: ***REMOVED***
       editIcon: Edit2,
       defaultColor: '#10B981',
-      avatarContent: null 
     ***REMOVED***
   ***REMOVED***;
 
@@ -87,7 +87,33 @@ const BaseShiftCard = (***REMOVED***
     ***REMOVED***
   ];
 
-  const colorTrabajo = trabajo.color || trabajo.colorAvatar || currentConfig.defaultColor;
+  // --- Avatar Logic ---
+  let iconName = null;
+  let avatarColor = trabajo.color || trabajo.colorAvatar || currentConfig.defaultColor;
+
+  if (type === 'delivery') ***REMOVED***
+    // El color se basa en la plataforma
+    if (trabajo.plataforma) ***REMOVED***
+      const platformName = trabajo.plataforma.toLowerCase();
+      const platformData = DELIVERY_PLATFORMS_AUSTRALIA.find(p => p.nombre.toLowerCase() === platformName);
+      if (platformData) ***REMOVED***
+        avatarColor = platformData.color;
+      ***REMOVED***
+    ***REMOVED***
+    
+    // El ícono se basa en el vehículo del trabajo
+    if (trabajo.vehiculo) ***REMOVED***
+      const vehicleName = trabajo.vehiculo.toLowerCase();
+      const vehicleData = DELIVERY_VEHICLES.find(v => v.id === vehicleName || v.nombre.toLowerCase() === vehicleName);
+      if (vehicleData) ***REMOVED***
+        iconName = vehicleData.id;
+      ***REMOVED*** else ***REMOVED***
+        iconName = 'default';
+      ***REMOVED***
+    ***REMOVED*** else ***REMOVED***
+      iconName = 'default';
+    ***REMOVED***
+  ***REMOVED***
 
   const renderEarningFooter = () => ***REMOVED***
     if (earningValue === undefined) return null;
@@ -115,12 +141,12 @@ const BaseShiftCard = (***REMOVED***
         <div className="space-y-3">
           <Flex variant="start-between">
             <Flex variant="start" className="items-center space-x-3 flex-1 min-w-0">
-              <Flex variant="center"
-                className="rounded-lg w-8 h-8 text-white font-bold text-sm flex-shrink-0"
-                style=***REMOVED******REMOVED*** backgroundColor: colorTrabajo ***REMOVED******REMOVED***
-              >
-                ***REMOVED***currentConfig.avatarContent || children?.avatarIcon***REMOVED***
-              </Flex>
+              <WorkAvatar
+                nombre=***REMOVED***trabajo.nombre***REMOVED***
+                color=***REMOVED***avatarColor***REMOVED***
+                iconName=***REMOVED***iconName***REMOVED***
+                size="sm"
+              />
 
               <Flex className="gap-2 min-w-0 overflow-hidden">
                 <h3 className="font-semibold text-gray-800 truncate text-base">
@@ -155,6 +181,7 @@ const BaseShiftCard = (***REMOVED***
               <div className="text-sm text-gray-600 ml-2 border-l pl-2 border-gray-300">
                 ***REMOVED***shiftData?.hours?.toFixed(1) || '0.0'***REMOVED***h
               </div>
+
             </Flex>
 
             ***REMOVED***/* RESTAURADO: Badges y fecha en Mobile */***REMOVED***
@@ -183,12 +210,12 @@ const BaseShiftCard = (***REMOVED***
           <Flex variant="start-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-3">
-                <Flex variant="center"
-                  className="w-10 h-10 rounded-lg text-white font-bold flex-shrink-0"
-                  style=***REMOVED******REMOVED*** backgroundColor: colorTrabajo ***REMOVED******REMOVED***
-                >
-                  ***REMOVED***currentConfig.avatarContent || children?.avatarIcon***REMOVED***
-                </Flex>
+                <WorkAvatar
+                  nombre=***REMOVED***trabajo.nombre***REMOVED***
+                  color=***REMOVED***avatarColor***REMOVED***
+                  iconName=***REMOVED***iconName***REMOVED***
+                  size="md"
+                />
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">

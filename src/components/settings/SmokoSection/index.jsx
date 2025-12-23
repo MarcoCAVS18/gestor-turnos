@@ -1,12 +1,12 @@
-// src/components/settings/SmokoSection/index.jsx -
+// src/components/settings/SmokoSection/index.jsx
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** Coffee, Save ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Coffee ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
-import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
+import Switch from '../../ui/Switch';
 
 const SmokoSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
@@ -18,40 +18,33 @@ const SmokoSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***)
   const colors = useThemeColors();
   const [enabled, setEnabled] = useState(smokoEnabled);
   const [minutes, setMinutes] = useState(smokoMinutes);
-  const [guardando, setGuardando] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => ***REMOVED***
     setEnabled(smokoEnabled);
     setMinutes(smokoMinutes);
   ***REMOVED***, [smokoEnabled, smokoMinutes]);
 
-  useEffect(() => ***REMOVED***
-    const cambiosDetectados = enabled !== smokoEnabled || minutes !== smokoMinutes;
-    setHasChanges(cambiosDetectados);
-  ***REMOVED***, [enabled, minutes, smokoEnabled, smokoMinutes]);
+  const handleGuardar = async (newEnabled, newMinutes) => ***REMOVED***
+    try ***REMOVED***
+      await savePreferences(***REMOVED*** 
+        smokoEnabled: newEnabled,
+        smokoMinutes: newEnabled ? newMinutes : 0
+      ***REMOVED***);
+      // onSuccess removed to avoid spamming toast notifications on every change
+    ***REMOVED*** catch (error) ***REMOVED***
+      onError?.('Error al guardar configuración de descansos: ' + error.message);
+    ***REMOVED***
+  ***REMOVED***;
 
   const handleToggle = (newEnabled) => ***REMOVED***
     setEnabled(newEnabled);
+    handleGuardar(newEnabled, minutes);
   ***REMOVED***;
 
-  const handleMinutesChange = (newMinutes) => ***REMOVED***
-    setMinutes(Math.max(5, Math.min(120, parseInt(newMinutes) || 0)));
-  ***REMOVED***;
-
-  const handleGuardar = async () => ***REMOVED***
-    try ***REMOVED***
-      setGuardando(true);
-      await savePreferences(***REMOVED*** 
-        smokoEnabled: enabled,
-        smokoMinutes: enabled ? minutes : 0
-      ***REMOVED***);
-      onSuccess?.('Configuración de descansos guardada correctamente');
-    ***REMOVED*** catch (error) ***REMOVED***
-      onError?.('Error al guardar configuración de descansos: ' + error.message);
-    ***REMOVED*** finally ***REMOVED***
-      setGuardando(false);
-    ***REMOVED***
+  const handleMinutesChange = (val) => ***REMOVED***
+    const newMinutes = Math.max(5, Math.min(120, parseInt(val) || 0));
+    setMinutes(newMinutes);
+    handleGuardar(enabled, newMinutes);
   ***REMOVED***;
 
   const formatearTiempo = (mins) => ***REMOVED***
@@ -86,15 +79,12 @@ const SmokoSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***)
               Descontar tiempo de descanso automáticamente
             </p>
           </div>
-          <label className="flex items-center cursor-pointer relative">
-            <input
-              type="checkbox"
-              checked=***REMOVED***enabled***REMOVED***
-              onChange=***REMOVED***(e) => handleToggle(e.target.checked)***REMOVED***
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
-          </label>
+          
+          ***REMOVED***/* Componente Switch reemplazado */***REMOVED***
+          <Switch 
+            checked=***REMOVED***enabled***REMOVED*** 
+            onChange=***REMOVED***handleToggle***REMOVED*** 
+          />
         </Flex>
 
         ***REMOVED***enabled && (
@@ -152,21 +142,6 @@ const SmokoSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***)
                 </div>
               </div>
             </div>
-          </div>
-        )***REMOVED***
-
-        ***REMOVED***hasChanges && (
-          <div className="pt-4 border-t border-gray-200">
-            <Button
-              onClick=***REMOVED***handleGuardar***REMOVED***
-              disabled=***REMOVED***guardando***REMOVED***
-              loading=***REMOVED***guardando***REMOVED***
-              icon=***REMOVED***Save***REMOVED***
-              className="w-full sm:w-auto" // Botón full width en móvil
-              themeColor=***REMOVED***colors.primary***REMOVED***
-            >
-              ***REMOVED***guardando ? 'Guardando...' : 'Guardar cambios'***REMOVED***
-            </Button>
           </div>
         )***REMOVED***
       </div>

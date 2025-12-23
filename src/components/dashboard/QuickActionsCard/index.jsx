@@ -5,7 +5,6 @@ import ***REMOVED*** Plus, Briefcase, Zap ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
-import New from '../../ui/New';
 
 const QuickActionsCard = (***REMOVED*** className ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -44,7 +43,6 @@ const QuickActionsCard = (***REMOVED*** className ***REMOVED***) => ***REMOVED**
           themeColor=***REMOVED***colors.primary***REMOVED***
         >
           Modo Live - Clock in and Clock out
-          <New />
         </Button>
       </div>
     </Card>

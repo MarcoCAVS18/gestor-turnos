@@ -1,7 +1,8 @@
-// src/components/cards/TarjetaTrabajoDelivery/index.jsx - Refactorizado usando BaseWorkCard
+// src/components/cards/TarjetaTrabajoDelivery/index.jsx
 
 import React from 'react';
-import ***REMOVED*** Package, Bike, Car, Truck, User ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Package, Bike, Car, User ***REMOVED*** from 'lucide-react';
+import MotorbikeIcon from '../../../icons/MotorbikeIcon';
 import BaseWorkCard from '../../base/BaseWorkCard';
 import Flex from '../../../ui/Flex';
 
@@ -12,7 +13,7 @@ const TarjetaTrabajoDelivery = (props) => ***REMOVED***
   const getVehicleIcon = (vehiculo) => ***REMOVED***
     switch (vehiculo) ***REMOVED***
       case 'Bicicleta': return <Bike size=***REMOVED***16***REMOVED*** className="text-green-500" />;
-      case 'Moto': return <Truck size=***REMOVED***16***REMOVED*** className="text-orange-500" />;
+      case 'Moto': return <MotorbikeIcon size=***REMOVED***16***REMOVED*** className="text-orange-500" />;
       case 'Auto': return <Car size=***REMOVED***16***REMOVED*** className="text-blue-500" />;
       case 'A pie': return <User size=***REMOVED***16***REMOVED*** className="text-gray-500" />;
       default: return <Package size=***REMOVED***16***REMOVED*** className="text-gray-400" />;

@@ -220,27 +220,36 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
   const removeProfilePhoto = async () => ***REMOVED***
     try ***REMOVED***
       setError('');
-
+  
       if (!currentUser) throw new Error('No hay usuario logueado');
-
-      // Eliminar del Storage
-      await deleteProfilePhoto(currentUser.uid);
-
-      // Actualizar en Firebase Auth (volver a null)
+      
+      const currentPhotoURL = currentUser.photoURL;
+  
+      // Si no hay foto, no hacer nada
+      if (!currentPhotoURL) return;
+  
+      // Eliminar del Storage usando la URL
+      await deleteProfilePhoto(currentPhotoURL);
+  
+      // Actualizar en Firebase Auth a null
       await updateProfile(currentUser, ***REMOVED*** photoURL: null ***REMOVED***);
-
+  
       // Actualizar en Firestore
       const userDocRef = doc(db, 'usuarios', currentUser.uid);
       await updateDoc(userDocRef, ***REMOVED***
         photoURL: null,
         fechaActualizacion: new Date()
       ***REMOVED***);
-
-      // Volver al logo por defecto
+  
+      // Forzar la recarga del estado del usuario para obtener la URL actualizada
+      await auth.currentUser.reload();
+      const updatedUser = auth.currentUser;
+  
+      // Volver al logo por defecto y actualizar el estado
       const defaultPhoto = getDefaultProfilePhoto();
       setProfilePhotoURL(defaultPhoto);
-      setCurrentUser(***REMOVED***...currentUser, photoURL: null***REMOVED***);
-
+      setCurrentUser(updatedUser); // Usar el usuario actualizado
+  
       return true;
     ***REMOVED*** catch (error) ***REMOVED***
       setError('Error al eliminar foto de perfil: ' + error.message);
@@ -257,14 +266,14 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
       ***REMOVED***
 
       // Primero verificar si hay photoURL en Firebase Auth
-      if (user.photoURL) ***REMOVED***
+      if (user.photoURL && user.photoURL.trim() !== '') ***REMOVED***
         setProfilePhotoURL(user.photoURL);
         return;
       ***REMOVED***
 
       // Si no, verificar en Firestore
       const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
-      if (userDoc.exists() && userDoc.data().photoURL) ***REMOVED***
+      if (userDoc.exists() && userDoc.data().photoURL && userDoc.data().photoURL.trim() !== '') ***REMOVED***
         setProfilePhotoURL(userDoc.data().photoURL);
       ***REMOVED*** else ***REMOVED***
         setProfilePhotoURL(getDefaultProfilePhoto());

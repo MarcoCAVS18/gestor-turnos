@@ -54,31 +54,53 @@ const ResumenDelivery = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVE
         Resumen Delivery
       </h3>
 
-      <div className=***REMOVED***`grid grid-cols-2 gap-4 transition-all duration-500 $***REMOVED***animacionActiva ? 'scale-105' : 'scale-100'***REMOVED***`***REMOVED***>
-        <div className="text-center p-4 bg-green-50 rounded-lg">
-          <DollarSign size=***REMOVED***24***REMOVED*** className="mx-auto mb-2 text-green-600" />
-          <p className="text-2xl font-bold text-green-700">***REMOVED***formatCurrency(deliveryStats.totalGanado)***REMOVED***</p>
-          <p className="text-sm text-green-600">Ganancia Total</p>
+      <div className=***REMOVED***`grid grid-cols-2 gap-4 transition-all duration-500 $***REMOVED***animacionActiva ? 'opacity-90' : 'opacity-100'***REMOVED***`***REMOVED***>
+        ***REMOVED***/* Ganancia Total */***REMOVED***
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden transition-transform transform hover:-translate-y-1">
+          <div className="h-2 bg-gradient-to-r from-green-400 to-green-500"></div>
+          <div className="p-4">
+            <div className="flex justify-between items-start">
+              <p className="text-sm font-semibold text-gray-700">Ganancia</p>
+              <DollarSign size=***REMOVED***20***REMOVED*** className="text-gray-400" />
+            </div>
+            <p className="mt-2 text-3xl font-bold text-gray-900">***REMOVED***formatCurrency(deliveryStats.totalGanado)***REMOVED***</p>
+          </div>
         </div>
 
-        <div className="text-center p-4 bg-blue-50 rounded-lg">
-          <Package size=***REMOVED***24***REMOVED*** className="mx-auto mb-2 text-blue-600" />
-          <p className="text-2xl font-bold text-blue-700">***REMOVED***deliveryStats.totalPedidos***REMOVED***</p>
-          <p className="text-sm text-blue-600">Pedidos</p>
+        ***REMOVED***/* Total Pedidos */***REMOVED***
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden transition-transform transform hover:-translate-y-1">
+          <div className="h-2 bg-gradient-to-r from-blue-400 to-blue-500"></div>
+          <div className="p-4">
+            <div className="flex justify-between items-start">
+              <p className="text-sm font-semibold text-gray-700">Pedidos</p>
+              <Package size=***REMOVED***20***REMOVED*** className="text-gray-400" />
+            </div>
+            <p className="mt-2 text-3xl font-bold text-gray-900">***REMOVED***deliveryStats.totalPedidos***REMOVED***</p>
+          </div>
         </div>
 
-        <div className="text-center p-4 bg-purple-50 rounded-lg">
-          <Navigation size=***REMOVED***24***REMOVED*** className="mx-auto mb-2 text-purple-600" />
-          <p className="text-2xl font-bold text-purple-700">***REMOVED***deliveryStats.totalKilometros.toFixed(1)***REMOVED***</p>
-          <p className="text-sm text-purple-600">Kilómetros</p>
+        ***REMOVED***/* Kilómetros Totales */***REMOVED***
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden transition-transform transform hover:-translate-y-1">
+          <div className="h-2 bg-gradient-to-r from-purple-400 to-purple-500"></div>
+          <div className="p-4">
+            <div className="flex justify-between items-start">
+              <p className="text-sm font-semibold text-gray-700">KMs</p>
+              <Navigation size=***REMOVED***20***REMOVED*** className="text-gray-400" />
+            </div>
+            <p className="mt-2 text-3xl font-bold text-gray-900">***REMOVED***deliveryStats.totalKilometros.toFixed(1)***REMOVED***</p>
+          </div>
         </div>
-
-        <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <DollarSign size=***REMOVED***24***REMOVED*** className="mx-auto mb-2" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
-          <p className="text-2xl font-bold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-            ***REMOVED***formatCurrency(promedioPorPedido)***REMOVED***
-          </p>
-          <p className="text-sm text-gray-600">Por Pedido</p>
+        
+        ***REMOVED***/* Promedio por Pedido */***REMOVED***
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden transition-transform transform hover:-translate-y-1">
+          <div className="h-2 bg-gradient-to-r from-orange-400 to-orange-500"></div>
+          <div className="p-4">
+            <div className="flex justify-between items-start">
+              <p className="text-sm font-semibold text-gray-700">€ / Pedido</p>
+              <DollarSign size=***REMOVED***20***REMOVED*** className="text-gray-400" />
+            </div>
+            <p className="mt-2 text-3xl font-bold text-gray-900">***REMOVED***formatCurrency(promedioPorPedido)***REMOVED***</p>
+          </div>
         </div>
       </div>
     </Card>
