@@ -5,6 +5,8 @@ import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 import ***REMOVED*** getMonthRange ***REMOVED*** from '../utils/time';
 import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../constants/delivery';
 
+
+
 /**
  * Calcula las horas trabajadas entre una hora de inicio y fin.
  * @param ***REMOVED***string***REMOVED*** start - Hora de inicio (e.g., "08:00")
@@ -391,6 +393,7 @@ export const calculateWeeklyStats = (***REMOVED***
   return ***REMOVED***
     fechaInicio,
     fechaFin,
+    turnos: turnosSemana,
     totalGanado: acc.totalGanado,
     horasTrabajadas: acc.horasTrabajadas,
     totalTurnos: turnosSemana.length,
@@ -643,3 +646,175 @@ export const calculateDeliveryStats = (***REMOVED*** trabajosDelivery, turnosDel
 
     return resultado;
 ***REMOVED***
+
+export const calculateDeliveryHourlyStats = (turnos = []) => ***REMOVED***
+  // Definición de franjas
+  const franjas = ***REMOVED***
+    manana: ***REMOVED*** 
+      id: 'manana', 
+      label: 'Mañana (6-12)', 
+      start: 6, 
+      end: 11, 
+      ganancia: 0, 
+      horas: 0, 
+      count: 0 
+    ***REMOVED***,
+    mediodia: ***REMOVED*** 
+      id: 'mediodia', 
+      label: 'Mediodía (12-16)', 
+      start: 12, 
+      end: 15, 
+      ganancia: 0, 
+      horas: 0, 
+      count: 0 
+    ***REMOVED***,
+    tarde: ***REMOVED*** 
+      id: 'tarde', 
+      label: 'Tarde (16-20)', 
+      start: 16, 
+      end: 19, 
+      ganancia: 0, 
+      horas: 0, 
+      count: 0 
+    ***REMOVED***,
+    noche: ***REMOVED*** 
+      id: 'noche', 
+      label: 'Noche (20-6)', 
+      start: 20, 
+      end: 5, 
+      ganancia: 0, 
+      horas: 0, 
+      count: 0 
+    ***REMOVED***,
+  ***REMOVED***;
+
+  const deliveryTurnos = turnos.filter(t => t.tipo === 'delivery' || t.esDelivery || t.plataforma);
+
+  deliveryTurnos.forEach(turno => ***REMOVED***
+    if (!turno.fechaInicio || !turno.fechaFin) return;
+    
+    const fecha = new Date(turno.fechaInicio);
+    const hora = fecha.getHours();
+    
+    let key = 'noche';
+    if (hora >= 6 && hora < 12) key = 'manana';
+    else if (hora >= 12 && hora < 16) key = 'mediodia';
+    else if (hora >= 16 && hora < 20) key = 'tarde';
+
+    // Calcular ganancia neta del turno
+    const gananciaTurno = (turno.ganancia || turno.gananciaTotal || 0) + (turno.propinas || 0) - (turno.gastoCombustible || 0);
+    
+    // Calcular duración real
+    const startDateTime = new Date(`$***REMOVED***turno.fechaInicio***REMOVED***T$***REMOVED***turno.horaInicio***REMOVED***:00`);
+    let endDateTime = new Date(`$***REMOVED***turno.fechaFin***REMOVED***T$***REMOVED***turno.horaFin***REMOVED***:00`);
+
+    // If the shift ends on the same calendar day as it starts,
+    // but the end time is numerically earlier than the start time,
+    // it implies the shift crosses midnight into the next day.
+    // This handles cases like 22:00 (Day 1) to 02:00 (Day 2)
+    // where fechaFin and fechaInicio might still be the same ('YYYY-MM-DD').
+    if (endDateTime.getTime() <= startDateTime.getTime() && turno.fechaFin === turno.fechaInicio) ***REMOVED***
+        endDateTime.setDate(endDateTime.getDate() + 1);
+    ***REMOVED***
+    
+    // Fallback if endDateTime is still <= startDateTime (e.g., malformed data)
+    if (endDateTime.getTime() <= startDateTime.getTime()) ***REMOVED***
+      console.warn("Shift end time is not after start time, skipping duration calculation for shift:", turno);
+      return; // Skip this shift as duration would be 0 or negative
+    ***REMOVED***
+
+    const duracionHoras = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60 * 60);
+
+    if (duracionHoras > 0) ***REMOVED***
+      franjas[key].ganancia += gananciaTurno;
+      franjas[key].horas += duracionHoras;
+      franjas[key].count += 1;
+    ***REMOVED***
+  ***REMOVED***);
+
+  // Retornar array ordenado por rentabilidad
+  return Object.values(franjas)
+    .map(f => (***REMOVED***
+      ...f,
+      promedioHora: f.horas > 0 ? f.ganancia / f.horas : 0
+    ***REMOVED***))
+    .filter(f => f.count > 0)
+    .sort((a, b) => b.promedioHora - a.promedioHora);
+***REMOVED***;
+
+export const calculateWeeklyHourlyDeliveryStats = (turnos = []) => ***REMOVED***
+  const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+  const initialWeeklyData = daysOfWeek.map(day => (***REMOVED***
+    day: day,
+    hourlyData: Array.from(***REMOVED*** length: 24 ***REMOVED***, (_, hour) => (***REMOVED***
+      hour: hour,
+      totalProfit: 0,
+      totalHours: 0,
+      averageProfitPerHour: 0,
+    ***REMOVED***))
+  ***REMOVED***));
+
+  const deliveryTurnos = turnos.filter(t => t.tipo === 'delivery' || t.esDelivery || t.plataforma);
+
+  deliveryTurnos.forEach(turno => ***REMOVED***
+    if (!turno.fechaInicio || !turno.horaInicio || !turno.horaFin) return;
+
+    const shiftStart = new Date(`$***REMOVED***turno.fechaInicio***REMOVED***T$***REMOVED***turno.horaInicio***REMOVED***:00`);
+    let shiftEnd = new Date(`$***REMOVED***turno.fechaInicio***REMOVED***T$***REMOVED***turno.horaFin***REMOVED***:00`);
+
+    // Adjust shiftEnd if it crosses midnight
+    if (shiftEnd.getTime() <= shiftStart.getTime()) ***REMOVED***
+      shiftEnd.setDate(shiftEnd.getDate() + 1);
+    ***REMOVED***
+    
+    const gananciaTurno = (turno.ganancia || turno.gananciaTotal || 0) + (turno.propinas || 0) - (turno.gastoCombustible || 0);
+
+    let currentHour = shiftStart.getHours();
+    let currentDay = shiftStart.getDay(); // 0 for Sunday, 1 for Monday, etc.
+    let currentTime = shiftStart.getTime();
+
+    while (currentTime < shiftEnd.getTime()) ***REMOVED***
+      const nextHourTime = new Date(currentTime);
+      nextHourTime.setHours(currentHour + 1, 0, 0, 0);
+
+      const intersectionEnd = Math.min(nextHourTime.getTime(), shiftEnd.getTime());
+      const hoursInThisSegment = (intersectionEnd - currentTime) / (1000 * 60 * 60);
+
+      if (hoursInThisSegment > 0) ***REMOVED***
+        const hourlyProfit = gananciaTurno * (hoursInThisSegment / ((shiftEnd.getTime() - shiftStart.getTime()) / (1000 * 60 * 60)));
+        
+        const dayIndex = currentDay;
+        const hourIndex = currentHour;
+
+        initialWeeklyData[dayIndex].hourlyData[hourIndex].totalProfit += hourlyProfit;
+        initialWeeklyData[dayIndex].hourlyData[hourIndex].totalHours += hoursInThisSegment;
+      ***REMOVED***
+
+      currentTime = nextHourTime.getTime();
+      currentHour = nextHourTime.getHours();
+      currentDay = nextHourTime.getDay();
+    ***REMOVED***
+  ***REMOVED***);
+
+  // Calculate averageProfitPerHour
+  initialWeeklyData.forEach(dayData => ***REMOVED***
+    dayData.hourlyData.forEach(hourData => ***REMOVED***
+      if (hourData.totalHours > 0) ***REMOVED***
+        hourData.averageProfitPerHour = hourData.totalProfit / hourData.totalHours;
+      ***REMOVED***
+    ***REMOVED***);
+  ***REMOVED***);
+
+  // Reorder days to start from Monday (1 for Monday, 0 for Sunday)
+  const reorderedWeeklyData = [
+    initialWeeklyData[1], // Lunes
+    initialWeeklyData[2], // Martes
+    initialWeeklyData[3], // Miércoles
+    initialWeeklyData[4], // Jueves
+    initialWeeklyData[5], // Viernes
+    initialWeeklyData[6], // Sábado
+    initialWeeklyData[0],  // Domingo
+  ];
+
+  return reorderedWeeklyData;
+***REMOVED***;

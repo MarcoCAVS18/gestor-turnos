@@ -20,9 +20,25 @@ const Popover = (***REMOVED***
   const triggerRef = useRef(null);
   const popoverRef = useRef(null);
 
-  const handleToggle = (e) => ***REMOVED***
-    e.stopPropagation();
-    setIsOpen(prev => !prev);
+  const setIsOpenState = (state) => setIsOpen(state);
+
+  const handleMouseEnter = () => ***REMOVED***
+    if (trigger === 'hover') ***REMOVED***
+      setIsOpenState(true);
+    ***REMOVED***
+  ***REMOVED***;
+
+  const handleMouseLeave = () => ***REMOVED***
+    if (trigger === 'hover') ***REMOVED***
+      setIsOpenState(false);
+    ***REMOVED***
+  ***REMOVED***;
+
+  const handleClick = (e) => ***REMOVED***
+    if (trigger === 'click') ***REMOVED***
+      e.stopPropagation();
+      setIsOpenState(prev => !prev);
+    ***REMOVED***
   ***REMOVED***;
 
   // CAMBIO IMPORTANTE: Usamos useLayoutEffect en lugar de useEffect para evitar el parpadeo visual
@@ -105,11 +121,15 @@ const Popover = (***REMOVED***
       popoverNode.style.display = '';
       popoverNode.style.visibility = ''; 
     ***REMOVED***
-  ***REMOVED***, [isOpen, position, anchorRef, fullWidth]);
+  ***REMOVED***, [isOpen, position, anchorRef, fullWidth, trigger]);
 
   // Click outside handler (se mantiene igual, usando useEffect normal)
   useEffect(() => ***REMOVED***
     const handleClickOutside = (event) => ***REMOVED***
+      // Si el trigger es 'hover', no queremos cerrar el popover al hacer clic fuera,
+      // porque el cierre se maneja con mouseLeave.
+      if (trigger === 'hover') return; 
+
       if (
         isOpen &&
         triggerRef.current &&
@@ -117,17 +137,17 @@ const Popover = (***REMOVED***
         popoverRef.current &&
         !popoverRef.current.contains(event.target)
       ) ***REMOVED***
-        setIsOpen(false);
+        setIsOpenState(false);
       ***REMOVED***
     ***REMOVED***;
 
     document.addEventListener('mousedown', handleClickOutside);
-    window.addEventListener('resize', () => setIsOpen(false));
+    window.addEventListener('resize', () => setIsOpenState(false));
     return () => ***REMOVED***
       document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('resize', () => setIsOpen(false));
+      window.removeEventListener('resize', () => setIsOpenState(false));
     ***REMOVED***;
-  ***REMOVED***, [isOpen]);
+  ***REMOVED***, [isOpen, trigger]);
 
   const popoverContent = isOpen && (
     <div 
@@ -146,7 +166,13 @@ const Popover = (***REMOVED***
 
   return (
     <>
-      <div ref=***REMOVED***triggerRef***REMOVED*** onClick=***REMOVED***handleToggle***REMOVED*** style=***REMOVED******REMOVED*** cursor: 'pointer', display: 'inline-flex' ***REMOVED******REMOVED***>
+      <div 
+        ref=***REMOVED***triggerRef***REMOVED*** 
+        onClick=***REMOVED***handleClick***REMOVED*** 
+        onMouseEnter=***REMOVED***handleMouseEnter***REMOVED***
+        onMouseLeave=***REMOVED***handleMouseLeave***REMOVED***
+        style=***REMOVED******REMOVED*** cursor: 'pointer', display: 'inline-flex' ***REMOVED******REMOVED***
+      >
         ***REMOVED***children***REMOVED***
       </div>
       ***REMOVED***popoverContent ? ReactDOM.createPortal(popoverContent, document.body) : null***REMOVED***

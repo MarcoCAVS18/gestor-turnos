@@ -1,60 +1,57 @@
-// src/components/stats/SeguimientoCombustible/index.jsx
-
 import React from 'react';
-import ***REMOVED*** Fuel ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import ***REMOVED*** Fuel, AlertTriangle ***REMOVED*** from 'lucide-react';
+
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const SeguimientoCombustible = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
-  const colors = useThemeColors();
 
-  const totalGastos = deliveryStats.totalGastos;
-  const totalKilometros = deliveryStats.totalKilometros;
-  const totalGanancias = deliveryStats.totalGanado;
+
+  // Valores por defecto para evitar errores
+  const totalGastos = deliveryStats?.totalGastos || 0;
+  const totalKilometros = deliveryStats?.totalKilometros || 0;
+  const totalGanancias = deliveryStats?.totalGanado || 0;
   
   const eficiencia = totalGastos > 0 ? totalKilometros / totalGastos : 0;
   const porcentajeGastos = totalGanancias > 0 ? (totalGastos / totalGanancias) * 100 : 0;
 
-  if (totalGastos === 0) ***REMOVED***
-    return (
-      <Card className="h-full flex flex-col justify-center items-center">
-        <div className="text-center">
-          <Fuel size=***REMOVED***32***REMOVED*** className="mx-auto mb-3 text-gray-300" />
-          <h3 className="font-semibold text-gray-600">Sin gastos de combustible</h3>
-        </div>
-      </Card>
-    );
-  ***REMOVED***
-
+  // CAMBIO: Eliminamos el return null para que siempre se renderice
+  
   return (
-    <Card>
-      <h3 className="text-lg font-semibold flex items-center mb-4">
-        <Fuel size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-        Combustible
-      </h3>
+    <Card className="bg-red-50/50 border-red-100">
+      <Flex variant="between" className="mb-2">
+        <h3 className="text-sm font-semibold flex items-center text-gray-700">
+          <Fuel size=***REMOVED***16***REMOVED*** className="mr-2 text-red-500" />
+          Control de Combustible
+        </h3>
+        ***REMOVED***porcentajeGastos > 25 && (
+           <div className="flex items-center text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
+             <AlertTriangle size=***REMOVED***10***REMOVED*** className="mr-1" />
+             Alto consumo
+           </div>
+        )***REMOVED***
+      </Flex>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="text-center p-4 bg-red-50 rounded-lg">
-          <Fuel size=***REMOVED***24***REMOVED*** className="mx-auto mb-2 text-red-600" />
-          <p className="text-2xl font-bold text-red-700">***REMOVED***formatCurrency(totalGastos)***REMOVED***</p>
-          <p className="text-sm text-red-600">Gasto Total</p>
+        <div className="flex flex-col">
+          <span className="text-xs text-gray-500">Gasto Total</span>
+          <span className="text-lg font-bold text-red-600">***REMOVED***formatCurrency(totalGastos)***REMOVED***</span>
         </div>
-
-        <div className="text-center p-4 bg-blue-50 rounded-lg">
-          <div className="text-2xl mb-2">⚡</div>
-          <p className="text-2xl font-bold text-blue-700">***REMOVED***eficiencia.toFixed(1)***REMOVED***</p>
-          <p className="text-sm text-blue-600">Km/Peso</p>
+        
+        <div className="flex flex-col text-right border-l border-red-100 pl-4">
+          <span className="text-xs text-gray-500">Rendimiento</span>
+          <span className="text-lg font-bold text-gray-800">
+            ***REMOVED***totalGastos > 0 ? eficiencia.toFixed(1) : '-'***REMOVED*** <span className="text-xs font-normal text-gray-500">km/$</span>
+          </span>
         </div>
       </div>
-
-      ***REMOVED***porcentajeGastos > 25 && (
-        <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-          <p className="text-sm text-yellow-800">
-            ⚠️ Los gastos representan ***REMOVED***porcentajeGastos.toFixed(1)***REMOVED***% de las ganancias
-          </p>
-        </div>
-      )***REMOVED***
+      
+      <div className="mt-2 pt-2 border-t border-red-100/50">
+        <p className="text-xs text-center text-gray-500">
+          Representa el <span className="font-semibold text-gray-700">***REMOVED***porcentajeGastos.toFixed(1)***REMOVED***%</span> de tus ganancias
+        </p>
+      </div>
     </Card>
   );
 ***REMOVED***;
