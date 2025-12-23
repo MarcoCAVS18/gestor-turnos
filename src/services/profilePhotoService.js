@@ -68,28 +68,28 @@ export const uploadProfilePhoto = async (userId, file) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Elimina la foto de perfil del usuario
- * @param ***REMOVED***string***REMOVED*** userId - ID del usuario
+ * Elimina la foto de perfil del usuario desde la URL
+ * @param ***REMOVED***string***REMOVED*** photoURL - URL de la foto de perfil a eliminar
  */
-export const deleteProfilePhoto = async (userId) => ***REMOVED***
-  try ***REMOVED***
-    // Intentar eliminar varios formatos comunes
-    const extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+export const deleteProfilePhoto = async (photoURL) => ***REMOVED***
+  // Si no hay URL, no hay nada que hacer
+  if (!photoURL || photoURL.includes('logo.svg')) ***REMOVED***
+    console.log('No hay foto de perfil para eliminar o es la por defecto.');
+    return;
+  ***REMOVED***
 
-    for (const ext of extensions) ***REMOVED***
-      try ***REMOVED***
-        const storageRef = ref(storage, `profile-photos/$***REMOVED***userId***REMOVED***/profile.$***REMOVED***ext***REMOVED***`);
-        await deleteObject(storageRef);
-      ***REMOVED*** catch (error) ***REMOVED***
-        // Si no existe el archivo con esta extensión, continuar
-        if (error.code !== 'storage/object-not-found') ***REMOVED***
-          throw error;
-        ***REMOVED***
-      ***REMOVED***
-    ***REMOVED***
+  try ***REMOVED***
+    // Obtener la referencia del archivo a partir de la URL
+    const storageRef = ref(storage, photoURL);
+    await deleteObject(storageRef);
   ***REMOVED*** catch (error) ***REMOVED***
-    console.error('Error al eliminar foto de perfil:', error);
-    throw error;
+    // Si el archivo no se encuentra, puede que ya haya sido eliminado.
+    if (error.code === 'storage/object-not-found') ***REMOVED***
+      console.warn('La foto de perfil no se encontró en Storage, posiblemente ya fue eliminada:', photoURL);
+    ***REMOVED*** else ***REMOVED***
+      console.error('Error al eliminar foto de perfil:', error);
+      throw error;
+    ***REMOVED***
   ***REMOVED***
 ***REMOVED***;
 

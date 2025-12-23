@@ -6,6 +6,7 @@ import Card from '../../../ui/Card';
 import WorkAvatar from '../../../work/WorkAvatar';
 import ActionsMenu from '../../../ui/ActionsMenu';
 import Badge from '../../../ui/Badge';
+import ***REMOVED*** DELIVERY_VEHICLES, DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../../constants/delivery';
 
 const BaseWorkCard = (***REMOVED***
   trabajo,
@@ -45,9 +46,35 @@ const BaseWorkCard = (***REMOVED***
 
   const currentConfig = config[type];
 
-  // Valores por defecto
+  // --- Avatar & Naming Logic ---
   const nombreTrabajo = trabajo.nombre || 'Trabajo sin nombre';
-  const colorTrabajo = trabajo.color || trabajo.colorAvatar || currentConfig.defaultColor;
+  let colorTrabajo = trabajo.color || trabajo.colorAvatar || currentConfig.defaultColor;
+  let iconName = null;
+  
+  if (type === 'delivery') ***REMOVED***
+    // El color se basa en la plataforma
+    if (trabajo.plataforma) ***REMOVED***
+      const platformName = trabajo.plataforma.toLowerCase();
+      const platformData = DELIVERY_PLATFORMS_AUSTRALIA.find(p => p.nombre.toLowerCase() === platformName);
+      if (platformData) ***REMOVED***
+        colorTrabajo = platformData.color;
+      ***REMOVED***
+    ***REMOVED***
+    
+    // El ícono se basa en el vehículo
+    if (trabajo.vehiculo) ***REMOVED***
+      const vehicleName = trabajo.vehiculo.toLowerCase();
+      const vehicleData = DELIVERY_VEHICLES.find(v => v.id === vehicleName || v.nombre.toLowerCase() === vehicleName);
+      if (vehicleData) ***REMOVED***
+        iconName = vehicleData.id;
+      ***REMOVED*** else ***REMOVED***
+        iconName = 'default'; // fallback to truck
+      ***REMOVED***
+    ***REMOVED*** else ***REMOVED***
+      iconName = 'default'; // fallback to truck
+    ***REMOVED***
+  ***REMOVED***
+
   const descripcion = trabajo.descripcion && trabajo.descripcion.trim()
     ? trabajo.descripcion
     : 'No olvides guardar más información sobre tu trabajo.';
@@ -85,6 +112,7 @@ const BaseWorkCard = (***REMOVED***
           <WorkAvatar
             nombre=***REMOVED***nombreTrabajo***REMOVED***
             color=***REMOVED***colorTrabajo***REMOVED***
+            iconName=***REMOVED***iconName***REMOVED***
             size="lg"
           />
         </div>
