@@ -20,9 +20,25 @@ const Popover = ({
   const triggerRef = useRef(null);
   const popoverRef = useRef(null);
 
-  const handleToggle = (e) => {
-    e.stopPropagation();
-    setIsOpen(prev => !prev);
+  const setIsOpenState = (state) => setIsOpen(state);
+
+  const handleMouseEnter = () => {
+    if (trigger === 'hover') {
+      setIsOpenState(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (trigger === 'hover') {
+      setIsOpenState(false);
+    }
+  };
+
+  const handleClick = (e) => {
+    if (trigger === 'click') {
+      e.stopPropagation();
+      setIsOpenState(prev => !prev);
+    }
   };
 
   // CAMBIO IMPORTANTE: Usamos useLayoutEffect en lugar de useEffect para evitar el parpadeo visual
@@ -105,11 +121,15 @@ const Popover = ({
       popoverNode.style.display = '';
       popoverNode.style.visibility = ''; 
     }
-  }, [isOpen, position, anchorRef, fullWidth]);
+  }, [isOpen, position, anchorRef, fullWidth, trigger]);
 
   // Click outside handler (se mantiene igual, usando useEffect normal)
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Si el trigger es 'hover', no queremos cerrar el popover al hacer clic fuera,
+      // porque el cierre se maneja con mouseLeave.
+      if (trigger === 'hover') return; 
+
       if (
         isOpen &&
         triggerRef.current &&
@@ -117,17 +137,17 @@ const Popover = ({
         popoverRef.current &&
         !popoverRef.current.contains(event.target)
       ) {
-        setIsOpen(false);
+        setIsOpenState(false);
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
-    window.addEventListener('resize', () => setIsOpen(false));
+    window.addEventListener('resize', () => setIsOpenState(false));
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
-      window.removeEventListener('resize', () => setIsOpen(false));
+      window.removeEventListener('resize', () => setIsOpenState(false));
     };
-  }, [isOpen]);
+  }, [isOpen, trigger]);
 
   const popoverContent = isOpen && (
     <div 
@@ -146,7 +166,13 @@ const Popover = ({
 
   return (
     <>
-      <div ref={triggerRef} onClick={handleToggle} style={{ cursor: 'pointer', display: 'inline-flex' }}>
+      <div 
+        ref={triggerRef} 
+        onClick={handleClick} 
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={{ cursor: 'pointer', display: 'inline-flex' }}
+      >
         {children}
       </div>
       {popoverContent ? ReactDOM.createPortal(popoverContent, document.body) : null}

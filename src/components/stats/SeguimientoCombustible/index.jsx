@@ -1,60 +1,57 @@
-// src/components/stats/SeguimientoCombustible/index.jsx
-
 import React from 'react';
-import { Fuel } from 'lucide-react';
-import { useThemeColors } from '../../../hooks/useThemeColors';
+import { Fuel, AlertTriangle } from 'lucide-react';
+
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
+import Flex from '../../ui/Flex';
 
 const SeguimientoCombustible = ({ deliveryStats }) => {
-  const colors = useThemeColors();
 
-  const totalGastos = deliveryStats.totalGastos;
-  const totalKilometros = deliveryStats.totalKilometros;
-  const totalGanancias = deliveryStats.totalGanado;
+
+  // Valores por defecto para evitar errores
+  const totalGastos = deliveryStats?.totalGastos || 0;
+  const totalKilometros = deliveryStats?.totalKilometros || 0;
+  const totalGanancias = deliveryStats?.totalGanado || 0;
   
   const eficiencia = totalGastos > 0 ? totalKilometros / totalGastos : 0;
   const porcentajeGastos = totalGanancias > 0 ? (totalGastos / totalGanancias) * 100 : 0;
 
-  if (totalGastos === 0) {
-    return (
-      <Card className="h-full flex flex-col justify-center items-center">
-        <div className="text-center">
-          <Fuel size={32} className="mx-auto mb-3 text-gray-300" />
-          <h3 className="font-semibold text-gray-600">Sin gastos de combustible</h3>
-        </div>
-      </Card>
-    );
-  }
-
+  // CAMBIO: Eliminamos el return null para que siempre se renderice
+  
   return (
-    <Card>
-      <h3 className="text-lg font-semibold flex items-center mb-4">
-        <Fuel size={20} style={{ color: colors.primary }} className="mr-2" />
-        Combustible
-      </h3>
+    <Card className="bg-red-50/50 border-red-100">
+      <Flex variant="between" className="mb-2">
+        <h3 className="text-sm font-semibold flex items-center text-gray-700">
+          <Fuel size={16} className="mr-2 text-red-500" />
+          Control de Combustible
+        </h3>
+        {porcentajeGastos > 25 && (
+           <div className="flex items-center text-xs text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
+             <AlertTriangle size={10} className="mr-1" />
+             Alto consumo
+           </div>
+        )}
+      </Flex>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="text-center p-4 bg-red-50 rounded-lg">
-          <Fuel size={24} className="mx-auto mb-2 text-red-600" />
-          <p className="text-2xl font-bold text-red-700">{formatCurrency(totalGastos)}</p>
-          <p className="text-sm text-red-600">Gasto Total</p>
+        <div className="flex flex-col">
+          <span className="text-xs text-gray-500">Gasto Total</span>
+          <span className="text-lg font-bold text-red-600">{formatCurrency(totalGastos)}</span>
         </div>
-
-        <div className="text-center p-4 bg-blue-50 rounded-lg">
-          <div className="text-2xl mb-2">⚡</div>
-          <p className="text-2xl font-bold text-blue-700">{eficiencia.toFixed(1)}</p>
-          <p className="text-sm text-blue-600">Km/Peso</p>
+        
+        <div className="flex flex-col text-right border-l border-red-100 pl-4">
+          <span className="text-xs text-gray-500">Rendimiento</span>
+          <span className="text-lg font-bold text-gray-800">
+            {totalGastos > 0 ? eficiencia.toFixed(1) : '-'} <span className="text-xs font-normal text-gray-500">km/$</span>
+          </span>
         </div>
       </div>
-
-      {porcentajeGastos > 25 && (
-        <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-          <p className="text-sm text-yellow-800">
-            ⚠️ Los gastos representan {porcentajeGastos.toFixed(1)}% de las ganancias
-          </p>
-        </div>
-      )}
+      
+      <div className="mt-2 pt-2 border-t border-red-100/50">
+        <p className="text-xs text-center text-gray-500">
+          Representa el <span className="font-semibold text-gray-700">{porcentajeGastos.toFixed(1)}%</span> de tus ganancias
+        </p>
+      </div>
     </Card>
   );
 };
