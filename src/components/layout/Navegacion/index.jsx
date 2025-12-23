@@ -1,6 +1,6 @@
 // src/components/layout/Navegacion/index.jsx
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle, Pencil } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -19,11 +19,25 @@ const Navegacion = ({ abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
   const { trabajos, trabajosDelivery } = useApp();
   const { profilePhotoURL, updateProfilePhoto } = useAuth();
   const colors = useThemeColors();
+  const [isPhotoLoading, setIsPhotoLoading] = useState(false);
 
   // Estado para el tooltip
   const [showTooltip, setShowTooltip] = useState(false);
   const [showPhotoEdit, setShowPhotoEdit] = useState(false);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const handleLoadingStart = () => setIsPhotoLoading(true);
+    const handleLoadingEnd = () => setIsPhotoLoading(false);
+
+    window.addEventListener('profile-photo-loading-start', handleLoadingStart);
+    window.addEventListener('profile-photo-loading-end', handleLoadingEnd);
+
+    return () => {
+      window.removeEventListener('profile-photo-loading-start', handleLoadingStart);
+      window.removeEventListener('profile-photo-loading-end', handleLoadingEnd);
+    };
+  }, []);
   
   const getCurrentView = () => {
     const path = location.pathname;
@@ -118,11 +132,13 @@ const Navegacion = ({ abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    window.dispatchEvent(new CustomEvent('profile-photo-loading-start'));
     try {
       await updateProfilePhoto(file);
     } catch (error) {
       console.error('Error al actualizar foto:', error);
     } finally {
+      window.dispatchEvent(new CustomEvent('profile-photo-loading-end'));
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -226,7 +242,7 @@ const Navegacion = ({ abrirModalNuevoTrabajo, abrirModalNuevoTurno }) => {
                   profilePhotoURL?.includes('logo.svg')
                     ? 'object-contain p-2 filter brightness-0 invert'
                     : 'object-cover'
-                }`}
+                } ${isPhotoLoading && !profilePhotoURL?.includes('logo.svg') ? 'opacity-70 blur-sm' : ''}`}
                 style={
                   profilePhotoURL?.includes('logo.svg')
                     ? { filter: 'brightness(0) invert(1)' }

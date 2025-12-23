@@ -6,6 +6,7 @@ import Card from '../../../ui/Card';
 import WorkAvatar from '../../../work/WorkAvatar';
 import ActionsMenu from '../../../ui/ActionsMenu';
 import Badge from '../../../ui/Badge';
+import { DELIVERY_VEHICLES, DELIVERY_PLATFORMS_AUSTRALIA } from '../../../../constants/delivery';
 
 const BaseWorkCard = ({
   trabajo,
@@ -45,9 +46,35 @@ const BaseWorkCard = ({
 
   const currentConfig = config[type];
 
-  // Valores por defecto
+  // --- Avatar & Naming Logic ---
   const nombreTrabajo = trabajo.nombre || 'Trabajo sin nombre';
-  const colorTrabajo = trabajo.color || trabajo.colorAvatar || currentConfig.defaultColor;
+  let colorTrabajo = trabajo.color || trabajo.colorAvatar || currentConfig.defaultColor;
+  let iconName = null;
+  
+  if (type === 'delivery') {
+    // El color se basa en la plataforma
+    if (trabajo.plataforma) {
+      const platformName = trabajo.plataforma.toLowerCase();
+      const platformData = DELIVERY_PLATFORMS_AUSTRALIA.find(p => p.nombre.toLowerCase() === platformName);
+      if (platformData) {
+        colorTrabajo = platformData.color;
+      }
+    }
+    
+    // El ícono se basa en el vehículo
+    if (trabajo.vehiculo) {
+      const vehicleName = trabajo.vehiculo.toLowerCase();
+      const vehicleData = DELIVERY_VEHICLES.find(v => v.id === vehicleName || v.nombre.toLowerCase() === vehicleName);
+      if (vehicleData) {
+        iconName = vehicleData.id;
+      } else {
+        iconName = 'default'; // fallback to truck
+      }
+    } else {
+      iconName = 'default'; // fallback to truck
+    }
+  }
+
   const descripcion = trabajo.descripcion && trabajo.descripcion.trim()
     ? trabajo.descripcion
     : 'No olvides guardar más información sobre tu trabajo.';
@@ -85,6 +112,7 @@ const BaseWorkCard = ({
           <WorkAvatar
             nombre={nombreTrabajo}
             color={colorTrabajo}
+            iconName={iconName}
             size="lg"
           />
         </div>

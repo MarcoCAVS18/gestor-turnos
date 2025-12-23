@@ -220,27 +220,36 @@ export const AuthProvider = ({ children }) => {
   const removeProfilePhoto = async () => {
     try {
       setError('');
-
+  
       if (!currentUser) throw new Error('No hay usuario logueado');
-
-      // Eliminar del Storage
-      await deleteProfilePhoto(currentUser.uid);
-
-      // Actualizar en Firebase Auth (volver a null)
+      
+      const currentPhotoURL = currentUser.photoURL;
+  
+      // Si no hay foto, no hacer nada
+      if (!currentPhotoURL) return;
+  
+      // Eliminar del Storage usando la URL
+      await deleteProfilePhoto(currentPhotoURL);
+  
+      // Actualizar en Firebase Auth a null
       await updateProfile(currentUser, { photoURL: null });
-
+  
       // Actualizar en Firestore
       const userDocRef = doc(db, 'usuarios', currentUser.uid);
       await updateDoc(userDocRef, {
         photoURL: null,
         fechaActualizacion: new Date()
       });
-
-      // Volver al logo por defecto
+  
+      // Forzar la recarga del estado del usuario para obtener la URL actualizada
+      await auth.currentUser.reload();
+      const updatedUser = auth.currentUser;
+  
+      // Volver al logo por defecto y actualizar el estado
       const defaultPhoto = getDefaultProfilePhoto();
       setProfilePhotoURL(defaultPhoto);
-      setCurrentUser({...currentUser, photoURL: null});
-
+      setCurrentUser(updatedUser); // Usar el usuario actualizado
+  
       return true;
     } catch (error) {
       setError('Error al eliminar foto de perfil: ' + error.message);
@@ -257,14 +266,14 @@ export const AuthProvider = ({ children }) => {
       }
 
       // Primero verificar si hay photoURL en Firebase Auth
-      if (user.photoURL) {
+      if (user.photoURL && user.photoURL.trim() !== '') {
         setProfilePhotoURL(user.photoURL);
         return;
       }
 
       // Si no, verificar en Firestore
       const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
-      if (userDoc.exists() && userDoc.data().photoURL) {
+      if (userDoc.exists() && userDoc.data().photoURL && userDoc.data().photoURL.trim() !== '') {
         setProfilePhotoURL(userDoc.data().photoURL);
       } else {
         setProfilePhotoURL(getDefaultProfilePhoto());

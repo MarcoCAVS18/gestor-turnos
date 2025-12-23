@@ -1,6 +1,6 @@
 // src/components/cards/shift/TarjetaTurnoDelivery/index.jsx
 import React from 'react';
-import { Package, Navigation, Truck } from 'lucide-react';
+import { Package, Navigation } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Flex from '../../../ui/Flex';
 import { getShiftGrossEarnings } from '../../../../utils/shiftUtils';
@@ -47,9 +47,6 @@ const TarjetaTurnoDelivery = (props) => {
       earningLabel="Ganancia Neta"
     >
       {{
-        // Avatar icon para delivery
-        avatarIcon: <Truck size={16} />,
-
         // Stats móvil - Pedidos y km (SIN Ganancia, solo stats físicos)
         mobileStats: (
           <Flex variant="between" className="pt-2 border-t border-gray-100">

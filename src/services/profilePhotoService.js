@@ -68,28 +68,28 @@ export const uploadProfilePhoto = async (userId, file) => {
 };
 
 /**
- * Elimina la foto de perfil del usuario
- * @param {string} userId - ID del usuario
+ * Elimina la foto de perfil del usuario desde la URL
+ * @param {string} photoURL - URL de la foto de perfil a eliminar
  */
-export const deleteProfilePhoto = async (userId) => {
-  try {
-    // Intentar eliminar varios formatos comunes
-    const extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+export const deleteProfilePhoto = async (photoURL) => {
+  // Si no hay URL, no hay nada que hacer
+  if (!photoURL || photoURL.includes('logo.svg')) {
+    console.log('No hay foto de perfil para eliminar o es la por defecto.');
+    return;
+  }
 
-    for (const ext of extensions) {
-      try {
-        const storageRef = ref(storage, `profile-photos/${userId}/profile.${ext}`);
-        await deleteObject(storageRef);
-      } catch (error) {
-        // Si no existe el archivo con esta extensión, continuar
-        if (error.code !== 'storage/object-not-found') {
-          throw error;
-        }
-      }
-    }
+  try {
+    // Obtener la referencia del archivo a partir de la URL
+    const storageRef = ref(storage, photoURL);
+    await deleteObject(storageRef);
   } catch (error) {
-    console.error('Error al eliminar foto de perfil:', error);
-    throw error;
+    // Si el archivo no se encuentra, puede que ya haya sido eliminado.
+    if (error.code === 'storage/object-not-found') {
+      console.warn('La foto de perfil no se encontró en Storage, posiblemente ya fue eliminada:', photoURL);
+    } else {
+      console.error('Error al eliminar foto de perfil:', error);
+      throw error;
+    }
   }
 };
 

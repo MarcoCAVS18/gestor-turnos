@@ -1,12 +1,12 @@
-// src/components/settings/SmokoSection/index.jsx -
+// src/components/settings/SmokoSection/index.jsx
 
 import React, { useState, useEffect } from 'react';
-import { Coffee, Save } from 'lucide-react';
+import { Coffee } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
-import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
+import Switch from '../../ui/Switch';
 
 const SmokoSection = ({ onError, onSuccess, className }) => {
   const { 
@@ -18,40 +18,33 @@ const SmokoSection = ({ onError, onSuccess, className }) => {
   const colors = useThemeColors();
   const [enabled, setEnabled] = useState(smokoEnabled);
   const [minutes, setMinutes] = useState(smokoMinutes);
-  const [guardando, setGuardando] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     setEnabled(smokoEnabled);
     setMinutes(smokoMinutes);
   }, [smokoEnabled, smokoMinutes]);
 
-  useEffect(() => {
-    const cambiosDetectados = enabled !== smokoEnabled || minutes !== smokoMinutes;
-    setHasChanges(cambiosDetectados);
-  }, [enabled, minutes, smokoEnabled, smokoMinutes]);
+  const handleGuardar = async (newEnabled, newMinutes) => {
+    try {
+      await savePreferences({ 
+        smokoEnabled: newEnabled,
+        smokoMinutes: newEnabled ? newMinutes : 0
+      });
+      // onSuccess removed to avoid spamming toast notifications on every change
+    } catch (error) {
+      onError?.('Error al guardar configuración de descansos: ' + error.message);
+    }
+  };
 
   const handleToggle = (newEnabled) => {
     setEnabled(newEnabled);
+    handleGuardar(newEnabled, minutes);
   };
 
-  const handleMinutesChange = (newMinutes) => {
-    setMinutes(Math.max(5, Math.min(120, parseInt(newMinutes) || 0)));
-  };
-
-  const handleGuardar = async () => {
-    try {
-      setGuardando(true);
-      await savePreferences({ 
-        smokoEnabled: enabled,
-        smokoMinutes: enabled ? minutes : 0
-      });
-      onSuccess?.('Configuración de descansos guardada correctamente');
-    } catch (error) {
-      onError?.('Error al guardar configuración de descansos: ' + error.message);
-    } finally {
-      setGuardando(false);
-    }
+  const handleMinutesChange = (val) => {
+    const newMinutes = Math.max(5, Math.min(120, parseInt(val) || 0));
+    setMinutes(newMinutes);
+    handleGuardar(enabled, newMinutes);
   };
 
   const formatearTiempo = (mins) => {
@@ -86,15 +79,12 @@ const SmokoSection = ({ onError, onSuccess, className }) => {
               Descontar tiempo de descanso automáticamente
             </p>
           </div>
-          <label className="flex items-center cursor-pointer relative">
-            <input
-              type="checkbox"
-              checked={enabled}
-              onChange={(e) => handleToggle(e.target.checked)}
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-600"></div>
-          </label>
+          
+          {/* Componente Switch reemplazado */}
+          <Switch 
+            checked={enabled} 
+            onChange={handleToggle} 
+          />
         </Flex>
 
         {enabled && (
@@ -152,21 +142,6 @@ const SmokoSection = ({ onError, onSuccess, className }) => {
                 </div>
               </div>
             </div>
-          </div>
-        )}
-
-        {hasChanges && (
-          <div className="pt-4 border-t border-gray-200">
-            <Button
-              onClick={handleGuardar}
-              disabled={guardando}
-              loading={guardando}
-              icon={Save}
-              className="w-full sm:w-auto" // Botón full width en móvil
-              themeColor={colors.primary}
-            >
-              {guardando ? 'Guardando...' : 'Guardar cambios'}
-            </Button>
           </div>
         )}
       </div>

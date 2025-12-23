@@ -54,31 +54,53 @@ const ResumenDelivery = ({ deliveryStats }) => {
         Resumen Delivery
       </h3>
 
-      <div className={`grid grid-cols-2 gap-4 transition-all duration-500 ${animacionActiva ? 'scale-105' : 'scale-100'}`}>
-        <div className="text-center p-4 bg-green-50 rounded-lg">
-          <DollarSign size={24} className="mx-auto mb-2 text-green-600" />
-          <p className="text-2xl font-bold text-green-700">{formatCurrency(deliveryStats.totalGanado)}</p>
-          <p className="text-sm text-green-600">Ganancia Total</p>
+      <div className={`grid grid-cols-2 gap-4 transition-all duration-500 ${animacionActiva ? 'opacity-90' : 'opacity-100'}`}>
+        {/* Ganancia Total */}
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden transition-transform transform hover:-translate-y-1">
+          <div className="h-2 bg-gradient-to-r from-green-400 to-green-500"></div>
+          <div className="p-4">
+            <div className="flex justify-between items-start">
+              <p className="text-sm font-semibold text-gray-700">Ganancia</p>
+              <DollarSign size={20} className="text-gray-400" />
+            </div>
+            <p className="mt-2 text-3xl font-bold text-gray-900">{formatCurrency(deliveryStats.totalGanado)}</p>
+          </div>
         </div>
 
-        <div className="text-center p-4 bg-blue-50 rounded-lg">
-          <Package size={24} className="mx-auto mb-2 text-blue-600" />
-          <p className="text-2xl font-bold text-blue-700">{deliveryStats.totalPedidos}</p>
-          <p className="text-sm text-blue-600">Pedidos</p>
+        {/* Total Pedidos */}
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden transition-transform transform hover:-translate-y-1">
+          <div className="h-2 bg-gradient-to-r from-blue-400 to-blue-500"></div>
+          <div className="p-4">
+            <div className="flex justify-between items-start">
+              <p className="text-sm font-semibold text-gray-700">Pedidos</p>
+              <Package size={20} className="text-gray-400" />
+            </div>
+            <p className="mt-2 text-3xl font-bold text-gray-900">{deliveryStats.totalPedidos}</p>
+          </div>
         </div>
 
-        <div className="text-center p-4 bg-purple-50 rounded-lg">
-          <Navigation size={24} className="mx-auto mb-2 text-purple-600" />
-          <p className="text-2xl font-bold text-purple-700">{deliveryStats.totalKilometros.toFixed(1)}</p>
-          <p className="text-sm text-purple-600">Kilómetros</p>
+        {/* Kilómetros Totales */}
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden transition-transform transform hover:-translate-y-1">
+          <div className="h-2 bg-gradient-to-r from-purple-400 to-purple-500"></div>
+          <div className="p-4">
+            <div className="flex justify-between items-start">
+              <p className="text-sm font-semibold text-gray-700">KMs</p>
+              <Navigation size={20} className="text-gray-400" />
+            </div>
+            <p className="mt-2 text-3xl font-bold text-gray-900">{deliveryStats.totalKilometros.toFixed(1)}</p>
+          </div>
         </div>
-
-        <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <DollarSign size={24} className="mx-auto mb-2" style={{ color: colors.primary }} />
-          <p className="text-2xl font-bold" style={{ color: colors.primary }}>
-            {formatCurrency(promedioPorPedido)}
-          </p>
-          <p className="text-sm text-gray-600">Por Pedido</p>
+        
+        {/* Promedio por Pedido */}
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden transition-transform transform hover:-translate-y-1">
+          <div className="h-2 bg-gradient-to-r from-orange-400 to-orange-500"></div>
+          <div className="p-4">
+            <div className="flex justify-between items-start">
+              <p className="text-sm font-semibold text-gray-700">€ / Pedido</p>
+              <DollarSign size={20} className="text-gray-400" />
+            </div>
+            <p className="mt-2 text-3xl font-bold text-gray-900">{formatCurrency(promedioPorPedido)}</p>
+          </div>
         </div>
       </div>
     </Card>

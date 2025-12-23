@@ -1,7 +1,7 @@
 // src/components/settings/PreferencesSection/index.jsx
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Info, Receipt } from 'lucide-react';
+import { Info, Receipt, Check } from 'lucide-react'; // Agregamos Check
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useTrabajos } from '../../../hooks/useTrabajos';
@@ -19,28 +19,59 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
   const { trabajos } = useTrabajos();
   
   const colors = useThemeColors();
-  const [impuestoDefault, setImpuestoDefault] = useState(defaultDiscount);
+  
+  // Estados de datos
+  const [impuestoDefault, setImpuestoDefault] = useState(defaultDiscount || 0);
   const [impuestosLocales, setImpuestosLocales] = useState({});
-  const [loading, setLoading] = useState(false);
   const [showMultiRate, setShowMultiRate] = useState(false);
+
+  // Estados de UI/Feedback
+  const [loading, setLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   const traditionalJobs = useMemo(() => 
     (trabajos || []).filter(t => t.tipo === 'tradicional'),
     [trabajos]
   );
 
+  // Inicializar estado local cuando cambia el contexto (carga inicial)
   useEffect(() => {
-    setImpuestoDefault(defaultDiscount);
+    setImpuestoDefault(defaultDiscount || 0);
   }, [defaultDiscount]);
   
   useEffect(() => {
     const initialImpuestos = {};
     traditionalJobs.forEach(job => {
+      // La lógica de inicialización debe ser consistente
       initialImpuestos[job.id] = impuestosPorTrabajo[job.id] ?? defaultDiscount ?? 0;
     });
     setImpuestosLocales(initialImpuestos);
   }, [traditionalJobs, impuestosPorTrabajo, defaultDiscount]);
 
+  // Efecto para detectar cambios (Dirty Checking)
+  useEffect(() => {
+    // 1. Verificar si el default cambió
+    const defaultChanged = impuestoDefault !== (defaultDiscount || 0);
+
+    // 2. Verificar si algún impuesto específico cambió
+    const localesChanged = traditionalJobs.some(job => {
+      const valorOriginal = impuestosPorTrabajo[job.id] ?? defaultDiscount ?? 0;
+      const valorActual = impuestosLocales[job.id];
+      // Comparamos valores (usamos == para ser tolerantes con strings/numbers si pasara, 
+      // aunque aquí forzamos number en el input)
+      return valorOriginal !== valorActual;
+    });
+
+    const isDirty = defaultChanged || localesChanged;
+    setHasChanges(isDirty);
+
+    // Si el usuario vuelve a editar, ocultamos el mensaje de éxito
+    if (isDirty && showSuccess) {
+      setShowSuccess(false);
+    }
+
+  }, [impuestoDefault, impuestosLocales, defaultDiscount, impuestosPorTrabajo, traditionalJobs, showSuccess]);
 
   const handleImpuestoLocalChange = (jobId, value) => {
     setImpuestosLocales(prev => ({
@@ -56,7 +87,17 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
         descuentoDefault: impuestoDefault,
         impuestosPorTrabajo: impuestosLocales
       });
+      
+      // Mostrar éxito
+      setShowSuccess(true);
+      setHasChanges(false); // Asumimos guardado exitoso
       onSuccess?.('Configuración de impuestos guardada correctamente');
+
+      // Ocultar mensaje de éxito después de 3s
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 3000);
+
     } catch (error) {
       onError?.('Error al guardar ajustes: ' + error.message);
     } finally {
@@ -127,7 +168,7 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
         </div>
 
         {showMultiRate && traditionalJobs.length > 1 && (
-          <div className="space-y-4 pt-4 border-t">
+          <div className="space-y-4 pt-4 border-t animate-in fade-in slide-in-from-top-2">
             <h3 className="text-md font-semibold text-gray-800">Impuestos por Trabajo</h3>
             {traditionalJobs.map(job => (
               <div key={job.id} className="flex items-center gap-4">
@@ -141,9 +182,9 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
                     min="0"
                     max="100"
                     step="0.5"
-                    value={impuestosLocales[job.id] || ''}
+                    value={impuestosLocales[job.id] || 0}
                     onChange={(e) => handleImpuestoLocalChange(job.id, Number(e.target.value))}
-                    className="w-24 px-2 py-1.5 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-opacity-50"
+                    className="w-24 px-2 py-1.5 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 text-center"
                     style={{'--tw-ring-color': colors.primary}}
                     placeholder="Ej: 15"
                   />
@@ -157,12 +198,15 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
         <div className="pt-4 flex flex-wrap items-center gap-4">
           <Button
             onClick={handleSave}
-            disabled={loading}
+            disabled={loading || !hasChanges}
             loading={loading}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto min-w-[180px]"
             themeColor={colors.primary}
+            icon={showSuccess ? Check : undefined}
           >
-            Guardar Preferencias
+            {loading ? 'Guardando...' : 
+             showSuccess ? 'Guardado correctamente' :
+             hasChanges ? 'Guardar Preferencias' : 'Sin cambios'}
           </Button>
 
           {traditionalJobs.length > 1 && (

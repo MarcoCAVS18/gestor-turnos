@@ -264,7 +264,7 @@ const TrabajoDeliveryFormContent = ({ trabajo, onSubmit, onCancel, thematicColor
         {/* Mensaje informativo para vehículos sin combustible */}
         {!mostrarOpcionCombustible && formData.vehiculo && (
           <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded border border-blue-200">
-            💡 Este vehículo no requiere combustible, por lo que no se incluirán gastos relacionados.
+            Este vehículo no requiere combustible, por lo que no se incluirán gastos relacionados.
           </div>
         )}
       </div>
