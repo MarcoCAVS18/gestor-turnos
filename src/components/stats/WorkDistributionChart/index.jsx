@@ -1,57 +1,56 @@
 // src/components/stats/WorkDistributionChart/index.jsx
 
 import React from 'react';
-import ***REMOVED*** PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend ***REMOVED*** from 'recharts';
+import ***REMOVED*** PieChart, Cell, ResponsiveContainer, Tooltip, Legend ***REMOVED*** from 'recharts';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 
-const WorkDistributionChart = (***REMOVED*** distribucionTrabajos = [] ***REMOVED***) => ***REMOVED***
-  // Validar que distribucionTrabajos sea un array
-  const datos = Array.isArray(distribucionTrabajos) ? distribucionTrabajos : [];
+const WorkDistributionChart = (***REMOVED*** worksDistribution = [] ***REMOVED***) => ***REMOVED***
+  // Verify that worksDistribution is an array
+  const data = Array.isArray(worksDistribution) ? worksDistribution : [];
   
-  if (datos.length === 0) ***REMOVED***
+  if (data.length === 0) ***REMOVED***
     return (
       <Card>
-        <h3 className="text-lg font-semibold mb-4">Distribución de Trabajos</h3>
+        <h3 className="text-lg font-semibold mb-4">Work Distribution</h3>
         <Flex variant="center" className="h-64 text-gray-500">
           <div className="text-center">
-            <div className="text-4xl mb-2">📊</div>
-            <p>No hay datos para mostrar</p>
-            <p className="text-sm">Agrega algunos turnos para ver la distribución</p>
+            <p className="text-sm">No data to display</p>
+            <p className="text-sm">Add some shifts to see the distribution</p>
           </div>
         </Flex>
       </Card>
     );
   ***REMOVED***
 
-  // Colores predefinidos para el gráfico
-  const COLORES = [
+  // Predefined colors for the chart
+  const COLORS = [
     '#EC4899', '#3B82F6', '#10B981', '#F59E0B', 
     '#8B5CF6', '#EF4444', '#06B6D4', '#84CC16'
   ];
 
-  // Asegurar que todos los datos tengan color
-  const datosConColor = datos.map((item, index) => (***REMOVED***
+  // Ensure all data has color
+  const dataWithColor = data.map((item, index) => (***REMOVED***
     ...item,
-    color: item.color || COLORES[index % COLORES.length]
+    color: item.color || COLORS[index % COLORS.length]
   ***REMOVED***));
 
   const renderLabel = (entry) => ***REMOVED***
-    return entry.porcentaje > 5 ? `$***REMOVED***entry.porcentaje***REMOVED***%` : '';
+    return entry.percentage > 5 ? `$***REMOVED***entry.percentage***REMOVED***%` : '';
   ***REMOVED***;
 
-  // Tooltip personalizado
+  // Custom Tooltip
   const CustomTooltip = (***REMOVED*** active, payload ***REMOVED***) => ***REMOVED***
     if (active && payload && payload.length) ***REMOVED***
       const data = payload[0].payload;
       return (
         <div className="bg-white p-3 border rounded-lg shadow-lg">
-          <p className="font-semibold">***REMOVED***data.nombre***REMOVED***</p>
+          <p className="font-semibold">***REMOVED***data.name***REMOVED***</p>
           <p className="text-sm text-gray-600">
-            ***REMOVED***data.horas.toFixed(1)***REMOVED*** horas (***REMOVED***data.porcentaje***REMOVED***%)
+            ***REMOVED***data.hours.toFixed(1)***REMOVED*** hrs (***REMOVED***data.percentage***REMOVED***%)
           </p>
           <p className="text-sm font-medium text-green-600">
-            $***REMOVED***data.ganancia.toFixed(2)***REMOVED***
+            ***REMOVED***data.earnings.toFixed(2)***REMOVED***
           </p>
         </div>
       );
@@ -61,42 +60,40 @@ const WorkDistributionChart = (***REMOVED*** distribucionTrabajos = [] ***REMOVE
 
   return (
     <Card>
-      <h3 className="text-lg font-semibold mb-4">Distribución de Trabajos</h3>
+      <h3 className="text del text-lg font-semibold mb-4">Work Distribution</h3>
       
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data=***REMOVED***datosConColor***REMOVED***
+          <PieChart
+            data=***REMOVED***dataWithColor***REMOVED***
               cx="50%"
               cy="50%"
               labelLine=***REMOVED***false***REMOVED***
               label=***REMOVED***renderLabel***REMOVED***
               outerRadius=***REMOVED***80***REMOVED***
               fill="#8884d8"
-              dataKey="horas"
+              dataKey="hours"
             >
-              ***REMOVED***datosConColor.map((entry, index) => (
+              ***REMOVED***dataWithColor.map((entry, index) => (
                 <Cell key=***REMOVED***`cell-$***REMOVED***index***REMOVED***`***REMOVED*** fill=***REMOVED***entry.color***REMOVED*** />
               ))***REMOVED***
-            </Pie>
+            </PieChart>
             <Tooltip content=***REMOVED***<CustomTooltip />***REMOVED*** />
             <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+          </ResponsiveContainer>
       </div>
 
-      ***REMOVED***/* Resumen */***REMOVED***
-      <div className="mt-4 pt-4 border-t">
+      ***REMOVED***/* Summary */***REMOVED***
+      <div className="mt-4 pt-3 border-t border-gray-100">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-gray-600">Total trabajos:</span>
-            <span className="font-medium ml-1">***REMOVED***datosConColor.length***REMOVED***</span>
+            <span className="text-gray-600">Total works:</span>
+            <span className="font-medium ml-1">***REMOVED***dataWithColor.length***REMOVED***</span>
           </div>
           <div>
-            <span className="text-gray-600">Total horas:</span>
+            <span className="text-gray-600">Total hours:</span>
             <span className="font-medium ml-1">
-              ***REMOVED***datosConColor.reduce((sum, item) => sum + item.horas, 0).toFixed(1)***REMOVED***h
+              ***REMOVED***data.reduce((sum, item) => sum + item.hours, 0).toFixed(1)***REMOVED***h
             </span>
           </div>
         </div>

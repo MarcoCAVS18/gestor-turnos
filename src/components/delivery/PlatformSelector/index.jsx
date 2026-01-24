@@ -1,4 +1,4 @@
-// src/components/delivery/PlatformSelector/index.jsx - REFACTORED
+// src/components/delivery/PlatformSelector/index.jsx
 
 import React from 'react';
 import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../constants/delivery';

@@ -1,33 +1,33 @@
-// src/utils/pluralization.js - Utilidad completa para pluralización
+// src/utils/pluralization.js - Complete utility for pluralization
 
 /**
- * Pluraliza la palabra "turno" según la cantidad
- * @param ***REMOVED***number***REMOVED*** cantidad - Número de turnos
- * @param ***REMOVED***boolean***REMOVED*** uppercase - Si debe estar en mayúsculas (por defecto false)
- * @returns ***REMOVED***string***REMOVED*** "turno" o "turnos" según corresponda
+ * Pluralizes the word "shift" according to the quantity
+ * @param ***REMOVED***number***REMOVED*** quantity - Number of shifts
+ * @param ***REMOVED***boolean***REMOVED*** uppercase - If it should be uppercase (default false)
+ * @returns ***REMOVED***string***REMOVED*** "shift" or "shifts" as appropriate
  */
-export const pluralizeTurnos = (cantidad, uppercase = false) => ***REMOVED***
-  const word = cantidad === 1 ? 'turno' : 'turnos';
+export const pluralizeShifts = (quantity, uppercase = false) => ***REMOVED***
+  const word = quantity === 1 ? 'shift' : 'shifts';
   return uppercase ? word.toUpperCase() : word;
 ***REMOVED***;
 
 /**
- * Formatea cantidad + palabra pluralizada
- * @param ***REMOVED***number***REMOVED*** cantidad - Número de turnos
- * @param ***REMOVED***boolean***REMOVED*** uppercase - Si la palabra debe estar en mayúsculas
- * @returns ***REMOVED***string***REMOVED*** Ej: "1 turno", "5 turnos"
+ * Formats quantity + pluralized word
+ * @param ***REMOVED***number***REMOVED*** quantity - Number of shifts
+ * @param ***REMOVED***boolean***REMOVED*** uppercase - If the word should be uppercase
+ * @returns ***REMOVED***string***REMOVED*** Ex: "1 shift", "5 shifts"
  */
-export const formatTurnosCount = (cantidad, uppercase = false) => ***REMOVED***
-  return `$***REMOVED***cantidad***REMOVED*** $***REMOVED***pluralizeTurnos(cantidad, uppercase)***REMOVED***`;
+export const formatShiftsCount = (quantity, uppercase = false) => ***REMOVED***
+  return `$***REMOVED***quantity***REMOVED*** $***REMOVED***pluralizeShifts(quantity, uppercase)***REMOVED***`;
 ***REMOVED***;
 
 /**
- * Genera títulos dinámicos basados en la cantidad de elementos
- * @param ***REMOVED***number***REMOVED*** totalCount - Cantidad total de elementos
- * @param ***REMOVED***string***REMOVED*** baseTitle - Título base (ej: "Tipos de")
- * @param ***REMOVED***string***REMOVED*** singular - Palabra en singular
- * @param ***REMOVED***string***REMOVED*** plural - Palabra en plural (opcional)
- * @returns ***REMOVED***string***REMOVED*** Título pluralizado
+ * Generates dynamic titles based on the quantity of elements
+ * @param ***REMOVED***number***REMOVED*** totalCount - Total number of elements
+ * @param ***REMOVED***string***REMOVED*** baseTitle - Base title (ex: "Types of")
+ * @param ***REMOVED***string***REMOVED*** singular - Singular word
+ * @param ***REMOVED***string***REMOVED*** plural - Plural word (optional)
+ * @returns ***REMOVED***string***REMOVED*** Pluralized title
  */
 export const getDynamicTitle = (totalCount, baseTitle, singular, plural = null) => ***REMOVED***
   const word = totalCount === 1 ? singular : (plural || `$***REMOVED***singular***REMOVED***s`);
@@ -35,35 +35,35 @@ export const getDynamicTitle = (totalCount, baseTitle, singular, plural = null) 
 ***REMOVED***;
 
 /**
- * Pluraliza "tipo/tipos de turno" según cantidad
- * @param ***REMOVED***number***REMOVED*** totalTurnos - Cantidad total de turnos
- * @returns ***REMOVED***string***REMOVED*** "Tipo de turno" o "Tipos de turno"
+ * Pluralizes "type/types of shift" according to quantity
+ * @param ***REMOVED***number***REMOVED*** totalShifts - Total number of shifts
+ * @returns ***REMOVED***string***REMOVED*** "Shift type" or "Shift types"
  */
-export const pluralizeTiposDeTurno = (totalTurnos) => ***REMOVED***
-  return totalTurnos === 1 ? 'Tipo de turno' : 'Tipos de turno';
+export const pluralizeShiftTypes = (totalShifts) => ***REMOVED***
+  return totalShifts === 1 ? 'Shift type' : 'Shift types';
 ***REMOVED***;
 
 /**
- * Pluraliza cualquier palabra según cantidad
- * @param ***REMOVED***number***REMOVED*** cantidad - Número de elementos
- * @param ***REMOVED***string***REMOVED*** singular - Forma singular de la palabra
- * @param ***REMOVED***string***REMOVED*** plural - Forma plural de la palabra (opcional, por defecto agrega 's')
- * @returns ***REMOVED***string***REMOVED*** La palabra en singular o plural
+ * Pluralizes any word according to quantity
+ * @param ***REMOVED***number***REMOVED*** quantity - Number of elements
+ * @param ***REMOVED***string***REMOVED*** singular - Singular form of the word
+ * @param ***REMOVED***string***REMOVED*** plural - Plural form of the word (optional, default adds 's')
+ * @returns ***REMOVED***string***REMOVED*** The word in singular or plural
  */
-export const pluralize = (cantidad, singular, plural = null) => ***REMOVED***
-  if (cantidad === 1) return singular;
+export const pluralize = (quantity, singular, plural = null) => ***REMOVED***
+  if (quantity === 1) return singular;
   return plural || `$***REMOVED***singular***REMOVED***s`;
 ***REMOVED***;
 
 /**
- * Calcula el total de turnos desde un objeto de tipos de turno
- * @param ***REMOVED***Object***REMOVED*** tiposDeTurno - Objeto con tipos de turno
- * @returns ***REMOVED***number***REMOVED*** Total de turnos
+ * Calculates total shifts from a shift type object
+ * @param ***REMOVED***Object***REMOVED*** shiftTypes - Object with shift types
+ * @returns ***REMOVED***number***REMOVED*** - Total number of shifts
  */
-export const calculateTotalTurnos = (tiposDeTurno) => ***REMOVED***
-  if (!tiposDeTurno || typeof tiposDeTurno !== 'object') return 0;
+export const calculateTotalShifts = (shiftTypes) => ***REMOVED***
+  if (!shiftTypes || typeof shiftTypes !== 'object') return 0;
   
-  return Object.values(tiposDeTurno).reduce((total, datos) => ***REMOVED***
-    return total + (datos?.turnos || 0);
+  return Object.values(shiftTypes).reduce((total, data) => ***REMOVED***
+    return total + (data?.shifts || 0);
   ***REMOVED***, 0);
 ***REMOVED***;

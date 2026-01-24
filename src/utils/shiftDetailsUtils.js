@@ -109,7 +109,6 @@ export function getShiftTypeLabel(type) ***REMOVED***
   return labels[type] || 'Night';
 ***REMOVED***
 
-// ✅ New function to pluralize "shifts"
 export function formatShifts(quantity) ***REMOVED***
   return `$***REMOVED***quantity***REMOVED*** $***REMOVED***quantity === 1 ? 'SHIFT' : 'SHIFTS'***REMOVED***`;
 ***REMOVED***
@@ -137,8 +136,8 @@ export function generateShiftDetails(shift, allJobs) ***REMOVED***
       // Calculate end date based on start date
       const baseDate = shift.startDate || shift.date;
       startDate = createSafeDate(baseDate);
-      endDate = createSafeDate(baseDate); // Create from base date
-      endDate.setDate(endDate.getDate() + 1); // Add 1 day
+      endDate = createSafeDate(baseDate);
+      endDate.setDate(endDate.getDate() + 1); 
     ***REMOVED***
     
     const startDateStr = startDate.toLocaleDateString('en-US', ***REMOVED***

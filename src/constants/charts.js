@@ -2,43 +2,43 @@
 
 import ***REMOVED*** TrendingUp, Clock, PieChart ***REMOVED*** from 'lucide-react';
 
-// Configuración de los gráficos disponibles
+// Configuration of available charts
 export const CHART_CONFIGS = [
   ***REMOVED***
     id: 'evolution',
-    title: 'Evolución Semanal',
-    subtitle: 'Progreso de ganancias',
+    title: 'Weekly Evolution',
+    subtitle: 'Earnings Progress',
     icon: TrendingUp,
     type: 'line'
   ***REMOVED***,
   ***REMOVED***
     id: 'works',
-    title: 'Por Trabajos',
-    subtitle: 'Distribución de ganancias',
+    title: 'By Work',
+    subtitle: 'Earnings Distribution',
     icon: PieChart,
     type: 'pie'
   ***REMOVED***,
   ***REMOVED***
     id: 'daily',
-    title: 'Horas Diarias',
-    subtitle: 'Distribución semanal',
+    title: 'Daily Hours',
+    subtitle: 'Weekly Distribution',
     icon: Clock,
     type: 'area'
   ***REMOVED***
 ];
 
-// Colores planos para gráfico de torta
+// Flat colors for pie chart
 export const PIE_CHART_COLORS = [
-  '#3B82F6', // Azul
-  '#10B981', // Verde
-  '#F59E0B', // Amarillo
-  '#EF4444', // Rojo
-  '#8B5CF6', // Púrpura
-  '#06B6D4', // Cian
-  '#84CC16'  // Lima
+  '#3B82F6', // Blue
+  '#10B981', // Green
+  '#F59E0B', // Yellow
+  '#EF4444', // Red
+  '#8B5CF6', // Purple
+  '#06B6D4', // Cyan
+  '#84CC16'  // Lime
 ];
 
-// Configuración de Recharts
+// Recharts Configuration
 export const RECHARTS_CONFIG = ***REMOVED***
   pie: ***REMOVED***
     innerRadius: 40,
@@ -60,11 +60,11 @@ export const RECHARTS_CONFIG = ***REMOVED***
   ***REMOVED***
 ***REMOVED***;
 
-// Configuraciones para gráficos CSS
+// Settings for CSS charts
 export const CSS_CHART_CONFIG = ***REMOVED***
   heights: ***REMOVED***
-    container: 'h-80', // 320px contenedor total
-    chart: '280px'     // Altura interna de gráficos
+    container: 'h-80', // 320px total container
+    chart: '280px'     // Internal height of charts
   ***REMOVED***,
   animation: ***REMOVED***
     duration: 'duration-500',

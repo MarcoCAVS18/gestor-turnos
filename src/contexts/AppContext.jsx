@@ -1,4 +1,5 @@
 // src/contexts/AppContext.jsx
+
 import React, ***REMOVED*** createContext, useMemo ***REMOVED*** from 'react';
 
 import ***REMOVED*** AuthProvider ***REMOVED*** from './AuthContext';

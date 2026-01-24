@@ -3,7 +3,7 @@
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** LayoutDashboard ***REMOVED*** from 'lucide-react';
-// import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom'; // Descomentamos cuando tengamos la ruta
+// import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom'; // Uncomment when we have the route
 
 import PageHeader from '../components/layout/PageHeader';
 import ***REMOVED*** useDashboardStats ***REMOVED*** from '../hooks/useDashboardStats';
@@ -22,7 +22,6 @@ import QuickActionsCard from '../components/dashboard/QuickActionsCard';
 import ExportReportCard from '../components/dashboard/ExportReportCard';
 import FooterSection from '../components/settings/FooterSection';
 
-// Importamos la nueva tarjeta de anuncio
 import FeatureAnnouncementCard from '../components/dashboard/FeatureAnnouncementCard';
 
 import Flex from '../components/ui/Flex';
@@ -35,21 +34,21 @@ const Dashboard = () => ***REMOVED***
   const [showFeatureAnnouncement, setShowFeatureAnnouncement] = useState(true);
 
   const handleNavigateToLiveMode = () => ***REMOVED***
-    console.log("Navegando al nuevo Modo Live...");
-    // navigate('/live'); // Aquí iremos a la página de navegación completa
+    console.log("Navigating to new Live Mode...");
+    // navigate('/live'); // Here we will go to the full navigation page
   ***REMOVED***;
 
   const handleExport = async (format) => ***REMOVED***
     try ***REMOVED***
       if (format === 'pdf') ***REMOVED***
-        await generatePDFReport(stats, stats.todosLosTurnos, stats.todosLosTrabajos);
+        await generatePDFReport(stats, stats.allShifts, stats.allWorks);
       ***REMOVED*** else if (format === 'png') ***REMOVED***
-        await generatePNGReport(stats, stats.todosLosTurnos, stats.todosLosTrabajos);
+        await generatePNGReport(stats, stats.allShifts, stats.allWorks);
       ***REMOVED*** else if (format === 'xlsx') ***REMOVED***
-        await generateXLSXReport(stats, stats.todosLosTurnos, stats.todosLosTrabajos, calculatePayment);
+        await generateXLSXReport(stats, stats.allShifts, stats.allWorks, calculatePayment);
       ***REMOVED***
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al exportar reporte:', error);
+      console.error('Error exporting report:', error);
     ***REMOVED***
   ***REMOVED***;
 
@@ -70,29 +69,28 @@ const Dashboard = () => ***REMOVED***
     <div className="px-4 py-6 space-y-6">
       <PageHeader
         title="Dashboard"
-        subtitle="Una vista general de tu actividad y progreso."
+        subtitle="An overview of your activity and progress."
         icon=***REMOVED***LayoutDashboard***REMOVED***
       />
 
       <div className="space-y-6">
-        ***REMOVED***/* --- SECCIÓN SUPERIOR DESKTOP --- */***REMOVED***
+        ***REMOVED***/* --- DESKTOP TOP SECTION --- */***REMOVED***
         <div className="hidden lg:grid lg:grid-cols-5 lg:auto-rows-max lg:gap-6">
           ***REMOVED***showFeatureAnnouncement ? (
             <>
-              ***REMOVED***/* --- CON FEATURE --- */***REMOVED***
+              ***REMOVED***/* --- WITH FEATURE --- */***REMOVED***
               <motion.div className="lg:col-span-4 h-full" variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
                 <FeatureAnnouncementCard onClick=***REMOVED***handleNavigateToLiveMode***REMOVED*** className="h-full" />
               </motion.div>
               <motion.div className="lg:col-span-1 h-full" variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
-                <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** isFeatureVisible=***REMOVED***true***REMOVED*** className="h-full" />
+                <WelcomeCard totalEarned=***REMOVED***stats.totalEarned***REMOVED*** isFeatureVisible=***REMOVED***true***REMOVED*** className="h-full" />
               </motion.div>
               
               <div className="lg:col-span-4 h-full">
-                ***REMOVED***/* MODIFICADO: Se pasan los datos crudos para la vista detallada */***REMOVED***
                 <QuickStatsGrid 
                   stats=***REMOVED***stats***REMOVED*** 
-                  todosLosTurnos=***REMOVED***stats.todosLosTurnos***REMOVED***
-                  todosLosTrabajos=***REMOVED***stats.todosLosTrabajos***REMOVED***
+                  allShifts=***REMOVED***stats.allShifts***REMOVED***
+                  allWorks=***REMOVED***stats.allWorks***REMOVED***
                   className="h-full" 
                 />
               </div>
@@ -102,17 +100,16 @@ const Dashboard = () => ***REMOVED***
             </>
           ) : (
             <>
-              ***REMOVED***/* --- SIN FEATURE --- */***REMOVED***
+              ***REMOVED***/* --- WITHOUT FEATURE --- */***REMOVED***
               <motion.div className="lg:col-span-4" variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
-                <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
+                <WelcomeCard totalEarned=***REMOVED***stats.totalEarned***REMOVED*** />
               </motion.div>
       
               <div className="lg:col-span-4 lg:row-start-2">
-                ***REMOVED***/* MODIFICADO: Se pasan los datos crudos para la vista detallada */***REMOVED***
                 <QuickStatsGrid 
                   stats=***REMOVED***stats***REMOVED*** 
-                  todosLosTurnos=***REMOVED***stats.todosLosTurnos***REMOVED***
-                  todosLosTrabajos=***REMOVED***stats.todosLosTrabajos***REMOVED***
+                  allShifts=***REMOVED***stats.allShifts***REMOVED***
+                  allWorks=***REMOVED***stats.allWorks***REMOVED***
                 />
               </div>
 
@@ -123,7 +120,7 @@ const Dashboard = () => ***REMOVED***
           )***REMOVED***
         </div>
 
-        ***REMOVED***/* --- SECCIÓN MÓVIL --- */***REMOVED***
+        ***REMOVED***/* --- MOBILE SECTION --- */***REMOVED***
         <div className="block lg:hidden space-y-4">
           ***REMOVED***showFeatureAnnouncement && (
             <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
@@ -131,45 +128,44 @@ const Dashboard = () => ***REMOVED***
             </motion.div>
           )***REMOVED***
           <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
-            <WelcomeCard totalGanado=***REMOVED***stats.totalGanado***REMOVED*** />
+            <WelcomeCard totalEarned=***REMOVED***stats.totalEarned***REMOVED*** />
           </motion.div>
           
-          ***REMOVED***/* MODIFICADO: Se pasan los datos crudos para la vista detallada */***REMOVED***
           <QuickStatsGrid 
             stats=***REMOVED***stats***REMOVED*** 
-            todosLosTurnos=***REMOVED***stats.todosLosTurnos***REMOVED***
-            todosLosTrabajos=***REMOVED***stats.todosLosTrabajos***REMOVED***
+            allShifts=***REMOVED***stats.allShifts***REMOVED***
+            allWorks=***REMOVED***stats.allWorks***REMOVED***
           />
           
           <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** />
         </div>
 
-        ***REMOVED***/* --- FILA INFERIOR (Común) --- */***REMOVED***
+        ***REMOVED***/* --- BOTTOM ROW (Common) --- */***REMOVED***
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:items-start">
-          ***REMOVED***/* Actividad Reciente */***REMOVED***
+          ***REMOVED***/* Recent Activity */***REMOVED***
           <div className="lg:col-span-1 h-full">
             <RecentActivityCard
               stats=***REMOVED***stats***REMOVED***
-              todosLosTrabajos=***REMOVED***stats.todosLosTrabajos***REMOVED***
-              todosLosTurnos=***REMOVED***stats.todosLosTurnos***REMOVED***
+              allWorks=***REMOVED***stats.allWorks***REMOVED***
+              allShifts=***REMOVED***stats.allShifts***REMOVED***
             />
           </div>
 
-          ***REMOVED***/* Grillas de datos */***REMOVED***
+          ***REMOVED***/* Data Grids */***REMOVED***
           <div className="lg:col-span-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-6 flex flex-col">
-                <FavoriteWorksCard trabajosFavoritos=***REMOVED***stats.trabajosFavoritos***REMOVED*** />
-                <TopWorkCard trabajoMasRentable=***REMOVED***stats.trabajoMasRentable***REMOVED*** />
+                <FavoriteWorksCard favoriteWorks=***REMOVED***stats.favoriteWorks***REMOVED*** />
+                <TopWorkCard mostProfitableWork=***REMOVED***stats.mostProfitableWork***REMOVED*** />
                 <NextShiftCard
-                  proximoTurno=***REMOVED***stats.proximoTurno***REMOVED***
-                  formatearFecha=***REMOVED***stats.formatearFecha***REMOVED***
+                  nextShift=***REMOVED***stats.nextShift***REMOVED***
+                  formatDate=***REMOVED***stats.formatDate***REMOVED***
                 />
               </div>
               <div className="space-y-6 flex flex-col">
                   <ProjectionCard
-                  proyeccionMensual=***REMOVED***stats.proyeccionMensual***REMOVED***
-                  horasTrabajadas=***REMOVED***stats.horasTrabajadas***REMOVED***
+                  monthlyProjection=***REMOVED***stats.monthlyProjection***REMOVED***
+                  hoursWorked=***REMOVED***stats.hoursWorked***REMOVED***
                   className="flex-grow"
                 />
                 <ExportReportCard onExport=***REMOVED***handleExport***REMOVED*** />

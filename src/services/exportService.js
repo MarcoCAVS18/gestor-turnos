@@ -5,46 +5,46 @@ import html2canvas from 'html2canvas';
 import * as XLSX from 'xlsx-js-style';
 import ***REMOVED*** getShiftGrossEarnings ***REMOVED*** from '../utils/shiftUtils';
 
-// Función para formatear moneda
+// Function to format currency
 const formatCurrency = (amount) => ***REMOVED***
   return `$$***REMOVED***amount.toFixed(2)***REMOVED***`;
 ***REMOVED***;
 
-// Función para formatear fecha
+// Function to format date
 const formatDate = (date) => ***REMOVED***
-  return new Date(date).toLocaleDateString('es-ES', ***REMOVED***
+  return new Date(date).toLocaleDateString('en-US', ***REMOVED***
     day: '2-digit',
     month: 'short',
     year: 'numeric'
   ***REMOVED***);
 ***REMOVED***;
 
-// Función para formatear hora
+// Function to format time
 const formatTime = (time) => ***REMOVED***
   return time || 'N/A';
 ***REMOVED***;
 
-// Función para calcular horas trabajadas
-const calculateHours = (horaInicio, horaFin) => ***REMOVED***
-  if (!horaInicio || !horaFin) return 0;
+// Function to calculate hours worked
+const calculateHours = (startTime, endTime) => ***REMOVED***
+  if (!startTime || !endTime) return 0;
 
-  const [inicioHoras, inicioMinutos] = horaInicio.split(':').map(Number);
-  const [finHoras, finMinutos] = horaFin.split(':').map(Number);
+  const [startHour, startMin] = startTime.split(':').map(Number);
+  const [endHour, endMin] = endTime.split(':').map(Number);
 
-  const inicioEnMinutos = inicioHoras * 60 + inicioMinutos;
-  const finEnMinutos = finHoras * 60 + finMinutos;
+  const startInMinutes = startHour * 60 + startMin;
+  const endInMinutes = endHour * 60 + endMin;
 
-  const diferenciaMinutos = finEnMinutos - inicioEnMinutos;
-  return (diferenciaMinutos / 60).toFixed(2);
+  const diffMinutes = endInMinutes - startInMinutes;
+  return (diffMinutes / 60).toFixed(2);
 ***REMOVED***;
 
 /**
- * Generar reporte en formato PDF
+ * Generate report in PDF format
  */
-export const generatePDFReport = async (stats, turnos, trabajos) => ***REMOVED***
+export const generatePDFReport = async (stats, shifts, works) => ***REMOVED***
   const doc = new jsPDF();
   
-  // Configuración de fuente y colores
+  // Font and color configuration
   const primaryColor = [236, 72, 153];
   const textColor = [50, 50, 50];
   const grayColor = [128, 128, 128];
@@ -53,45 +53,45 @@ export const generatePDFReport = async (stats, turnos, trabajos) => ***REMOVED**
   const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 20;
   
-  // Título principal
+  // Main title
   doc.setFontSize(24);
   doc.setTextColor(...primaryColor);
-  doc.text('Reporte de Actividad', margin, yPosition);
+  doc.text('Activity Report', margin, yPosition);
   
   yPosition += 8;
   
-  // Fecha del reporte
+  // Report date
   doc.setFontSize(10);
   doc.setTextColor(...grayColor);
-  doc.text(`Generado el $***REMOVED***formatDate(new Date())***REMOVED***`, margin, yPosition);
+  doc.text(`Generated on $***REMOVED***formatDate(new Date())***REMOVED***`, margin, yPosition);
   
   yPosition += 15;
   
-  // Línea divisoria
+  // Divider line
   doc.setDrawColor(...primaryColor);
   doc.setLineWidth(0.5);
   doc.line(margin, yPosition, pageWidth - margin, yPosition);
   
   yPosition += 10;
   
-  // SECCIÓN: Resumen General
+  // SECTION: General Summary
   doc.setFontSize(16);
   doc.setTextColor(...textColor);
-  doc.text('Resumen General', margin, yPosition);
+  doc.text('General Summary', margin, yPosition);
   
   yPosition += 10;
   
   doc.setFontSize(11);
   doc.setTextColor(...textColor);
   
-  const resumenData = [
-    ['Total Ganado:', formatCurrency(stats.totalGanado || 0)],
-    ['Horas Trabajadas:', `$***REMOVED***(stats.horasTrabajadas || 0).toFixed(1)***REMOVED***h`],
-    ['Total de Turnos:', stats.turnosTotal || 0],
-    ['Promedio por Hora:', formatCurrency(stats.promedioPorHora || 0)]
+  const summaryData = [
+    ['Total Earned:', formatCurrency(stats.totalEarned || 0)],
+    ['Hours Worked:', `$***REMOVED***(stats.hoursWorked || 0).toFixed(1)***REMOVED***h`],
+    ['Total Shifts:', stats.totalShifts || 0],
+    ['Average per Hour:', formatCurrency(stats.averagePerHour || 0)]
   ];
   
-  resumenData.forEach(([label, value]) => ***REMOVED***
+  summaryData.forEach(([label, value]) => ***REMOVED***
     doc.text(label, margin + 5, yPosition);
     doc.setFont(undefined, 'bold');
     doc.text(String(value), margin + 70, yPosition);
@@ -101,21 +101,21 @@ export const generatePDFReport = async (stats, turnos, trabajos) => ***REMOVED**
   
   yPosition += 8;
   
-  // SECCIÓN: Esta Semana
+  // SECTION: This Week
   doc.setFontSize(16);
-  doc.text('Esta Semana', margin, yPosition);
+  doc.text('This Week', margin, yPosition);
   
   yPosition += 10;
   
   doc.setFontSize(11);
   
-  const semanaData = [
-    ['Ganancias:', formatCurrency(stats.gananciasEstaSemana || 0)],
-    ['Turnos:', stats.turnosEstaSemana || 0],
-    ['Días Trabajados:', stats.diasTrabajados || 0]
+  const weekData = [
+    ['Earnings:', formatCurrency(stats.earningsThisWeek || 0)],
+    ['Shifts:', stats.shiftsThisWeek || 0],
+    ['Days Worked:', stats.daysWorked || 0]
   ];
   
-  semanaData.forEach(([label, value]) => ***REMOVED***
+  weekData.forEach(([label, value]) => ***REMOVED***
     doc.text(label, margin + 5, yPosition);
     doc.setFont(undefined, 'bold');
     doc.text(String(value), margin + 70, yPosition);
@@ -125,105 +125,105 @@ export const generatePDFReport = async (stats, turnos, trabajos) => ***REMOVED**
   
   yPosition += 8;
   
-  // SECCIÓN: Trabajo Más Rentable
-  if (stats.trabajoMasRentable) ***REMOVED***
+  // SECTION: Most Profitable Work
+  if (stats.mostProfitableWork) ***REMOVED***
     doc.setFontSize(16);
-    doc.text('Trabajo Más Rentable', margin, yPosition);
+    doc.text('Most Profitable Work', margin, yPosition);
     
     yPosition += 10;
     
     doc.setFontSize(11);
-    doc.text(stats.trabajoMasRentable.trabajo.nombre, margin + 5, yPosition);
+    doc.text(stats.mostProfitableWork.work.name, margin + 5, yPosition);
     yPosition += 7;
     doc.setFont(undefined, 'bold');
-    doc.text(formatCurrency(stats.trabajoMasRentable.ganancia), margin + 5, yPosition);
+    doc.text(formatCurrency(stats.mostProfitableWork.earnings), margin + 5, yPosition);
     doc.setFont(undefined, 'normal');
     yPosition += 5;
     doc.setFontSize(9);
     doc.setTextColor(...grayColor);
-    doc.text(`$***REMOVED***stats.trabajoMasRentable.turnos***REMOVED*** turnos • $***REMOVED***stats.trabajoMasRentable.horas.toFixed(1)***REMOVED***h`, margin + 5, yPosition);
+    doc.text(`$***REMOVED***stats.mostProfitableWork.shifts***REMOVED*** shifts • $***REMOVED***stats.mostProfitableWork.hours.toFixed(1)***REMOVED***h`, margin + 5, yPosition);
     doc.setTextColor(...textColor);
     
     yPosition += 10;
   ***REMOVED***
   
-  // SECCIÓN: Últimos Turnos
+  // SECTION: Recent Shifts
   yPosition += 5;
   doc.setFontSize(16);
-  doc.text('Últimos Turnos', margin, yPosition);
+  doc.text('Recent Shifts', margin, yPosition);
   
   yPosition += 10;
   
-  // Mostrar últimos 5 turnos
-  const ultimosTurnos = turnos.slice(0, 5);
+  // Show last 5 shifts
+  const recentShifts = shifts.slice(0, 5);
   
   doc.setFontSize(9);
-  ultimosTurnos.forEach((turno) => ***REMOVED***
-    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-    if (!trabajo) return;
+  recentShifts.forEach((shift) => ***REMOVED***
+    const work = works.find(w => w.id === shift.workId);
+    if (!work) return;
     
-    // Nombre del trabajo
+    // Work name
     doc.setFont(undefined, 'bold');
-    doc.text(trabajo.nombre, margin + 5, yPosition);
+    doc.text(work.name, margin + 5, yPosition);
     doc.setFont(undefined, 'normal');
     yPosition += 5;
     
-    // Detalles del turno
+    // Shift details
     doc.setTextColor(...grayColor);
-    const fecha = turno.fechaInicio || turno.fecha;
-    doc.text(`$***REMOVED***formatDate(fecha)***REMOVED*** • $***REMOVED***turno.horaInicio***REMOVED*** - $***REMOVED***turno.horaFin***REMOVED***`, margin + 5, yPosition);
+    const date = shift.startDate || shift.date;
+    doc.text(`$***REMOVED***formatDate(date)***REMOVED*** • $***REMOVED***shift.startTime***REMOVED*** - $***REMOVED***shift.endTime***REMOVED***`, margin + 5, yPosition);
     doc.setTextColor(...textColor);
     
     yPosition += 8;
     
-    // Verificar si necesitamos nueva página
+    // Check if we need a new page
     if (yPosition > 250) ***REMOVED***
       doc.addPage();
       yPosition = 20;
     ***REMOVED***
   ***REMOVED***);
   
-  // Pie de página
+  // Footer
   const totalPages = doc.internal.pages.length - 1;
   for (let i = 1; i <= totalPages; i++) ***REMOVED***
     doc.setPage(i);
     doc.setFontSize(8);
     doc.setTextColor(...grayColor);
     doc.text(
-      `Página $***REMOVED***i***REMOVED*** de $***REMOVED***totalPages***REMOVED***`,
+      `Page $***REMOVED***i***REMOVED*** of $***REMOVED***totalPages***REMOVED***`,
       pageWidth / 2,
       doc.internal.pageSize.getHeight() - 10,
       ***REMOVED*** align: 'center' ***REMOVED***
     );
   ***REMOVED***
   
-  // Descargar PDF
-  doc.save(`reporte-$***REMOVED***new Date().toISOString().split('T')[0]***REMOVED***.pdf`);
+  // Download PDF
+  doc.save(`report-$***REMOVED***new Date().toISOString().split('T')[0]***REMOVED***.pdf`);
 ***REMOVED***;
 
-// Función auxiliar para calcular ganancia correcta
-const calcularGananciaCorrecta = (turno, trabajo, calculatePayment) => ***REMOVED***
-  if (!turno || !trabajo) return 0;
+// Helper function to calculate correct earnings
+const calculateCorrectEarnings = (shift, work, calculatePayment) => ***REMOVED***
+  if (!shift || !work) return 0;
 
-  if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') ***REMOVED***
-    return getShiftGrossEarnings(turno);
+  if (shift.type === 'delivery' || work.type === 'delivery') ***REMOVED***
+    return getShiftGrossEarnings(shift);
   ***REMOVED***
 
   if (typeof calculatePayment === 'function') ***REMOVED***
-    const resultado = calculatePayment(turno);
-    return resultado.totalWithDiscount || resultado.totalConDescuento || 0;
+    const result = calculatePayment(shift);
+    return result.totalWithDiscount || result.totalConDescuento || 0;
   ***REMOVED***
 
-  const horas = calculateHours(turno.horaInicio, turno.horaFin);
-  return horas * (trabajo.tarifaBase || 0);
+  const hours = calculateHours(shift.startTime, shift.endTime);
+  return hours * (work.baseRate || 0);
 ***REMOVED***;
 
-// Estilos para el Excel
-const estilos = ***REMOVED***
-  // Encabezado principal (títulos de secciones)
-  encabezadoPrincipal: ***REMOVED***
+// Styles for Excel
+const styles = ***REMOVED***
+  // Main header (section titles)
+  mainHeader: ***REMOVED***
     font: ***REMOVED*** bold: true, size: 14, color: ***REMOVED*** rgb: "FFFFFF" ***REMOVED*** ***REMOVED***,
-    fill: ***REMOVED*** fgColor: ***REMOVED*** rgb: "EC4899" ***REMOVED*** ***REMOVED***, // Rosa
+    fill: ***REMOVED*** fgColor: ***REMOVED*** rgb: "EC4899" ***REMOVED*** ***REMOVED***, // Pink
     alignment: ***REMOVED*** horizontal: "center", vertical: "center" ***REMOVED***,
     border: ***REMOVED***
       top: ***REMOVED*** style: "thin", color: ***REMOVED*** rgb: "000000" ***REMOVED*** ***REMOVED***,
@@ -233,10 +233,10 @@ const estilos = ***REMOVED***
     ***REMOVED***
   ***REMOVED***,
 
-  // Encabezado de tabla
-  encabezadoTabla: ***REMOVED***
+  // Table header
+  tableHeader: ***REMOVED***
     font: ***REMOVED*** bold: true, size: 11, color: ***REMOVED*** rgb: "FFFFFF" ***REMOVED*** ***REMOVED***,
-    fill: ***REMOVED*** fgColor: ***REMOVED*** rgb: "4472C4" ***REMOVED*** ***REMOVED***, // Azul
+    fill: ***REMOVED*** fgColor: ***REMOVED*** rgb: "4472C4" ***REMOVED*** ***REMOVED***, // Blue
     alignment: ***REMOVED*** horizontal: "center", vertical: "center", wrapText: true ***REMOVED***,
     border: ***REMOVED***
       top: ***REMOVED*** style: "thin", color: ***REMOVED*** rgb: "000000" ***REMOVED*** ***REMOVED***,
@@ -246,18 +246,18 @@ const estilos = ***REMOVED***
     ***REMOVED***
   ***REMOVED***,
 
-  // Subtítulo (resumen del mes)
-  subtitulo: ***REMOVED***
+  // Subtitle (month summary)
+  subtitle: ***REMOVED***
     font: ***REMOVED*** bold: true, size: 12, color: ***REMOVED*** rgb: "1F2937" ***REMOVED*** ***REMOVED***,
-    fill: ***REMOVED*** fgColor: ***REMOVED*** rgb: "E5E7EB" ***REMOVED*** ***REMOVED***, // Gris claro
+    fill: ***REMOVED*** fgColor: ***REMOVED*** rgb: "E5E7EB" ***REMOVED*** ***REMOVED***, // Light gray
     alignment: ***REMOVED*** horizontal: "left", vertical: "center" ***REMOVED***,
     border: ***REMOVED***
       bottom: ***REMOVED*** style: "thin", color: ***REMOVED*** rgb: "9CA3AF" ***REMOVED*** ***REMOVED***
     ***REMOVED***
   ***REMOVED***,
 
-  // Celda normal (fila par - blanca)
-  celdaNormalPar: ***REMOVED***
+  // Normal cell (even row - white)
+  normalEvenCell: ***REMOVED***
     font: ***REMOVED*** size: 10, color: ***REMOVED*** rgb: "1F2937" ***REMOVED*** ***REMOVED***,
     fill: ***REMOVED*** fgColor: ***REMOVED*** rgb: "FFFFFF" ***REMOVED*** ***REMOVED***,
     alignment: ***REMOVED*** horizontal: "left", vertical: "center" ***REMOVED***,
@@ -269,10 +269,10 @@ const estilos = ***REMOVED***
     ***REMOVED***
   ***REMOVED***,
 
-  // Celda normal (fila impar - gris claro)
-  celdaNormalImpar: ***REMOVED***
+  // Normal cell (odd row - light gray)
+  normalOddCell: ***REMOVED***
     font: ***REMOVED*** size: 10, color: ***REMOVED*** rgb: "1F2937" ***REMOVED*** ***REMOVED***,
-    fill: ***REMOVED*** fgColor: ***REMOVED*** rgb: "F9FAFB" ***REMOVED*** ***REMOVED***, // Gris muy claro
+    fill: ***REMOVED*** fgColor: ***REMOVED*** rgb: "F9FAFB" ***REMOVED*** ***REMOVED***, // Very light gray
     alignment: ***REMOVED*** horizontal: "left", vertical: "center" ***REMOVED***,
     border: ***REMOVED***
       top: ***REMOVED*** style: "thin", color: ***REMOVED*** rgb: "E5E7EB" ***REMOVED*** ***REMOVED***,
@@ -282,412 +282,412 @@ const estilos = ***REMOVED***
     ***REMOVED***
   ***REMOVED***,
 
-  // Celda de moneda
-  celdaMoneda: ***REMOVED***
+  // Currency cell
+  currencyCell: ***REMOVED***
     numFmt: "$#,##0.00"
   ***REMOVED***,
 
-  // Celda de número decimal
-  celdaDecimal: ***REMOVED***
+  // Decimal number cell
+  decimalCell: ***REMOVED***
     numFmt: "0.00"
   ***REMOVED***,
 
-  // Celda centrada
-  celdaCentrada: ***REMOVED***
+  // Centered cell
+  centeredCell: ***REMOVED***
     alignment: ***REMOVED*** horizontal: "center", vertical: "center" ***REMOVED***
   ***REMOVED***,
 
-  // Etiqueta (para resumen)
-  etiqueta: ***REMOVED***
+  // Label (for summary)
+  label: ***REMOVED***
     font: ***REMOVED*** bold: true, size: 11, color: ***REMOVED*** rgb: "374151" ***REMOVED*** ***REMOVED***,
     alignment: ***REMOVED*** horizontal: "left", vertical: "center" ***REMOVED***
   ***REMOVED***,
 
-  // Valor (para resumen)
-  valor: ***REMOVED***
+  // Value (for summary)
+  value: ***REMOVED***
     font: ***REMOVED*** size: 11, color: ***REMOVED*** rgb: "1F2937" ***REMOVED*** ***REMOVED***,
     alignment: ***REMOVED*** horizontal: "right", vertical: "center" ***REMOVED***
   ***REMOVED***
 ***REMOVED***;
 
-// Función para aplicar estilo a una celda
-const aplicarEstilo = (worksheet, celda, estilo) => ***REMOVED***
-  if (!worksheet[celda]) ***REMOVED***
-    worksheet[celda] = ***REMOVED*** t: 's', v: '' ***REMOVED***;
+// Function to apply style to a cell
+const applyStyle = (worksheet, cell, style) => ***REMOVED***
+  if (!worksheet[cell]) ***REMOVED***
+    worksheet[cell] = ***REMOVED*** t: 's', v: '' ***REMOVED***;
   ***REMOVED***
-  worksheet[celda].s = estilo;
+  worksheet[cell].s = style;
 ***REMOVED***;
 
-// Función para aplicar estilo a un rango de celdas
-const aplicarEstiloRango = (worksheet, rangoInicio, rangoFin, estilo) => ***REMOVED***
-  const colInicio = rangoInicio.charCodeAt(0);
-  const colFin = rangoFin.charCodeAt(0);
-  const filaInicio = parseInt(rangoInicio.substring(1));
-  const filaFin = parseInt(rangoFin.substring(1));
+// Function to apply style to a range of cells
+const applyStyleRange = (worksheet, rangeStart, rangeEnd, style) => ***REMOVED***
+  const startCol = rangeStart.charCodeAt(0);
+  const endCol = rangeEnd.charCodeAt(0);
+  const startRow = parseInt(rangeStart.substring(1));
+  const endRow = parseInt(rangeEnd.substring(1));
 
-  for (let col = colInicio; col <= colFin; col++) ***REMOVED***
-    for (let fila = filaInicio; fila <= filaFin; fila++) ***REMOVED***
-      const celda = String.fromCharCode(col) + fila;
-      aplicarEstilo(worksheet, celda, estilo);
+  for (let col = startCol; col <= endCol; col++) ***REMOVED***
+    for (let row = startRow; row <= endRow; row++) ***REMOVED***
+      const cell = String.fromCharCode(col) + row;
+      applyStyle(worksheet, cell, style);
     ***REMOVED***
   ***REMOVED***
 ***REMOVED***;
 
-// Función para combinar celdas
-const combinarCeldas = (worksheet, rango) => ***REMOVED***
+// Function to merge cells
+const mergeCells = (worksheet, range) => ***REMOVED***
   if (!worksheet['!merges']) ***REMOVED***
     worksheet['!merges'] = [];
   ***REMOVED***
 
-  const match = rango.match(/([A-Z]+)(\d+):([A-Z]+)(\d+)/);
+  const match = range.match(/([A-Z]+)(\d+):([A-Z]+)(\d+)/);
   if (match) ***REMOVED***
-    const [, colInicio, filaInicio, colFin, filaFin] = match;
+    const [, colStart, rowStart, colEnd, rowEnd] = match;
     worksheet['!merges'].push(***REMOVED***
-      s: ***REMOVED*** c: colInicio.charCodeAt(0) - 65, r: parseInt(filaInicio) - 1 ***REMOVED***,
-      e: ***REMOVED*** c: colFin.charCodeAt(0) - 65, r: parseInt(filaFin) - 1 ***REMOVED***
+      s: ***REMOVED*** c: colStart.charCodeAt(0) - 65, r: parseInt(rowStart) - 1 ***REMOVED***,
+      e: ***REMOVED*** c: colEnd.charCodeAt(0) - 65, r: parseInt(rowEnd) - 1 ***REMOVED***
     ***REMOVED***);
   ***REMOVED***
 ***REMOVED***;
 
 /**
- * Generar reporte en formato XLSX
+ * Generate report in XLSX format
  */
-export const generateXLSXReport = async (stats, turnos, trabajos, calculatePayment) => ***REMOVED***
+export const generateXLSXReport = async (stats, shifts, works, calculatePayment) => ***REMOVED***
   const workbook = XLSX.utils.book_new();
 
-  const resumenSheet = [
-    ['REPORTE DE ACTIVIDAD'],
-    [`Generado el $***REMOVED***formatDate(new Date())***REMOVED***`],
+  const summarySheet = [
+    ['ACTIVITY REPORT'],
+    [`Generated on $***REMOVED***formatDate(new Date())***REMOVED***`],
     [],
-    ['RESUMEN GENERAL'],
-    ['Total Ganado', formatCurrency(stats.totalGanado || 0)],
-    ['Horas Trabajadas', `$***REMOVED***(stats.horasTrabajadas || 0).toFixed(1)***REMOVED***h`],
-    ['Total de Turnos', stats.turnosTotal || 0],
-    ['Promedio por Hora', formatCurrency(stats.promedioPorHora || 0)],
+    ['GENERAL SUMMARY'],
+    ['Total Earned', formatCurrency(stats.totalEarned || 0)],
+    ['Hours Worked', `$***REMOVED***(stats.hoursWorked || 0).toFixed(1)***REMOVED***h`],
+    ['Total Shifts', stats.totalShifts || 0],
+    ['Average per Hour', formatCurrency(stats.averagePerHour || 0)],
     [],
-    ['ESTA SEMANA'],
-    ['Ganancias', formatCurrency(stats.gananciasEstaSemana || 0)],
-    ['Turnos', stats.turnosEstaSemana || 0],
-    ['Días Trabajados', stats.diasTrabajados || 0],
+    ['THIS WEEK'],
+    ['Earnings', formatCurrency(stats.earningsThisWeek || 0)],
+    ['Shifts', stats.shiftsThisWeek || 0],
+    ['Days Worked', stats.daysWorked || 0],
     [],
-    ...(stats.trabajoMasRentable ? [
-      ['TRABAJO MÁS RENTABLE'],
-      ['Nombre', stats.trabajoMasRentable.trabajo.nombre],
-      ['Ganancia', formatCurrency(stats.trabajoMasRentable.ganancia)],
-      ['Turnos', stats.trabajoMasRentable.turnos],
-      ['Horas', `$***REMOVED***stats.trabajoMasRentable.horas.toFixed(1)***REMOVED***h`]
+    ...(stats.mostProfitableWork ? [
+      ['MOST PROFITABLE WORK'],
+      ['Name', stats.mostProfitableWork.work.name],
+      ['Earnings', formatCurrency(stats.mostProfitableWork.earnings)],
+      ['Shifts', stats.mostProfitableWork.shifts],
+      ['Hours', `$***REMOVED***stats.mostProfitableWork.hours.toFixed(1)***REMOVED***h`]
     ] : [])
   ];
 
-  const wsResumen = XLSX.utils.aoa_to_sheet(resumenSheet);
+  const wsSummary = XLSX.utils.aoa_to_sheet(summarySheet);
 
-  wsResumen['A1'].s = ***REMOVED***
+  wsSummary['A1'].s = ***REMOVED***
     font: ***REMOVED*** bold: true, size: 16, color: ***REMOVED*** rgb: "EC4899" ***REMOVED*** ***REMOVED***,
     alignment: ***REMOVED*** horizontal: "center", vertical: "center" ***REMOVED***
   ***REMOVED***;
 
-  wsResumen['A2'].s = ***REMOVED***
+  wsSummary['A2'].s = ***REMOVED***
     font: ***REMOVED*** size: 10, color: ***REMOVED*** rgb: "6B7280" ***REMOVED***, italic: true ***REMOVED***,
     alignment: ***REMOVED*** horizontal: "center", vertical: "center" ***REMOVED***
   ***REMOVED***;
 
-  ['A4', 'A10', 'A15'].forEach(celda => ***REMOVED***
-    if (wsResumen[celda]) ***REMOVED***
-      wsResumen[celda].s = estilos.subtitulo;
+  ['A4', 'A10', 'A15'].forEach(cell => ***REMOVED***
+    if (wsSummary[cell]) ***REMOVED***
+      wsSummary[cell].s = styles.subtitle;
     ***REMOVED***
   ***REMOVED***);
 
-  [[5, 8], [11, 13], [16, 19]].forEach(([inicio, fin]) => ***REMOVED***
-    for (let i = inicio; i <= fin; i++) ***REMOVED***
-      const celdaA = `A$***REMOVED***i***REMOVED***`;
-      const celdaB = `B$***REMOVED***i***REMOVED***`;
-      if (wsResumen[celdaA]) ***REMOVED***
-        wsResumen[celdaA].s = estilos.etiqueta;
+  [[5, 8], [11, 13], [16, 19]].forEach(([start, end]) => ***REMOVED***
+    for (let i = start; i <= end; i++) ***REMOVED***
+      const cellA = `A$***REMOVED***i***REMOVED***`;
+      const cellB = `B$***REMOVED***i***REMOVED***`;
+      if (wsSummary[cellA]) ***REMOVED***
+        wsSummary[cellA].s = styles.label;
       ***REMOVED***
-      if (wsResumen[celdaB]) ***REMOVED***
-        wsResumen[celdaB].s = estilos.valor;
+      if (wsSummary[cellB]) ***REMOVED***
+        wsSummary[cellB].s = styles.value;
       ***REMOVED***
     ***REMOVED***
   ***REMOVED***);
 
-  wsResumen['!cols'] = [
+  wsSummary['!cols'] = [
     ***REMOVED*** wch: 25 ***REMOVED***,
     ***REMOVED*** wch: 20 ***REMOVED***
   ];
 
-  combinarCeldas(wsResumen, 'A1:B1');
-  combinarCeldas(wsResumen, 'A2:B2');
+  mergeCells(wsSummary, 'A1:B1');
+  mergeCells(wsSummary, 'A2:B2');
 
-  XLSX.utils.book_append_sheet(workbook, wsResumen, 'Resumen');
+  XLSX.utils.book_append_sheet(workbook, wsSummary, 'Summary');
 
-  const turnosPorMes = ***REMOVED******REMOVED***;
+  const shiftsByMonth = ***REMOVED******REMOVED***;
 
-  const formatFecha = (fecha) => ***REMOVED***
-    if (!fecha) return '';
-    if (fecha.seconds) ***REMOVED***
-      return formatDate(new Date(fecha.seconds * 1000));
+  const formatFirebaseDate = (date) => ***REMOVED***
+    if (!date) return '';
+    if (date.seconds) ***REMOVED***
+      return formatDate(new Date(date.seconds * 1000));
     ***REMOVED***
-    return formatDate(new Date(fecha));
+    return formatDate(new Date(date));
   ***REMOVED***;
 
-  turnos.forEach((turno) => ***REMOVED***
-    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-    if (!trabajo) return;
+  shifts.forEach((shift) => ***REMOVED***
+    const work = works.find(w => w.id === shift.workId);
+    if (!work) return;
 
-    const fecha = new Date(turno.fechaInicio || turno.fecha);
-    const mesAnio = fecha.toLocaleDateString('es-ES', ***REMOVED*** year: 'numeric', month: 'long' ***REMOVED***);
+    const date = new Date(shift.startDate || shift.date);
+    const monthYear = date.toLocaleDateString('en-US', ***REMOVED*** year: 'numeric', month: 'long' ***REMOVED***);
 
-    if (!turnosPorMes[mesAnio]) ***REMOVED***
-      turnosPorMes[mesAnio] = ***REMOVED*** tradicionales: [], delivery: [] ***REMOVED***;
+    if (!shiftsByMonth[monthYear]) ***REMOVED***
+      shiftsByMonth[monthYear] = ***REMOVED*** traditional: [], delivery: [] ***REMOVED***;
     ***REMOVED***
 
-    const esDelivery = turno.tipo === 'delivery' || trabajo.tipo === 'delivery';
+    const isDelivery = shift.type === 'delivery' || work.type === 'delivery';
 
-    const ganancia = calcularGananciaCorrecta(turno, trabajo, calculatePayment);
-    let horas = 0;
+    const earnings = calculateCorrectEarnings(shift, work, calculatePayment);
+    let hours = 0;
     let breakdown = null;
 
-    if (esDelivery) ***REMOVED***
-      horas = parseFloat(calculateHours(turno.horaInicio, turno.horaFin));
+    if (isDelivery) ***REMOVED***
+      hours = parseFloat(calculateHours(shift.startTime, shift.endTime));
     ***REMOVED*** else if (typeof calculatePayment === 'function') ***REMOVED***
-      const resultado = calculatePayment(turno);
-      horas = resultado.hours || 0;
-      breakdown = resultado.breakdown || null;
+      const result = calculatePayment(shift);
+      hours = result.hours || 0;
+      breakdown = result.breakdown || null;
     ***REMOVED*** else ***REMOVED***
-      horas = parseFloat(calculateHours(turno.horaInicio, turno.horaFin));
+      hours = parseFloat(calculateHours(shift.startTime, shift.endTime));
     ***REMOVED***
 
-    const turnoBase = ***REMOVED***
-      id: turno.id || '',
-      fecha: formatDate(fecha),
-      diaSemana: fecha.toLocaleDateString('es-ES', ***REMOVED*** weekday: 'long' ***REMOVED***),
-      empresa: trabajo.nombre,
-      horaInicio: formatTime(turno.horaInicio),
-      horaFin: formatTime(turno.horaFin),
-      horasTrabajadas: horas,
-      cruzaMedianoche: turno.cruzaMedianoche ? 'Sí' : 'No',
-      fechaFin: turno.fechaFin ? formatDate(new Date(turno.fechaFin)) : '',
-      gananciaTotal: ganancia,
-      observaciones: turno.observaciones || turno.notas || turno.descripcion || '',
-      fechaCreacion: formatFecha(turno.fechaCreacion),
-      fechaActualizacion: formatFecha(turno.fechaActualizacion)
+    const shiftBase = ***REMOVED***
+      id: shift.id || '',
+      date: formatDate(date),
+      weekday: date.toLocaleDateString('en-US', ***REMOVED*** weekday: 'long' ***REMOVED***),
+      company: work.name,
+      startTime: formatTime(shift.startTime),
+      endTime: formatTime(shift.endTime),
+      hoursWorked: hours,
+      crossesMidnight: shift.crossesMidnight ? 'Yes' : 'No',
+      endDate: shift.endDate ? formatDate(new Date(shift.endDate)) : '',
+      totalEarnings: earnings,
+      observations: shift.observations || shift.notes || shift.description || '',
+      createdAt: formatFirebaseDate(shift.createdAt),
+      updatedAt: formatFirebaseDate(shift.updatedAt)
     ***REMOVED***;
 
-    if (esDelivery) ***REMOVED***
-      const turnoDelivery = ***REMOVED***
-        ...turnoBase,
-        plataforma: trabajo.plataforma || '',
-        vehiculo: trabajo.vehiculo || '',
-        numeroPedidos: turno.numeroPedidos || 0,
-        propinas: turno.propinas || 0,
-        kilometros: turno.kilometros || 0,
-        gastoCombustible: turno.gastoCombustible || 0,
-        gananciaBase: turno.gananciaBase || 0,
-        gananciaNeta: ganancia - (turno.gastoCombustible || 0),
-        promedioPorPedido: turno.numeroPedidos > 0 ? ganancia / turno.numeroPedidos : 0
+    if (isDelivery) ***REMOVED***
+      const deliveryShift = ***REMOVED***
+        ...shiftBase,
+        platform: work.platform || '',
+        vehicle: work.vehicle || '',
+        orderCount: shift.orderCount || 0,
+        tips: shift.tips || 0,
+        kilometers: shift.kilometers || 0,
+        fuelExpense: shift.fuelExpense || 0,
+        baseEarnings: shift.baseEarnings || 0,
+        netEarnings: earnings - (shift.fuelExpense || 0),
+        averagePerOrder: shift.orderCount > 0 ? earnings / shift.orderCount : 0
       ***REMOVED***;
-      turnosPorMes[mesAnio].delivery.push(turnoDelivery);
+      shiftsByMonth[monthYear].delivery.push(deliveryShift);
     ***REMOVED*** else ***REMOVED***
-      const turnoTradicional = ***REMOVED***
-        ...turnoBase,
-        tarifa: trabajo.tarifa || trabajo.tarifaBase || 0,
+      const traditionalShift = ***REMOVED***
+        ...shiftBase,
+        rate: work.rate || work.baseRate || 0,
         breakdown: breakdown
       ***REMOVED***;
-      turnosPorMes[mesAnio].tradicionales.push(turnoTradicional);
+      shiftsByMonth[monthYear].traditional.push(traditionalShift);
     ***REMOVED***
   ***REMOVED***);
 
-  const mesesOrdenados = Object.keys(turnosPorMes).sort((a, b) => ***REMOVED***
-    const [mesA, anioA] = a.split(' de ');
-    const [mesB, anioB] = b.split(' de ');
-    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-    const fechaA = new Date(parseInt(anioA), meses.indexOf(mesA.toLowerCase()));
-    const fechaB = new Date(parseInt(anioB), meses.indexOf(mesB.toLowerCase()));
-    return fechaB - fechaA;
+  const sortedMonths = Object.keys(shiftsByMonth).sort((a, b) => ***REMOVED***
+    const [monthA, yearA] = a.split(' of ');
+    const [monthB, yearB] = b.split(' of ');
+    const months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    const dateA = new Date(parseInt(yearA), months.indexOf(monthA.toLowerCase()));
+    const dateB = new Date(parseInt(yearB), months.indexOf(monthB.toLowerCase()));
+    return dateB - dateA;
   ***REMOVED***);
 
-  mesesOrdenados.forEach((mesAnio) => ***REMOVED***
-    const ***REMOVED*** tradicionales, delivery ***REMOVED*** = turnosPorMes[mesAnio];
-    const todosTurnos = [...tradicionales, ...delivery];
+  sortedMonths.forEach((monthYear) => ***REMOVED***
+    const ***REMOVED*** traditional, delivery ***REMOVED*** = shiftsByMonth[monthYear];
+    const allShifts = [...traditional, ...delivery];
 
-    const totalHorasMes = todosTurnos.reduce((sum, t) => sum + t.horasTrabajadas, 0);
-    const totalGananciasMes = todosTurnos.reduce((sum, t) => sum + t.gananciaTotal, 0);
-    const totalPedidos = delivery.reduce((sum, t) => sum + t.numeroPedidos, 0);
-    const totalPropinas = delivery.reduce((sum, t) => sum + t.propinas, 0);
-    const totalGastos = delivery.reduce((sum, t) => sum + t.gastoCombustible, 0);
+    const totalMonthHours = allShifts.reduce((sum, t) => sum + t.hoursWorked, 0);
+    const totalMonthEarnings = allShifts.reduce((sum, t) => sum + t.totalEarnings, 0);
+    const totalOrders = delivery.reduce((sum, t) => sum + t.orderCount, 0);
+    const totalTips = delivery.reduce((sum, t) => sum + t.tips, 0);
+    const totalExpenses = delivery.reduce((sum, t) => sum + t.fuelExpense, 0);
 
-    const mesData = [
-      [mesAnio.toUpperCase()],
+    const monthData = [
+      [monthYear.toUpperCase()],
       [],
-      ['RESUMEN DEL MES'],
-      ['Total de Turnos', todosTurnos.length],
-      ['Turnos Tradicionales', tradicionales.length],
-      ['Turnos Delivery', delivery.length],
-      ['Total Horas Trabajadas', `$***REMOVED***totalHorasMes.toFixed(2)***REMOVED***h`],
-      ['Total Ganado', formatCurrency(totalGananciasMes)],
-      ['Promedio por Turno', formatCurrency(todosTurnos.length > 0 ? totalGananciasMes / todosTurnos.length : 0)],
-      ['Promedio por Hora', formatCurrency(totalHorasMes > 0 ? totalGananciasMes / totalHorasMes : 0)],
+      ['MONTH SUMMARY'],
+      ['Total Shifts', allShifts.length],
+      ['Traditional Shifts', traditional.length],
+      ['Delivery Shifts', delivery.length],
+      ['Total Hours Worked', `$***REMOVED***totalMonthHours.toFixed(2)***REMOVED***h`],
+      ['Total Earned', formatCurrency(totalMonthEarnings)],
+      ['Average per Shift', formatCurrency(allShifts.length > 0 ? totalMonthEarnings / allShifts.length : 0)],
+      ['Average per Hour', formatCurrency(totalMonthHours > 0 ? totalMonthEarnings / totalMonthHours : 0)],
       ...(delivery.length > 0 ? [
-        ['Total Pedidos', totalPedidos],
-        ['Total Propinas', formatCurrency(totalPropinas)],
-        ['Total Gastos', formatCurrency(totalGastos)],
-        ['Ganancia Neta', formatCurrency(totalGananciasMes - totalGastos)]
+        ['Total Orders', totalOrders],
+        ['Total Tips', formatCurrency(totalTips)],
+        ['Total Expenses', formatCurrency(totalExpenses)],
+        ['Net Earnings', formatCurrency(totalMonthEarnings - totalExpenses)]
       ] : []),
       []
     ];
 
-    if (tradicionales.length > 0) ***REMOVED***
-      mesData.push(
-        ['TURNOS TRADICIONALES'],
+    if (traditional.length > 0) ***REMOVED***
+      monthData.push(
+        ['TRADITIONAL SHIFTS'],
         [],
         [
-          'ID Turno',
-          'Fecha',
-          'Día Semana',
-          'Empresa',
-          'Hora Inicio',
-          'Hora Fin',
-          'Horas Trabajadas',
-          'Cruza Medianoche',
-          'Fecha Fin',
-          'Tarifa/Hora',
-          'Ganancia Total',
-          'Diurno',
-          'Tarde',
-          'Noche',
-          'Sábado',
-          'Domingo',
-          'Observaciones',
-          'Fecha Creación',
-          'Fecha Actualización'
+          'Shift ID',
+          'Date',
+          'Weekday',
+          'Company',
+          'Start Time',
+          'End Time',
+          'Hours Worked',
+          'Crosses Midnight',
+          'End Date',
+          'Rate/Hour',
+          'Total Earnings',
+          'Day',
+          'Afternoon',
+          'Night',
+          'Saturday',
+          'Sunday',
+          'Observations',
+          'Created At',
+          'Updated At'
         ]
       );
 
-      tradicionales.forEach((turno) => ***REMOVED***
-        const breakdown = turno.breakdown || ***REMOVED******REMOVED***;
-        mesData.push([
-          turno.id,
-          turno.fecha,
-          turno.diaSemana,
-          turno.empresa,
-          turno.horaInicio,
-          turno.horaFin,
-          turno.horasTrabajadas,
-          turno.cruzaMedianoche,
-          turno.fechaFin,
-          formatCurrency(turno.tarifa),
-          formatCurrency(turno.gananciaTotal),
-          breakdown.diurno ? formatCurrency(breakdown.diurno) : '',
-          breakdown.tarde ? formatCurrency(breakdown.tarde) : '',
-          breakdown.noche ? formatCurrency(breakdown.noche) : '',
-          breakdown.sabado ? formatCurrency(breakdown.sabado) : '',
-          breakdown.domingo ? formatCurrency(breakdown.domingo) : '',
-          turno.observaciones,
-          turno.fechaCreacion,
-          turno.fechaActualizacion
+      traditional.forEach((shift) => ***REMOVED***
+        const breakdown = shift.breakdown || ***REMOVED******REMOVED***;
+        monthData.push([
+          shift.id,
+          shift.date,
+          shift.weekday,
+          shift.company,
+          shift.startTime,
+          shift.endTime,
+          shift.hoursWorked,
+          shift.crossesMidnight,
+          shift.endDate,
+          formatCurrency(shift.rate),
+          formatCurrency(shift.totalEarnings),
+          breakdown.day ? formatCurrency(breakdown.day) : '',
+          breakdown.afternoon ? formatCurrency(breakdown.afternoon) : '',
+          breakdown.night ? formatCurrency(breakdown.night) : '',
+          breakdown.saturday ? formatCurrency(breakdown.saturday) : '',
+          breakdown.sunday ? formatCurrency(breakdown.sunday) : '',
+          shift.observations,
+          shift.createdAt,
+          shift.updatedAt
         ]);
       ***REMOVED***);
 
-      mesData.push([]);
+      monthData.push([]);
     ***REMOVED***
 
     if (delivery.length > 0) ***REMOVED***
-      mesData.push(
-        ['TURNOS DELIVERY'],
+      monthData.push(
+        ['DELIVERY SHIFTS'],
         [],
         [
-          'ID Turno',
-          'Fecha',
-          'Día Semana',
-          'Empresa',
-          'Plataforma',
-          'Vehículo',
-          'Hora Inicio',
-          'Hora Fin',
-          'Horas Trabajadas',
-          'Cruza Medianoche',
-          'Fecha Fin',
-          'Nº Pedidos',
-          'Ganancia Total',
-          'Ganancia Base',
-          'Propinas',
-          'Kilómetros',
-          'Gasto Combustible',
-          'Ganancia Neta',
-          'Promedio/Pedido',
-          'Observaciones',
-          'Fecha Creación',
-          'Fecha Actualización'
+          'Shift ID',
+          'Date',
+          'Weekday',
+          'Company',
+          'Platform',
+          'Vehicle',
+          'Start Time',
+          'End Time',
+          'Hours Worked',
+          'Crosses Midnight',
+          'End Date',
+          '# Orders',
+          'Total Earnings',
+          'Base Earnings',
+          'Tips',
+          'Kilometers',
+          'Fuel Expense',
+          'Net Earnings',
+          'Avg/Order',
+          'Observations',
+          'Created At',
+          'Updated At'
         ]
       );
 
-      delivery.forEach((turno) => ***REMOVED***
-        mesData.push([
-          turno.id,
-          turno.fecha,
-          turno.diaSemana,
-          turno.empresa,
-          turno.plataforma,
-          turno.vehiculo,
-          turno.horaInicio,
-          turno.horaFin,
-          turno.horasTrabajadas,
-          turno.cruzaMedianoche,
-          turno.fechaFin,
-          turno.numeroPedidos,
-          formatCurrency(turno.gananciaTotal),
-          formatCurrency(turno.gananciaBase),
-          formatCurrency(turno.propinas),
-          turno.kilometros,
-          formatCurrency(turno.gastoCombustible),
-          formatCurrency(turno.gananciaNeta),
-          formatCurrency(turno.promedioPorPedido),
-          turno.observaciones,
-          turno.fechaCreacion,
-          turno.fechaActualizacion
+      delivery.forEach((shift) => ***REMOVED***
+        monthData.push([
+          shift.id,
+          shift.date,
+          shift.weekday,
+          shift.company,
+          shift.platform,
+          shift.vehicle,
+          shift.startTime,
+          shift.endTime,
+          shift.hoursWorked,
+          shift.crossesMidnight,
+          shift.endDate,
+          shift.orderCount,
+          formatCurrency(shift.totalEarnings),
+          formatCurrency(shift.baseEarnings),
+          formatCurrency(shift.tips),
+          shift.kilometers,
+          formatCurrency(shift.fuelExpense),
+          formatCurrency(shift.netEarnings),
+          formatCurrency(shift.averagePerOrder),
+          shift.observations,
+          shift.createdAt,
+          shift.updatedAt
         ]);
       ***REMOVED***);
     ***REMOVED***
 
-    const wsMes = XLSX.utils.aoa_to_sheet(mesData);
+    const wsMonth = XLSX.utils.aoa_to_sheet(monthData);
 
-    // Aplicar estilos y combinar celdas
-    aplicarEstilo(wsMes, 'A1', estilos.encabezadoPrincipal);
-    combinarCeldas(wsMes, 'A1:V1');
+    // Apply styles and merge cells
+    applyStyle(wsMonth, 'A1', styles.mainHeader);
+    mergeCells(wsMonth, 'A1:V1');
 
-    let filaActual = 3; // Inicia después del título y espacio
-    aplicarEstilo(wsMes, `A$***REMOVED***filaActual***REMOVED***`, estilos.subtitulo);
-    combinarCeldas(wsMes, `A$***REMOVED***filaActual***REMOVED***:D$***REMOVED***filaActual***REMOVED***`);
+    let currentRow = 3; // Starts after title and space
+    applyStyle(wsMonth, `A$***REMOVED***currentRow***REMOVED***`, styles.subtitle);
+    mergeCells(wsMonth, `A$***REMOVED***currentRow***REMOVED***:D$***REMOVED***currentRow***REMOVED***`);
 
-    filaActual += 1;
-    aplicarEstiloRango(wsMes, `A$***REMOVED***filaActual***REMOVED***`, `B$***REMOVED***filaActual + 6***REMOVED***`, estilos.etiqueta);
-    aplicarEstiloRango(wsMes, `C$***REMOVED***filaActual***REMOVED***`, `D$***REMOVED***filaActual + 6***REMOVED***`, estilos.valor);
+    currentRow += 1;
+    applyStyleRange(wsMonth, `A$***REMOVED***currentRow***REMOVED***`, `B$***REMOVED***currentRow + 6***REMOVED***`, styles.label);
+    applyStyleRange(wsMonth, `C$***REMOVED***currentRow***REMOVED***`, `D$***REMOVED***currentRow + 6***REMOVED***`, styles.value);
 
     if (delivery.length > 0) ***REMOVED***
-      aplicarEstiloRango(wsMes, `A$***REMOVED***filaActual + 7***REMOVED***`, `B$***REMOVED***filaActual + 10***REMOVED***`, estilos.etiqueta);
-      aplicarEstiloRango(wsMes, `C$***REMOVED***filaActual + 7***REMOVED***`, `D$***REMOVED***filaActual + 10***REMOVED***`, estilos.valor);
-      filaActual += 12;
+      applyStyleRange(wsMonth, `A$***REMOVED***currentRow + 7***REMOVED***`, `B$***REMOVED***currentRow + 10***REMOVED***`, styles.label);
+      applyStyleRange(wsMonth, `C$***REMOVED***currentRow + 7***REMOVED***`, `D$***REMOVED***currentRow + 10***REMOVED***`, styles.value);
+      currentRow += 12;
     ***REMOVED*** else ***REMOVED***
-      filaActual += 8;
+      currentRow += 8;
     ***REMOVED***
 
-    if (tradicionales.length > 0) ***REMOVED***
-      aplicarEstilo(wsMes, `A$***REMOVED***filaActual***REMOVED***`, estilos.encabezadoPrincipal);
-      combinarCeldas(wsMes, `A$***REMOVED***filaActual***REMOVED***:S$***REMOVED***filaActual***REMOVED***`);
-      filaActual += 2;
-      aplicarEstiloRango(wsMes, `A$***REMOVED***filaActual***REMOVED***`, `S$***REMOVED***filaActual***REMOVED***`, estilos.encabezadoTabla);
-      filaActual += tradicionales.length + 1;
+    if (traditional.length > 0) ***REMOVED***
+      applyStyle(wsMonth, `A$***REMOVED***currentRow***REMOVED***`, styles.mainHeader);
+      mergeCells(wsMonth, `A$***REMOVED***currentRow***REMOVED***:S$***REMOVED***currentRow***REMOVED***`);
+      currentRow += 2;
+      applyStyleRange(wsMonth, `A$***REMOVED***currentRow***REMOVED***`, `S$***REMOVED***currentRow***REMOVED***`, styles.tableHeader);
+      currentRow += traditional.length + 1;
     ***REMOVED***
 
     if (delivery.length > 0) ***REMOVED***
-      if(tradicionales.length > 0) filaActual += 1;
-      aplicarEstilo(wsMes, `A$***REMOVED***filaActual***REMOVED***`, estilos.encabezadoPrincipal);
-      combinarCeldas(wsMes, `A$***REMOVED***filaActual***REMOVED***:V$***REMOVED***filaActual***REMOVED***`);
-      filaActual += 2;
-      aplicarEstiloRango(wsMes, `A$***REMOVED***filaActual***REMOVED***`, `V$***REMOVED***filaActual***REMOVED***`, estilos.encabezadoTabla);
+      if (traditional.length > 0) currentRow += 1;
+      applyStyle(wsMonth, `A$***REMOVED***currentRow***REMOVED***`, styles.mainHeader);
+      mergeCells(wsMonth, `A$***REMOVED***currentRow***REMOVED***:V$***REMOVED***currentRow***REMOVED***`);
+      currentRow += 2;
+      applyStyleRange(wsMonth, `A$***REMOVED***currentRow***REMOVED***`, `V$***REMOVED***currentRow***REMOVED***`, styles.tableHeader);
     ***REMOVED***
     
-    wsMes['!cols'] = [
+    wsMonth['!cols'] = [
       ***REMOVED*** wch: 15 ***REMOVED***,
       ***REMOVED*** wch: 12 ***REMOVED***,
       ***REMOVED*** wch: 12 ***REMOVED***,
@@ -695,16 +695,13 @@ export const generateXLSXReport = async (stats, turnos, trabajos, calculatePayme
       ***REMOVED*** wch: 15 ***REMOVED***,
       ***REMOVED*** wch: 15 ***REMOVED***,
       ***REMOVED*** wch: 12 ***REMOVED***,
-      ***REMOVED*** wch: 12 ***REMOVED***,
       ***REMOVED*** wch: 10 ***REMOVED***,
       ***REMOVED*** wch: 15 ***REMOVED***,
       ***REMOVED*** wch: 12 ***REMOVED***,
       ***REMOVED*** wch: 10 ***REMOVED***,
       ***REMOVED*** wch: 12 ***REMOVED***,
       ***REMOVED*** wch: 12 ***REMOVED***,
-      ***REMOVED*** wch: 12 ***REMOVED***,
       ***REMOVED*** wch: 10 ***REMOVED***,
-      ***REMOVED*** wch: 12 ***REMOVED***,
       ***REMOVED*** wch: 12 ***REMOVED***,
       ***REMOVED*** wch: 12 ***REMOVED***,
       ***REMOVED*** wch: 30 ***REMOVED***,
@@ -712,99 +709,99 @@ export const generateXLSXReport = async (stats, turnos, trabajos, calculatePayme
       ***REMOVED*** wch: 15 ***REMOVED***
     ];
 
-    const nombreHoja = mesAnio.substring(0, 31);
-    XLSX.utils.book_append_sheet(workbook, wsMes, nombreHoja);
+    const sheetName = monthYear.substring(0, 31);
+    XLSX.utils.book_append_sheet(workbook, wsMonth, sheetName);
   ***REMOVED***);
 
-  XLSX.writeFile(workbook, `reporte-detallado-$***REMOVED***new Date().toISOString().split('T')[0]***REMOVED***.xlsx`);
+  XLSX.writeFile(workbook, `detailed-report-$***REMOVED***new Date().toISOString().split('T')[0]***REMOVED***.xlsx`);
 ***REMOVED***;
 
 /**
- * Generar reporte en formato TXT
+ * Generate report in TXT format
  */
-export const generateTXTReport = async (stats, turnos, trabajos) => ***REMOVED***
-  const fecha = new Date().toISOString().split('T')[0];
-  let contenido = '';
+export const generateTXTReport = async (stats, shifts, works) => ***REMOVED***
+  const date = new Date().toISOString().split('T')[0];
+  let content = '';
 
-  // Encabezado
-  contenido += '═'.repeat(80) + '\n';
-  contenido += 'REPORTE DE ACTIVIDAD\n';
-  contenido += `Generado el $***REMOVED***formatDate(new Date())***REMOVED***\n`;
-  contenido += '═'.repeat(80) + '\n\n';
+  // Header
+  content += '═'.repeat(80) + '\n';
+  content += 'ACTIVITY REPORT\n';
+  content += `Generated on $***REMOVED***formatDate(new Date())***REMOVED***\n`;
+  content += '═'.repeat(80) + '\n\n';
 
-  // Resumen General
-  contenido += 'RESUMEN GENERAL\n';
-  contenido += '─'.repeat(80) + '\n';
-  contenido += `Total Ganado:           $***REMOVED***formatCurrency(stats.totalGanado || 0)***REMOVED***\n`;
-  contenido += `Horas Trabajadas:       $***REMOVED***(stats.horasTrabajadas || 0).toFixed(1)***REMOVED***h\n`;
-  contenido += `Total de Turnos:        $***REMOVED***stats.turnosTotal || 0***REMOVED***\n`;
-  contenido += `Promedio por Hora:      $***REMOVED***formatCurrency(stats.promedioPorHora || 0)***REMOVED***\n\n`;
+  // General Summary
+  content += 'GENERAL SUMMARY\n';
+  content += '─'.repeat(80) + '\n';
+  content += `Total Earned:           $***REMOVED***formatCurrency(stats.totalEarned || 0)***REMOVED***\n`;
+  content += `Hours Worked:       $***REMOVED***(stats.hoursWorked || 0).toFixed(1)***REMOVED***h\n`;
+  content += `Total Shifts:        $***REMOVED***stats.totalShifts || 0***REMOVED***\n`;
+  content += `Average per Hour:      $***REMOVED***formatCurrency(stats.averagePerHour || 0)***REMOVED***\n\n`;
 
-  // Esta Semana
-  contenido += 'ESTA SEMANA\n';
-  contenido += '─'.repeat(80) + '\n';
-  contenido += `Ganancias:              $***REMOVED***formatCurrency(stats.gananciasEstaSemana || 0)***REMOVED***\n`;
-  contenido += `Turnos:                 $***REMOVED***stats.turnosEstaSemana || 0***REMOVED***\n`;
-  contenido += `Días Trabajados:        $***REMOVED***stats.diasTrabajados || 0***REMOVED***\n\n`;
+  // This Week
+  content += 'THIS WEEK\n';
+  content += '─'.repeat(80) + '\n';
+  content += `Earnings:              $***REMOVED***formatCurrency(stats.earningsThisWeek || 0)***REMOVED***\n`;
+  content += `Shifts:                 $***REMOVED***stats.shiftsThisWeek || 0***REMOVED***\n`;
+  content += `Days Worked:        $***REMOVED***stats.daysWorked || 0***REMOVED***\n\n`;
 
-  // Trabajo Más Rentable
-  if (stats.trabajoMasRentable) ***REMOVED***
-    contenido += 'TRABAJO MÁS RENTABLE\n';
-    contenido += '─'.repeat(80) + '\n';
-    contenido += `Nombre:                 $***REMOVED***stats.trabajoMasRentable.trabajo.nombre***REMOVED***\n`;
-    contenido += `Ganancia:               $***REMOVED***formatCurrency(stats.trabajoMasRentable.ganancia)***REMOVED***\n`;
-    contenido += `Turnos:                 $***REMOVED***stats.trabajoMasRentable.turnos***REMOVED***\n`;
-    contenido += `Horas:                  $***REMOVED***stats.trabajoMasRentable.horas.toFixed(1)***REMOVED***h\n\n`;
+  // Most Profitable Work
+  if (stats.mostProfitableWork) ***REMOVED***
+    content += 'MOST PROFITABLE WORK\n';
+    content += '─'.repeat(80) + '\n';
+    content += `Name:                 $***REMOVED***stats.mostProfitableWork.work.name***REMOVED***\n`;
+    content += `Earnings:               $***REMOVED***formatCurrency(stats.mostProfitableWork.earnings)***REMOVED***\n`;
+    content += `Shifts:                 $***REMOVED***stats.mostProfitableWork.shifts***REMOVED***\n`;
+    content += `Hours:                  $***REMOVED***stats.mostProfitableWork.hours.toFixed(1)***REMOVED***h\n\n`;
   ***REMOVED***
 
-  // Detalle de Turnos
-  contenido += 'DETALLE DE TURNOS\n';
-  contenido += '═'.repeat(80) + '\n';
-  contenido += 'Fecha        Trabajo                   Inicio   Fin      Horas    Ganancia    \n';
-  contenido += '─'.repeat(80) + '\n';
+  // Shift Details
+  content += 'SHIFT DETAILS\n';
+  content += '═'.repeat(80) + '\n';
+  content += 'Date        Work                   Start   End      Hours    Earnings    \n';
+  content += '─'.repeat(80) + '\n';
 
-  turnos.forEach((turno) => ***REMOVED***
-    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-    if (!trabajo) return;
+  shifts.forEach((shift) => ***REMOVED***
+    const work = works.find(w => w.id === shift.workId);
+    if (!work) return;
 
-    const fechaFormato = formatDate(turno.fechaInicio || turno.fecha);
-    const horas = calculateHours(turno.horaInicio, turno.horaFin);
-    let ganancia = 0;
-    if (turno.tipo === 'delivery') ***REMOVED***
-      ganancia = getShiftGrossEarnings(turno);
+    const dateFormat = formatDate(shift.startDate || shift.date);
+    const hours = calculateHours(shift.startTime, shift.endTime);
+    let earnings = 0;
+    if (shift.type === 'delivery') ***REMOVED***
+      earnings = getShiftGrossEarnings(shift);
     ***REMOVED*** else ***REMOVED***
       // For non-delivery shifts, we can't be sure without calculatePayment.
-      // We'll use gananciaTotal if it exists.
-      ganancia = turno.gananciaTotal || 0;
+      // We'll use totalEarnings if it exists.
+      earnings = shift.totalEarnings || 0;
     ***REMOVED***
 
-    const fechaPad = fechaFormato.padEnd(12, ' ');
-    const trabajoPad = trabajo.nombre.substring(0, 24).padEnd(25, ' ');
-    const inicioPad = formatTime(turno.horaInicio).padEnd(8, ' ');
-    const finPad = formatTime(turno.horaFin).padEnd(8, ' ');
-    const horasPad = String(horas).padEnd(8, ' ');
-    const gananciaPad = formatCurrency(ganancia).padEnd(12, ' ');
+    const datePad = dateFormat.padEnd(12, ' ');
+    const workPad = work.name.substring(0, 24).padEnd(25, ' ');
+    const startPad = formatTime(shift.startTime).padEnd(8, ' ');
+    const endPad = formatTime(shift.endTime).padEnd(8, ' ');
+    const hoursPad = String(hours).padEnd(8, ' ');
+    const earningsPad = formatCurrency(earnings).padEnd(12, ' ');
 
-    contenido += `$***REMOVED***fechaPad***REMOVED*** $***REMOVED***trabajoPad***REMOVED*** $***REMOVED***inicioPad***REMOVED*** $***REMOVED***finPad***REMOVED*** $***REMOVED***horasPad***REMOVED*** $***REMOVED***gananciaPad***REMOVED***\n`;
+    content += `$***REMOVED***datePad***REMOVED*** $***REMOVED***workPad***REMOVED*** $***REMOVED***startPad***REMOVED*** $***REMOVED***endPad***REMOVED*** $***REMOVED***hoursPad***REMOVED*** $***REMOVED***earningsPad***REMOVED***\n`;
   ***REMOVED***);
 
-  contenido += '═'.repeat(80) + '\n';
+  content += '═'.repeat(80) + '\n';
 
-  // Crear blob y descargar
-  const blob = new Blob([contenido], ***REMOVED*** type: 'text/plain;charset=utf-8' ***REMOVED***);
+  // Create blob and download
+  const blob = new Blob([content], ***REMOVED*** type: 'text/plain;charset=utf-8' ***REMOVED***);
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `reporte-$***REMOVED***fecha***REMOVED***.txt`;
+  link.download = `report-$***REMOVED***date***REMOVED***.txt`;
   link.click();
   URL.revokeObjectURL(url);
 ***REMOVED***;
 
 /**
- * Generar reporte en formato PNG
+ * Generate report in PNG format
  */
-export const generatePNGReport = async (stats, turnos, trabajos) => ***REMOVED***
-  // Crear un elemento temporal en el DOM
+export const generatePNGReport = async (stats, shifts, works) => ***REMOVED***
+  // Create temporary element in DOM
   const container = document.createElement('div');
   container.style.position = 'absolute';
   container.style.left = '-9999px';
@@ -813,83 +810,83 @@ export const generatePNGReport = async (stats, turnos, trabajos) => ***REMOVED**
   container.style.backgroundColor = '#ffffff';
   container.style.fontFamily = 'system-ui, -apple-system, sans-serif';
   
-  // Contenido HTML del reporte
+  // HTML report content
   container.innerHTML = `
     <div style="max-width: 800px;">
       <!-- Header -->
       <div style="margin-bottom: 30px;">
-        <h1 style="color: #EC4899; font-size: 32px; margin-bottom: 8px;">Reporte de Actividad</h1>
-        <p style="color: #6B7280; font-size: 14px;">Generado el $***REMOVED***formatDate(new Date())***REMOVED***</p>
+        <h1 style="color: #EC4899; font-size: 32px; margin-bottom: 8px;">Activity Report</h1>
+        <p style="color: #6B7280; font-size: 14px;">Generated on $***REMOVED***formatDate(new Date())***REMOVED***</p>
       </div>
       
       <div style="height: 2px; background: linear-gradient(to right, #EC4899, transparent); margin-bottom: 30px;"></div>
       
-      <!-- Resumen General -->
+      <!-- General Summary -->
       <div style="margin-bottom: 30px;">
-        <h2 style="color: #1F2937; font-size: 20px; margin-bottom: 15px;">Resumen General</h2>
+        <h2 style="color: #1F2937; font-size: 20px; margin-bottom: 15px;">General Summary</h2>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
           <div style="background: #F9FAFB; padding: 15px; border-radius: 8px;">
-            <p style="color: #6B7280; font-size: 12px; margin-bottom: 5px;">Total Ganado</p>
-            <p style="color: #1F2937; font-size: 24px; font-weight: bold;">$***REMOVED***formatCurrency(stats.totalGanado || 0)***REMOVED***</p>
+            <p style="color: #6B7280; font-size: 12px; margin-bottom: 5px;">Total Earned</p>
+            <p style="color: #1F2937; font-size: 24px; font-weight: bold;">$***REMOVED***formatCurrency(stats.totalEarned || 0)***REMOVED***</p>
           </div>
           <div style="background: #F9FAFB; padding: 15px; border-radius: 8px;">
-            <p style="color: #6B7280; font-size: 12px; margin-bottom: 5px;">Horas Trabajadas</p>
-            <p style="color: #1F2937; font-size: 24px; font-weight: bold;">$***REMOVED***(stats.horasTrabajadas || 0).toFixed(1)***REMOVED***h</p>
+            <p style="color: #6B7280; font-size: 12px; margin-bottom: 5px;">Hours Worked</p>
+            <p style="color: #1F2937; font-size: 24px; font-weight: bold;">$***REMOVED***(stats.hoursWorked || 0).toFixed(1)***REMOVED***h</p>
           </div>
           <div style="background: #F9FAFB; padding: 15px; border-radius: 8px;">
-            <p style="color: #6B7280; font-size: 12px; margin-bottom: 5px;">Total Turnos</p>
-            <p style="color: #1F2937; font-size: 24px; font-weight: bold;">$***REMOVED***stats.turnosTotal || 0***REMOVED***</p>
+            <p style="color: #6B7280; font-size: 12px; margin-bottom: 5px;">Total Shifts</p>
+            <p style="color: #1F2937; font-size: 24px; font-weight: bold;">$***REMOVED***stats.totalShifts || 0***REMOVED***</p>
           </div>
           <div style="background: #F9FAFB; padding: 15px; border-radius: 8px;">
-            <p style="color: #6B7280; font-size: 12px; margin-bottom: 5px;">Promedio/Hora</p>
-            <p style="color: #1F2937; font-size: 24px; font-weight: bold;">$***REMOVED***formatCurrency(stats.promedioPorHora || 0)***REMOVED***</p>
+            <p style="color: #6B7280; font-size: 12px; margin-bottom: 5px;">Average/Hour</p>
+            <p style="color: #1F2937; font-size: 24px; font-weight: bold;">$***REMOVED***formatCurrency(stats.averagePerHour || 0)***REMOVED***</p>
           </div>
         </div>
       </div>
       
-      <!-- Esta Semana -->
+      <!-- This Week -->
       <div style="margin-bottom: 30px;">
-        <h2 style="color: #1F2937; font-size: 20px; margin-bottom: 15px;">Esta Semana</h2>
+        <h2 style="color: #1F2937; font-size: 20px; margin-bottom: 15px;">This Week</h2>
         <div style="background: #FDF2F8; padding: 20px; border-radius: 8px; border-left: 4px solid #EC4899;">
           <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <span style="color: #6B7280;">Ganancias:</span>
-            <span style="color: #1F2937; font-weight: bold;">$***REMOVED***formatCurrency(stats.gananciasEstaSemana || 0)***REMOVED***</span>
+            <span style="color: #6B7280;">Earnings:</span>
+            <span style="color: #1F2937; font-weight: bold;">$***REMOVED***formatCurrency(stats.earningsThisWeek || 0)***REMOVED***</span>
           </div>
           <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-            <span style="color: #6B7280;">Turnos:</span>
-            <span style="color: #1F2937; font-weight: bold;">$***REMOVED***stats.turnosEstaSemana || 0***REMOVED***</span>
+            <span style="color: #6B7280;">Shifts:</span>
+            <span style="color: #1F2937; font-weight: bold;">$***REMOVED***stats.shiftsThisWeek || 0***REMOVED***</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
-            <span style="color: #6B7280;">Días Trabajados:</span>
-            <span style="color: #1F2937; font-weight: bold;">$***REMOVED***stats.diasTrabajados || 0***REMOVED***</span>
+            <span style="color: #6B7280;">Days Worked:</span>
+            <span style="color: #1F2937; font-weight: bold;">$***REMOVED***stats.daysWorked || 0***REMOVED***</span>
           </div>
         </div>
       </div>
       
-      <!-- Trabajo Más Rentable -->
-      $***REMOVED***stats.trabajoMasRentable ? `
+      <!-- Most Profitable Work -->
+      $***REMOVED***stats.mostProfitableWork ? `
         <div style="margin-bottom: 30px;">
-          <h2 style="color: #1F2937; font-size: 20px; margin-bottom: 15px;">Trabajo Más Rentable</h2>
+          <h2 style="color: #1F2937; font-size: 20px; margin-bottom: 15px;">Most Profitable Work</h2>
           <div style="background: #FFFBEB; padding: 20px; border-radius: 8px; border-left: 4px solid #F59E0B;">
-            <p style="color: #1F2937; font-size: 18px; font-weight: bold; margin-bottom: 5px;">$***REMOVED***stats.trabajoMasRentable.trabajo.nombre***REMOVED***</p>
-            <p style="color: #F59E0B; font-size: 24px; font-weight: bold; margin-bottom: 5px;">$***REMOVED***formatCurrency(stats.trabajoMasRentable.ganancia)***REMOVED***</p>
-            <p style="color: #6B7280; font-size: 12px;">$***REMOVED***stats.trabajoMasRentable.turnos***REMOVED*** turnos • $***REMOVED***stats.trabajoMasRentable.horas.toFixed(1)***REMOVED***h</p>
+            <p style="color: #1F2937; font-size: 18px; font-weight: bold; margin-bottom: 5px;">$***REMOVED***stats.mostProfitableWork.work.name***REMOVED***</p>
+            <p style="color: #F59E0B; font-size: 24px; font-weight: bold; margin-bottom: 5px;">$***REMOVED***formatCurrency(stats.mostProfitableWork.earnings)***REMOVED***</p>
+            <p style="color: #6B7280; font-size: 12px;">$***REMOVED***stats.mostProfitableWork.shifts***REMOVED*** shifts • $***REMOVED***stats.mostProfitableWork.hours.toFixed(1)***REMOVED***h</p>
           </div>
         </div>
       ` : ''***REMOVED***
       
-      <!-- Últimos Turnos -->
+      <!-- Recent Shifts -->
       <div>
-        <h2 style="color: #1F2937; font-size: 20px; margin-bottom: 15px;">Últimos Turnos</h2>
+        <h2 style="color: #1F2937; font-size: 20px; margin-bottom: 15px;">Recent Shifts</h2>
         <div style="space-y: 10px;">
-          $***REMOVED***turnos.slice(0, 5).map(turno => ***REMOVED***
-            const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-            if (!trabajo) return '';
-            const fecha = turno.fechaInicio || turno.fecha;
+          $***REMOVED***shifts.slice(0, 5).map(shift => ***REMOVED***
+            const work = works.find(w => w.id === shift.workId);
+            if (!work) return '';
+            const date = shift.startDate || shift.date;
             return `
               <div style="background: #F9FAFB; padding: 15px; border-radius: 8px; margin-bottom: 10px;">
-                <p style="color: #1F2937; font-weight: bold; margin-bottom: 5px;">$***REMOVED***trabajo.nombre***REMOVED***</p>
-                <p style="color: #6B7280; font-size: 14px;">$***REMOVED***formatDate(fecha)***REMOVED*** • $***REMOVED***turno.horaInicio***REMOVED*** - $***REMOVED***turno.horaFin***REMOVED***</p>
+                <p style="color: #1F2937; font-weight: bold; margin-bottom: 5px;">$***REMOVED***work.name***REMOVED***</p>
+                <p style="color: #6B7280; font-size: 14px;">$***REMOVED***formatDate(date)***REMOVED*** • $***REMOVED***shift.startTime***REMOVED*** - $***REMOVED***shift.endTime***REMOVED***</p>
               </div>
             `;
           ***REMOVED***).join('')***REMOVED***
@@ -901,24 +898,24 @@ export const generatePNGReport = async (stats, turnos, trabajos) => ***REMOVED**
   document.body.appendChild(container);
   
   try ***REMOVED***
-    // Generar canvas desde el HTML
+    // Generate canvas from HTML
     const canvas = await html2canvas(container, ***REMOVED***
       backgroundColor: '#ffffff',
       scale: 2,
       logging: false
     ***REMOVED***);
     
-    // Convertir a imagen y descargar
+    // Convert to image and download
     canvas.toBlob((blob) => ***REMOVED***
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `reporte-$***REMOVED***new Date().toISOString().split('T')[0]***REMOVED***.png`;
+      link.download = `report-$***REMOVED***new Date().toISOString().split('T')[0]***REMOVED***.png`;
       link.click();
       URL.revokeObjectURL(url);
     ***REMOVED***);
   ***REMOVED*** finally ***REMOVED***
-    // Limpiar el elemento temporal
+    // Clean up temporary element
     document.body.removeChild(container);
   ***REMOVED***
 ***REMOVED***;

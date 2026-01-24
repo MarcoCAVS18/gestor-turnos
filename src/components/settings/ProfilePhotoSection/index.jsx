@@ -5,14 +5,14 @@ import ***REMOVED*** Camera, Trash2 ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
-import ConfirmDeleteProfilePhotoModal from '../../modals/ConfirmDeleteProfilePhotoModal'; // Import the new modal
+import ConfirmDeleteProfilePhotoModal from '../../modals/ConfirmDeleteProfilePhotoModal';
 
 const ProfilePhotoSection = (***REMOVED*** className ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** profilePhotoURL, updateProfilePhoto, removeProfilePhoto ***REMOVED*** = useAuth();
   const colors = useThemeColors();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [showConfirmModal, setShowConfirmModal] = useState(false); // State for the new modal
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileSelect = async (event) => ***REMOVED***

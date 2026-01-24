@@ -1,17 +1,16 @@
 // src/utils/time/timeCalculations.js
-// Utilidades centralizadas para cálculos de tiempo
 
 /**
- * Calcula las horas trabajadas entre dos tiempos
- * Maneja correctamente turnos que cruzan la medianoche
+ * Calculates worked hours between two times
+ * Correctly handles shifts that cross midnight
  *
- * @param ***REMOVED***string***REMOVED*** startTime - Hora de inicio en formato "HH:mm"
- * @param ***REMOVED***string***REMOVED*** endTime - Hora de fin en formato "HH:mm"
- * @returns ***REMOVED***number***REMOVED*** - Horas trabajadas (decimal)
+ * @param ***REMOVED***string***REMOVED*** startTime - Start time in format "HH:mm"
+ * @param ***REMOVED***string***REMOVED*** endTime - End time in format "HH:mm"
+ * @returns ***REMOVED***number***REMOVED*** - Worked hours (decimal)
  *
  * @example
  * calculateShiftHours("09:00", "17:00") // 8
- * calculateShiftHours("22:00", "02:00") // 4 (cruza medianoche)
+ * calculateShiftHours("22:00", "02:00") // 4 (crosses midnight)
  */
 export const calculateShiftHours = (startTime, endTime) => ***REMOVED***
   if (!startTime || !endTime) return 0;
@@ -22,7 +21,7 @@ export const calculateShiftHours = (startTime, endTime) => ***REMOVED***
   let startMinutes = startHour * 60 + startMin;
   let endMinutes = endHour * 60 + endMin;
 
-  // Si cruza medianoche (ej: 22:00 a 02:00)
+  // If crosses midnight (e.g: 22:00 to 02:00)
   if (endMinutes <= startMinutes) ***REMOVED***
     endMinutes += 24 * 60;
   ***REMOVED***
@@ -31,11 +30,11 @@ export const calculateShiftHours = (startTime, endTime) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Formatea la duración de un turno en formato legible
+ * Formats the duration of a shift in a readable format
  *
- * @param ***REMOVED***string***REMOVED*** startTime - Hora de inicio
- * @param ***REMOVED***string***REMOVED*** endTime - Hora de fin
- * @returns ***REMOVED***string***REMOVED*** - Duración formateada (ej: "8h" o "7h 30min")
+ * @param ***REMOVED***string***REMOVED*** startTime - Start time
+ * @param ***REMOVED***string***REMOVED*** endTime - End time
+ * @returns ***REMOVED***string***REMOVED*** - Formatted duration (ex: "8h" or "7h 30min")
  *
  * @example
  * formatShiftDuration("09:00", "17:00") // "8h"
@@ -51,10 +50,10 @@ export const formatShiftDuration = (startTime, endTime) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Formatea horas decimales en formato legible
+ * Formats decimal hours in a readable format
  *
- * @param ***REMOVED***number***REMOVED*** hours - Horas en formato decimal
- * @returns ***REMOVED***string***REMOVED*** - Duración formateada (ej: "8h" o "7h 30min" o "45min")
+ * @param ***REMOVED***number***REMOVED*** hours - Hours in decimal format
+ * @returns ***REMOVED***string***REMOVED*** - Formatted duration (ex: "8h", "7h 30min" or "45min")
  *
  * @example
  * formatHoursDecimal(8) // "8h"
@@ -77,31 +76,31 @@ export const formatHoursDecimal = (hours) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Calcula las horas totales de un array de turnos
+ * Calculates total hours for an array of shifts
  *
- * @param ***REMOVED***Array***REMOVED*** shifts - Array de turnos con horaInicio y horaFin
- * @returns ***REMOVED***number***REMOVED*** - Total de horas trabajadas
+ * @param ***REMOVED***Array***REMOVED*** shifts - Array of shifts with startTime and endTime
+ * @returns ***REMOVED***number***REMOVED*** - Total worked hours
  *
  * @example
  * const shifts = [
- *   ***REMOVED*** horaInicio: "09:00", horaFin: "17:00" ***REMOVED***,
- *   ***REMOVED*** horaInicio: "10:00", horaFin: "14:00" ***REMOVED***
+ *   ***REMOVED*** startTime: "09:00", endTime: "17:00" ***REMOVED***,
+ *   ***REMOVED*** startTime: "10:00", endTime: "14:00" ***REMOVED***
  * ];
  * calculateTotalHours(shifts) // 12
  */
 export const calculateTotalHours = (shifts = []) => ***REMOVED***
   return shifts.reduce((total, shift) => ***REMOVED***
-    return total + calculateShiftHours(shift.horaInicio, shift.horaFin);
+    return total + calculateShiftHours(shift.startTime, shift.endTime);
   ***REMOVED***, 0);
 ***REMOVED***;
 
 /**
- * Calcula las horas aplicando descuento de smoko (descanso)
+ * Calculates hours applying smoko discount (break)
  *
- * @param ***REMOVED***string***REMOVED*** startTime - Hora de inicio
- * @param ***REMOVED***string***REMOVED*** endTime - Hora de fin
- * @param ***REMOVED***number***REMOVED*** smokoMinutes - Minutos de descanso a descontar
- * @returns ***REMOVED***number***REMOVED*** - Horas trabajadas después del descuento
+ * @param ***REMOVED***string***REMOVED*** startTime - Start time
+ * @param ***REMOVED***string***REMOVED*** endTime - End time
+ * @param ***REMOVED***number***REMOVED*** smokoMinutes - Minutes of break to subtract
+ * @returns ***REMOVED***number***REMOVED*** - Worked hours after discount
  *
  * @example
  * calculateHoursWithSmoko("09:00", "17:00", 30) // 7.5 (8h - 30min)
@@ -113,10 +112,10 @@ export const calculateHoursWithSmoko = (startTime, endTime, smokoMinutes = 0) =>
 ***REMOVED***;
 
 /**
- * Convierte horas decimales a formato HH:mm
+ * Converts decimal hours to HH:mm format
  *
- * @param ***REMOVED***number***REMOVED*** hours - Horas en formato decimal
- * @returns ***REMOVED***string***REMOVED*** - Tiempo en formato "HH:mm"
+ * @param ***REMOVED***number***REMOVED*** hours - Hours in decimal format
+ * @returns ***REMOVED***string***REMOVED*** - Time in format "HH:mm"
  *
  * @example
  * hoursToTimeString(7.5) // "07:30"
@@ -130,11 +129,11 @@ export const hoursToTimeString = (hours) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Verifica si un turno cruza la medianoche
+ * Checks if a shift crosses midnight
  *
- * @param ***REMOVED***string***REMOVED*** startTime - Hora de inicio
- * @param ***REMOVED***string***REMOVED*** endTime - Hora de fin
- * @returns ***REMOVED***boolean***REMOVED*** - true si cruza medianoche
+ * @param ***REMOVED***string***REMOVED*** startTime - Start time
+ * @param ***REMOVED***string***REMOVED*** endTime - End time
+ * @returns ***REMOVED***boolean***REMOVED*** - true if crosses midnight
  *
  * @example
  * crossesMidnight("22:00", "02:00") // true
@@ -150,32 +149,32 @@ export const crossesMidnight = (startTime, endTime) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Obtiene el rango de fechas de una semana (lunes a domingo)
+ * Gets the date range of a week (Monday to Sunday)
  *
- * @param ***REMOVED***number***REMOVED*** offset - Desplazamiento en semanas (0 = semana actual, -1 = semana anterior, 1 = semana siguiente)
- * @returns ***REMOVED***Object***REMOVED*** - ***REMOVED*** fechaInicio: Date, fechaFin: Date ***REMOVED***
+ * @param ***REMOVED***number***REMOVED*** offset - Displacement in weeks (0 = current week, -1 = previous week, 1 = next week)
+ * @returns ***REMOVED***Object***REMOVED*** - ***REMOVED*** startDate: Date, endDate: Date ***REMOVED***
  *
  * @example
- * getWeekDateRange(0)  // Esta semana
- * getWeekDateRange(-1) // Semana anterior
- * getWeekDateRange(1)  // Semana siguiente
+ * getWeekDateRange(0) // Current week
+ * getWeekDateRange(-1) // Previous week
+ * getWeekDateRange(1) // Next week
  */
 export const getWeekDateRange = (offset = 0) => ***REMOVED***
-  const hoy = new Date();
-  const diaSemana = hoy.getDay();
+  const today = new Date();
+  const dayOfWeek = today.getDay();
 
-  // Calcular diferencia para llegar al lunes (0 = domingo, 1 = lunes, ...)
-  const diffInicio = diaSemana === 0 ? 6 : diaSemana - 1;
+  // Calculate difference to reach Monday (0 = Sunday, 1 = Monday, ...)
+  const startDiff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
-  // Fecha de inicio (lunes)
-  const fechaInicio = new Date(hoy);
-  fechaInicio.setDate(hoy.getDate() - diffInicio + (offset * 7));
-  fechaInicio.setHours(0, 0, 0, 0);
+  // Start date (Monday)
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - startDiff + (offset * 7));
+  startDate.setHours(0, 0, 0, 0);
 
-  // Fecha de fin (domingo)
-  const fechaFin = new Date(fechaInicio);
-  fechaFin.setDate(fechaInicio.getDate() + 6);
-  fechaFin.setHours(23, 59, 59, 999);
+  // End date (Sunday)
+  const endDate = new Date(startDate);
+  endDate.setDate(startDate.getDate() + 6);
+  endDate.setHours(23, 59, 59, 999);
 
-  return ***REMOVED*** fechaInicio, fechaFin ***REMOVED***;
+  return ***REMOVED*** startDate, endDate ***REMOVED***;
 ***REMOVED***;

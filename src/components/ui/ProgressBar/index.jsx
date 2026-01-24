@@ -1,3 +1,5 @@
+// src/components/ui/ProgressBar/index.jsx
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import PropTypes from 'prop-types';
 

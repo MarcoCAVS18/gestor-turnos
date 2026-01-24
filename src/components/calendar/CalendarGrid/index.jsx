@@ -2,80 +2,80 @@
 
 import React from 'react';
 import CalendarDayCell from '../CalendarDayCell';
-import ***REMOVED*** fechaLocalAISO ***REMOVED*** from '../../../utils/calendarUtils';
+import ***REMOVED*** localDateToISO ***REMOVED*** from '../../../utils/calendarUtils';
 
 const CalendarGrid = (***REMOVED*** 
-  dias, 
-  fechaActual, 
-  diaSeleccionadoActual, 
-  trabajos, 
+  days, 
+  currentDate, 
+  currentSelectedDay, 
+  jobs, 
   thematicColors, 
-  onDiaClick 
+  onDayClick 
 ***REMOVED***) => ***REMOVED***
-  const diasSemana = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-  const fechaActualISO = fechaLocalAISO(fechaActual);
+  const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const currentDateISO = localDateToISO(currentDate);
 
-  // Función para obtener colores de trabajos
-  const obtenerColoresTrabajos = (turnosDelDia, todosLosTrabajos) => ***REMOVED***
-    const coloresUnicos = new Set();
+  // Function to get job colors
+  const getJobColors = (dayShifts, allJobs) => ***REMOVED***
+    const uniqueColors = new Set();
     
-    if (!turnosDelDia || turnosDelDia.length === 0) ***REMOVED***
+    if (!dayShifts || dayShifts.length === 0) ***REMOVED***
       return [];
     ***REMOVED***
     
-    turnosDelDia.forEach(turno => ***REMOVED***
-      const trabajo = todosLosTrabajos.find(t => t.id === turno.trabajoId);
-      if (trabajo) ***REMOVED***
-        // Para trabajos de delivery, usar color específico
-        if (trabajo.tipo === 'delivery' || turno.tipo === 'delivery') ***REMOVED***
-          coloresUnicos.add(trabajo.colorAvatar || trabajo.color || '#10B981');
+    dayShifts.forEach(shift => ***REMOVED***
+      const job = allJobs.find(t => t.id === shift.jobId);
+      if (job) ***REMOVED***
+        // For delivery jobs, use specific color
+        if (job.type === 'delivery' || shift.type === 'delivery') ***REMOVED***
+          uniqueColors.add(job.avatarColor || job.color || '#10B981');
         ***REMOVED*** else ***REMOVED***
-          // Para trabajos tradicionales
-          coloresUnicos.add(trabajo.color || '#EC4899');
+          // For traditional jobs
+          uniqueColors.add(job.color || '#EC4899');
         ***REMOVED***
       ***REMOVED*** else ***REMOVED***
-        // Si no se encuentra el trabajo, usar color por defecto según tipo
-        if (turno.tipo === 'delivery') ***REMOVED***
-          coloresUnicos.add('#10B981'); // Verde para delivery
+        // If job is not found, use default color based on type
+        if (shift.type === 'delivery') ***REMOVED***
+          uniqueColors.add('#10B981'); // Green for delivery
         ***REMOVED*** else ***REMOVED***
-          coloresUnicos.add('#EC4899'); // Rosa para tradicional
+          uniqueColors.add('#EC4899'); // Pink for traditional
         ***REMOVED***
       ***REMOVED***
     ***REMOVED***);
     
-    return Array.from(coloresUnicos).slice(0, 3); // Máximo 3 colores
+    return Array.from(uniqueColors).slice(0, 3); // Maximum 3 colors
   ***REMOVED***;
 
   return (
     <>
-      ***REMOVED***/* Encabezados de días */***REMOVED***
+      ***REMOVED***/* Day headers */***REMOVED***
       <div className="grid grid-cols-7 bg-gray-100">
-        ***REMOVED***diasSemana.map(dia => (
-          <div key=***REMOVED***dia***REMOVED*** className="py-2 text-center text-gray-600 text-sm font-medium">
-            ***REMOVED***dia***REMOVED***
+        ***REMOVED***weekDays.map(day => (
+          <div key=***REMOVED***day***REMOVED*** className="py-2 text-center text-gray-600 text-sm font-medium">
+            ***REMOVED***day***REMOVED***
           </div>
         ))***REMOVED***
       </div>
 
-      ***REMOVED***/* Grid de días */***REMOVED***
+      ***REMOVED***/* Days grid */***REMOVED***
       <div className="grid grid-cols-7">
-        ***REMOVED***dias.map((dia, index) => ***REMOVED***
-          const fechaDiaISO = fechaLocalAISO(dia.fecha);
-          const esHoy = fechaDiaISO === fechaActualISO;
-          const esSeleccionado = fechaDiaISO === diaSeleccionadoActual;
+        ***REMOVED***days.map((day, index) => ***REMOVED***
+          const dayDateISO = localDateToISO(day.date);
+          const isToday = dayDateISO === currentDateISO;
+          const isSelected = dayDateISO === currentSelectedDay;
           
-          // Obtener colores correctamente
-          const coloresTrabajos = obtenerColoresTrabajos(dia.turnosDelDia, trabajos);
+          // Get colors correctly
+          const workColors = getJobColors(day.shiftsOfTheDay, jobs);
 
           return (
             <CalendarDayCell
               key=***REMOVED***index***REMOVED***
-              dia=***REMOVED***dia***REMOVED***
-              esHoy=***REMOVED***esHoy***REMOVED***
-              esSeleccionado=***REMOVED***esSeleccionado***REMOVED***
-              coloresTrabajos=***REMOVED***coloresTrabajos***REMOVED***
+              day=***REMOVED***day***REMOVED***
+              isToday=***REMOVED***isToday***REMOVED***
+              isSelected=***REMOVED***isSelected***REMOVED***
+              workColors=***REMOVED***workColors***REMOVED***
               thematicColors=***REMOVED***thematicColors***REMOVED***
-              onClick=***REMOVED***() => onDiaClick(dia.fecha)***REMOVED***
+              onClick=***REMOVED***() => onDayClick(day.date)***REMOVED***
             />
           );
         ***REMOVED***)***REMOVED***

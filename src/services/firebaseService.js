@@ -1,4 +1,5 @@
 // src/services/firebaseService.js
+
 import ***REMOVED***
   doc,
   getDoc,
@@ -21,11 +22,11 @@ import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 const getUserSubcollections = (userUid) => ***REMOVED***
   if (!userUid) return null;
   return ***REMOVED***
-    trabajosRef: collection(db, 'usuarios', userUid, 'trabajos'),
-    turnosRef: collection(db, 'usuarios', userUid, 'turnos'),
-    trabajosDeliveryRef: collection(db, 'usuarios', userUid, 'trabajos-delivery'),
-    turnosDeliveryRef: collection(db, 'usuarios', userUid, 'turnos-delivery'),
-    userDocRef: doc(db, 'usuarios', userUid),
+    worksRef: collection(db, 'users', userUid, 'works'),
+    shiftsRef: collection(db, 'users', userUid, 'shifts'),
+    deliveryWorksRef: collection(db, 'users', userUid, 'works-delivery'),
+    deliveryShiftsRef: collection(db, 'users', userUid, 'shifts-delivery'),
+    userDocRef: doc(db, 'users', userUid),
   ***REMOVED***;
 ***REMOVED***;
 
@@ -47,7 +48,7 @@ const createIncrementalSubscription = (query, setData, errorCallback, sortCompar
             ***REMOVED***);
             return updatedData.sort(sortComparator);
         ***REMOVED***);
-    ***REMOVED***, (err) => errorCallback('Error al cargar datos: ' + err.message));
+    ***REMOVED***, (err) => errorCallback('Error loading data: ' + err.message));
 ***REMOVED***;
 
 // --- USER & SETTINGS ---
@@ -55,35 +56,35 @@ const createIncrementalSubscription = (query, setData, errorCallback, sortCompar
 export const ensureUserDocument = async (user) => ***REMOVED***
   if (!user) return null;
 
-  const userDocRef = doc(db, 'usuarios', user.uid);
+  const userDocRef = doc(db, 'users', user.uid);
   const userDocSnapshot = await getDoc(userDocRef);
 
   const defaultSettings = ***REMOVED***
-    colorPrincipal: '#EC4899',
-    emojiUsuario: '😊',
-    descuentoDefault: 15,
-    metaHorasSemanales: null,
+    primaryColor: '#EC4899',
+    userEmoji: '😊',
+    defaultDiscount: 15,
+    weeklyHoursGoal: null,
     deliveryEnabled: false,
     smokoEnabled: false,
     smokoMinutes: 30,
-    rangosTurnos: ***REMOVED***
-      diurnoInicio: 6,
-      diurnoFin: 14,
-      tardeInicio: 14,
-      tardeFin: 20,
-      nocheInicio: 20,
+    shiftRanges: ***REMOVED***
+      dayStart: 6,
+      dayEnd: 14,
+      afternoonStart: 14,
+      afternoonEnd: 20,
+      nightStart: 20,
     ***REMOVED***,
   ***REMOVED***;
 
   if (userDocSnapshot.exists()) ***REMOVED***
     const userData = userDocSnapshot.data();
-    return ***REMOVED*** ...defaultSettings, ...(userData.ajustes || ***REMOVED******REMOVED***) ***REMOVED***;
+    return ***REMOVED*** ...defaultSettings, ...(userData.settings || ***REMOVED******REMOVED***) ***REMOVED***;
   ***REMOVED*** else ***REMOVED***
     const defaultUserData = ***REMOVED***
       email: user.email,
-      displayName: user.displayName || 'Usuario',
-      fechaCreacion: new Date(),
-      ajustes: defaultSettings,
+      displayName: user.displayName || 'User',
+      createdAt: new Date(),
+      settings: defaultSettings,
     ***REMOVED***;
     await setDoc(userDocRef, defaultUserData);
     return defaultSettings;
@@ -91,18 +92,18 @@ export const ensureUserDocument = async (user) => ***REMOVED***
 ***REMOVED***;
 
 export const savePreferences = async (userUid, preferences) => ***REMOVED***
-    const userDocRef = doc(db, 'usuarios', userUid);
-    const updatedData = ***REMOVED*** fechaActualizacion: new Date() ***REMOVED***;
+    const userDocRef = doc(db, 'users', userUid);
+    const updatedData = ***REMOVED*** updatedAt: new Date() ***REMOVED***;
 
     const prefMap = ***REMOVED***
-        colorPrincipal: 'ajustes.colorPrincipal',
-        emojiUsuario: 'ajustes.emojiUsuario',
-        descuentoDefault: 'ajustes.descuentoDefault',
-        rangosTurnos: 'ajustes.rangosTurnos',
-        deliveryEnabled: 'ajustes.deliveryEnabled',
-        metaHorasSemanales: 'ajustes.metaHorasSemanales',
-        smokoEnabled: 'ajustes.smokoEnabled',
-        smokoMinutes: 'ajustes.smokoMinutes',
+        primaryColor: 'settings.primaryColor',
+        userEmoji: 'settings.userEmoji',
+        defaultDiscount: 'settings.defaultDiscount',
+        shiftRanges: 'settings.shiftRanges',
+        deliveryEnabled: 'settings.deliveryEnabled',
+        weeklyHoursGoal: 'settings.weeklyHoursGoal',
+        smokoEnabled: 'settings.smokoEnabled',
+        smokoMinutes: 'settings.smokoMinutes',
     ***REMOVED***;
 
     for (const key in preferences) ***REMOVED***
@@ -117,66 +118,66 @@ export const savePreferences = async (userUid, preferences) => ***REMOVED***
 ***REMOVED***;
 
 export const updateWeeklyHoursGoal = (userUid, newGoal) => ***REMOVED***
-    const userDocRef = doc(db, 'usuarios', userUid);
+    const userDocRef = doc(db, 'users', userUid);
     return updateDoc(userDocRef, ***REMOVED***
-        'ajustes.metaHorasSemanales': newGoal,
-        fechaActualizacion: new Date()
+        'settings.weeklyHoursGoal': newGoal,
+        updatedAt: new Date()
     ***REMOVED***);
 ***REMOVED***;
 
 
 // --- DATA SUBSCRIPTIONS ---
 
-export const subscribeToNormalData = (userUid, ***REMOVED*** setTrabajos, setTurnos, setError ***REMOVED***) => ***REMOVED***
+export const subscribeToNormalData = (userUid, ***REMOVED*** setWorks, setShifts, setError ***REMOVED***) => ***REMOVED***
   const collections = getUserSubcollections(userUid);
   if (!collections) return () => ***REMOVED******REMOVED***;
   const unsubscribes = [];
 
-  const trabajosQuery = query(collections.trabajosRef, orderBy('nombre', 'asc'));
+  const worksQuery = query(collections.worksRef, orderBy('name', 'asc'));
   unsubscribes.push(
     createIncrementalSubscription(
-      trabajosQuery,
-      setTrabajos,
+      worksQuery,
+      setWorks,
       (error) => setError(error),
-      (a, b) => a.nombre.localeCompare(b.nombre)
+      (a, b) => a.name.localeCompare(b.name)
     )
   );
 
-  const turnosQuery = query(collections.turnosRef, orderBy('fechaCreacion', 'desc'));
+  const shiftsQuery = query(collections.shiftsRef, orderBy('createdAt', 'desc'));
   unsubscribes.push(
     createIncrementalSubscription(
-      turnosQuery,
-      setTurnos,
+      shiftsQuery,
+      setShifts,
       (error) => setError(error),
-      (a, b) => new Date(b.fechaInicio || b.fecha) - new Date(a.fechaInicio || a.fecha)
+      (a, b) => new Date(b.startDate || b.date) - new Date(a.startDate || a.date)
     )
   );
 
   return () => unsubscribes.forEach(unsub => unsub());
 ***REMOVED***;
 
-export const subscribeToDeliveryData = (userUid, ***REMOVED*** setTrabajosDelivery, setTurnosDelivery, setError ***REMOVED***) => ***REMOVED***
+export const subscribeToDeliveryData = (userUid, ***REMOVED*** setDeliveryWorks, setDeliveryShifts, setError ***REMOVED***) => ***REMOVED***
   const collections = getUserSubcollections(userUid);
   if (!collections) return () => ***REMOVED******REMOVED***;
   const unsubscribes = [];
 
-  const trabajosDeliveryQuery = query(collections.trabajosDeliveryRef, orderBy('fechaCreacion', 'desc'));
+  const deliveryWorksQuery = query(collections.deliveryWorksRef, orderBy('createdAt', 'desc'));
     unsubscribes.push(
     createIncrementalSubscription(
-      trabajosDeliveryQuery,
-      setTrabajosDelivery,
+      deliveryWorksQuery,
+      setDeliveryWorks,
       (error) => setError(error),
-      (a, b) => b.fechaCreacion - a.fechaCreacion
+      (a, b) => b.createdAt - a.createdAt
     )
   );
 
-  const turnosDeliveryQuery = query(collections.turnosDeliveryRef, orderBy('fecha', 'desc'));
+  const deliveryShiftsQuery = query(collections.deliveryShiftsRef, orderBy('date', 'desc'));
   unsubscribes.push(
     createIncrementalSubscription(
-      turnosDeliveryQuery,
-      setTurnosDelivery,
+      deliveryShiftsQuery,
+      setDeliveryShifts,
       (error) => setError(error),
-      (a, b) => new Date(b.fecha) - new Date(a.fecha),
+      (a, b) => new Date(b.date) - new Date(a.date),
       (d) => (***REMOVED*** ...d, type: 'delivery' ***REMOVED***)
     )
   );
@@ -184,32 +185,32 @@ export const subscribeToDeliveryData = (userUid, ***REMOVED*** setTrabajosDelive
   return () => unsubscribes.forEach(unsub => unsub());
 ***REMOVED***;
 
-// --- TRABAJOS (JOBS) ---
+// --- WORKS ---
 
 export const addJob = async (userUid, newJob, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** trabajosRef, trabajosDeliveryRef ***REMOVED*** = getUserSubcollections(userUid);
-  const targetRef = isDelivery ? trabajosDeliveryRef : trabajosRef;
+  const ***REMOVED*** worksRef, deliveryWorksRef ***REMOVED*** = getUserSubcollections(userUid);
+  const targetRef = isDelivery ? deliveryWorksRef : worksRef;
 
   let jobData = ***REMOVED***
     ...newJob,
-    fechaCreacion: new Date(),
-    fechaActualizacion: new Date(),
+    createdAt: new Date(),
+    updatedAt: new Date(),
   ***REMOVED***;
 
   if (isDelivery) ***REMOVED***
     jobData = ***REMOVED***
       ...jobData,
-      tipo: 'delivery',
-      plataforma: newJob.plataforma || '',
-      vehiculo: newJob.vehiculo || '',
-      colorAvatar: newJob.colorAvatar || '#10B981',
-      estadisticas: ***REMOVED*** /* default stats */ ***REMOVED***
+      type: 'delivery',
+      platform: newJob.platform || '',
+      vehicle: newJob.vehicle || '',
+      avatarColor: newJob.avatarColor || '#10B981',
+      statistics: ***REMOVED*** /* default stats */ ***REMOVED***
     ***REMOVED***;
   ***REMOVED*** else ***REMOVED***
-    if (!newJob.nombre || !newJob.nombre.trim()) throw new Error('El nombre del trabajo es requerido');
+    if (!newJob.name || !newJob.name.trim()) throw new Error('Work name is required');
     jobData = ***REMOVED***
       ...jobData,
-      activo: true
+      active: true
     ***REMOVED***;
   ***REMOVED***
 
@@ -218,18 +219,18 @@ export const addJob = async (userUid, newJob, isDelivery = false) => ***REMOVED*
 ***REMOVED***;
 
 export const editJob = (userUid, id, updatedData, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** trabajosRef, trabajosDeliveryRef ***REMOVED*** = getUserSubcollections(userUid);
-  const targetRef = isDelivery ? trabajosDeliveryRef : trabajosRef;
-  const dataWithMetadata = ***REMOVED*** ...updatedData, fechaActualizacion: new Date() ***REMOVED***;
+  const ***REMOVED*** worksRef, deliveryWorksRef ***REMOVED*** = getUserSubcollections(userUid);
+  const targetRef = isDelivery ? deliveryWorksRef : worksRef;
+  const dataWithMetadata = ***REMOVED*** ...updatedData, updatedAt: new Date() ***REMOVED***;
   return updateDoc(doc(targetRef, id), dataWithMetadata);
 ***REMOVED***;
 
 export const deleteJob = async (userUid, id, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** trabajosRef, turnosRef, trabajosDeliveryRef, turnosDeliveryRef ***REMOVED*** = getUserSubcollections(userUid);
-  const jobRef = isDelivery ? doc(trabajosDeliveryRef, id) : doc(trabajosRef, id);
-  const shiftsCollectionRef = isDelivery ? turnosDeliveryRef : turnosRef;
+  const ***REMOVED*** worksRef, shiftsRef, deliveryWorksRef, deliveryShiftsRef ***REMOVED*** = getUserSubcollections(userUid);
+  const jobRef = isDelivery ? doc(deliveryWorksRef, id) : doc(worksRef, id);
+  const shiftsCollectionRef = isDelivery ? deliveryShiftsRef : shiftsRef;
 
-  const shiftsQuery = query(shiftsCollectionRef, where('trabajoId', '==', id));
+  const shiftsQuery = query(shiftsCollectionRef, where('workId', '==', id));
   const shiftsSnapshot = await getDocs(shiftsQuery);
   const deletePromises = shiftsSnapshot.docs.map(d => deleteDoc(d.ref));
   await Promise.all(deletePromises);
@@ -237,42 +238,42 @@ export const deleteJob = async (userUid, id, isDelivery = false) => ***REMOVED**
   await deleteDoc(jobRef);
 ***REMOVED***;
 
-// --- TURNOS (SHIFTS) ---
+// --- SHIFTS ---
 
 export const addShift = async (userUid, newShift, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** turnosRef, turnosDeliveryRef ***REMOVED*** = getUserSubcollections(userUid);
-  const targetRef = isDelivery ? turnosDeliveryRef : turnosRef;
+  const ***REMOVED*** shiftsRef, deliveryShiftsRef ***REMOVED*** = getUserSubcollections(userUid);
+  const targetRef = isDelivery ? deliveryShiftsRef : shiftsRef;
   
-  const cruzaMedianoche = newShift.cruzaMedianoche || (newShift.horaInicio && newShift.horaFin && newShift.horaInicio.split(':')[0] > newShift.horaFin.split(':')[0]);
-  let fechaFin = newShift.fechaFin;
-  if (!fechaFin && cruzaMedianoche) ***REMOVED***
-    const fechaInicio = createSafeDate(newShift.fechaInicio || newShift.fecha);
-    fechaFin = new Date(fechaInicio.setDate(fechaInicio.getDate() + 1)).toISOString().split('T')[0];
+  const crossesMidnight = newShift.crossesMidnight || (newShift.startTime && newShift.endTime && newShift.startTime.split(':')[0] > newShift.endTime.split(':')[0]);
+  let endDate = newShift.endDate;
+  if (!endDate && crossesMidnight) ***REMOVED***
+    const startDate = createSafeDate(newShift.startDate || newShift.date);
+    endDate = new Date(startDate.setDate(startDate.getDate() + 1)).toISOString().split('T')[0];
   ***REMOVED***
 
   let shiftData = ***REMOVED***
     ...newShift,
-    fechaCreacion: new Date(),
-    fechaActualizacion: new Date(),
-    fecha: newShift.fechaInicio || newShift.fecha,
-    fechaInicio: newShift.fechaInicio || newShift.fecha,
-    fechaFin: fechaFin || newShift.fechaInicio || newShift.fecha,
-    cruzaMedianoche,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    date: newShift.startDate || newShift.date,
+    startDate: newShift.startDate || newShift.date,
+    endDate: endDate || newShift.startDate || newShift.date,
+    crossesMidnight,
   ***REMOVED***;
 
   if (isDelivery) ***REMOVED***
-    const gananciaBase = newShift.gananciaBase || 0;
-    const propinas = newShift.propinas || 0;
-    const gananciaTotal = gananciaBase + propinas;
-    const gastoCombustible = newShift.gastoCombustible || 0;
+    const baseEarnings = newShift.baseEarnings || 0;
+    const tips = newShift.tips || 0;
+    const totalEarnings = baseEarnings + tips;
+    const fuelExpense = newShift.fuelExpense || 0;
     
     shiftData = ***REMOVED***
       ...shiftData,
-      tipo: 'delivery',
-      gananciaBase: gananciaBase,
-      propinas: propinas,
-      gananciaTotal: gananciaTotal,
-      gananciaNeta: gananciaTotal - gastoCombustible,
+      type: 'delivery',
+      baseEarnings: baseEarnings,
+      tips: tips,
+      totalEarnings: totalEarnings,
+      netEarnings: totalEarnings - fuelExpense,
     ***REMOVED***;
   ***REMOVED***
 
@@ -281,36 +282,36 @@ export const addShift = async (userUid, newShift, isDelivery = false) => ***REMO
 ***REMOVED***;
 
 export const editShift = (userUid, id, updatedData, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** turnosRef, turnosDeliveryRef ***REMOVED*** = getUserSubcollections(userUid);
-  const targetRef = isDelivery ? turnosDeliveryRef : turnosRef;
+  const ***REMOVED*** shiftsRef, deliveryShiftsRef ***REMOVED*** = getUserSubcollections(userUid);
+  const targetRef = isDelivery ? deliveryShiftsRef : shiftsRef;
 
-  const cruzaMedianoche = updatedData.cruzaMedianoche || (updatedData.horaInicio && updatedData.horaFin && updatedData.horaInicio.split(':')[0] > updatedData.horaFin.split(':')[0]);
-  let fechaFin = updatedData.fechaFin;
-  if (!fechaFin && cruzaMedianoche) ***REMOVED***
-    const fechaInicio = createSafeDate(updatedData.fechaInicio || updatedData.fecha);
-    fechaFin = new Date(fechaInicio.setDate(fechaInicio.getDate() + 1)).toISOString().split('T')[0];
+  const crossesMidnight = updatedData.crossesMidnight || (updatedData.startTime && updatedData.endTime && updatedData.startTime.split(':')[0] > updatedData.endTime.split(':')[0]);
+  let endDate = updatedData.endDate;
+  if (!endDate && crossesMidnight) ***REMOVED***
+    const startDate = createSafeDate(updatedData.startDate || updatedData.date);
+    endDate = new Date(startDate.setDate(startDate.getDate() + 1)).toISOString().split('T')[0];
   ***REMOVED***
 
   let dataWithMetadata = ***REMOVED***
     ...updatedData,
-    fechaActualizacion: new Date(),
-    fecha: updatedData.fechaInicio || updatedData.fecha,
-    fechaFin: fechaFin || updatedData.fechaInicio || updatedData.fecha,
-    cruzaMedianoche,
+    updatedAt: new Date(),
+    date: updatedData.startDate || updatedData.date,
+    endDate: endDate || updatedData.startDate || updatedData.date,
+    crossesMidnight,
   ***REMOVED***;
 
   if (isDelivery) ***REMOVED***
-    const gananciaBase = updatedData.gananciaBase || 0;
-    const propinas = updatedData.propinas || 0;
-    const gananciaTotal = gananciaBase + propinas;
-    const gastoCombustible = updatedData.gastoCombustible || 0;
+    const baseEarnings = updatedData.baseEarnings || 0;
+    const tips = updatedData.tips || 0;
+    const totalEarnings = baseEarnings + tips;
+    const fuelExpense = updatedData.fuelExpense || 0;
 
     dataWithMetadata = ***REMOVED***
       ...dataWithMetadata,
-      gananciaBase: gananciaBase,
-      propinas: propinas,
-      gananciaTotal: gananciaTotal,
-      gananciaNeta: gananciaTotal - gastoCombustible,
+      baseEarnings: baseEarnings,
+      tips: tips,
+      totalEarnings: totalEarnings,
+      netEarnings: totalEarnings - fuelExpense,
     ***REMOVED***;
   ***REMOVED***
 
@@ -318,7 +319,7 @@ export const editShift = (userUid, id, updatedData, isDelivery = false) => ***RE
 ***REMOVED***;
 
 export const deleteShift = (userUid, id, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** turnosRef, turnosDeliveryRef ***REMOVED*** = getUserSubcollections(userUid);
-  const targetRef = isDelivery ? turnosDeliveryRef : turnosRef;
+  const ***REMOVED*** shiftsRef, deliveryShiftsRef ***REMOVED*** = getUserSubcollections(userUid);
+  const targetRef = isDelivery ? deliveryShiftsRef : shiftsRef;
   return deleteDoc(doc(targetRef, id));
 ***REMOVED***;

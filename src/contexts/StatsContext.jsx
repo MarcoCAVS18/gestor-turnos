@@ -1,3 +1,5 @@
+// src/contexts/StatsContext.jsx
+
 import React, ***REMOVED*** createContext, useContext, useState, useMemo, useCallback ***REMOVED*** from 'react';
 import ***REMOVED*** useDataContext ***REMOVED*** from './DataContext';
 import ***REMOVED*** useDeliveryContext ***REMOVED*** from './DeliveryContext';
@@ -12,160 +14,160 @@ export const useStats = () => ***REMOVED***
 ***REMOVED***;
 
 export const StatsProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
-  // Hooks de los contextos de datos y configuración
+  // Hooks from data and configuration contexts
   const ***REMOVED*** trabajos, turnos, loading: dataLoading ***REMOVED*** = useDataContext();
   const ***REMOVED*** trabajosDelivery, turnosDelivery, loading: deliveryLoading ***REMOVED*** = useDeliveryContext();
   const ***REMOVED*** shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes, deliveryEnabled, weeklyHoursGoal, thematicColors, loading: configLoading ***REMOVED*** = useConfigContext();
 
-  // Estado para el control de la semana
-  const [offsetSemana, setOffsetSemana] = useState(0);
+  // State for week control
+  const [weekOffset, setWeekOffset] = useState(0);
 
-  // Combinar todos los trabajos y turnos
-  const todosLosTrabajos = useMemo(() => [...trabajos, ...trabajosDelivery], [trabajos, trabajosDelivery]);
-  const allTurnos = useMemo(() => [...turnos, ...turnosDelivery], [turnos, turnosDelivery]);
+  // Combine all work and shifts
+  const allWork = useMemo(() => [...trabajos, ...trabajosDelivery], [trabajos, trabajosDelivery]);
+  const allShifts = useMemo(() => [...turnos, ...turnosDelivery], [turnos, turnosDelivery]);
 
-  // Loading unificado
+  // Unified loading
   const loading = useMemo(() => dataLoading || deliveryLoading || configLoading, [dataLoading, deliveryLoading, configLoading]);
 
-  // Crear una función de cálculo de pago pre-configurada
-  const calculatePayment = useCallback((turno) => ***REMOVED***
+  // Create a pre-configured payment calculation function
+  const calculatePayment = useCallback((shift) => ***REMOVED***
     return calculationService.calculatePayment(
-      turno,
-      todosLosTrabajos,
+      shift,
+      allWork,
       shiftRanges,
       defaultDiscount,
       smokoEnabled,
       smokoMinutes
     );
-  ***REMOVED***, [todosLosTrabajos, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes]);
+  ***REMOVED***, [allWork, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes]);
 
-  // Calcular estadísticas semanales para la semana actual y la anterior
-  const datosActuales = useMemo(() => ***REMOVED***
+  // Calculate weekly statistics for the current and previous week
+  const currentData = useMemo(() => ***REMOVED***
     return calculationService.calculateWeeklyStats(***REMOVED***
       turnos,
       turnosDelivery,
-      todosLosTrabajos,
+      allWork,
       calculatePayment,
       shiftRanges,
-      offsetSemanas: offsetSemana,
+      weekOffset: weekOffset,
     ***REMOVED***);
-  ***REMOVED***, [turnos, turnosDelivery, todosLosTrabajos, calculatePayment, shiftRanges, offsetSemana]);
+  ***REMOVED***, [turnos, turnosDelivery, allWork, calculatePayment, shiftRanges, weekOffset]);
 
-  const datosAnteriores = useMemo(() => ***REMOVED***
+  const previousData = useMemo(() => ***REMOVED***
     return calculationService.calculateWeeklyStats(***REMOVED***
       turnos,
       turnosDelivery,
-      todosLosTrabajos,
+      allWork,
       calculatePayment,
       shiftRanges,
-      offsetSemanas: offsetSemana - 1,
+      weekOffset: weekOffset - 1,
     ***REMOVED***);
-  ***REMOVED***, [turnos, turnosDelivery, todosLosTrabajos, calculatePayment, shiftRanges, offsetSemana]);
+  ***REMOVED***, [turnos, turnosDelivery, allWork, calculatePayment, shiftRanges, weekOffset]);
 
-  // Calcular estadísticas de delivery
+  // Calculate delivery statistics
   const deliveryStats = useMemo(() => ***REMOVED***
     return calculationService.calculateDeliveryStats(***REMOVED***
       trabajosDelivery,
       turnosDelivery,
-      periodo: 'mes' // Hardcoded to 'mes' as it was in Estadisticas.jsx
+      period: 'month' // Hardcoded to 'month' as it was in Stats.jsx
     ***REMOVED***);
   ***REMOVED***, [trabajosDelivery, turnosDelivery]);
 
-  // NEW: Calcular datos para gráfico de evolución semanal
+  // NEW: Calculate data for weekly evolution chart
   const weeklyEvolutionData = useMemo(() => ***REMOVED***
-    const weekNames = ['Esta semana', 'Sem pasada', 'Hace 2 sem', 'Hace 3 sem'];
+    const weekNames = ['This week', 'Last week', '2 weeks ago', '3 weeks ago'];
     return [0, -1, -2, -3].map((offset, index) => ***REMOVED***
       const stats = calculationService.calculateWeeklyStats(***REMOVED***
         turnos,
         turnosDelivery,
-        todosLosTrabajos,
+        allWork,
         calculatePayment,
         shiftRanges,
-        offsetSemanas: offset,
+        weekOffset: offset,
       ***REMOVED***);
       return ***REMOVED***
-        semana: weekNames[index],
-        ganancia: stats.totalGanado || 0
+        week: weekNames[index],
+        earnings: stats.totalEarned || 0
       ***REMOVED***;
     ***REMOVED***).reverse(); // Reverse to have the oldest week first
-  ***REMOVED***, [turnos, turnosDelivery, todosLosTrabajos, calculatePayment, shiftRanges]);
+  ***REMOVED***, [turnos, turnosDelivery, allWork, calculatePayment, shiftRanges]);
 
 
-  // Memoized `turnosPorFecha` (lógica existente)
-  const turnosPorFecha = useMemo(() => ***REMOVED***
-    const turnosMap = ***REMOVED******REMOVED***;
-    allTurnos.forEach(turno => ***REMOVED***
-      const fechaPrincipal = turno.fechaInicio || turno.fecha;
-      if (fechaPrincipal) ***REMOVED***
-        if (!turnosMap[fechaPrincipal]) ***REMOVED***
-          turnosMap[fechaPrincipal] = [];
+  // Memoized `shiftsByDate` (existing logic)
+  const shiftsByDate = useMemo(() => ***REMOVED***
+    const shiftsMap = ***REMOVED******REMOVED***;
+    allShifts.forEach(shift => ***REMOVED***
+      const mainDate = shift.startDate || shift.date;
+      if (mainDate) ***REMOVED***
+        if (!shiftsMap[mainDate]) ***REMOVED***
+          shiftsMap[mainDate] = [];
         ***REMOVED***
-        turnosMap[fechaPrincipal].push(turno);
+        shiftsMap[mainDate].push(shift);
       ***REMOVED***
 
-      const esNocturno = turno.cruzaMedianoche || (turno.horaInicio && turno.horaFin && turno.horaInicio.split(':')[0] > turno.horaFin.split(':')[0]);
+      const isNight = shift.crossesMidnight || (shift.startTime && shift.endTime && shift.startTime.split(':')[0] > shift.endTime.split(':')[0]);
 
-      if (esNocturno && fechaPrincipal) ***REMOVED***
-        let fechaFin = turno.fechaFin;
-        if (!fechaFin) ***REMOVED***
-          const fechaInicioDate = createSafeDate(fechaPrincipal);
-          const fechaFinCalculada = new Date(fechaInicioDate);
-          fechaFinCalculada.setDate(fechaFinCalculada.getDate() + 1);
-          fechaFin = fechaFinCalculada.toISOString().split('T')[0];
+      if (isNight && mainDate) ***REMOVED***
+        let endDate = shift.endDate;
+        if (!endDate) ***REMOVED***
+          const startDateObj = createSafeDate(mainDate);
+          const calculatedEndDate = new Date(startDateObj);
+          calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
+          endDate = calculatedEndDate.toISOString().split('T')[0];
         ***REMOVED***
-        if (fechaFin && fechaFin !== fechaPrincipal) ***REMOVED***
-          if (!turnosMap[fechaFin]) ***REMOVED***
-            turnosMap[fechaFin] = [];
+        if (endDate && endDate !== mainDate) ***REMOVED***
+          if (!shiftsMap[endDate]) ***REMOVED***
+            shiftsMap[endDate] = [];
           ***REMOVED***
-          if (!turnosMap[fechaFin].some(t => t.id === turno.id)) ***REMOVED***
-            turnosMap[fechaFin].push(turno);
+          if (!shiftsMap[endDate].some(s => s.id === shift.id)) ***REMOVED***
+            shiftsMap[endDate].push(shift);
           ***REMOVED***
         ***REMOVED***
       ***REMOVED***
     ***REMOVED***);
-    return turnosMap;
-  ***REMOVED***, [allTurnos]);
+    return shiftsMap;
+  ***REMOVED***, [allShifts]);
   
-  // Memoized function to calculate monthly stats (lógica existente)
+  // Memoized function to calculate monthly stats (existing logic)
   const calculateMonthlyStats = useCallback((year, month) => ***REMOVED***
     return calculationService.calculateMonthlyStats(year, month, turnos, turnosDelivery, calculatePayment);
   ***REMOVED***, [turnos, turnosDelivery, calculatePayment]);
 
-  // Memoized value for current month's stats (lógica existente)
+  // Memoized value for current month's stats (existing logic)
   const currentMonthStats = useMemo(() => ***REMOVED***
     const now = new Date();
     return calculateMonthlyStats(now.getFullYear(), now.getMonth());
   ***REMOVED***, [calculateMonthlyStats]);
 
   const value = ***REMOVED***
-    // Estado de carga
+    // Loading state
     loading,
     
-    // Datos y funciones existentes
-    allTurnos,
-    turnosPorFecha,
+    // Existing data and functions
+    allShifts,
+    shiftsByDate,
     calculateMonthlyStats,
     currentMonthStats,
 
-    // Nuevos datos y funciones para estadísticas semanales
-    datosActuales,
-    datosAnteriores,
-    offsetSemana,
-    setOffsetSemana,
-    todosLosTrabajos,
+    // New data and functions for weekly statistics
+    currentData,
+    previousData,
+    weekOffset,
+    setWeekOffset,
+    allWork,
     weeklyEvolutionData,
     
-    // Estadísticas de delivery
+    // Delivery statistics
     deliveryStats,
 
-    // Configuración importante
+    // Important configuration
     deliveryEnabled,
     weeklyHoursGoal,
     thematicColors,
     smokoEnabled,
     smokoMinutes,
 
-    // Para no romper otras dependencias que puedan usarlo directamente
+    // To not break other dependencies that might use it directly
     calculatePayment, 
   ***REMOVED***;
 

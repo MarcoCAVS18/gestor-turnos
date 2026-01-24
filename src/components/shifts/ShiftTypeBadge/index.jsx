@@ -1,4 +1,4 @@
-// src/components/shifts/ShiftTypeBadge/index.jsx - Corrected
+// src/components/shifts/ShiftTypeBadge/index.jsx 
 
 import React from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';

@@ -1,3 +1,5 @@
+// src/hooks/useModalManager.js
+
 import ***REMOVED*** useState, useCallback ***REMOVED*** from 'react';
 
 const useModalManager = () => ***REMOVED***

@@ -15,94 +15,94 @@ import ***REMOVED*** auth, db ***REMOVED*** from '../services/firebase';
 import ***REMOVED*** doc, setDoc, getDoc, updateDoc ***REMOVED*** from 'firebase/firestore';
 import ***REMOVED*** uploadProfilePhoto, deleteProfilePhoto, getDefaultProfilePhoto ***REMOVED*** from '../services/profilePhotoService';
 
-// Crear el contexto
+// Create the context
 const AuthContext = createContext();
 
-// Hook personalizado para usar el contexto
+// Custom hook to use the context
 export const useAuth = () => ***REMOVED***
   return useContext(AuthContext);
 ***REMOVED***;
 
-// Proveedor del contexto
+// Context provider
 export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [profilePhotoURL, setProfilePhotoURL] = useState(getDefaultProfilePhoto());
 
-  // Registrar usuario
+  // Register user
   const signup = async (email, password, displayName) => ***REMOVED***
     try ***REMOVED***
       setError('');
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
-      // Actualizar perfil con displayName
+      // Update profile with displayName
       await updateProfile(userCredential.user, ***REMOVED*** displayName ***REMOVED***);
       
-      // Crear documento de usuario en Firestore
-      await setDoc(doc(db, 'usuarios', userCredential.user.uid), ***REMOVED***
+      // Create user document in Firestore
+      await setDoc(doc(db, 'users', userCredential.user.uid), ***REMOVED***
         email,
         displayName,
-        fechaCreacion: new Date(),
-        ajustes: ***REMOVED***
-          descuentoDefault: 15,
-          moneda: '$',
-          colorPrincipal: '#EC4899'
+        createdAt: new Date(),
+        settings: ***REMOVED***
+          defaultDiscount: 15,
+          currency: '$',
+          primaryColor: '#EC4899'
         ***REMOVED***
       ***REMOVED***);
       
       return userCredential.user;
     ***REMOVED*** catch (error) ***REMOVED***
-      setError('Error al registrar usuario: ' + error.message);
+      setError('Error registering user: ' + error.message);
       throw error;
     ***REMOVED***
   ***REMOVED***;
 
-  // Iniciar sesión con email y contraseña
+  // Sign in with email and password
   const login = async (email, password) => ***REMOVED***
     try ***REMOVED***
       setError('');
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return userCredential.user;
     ***REMOVED*** catch (error) ***REMOVED***
-      setError('Error al iniciar sesión: ' + error.message);
+      setError('Error signing in: ' + error.message);
       throw error;
     ***REMOVED***
   ***REMOVED***;
   
-  // Función para iniciar sesión con Google
+  // Function to sign in with Google
   const loginWithGoogle = async () => ***REMOVED***
     try ***REMOVED***
       setError('');
-      // Crear una nueva instancia del proveedor cada vez
+      // Create a new provider instance each time
       const provider = new GoogleAuthProvider();
       
-      // Asegurarnos de que solicitamos permisos de perfil básico
+      // Ensure we request basic profile permissions
       provider.addScope('profile');
       provider.addScope('email');
       
-      // Configuración adicional
+      // Additional configuration
       provider.setCustomParameters(***REMOVED***
         'prompt': 'select_account'
       ***REMOVED***);
       
-      // Usar signInWithPopup en lugar de signInWithRedirect para mejor manejo de errores
+      // Use signInWithPopup instead of signInWithRedirect for better error handling
       const result = await signInWithPopup(auth, provider);
       
-      // Verificar si es la primera vez que el usuario inicia sesión con Google
-      const userDoc = await getDoc(doc(db, 'usuarios', result.user.uid));
+      // Check if it's the first time the user signs in with Google
+      const userDoc = await getDoc(doc(db, 'users', result.user.uid));
       
       if (!userDoc.exists()) ***REMOVED***
-        // Si es la primera vez, crear documento de usuario en Firestore
-        await setDoc(doc(db, 'usuarios', result.user.uid), ***REMOVED***
+        // If first time, create user document in Firestore
+        await setDoc(doc(db, 'users', result.user.uid), ***REMOVED***
           email: result.user.email,
-          displayName: result.user.displayName || 'Usuario',
-          fechaCreacion: new Date(),
-          metodoRegistro: 'google',
-          ajustes: ***REMOVED***
-            descuentoDefault: 15,
-            moneda: '$',
-            colorPrincipal: '#EC4899'
+          displayName: result.user.displayName || 'User',
+          createdAt: new Date(),
+          signupMethod: 'google',
+          settings: ***REMOVED***
+            defaultDiscount: 15,
+            currency: '$',
+            primaryColor: '#EC4899'
           ***REMOVED***
         ***REMOVED***);
       ***REMOVED***
@@ -110,154 +110,154 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
       return result.user;
     ***REMOVED*** catch (error) ***REMOVED***
       if (error.code === 'auth/popup-closed-by-user') ***REMOVED***
-        setError('El proceso de inicio de sesión fue cancelado. Por favor, inténtalo de nuevo.');
+        setError('Sign in process was cancelled. Please try again.');
       ***REMOVED*** else if (error.code === 'auth/popup-blocked') ***REMOVED***
-        setError('El navegador ha bloqueado el popup. Por favor, permite ventanas emergentes e inténtalo de nuevo.');
+        setError('The browser blocked the popup. Please allow popups and try again.');
       ***REMOVED*** else ***REMOVED***
-        setError('Error al iniciar sesión con Google: ' + error.message);
+        setError('Error signing in with Google: ' + error.message);
       ***REMOVED***
       throw error;
     ***REMOVED***
   ***REMOVED***;
 
-  // Cerrar sesión
+  // Sign out
   const logout = async () => ***REMOVED***
     try ***REMOVED***
       setError('');
       await signOut(auth);
     ***REMOVED*** catch (error) ***REMOVED***
-      setError('Error al cerrar sesión: ' + error.message);
+      setError('Error signing out: ' + error.message);
       throw error;
     ***REMOVED***
   ***REMOVED***;
 
-  // Restablecer contraseña
+  // Reset password
   const resetPassword = async (email) => ***REMOVED***
     try ***REMOVED***
       setError('');
       await sendPasswordResetEmail(auth, email);
     ***REMOVED*** catch (error) ***REMOVED***
-      setError('Error al restablecer contraseña: ' + error.message);
+      setError('Error resetting password: ' + error.message);
       throw error;
     ***REMOVED***
   ***REMOVED***;
 
-  // Obtener datos del usuario
+  // Get user data
   const getUserData = async (userId) => ***REMOVED***
     try ***REMOVED***
-      const userDoc = await getDoc(doc(db, 'usuarios', userId));
+      const userDoc = await getDoc(doc(db, 'users', userId));
       if (userDoc.exists()) ***REMOVED***
         return userDoc.data();
       ***REMOVED*** else ***REMOVED***
         return null;
       ***REMOVED***
     ***REMOVED*** catch (error) ***REMOVED***
-      setError('Error al obtener datos del usuario: ' + error.message);
+      setError('Error getting user data: ' + error.message);
       throw error;
     ***REMOVED***
   ***REMOVED***;
 
-  // Actualizar nombre del usuario
+  // Update user name
   const updateUserName = async (displayName) => ***REMOVED***
     try ***REMOVED***
       setError('');
 
-      // Validar que hay un usuario y un displayName válido
-      if (!currentUser) throw new Error('No hay usuario logueado');
-      if (!displayName.trim()) throw new Error('El nombre no puede estar vacío');
+      // Validate there is a user and a valid displayName
+      if (!currentUser) throw new Error('No logged in user');
+      if (!displayName.trim()) throw new Error('Name cannot be empty');
 
-      // Actualizar el displayName en Firebase Auth
+      // Update displayName in Firebase Auth
       await updateProfile(currentUser, ***REMOVED*** displayName ***REMOVED***);
 
-      // Actualizar en Firestore también
-      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      // Update in Firestore as well
+      const userDocRef = doc(db, 'users', currentUser.uid);
       await updateDoc(userDocRef, ***REMOVED***
         displayName,
-        fechaActualizacion: new Date()
+        updatedAt: new Date()
       ***REMOVED***);
 
       setCurrentUser(***REMOVED***...currentUser, displayName***REMOVED***);
 
       return true;
     ***REMOVED*** catch (error) ***REMOVED***
-      setError('Error al actualizar nombre: ' + error.message);
+      setError('Error updating name: ' + error.message);
       throw error;
     ***REMOVED***
   ***REMOVED***;
 
-  // Actualizar foto de perfil
+  // Update profile photo
   const updateProfilePhoto = async (file) => ***REMOVED***
     try ***REMOVED***
       setError('');
 
-      if (!currentUser) throw new Error('No hay usuario logueado');
+      if (!currentUser) throw new Error('No logged in user');
 
-      // Subir imagen a Storage y obtener URL
+      // Upload image to Storage and get URL
       const photoURL = await uploadProfilePhoto(currentUser.uid, file);
 
-      // Actualizar en Firebase Auth
+      // Update in Firebase Auth
       await updateProfile(currentUser, ***REMOVED*** photoURL ***REMOVED***);
 
-      // Actualizar en Firestore
-      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      // Update in Firestore
+      const userDocRef = doc(db, 'users', currentUser.uid);
       await updateDoc(userDocRef, ***REMOVED***
         photoURL,
-        fechaActualizacion: new Date()
+        updatedAt: new Date()
       ***REMOVED***);
 
-      // Actualizar estado local
+      // Update local state
       setProfilePhotoURL(photoURL);
       setCurrentUser(***REMOVED***...currentUser, photoURL***REMOVED***);
 
       return photoURL;
     ***REMOVED*** catch (error) ***REMOVED***
-      setError('Error al actualizar foto de perfil: ' + error.message);
+      setError('Error updating profile photo: ' + error.message);
       throw error;
     ***REMOVED***
   ***REMOVED***;
 
-  // Eliminar foto de perfil
+  // Remove profile photo
   const removeProfilePhoto = async () => ***REMOVED***
     try ***REMOVED***
       setError('');
   
-      if (!currentUser) throw new Error('No hay usuario logueado');
+      if (!currentUser) throw new Error('No logged in user');
       
       const currentPhotoURL = currentUser.photoURL;
   
-      // Si no hay foto, no hacer nada
+      // If no photo, do nothing
       if (!currentPhotoURL) return;
   
-      // Eliminar del Storage usando la URL
+      // Delete from Storage using the URL
       await deleteProfilePhoto(currentPhotoURL);
   
-      // Actualizar en Firebase Auth a null
+      // Update in Firebase Auth to null
       await updateProfile(currentUser, ***REMOVED*** photoURL: null ***REMOVED***);
   
-      // Actualizar en Firestore
-      const userDocRef = doc(db, 'usuarios', currentUser.uid);
+      // Update in Firestore
+      const userDocRef = doc(db, 'users', currentUser.uid);
       await updateDoc(userDocRef, ***REMOVED***
         photoURL: null,
-        fechaActualizacion: new Date()
+        updatedAt: new Date()
       ***REMOVED***);
   
-      // Forzar la recarga del estado del usuario para obtener la URL actualizada
+      // Force reload user state to get updated URL
       await auth.currentUser.reload();
       const updatedUser = auth.currentUser;
   
-      // Volver al logo por defecto y actualizar el estado
+      // Revert to default logo and update state
       const defaultPhoto = getDefaultProfilePhoto();
       setProfilePhotoURL(defaultPhoto);
-      setCurrentUser(updatedUser); // Usar el usuario actualizado
+      setCurrentUser(updatedUser); // Use updated user
   
       return true;
     ***REMOVED*** catch (error) ***REMOVED***
-      setError('Error al eliminar foto de perfil: ' + error.message);
+      setError('Error removing profile photo: ' + error.message);
       throw error;
     ***REMOVED***
   ***REMOVED***;
 
-  // Cargar foto de perfil del usuario
+  // Load user profile photo
   const loadProfilePhoto = async (user) => ***REMOVED***
     try ***REMOVED***
       if (!user) ***REMOVED***
@@ -265,26 +265,26 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
         return;
       ***REMOVED***
 
-      // Primero verificar si hay photoURL en Firebase Auth
+      // First check if there is photoURL in Firebase Auth
       if (user.photoURL && user.photoURL.trim() !== '') ***REMOVED***
         setProfilePhotoURL(user.photoURL);
         return;
       ***REMOVED***
 
-      // Si no, verificar en Firestore
-      const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
+      // If not, check in Firestore
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
       if (userDoc.exists() && userDoc.data().photoURL && userDoc.data().photoURL.trim() !== '') ***REMOVED***
         setProfilePhotoURL(userDoc.data().photoURL);
       ***REMOVED*** else ***REMOVED***
         setProfilePhotoURL(getDefaultProfilePhoto());
       ***REMOVED***
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al cargar foto de perfil:', error);
+      console.error('Error loading profile photo:', error);
       setProfilePhotoURL(getDefaultProfilePhoto());
     ***REMOVED***
   ***REMOVED***;
 
-  // Monitorear cambios en el estado de autenticación
+  // Monitor authentication state changes
   useEffect(() => ***REMOVED***
     const unsubscribe = onAuthStateChanged(auth, (user) => ***REMOVED***
       setCurrentUser(user);
@@ -314,7 +314,7 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
   return (
     <AuthContext.Provider value=***REMOVED***value***REMOVED***>
       ***REMOVED***loading ? (
-        <div className="hidden">Cargando estado de autenticación...</div> 
+        <div className="hidden">Loading authentication state...</div> 
       ) : (
         children
       )***REMOVED***
@@ -322,4 +322,4 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
   );
 ***REMOVED***;
 
-export default AuthContext;
+export default AuthProvider;

@@ -9,65 +9,65 @@ import SettingsSection from '../SettingsSection';
 import Flex from '../../ui/Flex';
 
 const GoalsSection = (***REMOVED*** className ***REMOVED***) => ***REMOVED***
-  // Usar el nombre correcto de la variable y función del contexto
+  // Use the correct variable name and function from the context
   const ***REMOVED*** weeklyHoursGoal, updateWeeklyHoursGoal ***REMOVED*** = useApp();
   const colors = useThemeColors();
-  const [editando, setEditando] = useState(false);
-  const [nuevaMeta, setNuevaMeta] = useState(weeklyHoursGoal || '');
+  const [editing, setEditing] = useState(false);
+  const [newGoal, setNewGoal] = useState(weeklyHoursGoal || '');
 
-  const handleGuardar = async () => ***REMOVED***
+  const handleSave = async () => ***REMOVED***
     try ***REMOVED***
-      const meta = parseFloat(nuevaMeta);
-      if (meta > 0 && meta <= 168) ***REMOVED***
-        await updateWeeklyHoursGoal(meta);
-        setEditando(false);
+      const goal = parseFloat(newGoal);
+      if (goal > 0 && goal <= 168) ***REMOVED***
+        await updateWeeklyHoursGoal(goal);
+        setEditing(false);
       ***REMOVED***
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al guardar meta:', error);
+      console.error('Error saving goal:', error);
     ***REMOVED***
   ***REMOVED***;
 
-  const handleCancelar = () => ***REMOVED***
-    setNuevaMeta(weeklyHoursGoal || '');
-    setEditando(false);
+  const handleCancel = () => ***REMOVED***
+    setNewGoal(weeklyHoursGoal || '');
+    setEditing(false);
   ***REMOVED***;
 
-  const handleEliminar = async () => ***REMOVED***
+  const handleDelete = async () => ***REMOVED***
     try ***REMOVED***
       await updateWeeklyHoursGoal(null);
-      setNuevaMeta('');
-      setEditando(false);
+      setNewGoal('');
+      setEditing(false);
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al eliminar meta:', error);
+      console.error('Error deleting goal:', error);
     ***REMOVED***
   ***REMOVED***;
 
   return (
-    <SettingsSection icon=***REMOVED***Target***REMOVED*** title="Metas Semanales" className=***REMOVED***className***REMOVED***>
+    <SettingsSection icon=***REMOVED***Target***REMOVED*** title="Weekly Goals" className=***REMOVED***className***REMOVED***>
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Meta de horas por semana
+            Weekly hours goal
           </label>
           
-          ***REMOVED***!editando ? (
+          ***REMOVED***!editing ? (
             <Flex variant="between" className="p-3 bg-gray-50 rounded-lg">
               <div>
                 ***REMOVED***weeklyHoursGoal ? (
                   <>
                     <span className="text-lg font-semibold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                      ***REMOVED***weeklyHoursGoal***REMOVED*** horas
+                      ***REMOVED***weeklyHoursGoal***REMOVED*** hours
                     </span>
                     <p className="text-sm text-gray-500">
-                      ~***REMOVED***(weeklyHoursGoal / 7).toFixed(1)***REMOVED*** horas por día
+                      ~***REMOVED***(weeklyHoursGoal / 7).toFixed(1)***REMOVED*** hours per day
                     </p>
                   </>
                 ) : (
-                  <span className="text-gray-500">No configurada</span>
+                  <span className="text-gray-500">Not set</span>
                 )***REMOVED***
               </div>
               <button
-                onClick=***REMOVED***() => setEditando(true)***REMOVED***
+                onClick=***REMOVED***() => setEditing(true)***REMOVED***
                 className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                 style=***REMOVED******REMOVED***
                   backgroundColor: colors.transparent10,
@@ -80,7 +80,7 @@ const GoalsSection = (***REMOVED*** className ***REMOVED***) => ***REMOVED***
                   e.target.style.backgroundColor = colors.transparent10;
                 ***REMOVED******REMOVED***
               >
-                ***REMOVED***weeklyHoursGoal ? 'Editar' : 'Configurar'***REMOVED***
+                ***REMOVED***weeklyHoursGoal ? 'Edit' : 'Set up'***REMOVED***
               </button>
             </Flex>
           ) : (
@@ -88,22 +88,22 @@ const GoalsSection = (***REMOVED*** className ***REMOVED***) => ***REMOVED***
               <Flex className="space-x-2">
                 <input
                   type="number"
-                  value=***REMOVED***nuevaMeta***REMOVED***
-                  onChange=***REMOVED***(e) => setNuevaMeta(e.target.value)***REMOVED***
-                  placeholder="Ej: 40"
+                  value=***REMOVED***newGoal***REMOVED***
+                  onChange=***REMOVED***(e) => setNewGoal(e.target.value)***REMOVED***
+                  placeholder="E.g: 40"
                   min="1"
                   max="168"
                   step="0.5"
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent transition-colors"
                   style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
                 />
-                <span className="text-sm text-gray-500">horas</span>
+                <span className="text-sm text-gray-500">hours</span>
               </Flex>
               
               <Flex className="space-x-2">
                 <button
-                  onClick=***REMOVED***handleGuardar***REMOVED***
-                  disabled=***REMOVED***!nuevaMeta || parseFloat(nuevaMeta) <= 0***REMOVED***
+                  onClick=***REMOVED***handleSave***REMOVED***
+                  disabled=***REMOVED***!newGoal || parseFloat(newGoal) <= 0***REMOVED***
                   className="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50"
                   style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
                   onMouseEnter=***REMOVED***(e) => ***REMOVED***
@@ -118,11 +118,11 @@ const GoalsSection = (***REMOVED*** className ***REMOVED***) => ***REMOVED***
                   ***REMOVED******REMOVED***
                 >
                   <Save size=***REMOVED***16***REMOVED*** className="mr-1" />
-                  Guardar
+                  Save
                 </button>
                 
                 <button
-                  onClick=***REMOVED***handleCancelar***REMOVED***
+                  onClick=***REMOVED***handleCancel***REMOVED***
                   className="flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors"
                   style=***REMOVED******REMOVED***
                     backgroundColor: colors.transparent10,
@@ -136,16 +136,16 @@ const GoalsSection = (***REMOVED*** className ***REMOVED***) => ***REMOVED***
                   ***REMOVED******REMOVED***
                 >
                   <X size=***REMOVED***16***REMOVED*** className="mr-1" />
-                  Cancelar
+                  Cancel
                 </button>
 
                 ***REMOVED***weeklyHoursGoal && (
                   <button
-                    onClick=***REMOVED***handleEliminar***REMOVED***
+                    onClick=***REMOVED***handleDelete***REMOVED***
                     className="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-red-600 bg-red-50 transition-colors hover:bg-red-100"
                   >
                     <X size=***REMOVED***16***REMOVED*** className="mr-1" />
-                    Eliminar
+                    Delete
                   </button>
                 )***REMOVED***
               </Flex>
@@ -158,8 +158,8 @@ const GoalsSection = (***REMOVED*** className ***REMOVED***) => ***REMOVED***
           style=***REMOVED******REMOVED*** backgroundColor: colors.transparent5 ***REMOVED******REMOVED***
         >
           <p className="text-sm" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-            <strong>Consejo:</strong> Configura una meta realista para ver tu progreso semanal 
-            en la barra de progreso de Estadísticas.
+            <strong>Tip:</strong> Set a realistic goal to see your weekly progress 
+            in the Statistics progress bar.
           </p>
         </div>
       </div>

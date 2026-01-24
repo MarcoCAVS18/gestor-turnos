@@ -1,3 +1,5 @@
+// src/components/ui/WavyText/index.jsx
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import './index.css';
 
@@ -22,8 +24,8 @@ const WavyText = (***REMOVED*** text, color, initialDelay = 0 ***REMOVED***) => 
 
   useEffect(() => ***REMOVED***
     if (isAnimating) ***REMOVED***
-      const animationDuration = 1500; // from CSS
-      const delayIncrement = 100; // from CSS
+      const animationDuration = 1500; 
+      const delayIncrement = 100; 
       const totalDuration = animationDuration + (text.length * delayIncrement);
 
       const timeout = setTimeout(() => ***REMOVED***

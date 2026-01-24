@@ -5,15 +5,15 @@ import ***REMOVED*** ChevronLeft, ChevronRight ***REMOVED*** from 'lucide-react'
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const CalendarHeader = (***REMOVED*** 
-  mesActual, 
-  anioActual, 
-  onCambiarMes, 
-  onIrAHoy
+  currentMonth, 
+  currentYear, 
+  onChangeMonth, 
+  onGoToToday
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   
-  const getNombreMes = () => ***REMOVED***
-    return new Date(anioActual, mesActual, 1).toLocaleDateString('es-ES', ***REMOVED*** month: 'long' ***REMOVED***);
+  const getMonthName = () => ***REMOVED***
+    return new Date(currentYear, currentMonth, 1).toLocaleDateString('en-US', ***REMOVED*** month: 'long' ***REMOVED***);
   ***REMOVED***;
 
   return (
@@ -22,7 +22,7 @@ const CalendarHeader = (***REMOVED***
       style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
     >
       <button
-        onClick=***REMOVED***() => onCambiarMes(-1)***REMOVED***
+        onClick=***REMOVED***() => onChangeMonth(-1)***REMOVED***
         className="text-white p-2 rounded-full transition-colors hover:bg-black hover:bg-opacity-20"
       >
         <ChevronLeft size=***REMOVED***20***REMOVED*** />
@@ -30,18 +30,18 @@ const CalendarHeader = (***REMOVED***
       
       <div className="flex flex-col items-center">
         <h3 className="text-lg font-semibold capitalize">
-          ***REMOVED***getNombreMes()***REMOVED*** ***REMOVED***anioActual***REMOVED***
+          ***REMOVED***getMonthName()***REMOVED*** ***REMOVED***currentYear***REMOVED***
         </h3>
         <button
-          onClick=***REMOVED***onIrAHoy***REMOVED***
+          onClick=***REMOVED***onGoToToday***REMOVED***
           className="text-xs px-3 py-1 rounded-full mt-1 transition-colors bg-white bg-opacity-20 hover:bg-opacity-30"
         >
-          Hoy
+          Today
         </button>
       </div>
       
       <button
-        onClick=***REMOVED***() => onCambiarMes(1)***REMOVED***
+        onClick=***REMOVED***() => onChangeMonth(1)***REMOVED***
         className="text-white p-2 rounded-full transition-colors hover:bg-black hover:bg-opacity-20"
       >
         <ChevronRight size=***REMOVED***20***REMOVED*** />

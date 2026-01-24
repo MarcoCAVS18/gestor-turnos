@@ -18,18 +18,18 @@ const SessionSection = (***REMOVED*** onError, className = '' ***REMOVED***) => 
       await logout();
       navigate('/login');
     ***REMOVED*** catch (error) ***REMOVED***
-      onError?.('Error al cerrar sesión: ' + error.message);
+      onError?.('Error logging out: ' + error.message);
     ***REMOVED***
   ***REMOVED***;
 
   return (
-    <SettingsSection icon=***REMOVED***LogOut***REMOVED*** title="Sesión" className=***REMOVED***className***REMOVED***>
+    <SettingsSection icon=***REMOVED***LogOut***REMOVED*** title="Session" className=***REMOVED***className***REMOVED***>
       <div className="flex flex-row items-center justify-between flex-1 w-full mt-4">
         <Link 
           to="/delete-account"
           className="text-xs text-gray-400 hover:text-gray-600 hover:underline transition-colors"
         >
-          Eliminar cuenta
+          Delete account
         </Link>
         <Button
           onClick=***REMOVED***handleLogout***REMOVED***
@@ -37,7 +37,7 @@ const SessionSection = (***REMOVED*** onError, className = '' ***REMOVED***) => 
           icon=***REMOVED***LogOut***REMOVED***
           themeColor=***REMOVED***colors.primary***REMOVED***
         >
-          Cerrar sesión
+          Log out
         </Button>
       </div>
     </SettingsSection>

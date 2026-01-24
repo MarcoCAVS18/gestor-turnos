@@ -1,4 +1,5 @@
 // src/components/modals/ConfirmDeleteProfilePhotoModal/index.jsx
+
 import React from 'react';
 import BaseModal from '../base/BaseModal';
 import ***REMOVED*** ArrowRight ***REMOVED*** from 'lucide-react';
@@ -6,7 +7,7 @@ import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
 import ***REMOVED*** getDefaultProfilePhoto ***REMOVED*** from '../../../services/profilePhotoService';
 import Flex from '../../ui/Flex';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
-import Button from '../../ui/Button'; // Import Button component
+import Button from '../../ui/Button'; 
 
 const ConfirmDeleteProfilePhotoModal = (***REMOVED*** isOpen, onClose, onConfirm, loading ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** profilePhotoURL ***REMOVED*** = useAuth();
@@ -17,7 +18,7 @@ const ConfirmDeleteProfilePhotoModal = (***REMOVED*** isOpen, onClose, onConfirm
     <BaseModal
       isOpen=***REMOVED***isOpen***REMOVED***
       onClose=***REMOVED***onClose***REMOVED***
-      title="Eliminar Foto de Perfil"
+      title="Delete Profile Photo"
       showActions=***REMOVED***false***REMOVED***
       loading=***REMOVED***loading***REMOVED***
     >
@@ -48,7 +49,7 @@ const ConfirmDeleteProfilePhotoModal = (***REMOVED*** isOpen, onClose, onConfirm
         </Flex>
 
         <p className="text-center text-sm text-gray-600 mb-4">
-          ¿Estás seguro de que quieres eliminar tu foto de perfil? Se reemplazará por el logo por defecto.
+          Are you sure you want to delete your profile photo? It will be replaced by the default logo.
         </p>
         
         ***REMOVED***/* Custom Actions Footer */***REMOVED***
@@ -64,17 +65,17 @@ const ConfirmDeleteProfilePhotoModal = (***REMOVED*** isOpen, onClose, onConfirm
               themeColor=***REMOVED***colors.primary***REMOVED***
 
             >
-              Cancelar
+              Cancel
             </Button>
             <Button
               type="submit"
               form="delete-profile-photo-form"
               loading=***REMOVED***loading***REMOVED***
-              loadingText="Eliminando..."
+              loadingText="Deleting..."
               disabled=***REMOVED***loading***REMOVED***
               bgColor=***REMOVED***colors.primary***REMOVED***
             >
-              Confirmar Eliminación
+              Confirm Deletion
             </Button>
           </div>
         </div>

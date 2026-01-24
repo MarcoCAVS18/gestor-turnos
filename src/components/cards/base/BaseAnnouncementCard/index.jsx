@@ -10,7 +10,7 @@ const BaseAnnouncementCard = (***REMOVED***
   children,
   className = '',
   onClick,
-  decorativeIcon: DecorativeIcon, // Nueva prop
+  decorativeIcon: DecorativeIcon, // New prop
 ***REMOVED***) => ***REMOVED***
   const motionProps = ***REMOVED***
     whileHover: ***REMOVED*** scale: 1.01, transition: ***REMOVED*** type: 'spring', stiffness: 400, damping: 20 ***REMOVED*** ***REMOVED***
@@ -25,7 +25,7 @@ const BaseAnnouncementCard = (***REMOVED***
       style=***REMOVED******REMOVED*** background: gradient ***REMOVED******REMOVED***
       onClick=***REMOVED***!to ? onClick : undefined***REMOVED***
     >
-      ***REMOVED***/* Icono decorativo de fondo */***REMOVED***
+      ***REMOVED***/* Background decorative icon */***REMOVED***
       ***REMOVED***DecorativeIcon && (
         <DecorativeIcon
           className="absolute -right-4 -bottom-4 text-white/5"
@@ -35,7 +35,7 @@ const BaseAnnouncementCard = (***REMOVED***
         />
       )***REMOVED***
 
-      ***REMOVED***/* Efectos de luz */***REMOVED***
+      ***REMOVED***/* Light effects */***REMOVED***
       <div className="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-white opacity-5 bg-blend-soft-light rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -mb-12 -ml-12 w-32 h-32 bg-white opacity-5 bg-blend-soft-light rounded-full blur-3xl pointer-events-none" />
       

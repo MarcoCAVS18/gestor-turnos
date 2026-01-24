@@ -1,4 +1,5 @@
 // src/config/chartConfig.js
+
 import ***REMOVED*** TrendingUp, Clock, PieChart ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../utils/currency';
 

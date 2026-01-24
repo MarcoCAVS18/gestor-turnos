@@ -7,19 +7,19 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
 import Flex from '../../ui/Flex';
 
-const Header = (***REMOVED*** setVistaActual ***REMOVED***) => ***REMOVED***
+const Header = (***REMOVED*** setCurrentView ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   const ***REMOVED*** profilePhotoURL ***REMOVED*** = useAuth();
   const navigate = useNavigate();
   
   const handleSettingsClick = () => ***REMOVED***
     navigate('/ajustes');
-    setVistaActual('ajustes');
+    setCurrentView('settings');
   ***REMOVED***;
 
   const handleLogoClick = () => ***REMOVED***
     navigate('/dashboard');
-    setVistaActual('dashboard');
+    setCurrentView('dashboard');
   ***REMOVED***;
 
   return (
@@ -27,7 +27,7 @@ const Header = (***REMOVED*** setVistaActual ***REMOVED***) => ***REMOVED***
       className="flex justify-between items-center px-4 py-4 text-white shadow-md"
       style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
     >
-      ***REMOVED***/* Logo y título a la izquierda - clickeable */***REMOVED***
+      ***REMOVED***/* Logo and title on the left - clickable */***REMOVED***
       <Flex className="flex-1">
         <button
           onClick=***REMOVED***handleLogoClick***REMOVED***
@@ -43,36 +43,36 @@ const Header = (***REMOVED*** setVistaActual ***REMOVED***) => ***REMOVED***
             />
           </Flex>
 
-          ***REMOVED***/* Título y subtítulo */***REMOVED***
+          ***REMOVED***/* Title and subtitle */***REMOVED***
           <div className="text-left">
             <h1 className="text-2xl font-bold tracking-tight">
               GestAPP.
             </h1>
             <p className="text-xs opacity-90 font-light">
-              Tu gestor de trabajos y turnos
+              Your work and shift manager
             </p>
           </div>
         </button>
       </Flex>
       
-      ***REMOVED***/* Botón de perfil/settings a la derecha */***REMOVED***
+      ***REMOVED***/* Profile/Settings button on the right */***REMOVED***
       <div className="flex gap-2">
         <button
           onClick=***REMOVED***handleSettingsClick***REMOVED***
           className="rounded-full p-1 transition-all duration-200 hover:bg-white hover:bg-opacity-20"
-          title="Configuración"
+          title="Settings"
         >
           ***REMOVED***profilePhotoURL?.includes('logo.svg') ? (
-            // Si es el logo por defecto, mostrar ícono de engranaje
+            // If it is the default logo, show gear icon
             <Flex variant="center" className="w-10 h-10">
               <Settings className="h-6 w-6 text-white" />
             </Flex>
           ) : (
-            // Si tiene foto de perfil, mostrarla
+            // If has profile photo, show it
             <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-lg">
               <img
                 src=***REMOVED***profilePhotoURL***REMOVED***
-                alt="Perfil"
+                alt="Profile"
                 className="w-full h-full object-cover"
               />
             </div>

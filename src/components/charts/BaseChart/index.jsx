@@ -6,17 +6,17 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 
 const BaseChart = (***REMOVED***
   data,
-  chartType, // 'line', 'pie', 'area', 'bar'
-  dataKeys, // Array of ***REMOVED*** key: 'name', stroke: 'color' ***REMOVED*** or string for PieChart valueKey
-  nameKey, // For XAxis dataKey, or PieChart nameKey
-  valueFormatter, // Function to format YAxis ticks
-  tooltipFormatter, // Function to format Tooltip values
-  customTooltipContent, // Custom tooltip component
-  config = ***REMOVED******REMOVED***, // Optional overrides for getRechartsConfig
-  pieOuterRadius = '80%', // Specific for PieChart
-  pieInnerRadius = '60%', // Specific for PieChart
-  showLegend = true, // Control legend visibility
-  margin = ***REMOVED*** top: 5, right: 20, left: -10, bottom: 5 ***REMOVED*** // Default margins
+  chartType,
+  dataKeys,
+  nameKey,
+  valueFormatter,
+  tooltipFormatter,
+  customTooltipContent,
+  config = ***REMOVED******REMOVED***,
+  pieOuterRadius = '80%',
+  pieInnerRadius = '60%',
+  showLegend = true,
+  margin = ***REMOVED*** top: 5, right: 20, left: -10, bottom: 5 ***REMOVED***
 ***REMOVED***) => ***REMOVED***
   const thematicColors = useThemeColors();
   const baseConfig = getRechartsConfig(thematicColors);
@@ -34,7 +34,7 @@ const BaseChart = (***REMOVED***
     // This empty state is simple; more complex empty states can be handled by the parent component
     return (
       <Flex variant="center" className="h-full text-gray-500">
-        <p>No hay datos para el gráfico.</p>
+        <p>No data available for the chart.</p>
       </Flex>
     );
   ***REMOVED***
@@ -120,7 +120,7 @@ const BaseChart = (***REMOVED***
       default:
         return (
           <Flex variant="center" className="h-full text-gray-500">
-            <p>Tipo de gráfico no soportado.</p>
+            <p>Unsupported chart type.</p>
           </Flex>
         );
     ***REMOVED***

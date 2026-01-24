@@ -1,53 +1,53 @@
-// src/utils/calendarUtils.js - VERSIÓN ACTUALIZADA COMPLETA
+// src/utils/calendarUtils.js - FULLY UPDATED VERSION
 
 import ***REMOVED*** createSafeDate ***REMOVED*** from './time';
 
 /**
- * Crea una fecha local evitando problemas de zona horaria
+ * Creates a local date avoiding timezone issues
  */
-export const crearFechaLocal = (year, month, day) => new Date(year, month, day);
+export const createLocalDate = (year, month, day) => new Date(year, month, day);
 
 /**
- * Convierte una fecha local a formato ISO string (YYYY-MM-DD)
+ * Converts a local date to ISO string (YYYY-MM-DD)
  */
-export const fechaLocalAISO = (fecha) => ***REMOVED***
-  const year = fecha.getFullYear();
-  const month = String(fecha.getMonth() + 1).padStart(2, '0');
-  const day = String(fecha.getDate()).padStart(2, '0');
+export const localDateToISO = (date) => ***REMOVED***
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
   return `$***REMOVED***year***REMOVED***-$***REMOVED***month***REMOVED***-$***REMOVED***day***REMOVED***`;
 ***REMOVED***;
 
 /**
- * Verifica si una fecha es hoy
+ * Checks if a date is today
  */
-export const fechaEsHoy = (fecha, fechaActual) => ***REMOVED***
-  return fecha.getDate() === fechaActual.getDate() &&
-         fecha.getMonth() === fechaActual.getMonth() &&
-         fecha.getFullYear() === fechaActual.getFullYear();
+export const dateIsToday = (date, currentDate) => ***REMOVED***
+  return date.getDate() === currentDate.getDate() &&
+         date.getMonth() === currentDate.getMonth() &&
+         date.getFullYear() === currentDate.getFullYear();
 ***REMOVED***;
 
 /**
- * Obtiene los turnos del mes considerando turnos nocturnos
+ * Gets shifts of the month considering night shifts
  */
-export const obtenerTurnosMes = (turnos, anioActual, mesActual) => ***REMOVED***
-  const primerDia = crearFechaLocal(anioActual, mesActual, 1);
-  const ultimoDia = crearFechaLocal(anioActual, mesActual + 1, 0);
+export const getMonthShifts = (shifts, currentYear, currentMonth) => ***REMOVED***
+  const firstDay = createLocalDate(currentYear, currentMonth, 1);
+  const lastDay = createLocalDate(currentYear, currentMonth + 1, 0);
   
-  const primerDiaStr = fechaLocalAISO(primerDia);
-  const ultimoDiaStr = fechaLocalAISO(ultimoDia);
+  const firstDayStr = localDateToISO(firstDay);
+  const lastDayStr = localDateToISO(lastDay);
   
-  // Filtrar turnos que ocurren en el mes (considerando turnos nocturnos)
-  return turnos.filter(turno => ***REMOVED***
-    // Fecha principal del turno
-    const fechaPrincipal = turno.fechaInicio || turno.fecha;
+  // Filter shifts occurring in the month (considering night shifts)
+  return shifts.filter(shift => ***REMOVED***
+    // Main date of the shift
+    const mainDate = shift.startDate || shift.date;
     
-    if (fechaPrincipal >= primerDiaStr && fechaPrincipal <= ultimoDiaStr) ***REMOVED***
+    if (mainDate >= firstDayStr && mainDate <= lastDayStr) ***REMOVED***
       return true;
     ***REMOVED***
     
-    // Si el turno tiene fechaFin diferente, verificar también esa fecha
-    if (turno.fechaFin && turno.fechaFin !== fechaPrincipal) ***REMOVED***
-      return turno.fechaFin >= primerDiaStr && turno.fechaFin <= ultimoDiaStr;
+    // If shift has different end date, check that too
+    if (shift.endDate && shift.endDate !== mainDate) ***REMOVED***
+      return shift.endDate >= firstDayStr && shift.endDate <= lastDayStr;
     ***REMOVED***
     
     return false;
@@ -55,42 +55,19 @@ export const obtenerTurnosMes = (turnos, anioActual, mesActual) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Verifica si hay turnos en una fecha específica
+ * Checks if there are shifts on a specific date
  */
-export const verificarTurnosEnFecha = (fecha, turnos) => ***REMOVED***
-  const fechaStr = fechaLocalAISO(fecha);
-  
-  return turnos.some(turno => ***REMOVED***
-    // Verificar fecha principal
-    const fechaPrincipal = turno.fechaInicio || turno.fecha;
-    if (fechaPrincipal === fechaStr) ***REMOVED***
+export const checkShiftsOnDate = (date, shifts) => ***REMOVED***
+  const dateStr = localDateToISO(date);  
+  return shifts.some(shift => ***REMOVED***
+    // Check main date
+    const mainDate = shift.startDate || shift.date;
+    if (mainDate === dateStr) ***REMOVED***
       return true;
     ***REMOVED***
     
-    // Verificar fecha de fin para turnos nocturnos
-    if (turno.fechaFin && turno.fechaFin !== fechaPrincipal && turno.fechaFin === fechaStr) ***REMOVED***
-      return true;
-    ***REMOVED***
-    
-    return false;
-  ***REMOVED***);
-***REMOVED***;
-
-/**
- * Obtener turnos de un día específico (incluyendo nocturnos)
- */
-export const obtenerTurnosDelDia = (fecha, turnos) => ***REMOVED***
-  const fechaStr = fechaLocalAISO(fecha);
-  
-  return turnos.filter(turno => ***REMOVED***
-    // Verificar fecha principal
-    const fechaPrincipal = turno.fechaInicio || turno.fecha;
-    if (fechaPrincipal === fechaStr) ***REMOVED***
-      return true;
-    ***REMOVED***
-    
-    // Verificar fecha de fin para turnos nocturnos
-    if (turno.fechaFin && turno.fechaFin !== fechaPrincipal && turno.fechaFin === fechaStr) ***REMOVED***
+    // Check end date for night shifts
+    if (shift.endDate && shift.endDate !== mainDate && shift.endDate === dateStr) ***REMOVED***
       return true;
     ***REMOVED***
     
@@ -99,112 +76,132 @@ export const obtenerTurnosDelDia = (fecha, turnos) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Obtener colores considerando turnos nocturnos
+ * Get shifts for a specific day (including night shifts)
  */
-export const obtenerColoresTrabajos = (turnosDelDia, trabajos) => ***REMOVED***
-  const coloresUnicos = new Set();
+export const getShiftsOfDay = (date, shifts) => ***REMOVED***
+  const dateStr = localDateToISO(date);  
+  return shifts.filter(shift => ***REMOVED***
+    // Check main date
+    const mainDate = shift.startDate || shift.date;
+    if (mainDate === dateStr) ***REMOVED***
+      return true;
+    ***REMOVED***
+    
+    // Check end date for night shifts
+    if (shift.endDate && shift.endDate !== mainDate && shift.endDate === dateStr) ***REMOVED***
+      return true;
+    ***REMOVED***
+    
+    return false;
+  ***REMOVED***);
+***REMOVED***;
+
+/**
+ * Get colors considering night shifts
+ */
+export const getShiftColors = (dayShifts, works) => ***REMOVED***
+  const uniqueColors = new Set();
   
-  turnosDelDia.forEach(turno => ***REMOVED***
-    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-    if (trabajo) ***REMOVED***
-      // Para trabajos de delivery, usar un color específico o el color del trabajo
-      if (trabajo.tipo === 'delivery' || turno.tipo === 'delivery') ***REMOVED***
-        coloresUnicos.add(trabajo.colorAvatar || trabajo.color || '#10B981');
+  dayShifts.forEach(shift => ***REMOVED***
+    const work = works.find(w => w.id === shift.workId);
+    if (work) ***REMOVED***
+      // For delivery works, use a specific color or the work color
+      if (work.type === 'delivery' || shift.type === 'delivery') ***REMOVED***
+        uniqueColors.add(work.avatarColor || work.color || '#10B981');
       ***REMOVED*** else ***REMOVED***
-        coloresUnicos.add(trabajo.color);
+        uniqueColors.add(work.color);
       ***REMOVED***
     ***REMOVED***
   ***REMOVED***);
   
-  return Array.from(coloresUnicos).slice(0, 3);
+  return Array.from(uniqueColors).slice(0, 3);
 ***REMOVED***;
 
 /**
- * Determinar el tipo de turno en una fecha específica
+ * Determines the type of shift on a specific date
  */
-export const obtenerTipoTurnoEnFecha = (turno, fechaStr) => ***REMOVED***
-  const fechaPrincipal = turno.fechaInicio || turno.fecha;
+export const getShiftTypeOnDate = (shift, dateStr) => ***REMOVED***
+  const mainDate = shift.startDate || shift.date;
   
-  // Si es la fecha principal del turno
-  if (fechaPrincipal === fechaStr) ***REMOVED***
-    if (turno.cruzaMedianoche) ***REMOVED***
-      return 'inicio-nocturno'; // Turno que empieza este día y termina al siguiente
+  // If it is the main date of the shift
+  if (mainDate === dateStr) ***REMOVED***
+    if (shift.crossesMidnight) ***REMOVED***
+      return 'start-night'; // Shift starting this day and ending the next
     ***REMOVED***
-    return 'normal'; // Turno completo en este día
+    return 'normal'; // Full shift on this day
   ***REMOVED***
   
-  // Si es la fecha de fin de un turno nocturno
-  if (turno.fechaFin && turno.fechaFin === fechaStr && turno.cruzaMedianoche) ***REMOVED***
-    return 'fin-nocturno'; // Turno que empezó el día anterior y termina este día
+  // If it is the end date of a night shift
+  if (shift.endDate && shift.endDate !== mainDate && shift.endDate === dateStr && shift.crossesMidnight) ***REMOVED***
+    return 'end-night'; // Shift that started the previous day and ending this one
   ***REMOVED***
   
   return 'normal';
 ***REMOVED***;
 
 /**
- * Formatear la información del turno para mostrar en el calendario
+ * Formats shift info to display in the calendar
  */
-export const formatearInfoTurnoParaCalendario = (turno, fechaStr, trabajo) => ***REMOVED***
-  const tipoTurno = obtenerTipoTurnoEnFecha(turno, fechaStr);
+export const formatShiftInfoForCalendar = (shift, dateStr, work) => ***REMOVED***
+  const shiftType = getShiftTypeOnDate(shift, dateStr);  
+  let timeLabel = `$***REMOVED***shift.startTime***REMOVED*** - $***REMOVED***shift.endTime***REMOVED***`;
+  let typeLabel = '';
   
-  let etiquetaHora = `$***REMOVED***turno.horaInicio***REMOVED*** - $***REMOVED***turno.horaFin***REMOVED***`;
-  let etiquetaTipo = '';
-  
-  if (tipoTurno === 'inicio-nocturno') ***REMOVED***
-    etiquetaHora = `$***REMOVED***turno.horaInicio***REMOVED*** - ...`;
-    etiquetaTipo = ' (inicia)';
-  ***REMOVED*** else if (tipoTurno === 'fin-nocturno') ***REMOVED***
-    etiquetaHora = `... - $***REMOVED***turno.horaFin***REMOVED***`;
-    etiquetaTipo = ' (termina)';
+  if (shiftType === 'start-night') ***REMOVED***
+    timeLabel = `$***REMOVED***shift.startTime***REMOVED*** ...`;
+    typeLabel = '(starts)';
+  ***REMOVED*** else if (shiftType === 'end-night') ***REMOVED***
+    timeLabel = `... - $***REMOVED***shift.endTime***REMOVED***`;
+    typeLabel = '(ends)';
   ***REMOVED***
   
   return ***REMOVED***
-    id: turno.id,
-    trabajo: trabajo?.nombre || 'Trabajo no encontrado',
-    etiquetaHora,
-    etiquetaTipo,
-    tipoTurno,
-    color: trabajo?.color || trabajo?.colorAvatar || '#6B7280',
-    esDelivery: turno.tipo === 'delivery' || trabajo?.tipo === 'delivery'
+    id: shift.id,
+    work: work?.name || 'Work not found',
+    timeLabel,
+    typeLabel,
+    shiftType,
+    color: work?.color || work?.avatarColor || '#6B7280',
+    isDelivery: shift.type === 'delivery' || work?.type === 'delivery'
   ***REMOVED***;
 ***REMOVED***;
 
 /**
- * Obtiene los días de la semana en español
+ * Gets the days of the week in English
  */
-export const getDiasSemana = () => ***REMOVED***
-  return ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+export const getDaysOfWeek = () => ***REMOVED***
+  return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 ***REMOVED***;
 
 /**
- * Obtiene los meses en español
+ * Gets the months in English
  */
-export const getMeses = () => ***REMOVED***
+export const getMonths = () => ***REMOVED***
   return [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
   ];
 ***REMOVED***;
 
 /**
- * Formatea una fecha relativa (hoy, ayer, etc.)
+ * Formats a date relatively (today, yesterday, etc.)
  */
-export const formatearFechaRelativa = (fechaStr) => ***REMOVED***
-  const fecha = createSafeDate(fechaStr);
-  const hoy = new Date();
-  const ayer = new Date(hoy);
-  ayer.setDate(hoy.getDate() - 1);
-  const mañana = new Date(hoy);
-  mañana.setDate(hoy.getDate() + 1);
+export const formatRelativeDate = (dateStr) => ***REMOVED***
+  const date = createSafeDate(dateStr);
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
 
-  if (fecha.toDateString() === hoy.toDateString()) ***REMOVED***
-    return 'Hoy';
-  ***REMOVED*** else if (fecha.toDateString() === ayer.toDateString()) ***REMOVED***
-    return 'Ayer';
-  ***REMOVED*** else if (fecha.toDateString() === mañana.toDateString()) ***REMOVED***
-    return 'Mañana';
+  if (date.toDateString() === today.toDateString()) ***REMOVED***
+    return 'Today';
+  ***REMOVED*** else if (date.toDateString() === yesterday.toDateString()) ***REMOVED***
+    return 'Yesterday';
+  ***REMOVED*** else if (date.toDateString() === tomorrow.toDateString()) ***REMOVED***
+    return 'Tomorrow';
   ***REMOVED*** else ***REMOVED***
-    return fecha.toLocaleDateString('es-ES', ***REMOVED***
+    return date.toLocaleDateString('en-US', ***REMOVED***
       weekday: 'long',
       day: 'numeric',
       month: 'long'

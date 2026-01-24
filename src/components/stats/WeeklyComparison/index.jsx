@@ -6,75 +6,75 @@ import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency'
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 
-const WeeklyComparison = (***REMOVED*** datosActuales, datosAnteriores, thematicColors, className = '' ***REMOVED***) => ***REMOVED***
-  const horasActuales = datosActuales?.horasTrabajadas || 0;
-  const horasAnteriores = datosAnteriores?.horasTrabajadas || 0;
+const WeeklyComparison = (***REMOVED*** currentData, previousData, thematicColors, className = '' ***REMOVED***) => ***REMOVED***
+  const hoursCurrent = currentData?.hoursWorked || 0;
+  const hoursPrevious = previousData?.hoursWorked || 0;
   
-  const turnosActuales = datosActuales?.totalTurnos || 0;
-  const turnosAnteriores = datosAnteriores?.totalTurnos || 0;
+  const shiftsCurrent = currentData?.totalShifts || 0;
+  const shiftsPrevious = previousData?.totalShifts || 0;
 
-  const gananciaActual = (datosActuales && typeof datosActuales.totalGanado === 'number' && !isNaN(datosActuales.totalGanado)) ? datosActuales.totalGanado : 0;
-  const gananciaAnterior = (datosAnteriores && typeof datosAnteriores.totalGanado === 'number' && !isNaN(datosAnteriores.totalGanado)) ? datosAnteriores.totalGanado : 0;
+  const earningsCurrent = (currentData && typeof currentData.totalEarnings === 'number' && !isNaN(currentData.totalEarnings)) ? currentData.totalEarnings : 0;
+  const earningsPrevious = (previousData && typeof previousData.totalEarnings === 'number' && !isNaN(previousData.totalEarnings)) ? previousData.totalEarnings : 0;
 
-  const diasActuales = datosActuales?.diasTrabajados || 0;
-  const diasAnteriores = datosAnteriores?.diasTrabajados || 0;
+  const daysCurrent = currentData?.daysWorked || 0;
+  const daysPrevious = previousData?.daysWorked || 0;
 
-  const promedioPorHoraActual = datosActuales?.promedioPorHora || 0;
-  const promedioPorHoraAnterior = datosAnteriores?.promedioPorHora || 0;
+  const avgEarningsPerHourCurrent = currentData?.averageEarningsPerHour || 0;
+  const avgEarningsPerHourPrevious = previousData?.averageEarningsPerHour || 0;
 
-  const calcularCambio = (actual, anterior) => ***REMOVED***
-    if (anterior === 0) return actual > 0 ? 100 : 0;
-    return ((actual - anterior) / anterior) * 100;
+  const calculateChange = (current, previous) => ***REMOVED***
+    if (previous === 0) return 100;
+    return ((current - previous) / previous) * 100;
   ***REMOVED***;
 
-  const cambioHoras = calcularCambio(horasActuales, horasAnteriores);
-  const cambioTurnos = calcularCambio(turnosActuales, turnosAnteriores);
-  const cambioGanancia = calcularCambio(gananciaActual, gananciaAnterior);
-  const cambioDias = calcularCambio(diasActuales, diasAnteriores);
-  const cambioPromedioPorHora = calcularCambio(promedioPorHoraActual, promedioPorHoraAnterior);
+  const changeHours = calculateChange(hoursCurrent, hoursPrevious);
+  const changeShifts = calculateChange(shiftsCurrent, shiftsPrevious);
+  const changeEarnings = calculateChange(earningsCurrent, earningsPrevious);
+  const changeAvg = calculateChange(avgEarningsPerHourCurrent, avgEarningsPerHourPrevious);
+  const changeDays = calculateChange(daysCurrent, daysPrevious);
 
-  const getIcono = (cambio) => ***REMOVED***
-    if (cambio > 0) return TrendingUp;
-    if (cambio < 0) return TrendingDown;
+  const getIcon = (change) => ***REMOVED***
+    if (change > 0) return TrendingUp;
+    if (change < 0) return TrendingDown;
     return Minus;
   ***REMOVED***;
 
-  const getColor = (cambio) => ***REMOVED***
-    if (cambio > 0) return thematicColors.success || '#10B981';
-    if (cambio < 0) return thematicColors.danger || '#EF4444';
+  const getColor = (change) => ***REMOVED***
+    if (change > 0) return thematicColors.success || '#10B981';
+    if (change < 0) return thematicColors.danger || '#EF4444';
     return thematicColors.neutral || '#6B7280';
   ***REMOVED***;
 
-  const comparaciones = [
-    ***REMOVED*** label: 'Ganancia vs semana anterior', cambio: cambioGanancia, valor: `$***REMOVED***Math.abs(cambioGanancia).toFixed(1)***REMOVED***%`, valorAbsoluto: formatCurrency(Math.abs(gananciaActual - gananciaAnterior)) ***REMOVED***,
-    ***REMOVED*** label: 'Horas vs semana anterior', cambio: cambioHoras, valor: `$***REMOVED***Math.abs(cambioHoras).toFixed(1)***REMOVED***%`, valorAbsoluto: `$***REMOVED***Math.abs(horasActuales - horasAnteriores).toFixed(1)***REMOVED***h` ***REMOVED***,
-    ***REMOVED*** label: 'Promedio por hora', cambio: cambioPromedioPorHora, valor: `$***REMOVED***Math.abs(cambioPromedioPorHora).toFixed(1)***REMOVED***%`, valorAbsoluto: formatCurrency(Math.abs(promedioPorHoraActual - promedioPorHoraAnterior)) ***REMOVED***,
-    ***REMOVED*** label: 'Turnos vs semana anterior', cambio: cambioTurnos, valor: `$***REMOVED***Math.abs(cambioTurnos).toFixed(1)***REMOVED***%`, valorAbsoluto: `$***REMOVED***Math.abs(turnosActuales - turnosAnteriores)***REMOVED*** turnos` ***REMOVED***,
-    ***REMOVED*** label: 'Días vs semana anterior', cambio: cambioDias, valor: `$***REMOVED***Math.abs(cambioDias).toFixed(1)***REMOVED***%`, valorAbsoluto: `$***REMOVED***Math.abs(diasActuales - diasAnteriores)***REMOVED*** días` ***REMOVED***
+  const comparisons = [
+    ***REMOVED*** label: 'Earnings vs last week', change: changeEarnings, valueAbs: formatCurrency(earningsCurrent - earningsPrevious) ***REMOVED***,
+    ***REMOVED*** label: 'Hours vs last week', change: changeHours, valueAbs: `$***REMOVED***Math.abs(hoursCurrent - hoursPrevious).toFixed(1)***REMOVED***h` ***REMOVED***,
+    ***REMOVED*** label: 'Avg/Hour vs last week', change: changeAvg, valueAbs: formatCurrency(Math.abs(avgEarningsPerHourCurrent - avgEarningsPerHourPrevious)) ***REMOVED***,
+    ***REMOVED*** label: 'Shifts vs last week', change: changeShifts, valueAbs: `$***REMOVED***Math.abs(shiftsCurrent - shiftsPrevious)***REMOVED*** shifts` ***REMOVED***,
+    ***REMOVED*** label: 'Days vs last week', change: changeDays, valueAbs: `$***REMOVED***Math.abs(daysCurrent - daysPrevious)***REMOVED*** days` ***REMOVED***
   ];
-  
+
   return (
     <Card className=***REMOVED***`p-4 flex flex-col $***REMOVED***className***REMOVED***`***REMOVED***>
-      <h3 className="font-semibold mb-4">Comparación semanal</h3>
+      <h3 className="font-semibold mb-4">Weekly Comparison</h3>
       
       <div className="flex-1 flex flex-col justify-between">
-        ***REMOVED***comparaciones.map((comp, index) => ***REMOVED***
-          const Icono = getIcono(comp.cambio);
-          const color = getColor(comp.cambio);
+        ***REMOVED***comparisons.map((comp, index) => ***REMOVED***
+          const Icon = getIcon(comp.change);
+          const color = getColor(comp.change);
           
           return (
             <Flex variant="between" key=***REMOVED***index***REMOVED*** className="p-3 bg-gray-50 rounded-lg">
-              <div className="flex-1">
+              <div className="flex-1 flex flex-col justify-center">
                 <span className="text-sm text-gray-600">***REMOVED***comp.label***REMOVED***</span>
-                ***REMOVED***comp.valorAbsoluto && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Diferencia: ***REMOVED***comp.valorAbsoluto***REMOVED***
-                  </p>
-                )***REMOVED***
               </div>
-              <div className="flex items-center" style=***REMOVED******REMOVED*** color ***REMOVED******REMOVED***>
-                <Icono size=***REMOVED***16***REMOVED*** className="mr-1" />
-                <span className="text-sm font-medium">***REMOVED***comp.valor***REMOVED***</span>
+              <div className="flex items-center">
+                ***REMOVED***comp.valueAbs && (
+                  <p className="text-sm text-gray-800 font-medium mr-2">***REMOVED***comp.valueAbs***REMOVED***</p>
+                )***REMOVED***
+                <Flex variant="center" className="gap-1">
+                  <Icon size=***REMOVED***14***REMOVED*** className=***REMOVED***`mr-1 $***REMOVED***color***REMOVED***`***REMOVED*** />
+                  <span className="text-xs font-medium">***REMOVED***Math.abs(comp.change).toFixed(1)***REMOVED***%</span>
+                </Flex>
               </div>
             </Flex>
           );

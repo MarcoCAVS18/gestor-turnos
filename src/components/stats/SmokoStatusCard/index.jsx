@@ -1,4 +1,5 @@
 // src/components/stats/SmokoStatusCard/index.jsx
+
 import React from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Coffee ***REMOVED*** from 'lucide-react';
@@ -7,7 +8,7 @@ import WavyText from '../../ui/WavyText';
 
 const SmokoStatusCard = (***REMOVED*** smokoEnabled, loading, thematicColors, className = '' ***REMOVED***) => ***REMOVED***
   const navigate = useNavigate();
-  const statusText = smokoEnabled ? 'ACTIVO' : 'DESACTIVO';
+  const statusText = smokoEnabled ? 'ACTIVE' : 'INACTIVE';
 
   const handleClick = () => ***REMOVED***
     navigate('/ajustes');
@@ -17,7 +18,7 @@ const SmokoStatusCard = (***REMOVED*** smokoEnabled, loading, thematicColors, cl
     <div onClick=***REMOVED***handleClick***REMOVED*** className=***REMOVED***`$***REMOVED***className***REMOVED*** cursor-pointer`***REMOVED***>
       <BaseStatsCard
         icon=***REMOVED***Coffee***REMOVED***
-        title="Descanso"
+        title="Break"
         loading=***REMOVED***loading***REMOVED***
       >
         <div className="text-center w-full">

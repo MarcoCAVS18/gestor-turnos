@@ -1,4 +1,5 @@
 // src/services/calculationService.js
+
 import ***REMOVED*** getShiftGrossEarnings ***REMOVED*** from '../utils/shiftUtils';
 import ***REMOVED*** determineShiftType ***REMOVED*** from '../utils/shiftDetailsUtils';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
@@ -8,7 +9,7 @@ import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../constan
 
 
 /**
- * Calculates the hours worked between a start and end time.
+ * Calculates hours worked between a start and end time.
  * @param ***REMOVED***string***REMOVED*** start - Start time (e.g., "08:00")
  * @param ***REMOVED***string***REMOVED*** end - End time (e.g., "16:00")
  * @returns ***REMOVED***number***REMOVED*** - Total hours
@@ -21,7 +22,7 @@ export const calculateHours = (start, end) => ***REMOVED***
   let startMinutes = startHour * 60 + startMin;
   let endMinutes = endHour * 60 + endMin;
 
-  // If the shift crosses midnight
+  // If shift crosses midnight
   if (endMinutes <= startMinutes) ***REMOVED***
     endMinutes += 24 * 60;
   ***REMOVED***
@@ -30,12 +31,12 @@ export const calculateHours = (start, end) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Calculates the payment for a shift, considering time ranges, rates, and breaks.
+ * Calculates payment for a shift, considering time ranges, rates, and breaks.
  * @param ***REMOVED***object***REMOVED*** shift - The shift object.
  * @param ***REMOVED***Array***REMOVED*** allJobs - Array of all jobs (normal and delivery).
  * @param ***REMOVED***object***REMOVED*** shiftRanges - Configuration of time ranges.
  * @param ***REMOVED***number***REMOVED*** defaultDiscount - Default discount.
- * @param ***REMOVED***boolean***REMOVED*** smokoEnabled - Whether the break (smoko) is enabled.
+ * @param ***REMOVED***boolean***REMOVED*** smokoEnabled - Whether break (smoko) is enabled.
  * @param ***REMOVED***number***REMOVED*** smokoMinutes - Break duration in minutes.
  * @returns ***REMOVED***object***REMOVED*** - Object with payment details.
  */
@@ -177,18 +178,18 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
 ***REMOVED***;
 
 /**
- * Calcula el total de horas y ganancias para un conjunto de turnos diarios.
- * @param ***REMOVED***Array***REMOVED*** dailyShifts - Array de turnos para un día.
- * @param ***REMOVED***Function***REMOVED*** calculatePaymentFn - La función para calcular el pago de un turno.
- * @returns ***REMOVED***object***REMOVED*** - Objeto con `hours` y `total`.
+ * Calculates total hours and earnings for a set of daily shifts.
+ * @param ***REMOVED***Array***REMOVED*** dailyShifts - Array of shifts for a day.
+ * @param ***REMOVED***Function***REMOVED*** calculatePaymentFn - The function to calculate shift payment.
+ * @returns ***REMOVED***object***REMOVED*** - Object with `hours` and `total`.
  */
 export const calculateDailyTotal = (dailyShifts, calculatePaymentFn) => ***REMOVED***
   return dailyShifts.reduce((total, shift) => ***REMOVED***
     if (shift.type === 'delivery') ***REMOVED***
       const grossEarnings = getShiftGrossEarnings(shift);
-      const netEarnings = grossEarnings - (shift.gastoCombustible || 0);
+      const netEarnings = grossEarnings - (shift.fuelExpense || 0);
       return ***REMOVED***
-        hours: total.hours, // Las horas de delivery se calculan por separado si es necesario
+        hours: total.hours, // Delivery hours are calculated separately if needed
         total: total.total + netEarnings
       ***REMOVED***;
     ***REMOVED*** else ***REMOVED***
@@ -202,20 +203,20 @@ export const calculateDailyTotal = (dailyShifts, calculatePaymentFn) => ***REMOV
 ***REMOVED***;
 
 /**
- * Calcula las estadísticas mensuales basadas en los turnos.
- * @param ***REMOVED***number***REMOVED*** year - Año.
- * @param ***REMOVED***number***REMOVED*** month - Mes (0-11).
- * @param ***REMOVED***Array***REMOVED*** turnos - Array de turnos tradicionales.
- * @param ***REMOVED***Array***REMOVED*** turnosDelivery - Array de turnos de delivery.
- * @param ***REMOVED***Function***REMOVED*** calculatePaymentFn - La función para calcular el pago.
- * @returns ***REMOVED***object***REMOVED*** - Estadísticas mensuales.
+ * Calculates monthly statistics based on shifts.
+ * @param ***REMOVED***number***REMOVED*** year - Year.
+ * @param ***REMOVED***number***REMOVED*** month - Month (0-11).
+ * @param ***REMOVED***Array***REMOVED*** shifts - Array of traditional shifts.
+ * @param ***REMOVED***Array***REMOVED*** deliveryShifts - Array of delivery shifts.
+ * @param ***REMOVED***Function***REMOVED*** calculatePaymentFn - The function to calculate payment.
+ * @returns ***REMOVED***object***REMOVED*** - Monthly statistics.
  */
-export const calculateMonthlyStats = (year, month, turnos, turnosDelivery, calculatePaymentFn) => ***REMOVED***
+export const calculateMonthlyStats = (year, month, shifts, deliveryShifts, calculatePaymentFn) => ***REMOVED***
   const ***REMOVED*** start, end ***REMOVED*** = getMonthRange(year, month);
-  const allShifts = [...turnos, ...turnosDelivery];
+  const allShifts = [...shifts, ...deliveryShifts];
 
   const monthlyShifts = allShifts.filter(shift => ***REMOVED***
-    const shiftDate = shift.fechaInicio || shift.fecha;
+    const shiftDate = shift.startDate || shift.date;
     return shiftDate >= start && shiftDate <= end;
   ***REMOVED***);
 
@@ -229,11 +230,11 @@ export const calculateMonthlyStats = (year, month, turnos, turnosDelivery, calcu
   monthlyShifts.forEach(shift => ***REMOVED***
     if (shift.type === 'delivery' || shift.tipo === 'delivery') ***REMOVED***
       totalEarnings += getShiftGrossEarnings(shift);
-      totalTips += shift.propinas || 0;
-      totalDeliveries += shift.numeroPedidos || 0;
-      totalKilometers += shift.kilometros || 0;
-      totalFuelCost += shift.gastoCombustible || 0;
-      totalHours += calculateHours(shift.horaInicio, shift.horaFin);
+      totalTips += shift.tips || 0;
+      totalDeliveries += shift.orderCount || 0;
+      totalKilometers += shift.kilometers || 0;
+      totalFuelCost += shift.fuelExpense || 0;
+      totalHours += calculateHours(shift.startTime, shift.endTime);
     ***REMOVED*** else ***REMOVED***
       const payment = calculatePaymentFn(shift);
       totalHours += payment.hours;
@@ -258,492 +259,492 @@ export const calculateMonthlyStats = (year, month, turnos, turnosDelivery, calcu
 
 /**
  * Formats a given number of minutes into a string like "1H 30M".
- * @param ***REMOVED***number***REMOVED*** minutos - The total minutes to format.
+ * @param ***REMOVED***number***REMOVED*** minutes - The total minutes to format.
  * @returns ***REMOVED***string***REMOVED*** - The formatted time string.
  */
-export const formatMinutesToHoursAndMinutes = (minutos) => ***REMOVED***
-  if (!minutos || minutos === 0) return '0 MIN';
+export const formatMinutesToHoursAndMinutes = (minutes) => ***REMOVED***
+  if (!minutes || minutes === 0) return '0 MIN';
   
-  if (minutos < 60) ***REMOVED***
-    return `$***REMOVED***minutos***REMOVED*** MIN`;
+  if (minutes < 60) ***REMOVED***
+    return `$***REMOVED***minutes***REMOVED*** MIN`;
   ***REMOVED***
   
-  const horas = Math.floor(minutos / 60);
-  const minutosRestantes = minutos % 60;
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
   
-  if (minutosRestantes === 0) ***REMOVED***
-    return `$***REMOVED***horas***REMOVED***H`;
+  if (remainingMinutes === 0) ***REMOVED***
+    return `$***REMOVED***hours***REMOVED***H`;
   ***REMOVED***
   
-  return `$***REMOVED***horas***REMOVED***H $***REMOVED***minutosRestantes***REMOVED***M`;
+  return `$***REMOVED***hours***REMOVED***H $***REMOVED***remainingMinutes***REMOVED***M`;
 ***REMOVED***;
 
 /**
  * Calculates a comprehensive set of weekly statistics based on shifts and other data.
  */
 export const calculateWeeklyStats = (***REMOVED***
-  turnos,
-  turnosDelivery,
-  todosLosTrabajos,
+  shifts,
+  deliveryShifts,
+  allWorks,
   calculatePayment,
   shiftRanges,
-  offsetSemanas = 0,
+  weekOffset = 0,
 ***REMOVED***) => ***REMOVED***
-  const turnosTradicionales = Array.isArray(turnos) ? turnos : [];
-  const turnosDeliveryValidos = Array.isArray(turnosDelivery) ? turnosDelivery : [];
-  const todosLosTurnos = [...turnosTradicionales, ...turnosDeliveryValidos];
-  const trabajosValidos = Array.isArray(todosLosTrabajos) ? todosLosTrabajos : [];
+  const traditionalShifts = Array.isArray(shifts) ? shifts : [];
+  const validDeliveryShifts = Array.isArray(deliveryShifts) ? deliveryShifts : [];
+  const allShifts = [...traditionalShifts, ...validDeliveryShifts];
+  const validWorks = Array.isArray(allWorks) ? allWorks : [];
 
-  const obtenerFechasSemana = (offset) => ***REMOVED***
-    const hoy = new Date();
-    const diaSemana = hoy.getDay();
-    const diffInicio = diaSemana === 0 ? 6 : diaSemana - 1; 
-    const fechaInicio = new Date(hoy);
-    fechaInicio.setDate(hoy.getDate() - diffInicio + (offset * 7));
-    fechaInicio.setHours(0, 0, 0, 0);
-    const fechaFin = new Date(fechaInicio);
-    fechaFin.setDate(fechaInicio.getDate() + 6);
-    fechaFin.setHours(23, 59, 59, 999);
-    return ***REMOVED*** fechaInicio, fechaFin ***REMOVED***;
+  const getWeekDates = (offset) => ***REMOVED***
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const startDiff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
+    const startDate = new Date(today);
+    startDate.setDate(today.getDate() - startDiff + (offset * 7));
+    startDate.setHours(0, 0, 0, 0);
+    const endDate = new Date(startDate);
+    endDate.setDate(startDate.getDate() + 6);
+    endDate.setHours(23, 59, 59, 999);
+    return ***REMOVED*** startDate, endDate ***REMOVED***;
   ***REMOVED***;
 
-  const ***REMOVED*** fechaInicio, fechaFin ***REMOVED*** = obtenerFechasSemana(offsetSemanas);
+  const ***REMOVED*** startDate, endDate ***REMOVED*** = getWeekDates(weekOffset);
 
-  const turnosSemana = todosLosTurnos.filter(turno => ***REMOVED***
-    const fechaClave = turno.fechaInicio || turno.fecha;
-    if (!fechaClave) return false;
-    const fechaTurno = createSafeDate(fechaClave);
-    return fechaTurno >= fechaInicio && fechaTurno <= fechaFin;
+  const weekShifts = allShifts.filter(shift => ***REMOVED***
+    const dateKey = shift.startDate || shift.date;
+    if (!dateKey) return false;
+    const shiftDate = createSafeDate(dateKey);
+    return shiftDate >= startDate && shiftDate <= endDate;
   ***REMOVED***);
 
   const initialState = ***REMOVED***
-    fechaInicio,
-    fechaFin,
-    totalGanado: 0,
-    horasTrabajadas: 0,
-    totalTurnos: 0,
-    gananciaPorDia: ***REMOVED*** "Lunes": ***REMOVED******REMOVED***, "Martes": ***REMOVED******REMOVED***, "Miércoles": ***REMOVED******REMOVED***, "Jueves": ***REMOVED******REMOVED***, "Viernes": ***REMOVED******REMOVED***, "Sábado": ***REMOVED******REMOVED***, "Domingo": ***REMOVED******REMOVED*** ***REMOVED***,
-    gananciaPorTrabajo: [],
-    tiposDeTurno: ***REMOVED******REMOVED***,
-    diasTrabajados: 0,
-    promedioHorasPorDia: 0,
-    promedioPorHora: 0,
-    diaMasProductivo: ***REMOVED*** dia: 'Ninguno', ganancia: 0 ***REMOVED***
+    startDate,
+    endDate,
+    totalEarned: 0,
+    hoursWorked: 0,
+    totalShifts: 0,
+    earningsByDay: ***REMOVED*** "Monday": ***REMOVED******REMOVED***, "Tuesday": ***REMOVED******REMOVED***, "Wednesday": ***REMOVED******REMOVED***, "Thursday": ***REMOVED******REMOVED***, "Friday": ***REMOVED******REMOVED***, "Saturday": ***REMOVED******REMOVED***, "Sunday": ***REMOVED******REMOVED*** ***REMOVED***,
+    earningsByWork: [],
+    shiftTypes: ***REMOVED******REMOVED***,
+    daysWorked: 0,
+    averageHoursPerDay: 0,
+    averagePerHour: 0,
+    mostProductiveDay: ***REMOVED*** day: 'None', earnings: 0 ***REMOVED***
   ***REMOVED***;
 
-  if (turnosSemana.length === 0) return initialState;
+  if (weekShifts.length === 0) return initialState;
 
   const acc = ***REMOVED***
-    totalGanado: 0,
-    horasTrabajadas: 0,
-    gananciaPorDia: ***REMOVED*** "Lunes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***, "Martes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***, "Miércoles": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***, "Jueves": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***, "Viernes": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***, "Sábado": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED***, "Domingo": ***REMOVED*** ganancia: 0, horas: 0, turnos: 0 ***REMOVED*** ***REMOVED***,
-    gananciaPorTrabajo: ***REMOVED******REMOVED***,
-    tiposDeTurno: ***REMOVED******REMOVED***
+    totalEarned: 0,
+    hoursWorked: 0,
+    earningsByDay: ***REMOVED*** "Monday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Tuesday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Wednesday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Thursday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Friday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Saturday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Sunday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED*** ***REMOVED***,
+    earningsByWork: ***REMOVED******REMOVED***,
+    shiftTypes: ***REMOVED******REMOVED***
   ***REMOVED***;
 
-  turnosSemana.forEach(turno => ***REMOVED***
-    const trabajo = trabajosValidos.find(t => t.id === turno.trabajoId);
-    if (!trabajo) return;
+  weekShifts.forEach(shift => ***REMOVED***
+    const work = validWorks.find(w => w.id === shift.workId);
+    if (!work) return;
 
-    const resultado = calculatePayment(turno);
-    const ganancia = resultado.totalWithDiscount || 0;
-    const horas = resultado.hours || 0;
+    const result = calculatePayment(shift);
+    const earnings = result.totalWithDiscount || 0;
+    const hours = result.hours || 0;
 
-    acc.totalGanado += ganancia;
-    acc.horasTrabajadas += horas;
+    acc.totalEarned += earnings;
+    acc.hoursWorked += hours;
 
-    const fechaTurno = createSafeDate(turno.fechaInicio || turno.fecha);
-    const nombresDias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
-    const nombreDia = nombresDias[fechaTurno.getDay()];
+    const shiftDate = createSafeDate(shift.startDate || shift.date);
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dayName = dayNames[shiftDate.getDay()];
     
-    acc.gananciaPorDia[nombreDia].ganancia += ganancia;
-    acc.gananciaPorDia[nombreDia].horas += horas;
-    acc.gananciaPorDia[nombreDia].turnos += 1;
+    acc.earningsByDay[dayName].earnings += earnings;
+    acc.earningsByDay[dayName].hours += hours;
+    acc.earningsByDay[dayName].shifts += 1;
 
-    if (!acc.gananciaPorTrabajo[trabajo.id]) ***REMOVED***
-      acc.gananciaPorTrabajo[trabajo.id] = ***REMOVED*** id: trabajo.id, nombre: trabajo.nombre, color: trabajo.color || trabajo.colorAvatar || '#EC4899', ganancia: 0, horas: 0, turnos: 0, tipo: trabajo.tipo || 'tradicional' ***REMOVED***;
+    if (!acc.earningsByWork[work.id]) ***REMOVED***
+      acc.earningsByWork[work.id] = ***REMOVED*** id: work.id, name: work.name, color: work.color || work.avatarColor || '#EC4899', earnings: 0, hours: 0, shifts: 0, type: work.type || 'traditional' ***REMOVED***;
     ***REMOVED***
-    acc.gananciaPorTrabajo[trabajo.id].ganancia += ganancia;
-    acc.gananciaPorTrabajo[trabajo.id].horas += horas;
-    acc.gananciaPorTrabajo[trabajo.id].turnos += 1;
+    acc.earningsByWork[work.id].earnings += earnings;
+    acc.earningsByWork[work.id].hours += hours;
+    acc.earningsByWork[work.id].shifts += 1;
 
-    let tipoTurno = 'mixto';
-    if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') tipoTurno = 'delivery';
-    else if (fechaTurno.getDay() === 6) tipoTurno = 'sabado';
-    else if (fechaTurno.getDay() === 0) tipoTurno = 'domingo';
-    else if (shiftRanges) tipoTurno = determineShiftType(turno, shiftRanges);
+    let shiftType = 'mixed';
+    if (shift.type === 'delivery' || work.type === 'delivery') shiftType = 'delivery';
+    else if (shiftDate.getDay() === 6) shiftType = 'saturday';
+    else if (shiftDate.getDay() === 0) shiftType = 'sunday';
+    else if (shiftRanges) shiftType = determineShiftType(shift, shiftRanges);
 
-    if (!acc.tiposDeTurno[tipoTurno]) ***REMOVED***
-      acc.tiposDeTurno[tipoTurno] = ***REMOVED*** turnos: 0, horas: 0, ganancia: 0 ***REMOVED***;
+    if (!acc.shiftTypes[shiftType]) ***REMOVED***
+      acc.shiftTypes[shiftType] = ***REMOVED*** shifts: 0, hours: 0, earnings: 0 ***REMOVED***;
     ***REMOVED***
-    acc.tiposDeTurno[tipoTurno].turnos += 1;
-    acc.tiposDeTurno[tipoTurno].horas += horas;
-    acc.tiposDeTurno[tipoTurno].ganancia += ganancia;
+    acc.shiftTypes[shiftType].shifts += 1;
+    acc.shiftTypes[shiftType].hours += hours;
+    acc.shiftTypes[shiftType].earnings += earnings;
   ***REMOVED***);
 
-  const diasTrabajados = Object.values(acc.gananciaPorDia).filter(dia => dia.turnos > 0).length;
-  const promedioHorasPorDia = diasTrabajados > 0 ? acc.horasTrabajadas / diasTrabajados : 0;
-  const promedioPorHora = acc.horasTrabajadas > 0 ? acc.totalGanado / acc.horasTrabajadas : 0;
+  const daysWorked = Object.values(acc.earningsByDay).filter(day => day.shifts > 0).length;
+  const averageHoursPerDay = daysWorked > 0 ? acc.hoursWorked / daysWorked : 0;
+  const averagePerHour = acc.hoursWorked > 0 ? acc.totalEarned / acc.hoursWorked : 0;
   
-  const diaMasProductivo = Object.entries(acc.gananciaPorDia).reduce(
-    (max, [dia, datos]) => (datos.ganancia > max.ganancia ? ***REMOVED*** dia, ...datos ***REMOVED*** : max),
-    ***REMOVED*** dia: 'Ninguno', ganancia: 0 ***REMOVED***
+  const mostProductiveDay = Object.entries(acc.earningsByDay).reduce(
+    (max, [day, data]) => (data.earnings > max.earnings ? ***REMOVED*** day, ...data ***REMOVED*** : max),
+    ***REMOVED*** day: 'None', earnings: 0 ***REMOVED***
   );
 
   return ***REMOVED***
-    fechaInicio,
-    fechaFin,
-    turnos: turnosSemana,
-    totalGanado: acc.totalGanado,
-    horasTrabajadas: acc.horasTrabajadas,
-    totalTurnos: turnosSemana.length,
-    gananciaPorDia: acc.gananciaPorDia,
-    gananciaPorTrabajo: Object.values(acc.gananciaPorTrabajo).sort((a, b) => b.ganancia - a.ganancia),
-    tiposDeTurno: acc.tiposDeTurno, 
-    diasTrabajados,
-    promedioHorasPorDia,
-    promedioPorHora,
-    diaMasProductivo
+    startDate,
+    endDate,
+    shifts: weekShifts,
+    totalEarned: acc.totalEarned,
+    hoursWorked: acc.hoursWorked,
+    totalShifts: weekShifts.length,
+    earningsByDay: acc.earningsByDay,
+    earningsByWork: Object.values(acc.earningsByWork).sort((a, b) => b.earnings - a.earnings),
+    shiftTypes: acc.shiftTypes, 
+    daysWorked,
+    averageHoursPerDay,
+    averagePerHour,
+    mostProductiveDay
   ***REMOVED***;
 ***REMOVED***
 
-export const calculateDeliveryStats = (***REMOVED*** trabajosDelivery, turnosDelivery, periodo = 'mes' ***REMOVED***) => ***REMOVED***
-    const trabajosDeliveryValidos = Array.isArray(trabajosDelivery) ? trabajosDelivery : [];
-    const turnosDeliveryValidos = Array.isArray(turnosDelivery) ? turnosDelivery : [];
+export const calculateDeliveryStats = (***REMOVED*** deliveryWork, deliveryShifts, period = 'month' ***REMOVED***) => ***REMOVED***
+    const validDeliveryWork = Array.isArray(deliveryWork) ? deliveryWork : [];
+    const validDeliveryShifts = Array.isArray(deliveryShifts) ? deliveryShifts : [];
     
-    if (turnosDeliveryValidos.length === 0) ***REMOVED***
+    if (validDeliveryShifts.length === 0) ***REMOVED***
       return ***REMOVED***
-        totalGanado: 0,
-        totalPropinas: 0,
-        totalPedidos: 0,
-        totalKilometros: 0,
-        totalGastos: 0,
-        gananciaLiquida: 0,
-        promedioPorPedido: 0,
-        promedioPorKilometro: 0,
-        promedioPorHora: 0,
-        promedioPropinasPorPedido: 0,
-        mejorDia: null,
-        mejorTurno: null,
-        turnosPorPlataforma: ***REMOVED******REMOVED***,
-        estadisticasPorVehiculo: ***REMOVED******REMOVED***,
-        estadisticasPorDia: ***REMOVED******REMOVED***,
-        tendencia: 0,
-        diasTrabajados: 0,
-        turnosRealizados: 0,
-        totalHoras: 0,
-        eficienciaCombustible: 0,
-        costoPorKilometro: 0
+        totalEarned: 0,
+        totalTips: 0,
+        totalOrders: 0,
+        totalKilometers: 0,
+        totalExpenses: 0,
+        netEarnings: 0,
+        averagePerOrder: 0,
+        averagePerKilometer: 0,
+        averagePerHour: 0,
+        averageTipsPerOrder: 0,
+        bestDay: null,
+        bestShift: null,
+        shiftsByPlatform: ***REMOVED******REMOVED***,
+        statsByVehicle: ***REMOVED******REMOVED***,
+        statsByDay: ***REMOVED******REMOVED***,
+        trend: 0,
+        daysWorked: 0,
+        shiftsCompleted: 0,
+        totalHours: 0,
+        fuelEfficiency: 0,
+        costPerKilometer: 0
       ***REMOVED***;
     ***REMOVED***
     
-    const hoy = new Date();
-    let fechaInicio;
+    const today = new Date();
+    let startDate;
     
-    switch (periodo) ***REMOVED***
-      case 'semana':
-        fechaInicio = new Date(hoy);
-        fechaInicio.setDate(hoy.getDate() - 7);
+    switch (period) ***REMOVED***
+      case 'week':
+        startDate = new Date(today);
+        startDate.setDate(today.getDate() - 7);
         break;
-      case 'mes':
-        fechaInicio = new Date(hoy);
-        fechaInicio.setMonth(hoy.getMonth() - 1);
+      case 'month':
+        startDate = new Date(today);
+        startDate.setMonth(today.getMonth() - 1);
         break;
-      case 'año':
-        fechaInicio = new Date(hoy);
-        fechaInicio.setFullYear(hoy.getFullYear() - 1);
+      case 'year':
+        startDate = new Date(today);
+        startDate.setFullYear(today.getFullYear() - 1);
         break;
       default:
-        fechaInicio = new Date(0); 
+        startDate = new Date(0); 
     ***REMOVED***
     
-    const turnosPeriodo = turnosDeliveryValidos.filter(turno => ***REMOVED***
-      const fechaTurno = new Date(turno.fecha);
-      return fechaTurno >= fechaInicio;
+    const periodShifts = validDeliveryShifts.filter(shift => ***REMOVED***
+      const shiftDate = new Date(shift.date);
+      return shiftDate >= startDate;
     ***REMOVED***);
         
-    let totalGanado = 0;
-    let totalPropinas = 0;
-    let totalPedidos = 0;
-    let totalKilometros = 0;
-    let totalGastos = 0;
-    let totalHoras = 0;
+    let totalEarned = 0;
+    let totalTips = 0;
+    let totalOrders = 0;
+    let totalKilometers = 0;
+    let totalExpenses = 0;
+    let totalHours = 0;
     
-    const estadisticasPorDia = ***REMOVED******REMOVED***;
-    const turnosPorPlataforma = ***REMOVED******REMOVED***;
-    const estadisticasPorVehiculo = ***REMOVED******REMOVED***;
+    const statsByDay = ***REMOVED******REMOVED***;
+    const shiftsByPlatform = ***REMOVED******REMOVED***;
+    const statsByVehicle = ***REMOVED******REMOVED***;
     
-    turnosPeriodo.forEach(turno => ***REMOVED***
-      const trabajo = trabajosDeliveryValidos.find(t => t.id === turno.trabajoId);
-      if (!trabajo) ***REMOVED***
-        console.warn('⚠️ Trabajo delivery no encontrado para turno:', turno.id);
+    periodShifts.forEach(shift => ***REMOVED***
+      const work = validDeliveryWork.find(w => w.id === shift.workId);
+      if (!work) ***REMOVED***
+        console.warn('⚠️ Delivery work not found for shift:', shift.id);
         return;
       ***REMOVED***
       
-            const gananciaTurno = getShiftGrossEarnings(turno);
-            const propinas = turno.propinas || 0;
-            const pedidos = turno.numeroPedidos || 0;
-            const kilometros = turno.kilometros || 0;
-            const gastos = turno.gastoCombustible || 0;
+            const shiftEarnings = getShiftGrossEarnings(shift);
+            const tips = shift.tips || 0;
+            const orders = shift.orderCount || 0;
+            const kilometers = shift.kilometers || 0;
+            const expenses = shift.fuelExpense || 0;
             
-            totalGanado += gananciaTurno;
-            totalPropinas += propinas;
-            totalPedidos += pedidos;
-            totalKilometros += kilometros;
-            totalGastos += gastos;
+            totalEarned += shiftEarnings;
+            totalTips += tips;
+            totalOrders += orders;
+            totalKilometers += kilometers;
+            totalExpenses += expenses;
             
-            const [horaIni, minIni] = turno.horaInicio.split(':').map(Number);
-            const [horaFin, minFin] = turno.horaFin.split(':').map(Number);
-            let horas = (horaFin + minFin/60) - (horaIni + minIni/60);
-            if (horas < 0) horas += 24;
-            totalHoras += horas;
+            const [startHour, startMin] = shift.startTime.split(':').map(Number);
+            const [endHour, endMin] = shift.endTime.split(':').map(Number);
+            let hours = (endHour + endMin/60) - (startHour + startMin/60);
+            if (hours < 0) hours += 24;
+            totalHours += hours;
             
-            if (!estadisticasPorDia[turno.fecha]) ***REMOVED***
-              estadisticasPorDia[turno.fecha] = ***REMOVED***
-                ganancia: 0,
-                propinas: 0,
-                pedidos: 0,
-                kilometros: 0,
-                gastos: 0,
-                horas: 0,
-                turnos: []
+            if (!statsByDay[shift.date]) ***REMOVED***
+              statsByDay[shift.date] = ***REMOVED***
+                earnings: 0,
+                tips: 0,
+                orders: 0,
+                kilometers: 0,
+                expenses: 0,
+                hours: 0,
+                shifts: []
               ***REMOVED***;
             ***REMOVED***
             
-            estadisticasPorDia[turno.fecha].ganancia += gananciaTurno;
-            estadisticasPorDia[turno.fecha].propinas += propinas;
-            estadisticasPorDia[turno.fecha].pedidos += pedidos;
-            estadisticasPorDia[turno.fecha].kilometros += kilometros;
-            estadisticasPorDia[turno.fecha].gastos += gastos;
-            estadisticasPorDia[turno.fecha].horas += horas;
-            estadisticasPorDia[turno.fecha].turnos.push(***REMOVED***
-              ...turno,
-              trabajo,
-              horas
+            statsByDay[shift.date].earnings += shiftEarnings;
+            statsByDay[shift.date].tips += tips;
+            statsByDay[shift.date].orders += orders;
+            statsByDay[shift.date].kilometers += kilometers;
+            statsByDay[shift.date].expenses += expenses;
+            statsByDay[shift.date].hours += hours;
+            statsByDay[shift.date].shifts.push(***REMOVED***
+              ...shift,
+              work,
+              hours
             ***REMOVED***);
             
-            const plataforma = trabajo.plataforma || trabajo.nombre;
-            if (!turnosPorPlataforma[plataforma]) ***REMOVED***
-              const platformData = DELIVERY_PLATFORMS_AUSTRALIA.find(p => p.nombre === plataforma);
-              turnosPorPlataforma[plataforma] = ***REMOVED***
-                nombre: plataforma,
+            const platform = work.platform || work.name;
+            if (!shiftsByPlatform[platform]) ***REMOVED***
+              const platformData = DELIVERY_PLATFORMS_AUSTRALIA.find(p => p.name === platform);
+              shiftsByPlatform[platform] = ***REMOVED***
+                name: platform,
                 color: platformData?.color || '#10B981',
-                totalGanado: 0,
-                totalPedidos: 0,
-                totalPropinas: 0,
-                totalHoras: 0,
-                totalKilometros: 0,
-                totalGastos: 0,
-                turnos: 0
+                totalEarned: 0,
+                totalOrders: 0,
+                totalTips: 0,
+                totalHours: 0,
+                totalKilometers: 0,
+                totalExpenses: 0,
+                shifts: 0
               ***REMOVED***;
             ***REMOVED***
             
-            turnosPorPlataforma[plataforma].totalGanado += gananciaTurno;
-            turnosPorPlataforma[plataforma].totalPedidos += pedidos;
-            turnosPorPlataforma[plataforma].totalPropinas += propinas;
-            turnosPorPlataforma[plataforma].totalHoras += horas;
-            turnosPorPlataforma[plataforma].totalKilometros += kilometros;
-            turnosPorPlataforma[plataforma].totalGastos += gastos;
-            turnosPorPlataforma[plataforma].turnos += 1;
+            shiftsByPlatform[platform].totalEarned += shiftEarnings;
+            shiftsByPlatform[platform].totalOrders += orders;
+            shiftsByPlatform[platform].totalTips += tips;
+            shiftsByPlatform[platform].totalHours += hours;
+            shiftsByPlatform[platform].totalKilometers += kilometers;
+            shiftsByPlatform[platform].totalExpenses += expenses;
+            shiftsByPlatform[platform].shifts += 1;
             
-            const vehiculo = trabajo.vehiculo || 'No especificado';
-            if (!estadisticasPorVehiculo[vehiculo]) ***REMOVED***
-              estadisticasPorVehiculo[vehiculo] = ***REMOVED***
-                nombre: vehiculo,
-                totalGanado: 0,
-                totalPedidos: 0,
-                totalKilometros: 0,
-                totalGastos: 0,
-                totalHoras: 0,
-                turnos: 0,
-                eficiencia: 0 
+            const vehicle = work.vehicle || 'Not specified';
+            if (!statsByVehicle[vehicle]) ***REMOVED***
+              statsByVehicle[vehicle] = ***REMOVED***
+                name: vehicle,
+                totalEarned: 0,
+                totalOrders: 0,
+                totalKilometers: 0,
+                totalExpenses: 0,
+                totalHours: 0,
+                shifts: 0,
+                efficiency: 0 
               ***REMOVED***;
             ***REMOVED***
             
-            estadisticasPorVehiculo[vehiculo].totalGanado += gananciaTurno;
-            estadisticasPorVehiculo[vehiculo].totalPedidos += pedidos;
-            estadisticasPorVehiculo[vehiculo].totalKilometros += kilometros;
-            estadisticasPorVehiculo[vehiculo].totalGastos += gastos;
-            estadisticasPorVehiculo[vehiculo].totalHoras += horas;
-            estadisticasPorVehiculo[vehiculo].turnos += 1;
+            statsByVehicle[vehicle].totalEarned += shiftEarnings;
+            statsByVehicle[vehicle].totalOrders += orders;
+            statsByVehicle[vehicle].totalKilometers += kilometers;
+            statsByVehicle[vehicle].totalExpenses += expenses;
+            statsByVehicle[vehicle].totalHours += hours;
+            statsByVehicle[vehicle].shifts += 1;
           ***REMOVED***);    
-    Object.values(estadisticasPorVehiculo).forEach(vehiculo => ***REMOVED***
-      if (vehiculo.totalGastos > 0) ***REMOVED***
-        vehiculo.eficiencia = vehiculo.totalKilometros / vehiculo.totalGastos;
+    Object.values(statsByVehicle).forEach(vehicle => ***REMOVED***
+      if (vehicle.totalExpenses > 0) ***REMOVED***
+        vehicle.efficiency = vehicle.totalKilometers / vehicle.totalExpenses;
       ***REMOVED***
     ***REMOVED***);
     
-    let mejorDia = null;
-    let mejorGanancia = 0;
+    let bestDay = null;
+    let bestEarnings = 0;
     
-    Object.entries(estadisticasPorDia).forEach(([fecha, stats]) => ***REMOVED***
-      const gananciaLiquida = stats.ganancia - stats.gastos;
+    Object.entries(statsByDay).forEach(([date, stats]) => ***REMOVED***
+      const netEarnings = stats.earnings - stats.expenses;
       
-      if (gananciaLiquida > mejorGanancia) ***REMOVED***
-        mejorGanancia = gananciaLiquida;
-        mejorDia = ***REMOVED***
-          fecha,
-          ganancia: stats.ganancia,
-          gananciaLiquida,
-          pedidos: stats.pedidos,
-          horas: stats.horas,
-          kilometros: stats.kilometros,
-          gastos: stats.gastos
+      if (netEarnings > bestEarnings) ***REMOVED***
+        bestEarnings = netEarnings;
+        bestDay = ***REMOVED***
+          date,
+          earnings: stats.earnings,
+          netEarnings,
+          orders: stats.orders,
+          hours: stats.hours,
+          kilometers: stats.kilometers,
+          expenses: stats.expenses
         ***REMOVED***;
       ***REMOVED***
     ***REMOVED***);
     
-    let mejorTurno = null;
-    let mejorGananciaTurno = 0;
+    let bestShift = null;
+    let bestShiftEarnings = 0;
     
-    turnosPeriodo.forEach(turno => ***REMOVED***
-      const gananciaBruta = getShiftGrossEarnings(turno);
-      const gananciaLiquida = gananciaBruta - (turno.gastoCombustible || 0);
-      if (gananciaLiquida > mejorGananciaTurno) ***REMOVED***
-        mejorGananciaTurno = gananciaLiquida;
-        mejorTurno = ***REMOVED***
-          ...turno,
-          gananciaLiquida,
-          trabajo: trabajosDeliveryValidos.find(t => t.id === turno.trabajoId)
+    periodShifts.forEach(shift => ***REMOVED***
+      const grossEarnings = getShiftGrossEarnings(shift);
+      const netEarnings = grossEarnings - (shift.fuelExpense || 0);
+      if (netEarnings > bestShiftEarnings) ***REMOVED***
+        bestShiftEarnings = netEarnings;
+        bestShift = ***REMOVED***
+          ...shift,
+          netEarnings,
+          work: validDeliveryWork.find(w => w.id === shift.workId)
         ***REMOVED***;
       ***REMOVED***
     ***REMOVED***);
     
-    const gananciaLiquida = totalGanado - totalGastos;
-    const promedioPorPedido = totalPedidos > 0 ? totalGanado / totalPedidos : 0;
-    const promedioPorKilometro = totalKilometros > 0 ? totalGanado / totalKilometros : 0;
-    const promedioPorHora = totalHoras > 0 ? totalGanado / totalHoras : 0;
-    const promedioPropinasPorPedido = totalPedidos > 0 ? totalPropinas / totalPedidos : 0;
-    const eficienciaCombustible = totalGastos > 0 ? totalKilometros / totalGastos : 0;
-    const costoPorKilometro = totalKilometros > 0 ? totalGastos / totalKilometros : 0;
+    const netEarnings = totalEarned - totalExpenses;
+    const averagePerOrder = totalOrders > 0 ? totalEarned / totalOrders : 0;
+    const averagePerKilometer = totalKilometers > 0 ? totalEarned / totalKilometers : 0;
+    const averagePerHour = totalHours > 0 ? totalEarned / totalHours : 0;
+    const averageTipsPerOrder = totalOrders > 0 ? totalTips / totalOrders : 0;
+    const fuelEfficiency = totalExpenses > 0 ? totalKilometers / totalExpenses : 0;
+    const costPerKilometer = totalKilometers > 0 ? totalExpenses / totalKilometers : 0;
     
-    const resultado = ***REMOVED***
-      totalGanado,
-      totalPropinas,
-      totalPedidos,
-      totalKilometros,
-      totalGastos,
-      gananciaLiquida,
-      totalHoras,
+    const result = ***REMOVED***
+      totalEarned,
+      totalTips,
+      totalOrders,
+      totalKilometers,
+      totalExpenses,
+      netEarnings,
+      totalHours,
       
-      promedioPorPedido,
-      promedioPorKilometro,
-      promedioPorHora,
-      promedioPropinasPorPedido,
-      eficienciaCombustible,
-      costoPorKilometro,
+      averagePerOrder,
+      averagePerKilometer,
+      averagePerHour,
+      averageTipsPerOrder,
+      fuelEfficiency,
+      costPerKilometer,
       
-      mejorDia,
-      mejorTurno,
+      bestDay,
+      bestShift,
       
-      turnosPorPlataforma,
-      estadisticasPorVehiculo,
-      estadisticasPorDia,
+      shiftsByPlatform,
+      statsByVehicle,
+      statsByDay,
       
-      diasTrabajados: Object.keys(estadisticasPorDia).length,
-      turnosRealizados: turnosPeriodo.length
+      daysWorked: Object.keys(statsByDay).length,
+      shiftsCompleted: periodShifts.length
     ***REMOVED***;
 
-    return resultado;
+    return result;
 ***REMOVED***
 
-export const calculateDeliveryHourlyStats = (turnos = []) => ***REMOVED***
-  // Definición de franjas
-  const franjas = ***REMOVED***
-    manana: ***REMOVED*** 
-      id: 'manana', 
-      label: 'Mañana (6-12)', 
+export const calculateDeliveryHourlyStats = (shifts = []) => ***REMOVED***
+  // Time slots definition
+  const slots = ***REMOVED***
+    morning: ***REMOVED*** 
+      id: 'morning', 
+      label: 'Morning (6-12)', 
       start: 6, 
       end: 11, 
-      ganancia: 0, 
-      horas: 0, 
+      earnings: 0, 
+      hours: 0, 
       count: 0 
     ***REMOVED***,
-    mediodia: ***REMOVED*** 
-      id: 'mediodia', 
-      label: 'Mediodía (12-16)', 
+    midday: ***REMOVED*** 
+      id: 'midday', 
+      label: 'Midday (12-16)', 
       start: 12, 
       end: 15, 
-      ganancia: 0, 
-      horas: 0, 
+      earnings: 0, 
+      hours: 0, 
       count: 0 
     ***REMOVED***,
-    tarde: ***REMOVED*** 
-      id: 'tarde', 
-      label: 'Tarde (16-20)', 
+    afternoon: ***REMOVED*** 
+      id: 'afternoon', 
+      label: 'Afternoon (16-20)', 
       start: 16, 
       end: 19, 
-      ganancia: 0, 
-      horas: 0, 
+      earnings: 0, 
+      hours: 0, 
       count: 0 
     ***REMOVED***,
-    noche: ***REMOVED*** 
-      id: 'noche', 
-      label: 'Noche (20-6)', 
+    night: ***REMOVED*** 
+      id: 'night', 
+      label: 'Night (20-6)', 
       start: 20, 
       end: 5, 
-      ganancia: 0, 
-      horas: 0, 
+      earnings: 0, 
+      hours: 0, 
       count: 0 
     ***REMOVED***,
   ***REMOVED***;
 
-  const deliveryTurnos = turnos.filter(t => t.tipo === 'delivery' || t.esDelivery || t.plataforma);
+  const deliveryShifts = shifts.filter(s => s.type === 'delivery' || s.isDelivery || s.platform);
 
-  deliveryTurnos.forEach(turno => ***REMOVED***
-    if (!turno.fechaInicio || !turno.fechaFin) return;
+  deliveryShifts.forEach(shift => ***REMOVED***
+    if (!shift.startDate || !shift.endDate) return;
     
-    const fecha = new Date(turno.fechaInicio);
-    const hora = fecha.getHours();
+    const date = new Date(shift.startDate);
+    const hour = date.getHours();
     
-    let key = 'noche';
-    if (hora >= 6 && hora < 12) key = 'manana';
-    else if (hora >= 12 && hora < 16) key = 'mediodia';
-    else if (hora >= 16 && hora < 20) key = 'tarde';
+    let key = 'night';
+    if (hour >= 6 && hour < 12) key = 'morning';
+    else if (hour >= 12 && hour < 16) key = 'midday';
+    else if (hour >= 16 && hour < 20) key = 'afternoon';
 
-    // Calcular ganancia neta del turno
-    const gananciaTurno = (turno.ganancia || turno.gananciaTotal || 0) + (turno.propinas || 0) - (turno.gastoCombustible || 0);
+    // Calculate net earnings of the shift
+    const shiftEarnings = (shift.earnings || shift.totalEarnings || 0) + (shift.tips || 0) - (shift.fuelExpense || 0);
     
-    // Calcular duración real
-    const startDateTime = new Date(`$***REMOVED***turno.fechaInicio***REMOVED***T$***REMOVED***turno.horaInicio***REMOVED***:00`);
-    let endDateTime = new Date(`$***REMOVED***turno.fechaFin***REMOVED***T$***REMOVED***turno.horaFin***REMOVED***:00`);
+    // Calculate real duration
+    const startDateTime = new Date(`$***REMOVED***shift.startDate***REMOVED***T$***REMOVED***shift.startTime***REMOVED***:00`);
+    let endDateTime = new Date(`$***REMOVED***shift.endDate***REMOVED***T$***REMOVED***shift.endTime***REMOVED***:00`);
 
-    // If the shift ends on the same calendar day as it starts,
-    // but the end time is numerically earlier than the start time,
-    // it implies the shift crosses midnight into the next day.
+    // If shift ends on the same calendar day as it starts,
+    // but end time is numerically earlier than start time,
+    // it implies shift crosses midnight into the next day.
     // This handles cases like 22:00 (Day 1) to 02:00 (Day 2)
-    // where fechaFin and fechaInicio might still be the same ('YYYY-MM-DD').
-    if (endDateTime.getTime() <= startDateTime.getTime() && turno.fechaFin === turno.fechaInicio) ***REMOVED***
+    // where endDate and startDate might still be the same ('YYYY-MM-DD').
+    if (endDateTime.getTime() <= startDateTime.getTime() && shift.endDate === shift.startDate) ***REMOVED***
         endDateTime.setDate(endDateTime.getDate() + 1);
     ***REMOVED***
     
     // Fallback if endDateTime is still <= startDateTime (e.g., malformed data)
     if (endDateTime.getTime() <= startDateTime.getTime()) ***REMOVED***
-      console.warn("Shift end time is not after start time, skipping duration calculation for shift:", turno);
+      console.warn("Shift end time is not after start time, skipping duration calculation for shift:", shift);
       return; // Skip this shift as duration would be 0 or negative
     ***REMOVED***
 
-    const duracionHoras = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60 * 60);
+    const durationHours = (endDateTime.getTime() - startDateTime.getTime()) / (1000 * 60 * 60);
 
-    if (duracionHoras > 0) ***REMOVED***
-      franjas[key].ganancia += gananciaTurno;
-      franjas[key].horas += duracionHoras;
-      franjas[key].count += 1;
+    if (durationHours > 0) ***REMOVED***
+      slots[key].earnings += shiftEarnings;
+      slots[key].hours += durationHours;
+      slots[key].count += 1;
     ***REMOVED***
   ***REMOVED***);
 
-  // Retornar array ordenado por rentabilidad
-  return Object.values(franjas)
-    .map(f => (***REMOVED***
-      ...f,
-      promedioHora: f.horas > 0 ? f.ganancia / f.horas : 0
+  // Return array sorted by profitability
+  return Object.values(slots)
+    .map(s => (***REMOVED***
+      ...s,
+      averageHour: s.hours > 0 ? s.earnings / s.hours : 0
     ***REMOVED***))
-    .filter(f => f.count > 0)
-    .sort((a, b) => b.promedioHora - a.promedioHora);
+    .filter(s => s.count > 0)
+    .sort((a, b) => b.averageHour - a.averageHour);
 ***REMOVED***;
 
-export const calculateWeeklyHourlyDeliveryStats = (turnos = []) => ***REMOVED***
-  const daysOfWeek = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+export const calculateWeeklyHourlyDeliveryStats = (shifts = []) => ***REMOVED***
+  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const initialWeeklyData = daysOfWeek.map(day => (***REMOVED***
     day: day,
     hourlyData: Array.from(***REMOVED*** length: 24 ***REMOVED***, (_, hour) => (***REMOVED***
@@ -754,20 +755,20 @@ export const calculateWeeklyHourlyDeliveryStats = (turnos = []) => ***REMOVED***
     ***REMOVED***))
   ***REMOVED***));
 
-  const deliveryTurnos = turnos.filter(t => t.tipo === 'delivery' || t.esDelivery || t.plataforma);
+  const deliveryShifts = shifts.filter(s => s.type === 'delivery' || s.isDelivery || s.platform);
 
-  deliveryTurnos.forEach(turno => ***REMOVED***
-    if (!turno.fechaInicio || !turno.horaInicio || !turno.horaFin) return;
+  deliveryShifts.forEach(shift => ***REMOVED***
+    if (!shift.startDate || !shift.startTime || !shift.endTime) return;
 
-    const shiftStart = new Date(`$***REMOVED***turno.fechaInicio***REMOVED***T$***REMOVED***turno.horaInicio***REMOVED***:00`);
-    let shiftEnd = new Date(`$***REMOVED***turno.fechaInicio***REMOVED***T$***REMOVED***turno.horaFin***REMOVED***:00`);
+    const shiftStart = new Date(`$***REMOVED***shift.startDate***REMOVED***T$***REMOVED***shift.startTime***REMOVED***:00`);
+    let shiftEnd = new Date(`$***REMOVED***shift.startDate***REMOVED***T$***REMOVED***shift.endTime***REMOVED***:00`);
 
     // Adjust shiftEnd if it crosses midnight
     if (shiftEnd.getTime() <= shiftStart.getTime()) ***REMOVED***
       shiftEnd.setDate(shiftEnd.getDate() + 1);
     ***REMOVED***
     
-    const gananciaTurno = (turno.ganancia || turno.gananciaTotal || 0) + (turno.propinas || 0) - (turno.gastoCombustible || 0);
+    const shiftEarnings = (shift.earnings || shift.totalEarnings || 0) + (shift.tips || 0) - (shift.fuelExpense || 0);
 
     let currentHour = shiftStart.getHours();
     let currentDay = shiftStart.getDay(); // 0 for Sunday, 1 for Monday, etc.
@@ -781,7 +782,7 @@ export const calculateWeeklyHourlyDeliveryStats = (turnos = []) => ***REMOVED***
       const hoursInThisSegment = (intersectionEnd - currentTime) / (1000 * 60 * 60);
 
       if (hoursInThisSegment > 0) ***REMOVED***
-        const hourlyProfit = gananciaTurno * (hoursInThisSegment / ((shiftEnd.getTime() - shiftStart.getTime()) / (1000 * 60 * 60)));
+        const hourlyProfit = shiftEarnings * (hoursInThisSegment / ((shiftEnd.getTime() - shiftStart.getTime()) / (1000 * 60 * 60)));
         
         const dayIndex = currentDay;
         const hourIndex = currentHour;
@@ -807,13 +808,13 @@ export const calculateWeeklyHourlyDeliveryStats = (turnos = []) => ***REMOVED***
 
   // Reorder days to start from Monday (1 for Monday, 0 for Sunday)
   const reorderedWeeklyData = [
-    initialWeeklyData[1], // Lunes
-    initialWeeklyData[2], // Martes
-    initialWeeklyData[3], // Miércoles
-    initialWeeklyData[4], // Jueves
-    initialWeeklyData[5], // Viernes
-    initialWeeklyData[6], // Sábado
-    initialWeeklyData[0],  // Domingo
+    initialWeeklyData[1], // Monday
+    initialWeeklyData[2], // Tuesday
+    initialWeeklyData[3], // Wednesday
+    initialWeeklyData[4], // Thursday
+    initialWeeklyData[5], // Friday
+    initialWeeklyData[6], // Saturday
+    initialWeeklyData[0],  // Sunday
   ];
 
   return reorderedWeeklyData;

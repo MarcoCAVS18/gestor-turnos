@@ -3,45 +3,45 @@
 import ***REMOVED*** Sun, Sunset, Moon, Calendar, Truck, Clock ***REMOVED*** from 'lucide-react';
 
 export const getShiftTypesConfig = (thematicColors) => (***REMOVED***
-  diurno: ***REMOVED***
-    id: 'diurno',
-    label: 'Diurno',
+  day: ***REMOVED***
+    id: 'day',
+    label: 'Day',
     icon: Sun,
     color: '#F59E0B',
     bgColor: '#FEF3C7',
-    description: 'Turno de día'
+    description: 'Day shift'
   ***REMOVED***,
-  tarde: ***REMOVED***
-    id: 'tarde',
-    label: 'Tarde',
+  afternoon: ***REMOVED***
+    id: 'afternoon',
+    label: 'Afternoon',
     icon: Sunset,
     color: '#F97316',
     bgColor: '#FED7AA',
-    description: 'Turno de tarde'
+    description: 'Afternoon shift'
   ***REMOVED***,
-  noche: ***REMOVED***
-    id: 'noche',
-    label: 'Noche',
+  night: ***REMOVED***
+    id: 'night',
+    label: 'Night',
     icon: Moon,
     color: thematicColors?.base || '#6366F1',
     bgColor: thematicColors?.transparent10 || '#E0E7FF',
-    description: 'Turno de noche'
+    description: 'Night shift'
   ***REMOVED***,
-  sabado: ***REMOVED***
-    id: 'sabado',
-    label: 'Sábado',
+  saturday: ***REMOVED***
+    id: 'saturday',
+    label: 'Saturday',
     icon: Calendar,
     color: '#8B5CF6',
     bgColor: '#EDE9FE',
-    description: 'Turno de sábado'
+    description: 'Saturday shift'
   ***REMOVED***,
-  domingo: ***REMOVED***
-    id: 'domingo',
-    label: 'Domingo',
+  sunday: ***REMOVED***
+    id: 'sunday',
+    label: 'Sunday',
     icon: Calendar,
     color: '#EF4444',
     bgColor: '#FEE2E2',
-    description: 'Turno de domingo'
+    description: 'Sunday shift'
   ***REMOVED***,
   delivery: ***REMOVED***
     id: 'delivery',
@@ -49,51 +49,51 @@ export const getShiftTypesConfig = (thematicColors) => (***REMOVED***
     icon: Truck,
     color: '#10B981',
     bgColor: '#D1FAE5',
-    description: 'Turno de delivery'
+    description: 'Delivery shift'
   ***REMOVED***,
-  mixto: ***REMOVED***
-    id: 'mixto',
-    label: 'Mixto',
+  mixed: ***REMOVED***
+    id: 'mixed',
+    label: 'Mixed',
     icon: Clock,
     color: '#6B7280',
     bgColor: '#F3F4F6',
-    description: 'Turno mixto (múltiples tipos de horario)'
+    description: 'Mixed shift (multiple time types)'
   ***REMOVED***
 ***REMOVED***);
 
-// Función para obtener tipos disponibles según los turnos existentes
-export const getAvailableShiftTypes = (turnosPorFecha, shiftRanges, thematicColors) => ***REMOVED***
+// Function to get available types based on existing shifts
+export const getAvailableShiftTypes = (shiftsByDate, shiftRanges, thematicColors) => ***REMOVED***
   const allShiftTypes = getShiftTypesConfig(thematicColors);
-  const availableTypes = new Set(['todos']); // Siempre incluir "todos"
+  const availableTypes = new Set(['all']); // Always include "all"
   
-  if (!turnosPorFecha) return [***REMOVED*** id: 'todos', label: 'Todos los tipos', icon: Clock, color: '#6B7280' ***REMOVED***];
+  if (!shiftsByDate) return [***REMOVED*** id: 'all', label: 'All types', icon: Clock, color: '#6B7280' ***REMOVED***];
   
-  // Importar dinámicamente la función para evitar dependencias circulares
+  // Dynamically import function to avoid circular dependencies
   try ***REMOVED***
     const ***REMOVED*** determineShiftType ***REMOVED*** = require('./shiftDetailsUtils');
     
-    // Analizar todos los turnos para ver qué tipos están presentes
-    Object.values(turnosPorFecha).flat().forEach(turno => ***REMOVED***
-      const tipoTurno = determineShiftType(turno, shiftRanges);
-      availableTypes.add(tipoTurno);
+    // Analyze all shifts to see which types are present
+    Object.values(shiftsByDate).flat().forEach(shift => ***REMOVED***
+      const shiftType = determineShiftType(shift, shiftRanges);
+      availableTypes.add(shiftType);
     ***REMOVED***);
   ***REMOVED*** catch (error) ***REMOVED***
-    // Si no se puede importar, retornar tipos básicos
-    console.warn('No se pudo determinar tipos de turno dinámicamente:', error);
+    // If cannot import, return basic types
+    console.warn('Could not determine shift types dynamically:', error);
     return [
-      ***REMOVED*** id: 'todos', label: 'Todos los tipos', icon: Clock, color: '#6B7280' ***REMOVED***,
+      ***REMOVED*** id: 'all', label: 'All types', icon: Clock, color: '#6B7280' ***REMOVED***,
       ...Object.values(allShiftTypes)
     ];
   ***REMOVED***
   
-  // Retornar solo los tipos que están disponibles
+  // Return only the types that are available
   const result = [
-    ***REMOVED*** id: 'todos', label: 'Todos los tipos', icon: Clock, color: '#6B7280' ***REMOVED***
+    ***REMOVED*** id: 'all', label: 'All types', icon: Clock, color: '#6B7280' ***REMOVED***
   ];
   
-  availableTypes.forEach(tipo => ***REMOVED***
-    if (tipo !== 'todos' && allShiftTypes[tipo]) ***REMOVED***
-      result.push(allShiftTypes[tipo]);
+  availableTypes.forEach(type => ***REMOVED***
+    if (type !== 'all' && allShiftTypes[type]) ***REMOVED***
+      result.push(allShiftTypes[type]);
     ***REMOVED***
   ***REMOVED***);
   

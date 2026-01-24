@@ -1,3 +1,5 @@
+// src/components/icons/Logo.jsx
+
 import React from 'react';
 
 const Logo = () => ***REMOVED***

@@ -18,22 +18,22 @@ export const COMMON_EMOJIS = [
   '💻', '📊', '🎯', '💪', '🌟', '⚡'
 ];
 
-export const TURN_RANGES = ***REMOVED***
-  DIURNO: ***REMOVED*** start: 6, end: 14, label: 'Diurno' ***REMOVED***,
-  TARDE: ***REMOVED*** start: 14, end: 20, label: 'Tarde' ***REMOVED***,
-  NOCHE: ***REMOVED*** start: 20, end: 24, label: 'Nocturno' ***REMOVED***
+export const SHIFT_RANGES = ***REMOVED***
+  DIURNO: ***REMOVED*** start: 6, end: 14, label: 'Morning Shift' ***REMOVED***,
+  TARDE: ***REMOVED*** start: 14, end: 20, label: 'Afternoon Shift' ***REMOVED***,
+  NOCHE: ***REMOVED*** start: 20, end: 24, label: 'Night Shift' ***REMOVED***
 ***REMOVED***;
 
 export const DAYS_OF_WEEK = [
-  'Domingo', 'Lunes', 'Martes', 'Miércoles', 
-  'Jueves', 'Viernes', 'Sábado'
+  'Sunday', 'Monday', 'Tuesday', 'Wednesday', 
+  'Thursday', 'Friday', 'Saturday'
 ];
 
 export const DAYS_ABBREV = [
-  'Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'
+  'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
 ];
 
-export const MONTHS_SPANISH = [
-  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+export const MONTHS_ENGLISH = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ];

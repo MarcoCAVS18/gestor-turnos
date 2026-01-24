@@ -9,26 +9,26 @@ import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 
-const NextShiftCard = (***REMOVED*** proximoTurno, formatearFecha ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** trabajos ***REMOVED*** = useApp();
+const NextShiftCard = (***REMOVED*** nextShift, formatDate ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** works ***REMOVED*** = useApp();
   const colors = useThemeColors();
   const navigate = useNavigate();
 
-  const trabajo = proximoTurno ? trabajos.find(t => t.id === proximoTurno.trabajoId) : null;
+  const work = nextShift ? works.find(t => t.id === nextShift.workId) : null;
 
   return (
     <Card>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
         <Star size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-        Próximo turno
+        Next shift
       </h3>
       
-      ***REMOVED***proximoTurno && trabajo ? (
+      ***REMOVED***nextShift && work ? (
         <Flex variant="between">
           <div>
-            <p className="font-semibold text-gray-800">***REMOVED***trabajo.nombre***REMOVED***</p>
+            <p className="font-semibold text-gray-800">***REMOVED***work.name***REMOVED***</p>
             <p className="text-sm text-gray-600">
-              ***REMOVED***formatearFecha(proximoTurno.fecha)***REMOVED*** • ***REMOVED***proximoTurno.horaInicio***REMOVED***
+              ***REMOVED***formatDate(nextShift.date)***REMOVED*** • ***REMOVED***nextShift.startTime***REMOVED***
             </p>
           </div>
           <Button
@@ -38,13 +38,13 @@ const NextShiftCard = (***REMOVED*** proximoTurno, formatearFecha ***REMOVED***)
             icon=***REMOVED***ChevronRight***REMOVED***
             themeColor=***REMOVED***colors.primary***REMOVED***
           >
-            Ver
+            View
           </Button>
         </Flex>
       ) : (
         <Flex variant="center" className="text-center text-gray-500 py-4">
           <CalendarX size=***REMOVED***24***REMOVED*** className="mr-2" />
-          <p>No tienes turnos futuros disponibles.</p>
+          <p>You have no upcoming shifts.</p>
         </Flex>
       )***REMOVED***
     </Card>

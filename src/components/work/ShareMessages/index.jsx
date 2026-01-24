@@ -1,3 +1,5 @@
+// src/components/work/ShareMessages/index.jsx
+
 import React from 'react';
 
 const ShareMessages = (***REMOVED*** messages ***REMOVED***) => ***REMOVED***
@@ -7,10 +9,10 @@ const ShareMessages = (***REMOVED*** messages ***REMOVED***) => ***REMOVED***
 
   return (
     <div className="space-y-2">
-      ***REMOVED***Object.entries(messages).map(([trabajoId, mensaje]) => 
-        mensaje ? (
-          <div key=***REMOVED***trabajoId***REMOVED*** className="p-3 bg-green-100 text-green-700 rounded-md text-sm">
-            ***REMOVED***mensaje***REMOVED***
+      ***REMOVED***Object.entries(messages).map(([workId, message ]) => 
+        message ? (
+          <div key=***REMOVED***workId***REMOVED*** className="p-3 bg-green-100 text-green-700 rounded-md text-sm">
+            ***REMOVED*** message ***REMOVED***
           </div>
         ) : null
       )***REMOVED***

@@ -2,7 +2,6 @@
 
 import React, ***REMOVED*** useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
-import Button from '../Button';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
 import Flex from '../ui/Flex';
 
@@ -15,11 +14,10 @@ const Modal = (***REMOVED***
   size = 'md',
   className = '',
   showCloseButton = true,
-  mobileFullScreen = false // Nueva prop para control móvil
+  mobileFullScreen = false
 ***REMOVED***) => ***REMOVED***
   const isMobile = useIsMobile();
 
-  // Prevenir scroll del body cuando el modal está abierto
   useEffect(() => ***REMOVED***
     if (isOpen) ***REMOVED***
       document.body.style.overflow = 'hidden';
@@ -36,13 +34,11 @@ const Modal = (***REMOVED***
 
   const getSizeClasses = () => ***REMOVED***
     if (isMobile) ***REMOVED***
-      // En móvil, usar clases específicas
       return mobileFullScreen 
         ? 'w-full h-full max-w-none max-h-none' 
         : 'w-full max-w-none mx-4 max-h-[90vh]';
     ***REMOVED***
     
-    // En desktop, usar tamaños normales
     const sizes = ***REMOVED***
       sm: 'max-w-sm',
       md: 'max-w-md',
@@ -56,8 +52,8 @@ const Modal = (***REMOVED***
   const getContainerClasses = () => ***REMOVED***
     if (isMobile) ***REMOVED***
       return mobileFullScreen
-        ? 'fixed inset-0 z-50' // Pantalla completa
-        : 'fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4'; // Desde abajo
+        ? 'fixed inset-0 z-50'
+        : 'fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4'; 
     ***REMOVED***
     return 'fixed inset-0 z-50 overflow-y-auto flex min-h-screen items-center justify-center p-4';
   ***REMOVED***;
@@ -67,8 +63,8 @@ const Modal = (***REMOVED***
     
     if (isMobile) ***REMOVED***
       return mobileFullScreen
-        ? `$***REMOVED***baseClasses***REMOVED*** w-full h-full` // Sin bordes redondeados en pantalla completa
-        : `$***REMOVED***baseClasses***REMOVED*** w-full rounded-t-xl md:rounded-xl`; // Bordes redondeados solo arriba
+        ? `$***REMOVED***baseClasses***REMOVED*** w-full h-full` 
+        : `$***REMOVED***baseClasses***REMOVED*** w-full rounded-t-xl md:rounded-xl`; 
     ***REMOVED***
     
     return `$***REMOVED***baseClasses***REMOVED*** rounded-xl w-full`;
@@ -130,7 +126,6 @@ const Modal = (***REMOVED***
           </div>
         )***REMOVED***
         
-        ***REMOVED***/* Indicador de arrastrar en móvil (solo si no es pantalla completa) */***REMOVED***
         ***REMOVED***isMobile && !mobileFullScreen && (
           <div className="absolute top-2 left-1/2 transform -translate-x-1/2">
             <div className="w-10 h-1 bg-gray-300 rounded-full"></div>

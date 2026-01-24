@@ -1,27 +1,53 @@
+// src/pages/legal/PrivacyPolicy.jsx
+
 import React from 'react';
 
 const PrivacyPolicy = () => ***REMOVED***
   return (
-    <div className="p-4 md:p-8">
-      <h1 className="text-3xl font-bold mb-4">Política de Privacidad</h1>
-      <div className="prose lg:prose-xl">
+    <div className="max-w-3xl mx-auto p-6 md:p-12 bg-white min-h-screen">
+      <div className="mb-8 border-b pb-4">
+        <h1 className="text-4xl font-bold text-gray-900 mb-2">Privacy Policy</h1>
+        <p className="text-sm text-gray-500">Last updated: December 15, 2025</p>
+      </div>
+
+      <div className="prose prose-lg text-gray-700">
         <p>
-          <strong>Fecha de última actualización:</strong> 15 de Diciembre de 2025
+          At <strong>GestAPP</strong>, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your information when you use our shift management application.
         </p>
+
+        <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">1. Information We Collect</h2>
+        <p>We collect information to provide better services to all our users. This includes:</p>
+        <ul className="list-disc pl-5 space-y-2 mt-2">
+          <li><strong>Account Information:</strong> Name, email address, and profile photo (when you sign up or use Google Sign-In).</li>
+          <li><strong>Work Data:</strong> Shift times, earnings, work locations, and tax/deduction settings you input to manage your income.</li>
+          <li><strong>Device Data:</strong> IP address, device type, and operating system version for maintenance and security purposes.</li>
+        </ul>
+
+        <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">2. How We Use Your Information</h2>
+        <p>We use the data we collect to:</p>
+        <ul className="list-disc pl-5 space-y-2 mt-2">
+          <li>Provide, maintain, and improve the core features of GestAPP (shift tracking, calculations, and statistics).</li>
+          <li>Sync your data securely across your devices using our cloud infrastructure.</li>
+          <li>Communicate with you regarding support requests, security updates, or service changes.</li>
+          <li>Analyze usage patterns to optimize the performance of the application.</li>
+        </ul>
+
+        <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">3. Data Sharing & Security</h2>
         <p>
-          Esta Política de Privacidad describe cómo se recopila, utiliza y comparte su información cuando utiliza nuestra aplicación.
+          We do not sell your personal data to third parties. Your data is stored securely on Firebase (Google Cloud Platform) servers.
         </p>
-        <h2 className="text-2xl font-bold mt-6 mb-2">1. Información que recopilamos</h2>
+        <ul className="list-disc pl-5 space-y-2 mt-2">
+          <li><strong>Third-Party Services:</strong> We use Google Authentication for login and Firebase for real-time database storage. These services process data only as necessary to provide the functionality of GestAPP.</li>
+          <li><strong>Legal Requirements:</strong> We may disclose information if required by law or to protect our rights.</li>
+        </ul>
+
+        <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">4. Your Rights (GDPR & CCPA)</h2>
+        <p>You have the right to access, correct, or delete your personal data at any time. You can download your data or request account deletion directly from the app settings or by contacting support.</p>
+
+        <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">5. Contact Us</h2>
         <p>
-          Recopilamos la información que nos proporciona directamente cuando se registra, que puede incluir su nombre, dirección de correo electrónico y foto de perfil si elige iniciar sesión con un proveedor de redes sociales como Google o Facebook.
-        </p>
-        <h2 className="text-2xl font-bold mt-6 mb-2">2. Cómo utilizamos su información</h2>
-        <p>
-          Utilizamos la información que recopilamos para operar, mantener y proporcionarle las características y la funcionalidad de la aplicación, así como para comunicarnos directamente сon usted.
-        </p>
-        <h2 className="text-2xl font-bold mt-6 mb-2">3. Intercambio de su información</h2>
-        <p>
-          No compartiremos su información con terceros, excepto como se describe en esta Política de Privacidad.
+          If you have any questions about this Privacy Policy, please contact us at***REMOVED***' '***REMOVED***
+          <a href="mailto:privacy@gestapp.com" className="text-pink-600 hover:underline">privacy@gestapp.com</a>.
         </p>
       </div>
     </div>

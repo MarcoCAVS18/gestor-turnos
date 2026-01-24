@@ -1,43 +1,44 @@
-// src/components/work/WorkEmptyState/index.jsx - REFACTORIZADO
+// src/components/work/WorkEmptyState/index.jsx
 
 import React from 'react';
 import ***REMOVED*** Briefcase, Plus ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 
-const WorkEmptyState = (***REMOVED*** onNuevoTrabajo ***REMOVED***) => ***REMOVED***
+const WorkEmptyState = (***REMOVED*** onNewWork ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
-  
+
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-      <Flex variant="center"
-        className="p-4 rounded-full w-20 h-20 mx-auto mb-4"
-        style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
-      >
-        <Briefcase 
-          className="w-10 h-10" 
-          style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
-        />
-      </Flex>
-      <h3 className="text-lg font-semibold text-gray-900 mb-2">No hay trabajos aún</h3>
-      <p className="text-gray-500 mb-6 max-w-md mx-auto">
-        Crea tu primer trabajo para empezar a registrar turnos y gestionar tus ingresos.
-      </p>
-      <button
-        onClick=***REMOVED***onNuevoTrabajo***REMOVED***
-        className="text-white px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2 hover:shadow-md"
-        style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
-        onMouseEnter=***REMOVED***(e) => ***REMOVED***
-          e.target.style.backgroundColor = colors.primaryDark;
-        ***REMOVED******REMOVED***
-        onMouseLeave=***REMOVED***(e) => ***REMOVED***
-          e.target.style.backgroundColor = colors.primary;
-        ***REMOVED******REMOVED***
-      >
-        <Plus className="w-4 h-4" />
-        <span>Crear Nuevo Trabajo</span>
-      </button>
-    </div>
+    <Card>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+        <Flex variant="center" className="mb-4">
+          <div className="p-4 rounded-full mb-3">
+            <Briefcase size=***REMOVED***32***REMOVED*** className="mx-auto text-gray-300" />
+          </div>
+          <div>
+            <p className="text-gray-600 font-medium mb-2">No works yet</p>
+            <p className="text-sm text-gray-500 mb-4">Create your first work to start managing your income</p>
+            <button
+              onClick=***REMOVED***onNewWork***REMOVED***
+              className="px-6 py-2 rounded-lg bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+              style=***REMOVED******REMOVED*** color: colors.primary, borderColor: colors.primary ***REMOVED******REMOVED*** 
+              onMouseEnter=***REMOVED***(e) => ***REMOVED***
+                e.currentTarget.style.backgroundColor = colors.primary;
+                e.currentTarget.style.color = 'white';
+              ***REMOVED******REMOVED***
+              onMouseLeave=***REMOVED***(e) => ***REMOVED***
+                e.currentTarget.style.backgroundColor = 'white';
+                e.currentTarget.style.color = colors.primary;
+              ***REMOVED******REMOVED***
+            >
+              <Plus size=***REMOVED***16***REMOVED*** className="mr-2" />
+              Add Work
+            </button>
+          </div>
+        </Flex>
+      </div>
+    </Card>
   );
 ***REMOVED***;
 

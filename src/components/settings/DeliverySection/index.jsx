@@ -16,59 +16,59 @@ const DeliverySection = (***REMOVED*** onError, onSuccess, className ***REMOVED*
   const handleToggle = async (newValue) => ***REMOVED***
     try ***REMOVED***
       await savePreferences(***REMOVED*** deliveryEnabled: newValue ***REMOVED***);
-      onSuccess?.(`Modo delivery $***REMOVED***newValue ? 'activado' : 'desactivado'***REMOVED***`);
+      onSuccess?.(`Delivery mode $***REMOVED***newValue ? 'enabled' : 'disabled'***REMOVED***`);
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al cambiar configuración de delivery:', error);
-      onError?.('Error al cambiar configuración de delivery');
+      console.error('Error changing delivery setting:', error);
+      onError?.('Error changing delivery setting');
     ***REMOVED***
   ***REMOVED***;
 
-  // Contenido condicional del Popover
+  // Conditional content for Popover
   const popoverContent = deliveryEnabled ? (
-    // CONTENIDO SI SE VA A DESACTIVAR
+    // CONTENT IF DEACTIVATING
     <div className="p-2 max-w-xs text-sm">
       <p className="mb-2 text-gray-700">
-        Al desactivar esta opción, la interfaz se simplificará para trabajos por hora:
+        By disabling this option, the interface will simplify for hourly jobs:
       </p>
       <ul className="space-y-2 text-gray-600 list-disc pl-4">
         <li>
-          Se mostrarán únicamente estadísticas de <strong>trabajos tradicionales</strong> en el dashboard.
+          Only statistics for <strong>traditional jobs</strong> will be shown on the dashboard.
         </li>
         <li className="text-amber-700 bg-amber-50 p-1 rounded -ml-1 pl-4 border-l-2 border-amber-500">
-          <strong>Nota:</strong> Tus turnos de delivery anteriores <strong>seguirán visibles</strong> en el historial, pero <strong>no podrás agregar nuevos</strong> turnos de este tipo hasta volver a activar.
+          <strong>Note:</strong> Your previous delivery shifts <strong>will remain visible</strong> in history, but you <strong>won't be able to add new</strong> ones until re-enabled.
         </li>
       </ul>
     </div>
   ) : (
-    // CONTENIDO SI SE VA A ACTIVAR
+    // CONTENT IF ENABLING
     <div className="p-2 max-w-xs text-sm">
       <p className="mb-2 text-gray-700">
-        El <strong>modo delivery</strong> adapta la aplicación para trabajos de reparto (Gig Economy):
+        <strong>Delivery mode</strong> adapts the application for delivery jobs (Gig Economy):
       </p>
       <ul className="space-y-1.5 text-gray-600 list-disc pl-4">
-        <li>Los trabajos <strong>no requieren</strong> tarifa por hora fija.</li>
-        <li>Registras <strong>ganancias totales</strong> por cada turno.</li>
-        <li>Campos para <strong>propinas</strong> y cantidad de pedidos.</li>
-        <li>Seguimiento detallado de <strong>km y combustible</strong>.</li>
+        <li>Jobs <strong>do not require</strong> a fixed hourly rate.</li>
+        <li>You record <strong>total earnings</strong> for each shift.</li>
+        <li>Fields for <strong>tips</strong> and order count.</li>
+        <li>Detailed tracking of <strong>km and fuel</strong>.</li>
       </ul>
     </div>
   );
 
   return (
-    <SettingsSection icon=***REMOVED***Truck***REMOVED*** title="Trabajos de Delivery" className=***REMOVED***className***REMOVED***>
+    <SettingsSection icon=***REMOVED***Truck***REMOVED*** title="Delivery Jobs" className=***REMOVED***className***REMOVED***>
       <div className="space-y-4">
         <Flex variant="between" className="items-start">
           <div className="flex-1 pr-4">
             <p className="font-medium text-gray-900">
-              ***REMOVED***deliveryEnabled ? 'Deshabilitar modo delivery' : 'Habilitar modo delivery'***REMOVED***
+              ***REMOVED***deliveryEnabled ? 'Disable delivery mode' : 'Enable delivery mode'***REMOVED***
             </p>
             <p className="text-sm text-gray-500 mb-2">
-              Permite registrar trabajos de reparto con ganancias variables.
+              Allows registering delivery jobs with variable earnings.
             </p>
 
             <Popover 
               content=***REMOVED***popoverContent***REMOVED*** 
-              title=***REMOVED***deliveryEnabled ? "Consecuencias de desactivar" : "¿Cómo funciona?"***REMOVED***
+              title=***REMOVED***deliveryEnabled ? "Consequences of disabling" : "How it works?"***REMOVED***
               position="bottom-start"
             >
               <button 
@@ -78,8 +78,8 @@ const DeliverySection = (***REMOVED*** onError, onSuccess, className ***REMOVED*
                 ***REMOVED***deliveryEnabled ? <AlertTriangle size=***REMOVED***14***REMOVED*** /> : <Info size=***REMOVED***14***REMOVED*** />***REMOVED***
                 <span>
                   ***REMOVED***deliveryEnabled 
-                    ? '¿Qué pasa si lo desactivo?' 
-                    : '¿Qué cambia al activarlo?'***REMOVED***
+                    ? 'What happens if I disable it?' 
+                    : 'What changes when I enable it?'***REMOVED***
                 </span>
               </button>
             </Popover>

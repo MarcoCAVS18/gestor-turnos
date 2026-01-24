@@ -1,0 +1,63 @@
+// src/components/filters/WorkFilter/index.jsx
+
+import React from 'react';
+import ***REMOVED*** Briefcase, Truck ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+
+const WorkFilter = (***REMOVED*** value, onChange ***REMOVED***) => ***REMOVED***
+  const ***REMOVED*** works, deliveryWorks ***REMOVED*** = useApp();
+  const colors = useThemeColors();
+  
+  // Combine all works
+  const allWorks = [
+    ...works.map(t => (***REMOVED*** ...t, type: t.type || 'traditional' ***REMOVED***)),
+    ...deliveryWorks.map(t => (***REMOVED*** ...t, type: 'delivery' ***REMOVED***))
+  ];
+
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-2">
+        Filter by work
+      </label>
+      <div className="relative">
+        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+          ***REMOVED***value !== 'all' ? (
+            (() => ***REMOVED***
+              const selectedWork = allWorks.find(t => t.id === value);
+              return selectedWork?.type === 'delivery' ? (
+                <Truck size=***REMOVED***16***REMOVED*** className="text-green-600" />
+              ) : (
+                <Briefcase size=***REMOVED***16***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
+              );
+            ***REMOVED***)()
+          ) : (
+            <Briefcase size=***REMOVED***16***REMOVED*** className="text-gray-400" />
+          )***REMOVED***
+        </div>
+
+        <select
+          value=***REMOVED***value***REMOVED***
+          onChange=***REMOVED***(e) => onChange(e.target.value)***REMOVED***
+          className=***REMOVED***`
+            w-full py-2 pr-8 border border-gray-300 rounded-lg 
+            bg-white text-sm focus:outline-none focus:ring-2 focus:border-transparent 
+            transition-colors
+            pl-10 /* THIS REPLACES THE JSX STYLE */
+          `***REMOVED***
+          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+        >
+          <option value="all">All works</option>
+          ***REMOVED***allWorks.map(work => (
+            <option key=***REMOVED***work.id***REMOVED*** value=***REMOVED***work.id***REMOVED***>
+              ***REMOVED***work.name***REMOVED***
+              ***REMOVED***work.type === 'delivery' ? ' (Delivery)' : ''***REMOVED***
+            </option>
+          ))***REMOVED***
+        </select>
+      </div>
+    </div>
+  );
+***REMOVED***;
+
+export default WorkFilter;
