@@ -1,11 +1,11 @@
 // src/components/ui/Modal/index.jsx
 
-import React, ***REMOVED*** useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
+import React, { useEffect } from 'react';
+import { X } from 'lucide-react';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import Flex from '../ui/Flex';
 
-const Modal = (***REMOVED***
+const Modal = ({
   isOpen,
   onClose,
   title,
@@ -15,125 +15,125 @@ const Modal = (***REMOVED***
   className = '',
   showCloseButton = true,
   mobileFullScreen = false
-***REMOVED***) => ***REMOVED***
+}) => {
   const isMobile = useIsMobile();
 
-  useEffect(() => ***REMOVED***
-    if (isOpen) ***REMOVED***
+  useEffect(() => {
+    if (isOpen) {
       document.body.style.overflow = 'hidden';
-    ***REMOVED*** else ***REMOVED***
+    } else {
       document.body.style.overflow = 'unset';
-    ***REMOVED***
+    }
     
-    return () => ***REMOVED***
+    return () => {
       document.body.style.overflow = 'unset';
-    ***REMOVED***;
-  ***REMOVED***, [isOpen]);
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const getSizeClasses = () => ***REMOVED***
-    if (isMobile) ***REMOVED***
+  const getSizeClasses = () => {
+    if (isMobile) {
       return mobileFullScreen 
         ? 'w-full h-full max-w-none max-h-none' 
         : 'w-full max-w-none mx-4 max-h-[90vh]';
-    ***REMOVED***
+    }
     
-    const sizes = ***REMOVED***
+    const sizes = {
       sm: 'max-w-sm',
       md: 'max-w-md',
       lg: 'max-w-lg',
       xl: 'max-w-xl',
       '2xl': 'max-w-2xl'
-    ***REMOVED***;
+    };
     return sizes[size] || sizes.md;
-  ***REMOVED***;
+  };
 
-  const getContainerClasses = () => ***REMOVED***
-    if (isMobile) ***REMOVED***
+  const getContainerClasses = () => {
+    if (isMobile) {
       return mobileFullScreen
         ? 'fixed inset-0 z-50'
         : 'fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4'; 
-    ***REMOVED***
+    }
     return 'fixed inset-0 z-50 overflow-y-auto flex min-h-screen items-center justify-center p-4';
-  ***REMOVED***;
+  };
 
-  const getModalClasses = () => ***REMOVED***
+  const getModalClasses = () => {
     const baseClasses = 'relative bg-white shadow-xl';
     
-    if (isMobile) ***REMOVED***
+    if (isMobile) {
       return mobileFullScreen
-        ? `$***REMOVED***baseClasses***REMOVED*** w-full h-full` 
-        : `$***REMOVED***baseClasses***REMOVED*** w-full rounded-t-xl md:rounded-xl`; 
-    ***REMOVED***
+        ? `${baseClasses} w-full h-full` 
+        : `${baseClasses} w-full rounded-t-xl md:rounded-xl`; 
+    }
     
-    return `$***REMOVED***baseClasses***REMOVED*** rounded-xl w-full`;
-  ***REMOVED***;
+    return `${baseClasses} rounded-xl w-full`;
+  };
 
   return (
-    <div className=***REMOVED***getContainerClasses()***REMOVED***>
-      ***REMOVED***/* Overlay */***REMOVED***
+    <div className={getContainerClasses()}>
+      {/* Overlay */}
       <div 
         className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-        onClick=***REMOVED***onClose***REMOVED***
+        onClick={onClose}
       />
       
-      ***REMOVED***/* Modal */***REMOVED***
-      <div className=***REMOVED***`$***REMOVED***getModalClasses()***REMOVED*** $***REMOVED***getSizeClasses()***REMOVED*** $***REMOVED***className***REMOVED***`***REMOVED***>
-        ***REMOVED***/* Header */***REMOVED***
-        ***REMOVED***(title || showCloseButton) && (
-          <Flex variant="between" className=***REMOVED***`
+      {/* Modal */}
+      <div className={`${getModalClasses()} ${getSizeClasses()} ${className}`}>
+        {/* Header */}
+        {(title || showCloseButton) && (
+          <Flex variant="between" className={`
             p-4 border-b border-gray-200
-            $***REMOVED***isMobile ? 'sticky top-0 bg-white z-10' : ''***REMOVED***
-            $***REMOVED***isMobile && mobileFullScreen ? 'pt-6' : ''***REMOVED***
-          `***REMOVED***>
+            ${isMobile ? 'sticky top-0 bg-white z-10' : ''}
+            ${isMobile && mobileFullScreen ? 'pt-6' : ''}
+          `}>
             <div className="flex items-center flex-1">
-              ***REMOVED***title && (
+              {title && (
                 <h2 className="text-lg md:text-xl font-semibold text-gray-900 truncate">
-                  ***REMOVED***title***REMOVED***
+                  {title}
                 </h2>
-              )***REMOVED***
+              )}
             </div>
             
-            ***REMOVED***showCloseButton && (
+            {showCloseButton && (
               <button
-                onClick=***REMOVED***onClose***REMOVED***
+                onClick={onClose}
                 className="ml-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
               >
-                <X size=***REMOVED***isMobile ? 24 : 20***REMOVED*** />
+                <X size={isMobile ? 24 : 20} />
               </button>
-            )***REMOVED***
+            )}
           </Flex>
-        )***REMOVED***
+        )}
         
-        ***REMOVED***/* Content */***REMOVED***
-        <div className=***REMOVED***`
-          $***REMOVED***(title || showCloseButton) ? 'p-4 md:p-6' : 'p-4 md:p-6'***REMOVED***
-          $***REMOVED***isMobile && mobileFullScreen ? 'flex-1 overflow-y-auto' : ''***REMOVED***
-          $***REMOVED***isMobile && !mobileFullScreen ? 'max-h-[70vh] overflow-y-auto' : ''***REMOVED***
-        `***REMOVED***>
-          ***REMOVED***children***REMOVED***
+        {/* Content */}
+        <div className={`
+          ${(title || showCloseButton) ? 'p-4 md:p-6' : 'p-4 md:p-6'}
+          ${isMobile && mobileFullScreen ? 'flex-1 overflow-y-auto' : ''}
+          ${isMobile && !mobileFullScreen ? 'max-h-[70vh] overflow-y-auto' : ''}
+        `}>
+          {children}
         </div>
         
-        ***REMOVED***/* Footer */***REMOVED***
-        ***REMOVED***footer && (
-          <div className=***REMOVED***`
+        {/* Footer */}
+        {footer && (
+          <div className={`
             flex justify-end gap-3 p-4 md:p-6 border-t border-gray-200
-            $***REMOVED***isMobile ? 'sticky bottom-0 bg-white' : ''***REMOVED***
-            $***REMOVED***isMobile && mobileFullScreen ? 'pb-6' : ''***REMOVED***
-          `***REMOVED***>
-            ***REMOVED***footer***REMOVED***
+            ${isMobile ? 'sticky bottom-0 bg-white' : ''}
+            ${isMobile && mobileFullScreen ? 'pb-6' : ''}
+          `}>
+            {footer}
           </div>
-        )***REMOVED***
+        )}
         
-        ***REMOVED***isMobile && !mobileFullScreen && (
+        {isMobile && !mobileFullScreen && (
           <div className="absolute top-2 left-1/2 transform -translate-x-1/2">
             <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
           </div>
-        )***REMOVED***
+        )}
       </div>
     </div>
   );
-***REMOVED***;
+};
 
 export default Modal;

@@ -1,43 +1,43 @@
 // src/hooks/useDeleteManager.js
 
-import ***REMOVED*** useState ***REMOVED*** from 'react';
+import { useState } from 'react';
 
-export const useDeleteManager = (deleteFunction) => ***REMOVED***
+export const useDeleteManager = (deleteFunction) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  const startDeletion = (item) => ***REMOVED***
+  const startDeletion = (item) => {
     setItemToDelete(item);
     setShowDeleteModal(true);
-  ***REMOVED***;
+  };
 
-  const cancelDeletion = () => ***REMOVED***
+  const cancelDeletion = () => {
     setShowDeleteModal(false);
     setItemToDelete(null);
-  ***REMOVED***;
+  };
 
-  const confirmDeletion = async () => ***REMOVED***
+  const confirmDeletion = async () => {
     if (!itemToDelete) return;
     
     setDeleting(true);
-    try ***REMOVED***
+    try {
       await deleteFunction(itemToDelete.id);
       setShowDeleteModal(false);
       setItemToDelete(null);
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       console.error('Error en deleteManager:', error);
-    ***REMOVED*** finally ***REMOVED***
+    } finally {
       setDeleting(false);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  return ***REMOVED***
+  return {
     showDeleteModal,
     itemToDelete,
     deleting,
     startDeletion,
     cancelDeletion,
     confirmDeletion
-  ***REMOVED***;
-***REMOVED***;
+  };
+};

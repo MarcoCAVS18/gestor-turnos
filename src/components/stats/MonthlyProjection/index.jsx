@@ -1,12 +1,12 @@
 // src/components/stats/MonthlyProjection/index.jsx
 
 import React from 'react';
-import ***REMOVED*** TrendingUp ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
-import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
+import { TrendingUp } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
 
-const MonthlyProjection = (***REMOVED*** totalEarned = 0, hoursWorked = 0 ***REMOVED***) => ***REMOVED***
+const MonthlyProjection = ({ totalEarned = 0, hoursWorked = 0 }) => {
   const colors = useThemeColors();
 
   // Validate data
@@ -20,9 +20,9 @@ const MonthlyProjection = (***REMOVED*** totalEarned = 0, hoursWorked = 0 ***REM
 
   return (
     <BaseStatsCard
-      icon=***REMOVED***TrendingUp***REMOVED***
+      icon={TrendingUp}
       title="Monthly Projection"
-      empty=***REMOVED***isEmpty***REMOVED***
+      empty={isEmpty}
       emptyMessage="No recent activity data"
       emptyDescription="Register shifts to see your monthly projection"
     >
@@ -32,16 +32,16 @@ const MonthlyProjection = (***REMOVED*** totalEarned = 0, hoursWorked = 0 ***REM
         </p>
         <p
           className="text-3xl font-bold"
-          style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
+          style={{ color: colors.primary }}
         >
-          ***REMOVED***formatCurrency(projectedEarnings)***REMOVED***
+          {formatCurrency(projectedEarnings)}
         </p>
         <p className="text-sm text-gray-500">
-          ~***REMOVED***projectedHours.toFixed(0)***REMOVED*** hours
+          ~{projectedHours.toFixed(0)} hours
         </p>
       </div>
     </BaseStatsCard>
   );
-***REMOVED***;
+};
 
 export default MonthlyProjection;

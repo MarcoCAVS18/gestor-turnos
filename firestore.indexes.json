@@ -1,19 +1,19 @@
-***REMOVED***
+{
   "indexes": [
-    ***REMOVED***
+    {
       "collectionGroup": "shared-works",
       "queryScope": "COLLECTION",
       "fields": [
-        ***REMOVED***
+        {
           "fieldPath": "createdAt",
           "order": "DESCENDING"
-        ***REMOVED***,
-        ***REMOVED***
+        },
+        {
           "fieldPath": "createdBy",
           "order": "ASCENDING"
-        ***REMOVED***
+        }
       ]
-    ***REMOVED***
+    }
   ],
   "fieldOverrides": []
-***REMOVED***
+}

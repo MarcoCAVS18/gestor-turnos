@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const Input = (***REMOVED***
+const Input = ({
   label,
   error,
   helperText,
@@ -11,45 +11,45 @@ const Input = (***REMOVED***
   required = false,
   focusColor = '#EC4899',
   ...props
-***REMOVED***) => ***REMOVED***
+}) => {
   return (
-    <div className=***REMOVED***className***REMOVED***>
-      ***REMOVED***label && (
+    <div className={className}>
+      {label && (
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          ***REMOVED***Icon && <Icon size=***REMOVED***16***REMOVED*** className="inline mr-2" />***REMOVED***
-          ***REMOVED***label***REMOVED***
-          ***REMOVED***required && <span className="text-red-500 ml-1">*</span>***REMOVED***
+          {Icon && <Icon size={16} className="inline mr-2" />}
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
         </label>
-      )***REMOVED***
+      )}
       
       <div className="relative">
         <input
-          className=***REMOVED***`
+          className={`
             block w-full px-3 py-2 border rounded-lg shadow-sm 
             placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-0 
             transition-colors bg-white
-            $***REMOVED***error 
+            ${error 
               ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
               : 'border-gray-300 focus:border-transparent'
-            ***REMOVED***
-          `***REMOVED***
-          style=***REMOVED******REMOVED***
+            }
+          `}
+          style={{
             '--tw-ring-color': error ? '#EF4444' : focusColor,
             backgroundColor: '#FFFFFF'
-          ***REMOVED******REMOVED***
-          ***REMOVED***...props***REMOVED***
+          }}
+          {...props}
         />
       </div>
       
-      ***REMOVED***error && (
-        <p className="mt-1 text-sm text-red-600">***REMOVED***error***REMOVED***</p>
-      )***REMOVED***
+      {error && (
+        <p className="mt-1 text-sm text-red-600">{error}</p>
+      )}
       
-      ***REMOVED***!error && helperText && (
-        <p className="mt-1 text-sm text-gray-500">***REMOVED***helperText***REMOVED***</p>
-      )***REMOVED***
+      {!error && helperText && (
+        <p className="mt-1 text-sm text-gray-500">{helperText}</p>
+      )}
     </div>
   );
-***REMOVED***;
+};
 
 export default Input;

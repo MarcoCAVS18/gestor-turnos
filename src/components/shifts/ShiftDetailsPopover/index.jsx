@@ -2,9 +2,9 @@
 
 import React from 'react';
 import Popover from '../../ui/Popover';
-import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
+import { formatCurrency } from '../../../utils/currency';
 
-const ShiftDetailsPopover = (***REMOVED*** 
+const ShiftDetailsPopover = ({ 
   shift, 
   shiftData, 
   children, 
@@ -12,22 +12,22 @@ const ShiftDetailsPopover = (***REMOVED***
   // New props with default values for the new design
   position = 'top', 
   fullWidth = true
-***REMOVED***) => ***REMOVED***
-  const formatCreationDate = (timestamp) => ***REMOVED***
+}) => {
+  const formatCreationDate = (timestamp) => {
     if (!timestamp || typeof timestamp.seconds !== 'number') return '';
-    try ***REMOVED***
+    try {
       const date = new Date(timestamp.seconds * 1000);
       const day = String(date.getDate()).padStart(2, '0');
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const year = date.getFullYear();
       const hours = String(date.getHours()).padStart(2, '0');
       const minutes = String(date.getMinutes()).padStart(2, '0');
-      return `$***REMOVED***day***REMOVED***/$***REMOVED***month***REMOVED***/$***REMOVED***year***REMOVED*** $***REMOVED***hours***REMOVED***:$***REMOVED***minutes***REMOVED***`;
-    ***REMOVED*** catch (e) ***REMOVED***
+      return `${day}/${month}/${year} ${hours}:${minutes}`;
+    } catch (e) {
       console.error("Error formatting creation date:", e);
       return '';
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   const hasNotes = shift.notes?.trim();
   const isDelivery = shift.type === 'delivery';
@@ -37,21 +37,21 @@ const ShiftDetailsPopover = (***REMOVED***
                      (isDelivery && shiftData && (shiftData.totalEarnings > 0 || shiftData.baseEarnings > 0 || shiftData.tips > 0 || shiftData.expenses > 0)) ||
                      (!isDelivery && shiftData && (shiftData.smokoApplied || shiftData.totalWithDiscount));
 
-  if (!hasContent) ***REMOVED***
-    return <>***REMOVED***children***REMOVED***</>;
-  ***REMOVED***
+  if (!hasContent) {
+    return <>{children}</>;
+  }
 
   const content = (
     <div>
-      ***REMOVED***hasNotes && (
+      {hasNotes && (
         <div className="mb-3 pb-2 border-b border-gray-100">
           <p className="font-semibold text-gray-700">Notes:</p>
-          <p className="text-sm text-gray-600 break-words">***REMOVED***shift.notes***REMOVED***</p>
+          <p className="text-sm text-gray-600 break-words">{shift.notes}</p>
         </div>
-      )***REMOVED***
+      )}
 
-      ***REMOVED***isDelivery && shiftData ? (
-        (() => ***REMOVED***
+      {isDelivery && shiftData ? (
+        (() => {
           const grossEarnings = shiftData.baseEarnings ?? 0;
           const tips = shiftData.tips || 0;
           const expenses = shiftData.expenses || 0;
@@ -61,78 +61,78 @@ const ShiftDetailsPopover = (***REMOVED***
             <div>
               <p className="font-semibold text-gray-700 mb-1">Financial Details:</p>
               <div className='text-sm text-gray-600 space-y-1'>
-                <div className="flex justify-between"><span>Gross Earnings:</span> <span>***REMOVED***formatCurrency(grossEarnings)***REMOVED***</span></div>
-                ***REMOVED***tips > 0 && <div className="flex justify-between"><span>Tips:</span> <span>***REMOVED***formatCurrency(tips)***REMOVED***</span></div>***REMOVED***
-                ***REMOVED***expenses > 0 && <div className="flex justify-between"><span>Expenses:</span> <span className='text-red-500'>-***REMOVED***formatCurrency(expenses)***REMOVED***</span></div>***REMOVED***
-                <div className="flex justify-between font-bold pt-1 border-t mt-1 border-gray-200"><span>Net Earnings:</span> <span className='text-green-600'>***REMOVED***formatCurrency(netEarnings)***REMOVED***</span></div>
+                <div className="flex justify-between"><span>Gross Earnings:</span> <span>{formatCurrency(grossEarnings)}</span></div>
+                {tips > 0 && <div className="flex justify-between"><span>Tips:</span> <span>{formatCurrency(tips)}</span></div>}
+                {expenses > 0 && <div className="flex justify-between"><span>Expenses:</span> <span className='text-red-500'>-{formatCurrency(expenses)}</span></div>}
+                <div className="flex justify-between font-bold pt-1 border-t mt-1 border-gray-200"><span>Net Earnings:</span> <span className='text-green-600'>{formatCurrency(netEarnings)}</span></div>
               </div>
             </div>
           );
-        ***REMOVED***)()
+        })()
       ) : shiftData ? (
         <div className="space-y-2 text-sm">
-          ***REMOVED***shiftData.hoursBreakdown &&
+          {shiftData.hoursBreakdown &&
             Object.entries(shiftData.hoursBreakdown)
               .filter(([, hours]) => hours > 0)
               .map(([type, hours]) => (
-                <div key=***REMOVED***type***REMOVED*** className="flex justify-between text-gray-600">
+                <div key={type} className="flex justify-between text-gray-600">
                   <span>
-                    ***REMOVED***hours.toFixed(2)***REMOVED***hs in ***REMOVED***type.charAt(0).toUpperCase() + type.slice(1)***REMOVED***
+                    {hours.toFixed(2)}hs in {type.charAt(0).toUpperCase() + type.slice(1)}
                   </span>
                   <span>
-                    ***REMOVED***formatCurrency(shiftData.breakdown[type] || 0)***REMOVED***
+                    {formatCurrency(shiftData.breakdown[type] || 0)}
                   </span>
                 </div>
-              ))***REMOVED***
+              ))}
 
           <div className="pt-1 border-t border-gray-100" />
 
           <div className="flex justify-between font-semibold">
             <span>Gross Earnings</span>
-            <span>***REMOVED***formatCurrency(shiftData.total || 0)***REMOVED***</span>
+            <span>{formatCurrency(shiftData.total || 0)}</span>
           </div>
 
-          ***REMOVED***shiftData.defaultDiscount > 0 && (
+          {shiftData.defaultDiscount > 0 && (
             <div className="flex justify-between text-red-500">
-              <span>Discount (***REMOVED***shiftData.defaultDiscount***REMOVED***%)</span>
+              <span>Discount ({shiftData.defaultDiscount}%)</span>
               <span>
-                -***REMOVED***formatCurrency((shiftData.total || 0) * (shiftData.defaultDiscount / 100))***REMOVED***
+                -{formatCurrency((shiftData.total || 0) * (shiftData.defaultDiscount / 100))}
               </span>
             </div>
-          )***REMOVED***
+          )}
 
-          ***REMOVED***shiftData.smokoApplied && (
+          {shiftData.smokoApplied && (
             <div className="flex justify-between text-red-500">
               <span>Smoko Discount</span>
-              <span>-***REMOVED***shiftData.smokoMinutes***REMOVED*** min</span>
+              <span>-{shiftData.smokoMinutes} min</span>
             </div>
-          )***REMOVED***          
+          )}          
           <div className="flex justify-between items-center font-bold text-base pt-1 border-t border-gray-200">
             <span className="text-gray-700">Net Earnings</span>
             <span className="text-green-600">
-              ***REMOVED***formatCurrency(shiftData.totalWithDiscount || 0)***REMOVED***
+              {formatCurrency(shiftData.totalWithDiscount || 0)}
             </span>
           </div>
         </div>
-      ) : null***REMOVED***
+      ) : null}
     </div>
   );
 
-  const footerContent = shift.createdAt ? `Created: $***REMOVED***formatCreationDate(shift.createdAt)***REMOVED***` : '';
+  const footerContent = shift.createdAt ? `Created: ${formatCreationDate(shift.createdAt)}` : '';
 
   return (
     <Popover 
-        content=***REMOVED***content***REMOVED*** 
+        content={content} 
         title="More information" 
-        footer=***REMOVED***footerContent***REMOVED***
-        position=***REMOVED***position***REMOVED***    // Use the prop (default 'top')
+        footer={footerContent}
+        position={position}    // Use the prop (default 'top')
         trigger="click"
-        anchorRef=***REMOVED***anchorRef***REMOVED***  // Important: uses the reference from the full card
-        fullWidth=***REMOVED***fullWidth***REMOVED***  // Use the prop (default true)
+        anchorRef={anchorRef}  // Important: uses the reference from the full card
+        fullWidth={fullWidth}  // Use the prop (default true)
     >
-      ***REMOVED***children***REMOVED***
+      {children}
     </Popover>
   );
-***REMOVED***;
+};
 
 export default ShiftDetailsPopover;

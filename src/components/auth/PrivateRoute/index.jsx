@@ -1,22 +1,22 @@
 // src/components/auth/PrivateRoute/index.jsx
 
 import React from 'react';
-import ***REMOVED*** Navigate, Outlet ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../../../contexts/AuthContext';
 import Loader from '../../other/Loader';
 
-const PrivateRoute = () => ***REMOVED***
-  const ***REMOVED*** currentUser, loading ***REMOVED*** = useAuth();
+const PrivateRoute = () => {
+  const { currentUser, loading } = useAuth();
 
-  if (loading) ***REMOVED***
+  if (loading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
-        <Loader size=***REMOVED***60***REMOVED*** />
+        <Loader size={60} />
       </div>
     );
-  ***REMOVED***
+  }
 
   return currentUser ? <Outlet /> : <Navigate to="/login" />;
-***REMOVED***;
+};
 
 export default PrivateRoute;

@@ -1,21 +1,21 @@
 // src/components/dashboard/QuickStatsGrid/index.jsx
 
-import React, ***REMOVED*** useMemo ***REMOVED*** from 'react';
-import ***REMOVED*** 
+import React, { useMemo } from 'react';
+import { 
   Briefcase, Calendar, Clock, Target, 
   CalendarDays, CalendarRange,
   Timer, History,
   TrendingUp
-***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+} from 'lucide-react';
+import { useApp } from '../../../contexts/AppContext';
 import QuickStatCard from '../QuickStatCard';
 
-const QuickStatsGrid = (***REMOVED*** stats, className ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors, works, deliveryWork ***REMOVED*** = useApp();
+const QuickStatsGrid = ({ stats, className }) => {
+  const { thematicColors, works, deliveryWork } = useApp();
   
   const totalWorks = (works?.length || 0) + (deliveryWork?.length || 0);
   
-  const detailedData = useMemo(() => ***REMOVED***
+  const detailedData = useMemo(() => {
     // 1. Data for WORKS
     const traditionalCount = works?.length || 0;
     const deliveryCount = deliveryWork?.length || 0;
@@ -23,31 +23,31 @@ const QuickStatsGrid = (***REMOVED*** stats, className ***REMOVED***) => ***REMO
     const platformsList = Array.from(platformsSet);
 
     // 2. Extract pre-calculated data from the useDashboardStats hook
-    const ***REMOVED*** currentWeek, currentMonth ***REMOVED*** = stats;
+    const { currentWeek, currentMonth } = stats;
 
-    return ***REMOVED***
-      works: ***REMOVED***
+    return {
+      works: {
         traditional: traditionalCount,
         delivery: deliveryCount,
         platforms: platformsList
-      ***REMOVED***,
+      },
       shifts: [
-        ***REMOVED*** label: 'This Week', value: currentWeek?.totalShifts || 0, icon: CalendarDays, iconColor: '#3b82f6' ***REMOVED***,
-        ***REMOVED*** label: 'This Month', value: currentMonth?.totalShifts || 0, icon: CalendarRange, iconColor: '#8b5cf6' ***REMOVED***
+        { label: 'This Week', value: currentWeek?.totalShifts || 0, icon: CalendarDays, iconColor: '#3b82f6' },
+        { label: 'This Month', value: currentMonth?.totalShifts || 0, icon: CalendarRange, iconColor: '#8b5cf6' }
       ],
       hours: [
-        ***REMOVED*** label: 'Current Week', value: `$***REMOVED***(currentWeek?.hoursWorked || 0).toFixed(1)***REMOVED***h`, icon: Timer, iconColor: '#10b981' ***REMOVED***,
-        ***REMOVED*** label: 'Current Month', value: `$***REMOVED***(currentMonth?.hoursWorked || 0).toFixed(1)***REMOVED***h`, icon: History, iconColor: '#f59e0b' ***REMOVED***
+        { label: 'Current Week', value: `${(currentWeek?.hoursWorked || 0).toFixed(1)}h`, icon: Timer, iconColor: '#10b981' },
+        { label: 'Current Month', value: `${(currentMonth?.hoursWorked || 0).toFixed(1)}h`, icon: History, iconColor: '#f59e0b' }
       ],
       average: [
-        ***REMOVED*** label: 'Per Hour', value: `$$***REMOVED***stats.averagePerHour.toFixed(0)***REMOVED***`, icon: Clock, iconColor: '#6366f1' ***REMOVED***,
-        ***REMOVED*** label: 'Week Earn.', value: `$$***REMOVED***(currentWeek?.totalEarnings || 0).toLocaleString()***REMOVED***`, icon: TrendingUp, iconColor: '#ec4899' ***REMOVED***
+        { label: 'Per Hour', value: `$${stats.averagePerHour.toFixed(0)}`, icon: Clock, iconColor: '#6366f1' },
+        { label: 'Week Earn.', value: `$${(currentWeek?.totalEarnings || 0).toLocaleString()}`, icon: TrendingUp, iconColor: '#ec4899' }
       ]
-    ***REMOVED***;
-  ***REMOVED***, [stats, works, deliveryWork]);
+    };
+  }, [stats, works, deliveryWork]);
 
   const cardsData = [
-    ***REMOVED***
+    {
       id: 'works',
       type: 'works', // Changed from 'jobs' to match the prop in QuickStatCard
       icon: Briefcase,
@@ -55,8 +55,8 @@ const QuickStatsGrid = (***REMOVED*** stats, className ***REMOVED***) => ***REMO
       value: totalWorks,
       subtitle: 'active',
       details: detailedData.works
-    ***REMOVED***,
-    ***REMOVED***
+    },
+    {
       id: 'shifts',
       type: 'general',
       icon: Calendar,
@@ -64,8 +64,8 @@ const QuickStatsGrid = (***REMOVED*** stats, className ***REMOVED***) => ***REMO
       value: stats.totalShifts,
       subtitle: 'completed',
       details: detailedData.shifts
-    ***REMOVED***,
-    ***REMOVED***
+    },
+    {
       id: 'hours',
       type: 'general',
       icon: Clock,
@@ -73,29 +73,29 @@ const QuickStatsGrid = (***REMOVED*** stats, className ***REMOVED***) => ***REMO
       value: stats.hoursWorked.toFixed(0),
       subtitle: 'worked',
       details: detailedData.hours
-    ***REMOVED***,
-    ***REMOVED***
+    },
+    {
       id: 'avg',
       type: 'general',
       icon: Target,
       label: 'Average',
-      value: `$$***REMOVED***stats.averagePerHour.toFixed(0)***REMOVED***`,
+      value: `$${stats.averagePerHour.toFixed(0)}`,
       subtitle: 'per hour',
       details: detailedData.average
-    ***REMOVED***
+    }
   ];
 
   return (
-    <div className=***REMOVED***`grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 $***REMOVED***className***REMOVED***`***REMOVED***>
-      ***REMOVED***cardsData.map((stat) => (
+    <div className={`grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6 ${className}`}>
+      {cardsData.map((stat) => (
         <QuickStatCard 
-          key=***REMOVED***stat.id***REMOVED*** 
-          ***REMOVED***...stat***REMOVED*** 
-          color=***REMOVED***thematicColors?.base***REMOVED*** 
+          key={stat.id} 
+          {...stat} 
+          color={thematicColors?.base} 
         />
-      ))***REMOVED***
+      ))}
     </div>
   );
-***REMOVED***;
+};
 
 export default QuickStatsGrid;

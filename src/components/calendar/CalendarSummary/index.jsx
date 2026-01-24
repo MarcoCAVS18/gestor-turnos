@@ -1,7 +1,7 @@
 // src/components/calendar/CalendarSummary/index.jsx
 
-const CalendarSummary = () => ***REMOVED***
+const CalendarSummary = () => {
   return null;
-***REMOVED***;
+};
 
 export default CalendarSummary;

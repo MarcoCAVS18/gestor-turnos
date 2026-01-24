@@ -1,49 +1,49 @@
 // src/components/layout/Header/index.jsx
 
 import React from 'react';
-import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** Settings ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { Settings } from 'lucide-react';
+import { useApp } from '../../../contexts/AppContext';
+import { useAuth } from '../../../contexts/AuthContext';
 import Flex from '../../ui/Flex';
 
-const Header = (***REMOVED*** setCurrentView ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
-  const ***REMOVED*** profilePhotoURL ***REMOVED*** = useAuth();
+const Header = ({ setCurrentView }) => {
+  const { thematicColors } = useApp();
+  const { profilePhotoURL } = useAuth();
   const navigate = useNavigate();
   
-  const handleSettingsClick = () => ***REMOVED***
+  const handleSettingsClick = () => {
     navigate('/ajustes');
     setCurrentView('settings');
-  ***REMOVED***;
+  };
 
-  const handleLogoClick = () => ***REMOVED***
+  const handleLogoClick = () => {
     navigate('/dashboard');
     setCurrentView('dashboard');
-  ***REMOVED***;
+  };
 
   return (
     <header 
       className="flex justify-between items-center px-4 py-4 text-white shadow-md"
-      style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED***
+      style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
     >
-      ***REMOVED***/* Logo and title on the left - clickable */***REMOVED***
+      {/* Logo and title on the left - clickable */}
       <Flex className="flex-1">
         <button
-          onClick=***REMOVED***handleLogoClick***REMOVED***
+          onClick={handleLogoClick}
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
         >
-          ***REMOVED***/* Logo SVG */***REMOVED***
+          {/* Logo SVG */}
           <Flex variant="center" className="w-14 h-14">
             <img
               src="/assets/SVG/logo.svg"
               alt="Logo"
               className="w-full h-full filter brightness-0 invert"
-              style=***REMOVED******REMOVED*** filter: 'brightness(0) invert(1)' ***REMOVED******REMOVED***
+              style={{ filter: 'brightness(0) invert(1)' }}
             />
           </Flex>
 
-          ***REMOVED***/* Title and subtitle */***REMOVED***
+          {/* Title and subtitle */}
           <div className="text-left">
             <h1 className="text-2xl font-bold tracking-tight">
               GestAPP.
@@ -55,14 +55,14 @@ const Header = (***REMOVED*** setCurrentView ***REMOVED***) => ***REMOVED***
         </button>
       </Flex>
       
-      ***REMOVED***/* Profile/Settings button on the right */***REMOVED***
+      {/* Profile/Settings button on the right */}
       <div className="flex gap-2">
         <button
-          onClick=***REMOVED***handleSettingsClick***REMOVED***
+          onClick={handleSettingsClick}
           className="rounded-full p-1 transition-all duration-200 hover:bg-white hover:bg-opacity-20"
           title="Settings"
         >
-          ***REMOVED***profilePhotoURL?.includes('logo.svg') ? (
+          {profilePhotoURL?.includes('logo.svg') ? (
             // If it is the default logo, show gear icon
             <Flex variant="center" className="w-10 h-10">
               <Settings className="h-6 w-6 text-white" />
@@ -71,16 +71,16 @@ const Header = (***REMOVED*** setCurrentView ***REMOVED***) => ***REMOVED***
             // If has profile photo, show it
             <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-lg">
               <img
-                src=***REMOVED***profilePhotoURL***REMOVED***
+                src={profilePhotoURL}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
             </div>
-          )***REMOVED***
+          )}
         </button>
       </div>
     </header>
   );
-***REMOVED***;
+};
 
 export default Header;

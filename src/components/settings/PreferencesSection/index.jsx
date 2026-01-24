@@ -1,28 +1,28 @@
 // src/components/settings/PreferencesSection/index.jsx
 
-import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'react';
-import ***REMOVED*** Info, Receipt, Check ***REMOVED*** from 'lucide-react'; // Added Check
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
-import ***REMOVED*** useWorks ***REMOVED*** from '../../../hooks/useWorks';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Info, Receipt, Check } from 'lucide-react'; // Added Check
+import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { useWorks } from '../../../hooks/useWorks';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 import Popover from '../../ui/Popover';
 import WorkAvatar from '../../work/WorkAvatar';
 
-const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** 
+const PreferencesSection = ({ onError, onSuccess, className }) => {
+  const { 
     defaultDiscount,
     taxesPerWork, // comes from context
     savePreferences
-  ***REMOVED*** = useApp();
-  const ***REMOVED*** allWorks ***REMOVED*** = useWorks(); // Changed from trabajos to allWorks
+  } = useApp();
+  const { allWorks } = useWorks(); // Changed from trabajos to allWorks
   
   const colors = useThemeColors();
   
   // Data states
   const [defaultTax, setDefaultTax] = useState(defaultDiscount || 0);
-  const [localTaxes, setLocalTaxes] = useState(***REMOVED******REMOVED***);
+  const [localTaxes, setLocalTaxes] = useState({});
   const [showMultiRate, setShowMultiRate] = useState(false);
 
   // UI/Feedback states
@@ -36,57 +36,57 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
   );
 
   // Initialize local state when context changes (initial load)
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     setDefaultTax(defaultDiscount || 0);
-  ***REMOVED***, [defaultDiscount]);
+  }, [defaultDiscount]);
   
-  useEffect(() => ***REMOVED***
-    const initialTaxes = ***REMOVED******REMOVED***;
-    traditionalWorks.forEach(work => ***REMOVED***
+  useEffect(() => {
+    const initialTaxes = {};
+    traditionalWorks.forEach(work => {
       // The initialization logic must be consistent
       initialTaxes[work.id] = taxesPerWork[work.id] ?? defaultDiscount ?? 0;
-    ***REMOVED***);
+    });
     setLocalTaxes(initialTaxes);
-  ***REMOVED***, [traditionalWorks, taxesPerWork, defaultDiscount]);
+  }, [traditionalWorks, taxesPerWork, defaultDiscount]);
 
   // Effect to detect changes (Dirty Checking)
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     // 1. Check if default changed
     const defaultChanged = defaultTax !== (defaultDiscount || 0);
 
     // 2. Check if any specific tax changed
-    const localTaxesChanged = traditionalWorks.some(work => ***REMOVED***
+    const localTaxesChanged = traditionalWorks.some(work => {
       const originalValue = taxesPerWork[work.id] ?? defaultDiscount ?? 0;
       const currentValue = localTaxes[work.id];
       // We compare values (we use == to be tolerant with strings/numbers if it happens, 
       // although here we force number in the input)
       return originalValue !== currentValue;
-    ***REMOVED***);
+    });
 
     const isDirty = defaultChanged || localTaxesChanged;
     setHasChanges(isDirty);
 
     // If the user edits again, hide the success message
-    if (isDirty && showSuccess) ***REMOVED***
+    if (isDirty && showSuccess) {
       setShowSuccess(false);
-    ***REMOVED***
+    }
 
-  ***REMOVED***, [defaultTax, localTaxes, defaultDiscount, taxesPerWork, traditionalWorks, showSuccess]);
+  }, [defaultTax, localTaxes, defaultDiscount, taxesPerWork, traditionalWorks, showSuccess]);
 
-  const handleLocalTaxChange = (jobId, value) => ***REMOVED***
-    setLocalTaxes(prev => (***REMOVED***
+  const handleLocalTaxChange = (jobId, value) => {
+    setLocalTaxes(prev => ({
       ...prev,
       [jobId]: value,
-    ***REMOVED***));
-  ***REMOVED***;
+    }));
+  };
 
-  const handleSave = async () => ***REMOVED***
-    try ***REMOVED***
+  const handleSave = async () => {
+    try {
       setLoading(true);
-      await savePreferences(***REMOVED*** 
+      await savePreferences({ 
         defaultTax: defaultTax,
         taxesPerWork: localTaxes
-      ***REMOVED***);
+      });
       
       // Show success
       setShowSuccess(true);
@@ -94,16 +94,16 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
       onSuccess?.('Tax settings saved successfully');
 
       // Hide success message after 3s
-      setTimeout(() => ***REMOVED***
+      setTimeout(() => {
         setShowSuccess(false);
-      ***REMOVED***, 3000);
+      }, 3000);
 
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       onError?.('Error saving settings: ' + error.message);
-    ***REMOVED*** finally ***REMOVED***
+    } finally {
       setLoading(false);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   const popoverContent = (
     <div className="p-2 max-w-xs">
@@ -122,7 +122,7 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
   );
 
   return (
-    <SettingsSection icon=***REMOVED***Receipt***REMOVED*** title="Payment and Tax Settings" className=***REMOVED***className***REMOVED***>
+    <SettingsSection icon={Receipt} title="Payment and Tax Settings" className={className}>
       <div className="space-y-5">
 
         <div>
@@ -132,13 +132,13 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
             </label>
             
             <Popover 
-              content=***REMOVED***popoverContent***REMOVED*** 
+              content={popoverContent} 
               title="What are these taxes?"
               position="top"
               trigger="click"
             >
               <button className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors focus:outline-none">
-                <Info size=***REMOVED***14***REMOVED*** />
+                <Info size={14} />
                 <span>What should I put here?</span>
               </button>
             </Popover>
@@ -151,10 +151,10 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
                 min="0"
                 max="100"
                 step="0.5"
-                value=***REMOVED***defaultTax***REMOVED***
-                onChange=***REMOVED***(e) => setDefaultTax(Number(e.target.value))***REMOVED***
+                value={defaultTax}
+                onChange={(e) => setDefaultTax(Number(e.target.value))}
                 className="flex-1 px-3 py-2.5 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all text-gray-900 font-medium"
-                style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary, borderColor: loading ? 'transparent' : '' ***REMOVED******REMOVED***
+                style={{ '--tw-ring-color': colors.primary, borderColor: loading ? 'transparent' : '' }}
                 placeholder="e.g.: 15"
               />
               <span className="inline-flex items-center px-4 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 font-medium">
@@ -167,14 +167,14 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
           </div>
         </div>
 
-        ***REMOVED***showMultiRate && traditionalWorks.length > 1 && (
+        {showMultiRate && traditionalWorks.length > 1 && (
           <div className="space-y-4 pt-4 border-t animate-in fade-in slide-in-from-top-2">
             <h3 className="text-md font-semibold text-gray-800">Taxes per Job</h3>
-            ***REMOVED***traditionalWorks.map(work => (
-              <div key=***REMOVED***work.id***REMOVED*** className="flex items-center gap-4">
-                <WorkAvatar name=***REMOVED***work.name***REMOVED*** color=***REMOVED***work.color***REMOVED*** size="md" />
+            {traditionalWorks.map(work => (
+              <div key={work.id} className="flex items-center gap-4">
+                <WorkAvatar name={work.name} color={work.color} size="md" />
                 <div className="flex-1">
-                  <span className="font-medium text-gray-700">***REMOVED***work.name***REMOVED***</span>
+                  <span className="font-medium text-gray-700">{work.name}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <input
@@ -182,47 +182,47 @@ const PreferencesSection = (***REMOVED*** onError, onSuccess, className ***REMOV
                     min="0"
                     max="100"
                     step="0.5"
-                    value=***REMOVED***localTaxes[work.id] || 0***REMOVED***
-                    onChange=***REMOVED***(e) => handleLocalTaxChange(work.id, Number(e.target.value))***REMOVED***
+                    value={localTaxes[work.id] || 0}
+                    onChange={(e) => handleLocalTaxChange(work.id, Number(e.target.value))}
                     className="w-24 px-2 py-1.5 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 text-center"
-                    style=***REMOVED******REMOVED***'--tw-ring-color': colors.primary***REMOVED******REMOVED***
+                    style={{'--tw-ring-color': colors.primary}}
                     placeholder="e.g.: 15"
                   />
                   <span className="text-gray-500 font-medium">%</span>
                 </div>
               </div>
-            ))***REMOVED***
+            ))}
           </div>
-        )***REMOVED***
+        )}
         
         <div className="pt-4 flex flex-wrap items-center gap-4">
           <Button
-            onClick=***REMOVED***handleSave***REMOVED***
-            disabled=***REMOVED***loading || !hasChanges***REMOVED***
-            loading=***REMOVED***loading***REMOVED***
+            onClick={handleSave}
+            disabled={loading || !hasChanges}
+            loading={loading}
             className="w-full sm:w-auto min-w-[180px]"
-            themeColor=***REMOVED***colors.primary***REMOVED***
-            icon=***REMOVED***showSuccess ? Check : undefined***REMOVED***
+            themeColor={colors.primary}
+            icon={showSuccess ? Check : undefined}
           >
-            ***REMOVED***loading ? 'Saving...' : 
+            {loading ? 'Saving...' : 
              showSuccess ? 'Saved successfully' :
-             hasChanges ? 'Save Preferences' : 'No changes'***REMOVED***
+             hasChanges ? 'Save Preferences' : 'No changes'}
           </Button>
 
-          ***REMOVED***traditionalWorks.length > 1 && (
+          {traditionalWorks.length > 1 && (
             <Button
-              onClick=***REMOVED***() => setShowMultiRate(prev => !prev)***REMOVED***
+              onClick={() => setShowMultiRate(prev => !prev)}
               variant="outline"
-              themeColor=***REMOVED***colors.primary***REMOVED***
+              themeColor={colors.primary}
               className="w-full sm:w-auto"
             >
-              ***REMOVED***showMultiRate ? 'Hide per-job settings' : 'Adjust per job'***REMOVED***
+              {showMultiRate ? 'Hide per-job settings' : 'Adjust per job'}
             </Button>
-          )***REMOVED***
+          )}
         </div>
       </div>
     </SettingsSection>
   );
-***REMOVED***;
+};
 
 export default PreferencesSection;

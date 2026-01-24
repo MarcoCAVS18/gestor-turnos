@@ -1,12 +1,12 @@
 // src/components/layout/PageHeader/index.jsx
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
-import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import Button from '../../ui/Button';
 
-const PageHeader = (***REMOVED***
+const PageHeader = ({
   icon: Icon,
   title,
   subtitle,
@@ -14,83 +14,83 @@ const PageHeader = (***REMOVED***
   rightContent,
   className = '',
   ...props
-***REMOVED***) => ***REMOVED***
+}) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile();
   const [isExpanded, setIsExpanded] = useState(true);
 
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     // On mount (after loader), if mobile and has action:
-    if (isMobile && action) ***REMOVED***
+    if (isMobile && action) {
       setIsExpanded(true); // Ensure it starts expanded
       
-      const timer = setTimeout(() => ***REMOVED***
+      const timer = setTimeout(() => {
         setIsExpanded(false); // Collapse after 2 seconds
-      ***REMOVED***, 2000);
+      }, 2000);
 
       return () => clearTimeout(timer);
-    ***REMOVED*** else ***REMOVED***
+    } else {
       setIsExpanded(true);
-    ***REMOVED***
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  ***REMOVED***, []); 
+  }, []); 
 
   // Variants for the full Header entry
-  const headerVariants = ***REMOVED***
-    hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
-    visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.3 ***REMOVED*** ***REMOVED***
-  ***REMOVED***;
+  const headerVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+  };
 
   const isCollapsed = isMobile && !isExpanded;
 
   return (
     <motion.div
-      className=***REMOVED***`flex items-center space-x-4 $***REMOVED***className***REMOVED***`***REMOVED***
-      variants=***REMOVED***headerVariants***REMOVED***
+      className={`flex items-center space-x-4 ${className}`}
+      variants={headerVariants}
       initial="hidden"
       animate="visible"
-      ***REMOVED***...props***REMOVED***
+      {...props}
     >
-      ***REMOVED***/* TEXT CONTAINER (Intact) */***REMOVED***
+      {/* TEXT CONTAINER (Intact) */}
       <div className="flex items-center space-x-3 flex-grow">
-        ***REMOVED***Icon && (
+        {Icon && (
           <div 
             className="flex-shrink-0 p-2 rounded-lg transition-colors" 
-            style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***
+            style={{ backgroundColor: colors.transparent10 }}
           >
-            <Icon className="w-6 h-6" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
+            <Icon className="w-6 h-6" style={{ color: colors.primary }} />
           </div>
-        )***REMOVED***
+        )}
         <div className="flex flex-col justify-center min-h-[3.25rem]">
           <h1 className="text-xl font-semibold leading-tight">
-            ***REMOVED***title***REMOVED***
+            {title}
           </h1>
-          ***REMOVED***subtitle && (
+          {subtitle && (
             <p className="text-sm text-gray-600 leading-snug">
-              ***REMOVED***subtitle***REMOVED***
+              {subtitle}
             </p>
-          )***REMOVED***
+          )}
         </div>
       </div>
       
-      ***REMOVED***/* ACTION BUTTON */***REMOVED***
-      ***REMOVED***rightContent ? rightContent : (action && (
+      {/* ACTION BUTTON */}
+      {rightContent ? rightContent : (action && (
         // Remove parent wrapper animations to avoid conflicts.
         // The Button handles its own size.
         <div className="flex-shrink-0 flex justify-end">
           <Button
-            onClick=***REMOVED***action.onClick***REMOVED***
-            icon=***REMOVED***action.icon***REMOVED***
-            themeColor=***REMOVED***action.themeColor || colors.primary***REMOVED***
-            collapsed=***REMOVED***isCollapsed***REMOVED*** // Pass state to button
+            onClick={action.onClick}
+            icon={action.icon}
+            themeColor={action.themeColor || colors.primary}
+            collapsed={isCollapsed} // Pass state to button
           >
-            <span className="hidden sm:inline">***REMOVED***action.label***REMOVED***</span>
-            <span className="sm:hidden">***REMOVED***action.mobileLabel || 'New'***REMOVED***</span>
+            <span className="hidden sm:inline">{action.label}</span>
+            <span className="sm:hidden">{action.mobileLabel || 'New'}</span>
           </Button>
         </div>
-      ))***REMOVED***
+      ))}
     </motion.div>
   );
-***REMOVED***;
+};
 
 export default PageHeader;

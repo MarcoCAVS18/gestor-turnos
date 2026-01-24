@@ -2,64 +2,64 @@
 
 import React from 'react';
 import CalendarDayCell from '../CalendarDayCell';
-import ***REMOVED*** localDateToISO ***REMOVED*** from '../../../utils/calendarUtils';
+import { localDateToISO } from '../../../utils/calendarUtils';
 
-const CalendarGrid = (***REMOVED*** 
+const CalendarGrid = ({ 
   days, 
   currentDate, 
   currentSelectedDay, 
   jobs, 
   thematicColors, 
   onDayClick 
-***REMOVED***) => ***REMOVED***
+}) => {
   const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   const currentDateISO = localDateToISO(currentDate);
 
   // Function to get job colors
-  const getJobColors = (dayShifts, allJobs) => ***REMOVED***
+  const getJobColors = (dayShifts, allJobs) => {
     const uniqueColors = new Set();
     
-    if (!dayShifts || dayShifts.length === 0) ***REMOVED***
+    if (!dayShifts || dayShifts.length === 0) {
       return [];
-    ***REMOVED***
+    }
     
-    dayShifts.forEach(shift => ***REMOVED***
+    dayShifts.forEach(shift => {
       const job = allJobs.find(t => t.id === shift.jobId);
-      if (job) ***REMOVED***
+      if (job) {
         // For delivery jobs, use specific color
-        if (job.type === 'delivery' || shift.type === 'delivery') ***REMOVED***
+        if (job.type === 'delivery' || shift.type === 'delivery') {
           uniqueColors.add(job.avatarColor || job.color || '#10B981');
-        ***REMOVED*** else ***REMOVED***
+        } else {
           // For traditional jobs
           uniqueColors.add(job.color || '#EC4899');
-        ***REMOVED***
-      ***REMOVED*** else ***REMOVED***
+        }
+      } else {
         // If job is not found, use default color based on type
-        if (shift.type === 'delivery') ***REMOVED***
+        if (shift.type === 'delivery') {
           uniqueColors.add('#10B981'); // Green for delivery
-        ***REMOVED*** else ***REMOVED***
+        } else {
           uniqueColors.add('#EC4899'); // Pink for traditional
-        ***REMOVED***
-      ***REMOVED***
-    ***REMOVED***);
+        }
+      }
+    });
     
     return Array.from(uniqueColors).slice(0, 3); // Maximum 3 colors
-  ***REMOVED***;
+  };
 
   return (
     <>
-      ***REMOVED***/* Day headers */***REMOVED***
+      {/* Day headers */}
       <div className="grid grid-cols-7 bg-gray-100">
-        ***REMOVED***weekDays.map(day => (
-          <div key=***REMOVED***day***REMOVED*** className="py-2 text-center text-gray-600 text-sm font-medium">
-            ***REMOVED***day***REMOVED***
+        {weekDays.map(day => (
+          <div key={day} className="py-2 text-center text-gray-600 text-sm font-medium">
+            {day}
           </div>
-        ))***REMOVED***
+        ))}
       </div>
 
-      ***REMOVED***/* Days grid */***REMOVED***
+      {/* Days grid */}
       <div className="grid grid-cols-7">
-        ***REMOVED***days.map((day, index) => ***REMOVED***
+        {days.map((day, index) => {
           const dayDateISO = localDateToISO(day.date);
           const isToday = dayDateISO === currentDateISO;
           const isSelected = dayDateISO === currentSelectedDay;
@@ -69,19 +69,19 @@ const CalendarGrid = (***REMOVED***
 
           return (
             <CalendarDayCell
-              key=***REMOVED***index***REMOVED***
-              day=***REMOVED***day***REMOVED***
-              isToday=***REMOVED***isToday***REMOVED***
-              isSelected=***REMOVED***isSelected***REMOVED***
-              workColors=***REMOVED***workColors***REMOVED***
-              thematicColors=***REMOVED***thematicColors***REMOVED***
-              onClick=***REMOVED***() => onDayClick(day.date)***REMOVED***
+              key={index}
+              day={day}
+              isToday={isToday}
+              isSelected={isSelected}
+              workColors={workColors}
+              thematicColors={thematicColors}
+              onClick={() => onDayClick(day.date)}
             />
           );
-        ***REMOVED***)***REMOVED***
+        })}
       </div>
     </>
   );
-***REMOVED***;
+};
 
 export default CalendarGrid;

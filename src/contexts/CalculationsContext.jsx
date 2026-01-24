@@ -1,28 +1,28 @@
 // src/contexts/CalculationsContext.jsx
 
-import React, ***REMOVED*** createContext, useContext, useMemo, useCallback ***REMOVED*** from 'react';
-import ***REMOVED*** useDataContext ***REMOVED*** from './DataContext';
-import ***REMOVED*** useDeliveryContext ***REMOVED*** from './DeliveryContext';
-import ***REMOVED*** useConfigContext ***REMOVED*** from './ConfigContext';
+import React, { createContext, useContext, useMemo, useCallback } from 'react';
+import { useDataContext } from './DataContext';
+import { useDeliveryContext } from './DeliveryContext';
+import { useConfigContext } from './ConfigContext';
 import * as calculationService from '../services/calculationService';
 
 const CalculationsContext = createContext();
 
-export const useCalculations = () => ***REMOVED***
+export const useCalculations = () => {
   return useContext(CalculationsContext);
-***REMOVED***;
+};
 
-export const CalculationsProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
+export const CalculationsProvider = ({ children }) => {
   // Consume data from other contexts
-  const ***REMOVED*** works ***REMOVED*** = useDataContext();
-  const ***REMOVED*** deliveryWork ***REMOVED*** = useDeliveryContext();
-  const ***REMOVED*** shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes ***REMOVED*** = useConfigContext();
+  const { works } = useDataContext();
+  const { deliveryWork } = useDeliveryContext();
+  const { shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes } = useConfigContext();
 
   // Combine all work to pass to calculation functions
   const allJobs = useMemo(() => [...works, ...deliveryWork], [works, deliveryWork]);
 
   // Create memoized and pre-configured versions of the calculation functions
-  const calculatePayment = useCallback((shift) => ***REMOVED***
+  const calculatePayment = useCallback((shift) => {
     return calculationService.calculatePayment(
       shift,
       allJobs,
@@ -31,24 +31,24 @@ export const CalculationsProvider = (***REMOVED*** children ***REMOVED***) => **
       smokoEnabled,
       smokoMinutes
     );
-  ***REMOVED***, [allJobs, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes]);
+  }, [allJobs, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes]);
 
-  const calculateDailyTotal = useCallback((dailyShifts) => ***REMOVED***
+  const calculateDailyTotal = useCallback((dailyShifts) => {
     const calculatePaymentForDailyTotal = (shift) => calculatePayment(shift);
     return calculationService.calculateDailyTotal(dailyShifts, calculatePaymentForDailyTotal);
-  ***REMOVED***, [calculatePayment]);
+  }, [calculatePayment]);
   
-  const value = ***REMOVED***
+  const value = {
     // Expose pure calculation functions
     calculateHours: calculationService.calculateHours,
     // Expose pre-configured functions
     calculatePayment,
     calculateDailyTotal,
-  ***REMOVED***;
+  };
 
   return (
-    <CalculationsContext.Provider value=***REMOVED***value***REMOVED***>
-      ***REMOVED***children***REMOVED***
+    <CalculationsContext.Provider value={value}>
+      {children}
     </CalculationsContext.Provider>
   );
-***REMOVED***;
+};

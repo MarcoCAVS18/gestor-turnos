@@ -1,10 +1,10 @@
 // src/components/ui/Popover/index.js
 
-import React, ***REMOVED*** useState, useRef, useLayoutEffect, useEffect ***REMOVED*** from 'react'; 
+import React, { useState, useRef, useLayoutEffect, useEffect } from 'react'; 
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const Popover = (***REMOVED***
+const Popover = ({
   children,
   content,
   title,
@@ -14,37 +14,37 @@ const Popover = (***REMOVED***
   anchorRef,
   fullWidth,
   className = ''
-***REMOVED***) => ***REMOVED***
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [popoverStyle, setPopoverStyle] = useState(***REMOVED******REMOVED***);
+  const [popoverStyle, setPopoverStyle] = useState({});
   const triggerRef = useRef(null);
   const popoverRef = useRef(null);
 
   const setIsOpenState = (state) => setIsOpen(state);
 
-  const handleMouseEnter = () => ***REMOVED***
-    if (trigger === 'hover') ***REMOVED***
+  const handleMouseEnter = () => {
+    if (trigger === 'hover') {
       setIsOpenState(true);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  const handleMouseLeave = () => ***REMOVED***
-    if (trigger === 'hover') ***REMOVED***
+  const handleMouseLeave = () => {
+    if (trigger === 'hover') {
       setIsOpenState(false);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  const handleClick = (e) => ***REMOVED***
-    if (trigger === 'click') ***REMOVED***
+  const handleClick = (e) => {
+    if (trigger === 'click') {
       e.stopPropagation();
       setIsOpenState(prev => !prev);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  useLayoutEffect(() => ***REMOVED***
+  useLayoutEffect(() => {
     const positioningRef = anchorRef || triggerRef;
 
-    if (isOpen && positioningRef.current) ***REMOVED***
+    if (isOpen && positioningRef.current) {
       const anchorRect = positioningRef.current.getBoundingClientRect();
       const popoverNode = popoverRef.current;
       
@@ -53,16 +53,16 @@ const Popover = (***REMOVED***
       popoverNode.style.visibility = 'hidden';
       popoverNode.style.display = 'block';
       
-      if (fullWidth) ***REMOVED***
-        popoverNode.style.width = `$***REMOVED***anchorRect.width***REMOVED***px`;
-      ***REMOVED***
+      if (fullWidth) {
+        popoverNode.style.width = `${anchorRect.width}px`;
+      }
       
       const popoverRect = popoverNode.getBoundingClientRect();
 
       let top, left;
       const offset = 10;
 
-      switch (position) ***REMOVED***
+      switch (position) {
         case 'top':
           top = anchorRect.top - popoverRect.height - offset;
 
@@ -87,38 +87,38 @@ const Popover = (***REMOVED***
         default:
           top = anchorRect.bottom + offset;
           left = anchorRect.left;
-      ***REMOVED***
+      }
       
       const screenWidth = window.innerWidth;
       const screenHeight = window.innerHeight;
 
-      if (left < 0) ***REMOVED***
+      if (left < 0) {
         left = 10;
-      ***REMOVED*** else if (left + popoverRect.width > screenWidth) ***REMOVED***
+      } else if (left + popoverRect.width > screenWidth) {
         left = screenWidth - popoverRect.width - 10;
-      ***REMOVED***
+      }
 
-      if (top < 0) ***REMOVED***
+      if (top < 0) {
         top = 10;
-      ***REMOVED*** else if (top + popoverRect.height > screenHeight) ***REMOVED***
+      } else if (top + popoverRect.height > screenHeight) {
         top = screenHeight - popoverRect.height - 10;
-      ***REMOVED***
+      }
 
-      setPopoverStyle(***REMOVED***
-        top: `$***REMOVED***top + window.scrollY***REMOVED***px`,
-        left: `$***REMOVED***left + window.scrollX***REMOVED***px`,
-        width: fullWidth ? `$***REMOVED***anchorRect.width***REMOVED***px` : 'auto',
+      setPopoverStyle({
+        top: `${top + window.scrollY}px`,
+        left: `${left + window.scrollX}px`,
+        width: fullWidth ? `${anchorRect.width}px` : 'auto',
         visibility: 'visible',
         opacity: 1
-      ***REMOVED***);
+      });
       
       popoverNode.style.display = '';
       popoverNode.style.visibility = ''; 
-    ***REMOVED***
-  ***REMOVED***, [isOpen, position, anchorRef, fullWidth, trigger]);
+    }
+  }, [isOpen, position, anchorRef, fullWidth, trigger]);
 
-  useEffect(() => ***REMOVED***
-    const handleClickOutside = (event) => ***REMOVED***
+  useEffect(() => {
+    const handleClickOutside = (event) => {
 
       if (trigger === 'hover') return; 
 
@@ -128,48 +128,48 @@ const Popover = (***REMOVED***
         !triggerRef.current.contains(event.target) &&
         popoverRef.current &&
         !popoverRef.current.contains(event.target)
-      ) ***REMOVED***
+      ) {
         setIsOpenState(false);
-      ***REMOVED***
-    ***REMOVED***;
+      }
+    };
 
     document.addEventListener('mousedown', handleClickOutside);
     window.addEventListener('resize', () => setIsOpenState(false));
-    return () => ***REMOVED***
+    return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       window.removeEventListener('resize', () => setIsOpenState(false));
-    ***REMOVED***;
-  ***REMOVED***, [isOpen, trigger]);
+    };
+  }, [isOpen, trigger]);
 
   const popoverContent = isOpen && (
     <div 
-        ref=***REMOVED***popoverRef***REMOVED*** 
-        className=***REMOVED***`popover-content popover-$***REMOVED***position***REMOVED*** $***REMOVED***className***REMOVED***`***REMOVED*** 
-        style=***REMOVED******REMOVED***...popoverStyle***REMOVED******REMOVED*** 
+        ref={popoverRef} 
+        className={`popover-content popover-${position} ${className}`} 
+        style={{...popoverStyle}} 
     >
       <div className="popover-arrow" />
-      ***REMOVED***title && <div className="popover-title">***REMOVED***title***REMOVED***</div>***REMOVED***
+      {title && <div className="popover-title">{title}</div>}
       <div className="popover-body">
-        ***REMOVED***content***REMOVED***
+        {content}
       </div>
-      ***REMOVED***footer && <div className="popover-footer">***REMOVED***footer***REMOVED***</div>***REMOVED***
+      {footer && <div className="popover-footer">{footer}</div>}
     </div>
   );
 
   return (
     <>
       <div 
-        ref=***REMOVED***triggerRef***REMOVED*** 
-        onClick=***REMOVED***handleClick***REMOVED*** 
-        onMouseEnter=***REMOVED***handleMouseEnter***REMOVED***
-        onMouseLeave=***REMOVED***handleMouseLeave***REMOVED***
-        style=***REMOVED******REMOVED*** cursor: 'pointer', display: 'inline-flex' ***REMOVED******REMOVED***
+        ref={triggerRef} 
+        onClick={handleClick} 
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        style={{ cursor: 'pointer', display: 'inline-flex' }}
       >
-        ***REMOVED***children***REMOVED***
+        {children}
       </div>
-      ***REMOVED***popoverContent ? ReactDOM.createPortal(popoverContent, document.body) : null***REMOVED***
+      {popoverContent ? ReactDOM.createPortal(popoverContent, document.body) : null}
     </>
   );
-***REMOVED***;
+};
 
 export default Popover;

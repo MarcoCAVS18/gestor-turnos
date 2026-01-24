@@ -1,17 +1,17 @@
 // src/contexts/DataContext.jsx
 
-import React, ***REMOVED*** createContext, useContext, useState, useEffect, useCallback ***REMOVED*** from 'react';
-import ***REMOVED*** useAuth ***REMOVED*** from './AuthContext';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useAuth } from './AuthContext';
 import * as firebaseService from '../services/firebaseService';
 
 const DataContext = createContext();
 
-export const useDataContext = () => ***REMOVED***
+export const useDataContext = () => {
   return useContext(DataContext);
-***REMOVED***;
+};
 
-export const DataProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
+export const DataProvider = ({ children }) => {
+  const { currentUser } = useAuth();
 
   // Translated state variables
   const [works, setWorks] = useState([]); // Was: trabajos / setTrabajos
@@ -19,101 +19,101 @@ export const DataProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => ***REMOVED***
-    if (currentUser) ***REMOVED***
+  useEffect(() => {
+    if (currentUser) {
       setLoading(true);
       
       // WARNING: Make sure your firebaseService.subscribeToNormalData 
       // is updated to accept these new key names (setWorks, setShifts)
       const unsubscribe = firebaseService.subscribeToNormalData(
         currentUser.uid,
-        ***REMOVED***
+        {
           setWorks, // Was: setTrabajos
           setShifts, // Was: setTurnos
           setError,
-        ***REMOVED***
+        }
       );
       
       // Data loads via snapshot, add delay to ensure first snapshot loads
-      const timeoutId = setTimeout(() => ***REMOVED***
+      const timeoutId = setTimeout(() => {
         setLoading(false);
-      ***REMOVED***, 1000);
+      }, 1000);
       
-      return () => ***REMOVED***
+      return () => {
         clearTimeout(timeoutId);
         unsubscribe();
-      ***REMOVED***;
-    ***REMOVED*** else ***REMOVED***
+      };
+    } else {
       // Clear data if no user
       setWorks([]);
       setShifts([]);
       setLoading(false);
-    ***REMOVED***
-  ***REMOVED***, [currentUser]);
+    }
+  }, [currentUser]);
 
   // CRUD functions for traditional jobs
-  const addJob = useCallback(async (newJob) => ***REMOVED***
+  const addJob = useCallback(async (newJob) => {
     if (!currentUser) throw new Error("User not authenticated");
-    try ***REMOVED***
+    try {
       return await firebaseService.addJob(currentUser.uid, newJob);
-    ***REMOVED*** catch (err) ***REMOVED***
+    } catch (err) {
       setError('Error adding job: ' + err.message);
       throw err;
-    ***REMOVED***
-  ***REMOVED***, [currentUser]);
+    }
+  }, [currentUser]);
 
-  const editJob = useCallback(async (id, updatedData) => ***REMOVED***
+  const editJob = useCallback(async (id, updatedData) => {
     if (!currentUser) throw new Error("User not authenticated");
-    try ***REMOVED***
+    try {
       await firebaseService.editJob(currentUser.uid, id, updatedData);
-    ***REMOVED*** catch (err) ***REMOVED***
+    } catch (err) {
       setError('Error editing job: ' + err.message);
       throw err;
-    ***REMOVED***
-  ***REMOVED***, [currentUser]);
+    }
+  }, [currentUser]);
 
-  const deleteJob = useCallback(async (id) => ***REMOVED***
+  const deleteJob = useCallback(async (id) => {
     if (!currentUser) throw new Error("User not authenticated");
-    try ***REMOVED***
+    try {
       await firebaseService.deleteJob(currentUser.uid, id);
-    ***REMOVED*** catch (err) ***REMOVED***
+    } catch (err) {
       setError('Error deleting job: ' + err.message);
       throw err;
-    ***REMOVED***
-  ***REMOVED***, [currentUser]);
+    }
+  }, [currentUser]);
 
   // CRUD functions for traditional shifts
-  const addShift = useCallback(async (newShift) => ***REMOVED***
+  const addShift = useCallback(async (newShift) => {
     if (!currentUser) throw new Error("User not authenticated");
-    try ***REMOVED***
+    try {
       return await firebaseService.addShift(currentUser.uid, newShift);
-    ***REMOVED*** catch (err) ***REMOVED***
+    } catch (err) {
       setError('Error adding shift: ' + err.message);
       throw err;
-    ***REMOVED***
-  ***REMOVED***, [currentUser]);
+    }
+  }, [currentUser]);
 
-  const editShift = useCallback(async (id, updatedData) => ***REMOVED***
+  const editShift = useCallback(async (id, updatedData) => {
     if (!currentUser) throw new Error("User not authenticated");
-    try ***REMOVED***
+    try {
       await firebaseService.editShift(currentUser.uid, id, updatedData);
-    ***REMOVED*** catch (err) ***REMOVED***
+    } catch (err) {
       setError('Error editing shift: ' + err.message);
       throw err;
-    ***REMOVED***
-  ***REMOVED***, [currentUser]);
+    }
+  }, [currentUser]);
 
-  const deleteShift = useCallback(async (id) => ***REMOVED***
+  const deleteShift = useCallback(async (id) => {
     if (!currentUser) throw new Error("User not authenticated");
-    try ***REMOVED***
+    try {
       await firebaseService.deleteShift(currentUser.uid, id);
-    ***REMOVED*** catch (err) ***REMOVED***
+    } catch (err) {
       setError('Error deleting shift: ' + err.message);
       throw err;
-    ***REMOVED***
-  ***REMOVED***, [currentUser]);
+    }
+  }, [currentUser]);
 
-  const value = ***REMOVED***
+  const value = {
     works, // Exported as 'works' to match AppContext expectation
     shifts, // Exported as 'shifts'
     loading,
@@ -124,7 +124,7 @@ export const DataProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
     addShift,
     editShift,
     deleteShift,
-  ***REMOVED***;
+  };
 
-  return <DataContext.Provider value=***REMOVED***value***REMOVED***>***REMOVED***children***REMOVED***</DataContext.Provider>;
-***REMOVED***;
+  return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
+};

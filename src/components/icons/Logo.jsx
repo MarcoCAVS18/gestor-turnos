@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const Logo = () => ***REMOVED***
+const Logo = () => {
   return (
     <div className="flex justify-center mb-6">
       <div className="bg-white rounded-full p-4 shadow-md">
@@ -10,6 +10,6 @@ const Logo = () => ***REMOVED***
       </div>
     </div>
   );
-***REMOVED***;
+};
 
 export default Logo;

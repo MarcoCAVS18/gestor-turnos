@@ -1,13 +1,13 @@
 // src/components/filters/FiltersSummary/index.jsx
 
 import React from 'react';
-import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import { X } from 'lucide-react';
+import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import Flex from '../../ui/Flex';
 
-const FiltersSummary = (***REMOVED*** filters, onRemoveFilter, onClearAll, statistics ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** works, deliveryWork ***REMOVED*** = useApp();
+const FiltersSummary = ({ filters, onRemoveFilter, onClearAll, statistics }) => {
+  const { works, deliveryWork } = useApp();
   const colors = useThemeColors();
   
   // Combine works to get names
@@ -21,13 +21,13 @@ const FiltersSummary = (***REMOVED*** filters, onRemoveFilter, onClearAll, stati
   if (!hasActiveFilters) return null;
 
   // Get work name
-  const getWorkName = (id) => ***REMOVED***
+  const getWorkName = (id) => {
     const work = allWorks.find(t => t.id === id);
     return work?.name || 'Unknown work';
-  ***REMOVED***;
+  };
 
   // Map days of the week
-  const weekDayLabels = ***REMOVED***
+  const weekDayLabels = {
     monday: 'Monday',
     tuesday: 'Tuesday',
     wednesday: 'Wednesday',
@@ -35,104 +35,104 @@ const FiltersSummary = (***REMOVED*** filters, onRemoveFilter, onClearAll, stati
     friday: 'Friday',
     saturday: 'Saturday',
     sunday: 'Sunday'
-  ***REMOVED***;
+  };
 
   // Map shift types
-  const shiftTypeLabels = ***REMOVED***
+  const shiftTypeLabels = {
     day: 'Day',
     afternoon: 'Afternoon',
     night: 'Night',
     saturday: 'Saturday',
     sunday: 'Sunday',
     delivery: 'Delivery'
-  ***REMOVED***;
+  };
 
   return (
     <div 
       className="p-4 rounded-lg border-l-4 space-y-3"
-      style=***REMOVED******REMOVED*** 
+      style={{ 
         backgroundColor: colors.transparent5,
         borderLeftColor: colors.primary 
-      ***REMOVED******REMOVED***
+      }}
     >
-      ***REMOVED***/* Statistics */***REMOVED***
+      {/* Statistics */}
       <Flex variant="between" className="text-sm">
-        <span style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="font-medium">
-          Active filters: ***REMOVED***statistics?.filteredShifts || 0***REMOVED*** of ***REMOVED***statistics?.totalShifts || 0***REMOVED*** shifts
+        <span style={{ color: colors.primary }} className="font-medium">
+          Active filters: {statistics?.filteredShifts || 0} of {statistics?.totalShifts || 0} shifts
         </span>
         <button
-          onClick=***REMOVED***onClearAll***REMOVED***
+          onClick={onClearAll}
           className="flex items-center space-x-1 px-2 py-1 text-xs rounded-md hover:bg-gray-100 transition-colors"
-          style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
+          style={{ color: colors.primary }}
         >
-          <X size=***REMOVED***12***REMOVED*** />
+          <X size={12} />
           <span>Clear all</span>
         </button>
       </Flex>
 
-      ***REMOVED***/* Active filter tags */***REMOVED***
+      {/* Active filter tags */}
       <div className="flex flex-wrap gap-2">
-        ***REMOVED***filters.work !== 'all' && (
+        {filters.work !== 'all' && (
           <div 
             className="flex items-center space-x-2 px-3 py-1 rounded-full text-sm"
-            style=***REMOVED******REMOVED*** 
+            style={{ 
               backgroundColor: colors.transparent20,
               color: colors.primary 
-            ***REMOVED******REMOVED***
+            }}
           >
-            <span>Work: ***REMOVED***getWorkName(filters.work)***REMOVED***</span>
+            <span>Work: {getWorkName(filters.work)}</span>
             <button 
-              onClick=***REMOVED***() => onRemoveFilter('work')***REMOVED***
+              onClick={() => onRemoveFilter('work')}
               className="hover:bg-white hover:bg-opacity-20 rounded-full p-0.5"
             >
-              <X size=***REMOVED***14***REMOVED*** />
+              <X size={14} />
             </button>
           </div>
-        )***REMOVED***
+        )}
         
-        ***REMOVED***filters.weekDays.length > 0 && (
+        {filters.weekDays.length > 0 && (
           <div 
             className="flex items-center space-x-2 px-3 py-1 rounded-full text-sm"
-            style=***REMOVED******REMOVED*** 
+            style={{ 
               backgroundColor: colors.transparent20,
               color: colors.primary 
-            ***REMOVED******REMOVED***
+            }}
           >
             <span>
-              Days: ***REMOVED***filters.weekDays.length === 7 
+              Days: {filters.weekDays.length === 7 
                 ? 'All' 
                 : filters.weekDays.map(day => weekDayLabels[day]).join(', ')
-              ***REMOVED***
+              }
             </span>
             <button 
-              onClick=***REMOVED***() => onRemoveFilter('weekDays')***REMOVED***
+              onClick={() => onRemoveFilter('weekDays')}
               className="hover:bg-white hover:bg-opacity-20 rounded-full p-0.5"
             >
-              <X size=***REMOVED***14***REMOVED*** />
+              <X size={14} />
             </button>
           </div>
-        )***REMOVED***
+        )}
         
-        ***REMOVED***filters.shiftType !== 'all' && (
+        {filters.shiftType !== 'all' && (
           <Flex variant="center" 
             className="space-x-2 px-3 py-1 rounded-full text-sm"
-            style=***REMOVED******REMOVED*** 
+            style={{ 
               backgroundColor: colors.transparent20,
               color: colors.primary 
-            ***REMOVED******REMOVED***
+            }}
           >
-            <span>Type: ***REMOVED***shiftTypeLabels[filters.shiftType] || filters.shiftType***REMOVED***</span>
+            <span>Type: {shiftTypeLabels[filters.shiftType] || filters.shiftType}</span>
             <button 
-              onClick=***REMOVED***() => onRemoveFilter('shiftType')***REMOVED***
+              onClick={() => onRemoveFilter('shiftType')}
               className="hover:bg-white hover:bg-opacity-20 rounded-full p-0.5"
             >
-              <X size=***REMOVED***14***REMOVED*** />
+              <X size={14} />
             </button>
           </Flex>
-        )***REMOVED***
+        )}
       </div>
     </div>
   );
-***REMOVED***;
+};
 
 export default FiltersSummary;

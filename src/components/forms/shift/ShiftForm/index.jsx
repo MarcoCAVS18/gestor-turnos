@@ -1,14 +1,14 @@
 // src/components/forms/shift/ShiftForm/index.jsx
 
-import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
-import ***REMOVED*** Briefcase, Calendar, Clock, FileText, Coffee, Pencil, Check ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
-import ***REMOVED*** createSafeDate, calculateShiftHours ***REMOVED*** from '../../../../utils/time';
-import BaseForm, ***REMOVED*** FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses ***REMOVED*** from '../../base/BaseForm';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Briefcase, Calendar, Clock, FileText, Coffee, Pencil, Check } from 'lucide-react';
+import { useThemeColors } from '../../../../hooks/useThemeColors';
+import { useApp } from '../../../../contexts/AppContext';
+import { createSafeDate, calculateShiftHours } from '../../../../utils/time';
+import BaseForm, { FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses } from '../../base/BaseForm';
 import Flex from '../../../ui/Flex';
 
-const ShiftForm = (***REMOVED***
+const ShiftForm = ({
   id,
   shift,
   workId,
@@ -18,12 +18,12 @@ const ShiftForm = (***REMOVED***
   onDirtyChange, 
   isMobile = false,
   initialDate
-***REMOVED***) => ***REMOVED***
+}) => {
   const colors = useThemeColors();
-  const ***REMOVED*** smokoEnabled, smokoMinutes ***REMOVED*** = useApp(); // NEW
+  const { smokoEnabled, smokoMinutes } = useApp(); // NEW
 
   const [initialFormData, setInitialFormData] = useState(null);
-  const [formData, setFormData] = useState(***REMOVED***
+  const [formData, setFormData] = useState({
     workId: workId || '',
     startDate: '',
     startTime: '',
@@ -33,17 +33,17 @@ const ShiftForm = (***REMOVED***
     hadBreak: true, // NEW - by default assumes break was taken
     breakMinutes: smokoMinutes, // NEW - editable
     notes: ''
-  ***REMOVED***);
+  });
 
   const [isEditingBreak, setIsEditingBreak] = useState(false);
-  const [errors, setErrors] = useState(***REMOVED******REMOVED***);
+  const [errors, setErrors] = useState({});
 
   // Effect to detect if the form is "dirty" (modified)
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     if (!initialFormData || !onDirtyChange) return;
 
     // Only considered dirty if it is an existing shift
-    if (shift) ***REMOVED***
+    if (shift) {
       const isDirty =
         formData.workId !== initialFormData.workId ||
         formData.startDate !== initialFormData.startDate ||
@@ -53,14 +53,14 @@ const ShiftForm = (***REMOVED***
         Number(formData.breakMinutes) !== Number(initialFormData.breakMinutes) ||
         formData.notes !== initialFormData.notes;
       onDirtyChange(isDirty);
-    ***REMOVED*** else ***REMOVED***
+    } else {
       onDirtyChange(true); // For new shifts, the button is always active
-    ***REMOVED***
-  ***REMOVED***, [formData, initialFormData, onDirtyChange, shift]);
+    }
+  }, [formData, initialFormData, onDirtyChange, shift]);
 
 
   // Function to calculate shift duration - USING CENTRALIZED UTILITY
-  const calculateShiftDuration = useCallback(() => ***REMOVED***
+  const calculateShiftDuration = useCallback(() => {
     if (!formData.startTime || !formData.endTime) return null;
 
     const totalHours = calculateShiftHours(formData.startTime, formData.endTime);
@@ -70,92 +70,92 @@ const ShiftForm = (***REMOVED***
     let actualMinutes = totalMinutes;
     const breakDuration = formData.breakMinutes || 0;
 
-    if (smokoEnabled && formData.hadBreak && totalMinutes > breakDuration) ***REMOVED***
+    if (smokoEnabled && formData.hadBreak && totalMinutes > breakDuration) {
       actualMinutes = totalMinutes - breakDuration;
-    ***REMOVED***
+    }
 
-    return ***REMOVED***
+    return {
       totalMinutes,
       actualMinutes,
       hours: Math.floor(actualMinutes / 60),
       minutes: actualMinutes % 60,
       smokoApplied: smokoEnabled && formData.hadBreak && totalMinutes > breakDuration,
       minutesDiscounted: breakDuration
-    ***REMOVED***;
-  ***REMOVED***, [formData.startTime, formData.endTime, formData.hadBreak, smokoEnabled, formData.breakMinutes]);
+    };
+  }, [formData.startTime, formData.endTime, formData.hadBreak, smokoEnabled, formData.breakMinutes]);
 
   const duration = calculateShiftDuration();
 
   // Detect night shifts automatically
-  useEffect(() => ***REMOVED***
-    if (formData.startTime && formData.endTime) ***REMOVED***
+  useEffect(() => {
+    if (formData.startTime && formData.endTime) {
       const [startHour] = formData.startTime.split(':').map(Number);
       const [endHour] = formData.endTime.split(':').map(Number);
       
       const isNightShift = startHour > endHour;
       
-      if (isNightShift !== formData.crossesMidnight) ***REMOVED***
-        setFormData(prev => (***REMOVED***
+      if (isNightShift !== formData.crossesMidnight) {
+        setFormData(prev => ({
           ...prev,
           crossesMidnight: isNightShift,
           endDate: isNightShift && prev.startDate 
             ? calculateEndDate(prev.startDate)
             : ''
-        ***REMOVED***));
-      ***REMOVED***
-    ***REMOVED***
-  ***REMOVED***, [formData.startTime, formData.endTime, formData.startDate, formData.crossesMidnight]);
+        }));
+      }
+    }
+  }, [formData.startTime, formData.endTime, formData.startDate, formData.crossesMidnight]);
 
-  const calculateEndDate = (startDate) => ***REMOVED***
+  const calculateEndDate = (startDate) => {
     const date = createSafeDate(startDate);
     date.setDate(date.getDate() + 1);
     return date.toISOString().split('T')[0];
-  ***REMOVED***;
+  };
 
-  const validateForm = () => ***REMOVED***
-    const newErrors = ***REMOVED******REMOVED***;
+  const validateForm = () => {
+    const newErrors = {};
 
-    if (!formData.workId) ***REMOVED***
+    if (!formData.workId) {
       newErrors.workId = 'Select a job';
-    ***REMOVED***
-    if (!formData.startDate) ***REMOVED***
+    }
+    if (!formData.startDate) {
       newErrors.startDate = 'Date is required';
-    ***REMOVED***
-    if (!formData.startTime) ***REMOVED***
+    }
+    if (!formData.startTime) {
       newErrors.startTime = 'Start time is required';
-    ***REMOVED***
-    if (!formData.endTime) ***REMOVED***
+    }
+    if (!formData.endTime) {
       newErrors.endTime = 'End time is required';
-    ***REMOVED***
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  ***REMOVED***;
+  };
 
-  const handleSubmit = (e) => ***REMOVED***
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (validateForm()) ***REMOVED***
+    if (validateForm()) {
       onSubmit(formData);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  const handleInputChange = useCallback((field, value) => ***REMOVED***
-    setFormData(prev => (***REMOVED*** ...prev, [field]: value ***REMOVED***));
-    if (errors[field]) ***REMOVED***
-      setErrors(prev => (***REMOVED*** ...prev, [field]: undefined ***REMOVED***));
-    ***REMOVED***
+  const handleInputChange = useCallback((field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
 
     // Notify parent component of work change
-    if (field === 'workId') ***REMOVED***
+    if (field === 'workId') {
       onWorkChange?.(value);
-    ***REMOVED***
-  ***REMOVED***, [errors, onWorkChange]);
+    }
+  }, [errors, onWorkChange]);
 
   // Initialize form - UPDATED
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     let initialData;
-    if (shift) ***REMOVED***
-      initialData = ***REMOVED***
+    if (shift) {
+      initialData = {
         workId: shift.workId || '',
         startDate: shift.startDate || shift.date || '',
         startTime: shift.startTime || '',
@@ -165,13 +165,13 @@ const ShiftForm = (***REMOVED***
         hadBreak: shift.hadBreak !== undefined ? shift.hadBreak : true,
         breakMinutes: shift.breakMinutes !== undefined ? shift.breakMinutes : smokoMinutes,
         notes: shift.notes || ''
-      ***REMOVED***;
-    ***REMOVED*** else ***REMOVED***
+      };
+    } else {
       const dateStr = initialDate 
         ? (initialDate instanceof Date ? initialDate.toISOString().split('T')[0] : initialDate)
         : new Date().toISOString().split('T')[0];
 
-      initialData = ***REMOVED***
+      initialData = {
         workId: workId || '',
         startDate: dateStr,
         startTime: '',
@@ -181,338 +181,338 @@ const ShiftForm = (***REMOVED***
         hadBreak: true,
         breakMinutes: smokoMinutes,
         notes: ''
-      ***REMOVED***;
-    ***REMOVED***
+      };
+    }
     setFormData(initialData);
     setInitialFormData(initialData);
-  ***REMOVED***, [shift, workId, initialDate, smokoMinutes]);
+  }, [shift, workId, initialDate, smokoMinutes]);
 
   const traditionalWorks = works.filter(w => w.type !== 'delivery');
   const deliveryWorks = works.filter(w => w.type === 'delivery');
 
   return (
     <BaseForm
-      id=***REMOVED***id***REMOVED***
-      onSubmit=***REMOVED***handleSubmit***REMOVED***
-      isMobile=***REMOVED***isMobile***REMOVED***
+      id={id}
+      onSubmit={handleSubmit}
+      isMobile={isMobile}
     >
-      ***REMOVED***/* Work selection */***REMOVED***
+      {/* Work selection */}
       <FormSection>
-        <FormLabel icon=***REMOVED***Briefcase***REMOVED***>Work</FormLabel>
+        <FormLabel icon={Briefcase}>Work</FormLabel>
         <select
-          value=***REMOVED***formData.workId***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('workId', e.target.value)***REMOVED***
-          className=***REMOVED***getInputClasses(isMobile, errors.workId)***REMOVED***
-          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+          value={formData.workId}
+          onChange={(e) => handleInputChange('workId', e.target.value)}
+          className={getInputClasses(isMobile, errors.workId)}
+          style={{ '--tw-ring-color': colors.primary }}
           required
         >
           <option value="">Select work</option>
 
-          ***REMOVED***traditionalWorks.length > 0 && (
+          {traditionalWorks.length > 0 && (
             <optgroup label="Traditional Works">
-              ***REMOVED***traditionalWorks.map(work => (
-                <option key=***REMOVED***work.id***REMOVED*** value=***REMOVED***work.id***REMOVED***>
-                  ***REMOVED***work.name***REMOVED***
+              {traditionalWorks.map(work => (
+                <option key={work.id} value={work.id}>
+                  {work.name}
                 </option>
-              ))***REMOVED***
+              ))}
             </optgroup>
-          )***REMOVED***
+          )}
 
-          ***REMOVED***deliveryWorks.length > 0 && (
+          {deliveryWorks.length > 0 && (
             <optgroup label="Delivery Works">
-              ***REMOVED***deliveryWorks.map(work => (
-                <option key=***REMOVED***work.id***REMOVED*** value=***REMOVED***work.id***REMOVED***>
-                  ***REMOVED***work.name***REMOVED***
+              {deliveryWorks.map(work => (
+                <option key={work.id} value={work.id}>
+                  {work.name}
                 </option>
-              ))***REMOVED***
+              ))}
             </optgroup>
-          )***REMOVED***
+          )}
         </select>
-        <FormError error=***REMOVED***errors.workId***REMOVED*** />
+        <FormError error={errors.workId} />
       </FormSection>
 
-      ***REMOVED***/* RESPONSIVE DATE CONTAINER */***REMOVED***
-      <FormGrid columns=***REMOVED***2***REMOVED***>
-        ***REMOVED***/* Start date */***REMOVED***
-        <FormField className=***REMOVED***!formData.crossesMidnight ? 'col-span-2' : ''***REMOVED***>
-          <FormLabel icon=***REMOVED***Calendar***REMOVED***>Start date</FormLabel>
+      {/* RESPONSIVE DATE CONTAINER */}
+      <FormGrid columns={2}>
+        {/* Start date */}
+        <FormField className={!formData.crossesMidnight ? 'col-span-2' : ''}>
+          <FormLabel icon={Calendar}>Start date</FormLabel>
           <input
             type="date"
-            value=***REMOVED***formData.startDate***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('startDate', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile, errors.startDate)***REMOVED***
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            value={formData.startDate}
+            onChange={(e) => handleInputChange('startDate', e.target.value)}
+            className={getInputClasses(isMobile, errors.startDate)}
+            style={{ '--tw-ring-color': colors.primary }}
             required
           />
-          <FormError error=***REMOVED***errors.startDate***REMOVED*** />
+          <FormError error={errors.startDate} />
         </FormField>
 
-        ***REMOVED***/* End date - only show if it's a night shift */***REMOVED***
-        ***REMOVED***formData.crossesMidnight && (
+        {/* End date - only show if it's a night shift */}
+        {formData.crossesMidnight && (
           <FormField>
-            <FormLabel icon=***REMOVED***Calendar***REMOVED***>End date</FormLabel>
+            <FormLabel icon={Calendar}>End date</FormLabel>
             <input
               type="date"
-              value=***REMOVED***formData.endDate || calculateEndDate(formData.startDate)***REMOVED***
-              onChange=***REMOVED***(e) => handleInputChange('endDate', e.target.value)***REMOVED***
-              className=***REMOVED***getInputClasses(isMobile)***REMOVED***
-              style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+              value={formData.endDate || calculateEndDate(formData.startDate)}
+              onChange={(e) => handleInputChange('endDate', e.target.value)}
+              className={getInputClasses(isMobile)}
+              style={{ '--tw-ring-color': colors.primary }}
               disabled
             />
             <p className="text-xs text-gray-500 mt-1">
               Calculated automatically for night shifts
             </p>
           </FormField>
-        )***REMOVED***
+        )}
       </FormGrid>
 
-      ***REMOVED***/* RESPONSIVE TIME CONTAINER */***REMOVED***
-      <FormGrid columns=***REMOVED***2***REMOVED***>
-        ***REMOVED***/* Start time */***REMOVED***
+      {/* RESPONSIVE TIME CONTAINER */}
+      <FormGrid columns={2}>
+        {/* Start time */}
         <FormField>
-          <FormLabel icon=***REMOVED***Clock***REMOVED***>Start time</FormLabel>
+          <FormLabel icon={Clock}>Start time</FormLabel>
           <input
             type="time"
-            value=***REMOVED***formData.startTime***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('startTime', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile, errors.startTime)***REMOVED***
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            value={formData.startTime}
+            onChange={(e) => handleInputChange('startTime', e.target.value)}
+            className={getInputClasses(isMobile, errors.startTime)}
+            style={{ '--tw-ring-color': colors.primary }}
             required
           />
-          <FormError error=***REMOVED***errors.startTime***REMOVED*** />
+          <FormError error={errors.startTime} />
         </FormField>
 
-        ***REMOVED***/* End time */***REMOVED***
+        {/* End time */}
         <FormField>
-          <FormLabel icon=***REMOVED***Clock***REMOVED***>End time</FormLabel>
+          <FormLabel icon={Clock}>End time</FormLabel>
           <input
             type="time"
-            value=***REMOVED***formData.endTime***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('endTime', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile, errors.endTime)***REMOVED***
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            value={formData.endTime}
+            onChange={(e) => handleInputChange('endTime', e.target.value)}
+            className={getInputClasses(isMobile, errors.endTime)}
+            style={{ '--tw-ring-color': colors.primary }}
             required
           />
-          <FormError error=***REMOVED***errors.endTime***REMOVED*** />
+          <FormError error={errors.endTime} />
         </FormField>
       </FormGrid>
 
-***REMOVED***/* NEW SECTION: BREAK (SMOKO) - OPTIMIZED FOR MOBILE */***REMOVED***
-***REMOVED***smokoEnabled && duration && duration.totalMinutes > 0 && (
+{/* NEW SECTION: BREAK (SMOKO) - OPTIMIZED FOR MOBILE */}
+{smokoEnabled && duration && duration.totalMinutes > 0 && (
   <div className="w-full">
     <div 
-      className=***REMOVED***`
+      className={`
         rounded-lg border
-        $***REMOVED***isMobile ? 'p-4 space-y-4' : 'p-4 space-y-3'***REMOVED***
-      `***REMOVED***
-      style=***REMOVED******REMOVED*** 
+        ${isMobile ? 'p-4 space-y-4' : 'p-4 space-y-3'}
+      `}
+      style={{ 
         backgroundColor: colors.transparent5,
         borderColor: colors.transparent20 
-      ***REMOVED******REMOVED***
+      }}
     >
-      ***REMOVED***/* Header with title and custom toggle */***REMOVED***
-      <Flex variant="between" className=***REMOVED***`
-        $***REMOVED***isMobile ? 'pb-2 border-b border-gray-200' : ''***REMOVED***
-      `***REMOVED***>
+      {/* Header with title and custom toggle */}
+      <Flex variant="between" className={`
+        ${isMobile ? 'pb-2 border-b border-gray-200' : ''}
+      `}>
         <div className="flex items-center flex-1">
           <Coffee 
-            size=***REMOVED***isMobile ? 18 : 16***REMOVED*** 
-            style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** 
+            size={isMobile ? 18 : 16} 
+            style={{ color: colors.primary }} 
             className="mr-2 flex-shrink-0" 
           />
-          <span className=***REMOVED***`font-medium text-gray-700 $***REMOVED***isMobile ? 'text-base' : 'text-sm'***REMOVED***`***REMOVED***>
+          <span className={`font-medium text-gray-700 ${isMobile ? 'text-base' : 'text-sm'}`}>
             Did you have a break?
           </span>
         </div>
 
-        ***REMOVED***/* Custom Toggle Switch */***REMOVED***
+        {/* Custom Toggle Switch */}
         <label className="relative inline-flex items-center cursor-pointer">
-          ***REMOVED***/* Hidden input */***REMOVED***
+          {/* Hidden input */}
           <input
             type="checkbox"
-            checked=***REMOVED***formData.hadBreak***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('hadBreak', e.target.checked)***REMOVED***
+            checked={formData.hadBreak}
+            onChange={(e) => handleInputChange('hadBreak', e.target.checked)}
             className="sr-only peer"
           />
           
-          ***REMOVED***/* Custom switch */***REMOVED***
-          <div className=***REMOVED***`
+          {/* Custom switch */}
+          <div className={`
             relative bg-gray-200 rounded-full peer 
             peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2
             peer-checked:after:translate-x-full peer-checked:after:border-white 
             after:content-[''] after:absolute after:bg-white after:border-gray-300 
             after:border after:rounded-full after:transition-all
-            $***REMOVED***isMobile 
+            ${isMobile 
               ? 'w-12 h-6 after:top-[2px] after:left-[2px] after:h-5 after:w-5' 
               : 'w-10 h-5 after:top-[1px] after:left-[1px] after:h-4 after:w-4'
-            ***REMOVED***
-          `***REMOVED***
-          style=***REMOVED******REMOVED***
+            }
+          `}
+          style={{
             '--tw-ring-color': colors.primary,
             backgroundColor: formData.hadBreak ? colors.primary : undefined
-          ***REMOVED******REMOVED***
+          }}
           />
           
-          ***REMOVED***/* Toggle text */***REMOVED***
-          <span className=***REMOVED***`
+          {/* Toggle text */}
+          <span className={`
             ml-3 font-medium
-            $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***
-            $***REMOVED***formData.hadBreak ? 'text-green-700' : 'text-gray-600'***REMOVED***
-          `***REMOVED***>
-            ***REMOVED***formData.hadBreak ? 'Yes' : 'No'***REMOVED***
+            ${isMobile ? 'text-sm' : 'text-xs'}
+            ${formData.hadBreak ? 'text-green-700' : 'text-gray-600'}
+          `}>
+            {formData.hadBreak ? 'Yes' : 'No'}
           </span>
         </label>
       </Flex>
 
-      ***REMOVED***/* Calculation information - RESPONSIVE LAYOUT */***REMOVED***
-      <div className=***REMOVED***`
-        $***REMOVED***isMobile ? 'space-y-3' : 'space-y-2'***REMOVED***
-        $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***
+      {/* Calculation information - RESPONSIVE LAYOUT */}
+      <div className={`
+        ${isMobile ? 'space-y-3' : 'space-y-2'}
+        ${isMobile ? 'text-sm' : 'text-xs'}
         text-gray-600
-      `***REMOVED***>
-        ***REMOVED***/* Scheduled time */***REMOVED***
-        <Flex variant="between" className=***REMOVED***`
+      `}>
+        {/* Scheduled time */}
+        <Flex variant="between" className={`
           p-2 rounded
-          $***REMOVED***isMobile ? 'bg-blue-50' : 'bg-gray-50'***REMOVED***
-        `***REMOVED***>
+          ${isMobile ? 'bg-blue-50' : 'bg-gray-50'}
+        `}>
           <div className="flex items-center">
-            <Flex variant="center" className=***REMOVED***`
+            <Flex variant="center" className={`
               rounded-full mr-2
-              $***REMOVED***isMobile ? 'w-6 h-6 text-xs' : 'w-5 h-5 text-xs'***REMOVED***
-            `***REMOVED***
-            style=***REMOVED******REMOVED*** backgroundColor: colors.transparent20, color: colors.primary ***REMOVED******REMOVED***>
-              <Clock size=***REMOVED***isMobile ? 12 : 10***REMOVED*** />
+              ${isMobile ? 'w-6 h-6 text-xs' : 'w-5 h-5 text-xs'}
+            `}
+            style={{ backgroundColor: colors.transparent20, color: colors.primary }}>
+              <Clock size={isMobile ? 12 : 10} />
             </Flex>
-            <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Scheduled time:</span>
+            <span className={isMobile ? 'text-sm' : 'text-xs'}>Scheduled time:</span>
           </div>
-          <span className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***>
-            ***REMOVED***Math.floor(duration.totalMinutes / 60)***REMOVED***h ***REMOVED***duration.totalMinutes % 60***REMOVED***min
+          <span className={`font-semibold ${isMobile ? 'text-sm' : 'text-xs'}`}>
+            {Math.floor(duration.totalMinutes / 60)}h {duration.totalMinutes % 60}min
           </span>
         </Flex>
 
-        ***REMOVED***formData.hadBreak ? (
+        {formData.hadBreak ? (
           <>
-            ***REMOVED***/* Configured break (NOW EDITABLE WITH CLICK) */***REMOVED***
-            <Flex variant="between" className=***REMOVED***`p-2 rounded items-center $***REMOVED***isMobile ? 'bg-orange-50' : 'bg-gray-50'***REMOVED***`***REMOVED***>
+            {/* Configured break (NOW EDITABLE WITH CLICK) */}
+            <Flex variant="between" className={`p-2 rounded items-center ${isMobile ? 'bg-orange-50' : 'bg-gray-50'}`}>
               <div className="flex items-center">
-                <Flex variant="center" className=***REMOVED***`
+                <Flex variant="center" className={`
                   rounded-full mr-2
-                  $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***
-                `***REMOVED***
-                style=***REMOVED******REMOVED*** backgroundColor: '#FED7AA', color: '#EA580C' ***REMOVED******REMOVED***>
-                  <Coffee size=***REMOVED***isMobile ? 10 : 8***REMOVED*** />
+                  ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
+                `}
+                style={{ backgroundColor: '#FED7AA', color: '#EA580C' }}>
+                  <Coffee size={isMobile ? 10 : 8} />
                 </Flex>
-                <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Break:</span>
+                <span className={isMobile ? 'text-sm' : 'text-xs'}>Break:</span>
               </div>
 
-              ***REMOVED***isEditingBreak ? (
+              {isEditingBreak ? (
                 <div className="flex items-center">
                   <input
                     type="number"
-                    value=***REMOVED***formData.breakMinutes***REMOVED***
-                    onChange=***REMOVED***(e) => handleInputChange('breakMinutes', e.target.value === '' ? 0 : parseInt(e.target.value, 10))***REMOVED***
-                    className=***REMOVED***`$***REMOVED***getInputClasses(isMobile)***REMOVED*** py-1 px-2 w-20 text-center font-semibold`***REMOVED***
-                    style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+                    value={formData.breakMinutes}
+                    onChange={(e) => handleInputChange('breakMinutes', e.target.value === '' ? 0 : parseInt(e.target.value, 10))}
+                    className={`${getInputClasses(isMobile)} py-1 px-2 w-20 text-center font-semibold`}
+                    style={{ '--tw-ring-color': colors.primary }}
                     autoFocus
-                    onBlur=***REMOVED***() => setIsEditingBreak(false)***REMOVED***
+                    onBlur={() => setIsEditingBreak(false)}
                   />
-                  <button type="button" onClick=***REMOVED***() => setIsEditingBreak(false)***REMOVED*** className="ml-2 text-green-600">
-                    <Check size=***REMOVED***18***REMOVED*** />
+                  <button type="button" onClick={() => setIsEditingBreak(false)} className="ml-2 text-green-600">
+                    <Check size={18} />
                   </button>
                 </div>
               ) : (
                 <div className="flex items-center">
-                  <span className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***>
-                    ***REMOVED***formData.breakMinutes***REMOVED*** minutes
+                  <span className={`font-semibold ${isMobile ? 'text-sm' : 'text-xs'}`}>
+                    {formData.breakMinutes} minutes
                   </span>
-                  <button type="button" onClick=***REMOVED***() => setIsEditingBreak(true)***REMOVED*** className="ml-2 text-gray-500 hover:text-gray-700">
-                    <Pencil size=***REMOVED***14***REMOVED*** />
+                  <button type="button" onClick={() => setIsEditingBreak(true)} className="ml-2 text-gray-500 hover:text-gray-700">
+                    <Pencil size={14} />
                   </button>
                 </div>
-              )***REMOVED***
+              )}
             </Flex>
 
-            ***REMOVED***/* Paid time */***REMOVED***
-            <Flex variant="between" className=***REMOVED***`
+            {/* Paid time */}
+            <Flex variant="between" className={`
               p-2 rounded border
-              $***REMOVED***isMobile ? 'bg-green-50 border-green-200' : 'bg-gray-50'***REMOVED***
-            `***REMOVED***
-            style=***REMOVED******REMOVED*** 
+              ${isMobile ? 'bg-green-50 border-green-200' : 'bg-gray-50'}
+            `}
+            style={{ 
               backgroundColor: isMobile ? colors.transparent10 : undefined,
               borderColor: isMobile ? colors.transparent30 : undefined
-            ***REMOVED******REMOVED***>
+            }}>
               <Flex variant="center">
-                <Flex variant="center" className=***REMOVED***`
+                <Flex variant="center" className={`
                   rounded-full mr-2
-                  $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***
-                `***REMOVED***
-                style=***REMOVED******REMOVED*** backgroundColor: colors.primary, color: 'white' ***REMOVED******REMOVED***>
-                  <span className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-xs' : 'text-[10px]'***REMOVED***`***REMOVED***>$</span>
+                  ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
+                `}
+                style={{ backgroundColor: colors.primary, color: 'white' }}>
+                  <span className={`font-bold ${isMobile ? 'text-xs' : 'text-[10px]'}`}>$</span>
                 </Flex>
-                <span className=***REMOVED***`font-medium $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
-                      style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+                <span className={`font-medium ${isMobile ? 'text-sm' : 'text-xs'}`}
+                      style={{ color: colors.primary }}>
                   Paid time:
                 </span>
               </Flex>
-              <span className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
-                    style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                ***REMOVED***duration.hours***REMOVED***h ***REMOVED***duration.minutes***REMOVED***min
+              <span className={`font-bold ${isMobile ? 'text-sm' : 'text-xs'}`}
+                    style={{ color: colors.primary }}>
+                {duration.hours}h {duration.minutes}min
               </span>
             </Flex>
           </>
         ) : (
           /* No discount applied */
-          <Flex variant="between" className=***REMOVED***`
+          <Flex variant="between" className={`
             p-2 rounded border
-            $***REMOVED***isMobile ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'***REMOVED***
-          `***REMOVED***
-          style=***REMOVED******REMOVED*** 
+            ${isMobile ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'}
+          `}
+          style={{ 
             backgroundColor: isMobile ? colors.transparent10 : undefined,
             borderColor: isMobile ? colors.transparent30 : undefined
-          ***REMOVED******REMOVED***>
+          }}>
             <Flex variant="center">
-              <Flex variant="center" className=***REMOVED***`
+              <Flex variant="center" className={`
                 rounded-full mr-2
-                $***REMOVED***isMobile ? 'w-6 h-6' : 'w-5 h-5'***REMOVED***
-              `***REMOVED***
-              style=***REMOVED******REMOVED*** backgroundColor: colors.primary, color: 'white' ***REMOVED******REMOVED***>
-                <span className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-xs' : 'text-[10px]'***REMOVED***`***REMOVED***>$</span>
+                ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
+              `}
+              style={{ backgroundColor: colors.primary, color: 'white' }}>
+                <span className={`font-bold ${isMobile ? 'text-xs' : 'text-[10px]'}`}>$</span>
               </Flex>
-              <span className=***REMOVED***`font-medium $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
-                    style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
+              <span className={`font-medium ${isMobile ? 'text-sm' : 'text-xs'}`}
+                    style={{ color: colors.primary }}>
                 Paid time:
               </span>
             </Flex>
             <div className="text-right">
-              <div className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
-                   style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                ***REMOVED***Math.floor(duration.totalMinutes / 60)***REMOVED***h ***REMOVED***duration.totalMinutes % 60***REMOVED***min
+              <div className={`font-bold ${isMobile ? 'text-sm' : 'text-xs'}`}
+                   style={{ color: colors.primary }}>
+                {Math.floor(duration.totalMinutes / 60)}h {duration.totalMinutes % 60}min
               </div>
-              <div className=***REMOVED***`$***REMOVED***isMobile ? 'text-xs' : 'text-[10px]'***REMOVED*** text-gray-500`***REMOVED***>
+              <div className={`${isMobile ? 'text-xs' : 'text-[10px]'} text-gray-500`}>
                 (no discount)
               </div>
             </div>
           </Flex>
-        )***REMOVED***
+        )}
       </div>
     </div>
   </div>
-)***REMOVED***
+)}
 
-      ***REMOVED***/* Notes field */***REMOVED***
+      {/* Notes field */}
       <FormSection>
-        <FormLabel icon=***REMOVED***FileText***REMOVED***>Notes (optional)</FormLabel>
+        <FormLabel icon={FileText}>Notes (optional)</FormLabel>
         <textarea
-          value=***REMOVED***formData.notes***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('notes', e.target.value)***REMOVED***
+          value={formData.notes}
+          onChange={(e) => handleInputChange('notes', e.target.value)}
           placeholder="Add notes about this shift..."
-          className=***REMOVED***`$***REMOVED***getInputClasses(isMobile)***REMOVED*** border-gray-300 resize-none`***REMOVED***
-          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
-          rows=***REMOVED***3***REMOVED***
+          className={`${getInputClasses(isMobile)} border-gray-300 resize-none`}
+          style={{ '--tw-ring-color': colors.primary }}
+          rows={3}
         />
       </FormSection>
     </BaseForm>
   );
-***REMOVED***;
+};
 
 export default ShiftForm;

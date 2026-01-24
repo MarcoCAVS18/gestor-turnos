@@ -1,16 +1,16 @@
 // src/utils/workUtils.js
 
-export const generateWorkDetails = (work) => ***REMOVED***
+export const generateWorkDetails = (work) => {
   if (!work) return [];
   
   const details = [work.name];
   
-  if (work.type === 'delivery') ***REMOVED***
-    if (work.platform) details.push(`Platform: $***REMOVED***work.platform***REMOVED***`);
-    if (work.vehicle) details.push(`Vehicle: $***REMOVED***work.vehicle***REMOVED***`);
-  ***REMOVED*** else ***REMOVED***
-    if (work.baseRate) details.push(`Rate: $***REMOVED***work.baseRate***REMOVED***`);
-  ***REMOVED***
+  if (work.type === 'delivery') {
+    if (work.platform) details.push(`Platform: ${work.platform}`);
+    if (work.vehicle) details.push(`Vehicle: ${work.vehicle}`);
+  } else {
+    if (work.baseRate) details.push(`Rate: ${work.baseRate}`);
+  }
   
   return details;
-***REMOVED***;
+};

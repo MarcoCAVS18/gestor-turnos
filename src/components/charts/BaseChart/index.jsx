@@ -1,10 +1,10 @@
 import React from 'react';
-import ***REMOVED*** LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area ***REMOVED*** from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
 import Flex from '../../ui/Flex';
-import ***REMOVED*** getRechartsConfig, PIE_CHART_COLORS ***REMOVED*** from '../../../config/chartConfig';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import { getRechartsConfig, PIE_CHART_COLORS } from '../../../config/chartConfig';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
-const BaseChart = (***REMOVED***
+const BaseChart = ({
   data,
   chartType,
   dataKeys,
@@ -12,104 +12,104 @@ const BaseChart = (***REMOVED***
   valueFormatter,
   tooltipFormatter,
   customTooltipContent,
-  config = ***REMOVED******REMOVED***,
+  config = {},
   pieOuterRadius = '80%',
   pieInnerRadius = '60%',
   showLegend = true,
-  margin = ***REMOVED*** top: 5, right: 20, left: -10, bottom: 5 ***REMOVED***
-***REMOVED***) => ***REMOVED***
+  margin = { top: 5, right: 20, left: -10, bottom: 5 }
+}) => {
   const thematicColors = useThemeColors();
   const baseConfig = getRechartsConfig(thematicColors);
 
   // Merge base config with any overrides
-  const chartConfig = ***REMOVED***
+  const chartConfig = {
     ...baseConfig,
     ...config,
-    axis: ***REMOVED*** ...baseConfig.axis, ...config.axis ***REMOVED***,
-    tooltip: ***REMOVED*** ...baseConfig.tooltip, ...config.tooltip ***REMOVED***,
-    legend: ***REMOVED*** ...baseConfig.legend, ...config.legend ***REMOVED***,
-  ***REMOVED***;
+    axis: { ...baseConfig.axis, ...config.axis },
+    tooltip: { ...baseConfig.tooltip, ...config.tooltip },
+    legend: { ...baseConfig.legend, ...config.legend },
+  };
 
-  if (!data || data.length === 0) ***REMOVED***
+  if (!data || data.length === 0) {
     // This empty state is simple; more complex empty states can be handled by the parent component
     return (
       <Flex variant="center" className="h-full text-gray-500">
         <p>No data available for the chart.</p>
       </Flex>
     );
-  ***REMOVED***
+  }
 
-  const renderChart = () => ***REMOVED***
-    switch (chartType) ***REMOVED***
+  const renderChart = () => {
+    switch (chartType) {
       case 'line':
         return (
-          <LineChart data=***REMOVED***data***REMOVED*** margin=***REMOVED***margin***REMOVED***>
-            <CartesianGrid ***REMOVED***...chartConfig.grid***REMOVED*** />
-            <XAxis dataKey=***REMOVED***nameKey***REMOVED*** tick=***REMOVED***chartConfig.axis.tick***REMOVED*** />
-            <YAxis tickFormatter=***REMOVED***valueFormatter***REMOVED*** tick=***REMOVED***chartConfig.axis.tick***REMOVED*** />
-            ***REMOVED***showLegend && <Legend ***REMOVED***...chartConfig.legend***REMOVED*** />***REMOVED***
+          <LineChart data={data} margin={margin}>
+            <CartesianGrid {...chartConfig.grid} />
+            <XAxis dataKey={nameKey} tick={chartConfig.axis.tick} />
+            <YAxis tickFormatter={valueFormatter} tick={chartConfig.axis.tick} />
+            {showLegend && <Legend {...chartConfig.legend} />}
             <Tooltip
-              formatter=***REMOVED***tooltipFormatter***REMOVED***
-              content=***REMOVED***customTooltipContent || chartConfig.customTooltip***REMOVED***
-              ***REMOVED***...chartConfig.tooltip***REMOVED***
+              formatter={tooltipFormatter}
+              content={customTooltipContent || chartConfig.customTooltip}
+              {...chartConfig.tooltip}
             />
-            ***REMOVED***dataKeys.map((item, index) => (
+            {dataKeys.map((item, index) => (
               <Line
-                key=***REMOVED***item.key***REMOVED***
+                key={item.key}
                 type="monotone"
-                dataKey=***REMOVED***item.key***REMOVED***
-                stroke=***REMOVED***item.stroke || thematicColors.primary || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]***REMOVED***
-                ***REMOVED***...chartConfig.line***REMOVED***
+                dataKey={item.key}
+                stroke={item.stroke || thematicColors.primary || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]}
+                {...chartConfig.line}
               />
-            ))***REMOVED***
+            ))}
           </LineChart>
         );
       case 'area':
         return (
-          <AreaChart data=***REMOVED***data***REMOVED*** margin=***REMOVED***margin***REMOVED***>
-            <CartesianGrid ***REMOVED***...chartConfig.grid***REMOVED*** />
-            <XAxis dataKey=***REMOVED***nameKey***REMOVED*** tick=***REMOVED***chartConfig.axis.tick***REMOVED*** />
-            <YAxis tickFormatter=***REMOVED***valueFormatter***REMOVED*** tick=***REMOVED***chartConfig.axis.tick***REMOVED*** />
-            ***REMOVED***showLegend && <Legend ***REMOVED***...chartConfig.legend***REMOVED*** />***REMOVED***
+          <AreaChart data={data} margin={margin}>
+            <CartesianGrid {...chartConfig.grid} />
+            <XAxis dataKey={nameKey} tick={chartConfig.axis.tick} />
+            <YAxis tickFormatter={valueFormatter} tick={chartConfig.axis.tick} />
+            {showLegend && <Legend {...chartConfig.legend} />}
             <Tooltip
-              formatter=***REMOVED***tooltipFormatter***REMOVED***
-              content=***REMOVED***customTooltipContent || chartConfig.customTooltip***REMOVED***
-              ***REMOVED***...chartConfig.tooltip***REMOVED***
+              formatter={tooltipFormatter}
+              content={customTooltipContent || chartConfig.customTooltip}
+              {...chartConfig.tooltip}
             />
-            ***REMOVED***dataKeys.map((item, index) => (
+            {dataKeys.map((item, index) => (
               <Area
-                key=***REMOVED***item.key***REMOVED***
+                key={item.key}
                 type="monotone"
-                dataKey=***REMOVED***item.key***REMOVED***
-                stroke=***REMOVED***item.stroke || thematicColors.primary || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]***REMOVED***
-                fill=***REMOVED***item.fill || thematicColors.transparent20 || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]***REMOVED***
-                ***REMOVED***...chartConfig.area***REMOVED***
+                dataKey={item.key}
+                stroke={item.stroke || thematicColors.primary || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]}
+                fill={item.fill || thematicColors.transparent20 || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]}
+                {...chartConfig.area}
               />
-            ))***REMOVED***
+            ))}
           </AreaChart>
         );
       case 'pie':
         return (
           <PieChart>
             <Pie
-              data=***REMOVED***data***REMOVED***
-              dataKey=***REMOVED***dataKeys***REMOVED*** // For pie, dataKeys is a string for the value
-              nameKey=***REMOVED***nameKey***REMOVED***
+              data={data}
+              dataKey={dataKeys} // For pie, dataKeys is a string for the value
+              nameKey={nameKey}
               cx="50%"
               cy="50%"
-              outerRadius=***REMOVED***pieOuterRadius***REMOVED***
-              innerRadius=***REMOVED***pieInnerRadius***REMOVED***
-              ***REMOVED***...chartConfig.pie***REMOVED***
+              outerRadius={pieOuterRadius}
+              innerRadius={pieInnerRadius}
+              {...chartConfig.pie}
             >
-              ***REMOVED***data.map((entry, index) => (
-                <Cell key=***REMOVED***`cell-$***REMOVED***index***REMOVED***`***REMOVED*** fill=***REMOVED***entry.color || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]***REMOVED*** />
-              ))***REMOVED***
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]} />
+              ))}
             </Pie>
-            ***REMOVED***showLegend && <Legend ***REMOVED***...chartConfig.legend***REMOVED*** />***REMOVED***
+            {showLegend && <Legend {...chartConfig.legend} />}
             <Tooltip
-              formatter=***REMOVED***tooltipFormatter***REMOVED***
-              content=***REMOVED***customTooltipContent || chartConfig.customTooltip***REMOVED***
-              ***REMOVED***...chartConfig.tooltip***REMOVED***
+              formatter={tooltipFormatter}
+              content={customTooltipContent || chartConfig.customTooltip}
+              {...chartConfig.tooltip}
             />
           </PieChart>
         );
@@ -123,14 +123,14 @@ const BaseChart = (***REMOVED***
             <p>Unsupported chart type.</p>
           </Flex>
         );
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      ***REMOVED***renderChart()***REMOVED***
+      {renderChart()}
     </ResponsiveContainer>
   );
-***REMOVED***;
+};
 
 export default BaseChart;

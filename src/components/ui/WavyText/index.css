@@ -1,17 +1,17 @@
-@keyframes wave ***REMOVED***
-  0%, 100% ***REMOVED***
+@keyframes wave {
+  0%, 100% {
     transform: translateY(0);
-  ***REMOVED***
-  50% ***REMOVED***
+  }
+  50% {
     transform: translateY(-8px);
-  ***REMOVED***
-***REMOVED***
+  }
+}
 
-.wavy-text--animating span ***REMOVED***
+.wavy-text--animating span {
   display: inline-block;
   animation: wave 1.5s;
-***REMOVED***
+}
 
-.wavy-text span ***REMOVED***
+.wavy-text span {
   display: inline-block;
-***REMOVED***
+}

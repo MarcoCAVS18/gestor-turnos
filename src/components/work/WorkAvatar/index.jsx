@@ -1,32 +1,32 @@
 // src/components/work/WorkAvatar/index.jsx 
 
 import React from 'react';
-import ***REMOVED*** Bike, Car, User, Truck ***REMOVED*** from 'lucide-react';
+import { Bike, Car, User, Truck } from 'lucide-react';
 import MotorbikeIcon from '../../icons/MotorbikeIcon';
 import Flex from '../../ui/Flex';
 
-const WorkAvatar = (***REMOVED*** name, color, size = 'md', iconName ***REMOVED***) => ***REMOVED***
-  const sizes = ***REMOVED***
+const WorkAvatar = ({ name, color, size = 'md', iconName }) => {
+  const sizes = {
     sm: 'w-8 h-8 text-sm',
     md: 'w-12 h-12 text-lg',
     lg: 'w-16 h-16 text-xl'
-  ***REMOVED***;
+  };
 
-  const iconSizes = ***REMOVED***
+  const iconSizes = {
     sm: 16,
     md: 20,
     lg: 24
-  ***REMOVED***;
+  };
 
   const currentIconSize = iconSizes[size] || iconSizes.md;
 
-  const iconMap = ***REMOVED***
-    bicycle: <Bike size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
-    motorbike: <MotorbikeIcon size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
-    car: <Car size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
-    'on_foot': <User size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
-    default: <Truck size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />
-  ***REMOVED***;
+  const iconMap = {
+    bicycle: <Bike size={currentIconSize} className="text-white" />,
+    motorbike: <MotorbikeIcon size={currentIconSize} className="text-white" />,
+    car: <Car size={currentIconSize} className="text-white" />,
+    'on_foot': <User size={currentIconSize} className="text-white" />,
+    default: <Truck size={currentIconSize} className="text-white" />
+  };
 
   const safeName = name || 'W';
   const safeColor = color || '#EC4899';
@@ -36,16 +36,16 @@ const WorkAvatar = (***REMOVED*** name, color, size = 'md', iconName ***REMOVED*
 
   const content = iconName && iconMap[iconName] 
     ? iconMap[iconName] 
-    : <span className="text-white font-bold">***REMOVED***initial***REMOVED***</span>;
+    : <span className="text-white font-bold">{initial}</span>;
 
   return (
     <Flex variant="center" 
-      className=***REMOVED***`$***REMOVED***safeSize***REMOVED*** rounded-lg`***REMOVED***
-      style=***REMOVED******REMOVED*** backgroundColor: safeColor ***REMOVED******REMOVED***
+      className={`${safeSize} rounded-lg`}
+      style={{ backgroundColor: safeColor }}
     >
-      ***REMOVED***content***REMOVED***
+      {content}
     </Flex>
   );
-***REMOVED***;
+};
 
 export default WorkAvatar;

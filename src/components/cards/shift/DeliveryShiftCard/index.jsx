@@ -1,18 +1,18 @@
 // src/components/cards/shift/DeliveryShiftCard/index.jsx
 import React from 'react';
-import ***REMOVED*** Package, Navigation ***REMOVED*** from 'lucide-react';
+import { Package, Navigation } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Flex from '../../../ui/Flex';
-import ***REMOVED*** getShiftGrossEarnings ***REMOVED*** from '../../../../utils/shiftUtils';
+import { getShiftGrossEarnings } from '../../../../utils/shiftUtils';
 
-const DeliveryShiftCard = (props) => ***REMOVED***
-  const ***REMOVED*** shift ***REMOVED*** = props;
+const DeliveryShiftCard = (props) => {
+  const { shift } = props;
 
   // Calculate shift data
-  const shiftData = React.useMemo(() => ***REMOVED***
-    if (!shift) ***REMOVED***
-      return ***REMOVED*** hours: 0, totalWithDiscount: 0 ***REMOVED***;
-    ***REMOVED***
+  const shiftData = React.useMemo(() => {
+    if (!shift) {
+      return { hours: 0, totalWithDiscount: 0 };
+    }
 
     // Calculate hours manually for delivery
     const [startHour, startMinute] = shift.startTime.split(':').map(Number);
@@ -24,7 +24,7 @@ const DeliveryShiftCard = (props) => ***REMOVED***
     const netEarning = grossEarning - (shift.fuelCost || 0);
     const averagePerOrder = shift.numberOfOrders > 0 ? grossEarning / shift.numberOfOrders : 0;
 
-    return ***REMOVED***
+    return {
       hours: hours,
       totalWithDiscount: netEarning,
       numberOfOrders: shift.numberOfOrders || 0,
@@ -34,36 +34,36 @@ const DeliveryShiftCard = (props) => ***REMOVED***
       totalEarning: grossEarning,
       baseEarning: shift.baseEarning ?? grossEarning - (shift.tips || 0),
       averagePerOrder
-    ***REMOVED***;
-  ***REMOVED***, [shift]);
+    };
+  }, [shift]);
 
   return (
     <BaseShiftCard 
-      ***REMOVED***...props***REMOVED*** 
+      {...props} 
       type="delivery" 
-      shiftData=***REMOVED***shiftData***REMOVED***
+      shiftData={shiftData}
       // We pass the earning to the Base to put it at the bottom
-      earningValue=***REMOVED***shiftData.totalWithDiscount***REMOVED***
+      earningValue={shiftData.totalWithDiscount}
       earningLabel="Net Earnings"
     >
-      ***REMOVED******REMOVED***
+      {{
         // Mobile stats - Orders and km (NO Earning, only physical stats)
         mobileStats: (
           <Flex variant="between" className="pt-2 border-t border-gray-100">
             <Flex variant="center" className="space-x-4 text-sm text-gray-600">
-              ***REMOVED***shiftData.numberOfOrders > 0 && (
+              {shiftData.numberOfOrders > 0 && (
                 <Flex variant="center">
-                  <Package size=***REMOVED***12***REMOVED*** className="mr-1 text-blue-500" />
-                  <span>***REMOVED***shiftData.numberOfOrders***REMOVED***</span>
+                  <Package size={12} className="mr-1 text-blue-500" />
+                  <span>{shiftData.numberOfOrders}</span>
                 </Flex>
-              )***REMOVED***
+              )}
 
-              ***REMOVED***shiftData.kilometers > 0 && (
+              {shiftData.kilometers > 0 && (
                 <Flex variant="center">
-                  <Navigation size=***REMOVED***12***REMOVED*** className="mr-1 text-purple-500" />
-                  <span>***REMOVED***shiftData.kilometers***REMOVED***km</span>
+                  <Navigation size={12} className="mr-1 text-purple-500" />
+                  <span>{shiftData.kilometers}km</span>
                 </Flex>
-              )***REMOVED***
+              )}
             </Flex>
           </Flex>
         ),
@@ -72,28 +72,28 @@ const DeliveryShiftCard = (props) => ***REMOVED***
         desktopStats: (
           <Flex variant="between">
             <Flex variant="center" className="text-sm text-gray-600 gap-4">
-              ***REMOVED***shiftData.numberOfOrders > 0 && (
+              {shiftData.numberOfOrders > 0 && (
                 <Flex variant="center">
-                  <Package size=***REMOVED***14***REMOVED*** className="mr-1 text-blue-500" />
-                  <span>***REMOVED***shiftData.numberOfOrders***REMOVED***</span>
+                  <Package size={14} className="mr-1 text-blue-500" />
+                  <span>{shiftData.numberOfOrders}</span>
                 </Flex>
-              )***REMOVED***
+              )}
 
-              ***REMOVED***shiftData.kilometers > 0 && (
+              {shiftData.kilometers > 0 && (
                 <Flex variant="center">
-                  <Navigation size=***REMOVED***14***REMOVED*** className="mr-1 text-purple-500" />
-                  <span>***REMOVED***shiftData.kilometers***REMOVED*** km</span>
+                  <Navigation size={14} className="mr-1 text-purple-500" />
+                  <span>{shiftData.kilometers} km</span>
                 </Flex>
-              )***REMOVED***
+              )}
             </Flex>
           </Flex>
         ),
 
         // Expanded content - Financial details in Popover
         
-      ***REMOVED******REMOVED***
+      }}
     </BaseShiftCard>
   );
-***REMOVED***;
+};
 
 export default DeliveryShiftCard;

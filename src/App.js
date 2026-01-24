@@ -1,9 +1,9 @@
 // src/App.js
 
 import React from 'react';
-import ***REMOVED*** BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** useAuth ***REMOVED*** from './contexts/AuthContext';
-import ***REMOVED*** AppProvider ***REMOVED*** from './contexts/AppContext';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
+import { AppProvider } from './contexts/AppContext';
 import ProtectedLayout from './components/layout/ProtectedLayout/ProtectedLayout';
 import LoadingSpinner from './components/ui/LoadingSpinner/LoadingSpinner';
 import Flex from './components/ui/Flex';
@@ -38,26 +38,26 @@ import WorkModal from './components/modals/work/WorkModal';
 import ShiftModal from './components/modals/shift/ShiftModal';
 
 // Public route that allows access without authentication
-const PublicRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** loading ***REMOVED*** = useAuth();
+const PublicRoute = ({ children }) => {
+  const { loading } = useAuth();
 
-  if (loading) ***REMOVED***
+  if (loading) {
     return (
       <Flex variant="center" className="h-screen">
         <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
       </Flex>
     );
-  ***REMOVED***
+  }
 
   return children;
-***REMOVED***;
+};
 
 // General app layout
-function AppLayout() ***REMOVED***
+function AppLayout() {
   const location = useLocation();
   const currentView = location.pathname.substring(1); // Removes leading '/'
 
-  const ***REMOVED***
+  const {
     isWorkModalOpen,
     isShiftModalOpen,
     selectedWork,
@@ -68,76 +68,76 @@ function AppLayout() ***REMOVED***
     openEditShiftModal,
     closeWorkModal,
     closeShiftModal,
-  ***REMOVED*** = useModalManager();
+  } = useModalManager();
 
   return (
     <div className="min-h-screen bg-gray-100 font-poppins">
-      ***REMOVED***/* Header only on mobile */***REMOVED***
+      {/* Header only on mobile */}
       <div className="md:hidden">
         <Header
-          currentView=***REMOVED***currentView***REMOVED***
-          openNewWorkModal=***REMOVED***openNewWorkModal***REMOVED***
-          openNewShiftModal=***REMOVED***openNewShiftModal***REMOVED***
+          currentView={currentView}
+          openNewWorkModal={openNewWorkModal}
+          openNewShiftModal={openNewShiftModal}
         />
       </div>
 
-      ***REMOVED***/* Main content */***REMOVED***
+      {/* Main content */}
       <main className="max-w-md mx-auto px-4 pb-20 md:max-w-none md:ml-72 md:px-6 md:pb-6">
-        <Outlet context=***REMOVED******REMOVED*** openEditWorkModal, openEditShiftModal ***REMOVED******REMOVED*** />
+        <Outlet context={{ openEditWorkModal, openEditShiftModal }} />
       </main>
 
-      ***REMOVED***/* Navigation */***REMOVED***
+      {/* Navigation */}
       <Navigation
-        openNewWorkModal=***REMOVED***openNewWorkModal***REMOVED***
-        openNewShiftModal=***REMOVED***openNewShiftModal***REMOVED***
+        openNewWorkModal={openNewWorkModal}
+        openNewShiftModal={openNewShiftModal}
       />
 
       <WorkModal
-        isOpen=***REMOVED***isWorkModalOpen***REMOVED***
-        onClose=***REMOVED***closeWorkModal***REMOVED***
-        work=***REMOVED***selectedWork***REMOVED***
+        isOpen={isWorkModalOpen}
+        onClose={closeWorkModal}
+        work={selectedWork}
       />
 
       <ShiftModal
-        isOpen=***REMOVED***isShiftModalOpen***REMOVED***
-        onClose=***REMOVED***closeShiftModal***REMOVED***
-        shift=***REMOVED***selectedShift***REMOVED***
+        isOpen={isShiftModalOpen}
+        onClose={closeShiftModal}
+        shift={selectedShift}
       />
     </div>
   );
-***REMOVED***
+}
 
 // Main App
-function App() ***REMOVED***
-  const ***REMOVED*** loading ***REMOVED*** = useAuth();
+function App() {
+  const { loading } = useAuth();
 
-  if (loading) ***REMOVED***
+  if (loading) {
     return (
       <Flex variant="center" className="h-screen">
         <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
       </Flex>
     );
-  ***REMOVED***
+  }
 
   return (
     <Router>
       <ScrollToTop />
       <Routes>
-        ***REMOVED***/* Authentication */***REMOVED***
-        <Route path="/login" element=***REMOVED***<Login />***REMOVED*** />
-        <Route path="/register" element=***REMOVED***<Register />***REMOVED*** />
-        <Route path="/forgot-password" element=***REMOVED***<ForgotPassword />***REMOVED*** />
-        <Route path="/reset-password" element=***REMOVED***<ResetPassword />***REMOVED*** />
+        {/* Authentication */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
-        ***REMOVED***/* Legal Pages */***REMOVED***
-        <Route path="/privacy" element=***REMOVED***<PrivacyPolicy />***REMOVED*** />
-        <Route path="/terms" element=***REMOVED***<TermsOfService />***REMOVED*** />
-        <Route path="/delete-account" element=***REMOVED***<DeleteAccount />***REMOVED*** />
+        {/* Legal Pages */}
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/delete-account" element={<DeleteAccount />} />
 
-        ***REMOVED***/* SPECIAL ROUTE for shared works - PUBLIC ACCESS */***REMOVED***
+        {/* SPECIAL ROUTE for shared works - PUBLIC ACCESS */}
         <Route
           path="/share/:token"
-          element=***REMOVED***
+          element={
             <PublicRoute>
               <AppProvider>
                 <div className="min-h-screen bg-gray-100 font-poppins">
@@ -147,25 +147,25 @@ function App() ***REMOVED***
                 </div>
               </AppProvider>
             </PublicRoute>
-          ***REMOVED***
+          }
         />
 
-        ***REMOVED***/* Protected routes */***REMOVED***
-        <Route element=***REMOVED***<ProtectedLayout><AppLayout /></ProtectedLayout>***REMOVED***>
-          <Route path="/dashboard" element=***REMOVED***<Dashboard />***REMOVED*** />
-          <Route path="/works" element=***REMOVED***<Works />***REMOVED*** />
-          <Route path="/shifts" element=***REMOVED***<Shifts />***REMOVED*** />
-          <Route path="/statistics" element=***REMOVED***<Statistics />***REMOVED*** />
-          <Route path="/calendar" element=***REMOVED***<CalendarView />***REMOVED*** />
-          <Route path="/settings" element=***REMOVED***<Settings />***REMOVED*** />
+        {/* Protected routes */}
+        <Route element={<ProtectedLayout><AppLayout /></ProtectedLayout>}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/works" element={<Works />} />
+          <Route path="/shifts" element={<Shifts />} />
+          <Route path="/statistics" element={<Statistics />} />
+          <Route path="/calendar" element={<CalendarView />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
 
-        ***REMOVED***/* Redirections */***REMOVED***
-        <Route path="/" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
-        <Route path="*" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
+        {/* Redirections */}
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Router>
   );
-***REMOVED***
+}
 
 export default App;

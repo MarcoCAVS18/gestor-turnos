@@ -2,9 +2,9 @@
 <svg id="Capa_1" data-name="Capa 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 842 596">
   <defs>
     <style>
-      .cls-1 ***REMOVED***
+      .cls-1 {
         fill: #fff;
-      ***REMOVED***
+      }
     </style>
   </defs>
   <rect class="cls-1" y="595" width="842" height="1"/>

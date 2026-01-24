@@ -1,23 +1,23 @@
 // src/components/modals/shift/ShiftModal/index.jsx
 
-import React, ***REMOVED*** useState, useEffect, useMemo, useId ***REMOVED*** from 'react';
-import ***REMOVED*** Pen, Plus ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
-import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
-import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../../utils/time';
+import React, { useState, useEffect, useMemo, useId } from 'react';
+import { Pen, Plus } from 'lucide-react';
+import { useApp } from '../../../../contexts/AppContext';
+import { useIsMobile } from '../../../../hooks/useIsMobile';
+import { createSafeDate } from '../../../../utils/time';
 import BaseModal from '../../base/BaseModal';
 import ShiftForm from '../../../forms/shift/ShiftForm';
 import DeliveryShiftForm from '../../../forms/shift/DeliveryShiftForm';
 
-const ShiftModal = (***REMOVED*** isOpen, onClose, shift, workId, initialDate ***REMOVED***) => ***REMOVED***
-  const ***REMOVED***
+const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
+  const {
     addShift,
     editShift,
     addDeliveryShift,
     editDeliveryShift,
     works,
     deliveryWork
-  ***REMOVED*** = useApp();
+  } = useApp();
 
   const [selectedWorkId, setSelectedWorkId] = useState(workId || '');
   const [formType, setFormType] = useState('traditional');
@@ -26,102 +26,102 @@ const ShiftModal = (***REMOVED*** isOpen, onClose, shift, workId, initialDate **
   const isMobile = useIsMobile();
   const formId = useId();
 
-  const allWorks = useMemo(() => ***REMOVED***
+  const allWorks = useMemo(() => {
     return [...works, ...deliveryWork];
-  ***REMOVED***, [works, deliveryWork]);
+  }, [works, deliveryWork]);
 
-  useEffect(() => ***REMOVED***
-    if (shift?.type === 'delivery') ***REMOVED***
+  useEffect(() => {
+    if (shift?.type === 'delivery') {
       setFormType('delivery');
       return;
-    ***REMOVED***
+    }
 
-    if (selectedWorkId) ***REMOVED***
+    if (selectedWorkId) {
       const work = allWorks.find(w => w.id === selectedWorkId);
 
-      if (work) ***REMOVED***
+      if (work) {
         const isDelivery = work.type === 'delivery';
         const newType = isDelivery ? 'delivery' : 'traditional';
 
-        if (formType !== newType) ***REMOVED***
+        if (formType !== newType) {
           setFormType(newType);
-        ***REMOVED***
-      ***REMOVED*** else ***REMOVED***
+        }
+      } else {
         setFormType('traditional');
-      ***REMOVED***
-    ***REMOVED*** else ***REMOVED***
+      }
+    } else {
       setFormType('traditional');
-    ***REMOVED***
-  ***REMOVED***, [selectedWorkId, allWorks, shift, formType]);
+    }
+  }, [selectedWorkId, allWorks, shift, formType]);
 
-  useEffect(() => ***REMOVED***
-    if (!isOpen) ***REMOVED***
+  useEffect(() => {
+    if (!isOpen) {
       setSelectedWorkId('');
       setFormType('traditional');
       setLoading(false);
       setIsFormDirty(false);
-    ***REMOVED*** else if (shift) ***REMOVED***
+    } else if (shift) {
       setSelectedWorkId(shift.workId || '');
-    ***REMOVED*** else if (workId) ***REMOVED***
+    } else if (workId) {
       setSelectedWorkId(workId);
-    ***REMOVED***
-  ***REMOVED***, [isOpen, shift, workId]);
+    }
+  }, [isOpen, shift, workId]);
 
-  const handleSave = async (shiftData) => ***REMOVED***
-    try ***REMOVED***
+  const handleSave = async (shiftData) => {
+    try {
       setLoading(true);
 
-      let finalData = ***REMOVED*** ...shiftData ***REMOVED***;
+      let finalData = { ...shiftData };
 
-      if (initialDate && !shift) ***REMOVED***
+      if (initialDate && !shift) {
         let dateStr;
-        if (initialDate instanceof Date) ***REMOVED***
+        if (initialDate instanceof Date) {
           const year = initialDate.getFullYear();
           const month = String(initialDate.getMonth() + 1).padStart(2, '0');
           const day = String(initialDate.getDate()).padStart(2, '0');
-          dateStr = `$***REMOVED***year***REMOVED***-$***REMOVED***month***REMOVED***-$***REMOVED***day***REMOVED***`;
-        ***REMOVED*** else ***REMOVED***
+          dateStr = `${year}-${month}-${day}`;
+        } else {
           dateStr = initialDate;
-        ***REMOVED***
+        }
 
-        if (!finalData.startDate && !finalData.date) ***REMOVED***
+        if (!finalData.startDate && !finalData.date) {
           finalData.startDate = dateStr;
-        ***REMOVED***
-      ***REMOVED***
+        }
+      }
 
-      if (formType === 'delivery') ***REMOVED***
-        if (shift) ***REMOVED***
+      if (formType === 'delivery') {
+        if (shift) {
           await editDeliveryShift(shift.id, finalData);
-        ***REMOVED*** else ***REMOVED***
+        } else {
           await addDeliveryShift(finalData);
-        ***REMOVED*** 
-      ***REMOVED*** else ***REMOVED***
-        if (shift) ***REMOVED***
+        } 
+      } else {
+        if (shift) {
           await editShift(shift.id, finalData);
-        ***REMOVED*** else ***REMOVED***
+        } else {
           await addShift(finalData);
-        ***REMOVED***
-      ***REMOVED***
+        }
+      }
 
       setLoading(false);
       onClose();
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       console.error('Error saving shift:', error);
       setLoading(false);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  const handleWorkChange = (newWorkId) => ***REMOVED***
+  const handleWorkChange = (newWorkId) => {
     setSelectedWorkId(newWorkId);
-  ***REMOVED***;
+  };
 
-  const handleClose = () => ***REMOVED***
+  const handleClose = () => {
     setSelectedWorkId('');
     setFormType('traditional');
     setLoading(false);
     setIsFormDirty(false);
     onClose();
-  ***REMOVED***;
+  };
 
   if (!isOpen) return null;
 
@@ -129,64 +129,64 @@ const ShiftModal = (***REMOVED*** isOpen, onClose, shift, workId, initialDate **
   const subtitle = formType === 'delivery' ? '• Delivery' : null;
 
   let dateSubtitle = null;
-  if (initialDate && !shift) ***REMOVED***
+  if (initialDate && !shift) {
     dateSubtitle = initialDate instanceof Date
-      ? initialDate.toLocaleDateString('en-US', ***REMOVED***
+      ? initialDate.toLocaleDateString('en-US', {
           weekday: 'short',
           day: 'numeric',
           month: 'short'
-        ***REMOVED***)
-      : createSafeDate(initialDate).toLocaleDateString('en-US', ***REMOVED***
+        })
+      : createSafeDate(initialDate).toLocaleDateString('en-US', {
           weekday: 'short',
           day: 'numeric',
           month: 'short'
-        ***REMOVED***);
-  ***REMOVED***
+        });
+  }
 
   const finalSubtitle = [subtitle, dateSubtitle].filter(Boolean).join(' ');
 
   return (
     <BaseModal
-      isOpen=***REMOVED***isOpen***REMOVED***
-      onClose=***REMOVED***handleClose***REMOVED***
-      title=***REMOVED***title***REMOVED***
-      icon=***REMOVED***shift ? Pen : Plus***REMOVED***
-      subtitle=***REMOVED***finalSubtitle || undefined***REMOVED***
-      loading=***REMOVED***loading***REMOVED***
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={title}
+      icon={shift ? Pen : Plus}
+      subtitle={finalSubtitle || undefined}
+      loading={loading}
       maxWidth="md"
-      showActions=***REMOVED***true***REMOVED***
-      onCancel=***REMOVED***handleClose***REMOVED***
-      formId=***REMOVED***formId***REMOVED***
-      saveText=***REMOVED***shift ? 'Save Changes' : 'Create Shift'***REMOVED***
-      isSaveDisabled=***REMOVED***shift ? !isFormDirty : false***REMOVED***
+      showActions={true}
+      onCancel={handleClose}
+      formId={formId}
+      saveText={shift ? 'Save Changes' : 'Create Shift'}
+      isSaveDisabled={shift ? !isFormDirty : false}
     >
-      ***REMOVED***formType === 'delivery' ? (
+      {formType === 'delivery' ? (
         <DeliveryShiftForm
-          id=***REMOVED***formId***REMOVED***
-          shift=***REMOVED***shift***REMOVED***
-          workId=***REMOVED***selectedWorkId***REMOVED***
-          works=***REMOVED***allWorks***REMOVED***
-          onSubmit=***REMOVED***handleSave***REMOVED***
-          onWorkChange=***REMOVED***handleWorkChange***REMOVED***
-          onDirtyChange=***REMOVED***setIsFormDirty***REMOVED***
-          isMobile=***REMOVED***isMobile***REMOVED***
-          initialDate=***REMOVED***initialDate***REMOVED***
+          id={formId}
+          shift={shift}
+          workId={selectedWorkId}
+          works={allWorks}
+          onSubmit={handleSave}
+          onWorkChange={handleWorkChange}
+          onDirtyChange={setIsFormDirty}
+          isMobile={isMobile}
+          initialDate={initialDate}
         />
       ) : (
         <ShiftForm
-          id=***REMOVED***formId***REMOVED***
-          shift=***REMOVED***shift***REMOVED***
-          workId=***REMOVED***selectedWorkId***REMOVED***
-          works=***REMOVED***allWorks***REMOVED***
-          onSubmit=***REMOVED***handleSave***REMOVED***
-          onWorkChange=***REMOVED***handleWorkChange***REMOVED***
-          onDirtyChange=***REMOVED***setIsFormDirty***REMOVED***
-          isMobile=***REMOVED***isMobile***REMOVED***
-          initialDate=***REMOVED***initialDate***REMOVED***
+          id={formId}
+          shift={shift}
+          workId={selectedWorkId}
+          works={allWorks}
+          onSubmit={handleSave}
+          onWorkChange={handleWorkChange}
+          onDirtyChange={setIsFormDirty}
+          isMobile={isMobile}
+          initialDate={initialDate}
         />
-      )***REMOVED***
+      )}
     </BaseModal>
   );
-***REMOVED***;
+};
 
 export default ShiftModal;

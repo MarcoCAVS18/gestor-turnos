@@ -1,38 +1,38 @@
 // src/components/settings/IntegrationsBanner/index.jsx
 
-import React, ***REMOVED*** useMemo ***REMOVED*** from 'react';
-import ***REMOVED*** ArrowRight, Share2, Puzzle ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
-import ***REMOVED*** generateColorVariations ***REMOVED*** from '../../../utils/colorUtils';
+import React, { useMemo } from 'react';
+import { ArrowRight, Share2, Puzzle } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { generateColorVariations } from '../../../utils/colorUtils';
 import BaseAnnouncementCard from '../../cards/base/BaseAnnouncementCard';
 import Button from '../../ui/Button';
 
-const IntegrationsBanner = (***REMOVED*** className ***REMOVED***) => ***REMOVED***
+const IntegrationsBanner = ({ className }) => {
   const colors = useThemeColors();
 
-  const palette = useMemo(() => ***REMOVED***
-    return generateColorVariations(colors.primary) || ***REMOVED***
+  const palette = useMemo(() => {
+    return generateColorVariations(colors.primary) || {
       lighter: colors.primary,
       base: colors.primary,
       dark: colors.primaryDark,
       darker: colors.primaryDark
-    ***REMOVED***;
-  ***REMOVED***, [colors.primary, colors.primaryDark]);
+    };
+  }, [colors.primary, colors.primaryDark]);
 
-  const gradient = `linear-gradient(135deg, $***REMOVED***palette.lighter***REMOVED*** 0%, $***REMOVED***colors.primary***REMOVED*** 50%, $***REMOVED***palette.darker***REMOVED*** 100%)`;
+  const gradient = `linear-gradient(135deg, ${palette.lighter} 0%, ${colors.primary} 50%, ${palette.darker} 100%)`;
 
   return (
     <BaseAnnouncementCard
       to="/integraciones"
-      gradient=***REMOVED***gradient***REMOVED***
-      className=***REMOVED***className***REMOVED***
-      decorativeIcon=***REMOVED***Share2***REMOVED***
+      gradient={gradient}
+      className={className}
+      decorativeIcon={Share2}
     >
       <div className="p-6 flex items-center justify-between gap-4">
-        ***REMOVED***/* Content */***REMOVED***
+        {/* Content */}
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <Puzzle size=***REMOVED***20***REMOVED*** className="text-white/80" />
+            <Puzzle size={20} className="text-white/80" />
             <h3 className="text-lg font-bold text-white">
               Integrations
             </h3>
@@ -42,11 +42,11 @@ const IntegrationsBanner = (***REMOVED*** className ***REMOVED***) => ***REMOVED
           </p>
         </div>
 
-        ***REMOVED***/* Action Button */***REMOVED***
+        {/* Action Button */}
         <div className="flex-shrink-0">
           <Button
             variant="ghost-animated"
-            icon=***REMOVED***ArrowRight***REMOVED***
+            icon={ArrowRight}
             textColor="white"
             className="hover:bg-white/10"
           >
@@ -56,6 +56,6 @@ const IntegrationsBanner = (***REMOVED*** className ***REMOVED***) => ***REMOVED
       </div>
     </BaseAnnouncementCard>
   );
-***REMOVED***;
+};
 
 export default IntegrationsBanner;

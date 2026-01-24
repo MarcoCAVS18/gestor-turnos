@@ -1,37 +1,37 @@
 // src/components/ui/ThemeInput/index.jsx
 
 import React from 'react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import { useApp } from '../../../contexts/AppContext';
 
-const ThemeInput = (***REMOVED*** 
+const ThemeInput = ({ 
   className = '',
-  style = ***REMOVED******REMOVED***,
+  style = {},
   ...props 
-***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+}) => {
+  const { thematicColors } = useApp();
   
-  const combinedStyle = ***REMOVED***
+  const combinedStyle = {
     '--tw-ring-color': thematicColors?.base || '#EC4899',
     borderColor: '#D1D5DB', 
     backgroundColor: '#FFFFFF',
     ...style
-  ***REMOVED***;
+  };
 
   const combinedClassName = `
     block w-full px-3 py-2 border rounded-lg 
     shadow-sm placeholder-gray-400 
     focus:outline-none focus:ring-2 focus:ring-offset-0 focus:border-transparent
     transition-colors bg-white
-    $***REMOVED***className***REMOVED***
+    ${className}
   `.trim();
   
   return (
     <input
-      className=***REMOVED***combinedClassName***REMOVED***
-      style=***REMOVED***combinedStyle***REMOVED***
-      ***REMOVED***...props***REMOVED***
+      className={combinedClassName}
+      style={combinedStyle}
+      {...props}
     />
   );
-***REMOVED***;
+};
 
 export default ThemeInput;

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const Card = (***REMOVED***
+const Card = ({
   children,
   className = '',
   padding = 'md',
@@ -16,102 +16,102 @@ const Card = (***REMOVED***
   onClick,
   variant = 'default',
   ...props
-***REMOVED***) => ***REMOVED***
-  const getPaddingClasses = () => ***REMOVED***
-    const paddings = ***REMOVED***
+}) => {
+  const getPaddingClasses = () => {
+    const paddings = {
       none: '',
       xs: 'p-2',
       sm: 'p-3',
       md: 'p-4',
       lg: 'p-6',
       xl: 'p-8'
-    ***REMOVED***;
+    };
     return paddings[padding] || paddings.md;
-  ***REMOVED***;
+  };
 
-  const getShadowClasses = () => ***REMOVED***
-    const shadows = ***REMOVED***
+  const getShadowClasses = () => {
+    const shadows = {
       none: '',
       sm: 'shadow-sm',
       md: 'shadow-md',
       lg: 'shadow-lg',
       xl: 'shadow-xl'
-    ***REMOVED***;
+    };
     return shadows[shadow] || shadows.md;
-  ***REMOVED***;
+  };
 
-  const getRoundedClasses = () => ***REMOVED***
-    const roundeds = ***REMOVED***
+  const getRoundedClasses = () => {
+    const roundeds = {
       none: '',
       sm: 'rounded-sm',
       md: 'rounded-md',
       lg: 'rounded-lg',
       xl: 'rounded-xl',
       '2xl': 'rounded-2xl'
-    ***REMOVED***;
+    };
     return roundeds[rounded] || roundeds.xl;
-  ***REMOVED***;
+  };
 
-  const getBorderClasses = () => ***REMOVED***
+  const getBorderClasses = () => {
     if (!borderColor || borderPosition === 'none') return '';
     
-    const positions = ***REMOVED***
-      left: `border-l-$***REMOVED***borderWidth***REMOVED***`,
-      right: `border-r-$***REMOVED***borderWidth***REMOVED***`,
-      top: `border-t-$***REMOVED***borderWidth***REMOVED***`,
-      bottom: `border-b-$***REMOVED***borderWidth***REMOVED***`,
-      all: `border-$***REMOVED***borderWidth***REMOVED***`
-    ***REMOVED***;
+    const positions = {
+      left: `border-l-${borderWidth}`,
+      right: `border-r-${borderWidth}`,
+      top: `border-t-${borderWidth}`,
+      bottom: `border-b-${borderWidth}`,
+      all: `border-${borderWidth}`
+    };
     
     return positions[borderPosition] || '';
-  ***REMOVED***;
+  };
 
-  const getVariantClasses = () => ***REMOVED***
-    const variants = ***REMOVED***
+  const getVariantClasses = () => {
+    const variants = {
       default: 'bg-white border-gray-200',
       elevated: 'bg-white',
       outlined: 'bg-white border-2 border-gray-300',
       ghost: 'bg-transparent',
       gradient: 'bg-gradient-to-br from-white to-gray-50 border-gray-200',
       transparent: 'bg-transparent border-none shadow-none'
-    ***REMOVED***;
+    };
     return variants[variant] || variants.default;
-  ***REMOVED***;
+  };
 
-  const getInteractiveClasses = () => ***REMOVED***
+  const getInteractiveClasses = () => {
     if (!interactive && !onClick && !hover) return '';
     
     return 'transition-all duration-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 active:shadow-md';
-  ***REMOVED***;
+  };
 
-  const getBorderStyle = () => ***REMOVED***
-    if (!borderColor || borderPosition === 'none') return ***REMOVED******REMOVED***;
+  const getBorderStyle = () => {
+    if (!borderColor || borderPosition === 'none') return {};
     
-    return ***REMOVED***
-      [`border$***REMOVED***borderPosition === 'all' ? '' : '-' + borderPosition***REMOVED***-color`]: borderColor
-    ***REMOVED***;
-  ***REMOVED***;
+    return {
+      [`border${borderPosition === 'all' ? '' : '-' + borderPosition}-color`]: borderColor
+    };
+  };
 
   const combinedClassName = `
-    $***REMOVED***getVariantClasses()***REMOVED***
-    $***REMOVED***getPaddingClasses()***REMOVED*** 
-    $***REMOVED***variant !== 'transparent' ? getShadowClasses() : ''***REMOVED*** 
-    $***REMOVED***getRoundedClasses()***REMOVED*** 
-    $***REMOVED***getBorderClasses()***REMOVED***
-    $***REMOVED***getInteractiveClasses()***REMOVED***
-    $***REMOVED***className***REMOVED***
+    ${getVariantClasses()}
+    ${getPaddingClasses()} 
+    ${variant !== 'transparent' ? getShadowClasses() : ''} 
+    ${getRoundedClasses()} 
+    ${getBorderClasses()}
+    ${getInteractiveClasses()}
+    ${className}
   `.trim().replace(/\s+/g, ' ');
 
   return (
     <div
-      className=***REMOVED***combinedClassName***REMOVED***
-      style=***REMOVED***getBorderStyle()***REMOVED***
-      onClick=***REMOVED***interactive || onClick ? onClick : undefined***REMOVED***
-      ***REMOVED***...props***REMOVED***
+      className={combinedClassName}
+      style={getBorderStyle()}
+      onClick={interactive || onClick ? onClick : undefined}
+      {...props}
     >
-      ***REMOVED***children***REMOVED***
+      {children}
     </div>
   );
-***REMOVED***;
+};
 
 export default Card;

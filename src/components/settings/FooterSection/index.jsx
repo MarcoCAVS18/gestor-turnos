@@ -1,10 +1,10 @@
 // src/components/settings/FooterSection/index.jsx
 
 import React from 'react';
-import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** Github, Twitter, Crown ***REMOVED*** from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Github, Twitter, Crown } from 'lucide-react';
 
-const FooterSection = () => ***REMOVED***
+const FooterSection = () => {
   const navigate = useNavigate();
 
   return (
@@ -14,16 +14,16 @@ const FooterSection = () => ***REMOVED***
           
           <button 
             className="group flex items-center gap-1.5 font-bold text-amber-500 hover:text-amber-600 transition-colors cursor-pointer"
-            onClick=***REMOVED***() => console.log('Open premium modal')***REMOVED***
+            onClick={() => console.log('Open premium modal')}
           >
-            <Crown size=***REMOVED***14***REMOVED*** className="group-hover:scale-110 transition-transform fill-current" />
+            <Crown size={14} className="group-hover:scale-110 transition-transform fill-current" />
             <span>Premium</span>
           </button>
 
           <span className="text-gray-300 hidden sm:inline">•</span>
 
           <button 
-            onClick=***REMOVED***() => navigate('/terms')***REMOVED*** 
+            onClick={() => navigate('/terms')} 
             className="hover:text-gray-800 transition-colors flex items-center gap-1 cursor-pointer"
           >
             <span className="hidden md:inline">Terms and conditions</span>
@@ -33,7 +33,7 @@ const FooterSection = () => ***REMOVED***
           <span className="text-gray-300 hidden sm:inline">•</span>
 
           <button 
-            onClick=***REMOVED***() => navigate('/privacy')***REMOVED*** 
+            onClick={() => navigate('/privacy')} 
             className="hover:text-gray-800 transition-colors cursor-pointer"
           >
             Privacy and policies
@@ -49,7 +49,7 @@ const FooterSection = () => ***REMOVED***
               className="text-gray-400 hover:text-gray-900 transition-colors"
               aria-label="GitHub"
             >
-              <Github size=***REMOVED***16***REMOVED*** />
+              <Github size={16} />
             </a>
             <a 
               href="https://twitter.com" 
@@ -58,13 +58,13 @@ const FooterSection = () => ***REMOVED***
               className="text-gray-400 hover:text-blue-400 transition-colors"
               aria-label="Twitter"
             >
-              <Twitter size=***REMOVED***16***REMOVED*** />
+              <Twitter size={16} />
             </a>
           </div>
         </div>
       </div>
     </footer>
   );
-***REMOVED***;
+};
 
 export default FooterSection;

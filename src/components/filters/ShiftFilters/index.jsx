@@ -1,133 +1,133 @@
 // src/components/filters/ShiftFilters/index.jsx
 
-import React, ***REMOVED*** useState ***REMOVED*** from 'react';
-import ***REMOVED*** Filter, X ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import React, { useState } from 'react';
+import { Filter, X } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import Badge from '../../ui/Badge';
 import WorkFilter from '../WorkFilter';
 import WeekDayFilter from '../WeekDayFilter';
 import ShiftTypeFilter from '../ShiftTypeFilter';
 import Flex from '../../ui/Flex';
 
-const ShiftFilters = (***REMOVED*** onFiltersChange, activeFilters = ***REMOVED******REMOVED*** ***REMOVED***) => ***REMOVED***
+const ShiftFilters = ({ onFiltersChange, activeFilters = {} }) => {
   const colors = useThemeColors();
   const [showFilters, setShowFilters] = useState(false);
   
   // Check if there are active filters
-  const hasActiveFilters = Object.values(activeFilters).some(filter => ***REMOVED***
-    if (Array.isArray(filter)) ***REMOVED***
+  const hasActiveFilters = Object.values(activeFilters).some(filter => {
+    if (Array.isArray(filter)) {
       return filter.length > 0;
-    ***REMOVED***
+    }
     return filter && filter !== 'all';
-  ***REMOVED***);
+  });
   
   // Handle changes in filters
-  const handleFilterChange = (filterType, value) => ***REMOVED***
-    const newFilters = ***REMOVED*** ...activeFilters, [filterType]: value ***REMOVED***;
+  const handleFilterChange = (filterType, value) => {
+    const newFilters = { ...activeFilters, [filterType]: value };
     onFiltersChange(newFilters);
-  ***REMOVED***;
+  };
   
   // Clear all filters
-  const clearAllFilters = () => ***REMOVED***
-    const clearedFilters = ***REMOVED***
+  const clearAllFilters = () => {
+    const clearedFilters = {
       work: 'all',
       weekDays: [],
       shiftType: 'all'
-    ***REMOVED***;
+    };
     onFiltersChange(clearedFilters);
-  ***REMOVED***;
+  };
 
   return (
     <div className="mb-6">
-      ***REMOVED***/* Button to show/hide filters */***REMOVED***
+      {/* Button to show/hide filters */}
       <Flex variant="between" className="mb-4">
         <button
-          onClick=***REMOVED***() => setShowFilters(!showFilters)***REMOVED***
+          onClick={() => setShowFilters(!showFilters)}
           className="flex items-center space-x-2 px-4 py-2 rounded-lg border transition-colors"
-          style=***REMOVED******REMOVED***
+          style={{
             backgroundColor: showFilters ? colors.transparent10 : 'white',
             borderColor: showFilters ? colors.primary : '#E5E7EB',
             color: showFilters ? colors.primary : '#6B7280'
-          ***REMOVED******REMOVED***
+          }}
         >
-          <Filter size=***REMOVED***18***REMOVED*** />
+          <Filter size={18} />
           <span className="font-medium">Filters</span>
-          ***REMOVED***hasActiveFilters && (
+          {hasActiveFilters && (
             <div 
               className="w-2 h-2 rounded-full"
-              style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***
+              style={{ backgroundColor: colors.primary }}
             />
-          )***REMOVED***
+          )}
         </button>
         
-        ***REMOVED***/* Clear filters button */***REMOVED***
-        ***REMOVED***hasActiveFilters && (
+        {/* Clear filters button */}
+        {hasActiveFilters && (
           <button
-            onClick=***REMOVED***clearAllFilters***REMOVED***
+            onClick={clearAllFilters}
             className="flex items-center space-x-1 px-3 py-1 text-sm text-gray-500 hover:text-gray-700 transition-colors"
           >
-            <X size=***REMOVED***14***REMOVED*** />
+            <X size={14} />
             <span>Clear</span>
           </button>
-        )***REMOVED***
+        )}
       </Flex>
 
-      ***REMOVED***/* Filters panel */***REMOVED***
-      ***REMOVED***showFilters && (
+      {/* Filters panel */}
+      {showFilters && (
         <div 
           className="rounded-lg border p-4 space-y-4 transition-all"
-          style=***REMOVED******REMOVED*** 
+          style={{ 
             backgroundColor: colors.transparent5,
             borderColor: colors.transparent20 
-          ***REMOVED******REMOVED***
+          }}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            ***REMOVED***/* Filter by work */***REMOVED***
+            {/* Filter by work */}
             <WorkFilter
-              value=***REMOVED***activeFilters.work || 'all'***REMOVED***
-              onChange=***REMOVED***(value) => handleFilterChange('work', value)***REMOVED***
+              value={activeFilters.work || 'all'}
+              onChange={(value) => handleFilterChange('work', value)}
             />
             
-            ***REMOVED***/* Filter by days of the week */***REMOVED***
+            {/* Filter by days of the week */}
             <WeekDayFilter
-              value=***REMOVED***activeFilters.weekDays || []***REMOVED***
-              onChange=***REMOVED***(value) => handleFilterChange('weekDays', value)***REMOVED***
+              value={activeFilters.weekDays || []}
+              onChange={(value) => handleFilterChange('weekDays', value)}
             />
             
-            ***REMOVED***/* Filter by shift type */***REMOVED***
+            {/* Filter by shift type */}
             <ShiftTypeFilter
-              value=***REMOVED***activeFilters.shiftType || 'all'***REMOVED***
-              onChange=***REMOVED***(value) => handleFilterChange('shiftType', value)***REMOVED***
+              value={activeFilters.shiftType || 'all'}
+              onChange={(value) => handleFilterChange('shiftType', value)}
             />
           </div>
           
-          ***REMOVED***/* Active filters summary */***REMOVED***
-          ***REMOVED***hasActiveFilters && (
-            <div className="pt-3 border-t" style=***REMOVED******REMOVED*** borderColor: colors.transparent20 ***REMOVED******REMOVED***>
+          {/* Active filters summary */}
+          {hasActiveFilters && (
+            <div className="pt-3 border-t" style={{ borderColor: colors.transparent20 }}>
               <div className="flex flex-wrap gap-2 items-center">
                 <span className="text-sm text-gray-600">Active filters:</span>
-                ***REMOVED***activeFilters.work && activeFilters.work !== 'all' && (
+                {activeFilters.work && activeFilters.work !== 'all' && (
                   <Badge variant="info" size="xs" rounded>
                     Specific work
                   </Badge>
-                )***REMOVED***
-                ***REMOVED***activeFilters.weekDays && activeFilters.weekDays.length > 0 && (
+                )}
+                {activeFilters.weekDays && activeFilters.weekDays.length > 0 && (
                   <Badge variant="info" size="xs" rounded>
-                    ***REMOVED***activeFilters.weekDays.length***REMOVED*** days
+                    {activeFilters.weekDays.length} days
                   </Badge>
-                )***REMOVED***
-                ***REMOVED***activeFilters.shiftType && activeFilters.shiftType !== 'all' && (
+                )}
+                {activeFilters.shiftType && activeFilters.shiftType !== 'all' && (
                   <Badge variant="info" size="xs" rounded>
-                    Type: ***REMOVED***activeFilters.shiftType***REMOVED***
+                    Type: {activeFilters.shiftType}
                   </Badge>
-                )***REMOVED***
+                )}
               </div>
             </div>
-          )***REMOVED***
+          )}
         </div>
-      )***REMOVED***
+      )}
     </div>
   );
-***REMOVED***;
+};
 
 export default ShiftFilters;

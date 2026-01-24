@@ -1,9 +1,9 @@
 // src/pages/auth/Register.jsx
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** Link, useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** Eye, EyeOff ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useAuth ***REMOVED*** from '../../contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 
 // New structured import
 import Button from '../../components/ui/Button';
@@ -12,7 +12,7 @@ import Logo from '../../components/icons/Logo';
 
 import GoogleIcon from '../../components/icons/GoogleIcon';
 
-const Register = () => ***REMOVED***
+const Register = () => {
   const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +21,7 @@ const Register = () => ***REMOVED***
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const ***REMOVED*** signup, loginWithGoogle ***REMOVED*** = useAuth();
+  const { signup, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -30,44 +30,44 @@ const Register = () => ***REMOVED***
   
   // States for validations
   const [emailValid, setEmailValid] = useState(true);
-  const [passwordStrength, setPasswordStrength] = useState(***REMOVED***
+  const [passwordStrength, setPasswordStrength] = useState({
     isValid: false,
     hasMinLength: false,
     hasUpperCase: false,
     hasLowerCase: false,
     hasNumber: false
-  ***REMOVED***);
+  });
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [nameValid, setNameValid] = useState(true);
   
   // Validate email
-  useEffect(() => ***REMOVED***
-    if (email) ***REMOVED***
+  useEffect(() => {
+    if (email) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       setEmailValid(emailRegex.test(email));
-    ***REMOVED*** else ***REMOVED***
+    } else {
       setEmailValid(true); // Don't show error if empty
-    ***REMOVED***
-  ***REMOVED***, [email]);
+    }
+  }, [email]);
   
   // Validate name
-  useEffect(() => ***REMOVED***
-    if (displayName) ***REMOVED***
+  useEffect(() => {
+    if (displayName) {
       setNameValid(displayName.trim().length >= 2);
-    ***REMOVED*** else ***REMOVED***
+    } else {
       setNameValid(true); // Don't show error if empty
-    ***REMOVED***
-  ***REMOVED***, [displayName]);
+    }
+  }, [displayName]);
   
   // Validate password strength
-  useEffect(() => ***REMOVED***
-    if (password) ***REMOVED***
-      const strength = ***REMOVED***
+  useEffect(() => {
+    if (password) {
+      const strength = {
         hasMinLength: password.length >= 6,
         hasUpperCase: /[A-Z]/.test(password),
         hasLowerCase: /[a-z]/.test(password),
         hasNumber: /[0-9]/.test(password)
-      ***REMOVED***;
+      };
       
       // Adding parentheses to clarify the order of operations
       strength.isValid = strength.hasMinLength && (
@@ -76,82 +76,82 @@ const Register = () => ***REMOVED***
                        );
       
       setPasswordStrength(strength);
-    ***REMOVED*** else ***REMOVED***
-      setPasswordStrength(***REMOVED***
+    } else {
+      setPasswordStrength({
         isValid: false,
         hasMinLength: false,
         hasUpperCase: false,
         hasLowerCase: false,
         hasNumber: false
-      ***REMOVED***);
-    ***REMOVED***
-  ***REMOVED***, [password]);
+      });
+    }
+  }, [password]);
   
   // Check passwords match
-  useEffect(() => ***REMOVED***
-    if (confirmPassword) ***REMOVED***
+  useEffect(() => {
+    if (confirmPassword) {
       setPasswordsMatch(password === confirmPassword);
-    ***REMOVED*** else ***REMOVED***
+    } else {
       setPasswordsMatch(true); // Don't show error if empty
-    ***REMOVED***
-  ***REMOVED***, [password, confirmPassword]);
+    }
+  }, [password, confirmPassword]);
 
-  const handleSubmit = async (e) => ***REMOVED***
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Final validation before submitting
-    if (!nameValid) ***REMOVED***
+    if (!nameValid) {
       return setError('Name must be at least 2 characters');
-    ***REMOVED***
+    }
     
-    if (!emailValid) ***REMOVED***
+    if (!emailValid) {
       return setError('Please enter a valid email');
-    ***REMOVED***
+    }
     
-    if (!passwordStrength.isValid) ***REMOVED***
+    if (!passwordStrength.isValid) {
       return setError('Password does not meet minimum requirements');
-    ***REMOVED***
+    }
     
-    if (password !== confirmPassword) ***REMOVED***
+    if (password !== confirmPassword) {
       return setError('Passwords do not match');
-    ***REMOVED***
+    }
     
-    try ***REMOVED***
+    try {
       setError('');
       setLoading(true);
       await signup(email, password, displayName);
       
       // Navigate to redirect route
       navigate(redirectTo);
-    ***REMOVED*** catch (error) ***REMOVED***
-      if (error.code === 'auth/email-already-in-use') ***REMOVED***
+    } catch (error) {
+      if (error.code === 'auth/email-already-in-use') {
         setError('This email is already in use. Try signing in.');
-      ***REMOVED*** else if (error.code === 'auth/weak-password') ***REMOVED***
+      } else if (error.code === 'auth/weak-password') {
         setError('Password is too weak. It must be at least 6 characters.');
-      ***REMOVED*** else ***REMOVED***
+      } else {
         setError('Error creating account. Please try again.');
-      ***REMOVED***
+      }
       setLoading(false);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  const handleGoogleRegister = async () => ***REMOVED***
-    try ***REMOVED***
+  const handleGoogleRegister = async () => {
+    try {
       setGoogleLoading(true);
       setError('');
       await loginWithGoogle();
       
       // Navigate to redirect route
       navigate(redirectTo);
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       setError('Error registering with Google: ' + error.message);
       setGoogleLoading(false);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   return (
     <div className="fixed inset-0">
-      ***REMOVED***/* Background video */***REMOVED***
+      {/* Background video */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
         <video 
@@ -166,7 +166,7 @@ const Register = () => ***REMOVED***
         </video>
       </div>
       
-      ***REMOVED***/* Register content */***REMOVED***
+      {/* Register content */}
       <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-12 overflow-y-auto">
         <Logo />
         <div className="text-center text-white mb-4">
@@ -175,13 +175,13 @@ const Register = () => ***REMOVED***
         </div>
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">
           
-          ***REMOVED***error && (
+          {error && (
             <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
-              ***REMOVED***error***REMOVED***
+              {error}
             </div>
-          )***REMOVED***
+          )}
           
-          <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 mb-1">
                 Name
@@ -189,19 +189,19 @@ const Register = () => ***REMOVED***
               <input
                 id="displayName"
                 type="text"
-                value=***REMOVED***displayName***REMOVED***
-                onChange=***REMOVED***(e) => setDisplayName(e.target.value)***REMOVED***
-                className=***REMOVED***`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 $***REMOVED***
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                className={`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 ${
                   !nameValid && displayName ? 'border-red-500' : 'border-gray-300'
-                ***REMOVED***`***REMOVED***
+                }`}
                 placeholder="Your name"
                 required
               />
-              ***REMOVED***!nameValid && displayName && (
+              {!nameValid && displayName && (
                 <p className="mt-1 text-xs text-red-500">
                   Name must be at least 2 characters
                 </p>
-              )***REMOVED***
+              )}
             </div>
             
             <div>
@@ -211,19 +211,19 @@ const Register = () => ***REMOVED***
               <input
                 id="email"
                 type="email"
-                value=***REMOVED***email***REMOVED***
-                onChange=***REMOVED***(e) => setEmail(e.target.value)***REMOVED***
-                className=***REMOVED***`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 $***REMOVED***
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 ${
                   !emailValid && email ? 'border-red-500' : 'border-gray-300'
-                ***REMOVED***`***REMOVED***
+                }`}
                 placeholder="your@email.com"
                 required
               />
-              ***REMOVED***!emailValid && email && (
+              {!emailValid && email && (
                 <p className="mt-1 text-xs text-red-500">
                   Please enter a valid email
                 </p>
-              )***REMOVED***
+              )}
             </div>
             
             <div>
@@ -233,42 +233,42 @@ const Register = () => ***REMOVED***
               <div className="relative">
                 <input
                   id="password"
-                  type=***REMOVED***showPassword ? "text" : "password"***REMOVED***
-                  value=***REMOVED***password***REMOVED***
-                  onChange=***REMOVED***(e) => setPassword(e.target.value)***REMOVED***
-                  className=***REMOVED***`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 $***REMOVED***
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 ${
                     password && !passwordStrength.isValid ? 'border-red-500' : 'border-gray-300'
-                  ***REMOVED***`***REMOVED***
+                  }`}
                   placeholder="Minimum 6 characters"
                   required
-                  minLength=***REMOVED***6***REMOVED***
+                  minLength={6}
                 />
                 <button 
                   type="button"
-                  onClick=***REMOVED***() => setShowPassword(!showPassword)***REMOVED***
+                  onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-2.5 text-gray-500"
                 >
-                  ***REMOVED***showPassword ? <EyeOff size=***REMOVED***20***REMOVED*** /> : <Eye size=***REMOVED***20***REMOVED*** />***REMOVED***
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
               
-              ***REMOVED***/* Password strength indicators */***REMOVED***
-              ***REMOVED***password && (
+              {/* Password strength indicators */}
+              {password && (
                 <div className="mt-2 text-xs space-y-1">
-                  <p className=***REMOVED***passwordStrength.hasMinLength ? 'text-green-600' : 'text-gray-500'***REMOVED***>
+                  <p className={passwordStrength.hasMinLength ? 'text-green-600' : 'text-gray-500'}>
                     ✓ Minimum 6 characters
                   </p>
-                  <p className=***REMOVED***passwordStrength.hasUpperCase ? 'text-green-600' : 'text-gray-500'***REMOVED***>
+                  <p className={passwordStrength.hasUpperCase ? 'text-green-600' : 'text-gray-500'}>
                     ✓ At least one uppercase letter
                   </p>
-                  <p className=***REMOVED***passwordStrength.hasLowerCase ? 'text-green-600' : 'text-gray-500'***REMOVED***>
+                  <p className={passwordStrength.hasLowerCase ? 'text-green-600' : 'text-gray-500'}>
                     ✓ At least one lowercase letter
                   </p>
-                  <p className=***REMOVED***passwordStrength.hasNumber ? 'text-green-600' : 'text-gray-500'***REMOVED***>
+                  <p className={passwordStrength.hasNumber ? 'text-green-600' : 'text-gray-500'}>
                     ✓ At least one number
                   </p>
                 </div>
-              )***REMOVED***
+              )}
             </div>
             
             <div>
@@ -278,34 +278,34 @@ const Register = () => ***REMOVED***
               <div className="relative">
               <input
                 id="confirmPassword"
-                type=***REMOVED***showPassword ? "text" : "password"***REMOVED***
-                value=***REMOVED***confirmPassword***REMOVED***
-                onChange=***REMOVED***(e) => setConfirmPassword(e.target.value)***REMOVED***
-                className=***REMOVED***`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 $***REMOVED***
+                type={showPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 ${
                   !passwordsMatch && confirmPassword ? 'border-red-500' : 'border-gray-300'
-                ***REMOVED***`***REMOVED***
+                }`}
                 placeholder="Confirm your password"
                 required
               />
                 <button 
                   type="button"
-                  onClick=***REMOVED***() => setShowPassword(!showPassword)***REMOVED***
+                  onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-2.5 text-gray-500"
                 >
-                  ***REMOVED***showPassword ? <EyeOff size=***REMOVED***20***REMOVED*** /> : <Eye size=***REMOVED***20***REMOVED*** />***REMOVED***
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-              ***REMOVED***!passwordsMatch && confirmPassword && (
+              {!passwordsMatch && confirmPassword && (
                 <p className="mt-1 text-xs text-red-500">
                   Passwords do not match
                 </p>
-              )***REMOVED***
+              )}
             </div>
             
             <Button
               type="submit"
-              disabled=***REMOVED***loading || !emailValid || !passwordStrength.isValid || !passwordsMatch || !nameValid***REMOVED***
-              loading=***REMOVED***loading***REMOVED***
+              disabled={loading || !emailValid || !passwordStrength.isValid || !passwordsMatch || !nameValid}
+              loading={loading}
               className="w-full"
             >
               Register
@@ -322,11 +322,11 @@ const Register = () => ***REMOVED***
           </div>
           
           <Button
-            onClick=***REMOVED***handleGoogleRegister***REMOVED***
-            loading=***REMOVED***googleLoading***REMOVED***
+            onClick={handleGoogleRegister}
+            loading={googleLoading}
             variant="secondary"
             className="w-full mb-4"
-            icon=***REMOVED***GoogleIcon***REMOVED***
+            icon={GoogleIcon}
             iconPosition="left"
             bgColor="#121212"
             textColor="white"
@@ -347,6 +347,6 @@ const Register = () => ***REMOVED***
       </Flex>
     </div>
   );
-***REMOVED***;
+};
 
 export default Register;

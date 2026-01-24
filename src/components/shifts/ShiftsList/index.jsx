@@ -1,36 +1,36 @@
 // src/components/shifts/ShiftsList/index.jsx
 
-import React, ***REMOVED*** createRef ***REMOVED*** from 'react';
-import ***REMOVED*** TransitionGroup, CSSTransition ***REMOVED*** from 'react-transition-group';
+import React, { createRef } from 'react';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import DaySection from '../../sections/DaySection';
 
-function ShiftsList(***REMOVED*** daysToShow, allWorks, onEditShift, onDeleteShift ***REMOVED***) ***REMOVED***
+function ShiftsList({ daysToShow, allWorks, onEditShift, onDeleteShift }) {
   return (
     <div>
       <TransitionGroup component="div" className="space-y-6">
-        ***REMOVED***daysToShow.map(([date, shiftsOfDay]) => ***REMOVED***
+        {daysToShow.map(([date, shiftsOfDay]) => {
           const nodeRef = createRef(null);
           return (
             <CSSTransition 
-              key=***REMOVED***date***REMOVED*** 
-              timeout=***REMOVED***500***REMOVED*** 
+              key={date} 
+              timeout={500} 
               classNames="day-section" 
-              nodeRef=***REMOVED***nodeRef***REMOVED***
+              nodeRef={nodeRef}
             >
               <DaySection
-                ref=***REMOVED***nodeRef***REMOVED***
-                date=***REMOVED***date***REMOVED***
-                shifts=***REMOVED***shiftsOfDay***REMOVED***
-                works=***REMOVED***allWorks***REMOVED***
-                onEditShift=***REMOVED***onEditShift***REMOVED***
-                onDeleteShift=***REMOVED***onDeleteShift***REMOVED***
+                ref={nodeRef}
+                date={date}
+                shifts={shiftsOfDay}
+                works={allWorks}
+                onEditShift={onEditShift}
+                onDeleteShift={onDeleteShift}
               />
             </CSSTransition>
           );
-        ***REMOVED***)***REMOVED***
+        })}
       </TransitionGroup>
     </div>
   );
-***REMOVED***
+}
 
 export default ShiftsList;

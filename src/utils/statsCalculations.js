@@ -1,49 +1,49 @@
 // src/utils/statsCalculations.js
 
-import ***REMOVED*** determineShiftType ***REMOVED*** from './shiftDetailsUtils';
-import ***REMOVED*** createSafeDate ***REMOVED*** from './time';
-import ***REMOVED*** formatCurrency ***REMOVED*** from './currency';
-import ***REMOVED*** formatHoursDecimal as formatHours ***REMOVED*** from './time/timeCalculations';
+import { determineShiftType } from './shiftDetailsUtils';
+import { createSafeDate } from './time';
+import { formatCurrency } from './currency';
+import { formatHoursDecimal as formatHours } from './time/timeCalculations';
 
 /**
  * Formats a given number of minutes into a string like "1H 30M".
- * @param ***REMOVED***number***REMOVED*** minutes - The total minutes to format.
- * @returns ***REMOVED***string***REMOVED*** - The formatted time string.
+ * @param {number} minutes - The total minutes to format.
+ * @returns {string} - The formatted time string.
  */
-export const formatMinutesToHoursAndMinutes = (minutes) => ***REMOVED***
+export const formatMinutesToHoursAndMinutes = (minutes) => {
   if (!minutes || minutes === 0) return '0 MIN';
   
-  if (minutes < 60) ***REMOVED***
-    return `$***REMOVED***minutes***REMOVED*** MIN`;
-  ***REMOVED***
+  if (minutes < 60) {
+    return `${minutes} MIN`;
+  }
   
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
   
-  if (remainingMinutes === 0) ***REMOVED***
-    return `$***REMOVED***hours***REMOVED***H`;
-  ***REMOVED***
+  if (remainingMinutes === 0) {
+    return `${hours}H`;
+  }
   
-  return `$***REMOVED***hours***REMOVED***H $***REMOVED***remainingMinutes***REMOVED***M`;
-***REMOVED***;
+  return `${hours}H ${remainingMinutes}M`;
+};
 
 /**
  * Calculates a comprehensive set of weekly statistics based on shifts and other data.
  */
-export const calculateWeeklyStats = (***REMOVED***
+export const calculateWeeklyStats = ({
   shifts,
   deliveryShifts,
   allWorks,
   calculatePayment,
   shiftRanges,
   weekOffset = 0,
-***REMOVED***) => ***REMOVED***
+}) => {
   const traditionalShifts = Array.isArray(shifts) ? shifts : [];
   const validDeliveryShifts = Array.isArray(deliveryShifts) ? deliveryShifts : [];
   const allShifts = [...traditionalShifts, ...validDeliveryShifts];
   const validWorks = Array.isArray(allWorks) ? allWorks : [];
 
-  const getWeekDates = (offset) => ***REMOVED***
+  const getWeekDates = (offset) => {
     const today = new Date();
     const dayOfWeek = today.getDay();
     const startDiff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
@@ -53,44 +53,44 @@ export const calculateWeeklyStats = (***REMOVED***
     const endDate = new Date(startDate);
     endDate.setDate(startDate.getDate() + 6);
     endDate.setHours(23, 59, 59, 999);
-    return ***REMOVED*** startDate, endDate ***REMOVED***;
-  ***REMOVED***;
+    return { startDate, endDate };
+  };
 
-  const ***REMOVED*** startDate, endDate ***REMOVED*** = getWeekDates(weekOffset);
+  const { startDate, endDate } = getWeekDates(weekOffset);
 
-  const weekShifts = allShifts.filter(shift => ***REMOVED***
+  const weekShifts = allShifts.filter(shift => {
     const dateKey = shift.startDate || shift.date;
     if (!dateKey) return false;
     const shiftDate = createSafeDate(dateKey);
     return shiftDate >= startDate && shiftDate <= endDate;
-  ***REMOVED***);
+  });
 
-  const initialState = ***REMOVED***
+  const initialState = {
     startDate,
     endDate,
     totalEarned: 0,
     hoursWorked: 0,
     totalShifts: 0,
-    earningsByDay: ***REMOVED*** "Monday": ***REMOVED******REMOVED***, "Tuesday": ***REMOVED******REMOVED***, "Wednesday": ***REMOVED******REMOVED***, "Thursday": ***REMOVED******REMOVED***, "Friday": ***REMOVED******REMOVED***, "Saturday": ***REMOVED******REMOVED***, "Sunday": ***REMOVED******REMOVED*** ***REMOVED***,
+    earningsByDay: { "Monday": {}, "Tuesday": {}, "Wednesday": {}, "Thursday": {}, "Friday": {}, "Saturday": {}, "Sunday": {} },
     earningsByWork: [],
-    shiftTypes: ***REMOVED******REMOVED***,
+    shiftTypes: {},
     daysWorked: 0,
     averageHoursPerDay: 0,
     averagePerHour: 0,
-    mostProductiveDay: ***REMOVED*** day: 'None', earnings: 0 ***REMOVED***
-  ***REMOVED***;
+    mostProductiveDay: { day: 'None', earnings: 0 }
+  };
 
   if (weekShifts.length === 0) return initialState;
 
-  const acc = ***REMOVED***
+  const acc = {
     totalEarned: 0,
     hoursWorked: 0,
-    earningsByDay: ***REMOVED*** "Monday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Tuesday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Wednesday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Thursday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Friday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Saturday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED***, "Sunday": ***REMOVED*** earnings: 0, hours: 0, shifts: 0 ***REMOVED*** ***REMOVED***,
-    earningsByWork: ***REMOVED******REMOVED***,
-    shiftTypes: ***REMOVED******REMOVED***
-  ***REMOVED***;
+    earningsByDay: { "Monday": { earnings: 0, hours: 0, shifts: 0 }, "Tuesday": { earnings: 0, hours: 0, shifts: 0 }, "Wednesday": { earnings: 0, hours: 0, shifts: 0 }, "Thursday": { earnings: 0, hours: 0, shifts: 0 }, "Friday": { earnings: 0, hours: 0, shifts: 0 }, "Saturday": { earnings: 0, hours: 0, shifts: 0 }, "Sunday": { earnings: 0, hours: 0, shifts: 0 } },
+    earningsByWork: {},
+    shiftTypes: {}
+  };
 
-  weekShifts.forEach(shift => ***REMOVED***
+  weekShifts.forEach(shift => {
     const work = validWorks.find(w => w.id === shift.workId);
     if (!work) return;
 
@@ -109,9 +109,9 @@ export const calculateWeeklyStats = (***REMOVED***
     acc.earningsByDay[dayName].hours += hours;
     acc.earningsByDay[dayName].shifts += 1;
 
-    if (!acc.earningsByWork[work.id]) ***REMOVED***
-      acc.earningsByWork[work.id] = ***REMOVED*** id: work.id, name: work.name, color: work.color || work.avatarColor || '#EC4899', earnings: 0, hours: 0, shifts: 0, type: work.type || 'traditional' ***REMOVED***;
-    ***REMOVED***
+    if (!acc.earningsByWork[work.id]) {
+      acc.earningsByWork[work.id] = { id: work.id, name: work.name, color: work.color || work.avatarColor || '#EC4899', earnings: 0, hours: 0, shifts: 0, type: work.type || 'traditional' };
+    }
     acc.earningsByWork[work.id].earnings += earnings;
     acc.earningsByWork[work.id].hours += hours;
     acc.earningsByWork[work.id].shifts += 1;
@@ -122,24 +122,24 @@ export const calculateWeeklyStats = (***REMOVED***
     else if (shiftDate.getDay() === 0) shiftType = 'sunday';
     else if (shiftRanges) shiftType = determineShiftType(shift, shiftRanges);
 
-    if (!acc.shiftTypes[shiftType]) ***REMOVED***
-      acc.shiftTypes[shiftType] = ***REMOVED*** shifts: 0, hours: 0, earnings: 0 ***REMOVED***;
-    ***REMOVED***
+    if (!acc.shiftTypes[shiftType]) {
+      acc.shiftTypes[shiftType] = { shifts: 0, hours: 0, earnings: 0 };
+    }
     acc.shiftTypes[shiftType].shifts += 1;
     acc.shiftTypes[shiftType].hours += hours;
     acc.shiftTypes[shiftType].earnings += earnings;
-  ***REMOVED***);
+  });
 
   const daysWorked = Object.values(acc.earningsByDay).filter(day => day.shifts > 0).length;
   const averageHoursPerDay = daysWorked > 0 ? acc.hoursWorked / daysWorked : 0;
   const averagePerHour = acc.hoursWorked > 0 ? acc.totalEarned / acc.hoursWorked : 0;
   
   const mostProductiveDay = Object.entries(acc.earningsByDay).reduce(
-    (max, [day, data]) => (data.earnings > max.earnings ? ***REMOVED*** day, ...data ***REMOVED*** : max),
-    ***REMOVED*** day: 'None', earnings: 0 ***REMOVED***
+    (max, [day, data]) => (data.earnings > max.earnings ? { day, ...data } : max),
+    { day: 'None', earnings: 0 }
   );
 
-  return ***REMOVED***
+  return {
     startDate,
     endDate,
     shifts: weekShifts,
@@ -153,16 +153,16 @@ export const calculateWeeklyStats = (***REMOVED***
     averageHoursPerDay,
     averagePerHour,
     mostProductiveDay
-  ***REMOVED***;
-***REMOVED***
+  };
+}
 
 /**
  * Calculates duration of a shift in hours.
- * @param ***REMOVED***object***REMOVED*** shift - The shift object with horaInicio and horaFin.
- * @returns ***REMOVED***number***REMOVED*** - The duration in hours.
+ * @param {object} shift - The shift object with horaInicio and horaFin.
+ * @returns {number} - The duration in hours.
  */
-export const calculateShiftHours = (turno) => ***REMOVED***
-  try ***REMOVED***
+export const calculateShiftHours = (turno) => {
+  try {
     const [startHour, startMin] = turno.horaInicio.split(':').map(Number);
     const [endHour, endMin] = turno.horaFin.split(':').map(Number);
 
@@ -173,19 +173,19 @@ export const calculateShiftHours = (turno) => ***REMOVED***
     if (fin < inicio) fin += 24;
 
     return Math.max(0, fin - inicio);
-  ***REMOVED*** catch (error) ***REMOVED***
+  } catch (error) {
     return 0;
-  ***REMOVED***
-***REMOVED***;
+  }
+};
 
 /**
  * Calculates earnings for a specific shift.
- * @param ***REMOVED***object***REMOVED*** turno - The shift object.
- * @param ***REMOVED***array***REMOVED*** trabajosValidos - Array of valid work objects to find matching job.
- * @returns ***REMOVED***number***REMOVED*** - The calculated earnings for shift.
+ * @param {object} turno - The shift object.
+ * @param {array} trabajosValidos - Array of valid work objects to find matching job.
+ * @returns {number} - The calculated earnings for shift.
  */
-export const calculateShiftEarnings = (turno, trabajosValidos) => ***REMOVED***
-  try ***REMOVED***
+export const calculateShiftEarnings = (turno, trabajosValidos) => {
+  try {
     const trabajo = trabajosValidos.find(t => t.id === turno.trabajoId);
     if (!trabajo) return 0;
 
@@ -197,58 +197,58 @@ export const calculateShiftEarnings = (turno, trabajosValidos) => ***REMOVED***
     const discountAmount = baseEarnings * (discount / 100);
 
     return Math.max(0, baseEarnings - discountAmount);
-  ***REMOVED*** catch (error) ***REMOVED***
+  } catch (error) {
     return 0;
-  ***REMOVED***
-***REMOVED***;
+  }
+};
 
 /**
  * Calculates average earnings per order for a platform.
- * @param ***REMOVED***object***REMOVED*** platform - The platform object.
- * @returns ***REMOVED***number***REMOVED*** - Average earnings per order.
+ * @param {object} platform - The platform object.
+ * @returns {number} - Average earnings per order.
  */
-export const calculateAveragePerOrder = (platform) => ***REMOVED***
+export const calculateAveragePerOrder = (platform) => {
   return platform.totalOrders > 0 ? platform.totalEarned / platform.totalOrders : 0;
-***REMOVED***;
+};
 
 /**
  * Calculates average earnings per hour for a platform.
- * @param ***REMOVED***object***REMOVED*** platform - The platform object.
- * @returns ***REMOVED***number***REMOVED*** - Average earnings per hour.
+ * @param {object} platform - The platform object.
+ * @returns {number} - Average earnings per hour.
  */
-export const calculateAveragePerHour = (platform) => ***REMOVED***
+export const calculateAveragePerHour = (platform) => {
   return platform.totalHours > 0 ? platform.totalEarned / platform.totalHours : 0;
-***REMOVED***;
+};
 
 /**
  * Calculates net earnings for a platform.
- * @param ***REMOVED***object***REMOVED*** platform - The platform object.
- * @returns ***REMOVED***number***REMOVED*** - Net earnings.
+ * @param {object} platform - The platform object.
+ * @returns {number} - Net earnings.
  */
-export const calculateNetEarnings = (platform) => ***REMOVED***
+export const calculateNetEarnings = (platform) => {
   return platform.totalEarned - platform.totalExpenses;
-***REMOVED***;
+};
 
 /**
  * Sorts an array of platforms based on a specified key.
- * @param ***REMOVED***array***REMOVED*** platforms - Array of platform objects.
- * @param ***REMOVED***string***REMOVED*** sortBy - The key to sort by.
- * @returns ***REMOVED***array***REMOVED*** - Sorted array of platform objects.
+ * @param {array} platforms - Array of platform objects.
+ * @param {string} sortBy - The key to sort by.
+ * @returns {array} - Sorted array of platform objects.
  */
-export const sortPlatforms = (platforms, sortBy) => ***REMOVED***
+export const sortPlatforms = (platforms, sortBy) => {
   return [...platforms].sort((a, b) => b[sortBy] - a[sortBy]);
-***REMOVED***;
+};
 
 /**
  * Finds most efficient vehicle from a list.
- * @param ***REMOVED***array***REMOVED*** vehicles - Array of vehicle objects.
- * @returns ***REMOVED***object|null***REMOVED*** - The most efficient vehicle object, or null if array is empty.
+ * @param {array} vehicles - Array of vehicle objects.
+ * @returns {object|null} - The most efficient vehicle object, or null if array is empty.
  */
-export const findMostEfficientVehicle = (vehicles) => ***REMOVED***
+export const findMostEfficientVehicle = (vehicles) => {
   if (!vehicles || vehicles.length === 0) return null;
-  return vehicles.reduce((best, current) => ***REMOVED***
+  return vehicles.reduce((best, current) => {
     return current.efficiency > best.efficiency ? current : best;
-  ***REMOVED***, vehicles[0]);
-***REMOVED***;
+  }, vehicles[0]);
+};
 
-export ***REMOVED*** formatCurrency, formatHours ***REMOVED***;
+export { formatCurrency, formatHours };

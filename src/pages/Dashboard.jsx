@@ -1,14 +1,14 @@
 // src/pages/Dashboard.jsx
 
-import React, ***REMOVED*** useState ***REMOVED*** from 'react';
-import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
-import ***REMOVED*** LayoutDashboard ***REMOVED*** from 'lucide-react';
-// import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom'; // Uncomment when we have the route
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { LayoutDashboard } from 'lucide-react';
+// import { useNavigate } from 'react-router-dom'; // Uncomment when we have the route
 
 import PageHeader from '../components/layout/PageHeader';
-import ***REMOVED*** useDashboardStats ***REMOVED*** from '../hooks/useDashboardStats';
-import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
-import ***REMOVED*** generatePDFReport, generatePNGReport, generateXLSXReport ***REMOVED*** from '../services/exportService';
+import { useDashboardStats } from '../hooks/useDashboardStats';
+import { useApp } from '../contexts/AppContext';
+import { generatePDFReport, generatePNGReport, generateXLSXReport } from '../services/exportService';
 import Loader from '../components/other/Loader';
 import WelcomeCard from '../components/dashboard/WelcomeCard';
 import QuickStatsGrid from '../components/dashboard/QuickStatsGrid';
@@ -26,149 +26,149 @@ import FeatureAnnouncementCard from '../components/dashboard/FeatureAnnouncement
 
 import Flex from '../components/ui/Flex';
 
-const Dashboard = () => ***REMOVED***
-  const ***REMOVED*** loading, calculatePayment ***REMOVED*** = useApp();
+const Dashboard = () => {
+  const { loading, calculatePayment } = useApp();
   const stats = useDashboardStats();
   // const navigate = useNavigate();
   // eslint-disable-next-line no-unused-vars
   const [showFeatureAnnouncement, setShowFeatureAnnouncement] = useState(true);
 
-  const handleNavigateToLiveMode = () => ***REMOVED***
+  const handleNavigateToLiveMode = () => {
     console.log("Navigating to new Live Mode...");
     // navigate('/live'); // Here we will go to the full navigation page
-  ***REMOVED***;
+  };
 
-  const handleExport = async (format) => ***REMOVED***
-    try ***REMOVED***
-      if (format === 'pdf') ***REMOVED***
+  const handleExport = async (format) => {
+    try {
+      if (format === 'pdf') {
         await generatePDFReport(stats, stats.allShifts, stats.allWorks);
-      ***REMOVED*** else if (format === 'png') ***REMOVED***
+      } else if (format === 'png') {
         await generatePNGReport(stats, stats.allShifts, stats.allWorks);
-      ***REMOVED*** else if (format === 'xlsx') ***REMOVED***
+      } else if (format === 'xlsx') {
         await generateXLSXReport(stats, stats.allShifts, stats.allWorks, calculatePayment);
-      ***REMOVED***
-    ***REMOVED*** catch (error) ***REMOVED***
+      }
+    } catch (error) {
       console.error('Error exporting report:', error);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  if (loading) ***REMOVED***
+  if (loading) {
     return (
       <Flex variant="center" className="h-screen">
         <Loader />
       </Flex>
     );
-  ***REMOVED***
+  }
 
-  const headerVariants = ***REMOVED***
-    hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
-    visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.3 ***REMOVED*** ***REMOVED***
-  ***REMOVED***;
+  const headerVariants = {
+    hidden: { opacity: 0, y: -20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } }
+  };
 
   return (
     <div className="px-4 py-6 space-y-6">
       <PageHeader
         title="Dashboard"
         subtitle="An overview of your activity and progress."
-        icon=***REMOVED***LayoutDashboard***REMOVED***
+        icon={LayoutDashboard}
       />
 
       <div className="space-y-6">
-        ***REMOVED***/* --- DESKTOP TOP SECTION --- */***REMOVED***
+        {/* --- DESKTOP TOP SECTION --- */}
         <div className="hidden lg:grid lg:grid-cols-5 lg:auto-rows-max lg:gap-6">
-          ***REMOVED***showFeatureAnnouncement ? (
+          {showFeatureAnnouncement ? (
             <>
-              ***REMOVED***/* --- WITH FEATURE --- */***REMOVED***
-              <motion.div className="lg:col-span-4 h-full" variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
-                <FeatureAnnouncementCard onClick=***REMOVED***handleNavigateToLiveMode***REMOVED*** className="h-full" />
+              {/* --- WITH FEATURE --- */}
+              <motion.div className="lg:col-span-4 h-full" variants={headerVariants} initial="hidden" animate="visible">
+                <FeatureAnnouncementCard onClick={handleNavigateToLiveMode} className="h-full" />
               </motion.div>
-              <motion.div className="lg:col-span-1 h-full" variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
-                <WelcomeCard totalEarned=***REMOVED***stats.totalEarned***REMOVED*** isFeatureVisible=***REMOVED***true***REMOVED*** className="h-full" />
+              <motion.div className="lg:col-span-1 h-full" variants={headerVariants} initial="hidden" animate="visible">
+                <WelcomeCard totalEarned={stats.totalEarned} isFeatureVisible={true} className="h-full" />
               </motion.div>
               
               <div className="lg:col-span-4 h-full">
                 <QuickStatsGrid 
-                  stats=***REMOVED***stats***REMOVED*** 
-                  allShifts=***REMOVED***stats.allShifts***REMOVED***
-                  allWorks=***REMOVED***stats.allWorks***REMOVED***
+                  stats={stats} 
+                  allShifts={stats.allShifts}
+                  allWorks={stats.allWorks}
                   className="h-full" 
                 />
               </div>
               <div className="lg:col-span-1 h-full">
-                <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** className="h-full" />
+                <ThisWeekSummaryCard stats={stats} className="h-full" />
               </div>
             </>
           ) : (
             <>
-              ***REMOVED***/* --- WITHOUT FEATURE --- */***REMOVED***
-              <motion.div className="lg:col-span-4" variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
-                <WelcomeCard totalEarned=***REMOVED***stats.totalEarned***REMOVED*** />
+              {/* --- WITHOUT FEATURE --- */}
+              <motion.div className="lg:col-span-4" variants={headerVariants} initial="hidden" animate="visible">
+                <WelcomeCard totalEarned={stats.totalEarned} />
               </motion.div>
       
               <div className="lg:col-span-4 lg:row-start-2">
                 <QuickStatsGrid 
-                  stats=***REMOVED***stats***REMOVED*** 
-                  allShifts=***REMOVED***stats.allShifts***REMOVED***
-                  allWorks=***REMOVED***stats.allWorks***REMOVED***
+                  stats={stats} 
+                  allShifts={stats.allShifts}
+                  allWorks={stats.allWorks}
                 />
               </div>
 
               <div className="lg:col-span-1 lg:col-start-5 lg:row-start-1 lg:row-span-2 h-full">
-                <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** className="h-full"/>
+                <ThisWeekSummaryCard stats={stats} className="h-full"/>
               </div>
             </>
-          )***REMOVED***
+          )}
         </div>
 
-        ***REMOVED***/* --- MOBILE SECTION --- */***REMOVED***
+        {/* --- MOBILE SECTION --- */}
         <div className="block lg:hidden space-y-4">
-          ***REMOVED***showFeatureAnnouncement && (
-            <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
-              <FeatureAnnouncementCard onClick=***REMOVED***handleNavigateToLiveMode***REMOVED*** />
+          {showFeatureAnnouncement && (
+            <motion.div variants={headerVariants} initial="hidden" animate="visible">
+              <FeatureAnnouncementCard onClick={handleNavigateToLiveMode} />
             </motion.div>
-          )***REMOVED***
-          <motion.div variants=***REMOVED***headerVariants***REMOVED*** initial="hidden" animate="visible">
-            <WelcomeCard totalEarned=***REMOVED***stats.totalEarned***REMOVED*** />
+          )}
+          <motion.div variants={headerVariants} initial="hidden" animate="visible">
+            <WelcomeCard totalEarned={stats.totalEarned} />
           </motion.div>
           
           <QuickStatsGrid 
-            stats=***REMOVED***stats***REMOVED*** 
-            allShifts=***REMOVED***stats.allShifts***REMOVED***
-            allWorks=***REMOVED***stats.allWorks***REMOVED***
+            stats={stats} 
+            allShifts={stats.allShifts}
+            allWorks={stats.allWorks}
           />
           
-          <ThisWeekSummaryCard stats=***REMOVED***stats***REMOVED*** />
+          <ThisWeekSummaryCard stats={stats} />
         </div>
 
-        ***REMOVED***/* --- BOTTOM ROW (Common) --- */***REMOVED***
+        {/* --- BOTTOM ROW (Common) --- */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:items-start">
-          ***REMOVED***/* Recent Activity */***REMOVED***
+          {/* Recent Activity */}
           <div className="lg:col-span-1 h-full">
             <RecentActivityCard
-              stats=***REMOVED***stats***REMOVED***
-              allWorks=***REMOVED***stats.allWorks***REMOVED***
-              allShifts=***REMOVED***stats.allShifts***REMOVED***
+              stats={stats}
+              allWorks={stats.allWorks}
+              allShifts={stats.allShifts}
             />
           </div>
 
-          ***REMOVED***/* Data Grids */***REMOVED***
+          {/* Data Grids */}
           <div className="lg:col-span-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-6 flex flex-col">
-                <FavoriteWorksCard favoriteWorks=***REMOVED***stats.favoriteWorks***REMOVED*** />
-                <TopWorkCard mostProfitableWork=***REMOVED***stats.mostProfitableWork***REMOVED*** />
+                <FavoriteWorksCard favoriteWorks={stats.favoriteWorks} />
+                <TopWorkCard mostProfitableWork={stats.mostProfitableWork} />
                 <NextShiftCard
-                  nextShift=***REMOVED***stats.nextShift***REMOVED***
-                  formatDate=***REMOVED***stats.formatDate***REMOVED***
+                  nextShift={stats.nextShift}
+                  formatDate={stats.formatDate}
                 />
               </div>
               <div className="space-y-6 flex flex-col">
                   <ProjectionCard
-                  monthlyProjection=***REMOVED***stats.monthlyProjection***REMOVED***
-                  hoursWorked=***REMOVED***stats.hoursWorked***REMOVED***
+                  monthlyProjection={stats.monthlyProjection}
+                  hoursWorked={stats.hoursWorked}
                   className="flex-grow"
                 />
-                <ExportReportCard onExport=***REMOVED***handleExport***REMOVED*** />
+                <ExportReportCard onExport={handleExport} />
                 <QuickActionsCard className="flex-grow" />
               </div>
             </div>
@@ -181,6 +181,6 @@ const Dashboard = () => ***REMOVED***
       </Flex>
     </div>
   );
-***REMOVED***;
+};
 
 export default Dashboard;

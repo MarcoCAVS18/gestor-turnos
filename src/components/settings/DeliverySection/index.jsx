@@ -1,27 +1,27 @@
 // src/components/settings/DeliverySection/index.jsx 
 
 import React from 'react';
-import ***REMOVED*** Truck, Info, AlertTriangle ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import { Truck, Info, AlertTriangle } from 'lucide-react';
+import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Switch from '../../ui/Switch';
 import Popover from '../../ui/Popover';
 import Flex from '../../ui/Flex';
 
-const DeliverySection = (***REMOVED*** onError, onSuccess, className ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** deliveryEnabled, savePreferences ***REMOVED*** = useApp();
+const DeliverySection = ({ onError, onSuccess, className }) => {
+  const { deliveryEnabled, savePreferences } = useApp();
   const colors = useThemeColors();
   
-  const handleToggle = async (newValue) => ***REMOVED***
-    try ***REMOVED***
-      await savePreferences(***REMOVED*** deliveryEnabled: newValue ***REMOVED***);
-      onSuccess?.(`Delivery mode $***REMOVED***newValue ? 'enabled' : 'disabled'***REMOVED***`);
-    ***REMOVED*** catch (error) ***REMOVED***
+  const handleToggle = async (newValue) => {
+    try {
+      await savePreferences({ deliveryEnabled: newValue });
+      onSuccess?.(`Delivery mode ${newValue ? 'enabled' : 'disabled'}`);
+    } catch (error) {
       console.error('Error changing delivery setting:', error);
       onError?.('Error changing delivery setting');
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   // Conditional content for Popover
   const popoverContent = deliveryEnabled ? (
@@ -55,44 +55,44 @@ const DeliverySection = (***REMOVED*** onError, onSuccess, className ***REMOVED*
   );
 
   return (
-    <SettingsSection icon=***REMOVED***Truck***REMOVED*** title="Delivery Jobs" className=***REMOVED***className***REMOVED***>
+    <SettingsSection icon={Truck} title="Delivery Jobs" className={className}>
       <div className="space-y-4">
         <Flex variant="between" className="items-start">
           <div className="flex-1 pr-4">
             <p className="font-medium text-gray-900">
-              ***REMOVED***deliveryEnabled ? 'Disable delivery mode' : 'Enable delivery mode'***REMOVED***
+              {deliveryEnabled ? 'Disable delivery mode' : 'Enable delivery mode'}
             </p>
             <p className="text-sm text-gray-500 mb-2">
               Allows registering delivery jobs with variable earnings.
             </p>
 
             <Popover 
-              content=***REMOVED***popoverContent***REMOVED*** 
-              title=***REMOVED***deliveryEnabled ? "Consequences of disabling" : "How it works?"***REMOVED***
+              content={popoverContent} 
+              title={deliveryEnabled ? "Consequences of disabling" : "How it works?"}
               position="bottom-start"
             >
               <button 
                 className="flex items-center gap-1.5 text-xs font-medium transition-colors hover:opacity-80 focus:outline-none"
-                style=***REMOVED******REMOVED*** color: deliveryEnabled ? colors.warning : colors.primary ***REMOVED******REMOVED***
+                style={{ color: deliveryEnabled ? colors.warning : colors.primary }}
               >
-                ***REMOVED***deliveryEnabled ? <AlertTriangle size=***REMOVED***14***REMOVED*** /> : <Info size=***REMOVED***14***REMOVED*** />***REMOVED***
+                {deliveryEnabled ? <AlertTriangle size={14} /> : <Info size={14} />}
                 <span>
-                  ***REMOVED***deliveryEnabled 
+                  {deliveryEnabled 
                     ? 'What happens if I disable it?' 
-                    : 'What changes when I enable it?'***REMOVED***
+                    : 'What changes when I enable it?'}
                 </span>
               </button>
             </Popover>
           </div>
           
           <Switch
-            checked=***REMOVED***deliveryEnabled***REMOVED***
-            onChange=***REMOVED***handleToggle***REMOVED***
+            checked={deliveryEnabled}
+            onChange={handleToggle}
           />
         </Flex>
       </div>
     </SettingsSection>
   );
-***REMOVED***;
+};
 
 export default DeliverySection;
