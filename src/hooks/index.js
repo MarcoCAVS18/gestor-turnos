@@ -8,4 +8,4 @@ export ***REMOVED*** useFormValidation ***REMOVED*** from './useFormValidation';
 export ***REMOVED*** useSwipeActions ***REMOVED*** from './useSwipeActions';
 export ***REMOVED*** useShare ***REMOVED*** from './useShare';
 export ***REMOVED*** useLocalStorage ***REMOVED*** from './useLocalStorage';
-export ***REMOVED*** useTrabajos ***REMOVED*** from './useTrabajos'
+export ***REMOVED*** useWorks ***REMOVED*** from './useWorks'

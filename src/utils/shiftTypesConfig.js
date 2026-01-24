@@ -70,11 +70,11 @@ export const getAvailableShiftTypes = (turnosPorFecha, shiftRanges, thematicColo
   
   // Importar dinámicamente la función para evitar dependencias circulares
   try ***REMOVED***
-    const ***REMOVED*** determinarTipoTurno ***REMOVED*** = require('./shiftDetailsUtils');
+    const ***REMOVED*** determineShiftType ***REMOVED*** = require('./shiftDetailsUtils');
     
     // Analizar todos los turnos para ver qué tipos están presentes
     Object.values(turnosPorFecha).flat().forEach(turno => ***REMOVED***
-      const tipoTurno = determinarTipoTurno(turno, shiftRanges);
+      const tipoTurno = determineShiftType(turno, shiftRanges);
       availableTypes.add(tipoTurno);
     ***REMOVED***);
   ***REMOVED*** catch (error) ***REMOVED***

@@ -4,7 +4,7 @@ import React, ***REMOVED*** useState, useEffect, useMemo ***REMOVED*** from 'rea
 import ***REMOVED*** Info, Receipt, Check ***REMOVED*** from 'lucide-react'; // Added Check
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
-import ***REMOVED*** useWorks ***REMOVED*** from '../../../hooks/useTrabajos';
+import ***REMOVED*** useWorks ***REMOVED*** from '../../../hooks/useWorks';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 import Popover from '../../ui/Popover';
