@@ -1,4 +1,5 @@
 // src/services/firebaseService.js
+// RESTRUCTURED FOR OPTIMIZED KPI ANALYTICS
 
 import {
   doc,
@@ -17,46 +18,56 @@ import {
 import { db } from './firebase';
 import { createSafeDate } from '../utils/time';
 
-// --- HELPERS ---
+// ============================================================================
+// COLLECTION REFERENCES
+// ============================================================================
 
-const getUserSubcollections = (userUid) => {
-  if (!userUid) return null;
+const getCollections = () => {
   return {
-    worksRef: collection(db, 'users', userUid, 'works'),
-    shiftsRef: collection(db, 'users', userUid, 'shifts'),
-    deliveryWorksRef: collection(db, 'users', userUid, 'works-delivery'),
-    deliveryShiftsRef: collection(db, 'users', userUid, 'shifts-delivery'),
-    userDocRef: doc(db, 'users', userUid),
+    usersRef: collection(db, 'users'),
+    worksRef: collection(db, 'works'),
+    shiftsRef: collection(db, 'shifts'),
+    statsRef: collection(db, 'stats'),
   };
 };
 
-const createIncrementalSubscription = (query, setData, errorCallback, sortComparator, dataTransform = (d) => d) => {
-    return onSnapshot(query, { includeMetadataChanges: true }, (snapshot) => {
-        setData((currentData) => {
-            let updatedData = [...(currentData || [])];
-            snapshot.docChanges().forEach((change) => {
-                const docData = dataTransform({ id: change.doc.id, ...change.doc.data() });
-                const index = updatedData.findIndex((t) => t.id === docData.id);
-
-                if (change.type === 'added') {
-                    if (index === -1) updatedData.push(docData);
-                } else if (change.type === 'modified') {
-                    if (index !== -1) updatedData[index] = docData;
-                } else if (change.type === 'removed') {
-                    updatedData = updatedData.filter((t) => t.id !== change.doc.id);
-                }
-            });
-            return updatedData.sort(sortComparator);
-        });
-    }, (err) => errorCallback('Error loading data: ' + err.message));
+const getUserDocRef = (userUid) => {
+  return doc(db, 'users', userUid);
 };
 
-// --- USER & SETTINGS ---
+// ============================================================================
+// SUBSCRIPTION HELPERS
+// ============================================================================
+
+const createIncrementalSubscription = (query, setData, errorCallback, sortComparator, dataTransform = (d) => d) => {
+  return onSnapshot(query, { includeMetadataChanges: true }, (snapshot) => {
+    setData((currentData) => {
+      let updatedData = [...(currentData || [])];
+      snapshot.docChanges().forEach((change) => {
+        const docData = dataTransform({ id: change.doc.id, ...change.doc.data() });
+        const index = updatedData.findIndex((t) => t.id === docData.id);
+
+        if (change.type === 'added') {
+          if (index === -1) updatedData.push(docData);
+        } else if (change.type === 'modified') {
+          if (index !== -1) updatedData[index] = docData;
+        } else if (change.type === 'removed') {
+          updatedData = updatedData.filter((t) => t.id !== change.doc.id);
+        }
+      });
+      return updatedData.sort(sortComparator);
+    });
+  }, (err) => errorCallback('Error loading data: ' + err.message));
+};
+
+// ============================================================================
+// USER & SETTINGS
+// ============================================================================
 
 export const ensureUserDocument = async (user) => {
   if (!user) return null;
 
-  const userDocRef = doc(db, 'users', user.uid);
+  const userDocRef = getUserDocRef(user.uid);
   const userDocSnapshot = await getDoc(userDocRef);
 
   const defaultSettings = {
@@ -92,48 +103,51 @@ export const ensureUserDocument = async (user) => {
 };
 
 export const savePreferences = async (userUid, preferences) => {
-    const userDocRef = doc(db, 'users', userUid);
-    const updatedData = { updatedAt: new Date() };
+  const userDocRef = getUserDocRef(userUid);
+  const updatedData = { updatedAt: new Date() };
 
-    const prefMap = {
-        primaryColor: 'settings.primaryColor',
-        userEmoji: 'settings.userEmoji',
-        defaultDiscount: 'settings.defaultDiscount',
-        shiftRanges: 'settings.shiftRanges',
-        deliveryEnabled: 'settings.deliveryEnabled',
-        weeklyHoursGoal: 'settings.weeklyHoursGoal',
-        smokoEnabled: 'settings.smokoEnabled',
-        smokoMinutes: 'settings.smokoMinutes',
-    };
+  const prefMap = {
+    primaryColor: 'settings.primaryColor',
+    userEmoji: 'settings.userEmoji',
+    defaultDiscount: 'settings.defaultDiscount',
+    shiftRanges: 'settings.shiftRanges',
+    deliveryEnabled: 'settings.deliveryEnabled',
+    weeklyHoursGoal: 'settings.weeklyHoursGoal',
+    smokoEnabled: 'settings.smokoEnabled',
+    smokoMinutes: 'settings.smokoMinutes',
+  };
 
-    for (const key in preferences) {
-        if (Object.prototype.hasOwnProperty.call(prefMap, key)) {
-            updatedData[prefMap[key]] = preferences[key];
-        }
+  for (const key in preferences) {
+    if (Object.prototype.hasOwnProperty.call(prefMap, key)) {
+      updatedData[prefMap[key]] = preferences[key];
     }
+  }
 
-    if (Object.keys(updatedData).length > 1) {
-        await updateDoc(userDocRef, updatedData);
-    }
+  if (Object.keys(updatedData).length > 1) {
+    await updateDoc(userDocRef, updatedData);
+  }
 };
 
 export const updateWeeklyHoursGoal = (userUid, newGoal) => {
-    const userDocRef = doc(db, 'users', userUid);
-    return updateDoc(userDocRef, {
-        'settings.weeklyHoursGoal': newGoal,
-        updatedAt: new Date()
-    });
+  const userDocRef = getUserDocRef(userUid);
+  return updateDoc(userDocRef, {
+    'settings.weeklyHoursGoal': newGoal,
+    updatedAt: new Date()
+  });
 };
 
-
-// --- DATA SUBSCRIPTIONS ---
+// ============================================================================
+// DATA SUBSCRIPTIONS (NEW STRUCTURE)
+// ============================================================================
 
 export const subscribeToNormalData = (userUid, { setWorks, setShifts, setError }) => {
-  const collections = getUserSubcollections(userUid);
-  if (!collections) return () => {};
+  const { worksRef, shiftsRef } = getCollections();
+
+  if (!userUid) return () => {};
+
   const unsubscribes = [];
 
-  const worksQuery = query(collections.worksRef, orderBy('name', 'asc'));
+  const worksQuery = query(worksRef, where('userId', '==', userUid), where('type', '==', 'regular'), orderBy('name', 'asc'));
   unsubscribes.push(
     createIncrementalSubscription(
       worksQuery,
@@ -143,13 +157,13 @@ export const subscribeToNormalData = (userUid, { setWorks, setShifts, setError }
     )
   );
 
-  const shiftsQuery = query(collections.shiftsRef, orderBy('createdAt', 'desc'));
+  const shiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('type', '==', 'regular'), orderBy('date', 'desc'));
   unsubscribes.push(
     createIncrementalSubscription(
       shiftsQuery,
       setShifts,
       (error) => setError(error),
-      (a, b) => new Date(b.startDate || b.date) - new Date(a.startDate || a.date)
+      (a, b) => new Date(b.date) - new Date(a.date)
     )
   );
 
@@ -157,12 +171,14 @@ export const subscribeToNormalData = (userUid, { setWorks, setShifts, setError }
 };
 
 export const subscribeToDeliveryData = (userUid, { setDeliveryWorks, setDeliveryShifts, setError }) => {
-  const collections = getUserSubcollections(userUid);
-  if (!collections) return () => {};
+  const { worksRef, shiftsRef } = getCollections();
+
+  if (!userUid) return () => {};
+
   const unsubscribes = [];
 
-  const deliveryWorksQuery = query(collections.deliveryWorksRef, orderBy('createdAt', 'desc'));
-    unsubscribes.push(
+  const deliveryWorksQuery = query(worksRef, where('userId', '==', userUid), where('type', '==', 'delivery'), orderBy('createdAt', 'desc'));
+  unsubscribes.push(
     createIncrementalSubscription(
       deliveryWorksQuery,
       setDeliveryWorks,
@@ -171,28 +187,31 @@ export const subscribeToDeliveryData = (userUid, { setDeliveryWorks, setDelivery
     )
   );
 
-  const deliveryShiftsQuery = query(collections.deliveryShiftsRef, orderBy('date', 'desc'));
+  const deliveryShiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('type', '==', 'delivery'), orderBy('date', 'desc'));
   unsubscribes.push(
     createIncrementalSubscription(
       deliveryShiftsQuery,
       setDeliveryShifts,
       (error) => setError(error),
-      (a, b) => new Date(b.date) - new Date(a.date),
-      (d) => ({ ...d, type: 'delivery' })
+      (a, b) => new Date(b.date) - new Date(a.date)
     )
   );
 
   return () => unsubscribes.forEach(unsub => unsub());
 };
 
-// --- WORKS ---
+// ============================================================================
+// WORKS (NEW STRUCTURE)
+// ============================================================================
 
 export const addJob = async (userUid, newJob, isDelivery = false) => {
-  const { worksRef, deliveryWorksRef } = getUserSubcollections(userUid);
-  const targetRef = isDelivery ? deliveryWorksRef : worksRef;
+  const { worksRef } = getCollections();
 
   let jobData = {
-    ...newJob,
+    userId: userUid,
+    name: newJob.name,
+    type: isDelivery ? 'delivery' : 'regular',
+    active: true,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -200,37 +219,44 @@ export const addJob = async (userUid, newJob, isDelivery = false) => {
   if (isDelivery) {
     jobData = {
       ...jobData,
-      type: 'delivery',
       platform: newJob.platform || '',
       vehicle: newJob.vehicle || '',
       avatarColor: newJob.avatarColor || '#10B981',
-      statistics: { /* default stats */ }
-    };
-  } else {
-    if (!newJob.name || !newJob.name.trim()) throw new Error('Work name is required');
-    jobData = {
-      ...jobData,
-      active: true
     };
   }
 
-  const docRef = await addDoc(targetRef, jobData);
+  if (!isDelivery && (!jobData.name || !jobData.name.trim())) {
+    throw new Error('Work name is required');
+  }
+
+  const docRef = await addDoc(worksRef, jobData);
   return { ...jobData, id: docRef.id };
 };
 
-export const editJob = (userUid, id, updatedData, isDelivery = false) => {
-  const { worksRef, deliveryWorksRef } = getUserSubcollections(userUid);
-  const targetRef = isDelivery ? deliveryWorksRef : worksRef;
-  const dataWithMetadata = { ...updatedData, updatedAt: new Date() };
-  return updateDoc(doc(targetRef, id), dataWithMetadata);
+export const editJob = async (userUid, id, updatedData, isDelivery = false) => {
+  const { worksRef } = getCollections();
+  const jobRef = doc(worksRef, id);
+
+  const dataWithMetadata = {
+    ...updatedData,
+    updatedAt: new Date(),
+  };
+
+  if (isDelivery) {
+    dataWithMetadata.platform = updatedData.platform || '';
+    dataWithMetadata.vehicle = updatedData.vehicle || '';
+    dataWithMetadata.avatarColor = updatedData.avatarColor || '#10B981';
+  }
+
+  return updateDoc(jobRef, dataWithMetadata);
 };
 
 export const deleteJob = async (userUid, id, isDelivery = false) => {
-  const { worksRef, shiftsRef, deliveryWorksRef, deliveryShiftsRef } = getUserSubcollections(userUid);
-  const jobRef = isDelivery ? doc(deliveryWorksRef, id) : doc(worksRef, id);
-  const shiftsCollectionRef = isDelivery ? deliveryShiftsRef : shiftsRef;
+  const { worksRef, shiftsRef } = getCollections();
 
-  const shiftsQuery = query(shiftsCollectionRef, where('workId', '==', id));
+  const jobRef = doc(worksRef, id);
+
+  const shiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('workId', '==', id));
   const shiftsSnapshot = await getDocs(shiftsQuery);
   const deletePromises = shiftsSnapshot.docs.map(d => deleteDoc(d.ref));
   await Promise.all(deletePromises);
@@ -238,12 +264,13 @@ export const deleteJob = async (userUid, id, isDelivery = false) => {
   await deleteDoc(jobRef);
 };
 
-// --- SHIFTS ---
+// ============================================================================
+// SHIFTS (NEW STRUCTURE)
+// ============================================================================
 
 export const addShift = async (userUid, newShift, isDelivery = false) => {
-  const { shiftsRef, deliveryShiftsRef } = getUserSubcollections(userUid);
-  const targetRef = isDelivery ? deliveryShiftsRef : shiftsRef;
-  
+  const { shiftsRef } = getCollections();
+
   const crossesMidnight = newShift.crossesMidnight || (newShift.startTime && newShift.endTime && newShift.startTime.split(':')[0] > newShift.endTime.split(':')[0]);
   let endDate = newShift.endDate;
   if (!endDate && crossesMidnight) {
@@ -252,13 +279,17 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
   }
 
   let shiftData = {
-    ...newShift,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    userId: userUid,
+    workId: newShift.workId || null,
+    type: isDelivery ? 'delivery' : 'regular',
     date: newShift.startDate || newShift.date,
     startDate: newShift.startDate || newShift.date,
     endDate: endDate || newShift.startDate || newShift.date,
+    startTime: newShift.startTime || null,
+    endTime: newShift.endTime || null,
     crossesMidnight,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   if (isDelivery) {
@@ -266,24 +297,26 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
     const tips = newShift.tips || 0;
     const totalEarnings = baseEarnings + tips;
     const fuelExpense = newShift.fuelExpense || 0;
-    
+
     shiftData = {
       ...shiftData,
-      type: 'delivery',
-      baseEarnings: baseEarnings,
-      tips: tips,
-      totalEarnings: totalEarnings,
+      baseEarnings,
+      tips,
+      totalEarnings,
       netEarnings: totalEarnings - fuelExpense,
+      fuelExpense,
+      platform: newShift.platform || '',
+      vehicle: newShift.vehicle || '',
     };
   }
 
-  const docRef = await addDoc(targetRef, shiftData);
+  const docRef = await addDoc(shiftsRef, shiftData);
   return { ...shiftData, id: docRef.id };
 };
 
-export const editShift = (userUid, id, updatedData, isDelivery = false) => {
-  const { shiftsRef, deliveryShiftsRef } = getUserSubcollections(userUid);
-  const targetRef = isDelivery ? deliveryShiftsRef : shiftsRef;
+export const editShift = async (userUid, id, updatedData, isDelivery = false) => {
+  const { shiftsRef } = getCollections();
+  const shiftRef = doc(shiftsRef, id);
 
   const crossesMidnight = updatedData.crossesMidnight || (updatedData.startTime && updatedData.endTime && updatedData.startTime.split(':')[0] > updatedData.endTime.split(':')[0]);
   let endDate = updatedData.endDate;
@@ -308,18 +341,154 @@ export const editShift = (userUid, id, updatedData, isDelivery = false) => {
 
     dataWithMetadata = {
       ...dataWithMetadata,
-      baseEarnings: baseEarnings,
-      tips: tips,
-      totalEarnings: totalEarnings,
+      baseEarnings,
+      tips,
+      totalEarnings,
       netEarnings: totalEarnings - fuelExpense,
+      fuelExpense,
+      platform: updatedData.platform || '',
+      vehicle: updatedData.vehicle || '',
     };
   }
 
-  return updateDoc(doc(targetRef, id), dataWithMetadata);
+  return updateDoc(shiftRef, dataWithMetadata);
 };
 
-export const deleteShift = (userUid, id, isDelivery = false) => {
-  const { shiftsRef, deliveryShiftsRef } = getUserSubcollections(userUid);
-  const targetRef = isDelivery ? deliveryShiftsRef : shiftsRef;
-  return deleteDoc(doc(targetRef, id));
+export const deleteShift = async (userUid, id, isDelivery = false) => {
+  const { shiftsRef } = getCollections();
+  const shiftRef = doc(shiftsRef, id);
+  return deleteDoc(shiftRef);
+};
+
+// ============================================================================
+// KPI ANALYTICS (NEW FUNCTIONALITY)
+// ============================================================================
+
+export const getKPIOverview = async (userUid = null) => {
+  const { shiftsRef } = getCollections();
+
+  let shiftsQuery;
+
+  if (userUid) {
+    shiftsQuery = query(shiftsRef, where('userId', '==', userUid));
+  } else {
+    shiftsQuery = query(shiftsRef);
+  }
+
+  const shiftsSnapshot = await getDocs(shiftsQuery);
+
+  const stats = {
+    totalShifts: shiftsSnapshot.size,
+    regularShifts: 0,
+    deliveryShifts: 0,
+    totalEarnings: 0,
+    totalNetEarnings: 0,
+    totalFuelExpense: 0,
+    byDate: {},
+    byUser: {},
+  };
+
+  shiftsSnapshot.forEach((doc) => {
+    const shift = doc.data();
+
+    if (shift.type === 'regular') {
+      stats.regularShifts++;
+    } else if (shift.type === 'delivery') {
+      stats.deliveryShifts++;
+      stats.totalEarnings += shift.totalEarnings || 0;
+      stats.totalNetEarnings += shift.netEarnings || 0;
+      stats.totalFuelExpense += shift.fuelExpense || 0;
+    }
+
+    const date = shift.date || shift.startDate;
+    if (date) {
+      if (!stats.byDate[date]) {
+        stats.byDate[date] = { count: 0, earnings: 0 };
+      }
+      stats.byDate[date].count++;
+      stats.byDate[date].earnings += shift.totalEarnings || 0;
+    }
+
+    if (shift.userId) {
+      if (!stats.byUser[shift.userId]) {
+        stats.byUser[shift.userId] = { count: 0, earnings: 0 };
+      }
+      stats.byUser[shift.userId].count++;
+      stats.byUser[shift.userId].earnings += shift.totalEarnings || 0;
+    }
+  });
+
+  return stats;
+};
+
+export const getShiftsByDateRange = async (startDate, endDate, userUid = null) => {
+  const { shiftsRef } = getCollections();
+
+  let shiftsQuery;
+
+  if (userUid) {
+    shiftsQuery = query(
+      shiftsRef,
+      where('userId', '==', userUid),
+      where('date', '>=', startDate),
+      where('date', '<=', endDate),
+      orderBy('date', 'desc')
+    );
+  } else {
+    shiftsQuery = query(
+      shiftsRef,
+      where('date', '>=', startDate),
+      where('date', '<=', endDate),
+      orderBy('date', 'desc')
+    );
+  }
+
+  const shiftsSnapshot = await getDocs(shiftsQuery);
+
+  const shifts = [];
+  shiftsSnapshot.forEach((doc) => {
+    shifts.push({ id: doc.id, ...doc.data() });
+  });
+
+  return shifts;
+};
+
+export const getWorksStatistics = async (userUid = null) => {
+  const { worksRef, shiftsRef } = getCollections();
+
+  let worksQuery;
+
+  if (userUid) {
+    worksQuery = query(worksRef, where('userId', '==', userUid));
+  } else {
+    worksQuery = query(worksRef);
+  }
+
+  const worksSnapshot = await getDocs(worksQuery);
+
+  const workStats = [];
+
+  for (const workDoc of worksSnapshot.docs) {
+    const work = workDoc.data();
+    const workId = workDoc.id;
+
+    const shiftsQuery = query(shiftsRef, where('workId', '==', workId));
+    const shiftsSnapshot = await getDocs(shiftsQuery);
+
+    const workShifts = [];
+    shiftsSnapshot.forEach((doc) => {
+      workShifts.push(doc.data());
+    });
+
+    workStats.push({
+      id: workId,
+      name: work.name,
+      type: work.type,
+      totalShifts: workShifts.length,
+      totalEarnings: workShifts.reduce((sum, s) => sum + (s.totalEarnings || 0), 0),
+      totalNetEarnings: workShifts.reduce((sum, s) => sum + (s.netEarnings || 0), 0),
+    });
+  }
+
+  return workStats;
 };

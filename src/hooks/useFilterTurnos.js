@@ -6,7 +6,7 @@ import { determineShiftType } from '../utils/shiftDetailsUtils';
 import { createSafeDate } from '../utils/time';
 
 export const useShiftFilters = (shiftsByDate) => {
-  const { works, deliveryWorks, shiftRanges } = useApp();
+  const { works, deliveryWork, shiftRanges } = useApp();
   
   // Filter state
   const [filters, setFilters] = useState({
@@ -18,8 +18,8 @@ export const useShiftFilters = (shiftsByDate) => {
   // Combine all works
   const allWorks = useMemo(() => [
     ...works,
-    ...deliveryWorks
-  ], [works, deliveryWorks]);
+    ...deliveryWork
+  ], [works, deliveryWork]);
 
   // Function to get the day of the week from a date
   const getWeekDay = (dateStr) => {

@@ -1,4 +1,5 @@
 // src/contexts/DeliveryContext.jsx
+// RESTRUCTURED FOR OPTIMIZED KPI ANALYTICS
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
@@ -21,6 +22,7 @@ export const DeliveryProvider = ({ children }) => {
   useEffect(() => {
     if (currentUser) {
       setLoading(true);
+
       const unsubscribe = firebaseService.subscribeToDeliveryData(
         currentUser.uid,
         {
@@ -29,25 +31,22 @@ export const DeliveryProvider = ({ children }) => {
           setError,
         }
       );
-      
-      // Data loads via snapshot, add delay to ensure first snapshot loads
+
       const timeoutId = setTimeout(() => {
         setLoading(false);
       }, 1000);
-      
+
       return () => {
         clearTimeout(timeoutId);
         unsubscribe();
       };
     } else {
-      // Clear data if no user
       setDeliveryWork([]);
       setDeliveryShifts([]);
       setLoading(false);
     }
   }, [currentUser]);
 
-  // CRUD functions for delivery work
   const addDeliveryJob = useCallback(async (newJob) => {
     if (!currentUser) throw new Error("Unauthenticated user");
     try {
@@ -78,7 +77,6 @@ export const DeliveryProvider = ({ children }) => {
     }
   }, [currentUser]);
 
-  // CRUD functions for delivery shifts
   const addDeliveryShift = useCallback(async (newShift) => {
     if (!currentUser) throw new Error("Unauthenticated user");
     try {
@@ -102,7 +100,7 @@ export const DeliveryProvider = ({ children }) => {
   const deleteDeliveryShift = useCallback(async (id) => {
     if (!currentUser) throw new Error("Unauthenticated user");
     try {
-      await firebaseService.deleteShift(currentUser.uid, id, true);
+      await firebaseService.deleteShift(currentUser.uid, id);
     } catch (err) {
       setError('Error deleting delivery shift: ' + err.message);
       throw err;
@@ -124,3 +122,5 @@ export const DeliveryProvider = ({ children }) => {
 
   return <DeliveryContext.Provider value={value}>{children}</DeliveryContext.Provider>;
 };
+
+export default DeliveryProvider;

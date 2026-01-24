@@ -188,7 +188,7 @@ const ShiftForm = ({
   }, [shift, workId, initialDate, smokoMinutes]);
 
   const traditionalWorks = works.filter(w => w.type !== 'delivery');
-  const deliveryWorks = works.filter(w => w.type === 'delivery');
+  const deliveryWork = works.filter(w => w.type === 'delivery');
 
   return (
     <BaseForm
@@ -218,9 +218,9 @@ const ShiftForm = ({
             </optgroup>
           )}
 
-          {deliveryWorks.length > 0 && (
+          {deliveryWork.length > 0 && (
             <optgroup label="Delivery Works">
-              {deliveryWorks.map(work => (
+              {deliveryWork.map(work => (
                 <option key={work.id} value={work.id}>
                   {work.name}
                 </option>

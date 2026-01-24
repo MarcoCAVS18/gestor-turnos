@@ -15,10 +15,10 @@ import { auth, db } from '../services/firebase';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { uploadProfilePhoto, deleteProfilePhoto, getDefaultProfilePhoto } from '../services/profilePhotoService';
 
-// Create the context
+// Create context
 const AuthContext = createContext();
 
-// Custom hook to use the context
+// Custom hook to use context
 export const useAuth = () => {
   return useContext(AuthContext);
 };
@@ -86,10 +86,10 @@ export const AuthProvider = ({ children }) => {
         'prompt': 'select_account'
       });
       
-      // Use signInWithPopup instead of signInWithRedirect for better error handling
+      // Use signInWithPopup - Firebase handles => popup window correctly
       const result = await signInWithPopup(auth, provider);
       
-      // Check if it's the first time the user signs in with Google
+      // Check if it's first time user signs in with Google
       const userDoc = await getDoc(doc(db, 'users', result.user.uid));
       
       if (!userDoc.exists()) {
@@ -109,12 +109,20 @@ export const AuthProvider = ({ children }) => {
       
       return result.user;
     } catch (error) {
+      // Handle specific Google Auth errors
       if (error.code === 'auth/popup-closed-by-user') {
-        setError('Sign in process was cancelled. Please try again.');
+        setError('Sign in was cancelled. Please try again.');
       } else if (error.code === 'auth/popup-blocked') {
-        setError('The browser blocked the popup. Please allow popups and try again.');
+        setError('Popup was blocked by the browser. Please allow popups for this site and try again.');
+      } else if (error.code === 'auth/unauthorized-domain') {
+        setError('This domain is not authorized for Google Sign-In. Please contact support.');
+      } else if (error.code === 'auth/cancelled-popup-request') {
+        setError('Sign in was cancelled. Please try again.');
+      } else if (error.message && error.message.includes('Cross-Origin-Opener')) {
+        // Handle Cross-Origin-Opener-Policy error
+        setError('Browser blocked => Google sign-in window. Please check your popup blocker settings and try again.');
       } else {
-        setError('Error signing in with Google: ' + error.message);
+        setError('Error signing in with Google: ' + (error.message || 'Unknown error'));
       }
       throw error;
     }
@@ -228,7 +236,7 @@ export const AuthProvider = ({ children }) => {
       // If no photo, do nothing
       if (!currentPhotoURL) return;
   
-      // Delete from Storage using the URL
+      // Delete from Storage using => URL
       await deleteProfilePhoto(currentPhotoURL);
   
       // Update in Firebase Auth to null
@@ -272,14 +280,43 @@ export const AuthProvider = ({ children }) => {
       }
 
       // If not, check in Firestore
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists() && userDoc.data().photoURL && userDoc.data().photoURL.trim() !== '') {
-        setProfilePhotoURL(userDoc.data().photoURL);
-      } else {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+        if (userDoc.exists() && userDoc.data().photoURL && userDoc.data().photoURL.trim() !== '') {
+          const photoURL = userDoc.data().photoURL;
+
+          // Check if it's a default logo or a valid Storage URL
+          if (photoURL.startsWith('/assets/SVG/logo.svg') || photoURL.startsWith('http')) {
+            // It's a default logo or a valid URL, use it
+            setProfilePhotoURL(photoURL);
+          } else {
+            // It might be an old Storage URL that no longer exists, use default
+            console.warn('Profile photo URL appears to be invalid, using default logo');
+            setProfilePhotoURL(getDefaultProfilePhoto());
+          }
+        } else {
+          setProfilePhotoURL(getDefaultProfilePhoto());
+        }
+      } catch (firestoreError) {
+        // If there's any Firestore error, use default photo
+        console.warn('Error accessing Firestore for profile photo, using default:', firestoreError);
         setProfilePhotoURL(getDefaultProfilePhoto());
       }
     } catch (error) {
-      console.error('Error loading profile photo:', error);
+      // If there's any Storage-related error, use default photo
+      console.error('Error loading profile photo, using default logo:', error);
+
+      // Log => specific error for debugging
+      if (error.code === 'storage/unauthorized') {
+        console.error('Storage access unauthorized. Check Storage rules.');
+      } else if (error.code === 'storage/object-not-found') {
+        console.warn('Profile photo file not found in Storage, using default logo.');
+      } else if (error.message && error.message.includes('Missing or insufficient permissions')) {
+        console.warn('Storage permissions issue. Using default profile photo.');
+      }
+
+      // Always set to default photo on error to prevent blocking => app
       setProfilePhotoURL(getDefaultProfilePhoto());
     }
   };

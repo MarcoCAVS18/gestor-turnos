@@ -16,7 +16,7 @@ import './index.css';
 const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { works, deliveryWorks } = useApp();
+  const { works, deliveryWork } = useApp();
   const { profilePhotoURL, updateProfilePhoto } = useAuth();
   const colors = useThemeColors();
   const [isPhotoLoading, setIsPhotoLoading] = useState(false);
@@ -53,7 +53,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
   const currentView = getCurrentView();
   
   // Check if there are works created
-  const totalWorks = (works?.length || 0) + (deliveryWorks?.length || 0);
+  const totalWorks = (works?.length || 0) + (deliveryWork?.length || 0);
   const hasWorks = totalWorks > 0;
   
   const navigateToView = (view) => {

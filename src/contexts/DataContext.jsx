@@ -1,4 +1,5 @@
 // src/contexts/DataContext.jsx
+// RESTRUCTURED FOR OPTIMIZED KPI ANALYTICS
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
@@ -13,45 +14,39 @@ export const useDataContext = () => {
 export const DataProvider = ({ children }) => {
   const { currentUser } = useAuth();
 
-  // Translated state variables
-  const [works, setWorks] = useState([]); // Was: trabajos / setTrabajos
-  const [shifts, setShifts] = useState([]); // Was: turnos / setTurnos
+  const [works, setWorks] = useState([]);
+  const [shifts, setShifts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (currentUser) {
       setLoading(true);
-      
-      // WARNING: Make sure your firebaseService.subscribeToNormalData 
-      // is updated to accept these new key names (setWorks, setShifts)
+
       const unsubscribe = firebaseService.subscribeToNormalData(
         currentUser.uid,
         {
-          setWorks, // Was: setTrabajos
-          setShifts, // Was: setTurnos
+          setWorks,
+          setShifts,
           setError,
         }
       );
-      
-      // Data loads via snapshot, add delay to ensure first snapshot loads
+
       const timeoutId = setTimeout(() => {
         setLoading(false);
       }, 1000);
-      
+
       return () => {
         clearTimeout(timeoutId);
         unsubscribe();
       };
     } else {
-      // Clear data if no user
       setWorks([]);
       setShifts([]);
       setLoading(false);
     }
   }, [currentUser]);
 
-  // CRUD functions for traditional jobs
   const addJob = useCallback(async (newJob) => {
     if (!currentUser) throw new Error("User not authenticated");
     try {
@@ -82,7 +77,6 @@ export const DataProvider = ({ children }) => {
     }
   }, [currentUser]);
 
-  // CRUD functions for traditional shifts
   const addShift = useCallback(async (newShift) => {
     if (!currentUser) throw new Error("User not authenticated");
     try {
@@ -114,8 +108,8 @@ export const DataProvider = ({ children }) => {
   }, [currentUser]);
 
   const value = {
-    works, // Exported as 'works' to match AppContext expectation
-    shifts, // Exported as 'shifts'
+    works,
+    shifts,
     loading,
     error,
     addJob,
@@ -128,3 +122,5 @@ export const DataProvider = ({ children }) => {
 
   return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
 };
+
+export default DataProvider;
