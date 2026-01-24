@@ -1,7 +1,7 @@
 // src/pages/Works.jsx - Improved version with column layout
 
 import React from 'react';
-import ***REMOVED*** useWorks ***REMOVED*** from '../hooks/useTrabajos';
+import ***REMOVED*** useWorks ***REMOVED*** from '../hooks/useWorks';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import ShareMessages from '../components/work/ShareMessages';
 import PageHeader from '../components/layout/PageHeader'; // Added import
