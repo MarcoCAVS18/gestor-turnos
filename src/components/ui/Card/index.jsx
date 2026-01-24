@@ -1,4 +1,4 @@
-// src/components/ui/Card/index.jsx - Con variante transparent
+// src/components/ui/Card/index.jsx
 
 import React from 'react';
 
@@ -68,11 +68,11 @@ const Card = (***REMOVED***
 
   const getVariantClasses = () => ***REMOVED***
     const variants = ***REMOVED***
-      default: 'bg-white border border-gray-200',
+      default: 'bg-white border-gray-200',
       elevated: 'bg-white',
       outlined: 'bg-white border-2 border-gray-300',
       ghost: 'bg-transparent',
-      gradient: 'bg-gradient-to-br from-white to-gray-50 border border-gray-200',
+      gradient: 'bg-gradient-to-br from-white to-gray-50 border-gray-200',
       transparent: 'bg-transparent border-none shadow-none'
     ***REMOVED***;
     return variants[variant] || variants.default;
@@ -81,7 +81,7 @@ const Card = (***REMOVED***
   const getInteractiveClasses = () => ***REMOVED***
     if (!interactive && !onClick && !hover) return '';
     
-    return 'transition-all duration-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-md';
+    return 'transition-all duration-200 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 active:shadow-md';
   ***REMOVED***;
 
   const getBorderStyle = () => ***REMOVED***

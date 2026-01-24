@@ -26,7 +26,6 @@ const Switch = (***REMOVED*** checked, onChange, disabled = false, size = 'md' *
     ***REMOVED***
   ***REMOVED***;
 
-  // Usar colores temáticos si estan disponibles
   const activeColor = thematicColors?.base || '#EC4899';
 
   return (

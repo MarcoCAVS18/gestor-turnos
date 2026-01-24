@@ -45,14 +45,14 @@ const TurnRange = (***REMOVED*** title, icon: Icon, iconColor, children, colors 
   );
 ***REMOVED***;
 
-const TurnRangeSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***) => ***REMOVED***
+const ShiftRangeSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** 
     shiftRanges,
     savePreferences
   ***REMOVED*** = useApp();
   
   const colors = useThemeColors();
-  const [rangosTurnos, setRangosTurnos] = useState(shiftRanges || ***REMOVED***
+  const [shiftRangesState, setShiftRangesState] = useState(shiftRanges || ***REMOVED***
     dayStart: 6,
     dayEnd: 14,
     afternoonStart: 14,
@@ -65,41 +65,41 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess, className ***REMOVED
 
   useEffect(() => ***REMOVED***
     if (shiftRanges) ***REMOVED***
-      setRangosTurnos(shiftRanges);
+      setShiftRangesState(shiftRanges);
     ***REMOVED***
   ***REMOVED***, [shiftRanges]);
 
-  // Detectar cambios para habilitar/deshabilitar el botón
+  // Detect changes to enable/disable the button
   useEffect(() => ***REMOVED***
     if (!shiftRanges) return;
     
     const hasChanged = 
-      rangosTurnos.dayStart !== shiftRanges.dayStart ||
-      rangosTurnos.dayEnd !== shiftRanges.dayEnd ||
-      rangosTurnos.afternoonStart !== shiftRanges.afternoonStart ||
-      rangosTurnos.afternoonEnd !== shiftRanges.afternoonEnd ||
-      rangosTurnos.nightStart !== shiftRanges.nightStart;
+      shiftRangesState.dayStart !== shiftRanges.dayStart ||
+      shiftRangesState.dayEnd !== shiftRanges.dayEnd ||
+      shiftRangesState.afternoonStart !== shiftRanges.afternoonStart ||
+      shiftRangesState.afternoonEnd !== shiftRanges.afternoonEnd ||
+      shiftRangesState.nightStart !== shiftRanges.nightStart;
     
     setHasChanges(hasChanged);
     
-    // Ocultar el ícono de éxito si hay cambios nuevos
+    // Hide success icon if there are new changes
     if (hasChanged && showSuccess) ***REMOVED***
       setShowSuccess(false);
     ***REMOVED***
-  ***REMOVED***, [rangosTurnos, shiftRanges, showSuccess]);
+  ***REMOVED***, [shiftRangesState, shiftRanges, showSuccess]);
 
-  const validarRangos = (rangos) => ***REMOVED***
-    if (rangos.dayStart >= rangos.dayEnd) ***REMOVED***
-      return 'La hora de inicio del turno diurno debe ser menor a la hora de fin';
+  const validateRanges = (ranges) => ***REMOVED***
+    if (ranges.dayStart >= ranges.dayEnd) ***REMOVED***
+      return 'The day shift start time must be earlier than the end time';
     ***REMOVED***
-    if (rangos.afternoonStart >= rangos.afternoonEnd) ***REMOVED***
-      return 'La hora de inicio del turno de tarde debe ser menor a la hora de fin';
+    if (ranges.afternoonStart >= ranges.afternoonEnd) ***REMOVED***
+      return 'The afternoon shift start time must be earlier than the end time';
     ***REMOVED***
-    if (rangos.dayEnd > rangos.afternoonStart) ***REMOVED***
-      return 'El turno de tarde debe comenzar después o al mismo tiempo que termina el diurno';
+    if (ranges.dayEnd > ranges.afternoonStart) ***REMOVED***
+      return 'The afternoon shift must start after or at the same time the day shift ends';
     ***REMOVED***
-    if (rangos.afternoonEnd > rangos.nightStart) ***REMOVED***
-      return 'El turno de noche debe comenzar después o al mismo tiempo que termina la tarde';
+    if (ranges.afternoonEnd > ranges.nightStart) ***REMOVED***
+      return 'The night shift must start after or at the same time the afternoon shift ends';
     ***REMOVED***
     return null;
   ***REMOVED***;
@@ -108,92 +108,92 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess, className ***REMOVED
     try ***REMOVED***
       setLoading(true);
       
-      const errorValidacion = validarRangos(rangosTurnos);
-      if (errorValidacion) ***REMOVED***
-        onError?.(errorValidacion);
+      const validationError = validateRanges(shiftRangesState);
+      if (validationError) ***REMOVED***
+        onError?.(validationError);
         return;
       ***REMOVED***
       
-      await savePreferences(***REMOVED*** rangosTurnos ***REMOVED***);
+      await savePreferences(***REMOVED*** shiftRanges: shiftRangesState ***REMOVED***);
       
-      // Mostrar éxito y ocultar después de un tiempo
+      // Show success and hide after a while
       setShowSuccess(true);
       setHasChanges(false);
-      onSuccess?.('Rangos de turnos guardados correctamente.');
+      onSuccess?.('Shift ranges saved successfully.');
       
       setTimeout(() => ***REMOVED***
         setShowSuccess(false);
       ***REMOVED***, 3000);
       
     ***REMOVED*** catch (error) ***REMOVED***
-      onError?.('Error al guardar rangos: ' + error.message);
+      onError?.('Error saving ranges: ' + error.message);
     ***REMOVED*** finally ***REMOVED***
       setLoading(false);
     ***REMOVED***
   ***REMOVED***;
 
-  // Función helper para actualizar rangos
+  // Helper function to update ranges
   const updateRange = (key, value) => ***REMOVED***
-    setRangosTurnos(prev => (***REMOVED***
+    setShiftRangesState(prev => (***REMOVED***
       ...prev,
       [key]: value
     ***REMOVED***));
   ***REMOVED***;
 
   return (
-    <SettingsSection icon=***REMOVED***Clock***REMOVED*** title="Rangos de Turnos" className=***REMOVED***className***REMOVED***>
+    <SettingsSection icon=***REMOVED***Clock***REMOVED*** title="Shift Ranges" className=***REMOVED***className***REMOVED***>
       <p className="text-sm text-gray-600 mb-4">
-        Configura los rangos de horarios para la detección automática de tipos de turno.
-        Los tags de turnos existentes se actualizarán automáticamente.
+        Configure the time ranges for automatic shift type detection.
+        Existing shift tags will be updated automatically.
       </p>
       
       <div className="space-y-4 mb-6">
-        ***REMOVED***/* Turno Diurno */***REMOVED***
-        <TurnRange title="Turno Diurno" icon=***REMOVED***Sun***REMOVED*** iconColor="#F59E0B" colors=***REMOVED***colors***REMOVED***>
+        ***REMOVED***/* Day Shift */***REMOVED***
+        <TurnRange title="Day Shift" icon=***REMOVED***Sun***REMOVED*** iconColor="#F59E0B" colors=***REMOVED***colors***REMOVED***>
           <div className="grid grid-cols-2 gap-4">
             <TimeSelect
-              label="Hora de inicio"
-              value=***REMOVED***rangosTurnos.dayStart***REMOVED***
+              label="Start time"
+              value=***REMOVED***shiftRangesState.dayStart***REMOVED***
               onChange=***REMOVED***(value) => updateRange('dayStart', value)***REMOVED***
               colors=***REMOVED***colors***REMOVED***
             />
             <TimeSelect
-              label="Hora de fin"
-              value=***REMOVED***rangosTurnos.dayEnd***REMOVED***
+              label="End time"
+              value=***REMOVED***shiftRangesState.dayEnd***REMOVED***
               onChange=***REMOVED***(value) => updateRange('dayEnd', value)***REMOVED***
               colors=***REMOVED***colors***REMOVED***
             />
           </div>
         </TurnRange>
         
-        ***REMOVED***/* Turno Tarde */***REMOVED***
-        <TurnRange title="Turno Tarde" icon=***REMOVED***Sunset***REMOVED*** iconColor="#F97316" colors=***REMOVED***colors***REMOVED***>
+        ***REMOVED***/* Afternoon Shift */***REMOVED***
+        <TurnRange title="Afternoon Shift" icon=***REMOVED***Sunset***REMOVED*** iconColor="#F97316" colors=***REMOVED***colors***REMOVED***>
           <div className="grid grid-cols-2 gap-4">
             <TimeSelect
-              label="Hora de inicio"
-              value=***REMOVED***rangosTurnos.afternoonStart***REMOVED***
+              label="Start time"
+              value=***REMOVED***shiftRangesState.afternoonStart***REMOVED***
               onChange=***REMOVED***(value) => updateRange('afternoonStart', value)***REMOVED***
               colors=***REMOVED***colors***REMOVED***
             />
             <TimeSelect
-              label="Hora de fin"
-              value=***REMOVED***rangosTurnos.afternoonEnd***REMOVED***
+              label="End time"
+              value=***REMOVED***shiftRangesState.afternoonEnd***REMOVED***
               onChange=***REMOVED***(value) => updateRange('afternoonEnd', value)***REMOVED***
               colors=***REMOVED***colors***REMOVED***
             />
           </div>
         </TurnRange>
         
-        ***REMOVED***/* Turno Noche */***REMOVED***
-        <TurnRange title="Turno Noche" icon=***REMOVED***Moon***REMOVED*** iconColor="#6366F1" colors=***REMOVED***colors***REMOVED***>
+        ***REMOVED***/* Night Shift */***REMOVED***
+        <TurnRange title="Night Shift" icon=***REMOVED***Moon***REMOVED*** iconColor="#6366F1" colors=***REMOVED***colors***REMOVED***>
           <TimeSelect
-            label="Hora de inicio"
-            value=***REMOVED***rangosTurnos.nightStart***REMOVED***
+            label="Start time"
+            value=***REMOVED***shiftRangesState.nightStart***REMOVED***
             onChange=***REMOVED***(value) => updateRange('nightStart', value)***REMOVED***
             colors=***REMOVED***colors***REMOVED***
           />
           <p className="text-xs text-gray-500 mt-1">
-            El turno de noche se extiende hasta el final del día
+            The night shift extends until the end of the day
           </p>
         </TurnRange>
       </div>
@@ -206,12 +206,12 @@ const TurnRangeSection = (***REMOVED*** onError, onSuccess, className ***REMOVED
         themeColor=***REMOVED***colors.primary***REMOVED***
         icon=***REMOVED***showSuccess ? Check : undefined***REMOVED***
       >
-        ***REMOVED***loading ? 'Guardando...' : 
-         showSuccess ? 'Guardado correctamente' :
-         hasChanges ? 'Guardar rangos de turnos' : 'Sin cambios'***REMOVED***
+        ***REMOVED***loading ? 'Saving...' : 
+         showSuccess ? 'Saved correctly' :
+         hasChanges ? 'Save shift ranges' : 'No changes'***REMOVED***
       </Button>
     </SettingsSection>
   );
 ***REMOVED***;
 
-export default TurnRangeSection;
+export default ShiftRangeSection;

@@ -34,7 +34,7 @@ export const useDeleteManager = (deleteFunction) => ***REMOVED***
 
   return ***REMOVED***
     showDeleteModal,
-    itemToDelete, // Return itemToDelete for summary display
+    itemToDelete,
     deleting,
     startDeletion,
     cancelDeletion,

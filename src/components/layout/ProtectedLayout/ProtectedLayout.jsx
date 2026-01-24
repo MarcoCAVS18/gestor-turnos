@@ -1,4 +1,5 @@
 // src/components/layout/ProtectedLayout/ProtectedLayout.jsx
+
 import React from 'react';
 import ***REMOVED*** Navigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';

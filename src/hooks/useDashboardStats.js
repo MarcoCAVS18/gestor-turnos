@@ -1,185 +1,185 @@
 // src/hooks/useDashboardStats.js
+
 import ***REMOVED*** useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** formatRelativeDate ***REMOVED*** from '../utils/time';
-import ***REMOVED*** calculateShiftHours ***REMOVED*** from '../utils/time/timeCalculations'; // Usamos tu utilidad centralizada
+import ***REMOVED*** calculateShiftHours ***REMOVED*** from '../utils/time/timeCalculations';
 
 export const useDashboardStats = () => ***REMOVED***
-  const ***REMOVED*** trabajos, trabajosDelivery, turnos, turnosDelivery, calculatePayment ***REMOVED*** = useApp();
+  const ***REMOVED*** trabajos, deliveryWork, turnos, deliveryShifts, calculatePayment ***REMOVED*** = useApp();
 
-  // Función para obtener fechas de la semana actual (Lunes a Domingo)
-  const rangosTemporales = useMemo(() => ***REMOVED***
-    const hoy = new Date();
+  // Function to get dates of the current week (Monday to Sunday)
+  const timeRanges = useMemo(() => ***REMOVED***
+    const today = new Date();
     
-    // --- SEMANA ---
-    const diaSemana = hoy.getDay();
-    const diffInicio = diaSemana === 0 ? 6 : diaSemana - 1; // Lunes(1) -> 0, Domingo(0) -> 6
+    // --- WEEK ---
+    const dayOfWeek = today.getDay();
+    const startDiff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
     
-    const inicioSemana = new Date(hoy);
-    inicioSemana.setDate(hoy.getDate() - diffInicio);
-    inicioSemana.setHours(0, 0, 0, 0);
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - startDiff);
+    weekStart.setHours(0, 0, 0, 0);
     
-    const finSemana = new Date(inicioSemana);
-    finSemana.setDate(inicioSemana.getDate() + 6);
-    finSemana.setHours(23, 59, 59, 999);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
 
-    // --- MES ---
-    const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-    const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0, 23, 59, 59, 999);
+    // --- MONTH ---
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    return ***REMOVED*** inicioSemana, finSemana, inicioMes, finMes ***REMOVED***;
+    return ***REMOVED*** weekStart, weekEnd, monthStart, monthEnd ***REMOVED***;
   ***REMOVED***, []);
 
   const stats = useMemo(() => ***REMOVED***
-    // Validación defensiva
-    const turnosValidos = Array.isArray(turnos) ? turnos : [];
-    const turnosDeliveryValidos = Array.isArray(turnosDelivery) ? turnosDelivery : [];
-    const todosLosTrabajos = [...(trabajos || []), ...(trabajosDelivery || [])];
-    const todosLosTurnos = [...turnosValidos, ...turnosDeliveryValidos];
+    // Defensive validation
+    const validShifts = Array.isArray(turnos) ? turnos : [];
+    const validDeliveryShifts = Array.isArray(deliveryShifts) ? deliveryShifts : [];
+    const allWork = [...(trabajos || []), ...(deliveryWork || [])];
+    const allShifts = [...validShifts, ...validDeliveryShifts];
 
-    // Estructura inicial
+    // Initial structure
     const defaultStats = ***REMOVED***
-      totalGanado: 0,
-      horasTrabajadas: 0,
-      promedioPorHora: 0,
-      turnosTotal: 0,
-      trabajoMasRentable: null,
-      proximoTurno: null,
-      tendenciaSemanal: 0,
-      trabajosFavoritos: [],
-      proyeccionMensual: 0,
-      // Objetos detallados para los componentes
-      semanaActual: ***REMOVED***
-        totalGanado: 0,
-        horasTrabajadas: 0,
-        totalTurnos: 0,
-        diasTrabajados: 0
+      totalEarned: 0,
+      hoursWorked: 0,
+      averagePerHour: 0,
+      totalShifts: 0,
+      mostProfitableWork: null,
+      nextShift: null,
+      weeklyTrend: 0,
+      favoriteWork: [],
+      monthlyProjection: 0,
+
+      currentWeek: ***REMOVED***
+        totalEarned: 0,
+        hoursWorked: 0,
+        totalShifts: 0,
+        daysWorked: 0
       ***REMOVED***,
-      mesActual: ***REMOVED***
-        totalGanado: 0,
-        horasTrabajadas: 0,
-        totalTurnos: 0,
-        diasTrabajados: 0
+      currentMonth: ***REMOVED***
+        totalEarned: 0,
+        hoursWorked: 0,
+        totalShifts: 0,
+        daysWorked: 0
       ***REMOVED***,
-      todosLosTrabajos,
-      todosLosTurnos
+      allWork,
+      allShifts
     ***REMOVED***;
 
-    if (todosLosTurnos.length === 0) return defaultStats;
+    if (allShifts.length === 0) return defaultStats;
 
     try ***REMOVED***
-      let totalGanado = 0;
-      let totalHoras = 0;
-      const gananciaPorTrabajo = ***REMOVED******REMOVED***;
+      let totalEarned = 0;
+      let totalHours = 0;
+      const earningsByWork = ***REMOVED******REMOVED***;
       
-      // Contadores temporales
-      const contadoresSemana = ***REMOVED*** ganancia: 0, horas: 0, turnos: 0, fechas: new Set() ***REMOVED***;
-      const contadoresMes = ***REMOVED*** ganancia: 0, horas: 0, turnos: 0, fechas: new Set() ***REMOVED***;
+      // Temporary counters
+      const weekCounters = ***REMOVED*** earnings: 0, hours: 0, shifts: 0, dates: new Set() ***REMOVED***;
+      const monthCounters = ***REMOVED*** earnings: 0, hours: 0, shifts: 0, dates: new Set() ***REMOVED***;
       
-      const ***REMOVED*** inicioSemana, finSemana, inicioMes, finMes ***REMOVED*** = rangosTemporales;
+      const ***REMOVED*** weekStart, weekEnd, monthStart, monthEnd ***REMOVED*** = timeRanges;
 
-      todosLosTurnos.forEach(turno => ***REMOVED***
-        const trabajo = todosLosTrabajos.find(t => t.id === turno.trabajoId);
-        if (!trabajo) return;
+      allShifts.forEach(shift => ***REMOVED***
+        const work = allWork.find(t => t.id === shift.workId);
+        if (!work) return;
 
-        // 1. Calcular Ganancia
-        let ganancia = 0;
-        if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') ***REMOVED***
-          ganancia = parseFloat(turno.gananciaTotal || turno.totalGanado || 0);
+        // 1. Calculate Earnings
+        let earnings = 0;
+        if (shift.type === 'delivery' || work.type === 'delivery') ***REMOVED***
+          earnings = parseFloat(shift.totalEarnings || shift.totalEarned || 0);
         ***REMOVED*** else if (typeof calculatePayment === 'function') ***REMOVED***
-          const resultado = calculatePayment(turno);
-          ganancia = resultado.totalWithDiscount || resultado.totalConDescuento || 0;
+          const result = calculatePayment(shift);
+          earnings = result.totalWithDiscount || result.totalConDescuento || 0;
         ***REMOVED***
 
-        // 2. Calcular Horas (Usando tu utilidad)
-        const horas = calculateShiftHours(turno.horaInicio, turno.horaFin);
+        // 2. Calculate Hours (Using your utility)
+        const hours = calculateShiftHours(shift.startTime, shift.endTime);
 
-        // 3. Acumulados Globales
-        totalGanado += ganancia;
-        totalHoras += horas;
+        // 3. Global Accumulators
+        totalEarned += earnings;
+        totalHours += hours;
 
-        // 4. Estadísticas por Trabajo (para favoritos/rentable)
-        if (!gananciaPorTrabajo[trabajo.id]) ***REMOVED***
-          gananciaPorTrabajo[trabajo.id] = ***REMOVED*** trabajo, ganancia: 0, horas: 0, turnos: 0 ***REMOVED***;
+        // 4. Work Statistics (for favorites/profitable)
+        if (!earningsByWork[work.id]) ***REMOVED***
+          earningsByWork[work.id] = ***REMOVED*** work, earnings: 0, hours: 0, shifts: 0 ***REMOVED***;
         ***REMOVED***
-        gananciaPorTrabajo[trabajo.id].ganancia += ganancia;
-        gananciaPorTrabajo[trabajo.id].horas += horas;
-        gananciaPorTrabajo[trabajo.id].turnos += 1;
+        earningsByWork[work.id].earnings += earnings;
+        earningsByWork[work.id].hours += hours;
+        earningsByWork[work.id].shifts += 1;
 
-        // 5. Análisis Temporal (Semana vs Mes)
-        // Aseguramos que la fecha se interprete correctamente (agregando T00:00:00 para evitar offset de zona horaria)
-        const fechaTurnoStr = turno.fechaInicio || turno.fecha;
-        const fechaTurno = new Date(`$***REMOVED***fechaTurnoStr***REMOVED***T00:00:00`);
+        // 5. Temporal Analysis (Week vs Month)
+        const shiftDateStr = shift.startDate || shift.date;
+        const shiftDate = new Date(`$***REMOVED***shiftDateStr***REMOVED***T00:00:00`);
 
-        // --- Semana Actual ---
-        if (fechaTurno >= inicioSemana && fechaTurno <= finSemana) ***REMOVED***
-          contadoresSemana.turnos++;
-          contadoresSemana.ganancia += ganancia;
-          contadoresSemana.horas += horas;
-          contadoresSemana.fechas.add(fechaTurnoStr);
+        // --- Current Week ---
+        if (shiftDate >= weekStart && shiftDate <= weekEnd) ***REMOVED***
+          weekCounters.shifts++;
+          weekCounters.earnings += earnings;
+          weekCounters.hours += hours;
+          weekCounters.dates.add(shiftDateStr);
         ***REMOVED***
 
-        // --- Mes Actual ---
-        if (fechaTurno >= inicioMes && fechaTurno <= finMes) ***REMOVED***
-          contadoresMes.turnos++;
-          contadoresMes.ganancia += ganancia;
-          contadoresMes.horas += horas;
-          contadoresMes.fechas.add(fechaTurnoStr);
+        // --- Current Month ---
+        if (shiftDate >= monthStart && shiftDate <= monthEnd) ***REMOVED***
+          monthCounters.shifts++;
+          monthCounters.earnings += earnings;
+          monthCounters.hours += hours;
+          monthCounters.dates.add(shiftDateStr);
         ***REMOVED***
       ***REMOVED***);
 
-      // Cálculos derivados
-      const trabajoMasRentable = Object.values(gananciaPorTrabajo)
-        .sort((a, b) => b.ganancia - a.ganancia)[0] || null;
+      // Derived calculations
+      const mostProfitableWork = Object.values(earningsByWork)
+        .sort((a, b) => b.earnings - a.earnings)[0] || null;
 
-      const trabajosFavoritos = Object.values(gananciaPorTrabajo)
-        .sort((a, b) => b.turnos - a.turnos)
+      const favoriteWork = Object.values(earningsByWork)
+        .sort((a, b) => b.shifts - a.shifts)
         .slice(0, 3);
 
-      const proximoTurno = todosLosTurnos
-        .filter(t => (t.fechaInicio || t.fecha) >= new Date().toISOString().split('T')[0])
-        .sort((a, b) => (a.fechaInicio || a.fecha).localeCompare(b.fechaInicio || b.fecha))[0] || null;
+      const nextShift = allShifts
+        .filter(t => (t.startDate || t.date) >= new Date().toISOString().split('T')[0])
+        .sort((a, b) => (a.startDate || a.date).localeCompare(b.startDate || b.date))[0] || null;
 
-      // Proyección simple basada en lo que va del mes (promedio diario * días totales mes)
-      const diasEnMes = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-      const diaActual = new Date().getDate();
-      const proyeccionMensual = diaActual > 0 
-        ? (contadoresMes.ganancia / diaActual) * diasEnMes 
+      // Simple projection based on month progress (daily average * total days in month)
+      const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
+      const currentDay = new Date().getDate();
+      const monthlyProjection = currentDay > 0 
+        ? (monthCounters.earnings / currentDay) * daysInMonth 
         : 0;
 
       return ***REMOVED***
-        totalGanado,
-        horasTrabajadas: totalHoras,
-        promedioPorHora: totalHoras > 0 ? totalGanado / totalHoras : 0,
-        turnosTotal: todosLosTurnos.length,
-        trabajoMasRentable,
-        proximoTurno,
-        trabajosFavoritos,
-        proyeccionMensual,
-        // Datos Listos para Componentes
-        semanaActual: ***REMOVED***
-          totalGanado: contadoresSemana.ganancia,
-          horasTrabajadas: contadoresSemana.horas,
-          totalTurnos: contadoresSemana.turnos,
-          diasTrabajados: contadoresSemana.fechas.size
+        totalEarned,
+        hoursWorked: totalHours,
+        averagePerHour: totalHours > 0 ? totalEarned / totalHours : 0,
+        totalShifts: allShifts.length,
+        mostProfitableWork,
+        nextShift,
+        favoriteWork,
+        monthlyProjection,
+
+        currentWeek: ***REMOVED***
+          totalEarned: weekCounters.earnings,
+          hoursWorked: weekCounters.hours,
+          totalShifts: weekCounters.shifts,
+          daysWorked: weekCounters.dates.size
         ***REMOVED***,
-        mesActual: ***REMOVED***
-          totalGanado: contadoresMes.ganancia,
-          horasTrabajadas: contadoresMes.horas,
-          totalTurnos: contadoresMes.turnos,
-          diasTrabajados: contadoresMes.fechas.size
+        currentMonth: ***REMOVED***
+          totalEarned: monthCounters.earnings,
+          hoursWorked: monthCounters.hours,
+          totalShifts: monthCounters.shifts,
+          daysWorked: monthCounters.dates.size
         ***REMOVED***,
-        todosLosTrabajos,
-        todosLosTurnos
+        allWork,
+        allShifts
       ***REMOVED***;
 
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error calculando estadísticas:', error);
+      console.error('Error calculating statistics:', error);
       return defaultStats;
     ***REMOVED***
-  ***REMOVED***, [trabajos, trabajosDelivery, turnos, turnosDelivery, calculatePayment, rangosTemporales]);
+  ***REMOVED***, [trabajos, deliveryWork, turnos, deliveryShifts, calculatePayment, timeRanges]);
 
-  const formatearFecha = useMemo(() => formatRelativeDate, []);
+  const formatDate = useMemo(() => formatRelativeDate, []);
 
-  return ***REMOVED*** ...stats, formatearFecha ***REMOVED***;
+  return ***REMOVED*** ...stats, formatDate ***REMOVED***;
 ***REMOVED***;

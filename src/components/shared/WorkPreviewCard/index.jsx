@@ -7,18 +7,18 @@ import Card from '../../ui/Card';
 import Badge from '../../ui/Badge';
 import Flex from '../../ui/Flex';
 
-const WorkPreviewCard = (***REMOVED*** trabajo ***REMOVED***) => ***REMOVED***
-  if (!trabajo) return null;
+const WorkPreviewCard = (***REMOVED*** work ***REMOVED***) => ***REMOVED***
+  if (!work) return null;
 
-  const esDelivery = trabajo.tipo === 'delivery';
+  const isDelivery = work.type === 'delivery';
 
-  // Obtener el ícono del vehículo para delivery
-  const getVehicleIcon = (vehiculo) => ***REMOVED***
-    switch (vehiculo) ***REMOVED***
-      case 'Bicicleta': return <Bike size=***REMOVED***16***REMOVED*** className="text-green-500" />;
-      case 'Moto': return <Truck size=***REMOVED***16***REMOVED*** className="text-orange-500" />;
-      case 'Auto': return <Car size=***REMOVED***16***REMOVED*** className="text-blue-500" />;
-      case 'A pie': return <User size=***REMOVED***16***REMOVED*** className="text-gray-500" />;
+  // Get vehicle icon for delivery
+  const getVehicleIcon = (vehicle) => ***REMOVED***
+    switch (vehicle) ***REMOVED***
+      case 'Bicycle': return <Bike size=***REMOVED***16***REMOVED*** className="text-green-500" />;
+      case 'Motorcycle': return <Truck size=***REMOVED***16***REMOVED*** className="text-orange-500" />;
+      case 'Car': return <Car size=***REMOVED***16***REMOVED*** className="text-blue-500" />;
+      case 'On foot': return <User size=***REMOVED***16***REMOVED*** className="text-gray-500" />;
       default: return <Package size=***REMOVED***16***REMOVED*** className="text-gray-400" />;
     ***REMOVED***
   ***REMOVED***;
@@ -29,9 +29,9 @@ const WorkPreviewCard = (***REMOVED*** trabajo ***REMOVED***) => ***REMOVED***
         <div className="flex items-center">
           <Flex variant="center"
             className="w-12 h-12 rounded-lg mr-4"
-            style=***REMOVED******REMOVED*** backgroundColor: trabajo.color ***REMOVED******REMOVED***
+            style=***REMOVED******REMOVED*** backgroundColor: work.color ***REMOVED******REMOVED***
           >
-            ***REMOVED***esDelivery ? (
+            ***REMOVED***isDelivery ? (
               <Truck className="h-6 w-6 text-white" />
             ) : (
               <Briefcase className="h-6 w-6 text-white" />
@@ -39,100 +39,97 @@ const WorkPreviewCard = (***REMOVED*** trabajo ***REMOVED***) => ***REMOVED***
           </Flex>
           <div>
             <Flex className="gap-2 mb-1">
-              <h2 className="text-xl font-bold text-gray-800">***REMOVED***trabajo.nombre***REMOVED***</h2>
-              ***REMOVED***esDelivery && (
+              <h2 className="text-xl font-bold text-gray-800">***REMOVED***work.name***REMOVED***</h2>
+              ***REMOVED***isDelivery && (
                 <Badge variant="success" size="xs" rounded>
                   Delivery
                 </Badge>
               )***REMOVED***
             </Flex>
-            ***REMOVED***trabajo.descripcion && (
-              <p className="text-gray-600 text-sm">***REMOVED***trabajo.descripcion***REMOVED***</p>
+            ***REMOVED***work.description && (
+              <p className="text-gray-600 text-sm">***REMOVED***work.description***REMOVED***</p>
             )***REMOVED***
           </div>
         </div>
       </Flex>
       
-      ***REMOVED***esDelivery ? (
-        // Información específica para trabajos de delivery
+      ***REMOVED***isDelivery ? (
+        // Specific information for delivery works
         <div className="space-y-3">
-          ***REMOVED***trabajo.plataforma && (
+          ***REMOVED***work.platform && (
             <Flex>
               <Package className="h-5 w-5 text-blue-500 mr-2" />
               <div>
-                <p className="text-sm text-gray-600">Plataforma</p>
-                <p className="font-semibold">***REMOVED***trabajo.plataforma***REMOVED***</p>
+                <p className="text-sm text-gray-600">Platform</p>
+                <p className="font-semibold">***REMOVED***work.platform***REMOVED***</p>
               </div>
             </Flex>
-          )***REMOVED***
-          
-          ***REMOVED***trabajo.vehiculo && (
+          )***REMOVED***          
+          ***REMOVED***work.vehicle && (
             <Flex>
-              ***REMOVED***getVehicleIcon(trabajo.vehiculo)***REMOVED***
+              ***REMOVED***getVehicleIcon(work.vehicle)***REMOVED***
               <div className="ml-2">
-                <p className="text-sm text-gray-600">Vehículo</p>
-                <p className="font-semibold">***REMOVED***trabajo.vehiculo***REMOVED***</p>
+                <p className="text-sm text-gray-600">Vehicle</p>
+                <p className="font-semibold">***REMOVED***work.vehicle***REMOVED***</p>
               </div>
             </Flex>
-          )***REMOVED***
-          
+          )***REMOVED***          
           <Flex>
             <Package className="h-5 w-5 text-green-500 mr-2" />
             <div>
-              <p className="text-sm text-gray-600">Tipo de trabajo</p>
-              <p className="font-semibold">Ganancias variables por entrega</p>
+              <p className="text-sm text-gray-600">Job type</p>
+              <p className="font-semibold">Variable earnings per delivery</p>
             </div>
           </Flex>
         </div>
       ) : (
-        // Información para trabajos tradicionales
+        // Information for traditional works
         <div className="space-y-3">
-          ***REMOVED***trabajo.tarifaBase && (
+          ***REMOVED***work.baseRate && (
             <Flex>
               <Briefcase className="h-5 w-5 text-green-500 mr-2" />
               <div>
-                <p className="text-sm text-gray-600">Tarifa base</p>
-                <p className="font-semibold">***REMOVED***formatCurrency(trabajo.tarifaBase)***REMOVED***/hora</p>
+                <p className="text-sm text-gray-600">Base rate</p>
+                <p className="font-semibold">***REMOVED***formatCurrency(work.baseRate)***REMOVED***/hour</p>
               </div>
             </Flex>
-          )***REMOVED***
-          
-          ***REMOVED***trabajo.tarifas && (
+          )***REMOVED***          
+          ***REMOVED***work.rates && (
             <div className="space-y-3 mt-3">
-              <p className="text-sm font-medium text-gray-700">Tarifas especiales:</p>
+              <p className="text-sm font-medium text-gray-700">Special rates:</p>
               <div className="grid grid-cols-2 gap-2">
-                ***REMOVED***trabajo.tarifas.diurno && (
+                ***REMOVED***work.rates.day && (
                   <div className="text-center p-2 bg-yellow-50 rounded-lg border">
-                    <p className="text-xs text-gray-600">Diurno</p>
-                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(trabajo.tarifas.diurno)***REMOVED***/h</p>
+                    <p className="text-xs text-gray-600">Day</p>
+                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(work.rates.day)***REMOVED***/h</p>
                   </div>
                 )***REMOVED***
                 
-                ***REMOVED***trabajo.tarifas.tarde && (
+                ***REMOVED***work.rates.afternoon && (
                   <div className="text-center p-2 bg-orange-50 rounded-lg border">
-                    <p className="text-xs text-gray-600">Tarde</p>
-                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(trabajo.tarifas.tarde)***REMOVED***/h</p>
+                    <p className="text-xs text-gray-600">Afternoon</p>
+                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(work.rates.afternoon)***REMOVED***/h</p>
                   </div>
                 )***REMOVED***
                 
-                ***REMOVED***trabajo.tarifas.noche && (
+                ***REMOVED***work.rates.night && (
                   <div className="text-center p-2 bg-blue-50 rounded-lg border">
-                    <p className="text-xs text-gray-600">Noche</p>
-                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(trabajo.tarifas.noche)***REMOVED***/h</p>
+                    <p className="text-xs text-gray-600">Night</p>
+                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(work.rates.night)***REMOVED***/h</p>
                   </div>
                 )***REMOVED***
                 
-                ***REMOVED***trabajo.tarifas.sabado && (
+                ***REMOVED***work.rates.saturday && (
                   <div className="text-center p-2 bg-purple-50 rounded-lg border">
-                    <p className="text-xs text-gray-600">Sábado</p>
-                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(trabajo.tarifas.sabado)***REMOVED***/h</p>
+                    <p className="text-xs text-gray-600">Saturday</p>
+                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(work.rates.saturday)***REMOVED***/h</p>
                   </div>
                 )***REMOVED***
                 
-                ***REMOVED***trabajo.tarifas.domingo && (
+                ***REMOVED***work.rates.sunday && (
                   <div className="text-center p-2 bg-red-50 rounded-lg border">
-                    <p className="text-xs text-gray-600">Domingo</p>
-                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(trabajo.tarifas.domingo)***REMOVED***/h</p>
+                    <p className="text-xs text-gray-600">Sunday</p>
+                    <p className="font-semibold text-sm">***REMOVED***formatCurrency(work.rates.sunday)***REMOVED***/h</p>
                   </div>
                 )***REMOVED***
               </div>

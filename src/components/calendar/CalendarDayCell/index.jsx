@@ -5,10 +5,10 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import Flex from '../../ui/Flex';
 
 const CalendarDayCell = (***REMOVED***
-  dia,
-  esHoy,
-  esSeleccionado,
-  coloresTrabajos,
+  day,
+  isToday,
+  isSelected,
+  workColors,
   onClick
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -20,16 +20,16 @@ const CalendarDayCell = (***REMOVED***
         p-2 text-center relative 
         hover:bg-gray-50 
         flex flex-col justify-center items-center
-        $***REMOVED***!dia.mesActual ? 'text-gray-400' : 'text-gray-800'***REMOVED***
+        $***REMOVED***!day.currentMonth ? 'text-gray-400' : 'text-gray-800'***REMOVED***
       `***REMOVED***
       style=***REMOVED******REMOVED***
-        backgroundColor: esSeleccionado
+        backgroundColor: isSelected
           ? colors.transparent10
           : 'transparent'
       ***REMOVED******REMOVED***
     >
-      ***REMOVED***/* Círculo para día actual */***REMOVED***
-      ***REMOVED***esHoy && (
+      ***REMOVED***/* Circle for current day */***REMOVED***
+      ***REMOVED***isToday && (
         <div
           className="absolute inset-0 m-auto rounded-full w-10 h-10 animate-pulse"
           style=***REMOVED******REMOVED***
@@ -38,53 +38,53 @@ const CalendarDayCell = (***REMOVED***
         />
       )***REMOVED***
 
-      ***REMOVED***/* Contenedor para número del día */***REMOVED***
+      ***REMOVED***/* Container for day number */***REMOVED***
       <Flex variant="center"
         className="rounded-full w-8 h-8 transition-all duration-200"
         style=***REMOVED******REMOVED***
-          backgroundColor: esHoy
+          backgroundColor: isToday
             ? colors.primary
-            : (esSeleccionado && !esHoy)
+            : (isSelected && !isToday)
               ? colors.transparent20
               : 'transparent',
-          color: esHoy
+          color: isToday
             ? colors.textContrast
             : 'inherit',
-          fontWeight: esHoy ? 'bold' : 'normal',
-          transform: esHoy ? 'scale(1.1)' : 'scale(1)',
-          boxShadow: esHoy
+          fontWeight: isToday ? 'bold' : 'normal',
+          transform: isToday ? 'scale(1.1)' : 'scale(1)',
+          boxShadow: isToday
             ? `0 4px 12px $***REMOVED***colors.transparent50***REMOVED***`
             : 'none'
         ***REMOVED******REMOVED***
       >
-        <span>***REMOVED***dia.dia***REMOVED***</span>
+        <span>***REMOVED***day.number***REMOVED***</span>
       </Flex>
 
-      ***REMOVED***/* Indicadores de turnos simplificados */***REMOVED***
-      ***REMOVED***dia.tieneTurnos && (
+      ***REMOVED***/* Simplified shift indicators */***REMOVED***
+      ***REMOVED***day.hasShifts && (
         <div className="absolute bottom-1 flex justify-center gap-0.5 w-full px-1">
-          ***REMOVED***/* Mostrar indicadores usando los colores de trabajos pasados como prop */***REMOVED***
-          ***REMOVED***coloresTrabajos && coloresTrabajos.length > 0 ? (
+          ***REMOVED***/* Show indicators using work colors passed as props */***REMOVED***
+          ***REMOVED***workColors && workColors.length > 0 ? (
             <div className="flex gap-0.5">
-              ***REMOVED***coloresTrabajos.length === 1 ? (
+              ***REMOVED***workColors.length === 1 ? (
                 <div
                   className="w-4 h-1 rounded"
-                  style=***REMOVED******REMOVED*** backgroundColor: coloresTrabajos[0] ***REMOVED******REMOVED***
+                  style=***REMOVED******REMOVED*** backgroundColor: workColors[0] ***REMOVED******REMOVED***
                 />
-              ) : coloresTrabajos.length === 2 ? (
+              ) : workColors.length === 2 ? (
                 <>
                   <div
                     className="w-2 h-1 rounded"
-                    style=***REMOVED******REMOVED*** backgroundColor: coloresTrabajos[0] ***REMOVED******REMOVED***
+                    style=***REMOVED******REMOVED*** backgroundColor: workColors[0] ***REMOVED******REMOVED***
                   />
                   <div
                     className="w-2 h-1 rounded"
-                    style=***REMOVED******REMOVED*** backgroundColor: coloresTrabajos[1] ***REMOVED******REMOVED***
+                    style=***REMOVED******REMOVED*** backgroundColor: workColors[1] ***REMOVED******REMOVED***
                   />
                 </>
               ) : (
-                // 3 o más trabajos
-                coloresTrabajos.slice(0, 3).map((color, index) => (
+                // 3 or more jobs
+                workColors.slice(0, 3).map((color, index) => (
                   <div
                     key=***REMOVED***index***REMOVED***
                     className="w-1 h-1 rounded-full"
@@ -94,7 +94,7 @@ const CalendarDayCell = (***REMOVED***
               )***REMOVED***
             </div>
           ) : (
-            // Fallback: mostrar indicador genérico si no hay colores específicos
+            // Fallback: show generic indicator if no specific colors available
             <div
               className="w-2 h-1 rounded"
               style=***REMOVED******REMOVED*** backgroundColor: colors.primary ***REMOVED******REMOVED***

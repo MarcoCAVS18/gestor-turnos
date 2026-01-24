@@ -1,7 +1,7 @@
 // src/hooks/useShare.js
 
 import ***REMOVED*** useState, useCallback ***REMOVED*** from 'react';
-import ***REMOVED*** compartirTrabajoNativo ***REMOVED*** from '../services/shareService';
+import ***REMOVED*** shareWorkNative ***REMOVED*** from '../services/shareService';
 import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
 
 export const useShare = () => ***REMOVED***
@@ -9,26 +9,26 @@ export const useShare = () => ***REMOVED***
   const [sharing, setSharing] = useState(***REMOVED******REMOVED***);
   const [messages, setMessages] = useState(***REMOVED******REMOVED***);
 
-  const shareWork = useCallback(async (trabajo) => ***REMOVED***
-    if (!currentUser || !trabajo) return;
+  const shareWork = useCallback(async (work) => ***REMOVED***
+    if (!currentUser || !work) return;
 
     try ***REMOVED***
-      setSharing(prev => (***REMOVED*** ...prev, [trabajo.id]: true ***REMOVED***));
-      setMessages(prev => (***REMOVED*** ...prev, [trabajo.id]: '' ***REMOVED***));
+      setSharing(prev => (***REMOVED*** ...prev, [work.id]: true ***REMOVED***));
+      setMessages(prev => (***REMOVED*** ...prev, [work.id]: '' ***REMOVED***));
 
-      await compartirTrabajoNativo(currentUser.uid, trabajo);
+      await shareWorkNative(currentUser.uid, work);
 
     ***REMOVED*** catch (error) ***REMOVED***
       setMessages(prev => (***REMOVED***
         ...prev,
-        [trabajo.id]: 'Error al compartir trabajo'
+        [work.id]: 'Error sharing work'
       ***REMOVED***));
       
       setTimeout(() => ***REMOVED***
-        setMessages(prev => (***REMOVED*** ...prev, [trabajo.id]: '' ***REMOVED***));
+        setMessages(prev => (***REMOVED*** ...prev, [work.id]: '' ***REMOVED***));
       ***REMOVED***, 3000);
     ***REMOVED*** finally ***REMOVED***
-      setSharing(prev => (***REMOVED*** ...prev, [trabajo.id]: false ***REMOVED***));
+      setSharing(prev => (***REMOVED*** ...prev, [work.id]: false ***REMOVED***));
     ***REMOVED***
   ***REMOVED***, [currentUser]);
 

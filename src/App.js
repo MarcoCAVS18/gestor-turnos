@@ -1,3 +1,5 @@
+// src/App.js
+
 import React from 'react';
 import ***REMOVED*** BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from './contexts/AuthContext';
@@ -22,18 +24,18 @@ import DeleteAccount from './pages/legal/DeleteAccount';
 
 // Main Components
 import Header from './components/layout/Header';
-import Navigation from './components/layout/Navegacion';
+import Navigation from './components/layout/Navigation';
 import Dashboard from './pages/Dashboard';
-import Works from './pages/Trabajos';
-import Shifts from './pages/Turnos';
-import Statistics from './pages/Estadisticas';
-import CalendarView from './pages/CalendarioView';
-import Settings from './pages/Ajustes';
-import SharedWork from './pages/TrabajoCompartido';
+import Works from './pages/Works';
+import Shifts from './pages/Shifts';
+import Statistics from './pages/Statistics';
+import CalendarView from './pages/CalendarView';
+import Settings from './pages/Settings';
+import SharedWork from './pages/SharedWork';
 
 // Modals
-import WorkModal from './components/modals/work/ModalTrabajo';
-import ShiftModal from './components/modals/shift/ModalTurno';
+import WorkModal from './components/modals/work/WorkModal';
+import ShiftModal from './components/modals/shift/ShiftModal';
 
 // Public route that allows access without authentication
 const PublicRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
@@ -53,7 +55,7 @@ const PublicRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
 // General app layout
 function AppLayout() ***REMOVED***
   const location = useLocation();
-  const currentView = location.pathname.substring(1); // Removes the leading '/'
+  const currentView = location.pathname.substring(1); // Removes leading '/'
 
   const ***REMOVED***
     isWorkModalOpen,
@@ -101,7 +103,6 @@ function AppLayout() ***REMOVED***
         onClose=***REMOVED***closeShiftModal***REMOVED***
         shift=***REMOVED***selectedShift***REMOVED***
       />
-
     </div>
   );
 ***REMOVED***

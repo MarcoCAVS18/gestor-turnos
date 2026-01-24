@@ -5,49 +5,49 @@ import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 
 export const useUtils = () => ***REMOVED***
   
-  // Formateo de moneda
+  // Currency formatting
   const formatCurrency = useCallback((amount, currency = '$') => ***REMOVED***
     return `$***REMOVED***currency***REMOVED***$***REMOVED***amount.toFixed(2)***REMOVED***`;
   ***REMOVED***, []);
 
-  // Formateo de horas
+  // Hours formatting
   const formatHours = useCallback((hours) => ***REMOVED***
     return `$***REMOVED***hours.toFixed(1)***REMOVED***h`;
   ***REMOVED***, []);
 
-  // Formateo de fechas
+  // Date formatting
   const formatDate = useCallback((dateString, format = 'full') => ***REMOVED***
     const date = createSafeDate(dateString);
     
     switch (format) ***REMOVED***
       case 'short':
-        return date.toLocaleDateString('es-ES', ***REMOVED***
+        return date.toLocaleDateString('en-US', ***REMOVED***
           day: '2-digit',
           month: '2-digit',
           year: 'numeric'
         ***REMOVED***);
       case 'medium':
-        return date.toLocaleDateString('es-ES', ***REMOVED***
+        return date.toLocaleDateString('en-US', ***REMOVED***
           day: 'numeric',
           month: 'short',
           year: 'numeric'
         ***REMOVED***);
       case 'full':
-        return date.toLocaleDateString('es-ES', ***REMOVED***
+        return date.toLocaleDateString('en-US', ***REMOVED***
           weekday: 'long',
           day: 'numeric',
           month: 'long',
           year: 'numeric'
         ***REMOVED***);
       case 'weekday':
-        const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         return days[date.getDay()];
       default:
         return dateString;
     ***REMOVED***
   ***REMOVED***, []);
 
-  // Verificar si una fecha es hoy
+  // Check if a date is today
   const isToday = useCallback((dateString) => ***REMOVED***
     const date = createSafeDate(dateString);
     const today = new Date();
@@ -57,7 +57,7 @@ export const useUtils = () => ***REMOVED***
            date.getFullYear() === today.getFullYear();
   ***REMOVED***, []);
 
-  // Verificar si una fecha es ayer
+  // Check if a date is yesterday
   const isYesterday = useCallback((dateString) => ***REMOVED***
     const date = createSafeDate(dateString);
     const yesterday = new Date();
@@ -68,14 +68,14 @@ export const useUtils = () => ***REMOVED***
            date.getFullYear() === yesterday.getFullYear();
   ***REMOVED***, []);
 
-  // Obtener fecha relativa
+  // Get relative date
   const getRelativeDate = useCallback((dateString) => ***REMOVED***
-    if (isToday(dateString)) return 'Hoy';
-    if (isYesterday(dateString)) return 'Ayer';
+    if (isToday(dateString)) return 'Today';
+    if (isYesterday(dateString)) return 'Yesterday';
     return formatDate(dateString, 'medium');
   ***REMOVED***, [isToday, isYesterday, formatDate]);
 
-  // Generar ID único
+  // Generate unique ID
   const generateId = useCallback(() => ***REMOVED***
     return Math.random().toString(36).substring(2, 15) + 
            Math.random().toString(36).substring(2, 15);
@@ -111,7 +111,7 @@ export const useUtils = () => ***REMOVED***
     return Math.min(Math.max(value, min), max);
   ***REMOVED***, []);
 
-  // Obtener iniciales
+  // Get initials
   const getInitials = useCallback((name) => ***REMOVED***
     return name
       .split(' ')
@@ -121,7 +121,7 @@ export const useUtils = () => ***REMOVED***
       .slice(0, 2);
   ***REMOVED***, []);
 
-  // Agrupar elementos por clave
+  // Group items by key
   const groupBy = useCallback((array, key) => ***REMOVED***
     return array.reduce((result, item) => ***REMOVED***
       const group = typeof key === 'function' ? key(item) : item[key];
@@ -133,7 +133,7 @@ export const useUtils = () => ***REMOVED***
     ***REMOVED***, ***REMOVED******REMOVED***);
   ***REMOVED***, []);
 
-  // Obtener valores únicos de un array
+  // Get unique values from an array
   const getUniqueValues = useCallback((array, key) => ***REMOVED***
     if (key) ***REMOVED***
       return [...new Set(array.map(item => item[key]))];
@@ -141,17 +141,17 @@ export const useUtils = () => ***REMOVED***
     return [...new Set(array)];
   ***REMOVED***, []);
 
-  // Ordenar array por fecha descendente  
-  const sortByDateDesc = useCallback((array, dateKey = 'fecha') => ***REMOVED***
+  // Sort array by date descending  
+  const sortByDateDesc = useCallback((array, dateKey = 'date') => ***REMOVED***
     return [...array].sort((a, b) => new Date(b[dateKey]) - new Date(a[dateKey]));
   ***REMOVED***, []);
 
-  // Capitalizar primera letra
+  // Capitalize first letter
   const capitalize = useCallback((str) => ***REMOVED***
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   ***REMOVED***, []);
 
-  // Truncar texto
+  // Truncate text
   const truncate = useCallback((str, length = 100) => ***REMOVED***
     if (str.length <= length) return str;
     return str.substring(0, length) + '...';

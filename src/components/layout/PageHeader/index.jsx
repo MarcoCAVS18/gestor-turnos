@@ -1,3 +1,5 @@
+// src/components/layout/PageHeader/index.jsx
+
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** motion ***REMOVED*** from 'framer-motion';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
@@ -18,12 +20,12 @@ const PageHeader = (***REMOVED***
   const [isExpanded, setIsExpanded] = useState(true);
 
   useEffect(() => ***REMOVED***
-    // Al montarse (después del loader), si es mobile y hay acción:
+    // On mount (after loader), if mobile and has action:
     if (isMobile && action) ***REMOVED***
-      setIsExpanded(true); // Aseguramos que empiece expandido
+      setIsExpanded(true); // Ensure it starts expanded
       
       const timer = setTimeout(() => ***REMOVED***
-        setIsExpanded(false); // Colapsa a los 2 segundos
+        setIsExpanded(false); // Collapse after 2 seconds
       ***REMOVED***, 2000);
 
       return () => clearTimeout(timer);
@@ -33,7 +35,7 @@ const PageHeader = (***REMOVED***
     // eslint-disable-next-line react-hooks/exhaustive-deps
   ***REMOVED***, []); 
 
-  // Variantes para la entrada del Header completo
+  // Variants for the full Header entry
   const headerVariants = ***REMOVED***
     hidden: ***REMOVED*** opacity: 0, y: -20 ***REMOVED***,
     visible: ***REMOVED*** opacity: 1, y: 0, transition: ***REMOVED*** duration: 0.3 ***REMOVED*** ***REMOVED***
@@ -49,7 +51,7 @@ const PageHeader = (***REMOVED***
       animate="visible"
       ***REMOVED***...props***REMOVED***
     >
-      ***REMOVED***/* TEXT CONTAINER (Intacto) */***REMOVED***
+      ***REMOVED***/* TEXT CONTAINER (Intact) */***REMOVED***
       <div className="flex items-center space-x-3 flex-grow">
         ***REMOVED***Icon && (
           <div 
@@ -73,17 +75,17 @@ const PageHeader = (***REMOVED***
       
       ***REMOVED***/* ACTION BUTTON */***REMOVED***
       ***REMOVED***rightContent ? rightContent : (action && (
-        // Quitamos las animaciones del wrapper padre para evitar conflictos.
-        // El Button maneja su propio tamaño.
+        // Remove parent wrapper animations to avoid conflicts.
+        // The Button handles its own size.
         <div className="flex-shrink-0 flex justify-end">
           <Button
             onClick=***REMOVED***action.onClick***REMOVED***
             icon=***REMOVED***action.icon***REMOVED***
             themeColor=***REMOVED***action.themeColor || colors.primary***REMOVED***
-            collapsed=***REMOVED***isCollapsed***REMOVED*** // Pasamos el estado al botón
+            collapsed=***REMOVED***isCollapsed***REMOVED*** // Pass state to button
           >
             <span className="hidden sm:inline">***REMOVED***action.label***REMOVED***</span>
-            <span className="sm:hidden">***REMOVED***action.mobileLabel || 'Nuevo'***REMOVED***</span>
+            <span className="sm:hidden">***REMOVED***action.mobileLabel || 'New'***REMOVED***</span>
           </Button>
         </div>
       ))***REMOVED***

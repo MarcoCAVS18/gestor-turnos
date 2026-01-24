@@ -14,7 +14,7 @@ const FooterSection = () => ***REMOVED***
           
           <button 
             className="group flex items-center gap-1.5 font-bold text-amber-500 hover:text-amber-600 transition-colors cursor-pointer"
-            onClick=***REMOVED***() => console.log('Abrir modal premium')***REMOVED***
+            onClick=***REMOVED***() => console.log('Open premium modal')***REMOVED***
           >
             <Crown size=***REMOVED***14***REMOVED*** className="group-hover:scale-110 transition-transform fill-current" />
             <span>Premium</span>
@@ -26,8 +26,8 @@ const FooterSection = () => ***REMOVED***
             onClick=***REMOVED***() => navigate('/terms')***REMOVED*** 
             className="hover:text-gray-800 transition-colors flex items-center gap-1 cursor-pointer"
           >
-            <span className="hidden md:inline">Términos y condiciones</span>
-            <span className="md:hidden">Términos</span>
+            <span className="hidden md:inline">Terms and conditions</span>
+            <span className="md:hidden">Terms</span>
           </button>
 
           <span className="text-gray-300 hidden sm:inline">•</span>
@@ -36,7 +36,7 @@ const FooterSection = () => ***REMOVED***
             onClick=***REMOVED***() => navigate('/privacy')***REMOVED*** 
             className="hover:text-gray-800 transition-colors cursor-pointer"
           >
-            Privacidad y políticas
+            Privacy and policies
           </button>
 
           <span className="text-gray-300 hidden sm:inline">|</span>

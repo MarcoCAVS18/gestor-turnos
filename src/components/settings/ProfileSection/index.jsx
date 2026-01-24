@@ -1,4 +1,4 @@
-// src/components/settings/ProfileSection/index.jsx - REFACTORIZADO
+// src/components/settings/ProfileSection/index.jsx - REFACTORED
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** User, Edit2, Save ***REMOVED*** from 'lucide-react';
@@ -19,18 +19,18 @@ const ProfileSection = (***REMOVED*** onError, onSuccess, className ***REMOVED**
       setLoading(true);
       await updateUserName(displayName);
       setEditingName(false);
-      onSuccess?.('Nombre actualizado correctamente');
+      onSuccess?.('Name updated successfully');
     ***REMOVED*** catch (error) ***REMOVED***
-      onError?.('Error al actualizar nombre: ' + error.message);
+      onError?.('Error updating name: ' + error.message);
     ***REMOVED*** finally ***REMOVED***
       setLoading(false);
     ***REMOVED***
   ***REMOVED***;
 
   return (
-    <SettingsSection icon=***REMOVED***User***REMOVED*** title="Perfil" className=***REMOVED***className***REMOVED***>
+    <SettingsSection icon=***REMOVED***User***REMOVED*** title="Profile" className=***REMOVED***className***REMOVED***>
       <div className="space-y-4">
-        ***REMOVED***/* Email y Nombre en la misma línea en desktop */***REMOVED***
+        ***REMOVED***/* Email and Name on the same line on desktop */***REMOVED***
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">Email</label>
@@ -38,7 +38,7 @@ const ProfileSection = (***REMOVED*** onError, onSuccess, className ***REMOVED**
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
             ***REMOVED***editingName ? (
               <div className="flex items-center gap-2">
                 <input

@@ -46,7 +46,7 @@ const StatCard = (***REMOVED***
     >
       <div className=***REMOVED***getSizeClasses()***REMOVED***>
         
-        ***REMOVED***/* Header con título e ícono */***REMOVED***
+        ***REMOVED***/* Header with title and icon */***REMOVED***
         <Flex variant="between" className="mb-2">
           <span className="text-sm text-gray-600">***REMOVED***title***REMOVED***</span>
           ***REMOVED***Icon && (
@@ -57,7 +57,7 @@ const StatCard = (***REMOVED***
           )***REMOVED***
         </Flex>
         
-        ***REMOVED***/* Valor principal */***REMOVED***
+        ***REMOVED***/* Main value */***REMOVED***
         <p 
           className=***REMOVED***`$***REMOVED***getValueSize()***REMOVED*** font-bold mb-1`***REMOVED***
           style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
@@ -65,7 +65,7 @@ const StatCard = (***REMOVED***
           ***REMOVED***value***REMOVED***
         </p>
         
-        ***REMOVED***/* Subtítulo y tendencia */***REMOVED***
+        ***REMOVED***/* Subtitle and trend */***REMOVED***
         <Flex variant="between">
           ***REMOVED***subtitle && (
             <span className="text-xs text-gray-500">***REMOVED***subtitle***REMOVED***</span>
@@ -80,7 +80,7 @@ const StatCard = (***REMOVED***
               ***REMOVED***trend === 0 && '→'***REMOVED***
               <span className="ml-1">
                 ***REMOVED***trend > 0 && '+'***REMOVED***
-                ***REMOVED***trend !== 0 ? `$***REMOVED***trend.toFixed(1)***REMOVED***%` : 'Sin cambios'***REMOVED***
+                ***REMOVED***trend !== 0 ? `$***REMOVED***trend.toFixed(1)***REMOVED***%` : 'No change'***REMOVED***
                 ***REMOVED***trendLabel && ` $***REMOVED***trendLabel***REMOVED***`***REMOVED***
               </span>
             </div>

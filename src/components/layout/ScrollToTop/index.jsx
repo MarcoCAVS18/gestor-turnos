@@ -1,3 +1,5 @@
+// src/components/layout/ScrollToTop/index.jsx
+
 import ***REMOVED*** useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useLocation ***REMOVED*** from 'react-router-dom';
 

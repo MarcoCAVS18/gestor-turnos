@@ -1,12 +1,12 @@
 // src/utils/arrayUtils.js
-// Utilidades para trabajar con arrays
+// Utilities for working with arrays
 
 /**
- * Asegura que un valor sea un array válido
- * Si el valor es null, undefined o no es un array, devuelve un array vacío
+ * Ensures a value is a valid array
+ * If value is null, undefined or not an array, returns empty array
  *
- * @param ***REMOVED***any***REMOVED*** value - Valor a validar
- * @returns ***REMOVED***Array***REMOVED*** - Array válido
+ * @param ***REMOVED***any***REMOVED*** value - Value to validate
+ * @returns ***REMOVED***Array***REMOVED*** - Valid array
  *
  * @example
  * ensureArray([1, 2, 3]) // [1, 2, 3]
@@ -19,15 +19,15 @@ export const ensureArray = (value) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Suma los valores de una propiedad específica en un array de objetos
+ * Sums values of a specific property in an array of objects
  *
- * @param ***REMOVED***Array***REMOVED*** array - Array de objetos
- * @param ***REMOVED***string***REMOVED*** key - Nombre de la propiedad a sumar
- * @returns ***REMOVED***number***REMOVED*** - Suma total
+ * @param ***REMOVED***Array***REMOVED*** array - Array of objects
+ * @param ***REMOVED***string***REMOVED*** key - Name of the property to sum
+ * @returns ***REMOVED***number***REMOVED*** - Total sum
  *
  * @example
- * const datos = [***REMOVED*** total: 100 ***REMOVED***, ***REMOVED*** total: 200 ***REMOVED***, ***REMOVED*** total: 50 ***REMOVED***];
- * sumBy(datos, 'total') // 350
+ * const data = [***REMOVED*** total: 100 ***REMOVED***, ***REMOVED*** total: 200 ***REMOVED***, ***REMOVED*** total: 50 ***REMOVED***];
+ * sumBy(data, 'total') // 350
  */
 export const sumBy = (array, key) => ***REMOVED***
   if (!Array.isArray(array)) return 0;
@@ -35,19 +35,19 @@ export const sumBy = (array, key) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Agrupa un array de objetos por una propiedad específica
+ * Groups an array of objects by a specific property
  *
- * @param ***REMOVED***Array***REMOVED*** array - Array de objetos
- * @param ***REMOVED***string|Function***REMOVED*** keyOrFn - Propiedad o función para agrupar
- * @returns ***REMOVED***Object***REMOVED*** - Objeto con items agrupados
+ * @param ***REMOVED***Array***REMOVED*** array - Array of objects
+ * @param ***REMOVED***string|Function***REMOVED*** keyOrFn - Property or function to group by
+ * @returns ***REMOVED***Object***REMOVED*** - Object with grouped items
  *
  * @example
- * const turnos = [
- *   ***REMOVED*** fecha: '2025-01-01', horas: 8 ***REMOVED***,
- *   ***REMOVED*** fecha: '2025-01-01', horas: 4 ***REMOVED***,
- *   ***REMOVED*** fecha: '2025-01-02', horas: 6 ***REMOVED***
+ * const shifts = [
+ *   ***REMOVED*** date: '2025-01-01', hours: 8 ***REMOVED***,
+ *   ***REMOVED*** date: '2025-01-01', hours: 4 ***REMOVED***,
+ *   ***REMOVED*** date: '2025-01-02', hours: 6 ***REMOVED***
  * ];
- * groupBy(turnos, 'fecha')
+ * groupBy(shifts, 'date')
  * // ***REMOVED*** '2025-01-01': [...], '2025-01-02': [...] ***REMOVED***
  */
 export const groupBy = (array, keyOrFn) => ***REMOVED***
@@ -64,17 +64,17 @@ export const groupBy = (array, keyOrFn) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Encuentra un objeto en un array por ID de forma segura
+ * Finds an object in an array by ID safely
  *
- * @param ***REMOVED***Array***REMOVED*** array - Array de objetos
- * @param ***REMOVED***string|number***REMOVED*** id - ID a buscar
- * @param ***REMOVED***string***REMOVED*** idKey - Nombre de la propiedad ID (default: 'id')
- * @returns ***REMOVED***Object|null***REMOVED*** - Objeto encontrado o null
+ * @param ***REMOVED***Array***REMOVED*** array - Array of objects
+ * @param ***REMOVED***string|number***REMOVED*** id - ID to find
+ * @param ***REMOVED***string***REMOVED*** idKey - Name of the ID property (default: 'id')
+ * @returns ***REMOVED***Object|null***REMOVED*** - Found object or null
  *
  * @example
- * const trabajos = [***REMOVED*** id: '1', nombre: 'A' ***REMOVED***, ***REMOVED*** id: '2', nombre: 'B' ***REMOVED***];
- * findById(trabajos, '1') // ***REMOVED*** id: '1', nombre: 'A' ***REMOVED***
- * findById(trabajos, '999') // null
+ * const works = [***REMOVED*** id: '1', name: 'A' ***REMOVED***, ***REMOVED*** id: '2', name: 'B' ***REMOVED***];
+ * findById(works, '1') // ***REMOVED*** id: '1', name: 'A' ***REMOVED***
+ * findById(works, '999') // null
  */
 export const findById = (array, id, idKey = 'id') => ***REMOVED***
   if (!Array.isArray(array) || !id) return null;
@@ -82,22 +82,22 @@ export const findById = (array, id, idKey = 'id') => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Ordena un array de objetos por una propiedad de fecha de forma descendente
+ * Sorts an array of objects by a date property in descending order
  *
- * @param ***REMOVED***Array***REMOVED*** array - Array de objetos
- * @param ***REMOVED***string***REMOVED*** dateKey - Nombre de la propiedad de fecha
- * @returns ***REMOVED***Array***REMOVED*** - Array ordenado (copia)
+ * @param ***REMOVED***Array***REMOVED*** array - Array of objects
+ * @param ***REMOVED***string***REMOVED*** dateKey - Name of the date property
+ * @returns ***REMOVED***Array***REMOVED*** - Sorted array (copy)
  *
  * @example
- * const turnos = [
- *   ***REMOVED*** fecha: '2025-01-01' ***REMOVED***,
- *   ***REMOVED*** fecha: '2025-01-03' ***REMOVED***,
- *   ***REMOVED*** fecha: '2025-01-02' ***REMOVED***
+ * const shifts = [
+ *   ***REMOVED*** date: '2025-01-01' ***REMOVED***,
+ *   ***REMOVED*** date: '2025-01-03' ***REMOVED***,
+ *   ***REMOVED*** date: '2025-01-02' ***REMOVED***
  * ];
- * sortByDateDesc(turnos, 'fecha')
- * // [***REMOVED*** fecha: '2025-01-03' ***REMOVED***, ***REMOVED*** fecha: '2025-01-02' ***REMOVED***, ***REMOVED*** fecha: '2025-01-01' ***REMOVED***]
+ * sortByDateDesc(shifts, 'date')
+ * // [***REMOVED*** date: '2025-01-03' ***REMOVED***, ***REMOVED*** date: '2025-01-02' ***REMOVED***, ***REMOVED*** date: '2025-01-01' ***REMOVED***]
  */
-export const sortByDateDesc = (array, dateKey = 'fecha') => ***REMOVED***
+export const sortByDateDesc = (array, dateKey = 'date') => ***REMOVED***
   if (!Array.isArray(array)) return [];
   return [...array].sort((a, b) => ***REMOVED***
     const dateA = new Date(a[dateKey]);

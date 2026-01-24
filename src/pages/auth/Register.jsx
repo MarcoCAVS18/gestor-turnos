@@ -5,7 +5,7 @@ import ***REMOVED*** Link, useNavigate, useLocation ***REMOVED*** from 'react-ro
 import ***REMOVED*** Eye, EyeOff ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../contexts/AuthContext';
 
-// Nueva importación estructurada
+// New structured import
 import Button from '../../components/ui/Button';
 import Flex from '../../components/ui/Flex';
 import Logo from '../../components/icons/Logo';
@@ -25,10 +25,10 @@ const Register = () => ***REMOVED***
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Obtener la ruta de redirección de los state de navegación
+  // Get redirect route from navigation state
   const redirectTo = location.state?.redirectTo || '/';
   
-  // Estados para validaciones
+  // States for validations
   const [emailValid, setEmailValid] = useState(true);
   const [passwordStrength, setPasswordStrength] = useState(***REMOVED***
     isValid: false,
@@ -40,26 +40,26 @@ const Register = () => ***REMOVED***
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [nameValid, setNameValid] = useState(true);
   
-  // Validar email
+  // Validate email
   useEffect(() => ***REMOVED***
     if (email) ***REMOVED***
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       setEmailValid(emailRegex.test(email));
     ***REMOVED*** else ***REMOVED***
-      setEmailValid(true); // No mostrar error si está vacío
+      setEmailValid(true); // Don't show error if empty
     ***REMOVED***
   ***REMOVED***, [email]);
   
-  // Validar nombre
+  // Validate name
   useEffect(() => ***REMOVED***
     if (displayName) ***REMOVED***
       setNameValid(displayName.trim().length >= 2);
     ***REMOVED*** else ***REMOVED***
-      setNameValid(true); // No mostrar error si está vacío
+      setNameValid(true); // Don't show error if empty
     ***REMOVED***
   ***REMOVED***, [displayName]);
   
-  // Validar fortaleza de contraseña
+  // Validate password strength
   useEffect(() => ***REMOVED***
     if (password) ***REMOVED***
       const strength = ***REMOVED***
@@ -69,7 +69,7 @@ const Register = () => ***REMOVED***
         hasNumber: /[0-9]/.test(password)
       ***REMOVED***;
       
-      // Agregando paréntesis para clarificar el orden de las operaciones
+      // Adding parentheses to clarify the order of operations
       strength.isValid = strength.hasMinLength && (
                         (strength.hasUpperCase && strength.hasLowerCase) || 
                         (strength.hasNumber && (strength.hasUpperCase || strength.hasLowerCase))
@@ -87,33 +87,33 @@ const Register = () => ***REMOVED***
     ***REMOVED***
   ***REMOVED***, [password]);
   
-  // Verificar que las contraseñas coinciden
+  // Check passwords match
   useEffect(() => ***REMOVED***
     if (confirmPassword) ***REMOVED***
       setPasswordsMatch(password === confirmPassword);
     ***REMOVED*** else ***REMOVED***
-      setPasswordsMatch(true); // No mostrar error si está vacío
+      setPasswordsMatch(true); // Don't show error if empty
     ***REMOVED***
   ***REMOVED***, [password, confirmPassword]);
 
   const handleSubmit = async (e) => ***REMOVED***
     e.preventDefault();
     
-    // Validación final antes de enviar
+    // Final validation before submitting
     if (!nameValid) ***REMOVED***
-      return setError('El nombre debe tener al menos 2 caracteres');
+      return setError('Name must be at least 2 characters');
     ***REMOVED***
     
     if (!emailValid) ***REMOVED***
-      return setError('Por favor ingresa un email válido');
+      return setError('Please enter a valid email');
     ***REMOVED***
     
     if (!passwordStrength.isValid) ***REMOVED***
-      return setError('La contraseña no cumple con los requisitos mínimos');
+      return setError('Password does not meet minimum requirements');
     ***REMOVED***
     
     if (password !== confirmPassword) ***REMOVED***
-      return setError('Las contraseñas no coinciden');
+      return setError('Passwords do not match');
     ***REMOVED***
     
     try ***REMOVED***
@@ -121,15 +121,15 @@ const Register = () => ***REMOVED***
       setLoading(true);
       await signup(email, password, displayName);
       
-      // Navegar a la ruta de redirección
+      // Navigate to redirect route
       navigate(redirectTo);
     ***REMOVED*** catch (error) ***REMOVED***
       if (error.code === 'auth/email-already-in-use') ***REMOVED***
-        setError('Este email ya está en uso. Intenta iniciar sesión.');
+        setError('This email is already in use. Try signing in.');
       ***REMOVED*** else if (error.code === 'auth/weak-password') ***REMOVED***
-        setError('La contraseña es muy débil. Debe tener al menos 6 caracteres.');
+        setError('Password is too weak. It must be at least 6 characters.');
       ***REMOVED*** else ***REMOVED***
-        setError('Error al crear la cuenta. Inténtalo de nuevo.');
+        setError('Error creating account. Please try again.');
       ***REMOVED***
       setLoading(false);
     ***REMOVED***
@@ -141,17 +141,17 @@ const Register = () => ***REMOVED***
       setError('');
       await loginWithGoogle();
       
-      // Navegar a la ruta de redirección
+      // Navigate to redirect route
       navigate(redirectTo);
     ***REMOVED*** catch (error) ***REMOVED***
-      setError('Error al registrarse con Google: ' + error.message);
+      setError('Error registering with Google: ' + error.message);
       setGoogleLoading(false);
     ***REMOVED***
   ***REMOVED***;
 
   return (
     <div className="fixed inset-0">
-      ***REMOVED***/* Video de fondo */***REMOVED***
+      ***REMOVED***/* Background video */***REMOVED***
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
         <video 
@@ -162,16 +162,16 @@ const Register = () => ***REMOVED***
           className="absolute object-cover w-full h-full"
         >
           <source src="/assets/videos/sample_0.mp4" type="video/mp4" />
-          Tu navegador no soporta videos.
+          Your browser does not support videos.
         </video>
       </div>
       
-      ***REMOVED***/* Contenido del registro */***REMOVED***
+      ***REMOVED***/* Register content */***REMOVED***
       <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-12 overflow-y-auto">
         <Logo />
         <div className="text-center text-white mb-4">
           <h1 className="text-4xl font-bold mb-2">GestAPP</h1>
-          <p className="text-lg">Gestiona tus turnos de trabajo fácilmente.</p>
+          <p className="text-lg">Manage your work shifts easily.</p>
         </div>
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">
           
@@ -184,7 +184,7 @@ const Register = () => ***REMOVED***
           <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className="space-y-4">
             <div>
               <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 mb-1">
-                Nombre
+                Name
               </label>
               <input
                 id="displayName"
@@ -194,12 +194,12 @@ const Register = () => ***REMOVED***
                 className=***REMOVED***`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 $***REMOVED***
                   !nameValid && displayName ? 'border-red-500' : 'border-gray-300'
                 ***REMOVED***`***REMOVED***
-                placeholder="Tu nombre"
+                placeholder="Your name"
                 required
               />
               ***REMOVED***!nameValid && displayName && (
                 <p className="mt-1 text-xs text-red-500">
-                  El nombre debe tener al menos 2 caracteres
+                  Name must be at least 2 characters
                 </p>
               )***REMOVED***
             </div>
@@ -216,19 +216,19 @@ const Register = () => ***REMOVED***
                 className=***REMOVED***`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 $***REMOVED***
                   !emailValid && email ? 'border-red-500' : 'border-gray-300'
                 ***REMOVED***`***REMOVED***
-                placeholder="tu@email.com"
+                placeholder="your@email.com"
                 required
               />
               ***REMOVED***!emailValid && email && (
                 <p className="mt-1 text-xs text-red-500">
-                  Por favor ingresa un email válido
+                  Please enter a valid email
                 </p>
               )***REMOVED***
             </div>
             
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Contraseña
+                Password
               </label>
               <div className="relative">
                 <input
@@ -239,7 +239,7 @@ const Register = () => ***REMOVED***
                   className=***REMOVED***`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 $***REMOVED***
                     password && !passwordStrength.isValid ? 'border-red-500' : 'border-gray-300'
                   ***REMOVED***`***REMOVED***
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Minimum 6 characters"
                   required
                   minLength=***REMOVED***6***REMOVED***
                 />
@@ -252,20 +252,20 @@ const Register = () => ***REMOVED***
                 </button>
               </div>
               
-              ***REMOVED***/* Indicadores de fortaleza de contraseña */***REMOVED***
+              ***REMOVED***/* Password strength indicators */***REMOVED***
               ***REMOVED***password && (
                 <div className="mt-2 text-xs space-y-1">
                   <p className=***REMOVED***passwordStrength.hasMinLength ? 'text-green-600' : 'text-gray-500'***REMOVED***>
-                    ✓ Mínimo 6 caracteres
+                    ✓ Minimum 6 characters
                   </p>
                   <p className=***REMOVED***passwordStrength.hasUpperCase ? 'text-green-600' : 'text-gray-500'***REMOVED***>
-                    ✓ Al menos una letra mayúscula
+                    ✓ At least one uppercase letter
                   </p>
                   <p className=***REMOVED***passwordStrength.hasLowerCase ? 'text-green-600' : 'text-gray-500'***REMOVED***>
-                    ✓ Al menos una letra minúscula
+                    ✓ At least one lowercase letter
                   </p>
                   <p className=***REMOVED***passwordStrength.hasNumber ? 'text-green-600' : 'text-gray-500'***REMOVED***>
-                    ✓ Al menos un número
+                    ✓ At least one number
                   </p>
                 </div>
               )***REMOVED***
@@ -273,7 +273,7 @@ const Register = () => ***REMOVED***
             
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                Confirmar contraseña
+                Confirm Password
               </label>
               <div className="relative">
               <input
@@ -284,7 +284,7 @@ const Register = () => ***REMOVED***
                 className=***REMOVED***`w-full p-2 border rounded-md focus:ring-pink-500 focus:border-pink-500 $***REMOVED***
                   !passwordsMatch && confirmPassword ? 'border-red-500' : 'border-gray-300'
                 ***REMOVED***`***REMOVED***
-                placeholder="Confirma tu contraseña"
+                placeholder="Confirm your password"
                 required
               />
                 <button 
@@ -297,7 +297,7 @@ const Register = () => ***REMOVED***
               </div>
               ***REMOVED***!passwordsMatch && confirmPassword && (
                 <p className="mt-1 text-xs text-red-500">
-                  Las contraseñas no coinciden
+                  Passwords do not match
                 </p>
               )***REMOVED***
             </div>
@@ -308,7 +308,7 @@ const Register = () => ***REMOVED***
               loading=***REMOVED***loading***REMOVED***
               className="w-full"
             >
-              Registrarse
+              Register
             </Button>
           </form>
           
@@ -317,7 +317,7 @@ const Register = () => ***REMOVED***
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white px-3 text-gray-500 text-sm">o</span>
+              <span className="bg-white px-3 text-gray-500 text-sm">or</span>
             </div>
           </div>
           
@@ -331,16 +331,16 @@ const Register = () => ***REMOVED***
             bgColor="#121212"
             textColor="white"
           >
-            Registrarse con Google
+            Register with Google
           </Button>
           
           <div className="text-center">
-            <p className="text-gray-600 mb-2">¿Ya tienes una cuenta?</p>
+            <p className="text-gray-600 mb-2">Already have an account?</p>
             <Link 
               to="/login"
               className="text-pink-600 hover:text-pink-800 font-medium"
             >
-              Inicia sesión aquí
+              Sign in here
             </Link>
           </div>
         </div>

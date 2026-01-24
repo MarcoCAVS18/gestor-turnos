@@ -5,41 +5,41 @@ import ***REMOVED*** BarChart3, ChevronRight ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
-import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../constants/delivery'; // Importamos las plataformas
+import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../constants/delivery';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 
-const FavoriteWorksCard = (***REMOVED*** trabajosFavoritos ***REMOVED***) => ***REMOVED***
+const FavoriteWorksCard = (***REMOVED*** favoriteWorks ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  // Función auxiliar para obtener el color correcto del trabajo
-  const getJobColor = (trabajo) => ***REMOVED***
-    // 1. Si es trabajo tradicional, tiene su color propio
-    if (trabajo.color) return trabajo.color;
+  // Helper function to get the correct color for the work
+  const getWorkColor = (work) => ***REMOVED***
+    // 1. If it is a traditional work, it has its own color
+    if (work.color) return work.color;
 
-    // 2. Si es delivery, buscamos el color de la plataforma seleccionada
-    if (trabajo.plataforma) ***REMOVED***
+    // 2. If it is delivery, we look for the color of the selected platform
+    if (work.platform) ***REMOVED***
       const platform = DELIVERY_PLATFORMS_AUSTRALIA.find(
-        p => p.nombre === trabajo.plataforma
+        p => p.name === work.platform
       );
       if (platform) return platform.color;
     ***REMOVED***
 
-    // 3. Fallback: colorAvatar o gris por defecto
-    return trabajo.colorAvatar || '#9CA3AF';
+    // 3. Fallback: avatarColor or gray by default
+    return work.avatarColor || '#9CA3AF';
   ***REMOVED***;
 
-  if (trabajosFavoritos.length === 0) return null;
+  if (favoriteWorks.length === 0) return null;
 
   return (
     <Card>
       <Flex variant="between" className="mb-4 flex-nowrap gap-3">
         <h3 className="text-base font-semibold flex items-center text-gray-800 truncate">
           <BarChart3 size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2 flex-shrink-0" />
-          <span className="truncate">Trabajos favoritos</span>
+          <span className="truncate">Favorite works</span>
         </h3>
         
         <Button
@@ -53,30 +53,30 @@ const FavoriteWorksCard = (***REMOVED*** trabajosFavoritos ***REMOVED***) => ***
           icon=***REMOVED***ChevronRight***REMOVED***
           iconPosition="right"
         >
-          Ver más
+          View more
         </Button>
       </Flex>
       
       <div className="space-y-3">
-        ***REMOVED***trabajosFavoritos.map((trabajoInfo, index) => (
-          <Flex key=***REMOVED***trabajoInfo.trabajo.id***REMOVED*** variant="between">
+        ***REMOVED***favoriteWorks.map((workInfo, index) => (
+          <Flex key=***REMOVED***workInfo.work.id***REMOVED*** variant="between">
             <Flex variant="center" className="overflow-hidden">
               <span className="text-sm font-semibold text-gray-400 mr-3 flex-shrink-0">
                 #***REMOVED***index + 1***REMOVED***
               </span>
               
-              ***REMOVED***/* Círculo indicador de color usando la nueva función */***REMOVED***
+              ***REMOVED***/* Color indicator circle using the new function */***REMOVED***
               <div 
                 className="w-3 h-3 rounded-full mr-3 flex-shrink-0"
-                style=***REMOVED******REMOVED*** backgroundColor: getJobColor(trabajoInfo.trabajo) ***REMOVED******REMOVED***
+                style=***REMOVED******REMOVED*** backgroundColor: getWorkColor(workInfo.work) ***REMOVED******REMOVED***
               />
               
               <div className="min-w-0">
                 <p className="font-medium text-gray-800 truncate">
-                  ***REMOVED***trabajoInfo.trabajo.nombre***REMOVED***
+                  ***REMOVED***workInfo.work.name***REMOVED***
                 </p>
                 <p className="text-xs text-gray-500">
-                  ***REMOVED***trabajoInfo.turnos***REMOVED*** turnos
+                  ***REMOVED***workInfo.shifts***REMOVED*** shifts
                 </p>
               </div>
             </Flex>
@@ -84,7 +84,7 @@ const FavoriteWorksCard = (***REMOVED*** trabajosFavoritos ***REMOVED***) => ***
               className="text-sm font-semibold whitespace-nowrap ml-2" 
               style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
             >
-              ***REMOVED***formatCurrency(trabajoInfo.ganancia)***REMOVED***
+              ***REMOVED***formatCurrency(workInfo.earnings)***REMOVED***
             </p>
           </Flex>
         ))***REMOVED***

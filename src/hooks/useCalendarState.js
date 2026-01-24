@@ -2,63 +2,63 @@
 
 import ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED***
-  crearFechaLocal,
-  fechaLocalAISO,
-  fechaEsHoy
+  createLocalDate,
+  localDateToISO,
+  dateIsToday
 ***REMOVED*** from '../utils/calendarUtils';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 
-export const useCalendarState = (turnos, onDiaSeleccionado) => ***REMOVED***
-  const [fechaActual, setFechaActual] = useState(new Date());
-  const [mesActual, setMesActual] = useState(fechaActual.getMonth());
-  const [anioActual, setAnioActual] = useState(fechaActual.getFullYear());
-  const [diaSeleccionadoActual, setDiaSeleccionadoActual] = useState(null);
+export const useCalendarState = (shifts, onSelectedDay) => ***REMOVED***
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth());
+  const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
+  const [selectedDay, setSelectedDay] = useState(null);
 
-  // Actualizar fecha actual cada minuto
+  // Update current date every minute
   useEffect(() => ***REMOVED***
-    const intervalo = setInterval(() => ***REMOVED***
-      const nuevaFecha = new Date();
-      setFechaActual(nuevaFecha);
+    const interval = setInterval(() => ***REMOVED***
+      const newDate = new Date();
+      setCurrentDate(newDate);
       
-      if (nuevaFecha.getDate() !== fechaActual.getDate()) ***REMOVED***
-        setMesActual(nuevaFecha.getMonth());
-        setAnioActual(nuevaFecha.getFullYear());
+      if (newDate.getDate() !== currentDate.getDate()) ***REMOVED***
+        setCurrentMonth(newDate.getMonth());
+        setCurrentYear(newDate.getFullYear());
       ***REMOVED***
     ***REMOVED***, 60000);
 
-    return () => clearInterval(intervalo);
-  ***REMOVED***, [fechaActual]);
+    return () => clearInterval(interval);
+  ***REMOVED***, [currentDate]);
 
-  // Obtener turnos del día considerando turnos nocturnos
-  const obtenerTurnosDelDia = (fecha, todosLosTurnos) => ***REMOVED***
-    const fechaStr = fechaLocalAISO(fecha);
+  // Get shifts of the day considering night shifts
+  const getShiftsOfDay = (date, allShifts) => ***REMOVED***
+    const dateStr = localDateToISO(date);
     
-    return todosLosTurnos.filter(turno => ***REMOVED***
-      // Verificar fecha principal
-      const fechaPrincipal = turno.fechaInicio || turno.fecha;
-      if (fechaPrincipal === fechaStr) ***REMOVED***
+    return allShifts.filter(shift => ***REMOVED***
+      // Check main date
+      const mainDate = shift.startDate || shift.date;
+      if (mainDate === dateStr) ***REMOVED***
         return true;
       ***REMOVED***
       
-      // Verificar si es un turno nocturno que termina en esta fecha
-      const esNocturno = turno.cruzaMedianoche || 
-        (turno.horaInicio && turno.horaFin && 
-         turno.horaInicio.split(':')[0] > turno.horaFin.split(':')[0]);
+      // Check if it is a night shift ending on this date
+      const isNightShift = shift.crossesMidnight || 
+        (shift.startTime && shift.endTime && 
+         shift.startTime.split(':')[0] > shift.endTime.split(':')[0]);
       
-      if (esNocturno) ***REMOVED***
-        // Si tiene fechaFin explícita, usarla
-        if (turno.fechaFin && turno.fechaFin === fechaStr) ***REMOVED***
+      if (isNightShift) ***REMOVED***
+        // If it has explicit endDate, use it
+        if (shift.endDate && shift.endDate === dateStr) ***REMOVED***
           return true;
         ***REMOVED***
         
-        // Si no tiene fechaFin pero es nocturno, calcular si termina este día
-        if (!turno.fechaFin && fechaPrincipal) ***REMOVED***
-          const fechaInicio = createSafeDate(fechaPrincipal);
-          const fechaFinCalculada = new Date(fechaInicio);
-          fechaFinCalculada.setDate(fechaFinCalculada.getDate() + 1);
-          const fechaFinStr = fechaFinCalculada.toISOString().split('T')[0];
+        // If it doesn't have endDate but is night shift, calculate if it ends today
+        if (!shift.endDate && mainDate) ***REMOVED***
+          const startDateObj = createSafeDate(mainDate);
+          const calculatedEndDate = new Date(startDateObj);
+          calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
+          const endDateStr = calculatedEndDate.toISOString().split('T')[0];
           
-          if (fechaFinStr === fechaStr) ***REMOVED***
+          if (endDateStr === dateStr) ***REMOVED***
             return true;
           ***REMOVED***
         ***REMOVED***
@@ -68,108 +68,108 @@ export const useCalendarState = (turnos, onDiaSeleccionado) => ***REMOVED***
     ***REMOVED***);
   ***REMOVED***;
 
-  // FUNCIÓN ACTUALIZADA: Obtener días del mes considerando turnos nocturnos
-  const obtenerDiasDelMes = () => ***REMOVED***
-    const primerDia = crearFechaLocal(anioActual, mesActual, 1);
-    const ultimoDia = crearFechaLocal(anioActual, mesActual + 1, 0);
+  // Get days of the month considering night shifts
+  const getDaysOfMonth = () => ***REMOVED***
+    const firstDay = createLocalDate(currentYear, currentMonth, 1);
+    const lastDay = createLocalDate(currentYear, currentMonth + 1, 0);
 
-    let diaInicio = primerDia.getDay() - 1;
-    if (diaInicio === -1) diaInicio = 6;
+    let startDay = firstDay.getDay() - 1;
+    if (startDay === -1) startDay = 6;
 
-    const dias = [];
+    const days = [];
 
-    // Días del mes anterior
-    for (let i = diaInicio; i > 0; i--) ***REMOVED***
-      const fecha = crearFechaLocal(anioActual, mesActual, -i + 1);
-      const turnosDelDia = obtenerTurnosDelDia(fecha, turnos);
-      dias.push(***REMOVED***
-        fecha,
-        dia: fecha.getDate(),
-        mesActual: false,
-        tieneTurnos: turnosDelDia.length > 0,
-        turnosDelDia
+    // Days from previous month
+    for (let i = startDay; i > 0; i--) ***REMOVED***
+      const date = createLocalDate(currentYear, currentMonth, -i + 1);
+      const shiftsOfDay = getShiftsOfDay(date, shifts);
+      days.push(***REMOVED***
+        date,
+        day: date.getDate(),
+        currentMonth: false,
+        hasShifts: shiftsOfDay.length > 0,
+        shiftsOfDay
       ***REMOVED***);
     ***REMOVED***
 
-    // Días del mes actual
-    for (let i = 1; i <= ultimoDia.getDate(); i++) ***REMOVED***
-      const fecha = crearFechaLocal(anioActual, mesActual, i);
-      const turnosDelDia = obtenerTurnosDelDia(fecha, turnos);
-      dias.push(***REMOVED***
-        fecha,
-        dia: i,
-        mesActual: true,
-        tieneTurnos: turnosDelDia.length > 0,
-        turnosDelDia,
-        esHoy: fechaEsHoy(fecha, fechaActual)
+    // Days of current month
+    for (let i = 1; i <= lastDay.getDate(); i++) ***REMOVED***
+      const date = createLocalDate(currentYear, currentMonth, i);
+      const shiftsOfDay = getShiftsOfDay(date, shifts);
+      days.push(***REMOVED***
+        date,
+        day: i,
+        currentMonth: true,
+        hasShifts: shiftsOfDay.length > 0,
+        shiftsOfDay,
+        isToday: dateIsToday(date, currentDate)
       ***REMOVED***);
     ***REMOVED***
 
-    // Completar la última semana
-    const diasRestantes = 42 - dias.length;
-    for (let i = 1; i <= diasRestantes; i++) ***REMOVED***
-      const fecha = crearFechaLocal(anioActual, mesActual + 1, i);
-      const turnosDelDia = obtenerTurnosDelDia(fecha, turnos);
-      dias.push(***REMOVED***
-        fecha,
-        dia: i,
-        mesActual: false,
-        tieneTurnos: turnosDelDia.length > 0,
-        turnosDelDia
+    // Complete the last week
+    const remainingDays = 42 - days.length;
+    for (let i = 1; i <= remainingDays; i++) ***REMOVED***
+      const date = createLocalDate(currentYear, currentMonth + 1, i);
+      const shiftsOfDay = getShiftsOfDay(date, shifts);
+      days.push(***REMOVED***
+        date,
+        day: i,
+        currentMonth: false,
+        hasShifts: shiftsOfDay.length > 0,
+        shiftsOfDay
       ***REMOVED***);
     ***REMOVED***
 
-    return dias;
+    return days;
   ***REMOVED***;
 
   // Handlers
-  const cambiarMes = (incremento) => ***REMOVED***
-    let nuevoMes = mesActual + incremento;
-    let nuevoAnio = anioActual;
+  const changeMonth = (increment) => ***REMOVED***
+    let newMonth = currentMonth + increment;
+    let newYear = currentYear;
 
-    if (nuevoMes < 0) ***REMOVED***
-      nuevoMes = 11;
-      nuevoAnio--;
-    ***REMOVED*** else if (nuevoMes > 11) ***REMOVED***
-      nuevoMes = 0;
-      nuevoAnio++;
+    if (newMonth < 0) ***REMOVED***
+      newMonth = 11;
+      newYear--;
+    ***REMOVED*** else if (newMonth > 11) ***REMOVED***
+      newMonth = 0;
+      newYear++;
     ***REMOVED***
 
-    setMesActual(nuevoMes);
-    setAnioActual(nuevoAnio);
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
   ***REMOVED***;
 
-  const irAHoy = () => ***REMOVED***
-    const hoy = new Date();
-    setFechaActual(hoy);
-    setMesActual(hoy.getMonth());
-    setAnioActual(hoy.getFullYear());
+  const goToToday = () => ***REMOVED***
+    const today = new Date();
+    setCurrentDate(today);
+    setCurrentMonth(today.getMonth());
+    setCurrentYear(today.getFullYear());
     
-    const fechaStr = fechaLocalAISO(hoy);
-    setDiaSeleccionadoActual(fechaStr);
+    const dateStr = localDateToISO(today);
+    setSelectedDay(dateStr);
     
-    if (onDiaSeleccionado) ***REMOVED***
-      onDiaSeleccionado(hoy);
+    if (onSelectedDay) ***REMOVED***
+      onSelectedDay(today);
     ***REMOVED***
   ***REMOVED***;
 
-  const irADia = (fecha) => ***REMOVED***
-    const fechaStr = fechaLocalAISO(fecha);
-    setDiaSeleccionadoActual(fechaStr);
+  const goToDay = (date) => ***REMOVED***
+    const dateStr = localDateToISO(date);
+    setSelectedDay(dateStr);
     
-    if (onDiaSeleccionado) ***REMOVED***
-      onDiaSeleccionado(fecha);
+    if (onSelectedDay) ***REMOVED***
+      onSelectedDay(date);
     ***REMOVED***
   ***REMOVED***;
 
   return ***REMOVED***
-    fechaActual,
-    mesActual,
-    anioActual,
-    diaSeleccionadoActual,
-    obtenerDiasDelMes,
-    cambiarMes,
-    irAHoy,
-    irADia
+    currentDate,
+    currentMonth,
+    currentYear,
+    selectedDay,
+    getDaysOfMonth,
+    changeMonth,
+    goToToday,
+    goToDay
   ***REMOVED***;
 ***REMOVED***;

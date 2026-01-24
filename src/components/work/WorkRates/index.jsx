@@ -1,4 +1,4 @@
-// src/components/work/WorkRates/index.jsx - Version with defensive validations
+// src/components/work/WorkRates/index.jsx
 
 import React from 'react';
 import ***REMOVED*** Sun, Moon ***REMOVED*** from 'lucide-react';

@@ -3,15 +3,15 @@
 import React from 'react';
 
 /**
- * Componente Badge reutilizable para mostrar etiquetas con diferentes variantes
+ * Reusable component to display labels with different variants
  *
- * @param ***REMOVED***string***REMOVED*** variant - Variante de color: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'
- * @param ***REMOVED***string***REMOVED*** size - Tamaño: 'xs' | 'sm' | 'md' | 'lg'
- * @param ***REMOVED***boolean***REMOVED*** rounded - Si debe ser completamente redondeado (pill shape)
- * @param ***REMOVED***React.ReactNode***REMOVED*** children - Contenido del badge
- * @param ***REMOVED***React.ReactNode***REMOVED*** icon - Ícono opcional a mostrar
- * @param ***REMOVED***string***REMOVED*** className - Clases CSS adicionales
- * @param ***REMOVED***object***REMOVED*** style - Estilos inline adicionales
+ * @param ***REMOVED***string***REMOVED*** variant - Color variant: 'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'
+ * @param ***REMOVED***string***REMOVED*** size - Size: 'xs' | 'sm' | 'md' | 'lg'
+ * @param ***REMOVED***boolean***REMOVED*** rounded - If it should be fully rounded (pill shape)
+ * @param ***REMOVED***React.ReactNode***REMOVED*** children - Badge content
+ * @param ***REMOVED***React.ReactNode***REMOVED*** icon - Optional icon to display
+ * @param ***REMOVED***string***REMOVED*** className - Additional CSS classes
+ * @param ***REMOVED***object***REMOVED*** style - Additional inline styles
  */
 const Badge = (***REMOVED***
   variant = 'default',
@@ -23,14 +23,15 @@ const Badge = (***REMOVED***
   style = ***REMOVED******REMOVED***,
   ...props
 ***REMOVED***) => ***REMOVED***
-  // Clases base
+  // Base classes
   const baseClasses = 'inline-flex items-center font-medium';
 
-  // Variantes de color
+  // Color variants
   const variantClasses = ***REMOVED***
     default: 'bg-gray-100 text-gray-700',
     primary: 'bg-blue-50 text-blue-700',
     success: 'bg-green-50 text-green-700',
+    win: 'bg-purple-50 text-purple-700', // Cambié 'pink' por 'win' para consistencia con estilos comunes (opcional, si prefieres mantener 'pink', déjalo como 'pink')
     warning: 'bg-orange-50 text-orange-700',
     danger: 'bg-red-50 text-red-700',
     info: 'bg-cyan-50 text-cyan-700',
@@ -38,7 +39,7 @@ const Badge = (***REMOVED***
     pink: 'bg-pink-50 text-pink-700'
   ***REMOVED***;
 
-  // Tamaños
+  // Sizes
   const sizeClasses = ***REMOVED***
     xs: 'text-xs px-1.5 py-0.5',
     sm: 'text-xs px-2 py-1',
@@ -46,7 +47,7 @@ const Badge = (***REMOVED***
     lg: 'text-base px-4 py-2'
   ***REMOVED***;
 
-  // Tamaños de iconos
+  // Icon sizes
   const iconSizes = ***REMOVED***
     xs: 10,
     sm: 12,
@@ -54,7 +55,7 @@ const Badge = (***REMOVED***
     lg: 16
   ***REMOVED***;
 
-  // Clases de redondeo
+  // Rounded class
   const roundedClass = rounded ? 'rounded-full' : 'rounded';
 
   const combinedClasses = `

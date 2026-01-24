@@ -10,15 +10,13 @@ const ThemeInput = (***REMOVED***
 ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
   
-  // Combinar estilos personalizados con los del tema
   const combinedStyle = ***REMOVED***
     '--tw-ring-color': thematicColors?.base || '#EC4899',
-    borderColor: '#D1D5DB', // Borde gris claro en lugar de gris oscuro
+    borderColor: '#D1D5DB', 
     backgroundColor: '#FFFFFF',
     ...style
   ***REMOVED***;
 
-  // Clases CSS combinadas
   const combinedClassName = `
     block w-full px-3 py-2 border rounded-lg 
     shadow-sm placeholder-gray-400 

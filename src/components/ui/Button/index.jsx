@@ -1,3 +1,5 @@
+// src/components/ui/Button/index.jsx
+
 import React from 'react';
 import ***REMOVED*** motion, AnimatePresence ***REMOVED*** from 'framer-motion';
 

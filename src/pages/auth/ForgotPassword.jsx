@@ -4,7 +4,7 @@ import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** useAuth ***REMOVED*** from '../../contexts/AuthContext';
 
-// Nueva importación estructurada
+// New structured import
 import Button from '../../components/ui/Button';
 import Flex from '../../components/ui/Flex';
 import Logo from '../../components/icons/Logo';
@@ -14,13 +14,13 @@ const ForgotPassword = () => ***REMOVED***
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Obtener email de la ubicación si existe
+  // Get email from location if it exists
   const [email, setEmail] = useState(location.state?.email || '');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [emailValid, setEmailValid] = useState(false);
 
-  // Validar email cuando cambia
+  // Validate email when it changes
   useEffect(() => ***REMOVED***
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setEmailValid(emailRegex.test(email));
@@ -30,7 +30,7 @@ const ForgotPassword = () => ***REMOVED***
     e.preventDefault();
     
     if (!emailValid) ***REMOVED***
-      return setError('Por favor ingresa un email válido');
+      return setError('Please enter a valid email');
     ***REMOVED***
 
     try ***REMOVED***
@@ -38,7 +38,7 @@ const ForgotPassword = () => ***REMOVED***
       setLoading(true);
       await resetPassword(email);
       
-      // Redirigir a login con mensaje de éxito
+      // Redirect to login with success message
       navigate('/login', ***REMOVED*** 
         state: ***REMOVED*** 
           emailSent: true,
@@ -46,15 +46,15 @@ const ForgotPassword = () => ***REMOVED***
         ***REMOVED*** 
       ***REMOVED***);
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al enviar email de recuperación:', error);
-      setError('No se pudo enviar el email de recuperación. Verifica tu dirección de correo.');
+      console.error('Error sending recovery email:', error);
+      setError('Could not send recovery email. Check your email address.');
       setLoading(false);
     ***REMOVED***
   ***REMOVED***;
 
   return (
     <div className="fixed inset-0">
-      ***REMOVED***/* Video de fondo */***REMOVED***
+      ***REMOVED***/* Background video */***REMOVED***
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
         <video 
@@ -65,17 +65,17 @@ const ForgotPassword = () => ***REMOVED***
           className="absolute object-cover w-full h-full"
         >
           <source src="/assets/videos/sample_0.mp4" type="video/mp4" />
-          Tu navegador no soporta videos.
+          Your browser does not support videos.
         </video>
       </div>
       
-      ***REMOVED***/* Contenido de recuperación */***REMOVED***
+      ***REMOVED***/* Recovery content */***REMOVED***
       <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-12 overflow-y-auto">
         <Logo />
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">
-          <h1 className="text-2xl font-bold text-center mb-2">Recuperar contraseña</h1>
+          <h1 className="text-2xl font-bold text-center mb-2">Recover password</h1>
           <p className="text-center text-gray-600 mb-6">
-            Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña.
+            Enter your email address and we will send you a link to reset your password.
           </p>
           
           ***REMOVED***error && (
@@ -92,7 +92,7 @@ const ForgotPassword = () => ***REMOVED***
                 value=***REMOVED***email***REMOVED***
                 onChange=***REMOVED***(e) => setEmail(e.target.value)***REMOVED***
                 className="w-full p-2 border border-gray-300 rounded focus:ring-pink-500 focus:border-pink-500"
-                placeholder="tu@email.com"
+                placeholder="your@email.com"
                 required
               />
             </div>
@@ -104,7 +104,7 @@ const ForgotPassword = () => ***REMOVED***
                 variant="outline"
                 disabled=***REMOVED***loading***REMOVED***
               >
-                Cancelar
+                Cancel
               </Button>
               
               <Button
@@ -113,7 +113,7 @@ const ForgotPassword = () => ***REMOVED***
                 loading=***REMOVED***loading***REMOVED***
                 className="flex-1"
               >
-                Recuperar contraseña
+                Recover password
               </Button>
             </div>
           </form>

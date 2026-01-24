@@ -7,7 +7,7 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Card from '../../ui/Card';
 
-const WelcomeCard = (***REMOVED*** totalGanado, isFeatureVisible = false, className ***REMOVED***) => ***REMOVED***
+const WelcomeCard = (***REMOVED*** totalEarnings, isFeatureVisible = false, className ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
   const ***REMOVED*** userEmoji ***REMOVED*** = useApp();
   const colors = useThemeColors();
@@ -22,58 +22,58 @@ const WelcomeCard = (***REMOVED*** totalGanado, isFeatureVisible = false, classN
     ***REMOVED***
   ***REMOVED***, [currentUser]);
 
-  // Función para obtener el saludo según la hora
-  const getSaludo = () => ***REMOVED***
-    const hora = new Date().getHours();
-    if (hora < 12) return 'Buenos días,';
-    if (hora < 18) return 'Buenas tardes,';
-    return 'Buenas noches,';
+  // Function to get greeting based on time of day
+  const getGreeting = () => ***REMOVED***
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning,';
+    if (hour < 18) return 'Good afternoon,';
+    return 'Good evening,';
   ***REMOVED***;
 
   return (
     <Card className=***REMOVED***className***REMOVED***>
       <div className="flex flex-col h-full">
         <div className="my-auto">
-          ***REMOVED***/* Layout vertical (Móvil o cuando la feature es visible) */***REMOVED***
+          ***REMOVED***/* Vertical layout (Mobile or when feature is visible) */***REMOVED***
           <div className=***REMOVED***`$***REMOVED***isFeatureVisible ? 'block' : 'block sm:hidden'***REMOVED*** text-center space-y-4`***REMOVED***>
             <div>
               <h1 className="text-xl font-bold text-gray-800">
-                ***REMOVED***getSaludo()***REMOVED*** ***REMOVED***userName && `$***REMOVED***userName***REMOVED*** `***REMOVED******REMOVED***userEmoji***REMOVED***
+                ***REMOVED***getGreeting()***REMOVED*** ***REMOVED***userName && `$***REMOVED***userName***REMOVED*** `***REMOVED******REMOVED***userEmoji***REMOVED***
               </h1>
               <p className="text-gray-600 text-sm mt-2">
-                Acá tienes un resumen de tu actividad
+                Here is a summary of your activity
               </p>
             </div>
             
             <div>
-              <p className="text-xs text-gray-500 pt-4 mb-1">Ganado total</p>
+              <p className="text-xs text-gray-500 pt-4 mb-1">Total earned</p>
               <p 
                 className="text-4xl font-bold"
                 style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
               >
-                ***REMOVED***formatCurrency(totalGanado)***REMOVED***
+                ***REMOVED***formatCurrency(totalEarnings)***REMOVED***
               </p>
             </div>
           </div>
 
-          ***REMOVED***/* Layout horizontal (Tablet/Desktop sin feature) */***REMOVED***
+          ***REMOVED***/* Horizontal layout (Tablet/Desktop without feature) */***REMOVED***
           <div className=***REMOVED***`$***REMOVED***isFeatureVisible ? 'hidden' : 'hidden sm:flex'***REMOVED*** items-center justify-between`***REMOVED***>
             <div>
               <h1 className="text-2xl font-bold text-gray-800">
-                ***REMOVED***getSaludo()***REMOVED*** ***REMOVED***userName && `$***REMOVED***userName***REMOVED*** `***REMOVED******REMOVED***userEmoji***REMOVED***
+                ***REMOVED***getGreeting()***REMOVED*** ***REMOVED***userName && `$***REMOVED***userName***REMOVED*** `***REMOVED******REMOVED***userEmoji***REMOVED***
               </h1>
               <p className="text-gray-600 mt-1">
-                Acá tienes un resumen<br />
-                de tu actividad
+                Here is a summary<br />
+                of your activity
               </p>
             </div>
             <div className="text-right">
-              <p className="text-sm text-gray-500">Ganado total</p>
+              <p className="text-sm text-gray-500">Total earned</p>
               <p 
                 className="text-2xl font-bold"
                 style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
               >
-                ***REMOVED***formatCurrency(totalGanado)***REMOVED***
+                ***REMOVED***formatCurrency(totalEarnings)***REMOVED***
               </p>
             </div>
           </div>

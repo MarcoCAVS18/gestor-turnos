@@ -5,7 +5,7 @@ import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-d
 import ***REMOVED*** confirmPasswordReset ***REMOVED*** from 'firebase/auth';
 import ***REMOVED*** auth ***REMOVED*** from '../../services/firebase';
 
-// Nueva importación estructurada
+// New structured import
 import Button from '../../components/ui/Button';
 import Flex from '../../components/ui/Flex';
 import Logo from '../../components/icons/Logo';
@@ -34,7 +34,7 @@ const ResetPassword = () => ***REMOVED***
   
   useEffect(() => ***REMOVED***
     if (!oobCode) ***REMOVED***
-      setError('Enlace inválido o expirado. Por favor, solicita un nuevo enlace de recuperación.');
+      setError('Invalid or expired link. Please request a new recovery link.');
     ***REMOVED***
   ***REMOVED***, [oobCode]);
   
@@ -68,11 +68,11 @@ const ResetPassword = () => ***REMOVED***
     e.preventDefault();
     
     if (!passwordStrength.isValid) ***REMOVED***
-      return setError('La contraseña no cumple con los requisitos mínimos.');
+      return setError('Password does not meet minimum requirements.');
     ***REMOVED***
     
     if (!passwordsMatch) ***REMOVED***
-      return setError('Las contraseñas no coinciden.');
+      return setError('Passwords do not match.');
     ***REMOVED***
     
     try ***REMOVED***
@@ -86,13 +86,13 @@ const ResetPassword = () => ***REMOVED***
         navigate('/login', ***REMOVED*** state: ***REMOVED*** passwordReset: true ***REMOVED*** ***REMOVED***);
       ***REMOVED***, 3000);
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al restablecer contraseña:', error);
+      console.error('Error resetting password:', error);
       if (error.code === 'auth/expired-action-code') ***REMOVED***
-        setError('El enlace ha expirado. Por favor, solicita un nuevo enlace de recuperación.');
+        setError('The link has expired. Please request a new recovery link.');
       ***REMOVED*** else if (error.code === 'auth/invalid-action-code') ***REMOVED***
-        setError('El enlace es inválido. Por favor, solicita un nuevo enlace de recuperación.');
+        setError('The link is invalid. Please request a new recovery link.');
       ***REMOVED*** else ***REMOVED***
-        setError('Error al restablecer tu contraseña. Por favor, inténtalo de nuevo.');
+        setError('Error resetting your password. Please try again.');
       ***REMOVED***
       setLoading(false);
     ***REMOVED***
@@ -110,16 +110,16 @@ const ResetPassword = () => ***REMOVED***
           className="absolute object-cover w-full h-full"
         >
           <source src="/assets/videos/sample_0.mp4" type="video/mp4" />
-          Tu navegador no soporta videos.
+          Your browser does not support videos.
         </video>
       </div>
       
       <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-12 overflow-y-auto">
         <Logo />
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">
-          <h1 className="text-2xl font-bold text-center mb-2">Crear nueva contraseña</h1>
+          <h1 className="text-2xl font-bold text-center mb-2">Create new password</h1>
           <p className="text-center text-gray-600 mb-6">
-            Ingresa y confirma tu nueva contraseña.
+            Enter and confirm your new password.
           </p>
           
           ***REMOVED***error && (
@@ -130,14 +130,14 @@ const ResetPassword = () => ***REMOVED***
           
           ***REMOVED***success && (
             <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md text-sm">
-              ¡Tu contraseña ha sido restablecida con éxito! Serás redirigido en unos segundos...
+              Your password has been successfully reset! You will be redirected in a few seconds...
             </div>
           )***REMOVED***
           
           ***REMOVED***!success && (
             <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className="space-y-4">
               <div>
-                <label className="block text-gray-700 mb-2">Nueva contraseña</label>
+                <label className="block text-gray-700 mb-2">New password</label>
                 <input
                   type="password"
                   value=***REMOVED***password***REMOVED***
@@ -145,29 +145,29 @@ const ResetPassword = () => ***REMOVED***
                   className=***REMOVED***`w-full p-2 border rounded focus:ring-pink-500 focus:border-pink-500 $***REMOVED***
                     password && !passwordStrength.isValid ? 'border-red-500' : 'border-gray-300'
                   ***REMOVED***`***REMOVED***
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Minimum 6 characters"
                   required
                 />
                 ***REMOVED***password && (
                   <div className="mt-2 text-xs space-y-1">
                     <p className=***REMOVED***passwordStrength.hasMinLength ? 'text-green-600' : 'text-gray-500'***REMOVED***>
-                      ✓ Mínimo 6 caracteres
+                      ✓ Minimum 6 characters
                     </p>
                     <p className=***REMOVED***passwordStrength.hasUpperCase ? 'text-green-600' : 'text-gray-500'***REMOVED***>
-                      ✓ Al menos una letra mayúscula
+                      ✓ At least one uppercase letter
                     </p>
                     <p className=***REMOVED***passwordStrength.hasLowerCase ? 'text-green-600' : 'text-gray-500'***REMOVED***>
-                      ✓ Al menos una letra minúscula
+                      ✓ At least one lowercase letter
                     </p>
                     <p className=***REMOVED***passwordStrength.hasNumber ? 'text-green-600' : 'text-gray-500'***REMOVED***>
-                      ✓ Al menos un número
+                      ✓ At least one number
                     </p>
                   </div>
                 )***REMOVED***
               </div>
               
               <div>
-                <label className="block text-gray-700 mb-2">Confirmar contraseña</label>
+                <label className="block text-gray-700 mb-2">Confirm password</label>
                 <input
                   type="password"
                   value=***REMOVED***confirmPassword***REMOVED***
@@ -175,12 +175,12 @@ const ResetPassword = () => ***REMOVED***
                   className=***REMOVED***`w-full p-2 border rounded focus:ring-pink-500 focus:border-pink-500 $***REMOVED***
                     confirmPassword && !passwordsMatch ? 'border-red-500' : 'border-gray-300'
                   ***REMOVED***`***REMOVED***
-                  placeholder="Repite tu contraseña"
+                  placeholder="Repeat your password"
                   required
                 />
                 ***REMOVED***confirmPassword && !passwordsMatch && (
                   <p className="mt-1 text-xs text-red-500">
-                    Las contraseñas no coinciden
+                    Passwords do not match
                   </p>
                 )***REMOVED***
               </div>
@@ -191,7 +191,7 @@ const ResetPassword = () => ***REMOVED***
                 loading=***REMOVED***loading***REMOVED***
                 className="w-full"
               >
-                Confirmar nueva contraseña
+                Confirm new password
               </Button>
             </form>
           )***REMOVED***
@@ -203,7 +203,7 @@ const ResetPassword = () => ***REMOVED***
               variant="ghost"
               className="text-sm text-pink-600 hover:text-pink-800"
             >
-              Volver a inicio de sesión
+              Back to login
             </Button>
           </div>
         </div>

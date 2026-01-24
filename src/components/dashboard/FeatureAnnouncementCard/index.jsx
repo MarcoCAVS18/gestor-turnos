@@ -29,19 +29,19 @@ const FeatureAnnouncementCard = (***REMOVED*** onClick, className ***REMOVED***)
       decorativeIcon=***REMOVED***Timer***REMOVED***
     >
       <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between gap-6 h-full">
-        ***REMOVED***/* Lado Izquierdo: Contenido de texto */***REMOVED***
+        ***REMOVED***/* Left Side: Text Content */***REMOVED***
         <div className="flex-1 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 border border-white/20 backdrop-blur-md text-white text-xs font-bold tracking-wide uppercase shadow-sm">
             <Sparkles size=***REMOVED***12***REMOVED*** className="text-yellow-300" />
-            <span>Nueva Funcionalidad</span>
+            <span>New Feature</span>
           </div>
 
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-2">
-              Modo Live
+              Live Mode
             </h2>
             <p className="text-white text-sm sm:text-base leading-relaxed max-w-md opacity-90">
-              Control total de tus turnos en tiempo real. Ficha, pausa y monitorea tus ganancias al instante.
+              Full control of your shifts in real time. Clock in, pause, and monitor your earnings instantly.
             </p>
           </div>
 
@@ -56,12 +56,12 @@ const FeatureAnnouncementCard = (***REMOVED*** onClick, className ***REMOVED***)
                 themeColor=***REMOVED***colors.primary***REMOVED***
                 icon=***REMOVED***ArrowRight***REMOVED***
             >
-              Probar ahora
+              Try now
             </Button>
           </div>
         </div>
 
-        ***REMOVED***/* Lado Derecho: Ilustración / Iconografía (Ahora más sutil) */***REMOVED***
+        ***REMOVED***/* Right Side: Illustration / Iconography (Now more subtle) */***REMOVED***
         <div className="hidden sm:flex flex-col items-center justify-center relative opacity-50 group-hover/card:opacity-100 transition-opacity">
             <div 
                 className="absolute -bottom-2 -left-4 w-12 h-12 rounded-xl backdrop-blur-sm border border-white/20 flex items-center justify-center transform -rotate-12 shadow-lg animate-pulse"

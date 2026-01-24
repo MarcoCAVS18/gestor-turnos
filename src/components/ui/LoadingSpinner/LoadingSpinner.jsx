@@ -2,7 +2,6 @@
 import React from 'react';
 
 /**
- * Un componente de spinner de carga reutilizable.
  * @param ***REMOVED***object***REMOVED*** props
  * @param ***REMOVED***string***REMOVED*** props.size - Clases de Tailwind para el tamaño (e.g., "h-12 w-12"). Por defecto es "h-6 w-6".
  * @param ***REMOVED***string***REMOVED*** props.color - Clases de Tailwind para el color del borde (e.g., "border-pink-500").
@@ -15,7 +14,7 @@ const LoadingSpinner = (***REMOVED*** size = 'h-6 w-6', color = 'border-gray-900
       className=***REMOVED***`animate-spin rounded-full border-b-2 $***REMOVED***size***REMOVED*** $***REMOVED***color***REMOVED*** $***REMOVED***className***REMOVED***`***REMOVED***
       style=***REMOVED***style***REMOVED***
       role="status"
-      aria-label="Cargando..."
+      aria-label="Loading..."
     />
   );
 ***REMOVED***;

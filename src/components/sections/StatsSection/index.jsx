@@ -7,45 +7,45 @@ import WeeklyStatsGrid from '../../stats/WeeklyStatsGrid';
 import WorkDistributionChart from '../../stats/WorkDistributionChart';
 import DailyBreakdownCard from '../../stats/DailyBreakdownCard';
 
-const StatsSection = (***REMOVED*** weekStatsData = ***REMOVED******REMOVED***, trabajos = [] ***REMOVED***) => ***REMOVED***
+const StatsSection = (***REMOVED*** weekStatsData = ***REMOVED******REMOVED***, works = [] ***REMOVED***) => ***REMOVED***
   const ***REMOVED***
-    semanaActual = 0,
-    horasSemanales = 0,
-    gananciaTotal = 0,
-    distribucionTrabajos = [],
-    turnosPorDia = ***REMOVED******REMOVED***,
-    promedioHorasPorDia = 0,
-    trabajoMasFrecuente = null
+    currentWeek = 0,
+    weeklyHours = 0,
+    totalEarnings = 0,
+    workDistribution = [],
+    shiftsPerDay = ***REMOVED******REMOVED***,
+    averageHoursPerDay = 0,
+    mostFrequentWork = null
   ***REMOVED*** = weekStatsData;
 
   return (
     <div className="space-y-6">
-      <WeekNavigator semanaActual=***REMOVED***semanaActual***REMOVED*** />
+      <WeekNavigator currentWeek=***REMOVED***currentWeek***REMOVED*** />
       
-      ***REMOVED***/* Barra de progreso */***REMOVED***
+      ***REMOVED***/* Progress bar */***REMOVED***
       <StatsProgressBar 
-        horasSemanales=***REMOVED***horasSemanales***REMOVED***
-        metaHoras=***REMOVED***40***REMOVED***
-        gananciaTotal=***REMOVED***gananciaTotal***REMOVED***
+        weeklyHours=***REMOVED***weeklyHours***REMOVED***
+        hoursGoal=***REMOVED***40***REMOVED***
+        totalEarnings=***REMOVED***totalEarnings***REMOVED***
       />
       
-      ***REMOVED***/* Grid de estadísticas semanales */***REMOVED***
+      ***REMOVED***/* Weekly stats grid */***REMOVED***
       <WeeklyStatsGrid 
-        horasSemanales=***REMOVED***horasSemanales***REMOVED***
-        gananciaTotal=***REMOVED***gananciaTotal***REMOVED***
-        promedioHorasPorDia=***REMOVED***promedioHorasPorDia***REMOVED***
-        trabajoMasFrecuente=***REMOVED***trabajoMasFrecuente***REMOVED***
+        weeklyHours=***REMOVED***weeklyHours***REMOVED***
+        totalEarnings=***REMOVED***totalEarnings***REMOVED***
+        averageHoursPerDay=***REMOVED***averageHoursPerDay***REMOVED***
+        mostFrequentWork=***REMOVED***mostFrequentWork***REMOVED***
       />
       
-      ***REMOVED***/* Gráfico de distribución */***REMOVED***
+      ***REMOVED***/* Distribution chart */***REMOVED***
       <WorkDistributionChart 
-        distribucionTrabajos=***REMOVED***distribucionTrabajos***REMOVED***
+        workDistribution=***REMOVED***workDistribution***REMOVED***
       />
       
-      ***REMOVED***/* Desglose diario */***REMOVED***
+      ***REMOVED***/* Daily breakdown */***REMOVED***
       <DailyBreakdownCard 
-        turnosPorDia=***REMOVED***turnosPorDia***REMOVED***
-        trabajos=***REMOVED***trabajos***REMOVED***
+        shiftsPerDay=***REMOVED***shiftsPerDay***REMOVED***
+        works=***REMOVED***works***REMOVED***
       />
     </div>
   );

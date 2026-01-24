@@ -17,9 +17,9 @@ import WorkAvatar from '../../../work/WorkAvatar';
 import ***REMOVED*** DELIVERY_VEHICLES, DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../../../../constants/delivery';
 
 const BaseShiftCard = (***REMOVED***
-  turno,
-  trabajo,
-  fecha,
+  shift,
+  job,
+  date,
   type = 'traditional', // 'traditional' | 'delivery'
   onEdit,
   onDelete,
@@ -34,26 +34,26 @@ const BaseShiftCard = (***REMOVED***
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const isMobile = useIsMobile();
-  // Referencia para el ancho completo del popover
+  // Reference for the full width of the popover
   const cardWrapperRef = useRef(null);
 
-  if (!turno) ***REMOVED***
+  if (!shift) ***REMOVED***
     return (
       <Card variant="outlined" className="opacity-50">
         <div className="text-center text-gray-500">
-          <p className="text-sm">Turno no encontrado</p>
+          <p className="text-sm">Shift not found</p>
         </div>
       </Card>
     );
   ***REMOVED***
 
-  if (!trabajo) ***REMOVED***
+  if (!job) ***REMOVED***
     return (
       <Card variant="outlined" className="opacity-50">
         <div className="text-center text-gray-500">
-          <p className="text-sm">Trabajo eliminado</p>
+          <p className="text-sm">Job deleted</p>
           <p className="text-xs text-gray-400 mt-1">
-            ***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***
+            ***REMOVED***shift.startTime***REMOVED*** - ***REMOVED***shift.endTime***REMOVED***
           </p>
         </div>
       </Card>
@@ -76,35 +76,35 @@ const BaseShiftCard = (***REMOVED***
   const actions = [
     ***REMOVED***
       icon: currentConfig.editIcon,
-      label: 'Editar',
-      onClick: () => onEdit?.(turno)
+      label: 'Edit',
+      onClick: () => onEdit?.(shift)
     ***REMOVED***,
     ***REMOVED***
       icon: Trash2,
-      label: 'Eliminar',
-      onClick: () => onDelete?.(turno),
+      label: 'Delete',
+      onClick: () => onDelete?.(shift),
       variant: 'danger'
     ***REMOVED***
   ];
 
   // --- Avatar Logic ---
   let iconName = null;
-  let avatarColor = trabajo.color || trabajo.colorAvatar || currentConfig.defaultColor;
+  let avatarColor = job.color || job.avatarColor || currentConfig.defaultColor;
 
   if (type === 'delivery') ***REMOVED***
-    // El color se basa en la plataforma
-    if (trabajo.plataforma) ***REMOVED***
-      const platformName = trabajo.plataforma.toLowerCase();
-      const platformData = DELIVERY_PLATFORMS_AUSTRALIA.find(p => p.nombre.toLowerCase() === platformName);
+    // The color is based on the platform
+    if (job.platform) ***REMOVED***
+      const platformName = job.platform.toLowerCase();
+      const platformData = DELIVERY_PLATFORMS_AUSTRALIA.find(p => p.name.toLowerCase() === platformName);
       if (platformData) ***REMOVED***
         avatarColor = platformData.color;
       ***REMOVED***
     ***REMOVED***
     
-    // El ícono se basa en el vehículo del trabajo
-    if (trabajo.vehiculo) ***REMOVED***
-      const vehicleName = trabajo.vehiculo.toLowerCase();
-      const vehicleData = DELIVERY_VEHICLES.find(v => v.id === vehicleName || v.nombre.toLowerCase() === vehicleName);
+    // The icon is based on the job's vehicle
+    if (job.vehicle) ***REMOVED***
+      const vehicleName = job.vehicle.toLowerCase();
+      const vehicleData = DELIVERY_VEHICLES.find(v => v.id === vehicleName || v.name.toLowerCase() === vehicleName);
       if (vehicleData) ***REMOVED***
         iconName = vehicleData.id;
       ***REMOVED*** else ***REMOVED***
@@ -120,7 +120,7 @@ const BaseShiftCard = (***REMOVED***
     
     return (
       <Flex variant="between" className="pt-2 border-t border-gray-100 mt-2">
-        <span className="text-sm text-gray-500 font-medium">***REMOVED***earningLabel || 'Ganancia'***REMOVED***</span>
+        <span className="text-sm text-gray-500 font-medium">***REMOVED***earningLabel || 'Earning'***REMOVED***</span>
         <span className="text-lg font-bold text-green-600">
           ***REMOVED***formatCurrency(earningValue, currencySymbol)***REMOVED***
         </span>
@@ -137,12 +137,12 @@ const BaseShiftCard = (***REMOVED***
       shadow=***REMOVED***compact ? 'sm' : 'md'***REMOVED***
     >
       ***REMOVED***isMobile ? (
-        // ============= VISTA MOBILE =============
+        // ============= MOBILE VIEW =============
         <div className="space-y-3">
           <Flex variant="start-between">
             <Flex variant="start" className="items-center space-x-3 flex-1 min-w-0">
               <WorkAvatar
-                nombre=***REMOVED***trabajo.nombre***REMOVED***
+                name=***REMOVED***job.name***REMOVED***
                 color=***REMOVED***avatarColor***REMOVED***
                 iconName=***REMOVED***iconName***REMOVED***
                 size="sm"
@@ -150,16 +150,16 @@ const BaseShiftCard = (***REMOVED***
 
               <Flex className="gap-2 min-w-0 overflow-hidden">
                 <h3 className="font-semibold text-gray-800 truncate text-base">
-                  ***REMOVED***trabajo.nombre***REMOVED***
+                  ***REMOVED***job.name***REMOVED***
                 </h3>
-                <ShiftTypeBadge turno=***REMOVED***turno***REMOVED*** size="sm" />
+                <ShiftTypeBadge shift=***REMOVED***shift***REMOVED*** size="sm" />
               </Flex>
             </Flex>
 
             <div className="flex items-center gap-2">
-                ***REMOVED***/* Popover con nuevo diseño */***REMOVED***
+                ***REMOVED***/* Popover with new design */***REMOVED***
                 <ShiftDetailsPopover 
-                    turno=***REMOVED***turno***REMOVED*** 
+                    shift=***REMOVED***shift***REMOVED*** 
                     shiftData=***REMOVED***shiftData***REMOVED*** 
                     anchorRef=***REMOVED***cardWrapperRef***REMOVED***
                     position="top"
@@ -176,7 +176,7 @@ const BaseShiftCard = (***REMOVED***
             <Flex variant="start">
               <Flex variant="start" className="text-sm text-gray-600">
                 <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
-                <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
+                <span>***REMOVED***shift.startTime***REMOVED*** - ***REMOVED***shift.endTime***REMOVED***</span>
               </Flex>
               <div className="text-sm text-gray-600 ml-2 border-l pl-2 border-gray-300">
                 ***REMOVED***shiftData?.hours?.toFixed(1) || '0.0'***REMOVED***h
@@ -184,34 +184,34 @@ const BaseShiftCard = (***REMOVED***
 
             </Flex>
 
-            ***REMOVED***/* RESTAURADO: Badges y fecha en Mobile */***REMOVED***
+            ***REMOVED***/* RESTORED: Badges and date in Mobile */***REMOVED***
             <Flex variant="start" className="gap-2">
-              ***REMOVED***fecha && (
+              ***REMOVED***date && (
                 <Badge variant="default" size="sm">
-                  ***REMOVED***formatRelativeDate(fecha)***REMOVED***
+                  ***REMOVED***formatRelativeDate(date)***REMOVED***
                 </Badge>
               )***REMOVED***
               ***REMOVED***children?.mobileBadge***REMOVED***
               
-              ***REMOVED***turno.cruzaMedianoche && (
+              ***REMOVED***shift.crossesMidnight && (
                 <span className="text-blue-600 text-xs ml-auto">🌙</span>
               )***REMOVED***
             </Flex>
 
-            ***REMOVED***/* RESTAURADO: Stats adicionales en Mobile (ej. km, pedidos) */***REMOVED***
+            ***REMOVED***/* RESTORED: Additional stats in Mobile (e.g. km, orders) */***REMOVED***
             ***REMOVED***children?.mobileStats***REMOVED***
             
             ***REMOVED***renderEarningFooter()***REMOVED***
           </div>
         </div>
       ) : (
-        // ============= VISTA DESKTOP =============
+        // ============= DESKTOP VIEW =============
         <div className="space-y-3">
           <Flex variant="start-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-3">
                 <WorkAvatar
-                  nombre=***REMOVED***trabajo.nombre***REMOVED***
+                  name=***REMOVED***job.name***REMOVED***
                   color=***REMOVED***avatarColor***REMOVED***
                   iconName=***REMOVED***iconName***REMOVED***
                   size="md"
@@ -220,33 +220,33 @@ const BaseShiftCard = (***REMOVED***
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
                     <h3 className="font-semibold text-gray-800 truncate min-w-0">
-                      ***REMOVED***trabajo.nombre***REMOVED***
+                      ***REMOVED***job.name***REMOVED***
                     </h3>
-                    <ShiftTypeBadge turno=***REMOVED***turno***REMOVED*** size="sm" />
+                    <ShiftTypeBadge shift=***REMOVED***shift***REMOVED*** size="sm" />
                   </div>
 
                   <Flex variant="start" className="text-sm text-gray-600 gap-3 flex-wrap">
                     <Flex variant="center">
                       <Clock size=***REMOVED***14***REMOVED*** className="mr-1.5" />
-                      <span>***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***</span>
+                      <span>***REMOVED***shift.startTime***REMOVED*** - ***REMOVED***shift.endTime***REMOVED***</span>
                     </Flex>
                     <span className="text-gray-300">•</span>
                     <span>***REMOVED***shiftData?.hours?.toFixed(1) || '0.0'***REMOVED***h</span>
                     
-                    ***REMOVED***/* RESTAURADO: Fecha y Badges en Desktop */***REMOVED***
-                    ***REMOVED***fecha && (
+                    ***REMOVED***/* RESTORED: Date and Badges in Desktop */***REMOVED***
+                    ***REMOVED***date && (
                       <>
                         <span className="text-gray-300">•</span>
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-gray-500">
-                            ***REMOVED***formatRelativeDate(fecha)***REMOVED***
+                            ***REMOVED***formatRelativeDate(date)***REMOVED***
                           </span>
                           ***REMOVED***children?.desktopBadge***REMOVED***
                         </div>
                       </>
                     )***REMOVED***
 
-                    ***REMOVED***turno.cruzaMedianoche && (
+                    ***REMOVED***shift.crossesMidnight && (
                       <>
                         <span className="text-gray-300">•</span>
                         <span className="text-blue-600 text-xs">🌙</span>
@@ -256,16 +256,16 @@ const BaseShiftCard = (***REMOVED***
                 </div>
               </div>
 
-              ***REMOVED***/* RESTAURADO: Stats adicionales en Desktop */***REMOVED***
+              ***REMOVED***/* RESTORED: Additional stats in Desktop */***REMOVED***
               ***REMOVED***children?.desktopStats***REMOVED***
               
               ***REMOVED***renderEarningFooter()***REMOVED***
             </div>
 
             <Flex variant="center" className="gap-2 ml-4 self-start">
-              ***REMOVED***/* Popover con nuevo diseño */***REMOVED***
+              ***REMOVED***/* Popover with new design */***REMOVED***
               <ShiftDetailsPopover 
-                  turno=***REMOVED***turno***REMOVED*** 
+                  shift=***REMOVED***shift***REMOVED*** 
                   shiftData=***REMOVED***shiftData***REMOVED*** 
                   anchorRef=***REMOVED***cardWrapperRef***REMOVED***
                   position="top"

@@ -1,5 +1,5 @@
 // src/components/modals/base/BaseModal/index.jsx
-// Componente base unificado para todos los modales
+// Unified base component for all modals
 
 import React, ***REMOVED*** useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
@@ -19,16 +19,16 @@ const BaseModal = (***REMOVED***
   children,
   showActions = false,
   onCancel,
-  saveText = 'Guardar',
+  saveText = 'Save',
   saveLoadingText,
-  cancelText = 'Cancelar',
+  cancelText = 'Cancel',
   formId,
-  isSaveDisabled = false, // Nueva prop
+  isSaveDisabled = false, 
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const isMobile = useIsMobile();
 
-  // Prevenir scroll del body cuando el modal está abierto
+  // Prevent body scroll when modal is open
   useEffect(() => ***REMOVED***
     if (isOpen) ***REMOVED***
       document.body.style.overflow = 'hidden';
@@ -43,22 +43,19 @@ const BaseModal = (***REMOVED***
 
   if (!isOpen) return null;
 
-  // Generar texto de carga por defecto
+  // Generate loading text by default
   const generateLoadingText = (text) => ***REMOVED***
-    if (text.endsWith('ar')) ***REMOVED***
-      return text.slice(0, -2) + 'ando...';
+    if (text.endsWith('ing')) ***REMOVED***
+      return text + '...';
     ***REMOVED***
-    if (text.endsWith('er') || text.endsWith('ir')) ***REMOVED***
-      return text.slice(0, -2) + 'iendo...';
-    ***REMOVED***
-    // Casos especiales
-    if (text.toLowerCase().includes('crear')) return 'Creando...';
+    // Special cases
+    if (text.toLowerCase().includes('create')) return 'Creating...';
     return `$***REMOVED***text***REMOVED***...`;
   ***REMOVED***;
 
   const finalSaveLoadingText = saveLoadingText || generateLoadingText(saveText);
 
-  // Configurar tamaño máximo según prop
+  // Set max width according to prop
   const maxWidthClasses = ***REMOVED***
     sm: 'max-w-sm',
     md: 'max-w-md',
@@ -112,7 +109,7 @@ const BaseModal = (***REMOVED***
               title
             )***REMOVED***
 
-            ***REMOVED***/* Subtitle opcional */***REMOVED***
+            ***REMOVED***/* Optional subtitle */***REMOVED***
             ***REMOVED***subtitle && (
               <p className="text-sm font-normal text-gray-600 mt-1">
                 ***REMOVED***subtitle***REMOVED***
@@ -139,7 +136,7 @@ const BaseModal = (***REMOVED***
           </button>
         </Flex>
 
-        ***REMOVED***/* Content con scroll optimizado */***REMOVED***
+        ***REMOVED***/* Content with optimized scroll */***REMOVED***
         <div className=***REMOVED***`
           $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4 overflow-y-auto'***REMOVED***
         `***REMOVED***>
@@ -176,7 +173,7 @@ const BaseModal = (***REMOVED***
                 form=***REMOVED***formId***REMOVED***
                 loading=***REMOVED***loading***REMOVED***
                 loadingText=***REMOVED***finalSaveLoadingText***REMOVED***
-                disabled=***REMOVED***loading || isSaveDisabled***REMOVED*** // Usar la nueva prop
+                disabled=***REMOVED***loading || isSaveDisabled***REMOVED*** // Use the new prop
                 isMobile=***REMOVED***isMobile***REMOVED***
                 className=***REMOVED***isMobile ? '' : 'flex-none'***REMOVED***
               >

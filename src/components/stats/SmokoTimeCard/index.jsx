@@ -1,4 +1,5 @@
 // src/components/stats/SmokoTimeCard/index.jsx
+
 import React from 'react';
 import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
 import ***REMOVED*** Clock ***REMOVED*** from 'lucide-react';
@@ -17,10 +18,10 @@ const SmokoTimeCard = (***REMOVED*** smokoMinutes, smokoEnabled, loading, themat
     <div onClick=***REMOVED***handleClick***REMOVED*** className=***REMOVED***`$***REMOVED***className***REMOVED*** cursor-pointer`***REMOVED***>
       <BaseStatsCard
         icon=***REMOVED***Clock***REMOVED***
-        title="Tiempo"
+        title="Time"
         loading=***REMOVED***loading***REMOVED***
         empty=***REMOVED***!smokoEnabled***REMOVED***
-        emptyText="Los descansos no están activados."
+        emptyText="Breaks are not active."
       >
         <div className="text-center w-full">
           <div className="text-4xl font-bold">

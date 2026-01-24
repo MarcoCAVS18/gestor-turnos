@@ -1,4 +1,4 @@
-// src/components/dashboard/WeeklyStatsCard/index.jsx - REFACTORIZADO
+// src/components/dashboard/WeeklyStatsCard/index.jsx
 
 import React from 'react';
 import ***REMOVED*** DollarSign, Clock, Target, Activity ***REMOVED*** from 'lucide-react';
@@ -6,39 +6,39 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import Flex from '../../ui/Flex';
 
-const WeeklyStatsGrid = (***REMOVED*** datos = ***REMOVED******REMOVED*** ***REMOVED***) => ***REMOVED***
+const WeeklyStatsGrid = (***REMOVED*** data = ***REMOVED******REMOVED*** ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
 
-  const datosSeguro = ***REMOVED***
-    totalGanado: (datos && typeof datos.totalGanado === 'number' && !isNaN(datos.totalGanado)) ? datos.totalGanado : 0,
-    horasTrabajadas: (datos && typeof datos.horasTrabajadas === 'number') ? datos.horasTrabajadas : 0,
-    diasTrabajados: (datos && typeof datos.diasTrabajados === 'number') ? datos.diasTrabajados : 0,
-    totalTurnos: (datos && typeof datos.totalTurnos === 'number') ? datos.totalTurnos : 0
+  const safeData = ***REMOVED***
+    totalEarnings: (data && typeof data.totalEarnings === 'number' && !isNaN(data.totalEarnings)) ? data.totalEarnings : 0,
+    hoursWorked: (data && typeof data.hoursWorked === 'number') ? data.hoursWorked : 0,
+    daysWorked: (data && typeof data.daysWorked === 'number') ? data.daysWorked : 0,
+    totalShifts: (data && typeof data.totalShifts === 'number') ? data.totalShifts : 0
   ***REMOVED***;
 
   const stats = [
     ***REMOVED***
       icon: DollarSign,
-      label: 'Total ganado',
-      value: formatCurrency(datosSeguro.totalGanado),
+      label: 'Total earned',
+      value: formatCurrency(safeData.totalEarnings),
       color: colors.primary
     ***REMOVED***,
     ***REMOVED***
       icon: Clock,
-      label: 'Horas trabajadas',
-      value: `$***REMOVED***datosSeguro.horasTrabajadas.toFixed(1)***REMOVED***h`,
+      label: 'Hours worked',
+      value: `$***REMOVED***safeData.hoursWorked.toFixed(1)***REMOVED***h`,
       color: colors.primary
     ***REMOVED***,
     ***REMOVED***
       icon: Target,
-      label: 'Total turnos',
-      value: datosSeguro.totalTurnos,
+      label: 'Total shifts',
+      value: safeData.totalShifts,
       color: colors.primary
     ***REMOVED***,
     ***REMOVED***
       icon: Activity,
-      label: 'Días trabajados',
-      value: `$***REMOVED***datosSeguro.diasTrabajados***REMOVED***/7`,
+      label: 'Days worked',
+      value: `$***REMOVED***safeData.daysWorked***REMOVED***/7`,
       color: colors.primary
     ***REMOVED***
   ];

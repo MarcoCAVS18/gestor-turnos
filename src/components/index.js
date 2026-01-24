@@ -18,8 +18,8 @@ export ***REMOVED*** default as LoadingWrapper ***REMOVED*** from './layout/Load
 
 // Card Components
 export ***REMOVED*** default as StatCard ***REMOVED*** from './cards/StatCard';
-export ***REMOVED*** default as WorkCard ***REMOVED*** from './cards/work/TarjetaTrabajo';
-export ***REMOVED*** default as ShiftCard ***REMOVED*** from './cards/shift/TarjetaTurno';
+export ***REMOVED*** default as WorkCard ***REMOVED*** from './cards/work/WorkCard';
+export ***REMOVED*** default as ShiftCard ***REMOVED*** from './cards/shift/ShiftCard';
 export ***REMOVED*** default as WorkDetailsCard ***REMOVED*** from './forms/TrabajoCard';
 
 // Work Components
@@ -42,7 +42,7 @@ export ***REMOVED*** default as ShiftModal ***REMOVED*** from './modals/shift/Mo
 export ***REMOVED*** default as DeleteAlert ***REMOVED*** from './alerts/AlertaEliminacion';
 
 // Calendar Components
-export ***REMOVED*** default as Calendario ***REMOVED*** from './calendar/Calendario';
+export ***REMOVED*** default as Calendario ***REMOVED*** from './calendar/Calendar';
 export ***REMOVED*** default as CalendarDaySummary ***REMOVED*** from './calendar/CalendarDaySummary';
 
 // Section Components

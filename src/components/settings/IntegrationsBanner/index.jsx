@@ -29,20 +29,20 @@ const IntegrationsBanner = (***REMOVED*** className ***REMOVED***) => ***REMOVED
       decorativeIcon=***REMOVED***Share2***REMOVED***
     >
       <div className="p-6 flex items-center justify-between gap-4">
-        ***REMOVED***/* Contenido */***REMOVED***
+        ***REMOVED***/* Content */***REMOVED***
         <div className="flex-1">
           <div className="flex items-center gap-2">
             <Puzzle size=***REMOVED***20***REMOVED*** className="text-white/80" />
             <h3 className="text-lg font-bold text-white">
-              Integraciones
+              Integrations
             </h3>
           </div>
           <p className="text-sm text-white/80 mt-1 pl-8">
-            Configura alertas, Google Calendar y más.
+            Set up alerts, Google Calendar and more.
           </p>
         </div>
 
-        ***REMOVED***/* Botón de Acción */***REMOVED***
+        ***REMOVED***/* Action Button */***REMOVED***
         <div className="flex-shrink-0">
           <Button
             variant="ghost-animated"
@@ -50,7 +50,7 @@ const IntegrationsBanner = (***REMOVED*** className ***REMOVED***) => ***REMOVED
             textColor="white"
             className="hover:bg-white/10"
           >
-            Configurar
+            Set up
           </Button>
         </div>
       </div>

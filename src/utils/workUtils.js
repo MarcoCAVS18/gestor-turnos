@@ -1,14 +1,16 @@
-export const generateWorkDetails = (trabajo) => ***REMOVED***
-  if (!trabajo) return [];
+// src/utils/workUtils.js
+
+export const generateWorkDetails = (work) => ***REMOVED***
+  if (!work) return [];
   
-  const detalles = [trabajo.nombre];
+  const details = [work.name];
   
-  if (trabajo.tipo === 'delivery') ***REMOVED***
-    if (trabajo.plataforma) detalles.push(`Plataforma: $***REMOVED***trabajo.plataforma***REMOVED***`);
-    if (trabajo.vehiculo) detalles.push(`Vehículo: $***REMOVED***trabajo.vehiculo***REMOVED***`);
+  if (work.type === 'delivery') ***REMOVED***
+    if (work.platform) details.push(`Platform: $***REMOVED***work.platform***REMOVED***`);
+    if (work.vehicle) details.push(`Vehicle: $***REMOVED***work.vehicle***REMOVED***`);
   ***REMOVED*** else ***REMOVED***
-    if (trabajo.tarifaBase) detalles.push(`Tarifa: $***REMOVED***trabajo.tarifaBase***REMOVED***`);
+    if (work.baseRate) details.push(`Rate: $***REMOVED***work.baseRate***REMOVED***`);
   ***REMOVED***
   
-  return detalles;
+  return details;
 ***REMOVED***;

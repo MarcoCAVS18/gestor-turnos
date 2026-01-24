@@ -1,0 +1,31 @@
+@keyframes downloadAnimation ***REMOVED***
+  0% ***REMOVED***
+    opacity: 1;
+    transform: translateY(0);
+  ***REMOVED***
+  100% ***REMOVED***
+    opacity: 0;
+    transform: translateY(30px);
+  ***REMOVED***
+***REMOVED***
+
+@keyframes spin ***REMOVED***
+  to ***REMOVED***
+    transform: rotate(360deg);
+  ***REMOVED***
+***REMOVED***
+
+@keyframes fadeIn ***REMOVED***
+  from ***REMOVED***
+    opacity: 0;
+    height: 0;
+  ***REMOVED***
+  to ***REMOVED***
+    opacity: 1;
+    height: auto;
+  ***REMOVED***
+***REMOVED***
+
+.animate-fadeIn ***REMOVED***
+  animation: fadeIn 0.3s ease-out;
+***REMOVED***

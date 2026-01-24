@@ -11,77 +11,76 @@ import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 import Button from '../../ui/Button'; 
 
-const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurnos ***REMOVED***) => ***REMOVED***
+const RecentActivityCard = (***REMOVED*** stats, allWorks, allShifts ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const navigate = useNavigate();
   const isMobile = useIsMobile(); 
 
-  // Definir límite de forma reactiva (mucho más limpio que el useEffect anterior)
-  const limite = isMobile ? 2 : 6;
+  const limit = isMobile ? 2 : 6;
 
-  // Obtener turnos recientes
-  const turnosRecientes = useMemo(() => ***REMOVED***
-    if (!Array.isArray(todosLosTurnos)) return [];
+  // Get recent shifts
+  const recentShifts = useMemo(() => ***REMOVED***
+    if (!Array.isArray(allShifts)) return [];
     
-    return todosLosTurnos
+    return allShifts
       .sort((a, b) => ***REMOVED***
-        const fechaA = new Date((a.fechaInicio || a.fecha) + 'T' + a.horaInicio);
-        const fechaB = new Date((b.fechaInicio || b.fecha) + 'T' + b.horaInicio);
-        return fechaB - fechaA;
+        const dateA = new Date((a.startTime || a.date) + 'T' + a.startTime);
+        const dateB = new Date((b.startTime || b.date) + 'T' + b.startTime);
+        return dateB - dateA;
       ***REMOVED***)
-      .slice(0, limite);
-  ***REMOVED***, [todosLosTurnos, limite]);
+      .slice(0, limit);
+  ***REMOVED***, [allShifts, limit]);
 
-  // Función para obtener trabajo
-  const getTrabajo = (trabajoId) => ***REMOVED***
-    return todosLosTrabajos?.find(t => t.id === trabajoId);
+  // Function to get work
+  const getWork = (workId) => ***REMOVED***
+    return allWorks?.find(t => t.id === workId);
   ***REMOVED***;
 
-  // Función para formatear fecha relativa
-  const formatearFechaRelativa = (fechaStr) => ***REMOVED***
+  // Function to format relative date
+  const formatRelativeDate = (dateStr) => ***REMOVED***
     try ***REMOVED***
-      const fecha = createSafeDate(fechaStr);
-      const hoy = new Date();
-      const ayer = new Date(hoy);
-      ayer.setDate(hoy.getDate() - 1);
+      const date = createSafeDate(dateStr);
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
 
-      if (fecha.toDateString() === hoy.toDateString()) return 'Hoy';
-      if (fecha.toDateString() === ayer.toDateString()) return 'Ayer';
+      if (date.toDateString() === today.toDateString()) return 'Today';
+      if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
 
-      return fecha.toLocaleDateString('es-ES', ***REMOVED***
+      return date.toLocaleDateString('en-US', ***REMOVED***
         day: 'numeric',
         month: 'short'
       ***REMOVED***);
     ***REMOVED*** catch (error) ***REMOVED***
-      return fechaStr;
+      return dateStr;
     ***REMOVED***
   ***REMOVED***;
 
-  // Calcular ganancia del turno
-  const calcularGananciaDisplay = (turno) => ***REMOVED***
-    if (turno.tipo === 'delivery') ***REMOVED***
-      return turno.gananciaTotal || 0;
+  // Calculate shift earnings
+  const calculateShiftEarnings = (shift) => ***REMOVED***
+    if (shift.type === 'delivery') ***REMOVED***
+      return shift.totalEarnings || 0;
     ***REMOVED***
     
-    const trabajo = getTrabajo(turno.trabajoId);
-    if (!trabajo) return 0;
+    const work = getWork(shift.workId);
+    if (!work) return 0;
     
-    const [horaIni, minIni] = turno.horaInicio.split(':').map(Number);
-    const [horaFin, minFin] = turno.horaFin.split(':').map(Number);
-    let horas = (horaFin + minFin/60) - (horaIni + minIni/60);
-    if (horas < 0) horas += 24;
+    const [startHour, startMin] = shift.startTime.split(':').map(Number);
+    const [endHour, endMin] = shift.endTime.split(':').map(Number);
+    let hours = (endHour + endMin/60) - (startHour + startMin/60);
+    if (hours < 0) hours += 24;
     
-    return horas * (trabajo.tarifaBase || 0);
+    return hours * (work.baseRate || 0);
   ***REMOVED***;
 
-  // Estado vacío
-  if (turnosRecientes.length === 0) ***REMOVED***
+  // Empty state
+  if (recentShifts.length === 0) ***REMOVED***
     return (
       <Card className="h-full">
         <Flex variant="between" className="mb-4">
           <h3 className="text-base font-semibold flex items-center text-gray-800">
             <Activity size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-            Recientes
+            Recent
           </h3>
         </Flex>
         
@@ -93,14 +92,14 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
           >
             <Briefcase size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />
           </Flex>
-          <p className="text-sm text-gray-600 mb-3">Sin turnos recientes</p>
+          <p className="text-sm text-gray-600 mb-3">No recent shifts</p>
           <Button
             onClick=***REMOVED***() => navigate('/turnos')***REMOVED***
             size="sm"
             variant="primary"
             themeColor=***REMOVED***colors.primary***REMOVED***
           >
-            Agregar turno
+            Add shift
           </Button>
         </div>
       </Card>
@@ -112,7 +111,7 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
       <Flex variant="between" className="mb-4 flex-nowrap gap-3">
         <h3 className="text-base font-semibold flex items-center text-gray-800 truncate">
           <Activity size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2 flex-shrink-0" />
-          <span className="truncate">Recientes</span>
+          <span className="truncate">Recent</span>
         </h3>
         
         <Button
@@ -126,40 +125,40 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
           icon=***REMOVED***ChevronRight***REMOVED***
           iconPosition="right"
         >
-          Ver todos
+          View all
         </Button>
       </Flex>
 
       <div className="space-y-3 flex-grow">
-        ***REMOVED***turnosRecientes.map((turno, index) => ***REMOVED***
-          const trabajo = getTrabajo(turno.trabajoId);
-          const ganancia = calcularGananciaDisplay(turno);
-          const fechaRelativa = formatearFechaRelativa(turno.fechaInicio || turno.fecha);
+        ***REMOVED***recentShifts.map((shift, index) => ***REMOVED***
+          const work = getWork(shift.workId);
+          const earnings = calculateShiftEarnings(shift);
+          const relativeDate = formatRelativeDate(shift.startTime || shift.date);
 
           return (
             <Flex variant="between"
-              key=***REMOVED***turno.id || index***REMOVED***
+              key=***REMOVED***shift.id || index***REMOVED***
               className="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer group"
               onClick=***REMOVED***() => navigate('/turnos')***REMOVED***
             >
               <div className="flex items-center flex-1 min-w-0">
                 <div 
                   className="w-2.5 h-2.5 rounded-full mr-2 flex-shrink-0"
-                  style=***REMOVED******REMOVED*** backgroundColor: trabajo?.color || trabajo?.colorAvatar || colors.primary ***REMOVED******REMOVED***
+                  style=***REMOVED******REMOVED*** backgroundColor: work?.color || work?.avatarColor || colors.primary ***REMOVED******REMOVED***
                 />
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm text-gray-800 truncate">
-                    ***REMOVED***trabajo?.nombre || 'Trabajo eliminado'***REMOVED***
+                    ***REMOVED***work?.name || 'Deleted work'***REMOVED***
                   </p>
                   <p className="text-xs text-gray-500">
-                    ***REMOVED***fechaRelativa***REMOVED***
+                    ***REMOVED***relativeDate***REMOVED***
                   </p>
                 </div>
               </div>
               
               <div className="text-right flex-shrink-0 ml-2">
                 <p className="text-sm font-semibold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                  ***REMOVED***formatCurrency(ganancia)***REMOVED***
+                  ***REMOVED***formatCurrency(earnings)***REMOVED***
                 </p>
               </div>
             </Flex>
@@ -167,13 +166,13 @@ const RecentActivityCard = (***REMOVED*** stats, todosLosTrabajos, todosLosTurno
         ***REMOVED***)***REMOVED***
       </div>
 
-      ***REMOVED***/* Total simple */***REMOVED***
+      ***REMOVED***/* Simple total */***REMOVED***
       <div className="mt-4 pt-3 border-t border-gray-200">
         <Flex variant="between">
-          <span className="text-sm text-gray-600">Total reciente:</span>
+          <span className="text-sm text-gray-600">Total recent:</span>
           <span className="text-lg font-bold" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
             ***REMOVED***formatCurrency(
-              turnosRecientes.reduce((total, turno) => total + calcularGananciaDisplay(turno), 0)
+              recentShifts.reduce((total, shift) => total + calculateShiftEarnings(shift), 0)
             )***REMOVED***
           </span>
         </Flex>

@@ -1,4 +1,4 @@
-// src/components/dashboard/ThisWeekSummaryCard/index.jsx - Usando turnosSemana
+// src/components/dashboard/ThisWeekSummaryCard/index.jsx 
 
 import React from 'react';
 import ***REMOVED*** Calendar, TrendingUp, Target, ArrowRight ***REMOVED*** from 'lucide-react';
@@ -14,24 +14,24 @@ import Button from '../../ui/Button';
 const ThisWeekSummaryCard = (***REMOVED*** stats, className ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   const navigate = useNavigate();
-  const ***REMOVED*** weeklyHoursGoal ***REMOVED*** = useApp(); // Obtener meta del usuario
+  const ***REMOVED*** weeklyHoursGoal ***REMOVED*** = useApp(); 
 
-  // Obtener datos de esta semana desde stats
-  const semanaActual = stats.semanaActual || ***REMOVED******REMOVED***;
-  const totalSemana = semanaActual.totalGanado || 0;
-  const horasSemana = semanaActual.horasTrabajadas || 0;
-  const turnosSemana = semanaActual.totalTurnos || 0; // USAR la variable
+  // Get data for this week from stats
+  const currentWeek = stats.currentWeek || ***REMOVED******REMOVED***;
+  const totalWeek = currentWeek.totalEarnings || 0;
+  const hoursWeek = currentWeek.hoursWorked || 0;
+  const shiftsWeek = currentWeek.totalShifts || 0; 
 
-  // Usar la meta del usuario o mostrar call-to-action si no hay meta
-  const metaHoras = weeklyHoursGoal;
-  const tieneMetaHoras = metaHoras && metaHoras > 0;
+  // Use the user's goal or show call-to-action if there is no goal
+  const goalHours = weeklyHoursGoal;
+  const hasHoursGoal = goalHours && goalHours > 0;
 
-  // Calcular progreso solo si hay meta
-  const progresoHoras = tieneMetaHoras ? (horasSemana / metaHoras) * 100 : 0;
-  const progresoLimitado = Math.min(Math.max(progresoHoras, 0), 100);
+  // Calculate progress only if there is a goal
+  const progressHours = hasHoursGoal ? (hoursWeek / goalHours) * 100 : 0;
+  const limitedProgress = Math.min(Math.max(progressHours, 0), 100);
 
-  // Función para navegar a ajustes
-  const irAjustes = () => ***REMOVED***
+  // Function to navigate to settings
+  const goToSettings = () => ***REMOVED***
     navigate('/ajustes');
   ***REMOVED***;
 
@@ -48,41 +48,40 @@ const ThisWeekSummaryCard = (***REMOVED*** stats, className ***REMOVED***) => **
           <Flex variant="between" className="mb-4">
             <h3 className="text-lg font-semibold flex items-center">
               <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
-              Esta semana
+              This week
             </h3>
           </Flex>
 
           <div className="space-y-4">
-            ***REMOVED***/* Ganancia principal */***REMOVED***
+            ***REMOVED***/* Main earnings */***REMOVED***
             <div className="text-center">
               <p
                 className="text-2xl font-bold"
                 style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
               >
-                ***REMOVED***formatCurrency(totalSemana)***REMOVED***
+                ***REMOVED***formatCurrency(totalWeek)***REMOVED***
               </p>
-              <p className="text-sm text-gray-600">Total ganado</p>
+              <p className="text-sm text-gray-600">Total earned</p>
             </div>
 
-            ***REMOVED***/* Progreso de horas - Solo si hay meta */***REMOVED***
-            ***REMOVED***tieneMetaHoras ? (
+            ***REMOVED***/* Hours progress - Only if there is a goal */***REMOVED***
+            ***REMOVED***hasHoursGoal ? (
               <div className="space-y-2">
                 <Flex variant="between" className="text-sm">
-                  <span className="text-gray-600">Progreso: </span>
-                  <span className="font-medium">***REMOVED***horasSemana.toFixed(1)***REMOVED***h / ***REMOVED***metaHoras***REMOVED***h</span>
+                  <span className="text-gray-600">Progress: </span>
+                  <span className="font-medium">***REMOVED***hoursWeek.toFixed(1)***REMOVED***h / ***REMOVED***goalHours***REMOVED***h</span>
                 </Flex>
 
                 <ProgressBar
-                  value=***REMOVED***progresoLimitado***REMOVED***
-                  color=***REMOVED***getProgressBarColor(progresoLimitado)***REMOVED***
+                  value=***REMOVED***limitedProgress***REMOVED***
+                  color=***REMOVED***getProgressBarColor(limitedProgress)***REMOVED***
                 />
               </div>
             ) : (
-              // Sin meta - Call to action SIMPLIFICADO
               <div className="text-center">
                 <Flex variant="center" className="mb-2">
                   <Target size=***REMOVED***16***REMOVED*** className="text-gray-400 mr-1" />
-                  <span className="text-lg font-semibold text-gray-700">***REMOVED***horasSemana.toFixed(1)***REMOVED***h</span>
+                  <span className="text-lg font-semibold text-gray-700">***REMOVED***hoursWeek.toFixed(1)***REMOVED***h</span>
                 </Flex>
                 <div
                   className="p-2 rounded-lg border border-dashed transition-all duration-200"
@@ -92,13 +91,13 @@ const ThisWeekSummaryCard = (***REMOVED*** stats, className ***REMOVED***) => **
                   ***REMOVED******REMOVED***
                 >
                   <p className="text-xs text-gray-600 mb-1">
-                    ¿Sin meta semanal?
+                    No weekly goal yet?
                   </p>
                   <p className="text-xs text-gray-600 mb-2">
-                    Establecer una, te ayuda a mantener el rumbo
+                    Setting one helps you stay on track
                   </p>
                   <Button
-                    onClick=***REMOVED***irAjustes***REMOVED***
+                    onClick=***REMOVED***goToSettings***REMOVED***
                     variant="ghost-animated"
                     size="sm"
                     icon=***REMOVED***ArrowRight***REMOVED***
@@ -106,46 +105,46 @@ const ThisWeekSummaryCard = (***REMOVED*** stats, className ***REMOVED***) => **
                     themeColor=***REMOVED***colors.primary***REMOVED***
                     className="-ml-2"
                   >
-                    Configurar
+                    Set up
                   </Button>
                 </div>
               </div>
             )***REMOVED***
 
-            ***REMOVED***/* Stats básicas - Mostrar turnos realizados */***REMOVED***
+            ***REMOVED***/* Basic stats - Show shifts completed */***REMOVED***
             <Flex variant="between" className=" text-sm">
               <div className="text-center">
-                <p className="font-semibold text-gray-800">***REMOVED***turnosSemana***REMOVED***</p>
-                <p className="text-xs text-gray-500">turnos</p>
+                <p className="font-semibold text-gray-800">***REMOVED***shiftsWeek***REMOVED***</p>
+                <p className="text-xs text-gray-500">shifts</p>
               </div>
               
-              ***REMOVED***tieneMetaHoras && (
+              ***REMOVED***hasHoursGoal && (
                 <div className="text-center">
-                  <p className="font-semibold text-gray-800">***REMOVED***Math.ceil(progresoLimitado)***REMOVED***%</p>
-                  <p className="text-xs text-gray-500">meta</p>
+                  <p className="font-semibold text-gray-800">***REMOVED***Math.ceil(limitedProgress)***REMOVED***%</p>
+                  <p className="text-xs text-gray-500">goal</p>
                 </div>
               )***REMOVED***
               
               <div className="text-center">
-                <p className="font-semibold text-gray-800">***REMOVED***horasSemana.toFixed(1)***REMOVED***h</p>
-                <p className="text-xs text-gray-500">horas</p>
+                <p className="font-semibold text-gray-800">***REMOVED***hoursWeek.toFixed(1)***REMOVED***h</p>
+                <p className="text-xs text-gray-500">hours</p>
               </div>
             </Flex>
 
-            ***REMOVED***/* Mensaje motivacional */***REMOVED***
-            ***REMOVED***totalSemana > 0 && tieneMetaHoras && (
+            ***REMOVED***/* Motivational message */***REMOVED***
+            ***REMOVED***totalWeek > 0 && hasHoursGoal && (
               <div className="text-center p-2 rounded-lg" style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***>
                 <Flex variant="center">
                   <TrendingUp size=***REMOVED***12***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-1" />
                   <p className="text-xs font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                    ***REMOVED***progresoLimitado >= 75 ? '¡Excelente progreso!' : '¡Buen ritmo!'***REMOVED***
+                    ***REMOVED***limitedProgress >= 75 ? 'Excellent progress!' : 'Good pace!'***REMOVED***
                   </p>
                 </Flex>
               </div>
             )***REMOVED***
           </div>
         </div>
-        <div className="flex-grow" /> ***REMOVED***/* Spacer */***REMOVED***
+        <div className="flex-grow" /> 
       </div>
     </Card>
   );

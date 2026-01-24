@@ -22,17 +22,17 @@ function ShiftsEmptyState(***REMOVED*** allJobs, onNewShift, thematicColors ***R
           />
         </Flex>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Primero necesitas crear un trabajo
+          First you need to create a job
         </h3>
         <p className="text-gray-500 mb-6 max-w-md mx-auto">
-          Para poder registrar turnos, primero debes crear al menos un trabajo.
+          To register shifts, first you must create at least one job.
         </p>
         <button 
           onClick=***REMOVED***handleGoToJobs***REMOVED*** 
           className="text-white bg-orange-500 hover:bg-orange-600 px-6 py-3 rounded-lg transition-colors inline-flex items-center space-x-2"
         >
           <Briefcase className="w-4 h-4" />
-          <span>Crear Trabajo</span>
+          <span>Create Job</span>
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
@@ -51,10 +51,10 @@ function ShiftsEmptyState(***REMOVED*** allJobs, onNewShift, thematicColors ***R
         />
       </Flex>
       <h3 className="text-lg font-semibold text-gray-900 mb-2">
-        No hay turnos registrados
+        No shifts registered
       </h3>
       <p className="text-gray-500 mb-6 max-w-md mx-auto">
-        Comienza agregando tu primer turno para empezar a gestionar tus ingresos.
+        Start adding your first shift to start managing your income.
       </p>
       <button 
         onClick=***REMOVED***onNewShift***REMOVED*** 
@@ -64,7 +64,7 @@ function ShiftsEmptyState(***REMOVED*** allJobs, onNewShift, thematicColors ***R
         onMouseLeave=***REMOVED***(e) => ***REMOVED*** e.target.style.filter = 'brightness(1.1)'; ***REMOVED******REMOVED***
       >
         <Plus className="w-4 h-4" />
-        <span>Agregar Primer Turno</span>
+        <span>Add First Shift</span>
       </button>
     </div>
   );

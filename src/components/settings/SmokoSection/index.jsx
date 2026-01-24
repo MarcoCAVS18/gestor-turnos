@@ -24,7 +24,7 @@ const SmokoSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***)
     setMinutes(smokoMinutes);
   ***REMOVED***, [smokoEnabled, smokoMinutes]);
 
-  const handleGuardar = async (newEnabled, newMinutes) => ***REMOVED***
+  const handleSave = async (newEnabled, newMinutes) => ***REMOVED***
     try ***REMOVED***
       await savePreferences(***REMOVED*** 
         smokoEnabled: newEnabled,
@@ -32,33 +32,33 @@ const SmokoSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***)
       ***REMOVED***);
       // onSuccess removed to avoid spamming toast notifications on every change
     ***REMOVED*** catch (error) ***REMOVED***
-      onError?.('Error al guardar configuración de descansos: ' + error.message);
+      onError?.('Error saving break settings: ' + error.message);
     ***REMOVED***
   ***REMOVED***;
 
   const handleToggle = (newEnabled) => ***REMOVED***
     setEnabled(newEnabled);
-    handleGuardar(newEnabled, minutes);
+    handleSave(newEnabled, minutes);
   ***REMOVED***;
 
   const handleMinutesChange = (val) => ***REMOVED***
     const newMinutes = Math.max(5, Math.min(120, parseInt(val) || 0));
     setMinutes(newMinutes);
-    handleGuardar(enabled, newMinutes);
+    handleSave(enabled, newMinutes);
   ***REMOVED***;
 
-  const formatearTiempo = (mins) => ***REMOVED***
-    if (mins < 60) return `$***REMOVED***mins***REMOVED*** min`;
-    const horas = Math.floor(mins / 60);
-    const minutosRestantes = mins % 60;
-    if (minutosRestantes === 0) return `$***REMOVED***horas***REMOVED***h`;
-    return `$***REMOVED***horas***REMOVED***h $***REMOVED***minutosRestantes***REMOVED***m`;
+  const formatTime = (mins) => ***REMOVED***
+    if (mins < 60) return `$***REMOVED***mins***REMOVED***m`;
+    const hours = Math.floor(mins / 60);
+    const remainingMinutes = mins % 60;
+    if (remainingMinutes === 0) return `$***REMOVED***hours***REMOVED***h`;
+    return `$***REMOVED***hours***REMOVED***h $***REMOVED***remainingMinutes***REMOVED***m`;
   ***REMOVED***;
 
   return (
     <SettingsSection
       icon=***REMOVED***Coffee***REMOVED***
-      title="Smoko (Descansos)"
+      title="Smoko (Breaks)"
       className=***REMOVED***className***REMOVED***
     >
       <div className="space-y-6">
@@ -67,20 +67,20 @@ const SmokoSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***)
           style=***REMOVED******REMOVED*** backgroundColor: colors.transparent5 ***REMOVED******REMOVED***
         >
           <p className="text-sm" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-            <strong>¿Qué es esto?</strong> Configura el tiempo de descanso no pagado 
-            que se descontará automáticamente de tus turnos.
+            <strong>What is this?</strong> Configure the unpaid break time 
+            that will be automatically deducted from your shifts.
           </p>
         </div>
 
         <Flex variant="between">
           <div className="flex-1 pr-4">
-            <p className="font-medium text-gray-900">Habilitar descuento</p>
+            <p className="font-medium text-gray-900">Enable deduction</p>
             <p className="text-sm text-gray-500">
-              Descontar tiempo de descanso automáticamente
+              Automatically deduct break time
             </p>
           </div>
           
-          ***REMOVED***/* Componente Switch reemplazado */***REMOVED***
+          ***REMOVED***/* Switch component replaced */***REMOVED***
           <Switch 
             checked=***REMOVED***enabled***REMOVED*** 
             onChange=***REMOVED***handleToggle***REMOVED*** 
@@ -91,17 +91,17 @@ const SmokoSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***)
           <div className="space-y-4 pt-4 border-t border-gray-200 animate-in fade-in slide-in-from-top-2 duration-200">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                Duración del descanso
+                Break duration
               </label>
 
-              ***REMOVED***/* GRID RESPONSIVO: 2 columnas en móvil, 4 en desktop */***REMOVED***
+              ***REMOVED***/* RESPONSIVE GRID: 2 columns on mobile, 4 on desktop */***REMOVED***
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 ***REMOVED***[15, 30, 45].map(min => (
                   <button
                     key=***REMOVED***min***REMOVED***
                     type="button"
                     onClick=***REMOVED***() => handleMinutesChange(min)***REMOVED***
-                    // h-12 fija la altura para igualar al input
+                    // h-12 fixes the height to match the input
                     className=***REMOVED***`
                       relative h-12 w-full text-sm font-medium rounded-lg border transition-all
                       flex items-center justify-center
@@ -115,17 +115,17 @@ const SmokoSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***)
                       borderColor: minutes === min ? colors.primary : undefined
                     ***REMOVED******REMOVED***
                   >
-                    ***REMOVED***formatearTiempo(min)***REMOVED***
+                    ***REMOVED***formatTime(min)***REMOVED***
                   </button>
                 ))***REMOVED***
 
-                ***REMOVED***/* INPUT PERSONALIZADO */***REMOVED***
+                ***REMOVED***/* CUSTOM INPUT */***REMOVED***
                 <div className="relative h-12 w-full">
                   <input
                     type="number"
                     value=***REMOVED***minutes***REMOVED***
                     onChange=***REMOVED***(e) => handleMinutesChange(e.target.value)***REMOVED***
-                    // pb-4 levanta el texto del input para dejar espacio a "min" abajo
+                    // pb-4 raises input text to leave space for "min" label below
                     className="block w-full h-full px-2 pt-1 pb-4 text-center border rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-0 transition-colors bg-white font-medium text-gray-900"
                     style=***REMOVED******REMOVED*** 
                       borderColor: [15, 30, 45].includes(minutes) ? '#E5E7EB' : colors.primary,
@@ -135,7 +135,7 @@ const SmokoSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***)
                     max="120"
                     placeholder="--"
                   />
-                  ***REMOVED***/* Etiqueta "min" en la parte inferior */***REMOVED***
+                  ***REMOVED***/* "min" label at the bottom */***REMOVED***
                   <span className="absolute bottom-1.5 left-0 right-0 text-[10px] font-medium text-gray-400 text-center pointer-events-none uppercase tracking-wide">
                     min
                   </span>

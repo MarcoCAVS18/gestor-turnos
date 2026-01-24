@@ -5,89 +5,89 @@ import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** calculateShiftHours ***REMOVED*** from '../utils/time';
 
 export const useCalculations = () => ***REMOVED***
-  const ***REMOVED*** trabajos, rangosTurnos, descuentoDefault ***REMOVED*** = useApp();
+  const ***REMOVED*** trabajos, shiftRanges, defaultDiscount ***REMOVED*** = useApp();
 
-  // Usar la utilidad centralizada
-  const calcularHoras = useCallback((inicio, fin) => ***REMOVED***
-    return calculateShiftHours(inicio, fin);
+  // Use centralized utility
+  const calculateHours = useCallback((start, end) => ***REMOVED***
+    return calculateShiftHours(start, end);
   ***REMOVED***, []);
 
-  const calcularPago = useCallback((turno) => ***REMOVED***
-    const trabajo = trabajos.find(t => t.id === turno.trabajoId);
-    if (!trabajo) return ***REMOVED*** total: 0, totalConDescuento: 0, horas: 0 ***REMOVED***;
+  const calculatePayment = useCallback((shift) => ***REMOVED***
+    const work = trabajos.find(t => t.id === shift.workId);
+    if (!work) return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0 ***REMOVED***;
 
-    const ***REMOVED*** horaInicio, horaFin ***REMOVED*** = turno;
+    const ***REMOVED*** startTime, endTime ***REMOVED*** = shift;
 
-    // Usar la utilidad centralizada
-    const horas = calculateShiftHours(horaInicio, horaFin);
+    // Use centralized utility
+    const hours = calculateShiftHours(startTime, endTime);
 
-    const [horaIni, minIni] = horaInicio.split(':').map(n => parseInt(n));
-    const [horaFn, minFn] = horaFin.split(':').map(n => parseInt(n));
+    const [startHour, startMin] = startTime.split(':').map(n => parseInt(n));
+    const [endHour, endMin] = endTime.split(':').map(n => parseInt(n));
 
-    let inicioMinutos = horaIni * 60 + minIni;
-    let finMinutos = horaFn * 60 + minFn;
+    let startMinutes = startHour * 60 + startMin;
+    let endMinutes = endHour * 60 + endMin;
 
-    if (finMinutos <= inicioMinutos) ***REMOVED***
-      finMinutos += 24 * 60;
+    if (endMinutes <= startMinutes) ***REMOVED***
+      endMinutes += 24 * 60;
     ***REMOVED***
 
-    const [year, month, day] = turno.fecha.split('-');
-    const fecha = new Date(year, month - 1, day);
-    const diaSemana = fecha.getDay();
+    const [year, month, day] = shift.date.split('-');
+    const date = new Date(year, month - 1, day);
+    const dayOfWeek = date.getDay();
 
     let total = 0;
 
-    if (diaSemana === 0) ***REMOVED***
-      total = horas * trabajo.tarifas.domingo;
-    ***REMOVED*** else if (diaSemana === 6) ***REMOVED***
-      total = horas * trabajo.tarifas.sabado;
+    if (dayOfWeek === 0) ***REMOVED***
+      total = hours * work.rates.sunday;
+    ***REMOVED*** else if (dayOfWeek === 6) ***REMOVED***
+      total = hours * work.rates.saturday;
     ***REMOVED*** else ***REMOVED***
-      const rangos = rangosTurnos || ***REMOVED***
-        diurnoInicio: 6, diurnoFin: 14,
-        tardeInicio: 14, tardeFin: 20,
-        nocheInicio: 20
+      const ranges = shiftRanges || ***REMOVED***
+        dayStart: 6, dayEnd: 14,
+        afternoonStart: 14, afternoonEnd: 20,
+        nightStart: 20
       ***REMOVED***;
 
-      const diurnoInicioMin = rangos.diurnoInicio * 60;
-      const diurnoFinMin = rangos.diurnoFin * 60;
-      const tardeInicioMin = rangos.tardeInicio * 60;
-      const tardeFinMin = rangos.tardeFin * 60;
+      const dayStartMin = ranges.dayStart * 60;
+      const dayEndMin = ranges.dayEnd * 60;
+      const afternoonStartMin = ranges.afternoonStart * 60;
+      const afternoonEndMin = ranges.afternoonEnd * 60;
 
-      for (let minuto = inicioMinutos; minuto < finMinutos; minuto++) ***REMOVED***
-        const horaActual = minuto % (24 * 60);
-        let tarifa = trabajo.tarifaBase;
+      for (let minute = startMinutes; minute < endMinutes; minute++) ***REMOVED***
+        const currentHour = minute % (24 * 60);
+        let rate = work.baseRate;
 
-        if (horaActual >= diurnoInicioMin && horaActual < diurnoFinMin) ***REMOVED***
-          tarifa = trabajo.tarifas.diurno;
-        ***REMOVED*** else if (horaActual >= tardeInicioMin && horaActual < tardeFinMin) ***REMOVED***
-          tarifa = trabajo.tarifas.tarde;
+        if (currentHour >= dayStartMin && currentHour < dayEndMin) ***REMOVED***
+          rate = work.rates.day;
+        ***REMOVED*** else if (currentHour >= afternoonStartMin && currentHour < afternoonEndMin) ***REMOVED***
+          rate = work.rates.afternoon;
         ***REMOVED*** else ***REMOVED***
-          tarifa = trabajo.tarifas.noche;
+          rate = work.rates.night;
         ***REMOVED***
 
-        total += tarifa / 60;
+        total += rate / 60;
       ***REMOVED***
     ***REMOVED***
 
-    const totalConDescuento = total * (1 - descuentoDefault / 100);
+    const totalWithDiscount = total * (1 - defaultDiscount / 100);
 
     return ***REMOVED***
       total,
-      totalConDescuento,
-      horas
+      totalWithDiscount,
+      hours
     ***REMOVED***;
-  ***REMOVED***, [trabajos, rangosTurnos, descuentoDefault]);
+  ***REMOVED***, [trabajos, shiftRanges, defaultDiscount]);
 
-  const calcularTotalDia = useCallback((turnosDia) => ***REMOVED***
-    return turnosDia.reduce((total, turno) => ***REMOVED***
-      const ***REMOVED*** totalConDescuento ***REMOVED*** = calcularPago(turno);
-      return total + totalConDescuento;
+  const calculateDayTotal = useCallback((dayShifts) => ***REMOVED***
+    return dayShifts.reduce((total, shift) => ***REMOVED***
+      const ***REMOVED*** totalWithDiscount ***REMOVED*** = calculatePayment(shift);
+      return total + totalWithDiscount;
     ***REMOVED***, 0);
-  ***REMOVED***, [calcularPago]);
+  ***REMOVED***, [calculatePayment]);
 
   return ***REMOVED***
-    calcularHoras,
-    calcularPago,
-    calcularTotalDia
+    calculateHours,
+    calculatePayment,
+    calculateDayTotal
   ***REMOVED***;
 ***REMOVED***;

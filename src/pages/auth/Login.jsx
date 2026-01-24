@@ -24,13 +24,13 @@ const Login = () => ***REMOVED***
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Obtener la ruta de redirección
+  // Get redirect route
   const redirectTo = location.state?.redirectTo || '/dashboard';
 
-  // Detectar si venimos de forgot-password
+  // Detect if coming from forgot-password
   useEffect(() => ***REMOVED***
     if (location.state && location.state.emailSent) ***REMOVED***
-      setSuccessMessage('Hemos enviado un link de recuperación a tu email.');
+      setSuccessMessage('We have sent a recovery link to your email.');
       setEmail(location.state.email || '');
       
       const timer = setTimeout(() => ***REMOVED***
@@ -44,7 +44,7 @@ const Login = () => ***REMOVED***
   const handleLogin = async (e) => ***REMOVED***
     e.preventDefault();
     if (!email || !password) ***REMOVED***
-      return setError('Por favor ingresa tu email y contraseña');
+      return setError('Please enter your email and password');
     ***REMOVED***
 
     setLoading(true);
@@ -53,7 +53,7 @@ const Login = () => ***REMOVED***
       await login(email, password);
       navigate(redirectTo);
     ***REMOVED*** catch (err) ***REMOVED***
-      setError('Email o contraseña incorrectos');
+      setError('Incorrect email or password');
       setLoading(false);
     ***REMOVED***
   ***REMOVED***;
@@ -65,7 +65,7 @@ const Login = () => ***REMOVED***
       await loginWithGoogle();
       navigate(redirectTo);
     ***REMOVED*** catch (err) ***REMOVED***
-      setError('Error al iniciar sesión con Google');
+      setError('Error signing in with Google');
       setGoogleLoading(false);
     ***REMOVED***
   ***REMOVED***;
@@ -82,7 +82,7 @@ const Login = () => ***REMOVED***
 
   return (
     <div className="fixed inset-0">
-      ***REMOVED***/* Video de fondo */***REMOVED***
+      ***REMOVED***/* Background video */***REMOVED***
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
         <video 
@@ -93,16 +93,16 @@ const Login = () => ***REMOVED***
           className="absolute object-cover w-full h-full"
         >
           <source src="/assets/videos/sample_0.mp4" type="video/mp4" />
-          Tu navegador no soporta videos.
+          Your browser does not support videos.
         </video>
       </div>
       
-      ***REMOVED***/* Contenido del login */***REMOVED***
+      ***REMOVED***/* Login content */***REMOVED***
       <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-12 overflow-y-auto">
         <Logo />
         <div className="text-center text-white mb-4">
           <h1 className="text-4xl font-bold mb-2">GestAPP</h1>
-          <p className="text-lg">Gestiona tus turnos de trabajo fácilmente.</p>
+          <p className="text-lg">Manage your work shifts easily.</p>
         </div>
         <Card className="w-full max-w-md shadow-2xl" padding="lg">
           
@@ -126,7 +126,7 @@ const Login = () => ***REMOVED***
                 icon=***REMOVED***Mail***REMOVED***
                 value=***REMOVED***email***REMOVED***
                 onChange=***REMOVED***(e) => setEmail(e.target.value)***REMOVED***
-                placeholder="tu@email.com"
+                placeholder="your@email.com"
                 required
               />
             </div>
@@ -134,7 +134,7 @@ const Login = () => ***REMOVED***
             <div className="mb-2">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <Lock size=***REMOVED***16***REMOVED*** className="inline mr-2" />
-                Contraseña
+                Password
               </label>
               <div className="relative">
                 <input
@@ -142,7 +142,7 @@ const Login = () => ***REMOVED***
                   value=***REMOVED***password***REMOVED***
                   onChange=***REMOVED***(e) => setPassword(e.target.value)***REMOVED***
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 transition-colors"
-                  placeholder="Contraseña"
+                  placeholder="Password"
                   required
                 />
                 <button 
@@ -155,14 +155,14 @@ const Login = () => ***REMOVED***
               </div>
             </div>
             
-            ***REMOVED***/* Enlace de recuperación de contraseña */***REMOVED***
+            ***REMOVED***/* Password recovery link */***REMOVED***
             <div className="mb-4 text-right">
               <button 
                 type="button"
                 onClick=***REMOVED***handleForgotPassword***REMOVED***
                 className="text-sm text-pink-600 hover:text-pink-800"
               >
-                ¿Has olvidado tu contraseña?
+                Forgot your password?
               </button>
             </div>
             
@@ -171,7 +171,7 @@ const Login = () => ***REMOVED***
               loading=***REMOVED***loading***REMOVED***
               className="w-full mb-4"
             >
-              Continuar
+              Continue
             </Button>
           </form>
           
@@ -180,7 +180,7 @@ const Login = () => ***REMOVED***
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white px-3 text-gray-500 text-sm">o</span>
+              <span className="bg-white px-3 text-gray-500 text-sm">or</span>
             </div>
           </div>
           
@@ -194,16 +194,16 @@ const Login = () => ***REMOVED***
             bgColor="#121212"
             textColor="white"
           >
-            Continuar con Google
+            Continue with Google
           </Button>
           
           <div className="text-center">
-            <p className="text-gray-600 mb-2">¿No tienes una cuenta?</p>
+            <p className="text-gray-600 mb-2">Don't have an account?</p>
             <button 
               onClick=***REMOVED***handleRegister***REMOVED***
               className="text-pink-600 hover:text-pink-800 font-bold"
             >
-              Regístrate aquí
+              Register here!
             </button>
           </div>
         </Card>

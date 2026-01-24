@@ -1,4 +1,4 @@
-// src/components/ui/ActionsMenu/index.jsx - REFACTORIZADO
+// src/components/ui/ActionsMenu/index.jsx
 
 import React, ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** MoreVertical ***REMOVED*** from 'lucide-react';

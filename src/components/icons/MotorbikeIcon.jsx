@@ -1,3 +1,5 @@
+// src/components/icons/MotorbikeIcon.jsx
+
 import React from 'react';
 
 const MotorbikeIcon = (***REMOVED*** size = 24, className = "", ...props ***REMOVED***) => (

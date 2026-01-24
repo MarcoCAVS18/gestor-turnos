@@ -1,3 +1,5 @@
+// src/components/stats/DailyBreakdownCard/index.jsx
+
 import React from 'react';
 import ***REMOVED*** Calendar, Clock, DollarSign ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
@@ -6,44 +8,44 @@ import BaseStatsCard from '../../cards/base/BaseStatsCard';
 import ***REMOVED*** calculateShiftHours, calculateShiftEarnings ***REMOVED*** from '../../../utils/statsCalculations';
 import Flex from '../../ui/Flex';
 
-const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED***, trabajos = [] ***REMOVED***) => ***REMOVED***
+const DailyBreakdownCard = (***REMOVED*** shiftsByDay = ***REMOVED******REMOVED***, works = [] ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
 
-  // Validar datos
-  const datos = turnosPorDia && typeof turnosPorDia === 'object' ? turnosPorDia : ***REMOVED******REMOVED***;
-  const trabajosValidos = Array.isArray(trabajos) ? trabajos : [];
+  // Validate data
+  const data = shiftsByDay && typeof shiftsByDay === 'object' ? shiftsByDay : ***REMOVED******REMOVED***;
+  const validWorks = Array.isArray(works) ? works : [];
 
-  const isEmpty = Object.keys(datos).length === 0;
+  const isEmpty = Object.keys(data).length === 0;
 
-  // Formatear fecha
-  const formatearFecha = (fecha) => ***REMOVED***
+  // Format date
+  const formatDate = (date) => ***REMOVED***
     try ***REMOVED***
-      const date = new Date(fecha);
-      return date.toLocaleDateString('es-ES', ***REMOVED***
+      const dateObj = new Date(date);
+      return dateObj.toLocaleDateString('en-US', ***REMOVED***
         weekday: 'short',
         day: 'numeric',
         month: 'short'
       ***REMOVED***);
     ***REMOVED*** catch (error) ***REMOVED***
-      return fecha;
+      return date;
     ***REMOVED***
   ***REMOVED***;
 
   return (
     <BaseStatsCard
-      title="Desglose Diario"
+      title="Daily Breakdown"
       icon=***REMOVED***Calendar***REMOVED***
       empty=***REMOVED***isEmpty***REMOVED***
-      emptyMessage="No hay turnos registrados esta semana"
-      emptyDescription="Los turnos aparecerán aquí una vez que agregues algunos"
+      emptyMessage="No shifts registered this week"
+      emptyDescription="Shifts will appear here once you add some"
     >
       <div className="space-y-3">
-        ***REMOVED***Object.entries(datos).map(([fecha, turnos]) => ***REMOVED***
-          const horasTotal = turnos.reduce((total, turno) => total + calculateShiftHours(turno), 0);
-          const gananciaTotal = turnos.reduce((total, turno) => total + calculateShiftEarnings(turno, trabajosValidos), 0);
+        ***REMOVED***Object.entries(data).map(([date, shifts]) => ***REMOVED***
+          const totalHours = shifts.reduce((total, shift) => total + calculateShiftHours(shift), 0);
+          const totalEarnings = shifts.reduce((total, shift) => total + calculateShiftEarnings(shift, validWorks), 0);
 
           return (
-            <Flex variant="between" key=***REMOVED***fecha***REMOVED*** className="p-3 bg-gray-50 rounded-lg">
+            <Flex variant="between" key=***REMOVED***date***REMOVED*** className="p-3 bg-gray-50 rounded-lg">
               <Flex>
                 <Flex variant="center"
                   className="w-10 h-10 rounded-full mr-3"
@@ -53,10 +55,10 @@ const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED
                 </Flex>
                 <div>
                   <p className="font-medium text-gray-800">
-                    ***REMOVED***formatearFecha(fecha)***REMOVED***
+                    ***REMOVED***formatDate(date)***REMOVED***
                   </p>
                   <p className="text-sm text-gray-500">
-                    ***REMOVED***turnos.length***REMOVED*** turno***REMOVED***turnos.length !== 1 ? 's' : ''***REMOVED***
+                    ***REMOVED***shifts.length***REMOVED*** shift***REMOVED***shifts.length !== 1 ? 's' : ''***REMOVED***
                   </p>
                 </div>
               </Flex>
@@ -64,11 +66,11 @@ const DailyBreakdownCard = (***REMOVED*** turnosPorDia = ***REMOVED******REMOVED
               <Flex className="space-x-4 text-sm">
                 <Flex className="text-purple-600">
                   <Clock size=***REMOVED***14***REMOVED*** className="mr-1" />
-                  <span>***REMOVED***horasTotal.toFixed(1)***REMOVED***h</span>
+                  <span>***REMOVED***totalHours.toFixed(1)***REMOVED***h</span>
                 </Flex>
                 <Flex className="text-green-600">
                   <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1" />
-                  <span>***REMOVED***formatCurrency(gananciaTotal)***REMOVED***</span>
+                  <span>***REMOVED***formatCurrency(totalEarnings)***REMOVED***</span>
                 </Flex>
               </Flex>
             </Flex>

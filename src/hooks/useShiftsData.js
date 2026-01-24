@@ -4,13 +4,13 @@ import ***REMOVED*** useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 
 export function useShiftsData() ***REMOVED***
-  const ***REMOVED*** turnosPorFecha, trabajos, trabajosDelivery ***REMOVED*** = useApp();
+  const ***REMOVED*** shiftsByDate, works, deliveryWork ***REMOVED*** = useApp();
 
-  const allJobs = useMemo(() => [...trabajos, ...trabajosDelivery], [trabajos, trabajosDelivery]);
+  const allJobs = useMemo(() => [...works, ...deliveryWork], [works, deliveryWork]);
 
   const sortedDays = useMemo(() => ***REMOVED***
-    return Object.entries(turnosPorFecha).sort(([a], [b]) => new Date(b) - new Date(a));
-  ***REMOVED***, [turnosPorFecha]);
+    return Object.entries(shiftsByDate).sort(([a], [b]) => new Date(b) - new Date(a));
+  ***REMOVED***, [shiftsByDate]);
 
   const shiftsData = (daysShown) => ***REMOVED***
     const daysToShow = sortedDays.slice(0, daysShown);

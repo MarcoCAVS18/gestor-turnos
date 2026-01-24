@@ -1,8 +1,10 @@
+// src/components/sections/DaySection/index.jsx
+
 import React, ***REMOVED*** forwardRef ***REMOVED*** from 'react';
 import ***REMOVED*** Calendar ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import ShiftCard from '../../cards/shift/TarjetaTurno';
-import DeliveryShiftCard from '../../cards/shift/TarjetaTurnoDelivery';
+import ShiftCard from '../../cards/shift/ShiftCard';
+import DeliveryShiftCard from '../../cards/shift/DeliveryShiftCard';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../utils/time';
 
 const DaySection = forwardRef((***REMOVED*** date, shifts, works, onEditShift, onDeleteShift ***REMOVED***, ref) => ***REMOVED***

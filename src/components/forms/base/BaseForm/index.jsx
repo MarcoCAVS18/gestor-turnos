@@ -3,19 +3,19 @@
 import React from 'react';
 
 /**
- * BaseForm - Componente base unificado para todos los formularios
+ * BaseForm - Unified base component for all forms
  *
- * Características:
- * - Estructura de formulario consistente
- * - Estilos móviles optimizados (previene zoom en iOS)
- * - Grid responsivo integrado
+ * Features:
+ * - Consistent form structure
+ * - Optimized mobile styles (prevents zoom on iOS)
+ * - Integrated responsive grid
  *
  * @param ***REMOVED***Object***REMOVED*** props
- * @param ***REMOVED***string***REMOVED*** props.id - ID del formulario para enlazar con botones externos
- * @param ***REMOVED***Function***REMOVED*** props.onSubmit - Función a ejecutar al enviar el formulario
- * @param ***REMOVED***boolean***REMOVED*** props.isMobile - Si está en vista móvil
- * @param ***REMOVED***ReactNode***REMOVED*** props.children - Contenido del formulario
- * @param ***REMOVED***string***REMOVED*** props.className - Clases adicionales para el contenedor
+ * @param ***REMOVED***string***REMOVED*** props.id - Form ID to link with external buttons
+ * @param ***REMOVED***Function***REMOVED*** props.onSubmit - Function to execute when submitting the form
+ * @param ***REMOVED***boolean***REMOVED*** props.isMobile - If in mobile view
+ * @param ***REMOVED***ReactNode***REMOVED*** props.children - Form content
+ * @param ***REMOVED***string***REMOVED*** props.className - Additional classes for the container
  */
 const BaseForm = (***REMOVED***
   id,
@@ -33,11 +33,11 @@ const BaseForm = (***REMOVED***
       ***REMOVED******REMOVED***
     >
       <form id=***REMOVED***id***REMOVED*** onSubmit=***REMOVED***onSubmit***REMOVED*** className="space-y-4 w-full">
-        ***REMOVED***/* Contenido del formulario */***REMOVED***
+        ***REMOVED***/* Form content */***REMOVED***
         ***REMOVED***children***REMOVED***
       </form>
 
-      ***REMOVED***/* Estilos adicionales para móvil - previene zoom en iOS */***REMOVED***
+      ***REMOVED***/* Additional styles for mobile - prevents zoom on iOS */***REMOVED***
       ***REMOVED***isMobile && (
         <style jsx>***REMOVED***`
           .mobile-form input[type="date"],
@@ -73,8 +73,8 @@ const BaseForm = (***REMOVED***
 ***REMOVED***;
 
 /**
- * FormSection - Componente auxiliar para secciones de formulario
- * Proporciona un contenedor con estilos consistentes
+ * FormSection - Helper component for form sections
+ * Provides a container with consistent styles
  */
 export const FormSection = (***REMOVED*** children, className = '' ***REMOVED***) => (
   <div className=***REMOVED***`w-full $***REMOVED***className***REMOVED***`***REMOVED***>
@@ -83,8 +83,8 @@ export const FormSection = (***REMOVED*** children, className = '' ***REMOVED***
 );
 
 /**
- * FormGrid - Componente auxiliar para grids responsivos
- * Maneja automáticamente el layout móvil/desktop
+ * FormGrid - Helper component for responsive grids
+ * Automatically handles mobile/desktop layout
  */
 export const FormGrid = (***REMOVED*** children, columns = 2, className = '' ***REMOVED***) => (
   <div className="w-full">
@@ -95,8 +95,8 @@ export const FormGrid = (***REMOVED*** children, columns = 2, className = '' ***
 );
 
 /**
- * FormField - Componente auxiliar para campos individuales
- * Proporciona estructura consistente con label, input y error
+ * FormField - Helper component for individual fields
+ * Provides consistent structure with label, input, and error
  */
 export const FormField = (***REMOVED***
   children,
@@ -108,7 +108,7 @@ export const FormField = (***REMOVED***
 );
 
 /**
- * FormLabel - Componente auxiliar para labels consistentes
+ * FormLabel - Helper component for consistent labels
  */
 export const FormLabel = (***REMOVED***
   children,
@@ -122,7 +122,7 @@ export const FormLabel = (***REMOVED***
 );
 
 /**
- * FormError - Componente auxiliar para mostrar errores
+ * FormError - Helper component to display errors
  */
 export const FormError = (***REMOVED*** error, size = 'xs' ***REMOVED***) => ***REMOVED***
   if (!error) return null;
@@ -132,8 +132,8 @@ export const FormError = (***REMOVED*** error, size = 'xs' ***REMOVED***) => ***
 ***REMOVED***;
 
 /**
- * getInputClasses - Función auxiliar para clases de inputs
- * Proporciona clases consistentes para todos los inputs
+ * getInputClasses - Helper function for input classes
+ * Provides consistent classes for all inputs
  */
 export const getInputClasses = (isMobile = false, hasError = false) => ***REMOVED***
   const baseClasses = `

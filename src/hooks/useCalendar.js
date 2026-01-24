@@ -4,22 +4,22 @@ import ***REMOVED*** useState ***REMOVED*** from 'react';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 
 export const useCalendar = () => ***REMOVED***
-  const [fechaSeleccionada, setFechaSeleccionada] = useState(null);
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [nuevoTurnoFecha, setNuevoTurnoFecha] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newShiftDate, setNewShiftDate] = useState(null);
 
-  // Función para convertir fecha local a ISO
-  const fechaLocalAISO = (fecha) => ***REMOVED***
-    const year = fecha.getFullYear();
-    const month = String(fecha.getMonth() + 1).padStart(2, '0');
-    const day = String(fecha.getDate()).padStart(2, '0');
+  // Function to convert local date to ISO
+  const localDateToISO = (date) => ***REMOVED***
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
     return `$***REMOVED***year***REMOVED***-$***REMOVED***month***REMOVED***-$***REMOVED***day***REMOVED***`;
   ***REMOVED***;
 
-  // Formatear fecha para mostrar
-  const formatearFecha = (fechaStr) => ***REMOVED***
-    const fecha = createSafeDate(fechaStr);
-    return fecha.toLocaleDateString('es-ES', ***REMOVED***
+  // Format date for display
+  const formatDate = (dateStr) => ***REMOVED***
+    const date = createSafeDate(dateStr);
+    return date.toLocaleDateString('en-US', ***REMOVED***
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -27,30 +27,30 @@ export const useCalendar = () => ***REMOVED***
     ***REMOVED***);
   ***REMOVED***;
 
-  const seleccionarDia = (fecha) => ***REMOVED***
-    const fechaStr = fechaLocalAISO(fecha);
-    setFechaSeleccionada(fechaStr);
+  const selectDay = (date) => ***REMOVED***
+    const dateStr = localDateToISO(date);
+    setSelectedDate(dateStr);
   ***REMOVED***;
 
-  const abrirModalNuevoTurno = (fecha) => ***REMOVED***
-    const fechaISO = fechaLocalAISO(fecha);
-    setNuevoTurnoFecha(fechaISO);
-    setModalAbierto(true);
+  const openNewShiftModal = (date) => ***REMOVED***
+    const dateISO = localDateToISO(date);
+    setNewShiftDate(dateISO);
+    setIsModalOpen(true);
   ***REMOVED***;
 
-  const cerrarModal = () => ***REMOVED***
-    setModalAbierto(false);
-    setNuevoTurnoFecha(null);
+  const closeModal = () => ***REMOVED***
+    setIsModalOpen(false);
+    setNewShiftDate(null);
   ***REMOVED***;
 
   return ***REMOVED***
-    fechaSeleccionada,
-    modalAbierto,
-    nuevoTurnoFecha,
-    seleccionarDia,
-    abrirModalNuevoTurno,
-    cerrarModal,
-    formatearFecha,
-    fechaLocalAISO
+    selectedDate,
+    isModalOpen,
+    newShiftDate,
+    selectDay,
+    openNewShiftModal,
+    closeModal,
+    formatDate,
+    localDateToISO
   ***REMOVED***;
 ***REMOVED***;

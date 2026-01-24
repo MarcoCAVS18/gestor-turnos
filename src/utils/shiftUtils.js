@@ -1,7 +1,7 @@
 // src/utils/shiftUtils.js
 
 /**
- * Calculates the gross earnings for a shift, handling different data structures.
+ * Calculates gross earnings for a shift, handling different data structures.
  * For delivery shifts, it ensures tips are included.
  * @param ***REMOVED***object***REMOVED*** shift - The shift object.
  * @returns ***REMOVED***number***REMOVED*** - The gross earnings.
@@ -14,26 +14,26 @@ export const getShiftGrossEarnings = (shift) => ***REMOVED***
     return shift.total || 0;
   ***REMOVED***
 
-  // For new shifts, gananciaTotal is already calculated as gananciaBase + propinas.
-  // So if gananciaBase exists, gananciaTotal is correct.
-  if (shift.gananciaBase !== undefined) ***REMOVED***
-    return shift.gananciaTotal || 0;
+  // For new shifts, totalEarnings is already calculated as baseEarnings + tips.
+  // So if baseEarnings exists, totalEarnings is correct.
+  if (shift.baseEarnings !== undefined) ***REMOVED***
+    return shift.totalEarnings || 0;
   ***REMOVED***
 
-  // For old shifts, gananciaTotal does NOT include propinas.
+  // For old shifts, totalEarnings does NOT include tips.
   // So we have to add them.
-  return (shift.gananciaTotal || 0) + (shift.propinas || 0);
+  return (shift.totalEarnings || 0) + (shift.tips || 0);
 ***REMOVED***;
 
 
 /**
- * Determina la etiqueta de un turno (Diurno, Tarde, Noche) basado en la hora de inicio.
- * @param ***REMOVED***string***REMOVED*** horaInicio - La hora de inicio en formato "HH:mm".
- * @param ***REMOVED***object***REMOVED*** shiftRanges - El objeto de rangos desde los ajustes del usuario.
- * @returns ***REMOVED***string***REMOVED*** - La etiqueta del turno ('Diurno', 'Tarde', 'Noche').
+ * Determines the label of a shift (Day, Afternoon, Night) based on start time.
+ * @param ***REMOVED***string***REMOVED*** startTime - The start time in "HH:mm" format.
+ * @param ***REMOVED***object***REMOVED*** shiftRanges - The user settings ranges object.
+ * @returns ***REMOVED***string***REMOVED*** - The shift label ('Day', 'Afternoon', 'Night').
  */
-export const getTagForShift = (horaInicio, shiftRanges) => ***REMOVED***
-  const [hour] = horaInicio.split(':').map(Number);
+export const getTagForShift = (startTime, shiftRanges) => ***REMOVED***
+  const [hour] = startTime.split(':').map(Number);
   const ranges = shiftRanges || ***REMOVED***
     dayStart: 6,
     afternoonStart: 14,
@@ -41,10 +41,10 @@ export const getTagForShift = (horaInicio, shiftRanges) => ***REMOVED***
   ***REMOVED***;
 
   if (hour >= ranges.dayStart && hour < ranges.afternoonStart) ***REMOVED***
-    return 'Diurno';
+    return 'Day';
   ***REMOVED***
   if (hour >= ranges.afternoonStart && hour < ranges.nightStart) ***REMOVED***
-    return 'Tarde';
+    return 'Afternoon';
   ***REMOVED***
-  return 'Noche';
+  return 'Night';
 ***REMOVED***;
