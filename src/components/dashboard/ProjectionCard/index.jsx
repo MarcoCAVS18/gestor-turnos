@@ -8,18 +8,18 @@ import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 import { Link } from 'react-router-dom';
 
-const ProjectionCard = ({ proyeccionMensual, horasTrabajadas, className }) => {
+const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
   const colors = useThemeColors();
   const { calculateMonthlyStats } = useApp();
 
   const renderContent = () => {
-    if (proyeccionMensual <= 0) {
+    if (!monthlyProjection || monthlyProjection <= 0) {
       return (
         <Link to="/turnos" className="block w-full hover:bg-gray-50 rounded-lg p-4 transition-colors">
           <Flex variant="center" className="flex-col">
             <PlusCircle size={32} className="mb-2" style={{ color: colors.primary }} />
-            <p className="font-semibold text-gray-700">Comienza a ver tu proyección mensual</p>
-            <p className="text-sm text-gray-500">Agrega nuevos turnos este mes para calcularla.</p>
+            <p className="font-semibold text-gray-700">Start viewing your monthly projection</p>
+            <p className="text-sm text-gray-500">Add new shifts this month to calculate it.</p>
           </Flex>
         </Link>
       );
@@ -35,40 +35,40 @@ const ProjectionCard = ({ proyeccionMensual, horasTrabajadas, className }) => {
         return 'Tu primer mes registrado';
       }
 
-      const diferencia = proyeccionMensual - previousMonthStats.totalEarnings;
+      const diferencia = monthlyProjection - previousMonthStats.totalEarnings;
       const porcentaje = ((diferencia / previousMonthStats.totalEarnings) * 100).toFixed(1);
 
       if (diferencia > 0) {
-        return `${formatCurrency(Math.abs(diferencia))} más que el mes anterior (+${porcentaje}%)`;
+        return `${formatCurrency(Math.abs(diferencia))} more than last month (+${porcentaje}%)`;
       } else if (diferencia < 0) {
-        return `${formatCurrency(Math.abs(diferencia))} menos que el mes anterior (-${Math.abs(porcentaje)}%)`;
+        return `${formatCurrency(Math.abs(diferencia))} less than last month (-${Math.abs(porcentaje)}%)`;
       } else {
-        return 'Igual que el mes anterior';
+        return 'Same as last month';
       }
     };
 
     return (
       <Flex variant="between" className="w-full">
-        {/* Texto izquierdo */}
+        {/* Left text */}
         <div className="flex-1">
           <p className="text-sm text-gray-600 mb-1">
-            Si mantienes este ritmo durante todo el mes
+            If you keep this pace throughout the month
           </p>
           <p className="text-xs text-gray-500">
             {obtenerTextoComparacion()}
           </p>
         </div>
-        
-        {/* Datos derecha */}
+
+        {/* Right data */}
         <div className="text-right ml-4">
-          <p 
-            className="text-3xl font-bold mb-1" 
+          <p
+            className="text-3xl font-bold mb-1"
             style={{ color: colors.primary }}
           >
-            {formatCurrency(proyeccionMensual)}
+            {formatCurrency(monthlyProjection)}
           </p>
           <p className="text-sm text-gray-500">
-            ~{(horasTrabajadas * 4.33).toFixed(0)} horas
+            ~{((hoursWorked || 0) * 4.33).toFixed(0)} hours
           </p>
         </div>
       </Flex>
@@ -80,7 +80,7 @@ const ProjectionCard = ({ proyeccionMensual, horasTrabajadas, className }) => {
       {/* Header */}
       <div className="flex items-center mb-4">
         <BarChart3 size={20} style={{ color: colors.primary }} className="mr-2" />
-        <h3 className="text-lg font-semibold">Proyección mensual</h3>
+        <h3 className="text-lg font-semibold">Monthly projection</h3>
       </div>
       
       {/* Content */}

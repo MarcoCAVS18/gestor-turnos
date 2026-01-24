@@ -148,6 +148,7 @@ const Dashboard = () => {
               stats={stats}
               allWorks={stats.allWorks}
               allShifts={stats.allShifts}
+              calculatePayment={calculatePayment}
             />
           </div>
 

@@ -1,11 +1,13 @@
 // src/components/cards/BaseWorkCard/index.jsx
 
 import React from 'react';
-import { Edit, Edit2, Trash2, Share2 } from 'lucide-react';
+import { Edit, Edit2, Trash2, Share2, MoreVertical, Briefcase, Bike } from 'lucide-react';
+import { motion } from 'framer-motion';
 import Card from '../../../ui/Card';
 import WorkAvatar from '../../../work/WorkAvatar';
 import ActionsMenu from '../../../ui/ActionsMenu';
 import Badge from '../../../ui/Badge';
+import Flex from '../../../ui/Flex';
 import { DELIVERY_VEHICLES, DELIVERY_PLATFORMS_AUSTRALIA } from '../../../../constants/delivery';
 
 const BaseWorkCard = ({
@@ -33,12 +35,12 @@ const BaseWorkCard = ({
   // Configuration based on type
   const config = {
     traditional: {
-      badge: { variant: 'primary', label: 'Traditional' },
+      badge: { variant: 'primary', label: 'Traditional', icon: Briefcase },
       editIcon: Edit,
       defaultColor: '#EC4899'
     },
     delivery: {
-      badge: { variant: 'success', label: 'Delivery' },
+      badge: { variant: 'success', label: 'Delivery', icon: Bike },
       editIcon: Edit2,
       defaultColor: '#10b981'
     }
@@ -75,10 +77,6 @@ const BaseWorkCard = ({
     }
   }
 
-  const description = work.description && work.description.trim()
-    ? work.description
-    : 'Don\'t forget to save more information about your work.';
-
   // Configure menu actions
   const actions = [
     {
@@ -100,53 +98,102 @@ const BaseWorkCard = ({
     }
   ];
 
-  return (
-    <Card
-      variant={variant}
-      hover={true}
-      className={isSharing ? 'opacity-70' : ''}
-    >
-      <div className="flex items-center">
-        {/* Column 1: Avatar */}
-        <div className="flex-shrink-0">
-          <WorkAvatar
-            name={workName}
-            color={workColor}
-            iconName={iconName}
-            size="lg"
-          />
-        </div>
+  const BadgeIcon = currentConfig.badge.icon;
 
-        {/* Column 2: Title, Badge and Description */}
-        <div className="flex-1 ml-4 min-w-0">
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-800 truncate">
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ y: -4 }}
+      className="h-full"
+    >
+      <Card
+        className={`h-full flex flex-col overflow-hidden border-2 transition-all duration-300 hover:shadow-xl ${
+          isSharing ? 'opacity-70' : ''
+        }`}
+        style={{ borderColor: `${workColor}15` }}
+      >
+        {/* Header with gradient background */}
+        <div
+          className="relative p-6 pb-16"
+          style={{
+            background: `linear-gradient(135deg, ${workColor}15 0%, ${workColor}05 100%)`
+          }}
+        >
+          {/* Actions menu - top right */}
+          {showActions && (
+            <div className="absolute top-3 right-3">
+              <ActionsMenu
+                actions={actions}
+                trigger={
+                  <button className="p-2 rounded-full hover:bg-white/50 transition-colors">
+                    <MoreVertical size={18} className="text-gray-600" />
+                  </button>
+                }
+              />
+            </div>
+          )}
+
+          {/* Avatar centered */}
+          <Flex variant="center" className="flex-col">
+            <div className="mb-3">
+              <WorkAvatar
+                name={workName}
+                color={workColor}
+                iconName={iconName}
+                size="xl"
+              />
+            </div>
+
+            {/* Work name */}
+            <h3 className="font-bold text-lg text-gray-800 text-center truncate max-w-full px-2">
               {workName}
             </h3>
-            <Badge
-              variant={currentConfig.badge.variant}
-              size="xs"
-              rounded
-            >
-              {currentConfig.badge.label}
-            </Badge>
-          </div>
-          <p className="text-gray-600 text-sm leading-relaxed italic">
-            {description}
-          </p>
+
+            {/* Type badge */}
+            <div className="mt-2">
+              <Badge
+                variant={currentConfig.badge.variant}
+                size="sm"
+                rounded
+                className="flex items-center gap-1"
+              >
+                <BadgeIcon size={12} />
+                {currentConfig.badge.label}
+              </Badge>
+            </div>
+          </Flex>
         </div>
 
-        {/* Column 3: Actions */}
-        {showActions && (
-          <div className="ml-4 flex-shrink-0">
-            <ActionsMenu actions={actions} />
+        {/* Stats/Content section - overlapping card */}
+        <div className="px-6 -mt-10 relative z-10 flex-grow">
+          <div className="bg-white rounded-xl shadow-md border border-gray-100 p-4 min-h-[120px] flex flex-col justify-center">
+            {children}
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* Custom Content (Rates) */}
-      {children && <div className="mt-4 border-t border-gray-200 pt-4">{children}</div>}
-    </Card>
+        {/* Footer - description or platform */}
+        <div className="px-6 pb-6 mt-4">
+          {type === 'delivery' && work.platform ? (
+            <div className="text-center">
+              <p className="text-xs text-gray-500 mb-1">Platform</p>
+              <p className="text-sm font-semibold" style={{ color: workColor }}>
+                {work.platform}
+              </p>
+            </div>
+          ) : work.description ? (
+            <p className="text-xs text-gray-600 text-center line-clamp-2 italic">
+              {work.description}
+            </p>
+          ) : (
+            <p className="text-xs text-gray-400 text-center italic">
+              No description
+            </p>
+          )}
+        </div>
+      </Card>
+    </motion.div>
   );
 };
 

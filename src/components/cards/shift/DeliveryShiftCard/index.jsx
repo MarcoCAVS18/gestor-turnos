@@ -1,12 +1,15 @@
 // src/components/cards/shift/DeliveryShiftCard/index.jsx
 import React from 'react';
-import { Package, Navigation } from 'lucide-react';
+import { Package, Navigation, Fuel, DollarSign } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Flex from '../../../ui/Flex';
 import { getShiftGrossEarnings } from '../../../../utils/shiftUtils';
+import { formatCurrency } from '../../../../utils/currency';
+import { useApp } from '../../../../contexts/AppContext';
 
 const DeliveryShiftCard = (props) => {
   const { shift } = props;
+  const { currencySymbol } = useApp();
 
   // Calculate shift data
   const shiftData = React.useMemo(() => {
@@ -21,28 +24,29 @@ const DeliveryShiftCard = (props) => {
     if (hours < 0) hours += 24;
 
     const grossEarning = getShiftGrossEarnings(shift);
-    const netEarning = grossEarning - (shift.fuelCost || 0);
-    const averagePerOrder = shift.numberOfOrders > 0 ? grossEarning / shift.numberOfOrders : 0;
+    const netEarning = grossEarning - (shift.fuelExpense || 0);
+    const averagePerOrder = shift.orderCount > 0 ? grossEarning / shift.orderCount : 0;
 
     return {
       hours: hours,
       totalWithDiscount: netEarning,
-      numberOfOrders: shift.numberOfOrders || 0,
+      numberOfOrders: shift.orderCount || 0,
       kilometers: shift.kilometers || 0,
       tips: shift.tips || 0,
-      expenses: shift.fuelCost || 0,
+      expenses: shift.fuelExpense || 0,
       totalEarning: grossEarning,
-      baseEarning: shift.baseEarning ?? grossEarning - (shift.tips || 0),
+      baseEarning: shift.baseEarnings ?? grossEarning - (shift.tips || 0),
       averagePerOrder
     };
   }, [shift]);
 
   return (
-    <BaseShiftCard 
-      {...props} 
-      type="delivery" 
+    <BaseShiftCard
+      {...props}
+      job={props.work} 
+      type="delivery"
       shiftData={shiftData}
-      // We pass the earning to the Base to put it at the bottom
+      // We pass earning to Base to put it at the bottom
       earningValue={shiftData.totalWithDiscount}
       earningLabel="Net Earnings"
     >
@@ -68,29 +72,64 @@ const DeliveryShiftCard = (props) => {
           </Flex>
         ),
 
-        // Desktop stats - Orders and km (NO Earning)
+        // Desktop stats - Complete delivery breakdown for expanded view
         desktopStats: (
-          <Flex variant="between">
-            <Flex variant="center" className="text-sm text-gray-600 gap-4">
-              {shiftData.numberOfOrders > 0 && (
-                <Flex variant="center">
-                  <Package size={14} className="mr-1 text-blue-500" />
-                  <span>{shiftData.numberOfOrders}</span>
-                </Flex>
-              )}
-
-              {shiftData.kilometers > 0 && (
-                <Flex variant="center">
-                  <Navigation size={14} className="mr-1 text-purple-500" />
-                  <span>{shiftData.kilometers} km</span>
-                </Flex>
-              )}
+          <div className="space-y-2 text-xs">
+            {/* Orders & Kilometers */}
+            <Flex variant="between">
+              <Flex variant="center" className="text-gray-600">
+                <Package size={12} className="mr-1.5 text-blue-500" />
+                <span>Orders</span>
+              </Flex>
+              <span className="font-semibold">{shiftData.numberOfOrders || 0}</span>
             </Flex>
-          </Flex>
-        ),
 
-        // Expanded content - Financial details in Popover
-        
+            {shiftData.kilometers > 0 && (
+              <Flex variant="between">
+                <Flex variant="center" className="text-gray-600">
+                  <Navigation size={12} className="mr-1.5 text-purple-500" />
+                  <span>Distance</span>
+                </Flex>
+                <span className="font-semibold">{shiftData.kilometers} km</span>
+              </Flex>
+            )}
+
+            {/* Earnings breakdown */}
+            <div className="pt-2 border-t border-gray-100 space-y-1.5">
+              <Flex variant="between">
+                <span className="text-gray-500">Base earnings</span>
+                <span className="font-medium">{formatCurrency(shiftData.baseEarning, currencySymbol)}</span>
+              </Flex>
+
+              {shiftData.tips > 0 && (
+                <Flex variant="between">
+                  <Flex variant="center" className="text-gray-500">
+                    <DollarSign size={10} className="mr-1 text-green-500" />
+                    <span>Tips</span>
+                  </Flex>
+                  <span className="font-medium text-green-600">{formatCurrency(shiftData.tips, currencySymbol)}</span>
+                </Flex>
+              )}
+
+              {shiftData.expenses > 0 && (
+                <Flex variant="between">
+                  <Flex variant="center" className="text-gray-500">
+                    <Fuel size={10} className="mr-1 text-orange-500" />
+                    <span>Fuel expense</span>
+                  </Flex>
+                  <span className="font-medium text-red-600">-{formatCurrency(shiftData.expenses, currencySymbol)}</span>
+                </Flex>
+              )}
+
+              {shiftData.averagePerOrder > 0 && (
+                <Flex variant="between" className="pt-1.5 border-t border-gray-50">
+                  <span className="text-gray-500">Avg per order</span>
+                  <span className="font-semibold text-blue-600">{formatCurrency(shiftData.averagePerOrder, currencySymbol)}</span>
+                </Flex>
+              )}
+            </div>
+          </div>
+        ),
       }}
     </BaseShiftCard>
   );

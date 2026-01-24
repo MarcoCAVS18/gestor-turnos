@@ -8,8 +8,8 @@ import BaseStatsCard from '../../cards/base/BaseStatsCard';
 import Flex from '../../ui/Flex';
 
 const DailyDistribution = ({ currentData, loading, thematicColors }) => {
-  const { earningsPerDay, totalEarned } = currentData || {};
-  
+  const { earningsByDay, totalEarned } = currentData || {};
+
   const isEmpty = !totalEarned || totalEarned === 0;
 
   return (
@@ -24,7 +24,7 @@ const DailyDistribution = ({ currentData, loading, thematicColors }) => {
         {/* Wrapper to enable horizontal scroll on mobile */}
         <div className="lg:overflow-x-hidden overflow-x-auto">
           <div className="space-y-2 lg:w-full min-w-[30rem]">
-            {Object.entries(earningsPerDay).map(([day, data]) => (
+            {earningsByDay && Object.entries(earningsByDay).map(([day, data]) => (
               <div key={day} className="p-2 bg-gray-50 rounded-lg">
                 <div className="grid grid-cols-4 gap-x-2 items-center">
                   <span className="text-sm font-medium text-gray-700 col-span-1 truncate">{day}</span>

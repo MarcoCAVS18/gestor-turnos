@@ -54,7 +54,7 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
   };
 
   // If it's a delivery shift, return total earnings directly
-  if (shift.type === 'delivery') {
+  if (shift.type === 'delivery' || !work.rates) {
     const hours = calculateHours(shift.startTime, shift.endTime);
     const grossEarnings = getShiftGrossEarnings(shift);
     return {
@@ -142,8 +142,8 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
         rate = work.rates.night;
         rateType = 'night';
       }
-      
-      if(rate > 0) appliedRates[rateType] = rate;
+
+      if (rate > 0) appliedRates[rateType] = rate;
 
       const ratePerMinute = rate / 60;
       total += ratePerMinute;
@@ -228,7 +228,7 @@ export const calculateMonthlyStats = (year, month, shifts, deliveryShifts, calcu
   let totalFuelCost = 0;
 
   monthlyShifts.forEach(shift => {
-    if (shift.type === 'delivery' || shift.tipo === 'delivery') {
+    if (shift.type === 'delivery') {
       totalEarnings += getShiftGrossEarnings(shift);
       totalTips += shift.tips || 0;
       totalDeliveries += shift.orderCount || 0;
@@ -264,18 +264,18 @@ export const calculateMonthlyStats = (year, month, shifts, deliveryShifts, calcu
  */
 export const formatMinutesToHoursAndMinutes = (minutes) => {
   if (!minutes || minutes === 0) return '0 MIN';
-  
+
   if (minutes < 60) {
     return `${minutes} MIN`;
   }
-  
+
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
-  
+
   if (remainingMinutes === 0) {
     return `${hours}H`;
   }
-  
+
   return `${hours}H ${remainingMinutes}M`;
 };
 
@@ -285,7 +285,7 @@ export const formatMinutesToHoursAndMinutes = (minutes) => {
 export const calculateWeeklyStats = ({
   shifts,
   deliveryShifts,
-  allWorks,
+  allWork,
   calculatePayment,
   shiftRanges,
   weekOffset = 0,
@@ -293,12 +293,12 @@ export const calculateWeeklyStats = ({
   const traditionalShifts = Array.isArray(shifts) ? shifts : [];
   const validDeliveryShifts = Array.isArray(deliveryShifts) ? deliveryShifts : [];
   const allShifts = [...traditionalShifts, ...validDeliveryShifts];
-  const validWorks = Array.isArray(allWorks) ? allWorks : [];
+  const validWorks = Array.isArray(allWork) ? allWork : [];
 
   const getWeekDates = (offset) => {
     const today = new Date();
     const dayOfWeek = today.getDay();
-    const startDiff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
+    const startDiff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     const startDate = new Date(today);
     startDate.setDate(today.getDate() - startDiff + (offset * 7));
     startDate.setHours(0, 0, 0, 0);
@@ -320,6 +320,8 @@ export const calculateWeeklyStats = ({
   const initialState = {
     startDate,
     endDate,
+    weekStart: startDate,
+    weekEnd: endDate,
     totalEarned: 0,
     hoursWorked: 0,
     totalShifts: 0,
@@ -356,7 +358,7 @@ export const calculateWeeklyStats = ({
     const shiftDate = createSafeDate(shift.startDate || shift.date);
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const dayName = dayNames[shiftDate.getDay()];
-    
+
     acc.earningsByDay[dayName].earnings += earnings;
     acc.earningsByDay[dayName].hours += hours;
     acc.earningsByDay[dayName].shifts += 1;
@@ -385,7 +387,7 @@ export const calculateWeeklyStats = ({
   const daysWorked = Object.values(acc.earningsByDay).filter(day => day.shifts > 0).length;
   const averageHoursPerDay = daysWorked > 0 ? acc.hoursWorked / daysWorked : 0;
   const averagePerHour = acc.hoursWorked > 0 ? acc.totalEarned / acc.hoursWorked : 0;
-  
+
   const mostProductiveDay = Object.entries(acc.earningsByDay).reduce(
     (max, [day, data]) => (data.earnings > max.earnings ? { day, ...data } : max),
     { day: 'None', earnings: 0 }
@@ -394,13 +396,15 @@ export const calculateWeeklyStats = ({
   return {
     startDate,
     endDate,
+    weekStart: startDate,
+    weekEnd: endDate,
     shifts: weekShifts,
     totalEarned: acc.totalEarned,
     hoursWorked: acc.hoursWorked,
     totalShifts: weekShifts.length,
     earningsByDay: acc.earningsByDay,
     earningsByWork: Object.values(acc.earningsByWork).sort((a, b) => b.earnings - a.earnings),
-    shiftTypes: acc.shiftTypes, 
+    shiftTypes: acc.shiftTypes,
     daysWorked,
     averageHoursPerDay,
     averagePerHour,
@@ -409,283 +413,283 @@ export const calculateWeeklyStats = ({
 }
 
 export const calculateDeliveryStats = ({ deliveryWork, deliveryShifts, period = 'month' }) => {
-    const validDeliveryWork = Array.isArray(deliveryWork) ? deliveryWork : [];
-    const validDeliveryShifts = Array.isArray(deliveryShifts) ? deliveryShifts : [];
-    
-    if (validDeliveryShifts.length === 0) {
-      return {
+  const validDeliveryWork = Array.isArray(deliveryWork) ? deliveryWork : [];
+  const validDeliveryShifts = Array.isArray(deliveryShifts) ? deliveryShifts : [];
+
+  if (validDeliveryShifts.length === 0) {
+    return {
+      totalEarned: 0,
+      totalTips: 0,
+      totalOrders: 0,
+      totalKilometers: 0,
+      totalExpenses: 0,
+      netEarnings: 0,
+      averagePerOrder: 0,
+      averagePerKilometer: 0,
+      averagePerHour: 0,
+      averageTipsPerOrder: 0,
+      bestDay: null,
+      bestShift: null,
+      shiftsByPlatform: {},
+      statsByVehicle: {},
+      statsByDay: {},
+      trend: 0,
+      daysWorked: 0,
+      shiftsCompleted: 0,
+      totalHours: 0,
+      fuelEfficiency: 0,
+      costPerKilometer: 0
+    };
+  }
+
+  const today = new Date();
+  let startDate;
+
+  switch (period) {
+    case 'week':
+      startDate = new Date(today);
+      startDate.setDate(today.getDate() - 7);
+      break;
+    case 'month':
+      startDate = new Date(today);
+      startDate.setMonth(today.getMonth() - 1);
+      break;
+    case 'year':
+      startDate = new Date(today);
+      startDate.setFullYear(today.getFullYear() - 1);
+      break;
+    default:
+      startDate = new Date(0);
+  }
+
+  const periodShifts = validDeliveryShifts.filter(shift => {
+    const shiftDate = new Date(shift.date);
+    return shiftDate >= startDate;
+  });
+
+  let totalEarned = 0;
+  let totalTips = 0;
+  let totalOrders = 0;
+  let totalKilometers = 0;
+  let totalExpenses = 0;
+  let totalHours = 0;
+
+  const statsByDay = {};
+  const shiftsByPlatform = {};
+  const statsByVehicle = {};
+
+  periodShifts.forEach(shift => {
+    const work = validDeliveryWork.find(w => w.id === shift.workId);
+    if (!work) {
+      console.warn('⚠️ Delivery work not found for shift:', shift.id);
+      return;
+    }
+
+    const shiftEarnings = getShiftGrossEarnings(shift);
+    const tips = shift.tips || 0;
+    const orders = shift.orderCount || 0;
+    const kilometers = shift.kilometers || 0;
+    const expenses = shift.fuelExpense || 0;
+
+    totalEarned += shiftEarnings;
+    totalTips += tips;
+    totalOrders += orders;
+    totalKilometers += kilometers;
+    totalExpenses += expenses;
+
+    const [startHour, startMin] = shift.startTime.split(':').map(Number);
+    const [endHour, endMin] = shift.endTime.split(':').map(Number);
+    let hours = (endHour + endMin / 60) - (startHour + startMin / 60);
+    if (hours < 0) hours += 24;
+    totalHours += hours;
+
+    if (!statsByDay[shift.date]) {
+      statsByDay[shift.date] = {
+        earnings: 0,
+        tips: 0,
+        orders: 0,
+        kilometers: 0,
+        expenses: 0,
+        hours: 0,
+        shifts: []
+      };
+    }
+
+    statsByDay[shift.date].earnings += shiftEarnings;
+    statsByDay[shift.date].tips += tips;
+    statsByDay[shift.date].orders += orders;
+    statsByDay[shift.date].kilometers += kilometers;
+    statsByDay[shift.date].expenses += expenses;
+    statsByDay[shift.date].hours += hours;
+    statsByDay[shift.date].shifts.push({
+      ...shift,
+      work,
+      hours
+    });
+
+    const platform = work.platform || work.name;
+    if (!shiftsByPlatform[platform]) {
+      const platformData = DELIVERY_PLATFORMS_AUSTRALIA.find(p => p.name === platform);
+      shiftsByPlatform[platform] = {
+        name: platform,
+        color: platformData?.color || '#10B981',
         totalEarned: 0,
+        totalOrders: 0,
         totalTips: 0,
+        totalHours: 0,
+        totalKilometers: 0,
+        totalExpenses: 0,
+        shifts: 0
+      };
+    }
+
+    shiftsByPlatform[platform].totalEarned += shiftEarnings;
+    shiftsByPlatform[platform].totalOrders += orders;
+    shiftsByPlatform[platform].totalTips += tips;
+    shiftsByPlatform[platform].totalHours += hours;
+    shiftsByPlatform[platform].totalKilometers += kilometers;
+    shiftsByPlatform[platform].totalExpenses += expenses;
+    shiftsByPlatform[platform].shifts += 1;
+
+    const vehicle = work.vehicle || 'Not specified';
+    if (!statsByVehicle[vehicle]) {
+      statsByVehicle[vehicle] = {
+        name: vehicle,
+        totalEarned: 0,
         totalOrders: 0,
         totalKilometers: 0,
         totalExpenses: 0,
-        netEarnings: 0,
-        averagePerOrder: 0,
-        averagePerKilometer: 0,
-        averagePerHour: 0,
-        averageTipsPerOrder: 0,
-        bestDay: null,
-        bestShift: null,
-        shiftsByPlatform: {},
-        statsByVehicle: {},
-        statsByDay: {},
-        trend: 0,
-        daysWorked: 0,
-        shiftsCompleted: 0,
         totalHours: 0,
-        fuelEfficiency: 0,
-        costPerKilometer: 0
+        shifts: 0,
+        efficiency: 0
       };
     }
-    
-    const today = new Date();
-    let startDate;
-    
-    switch (period) {
-      case 'week':
-        startDate = new Date(today);
-        startDate.setDate(today.getDate() - 7);
-        break;
-      case 'month':
-        startDate = new Date(today);
-        startDate.setMonth(today.getMonth() - 1);
-        break;
-      case 'year':
-        startDate = new Date(today);
-        startDate.setFullYear(today.getFullYear() - 1);
-        break;
-      default:
-        startDate = new Date(0); 
-    }
-    
-    const periodShifts = validDeliveryShifts.filter(shift => {
-      const shiftDate = new Date(shift.date);
-      return shiftDate >= startDate;
-    });
-        
-    let totalEarned = 0;
-    let totalTips = 0;
-    let totalOrders = 0;
-    let totalKilometers = 0;
-    let totalExpenses = 0;
-    let totalHours = 0;
-    
-    const statsByDay = {};
-    const shiftsByPlatform = {};
-    const statsByVehicle = {};
-    
-    periodShifts.forEach(shift => {
-      const work = validDeliveryWork.find(w => w.id === shift.workId);
-      if (!work) {
-        console.warn('⚠️ Delivery work not found for shift:', shift.id);
-        return;
-      }
-      
-            const shiftEarnings = getShiftGrossEarnings(shift);
-            const tips = shift.tips || 0;
-            const orders = shift.orderCount || 0;
-            const kilometers = shift.kilometers || 0;
-            const expenses = shift.fuelExpense || 0;
-            
-            totalEarned += shiftEarnings;
-            totalTips += tips;
-            totalOrders += orders;
-            totalKilometers += kilometers;
-            totalExpenses += expenses;
-            
-            const [startHour, startMin] = shift.startTime.split(':').map(Number);
-            const [endHour, endMin] = shift.endTime.split(':').map(Number);
-            let hours = (endHour + endMin/60) - (startHour + startMin/60);
-            if (hours < 0) hours += 24;
-            totalHours += hours;
-            
-            if (!statsByDay[shift.date]) {
-              statsByDay[shift.date] = {
-                earnings: 0,
-                tips: 0,
-                orders: 0,
-                kilometers: 0,
-                expenses: 0,
-                hours: 0,
-                shifts: []
-              };
-            }
-            
-            statsByDay[shift.date].earnings += shiftEarnings;
-            statsByDay[shift.date].tips += tips;
-            statsByDay[shift.date].orders += orders;
-            statsByDay[shift.date].kilometers += kilometers;
-            statsByDay[shift.date].expenses += expenses;
-            statsByDay[shift.date].hours += hours;
-            statsByDay[shift.date].shifts.push({
-              ...shift,
-              work,
-              hours
-            });
-            
-            const platform = work.platform || work.name;
-            if (!shiftsByPlatform[platform]) {
-              const platformData = DELIVERY_PLATFORMS_AUSTRALIA.find(p => p.name === platform);
-              shiftsByPlatform[platform] = {
-                name: platform,
-                color: platformData?.color || '#10B981',
-                totalEarned: 0,
-                totalOrders: 0,
-                totalTips: 0,
-                totalHours: 0,
-                totalKilometers: 0,
-                totalExpenses: 0,
-                shifts: 0
-              };
-            }
-            
-            shiftsByPlatform[platform].totalEarned += shiftEarnings;
-            shiftsByPlatform[platform].totalOrders += orders;
-            shiftsByPlatform[platform].totalTips += tips;
-            shiftsByPlatform[platform].totalHours += hours;
-            shiftsByPlatform[platform].totalKilometers += kilometers;
-            shiftsByPlatform[platform].totalExpenses += expenses;
-            shiftsByPlatform[platform].shifts += 1;
-            
-            const vehicle = work.vehicle || 'Not specified';
-            if (!statsByVehicle[vehicle]) {
-              statsByVehicle[vehicle] = {
-                name: vehicle,
-                totalEarned: 0,
-                totalOrders: 0,
-                totalKilometers: 0,
-                totalExpenses: 0,
-                totalHours: 0,
-                shifts: 0,
-                efficiency: 0 
-              };
-            }
-            
-            statsByVehicle[vehicle].totalEarned += shiftEarnings;
-            statsByVehicle[vehicle].totalOrders += orders;
-            statsByVehicle[vehicle].totalKilometers += kilometers;
-            statsByVehicle[vehicle].totalExpenses += expenses;
-            statsByVehicle[vehicle].totalHours += hours;
-            statsByVehicle[vehicle].shifts += 1;
-          });    
-    Object.values(statsByVehicle).forEach(vehicle => {
-      if (vehicle.totalExpenses > 0) {
-        vehicle.efficiency = vehicle.totalKilometers / vehicle.totalExpenses;
-      }
-    });
-    
-    let bestDay = null;
-    let bestEarnings = 0;
-    
-    Object.entries(statsByDay).forEach(([date, stats]) => {
-      const netEarnings = stats.earnings - stats.expenses;
-      
-      if (netEarnings > bestEarnings) {
-        bestEarnings = netEarnings;
-        bestDay = {
-          date,
-          earnings: stats.earnings,
-          netEarnings,
-          orders: stats.orders,
-          hours: stats.hours,
-          kilometers: stats.kilometers,
-          expenses: stats.expenses
-        };
-      }
-    });
-    
-    let bestShift = null;
-    let bestShiftEarnings = 0;
-    
-    periodShifts.forEach(shift => {
-      const grossEarnings = getShiftGrossEarnings(shift);
-      const netEarnings = grossEarnings - (shift.fuelExpense || 0);
-      if (netEarnings > bestShiftEarnings) {
-        bestShiftEarnings = netEarnings;
-        bestShift = {
-          ...shift,
-          netEarnings,
-          work: validDeliveryWork.find(w => w.id === shift.workId)
-        };
-      }
-    });
-    
-    const netEarnings = totalEarned - totalExpenses;
-    const averagePerOrder = totalOrders > 0 ? totalEarned / totalOrders : 0;
-    const averagePerKilometer = totalKilometers > 0 ? totalEarned / totalKilometers : 0;
-    const averagePerHour = totalHours > 0 ? totalEarned / totalHours : 0;
-    const averageTipsPerOrder = totalOrders > 0 ? totalTips / totalOrders : 0;
-    const fuelEfficiency = totalExpenses > 0 ? totalKilometers / totalExpenses : 0;
-    const costPerKilometer = totalKilometers > 0 ? totalExpenses / totalKilometers : 0;
-    
-    const result = {
-      totalEarned,
-      totalTips,
-      totalOrders,
-      totalKilometers,
-      totalExpenses,
-      netEarnings,
-      totalHours,
-      
-      averagePerOrder,
-      averagePerKilometer,
-      averagePerHour,
-      averageTipsPerOrder,
-      fuelEfficiency,
-      costPerKilometer,
-      
-      bestDay,
-      bestShift,
-      
-      shiftsByPlatform,
-      statsByVehicle,
-      statsByDay,
-      
-      daysWorked: Object.keys(statsByDay).length,
-      shiftsCompleted: periodShifts.length
-    };
 
-    return result;
+    statsByVehicle[vehicle].totalEarned += shiftEarnings;
+    statsByVehicle[vehicle].totalOrders += orders;
+    statsByVehicle[vehicle].totalKilometers += kilometers;
+    statsByVehicle[vehicle].totalExpenses += expenses;
+    statsByVehicle[vehicle].totalHours += hours;
+    statsByVehicle[vehicle].shifts += 1;
+  });
+  Object.values(statsByVehicle).forEach(vehicle => {
+    if (vehicle.totalExpenses > 0) {
+      vehicle.efficiency = vehicle.totalKilometers / vehicle.totalExpenses;
+    }
+  });
+
+  let bestDay = null;
+  let bestEarnings = 0;
+
+  Object.entries(statsByDay).forEach(([date, stats]) => {
+    const netEarnings = stats.earnings - stats.expenses;
+
+    if (netEarnings > bestEarnings) {
+      bestEarnings = netEarnings;
+      bestDay = {
+        date,
+        earnings: stats.earnings,
+        netEarnings,
+        orders: stats.orders,
+        hours: stats.hours,
+        kilometers: stats.kilometers,
+        expenses: stats.expenses
+      };
+    }
+  });
+
+  let bestShift = null;
+  let bestShiftEarnings = 0;
+
+  periodShifts.forEach(shift => {
+    const grossEarnings = getShiftGrossEarnings(shift);
+    const netEarnings = grossEarnings - (shift.fuelExpense || 0);
+    if (netEarnings > bestShiftEarnings) {
+      bestShiftEarnings = netEarnings;
+      bestShift = {
+        ...shift,
+        netEarnings,
+        work: validDeliveryWork.find(w => w.id === shift.workId)
+      };
+    }
+  });
+
+  const netEarnings = totalEarned - totalExpenses;
+  const averagePerOrder = totalOrders > 0 ? totalEarned / totalOrders : 0;
+  const averagePerKilometer = totalKilometers > 0 ? totalEarned / totalKilometers : 0;
+  const averagePerHour = totalHours > 0 ? totalEarned / totalHours : 0;
+  const averageTipsPerOrder = totalOrders > 0 ? totalTips / totalOrders : 0;
+  const fuelEfficiency = totalExpenses > 0 ? totalKilometers / totalExpenses : 0;
+  const costPerKilometer = totalKilometers > 0 ? totalExpenses / totalKilometers : 0;
+
+  const result = {
+    totalEarned,
+    totalTips,
+    totalOrders,
+    totalKilometers,
+    totalExpenses,
+    netEarnings,
+    totalHours,
+
+    averagePerOrder,
+    averagePerKilometer,
+    averagePerHour,
+    averageTipsPerOrder,
+    fuelEfficiency,
+    costPerKilometer,
+
+    bestDay,
+    bestShift,
+
+    shiftsByPlatform,
+    statsByVehicle,
+    statsByDay,
+
+    daysWorked: Object.keys(statsByDay).length,
+    shiftsCompleted: periodShifts.length
+  };
+
+  return result;
 }
 
 export const calculateDeliveryHourlyStats = (shifts = []) => {
   // Time slots definition
   const slots = {
-    morning: { 
-      id: 'morning', 
-      label: 'Morning (6-12)', 
-      start: 6, 
-      end: 11, 
-      earnings: 0, 
-      hours: 0, 
-      count: 0 
+    morning: {
+      id: 'morning',
+      label: 'Morning (6-12)',
+      start: 6,
+      end: 11,
+      earnings: 0,
+      hours: 0,
+      count: 0
     },
-    midday: { 
-      id: 'midday', 
-      label: 'Midday (12-16)', 
-      start: 12, 
-      end: 15, 
-      earnings: 0, 
-      hours: 0, 
-      count: 0 
+    midday: {
+      id: 'midday',
+      label: 'Midday (12-16)',
+      start: 12,
+      end: 15,
+      earnings: 0,
+      hours: 0,
+      count: 0
     },
-    afternoon: { 
-      id: 'afternoon', 
-      label: 'Afternoon (16-20)', 
-      start: 16, 
-      end: 19, 
-      earnings: 0, 
-      hours: 0, 
-      count: 0 
+    afternoon: {
+      id: 'afternoon',
+      label: 'Afternoon (16-20)',
+      start: 16,
+      end: 19,
+      earnings: 0,
+      hours: 0,
+      count: 0
     },
-    night: { 
-      id: 'night', 
-      label: 'Night (20-6)', 
-      start: 20, 
-      end: 5, 
-      earnings: 0, 
-      hours: 0, 
-      count: 0 
+    night: {
+      id: 'night',
+      label: 'Night (20-6)',
+      start: 20,
+      end: 5,
+      earnings: 0,
+      hours: 0,
+      count: 0
     },
   };
 
@@ -693,10 +697,10 @@ export const calculateDeliveryHourlyStats = (shifts = []) => {
 
   deliveryShifts.forEach(shift => {
     if (!shift.startDate || !shift.endDate) return;
-    
+
     const date = new Date(shift.startDate);
     const hour = date.getHours();
-    
+
     let key = 'night';
     if (hour >= 6 && hour < 12) key = 'morning';
     else if (hour >= 12 && hour < 16) key = 'midday';
@@ -704,7 +708,7 @@ export const calculateDeliveryHourlyStats = (shifts = []) => {
 
     // Calculate net earnings of the shift
     const shiftEarnings = (shift.earnings || shift.totalEarnings || 0) + (shift.tips || 0) - (shift.fuelExpense || 0);
-    
+
     // Calculate real duration
     const startDateTime = new Date(`${shift.startDate}T${shift.startTime}:00`);
     let endDateTime = new Date(`${shift.endDate}T${shift.endTime}:00`);
@@ -715,9 +719,9 @@ export const calculateDeliveryHourlyStats = (shifts = []) => {
     // This handles cases like 22:00 (Day 1) to 02:00 (Day 2)
     // where endDate and startDate might still be the same ('YYYY-MM-DD').
     if (endDateTime.getTime() <= startDateTime.getTime() && shift.endDate === shift.startDate) {
-        endDateTime.setDate(endDateTime.getDate() + 1);
+      endDateTime.setDate(endDateTime.getDate() + 1);
     }
-    
+
     // Fallback if endDateTime is still <= startDateTime (e.g., malformed data)
     if (endDateTime.getTime() <= startDateTime.getTime()) {
       console.warn("Shift end time is not after start time, skipping duration calculation for shift:", shift);
@@ -767,7 +771,7 @@ export const calculateWeeklyHourlyDeliveryStats = (shifts = []) => {
     if (shiftEnd.getTime() <= shiftStart.getTime()) {
       shiftEnd.setDate(shiftEnd.getDate() + 1);
     }
-    
+
     const shiftEarnings = (shift.earnings || shift.totalEarnings || 0) + (shift.tips || 0) - (shift.fuelExpense || 0);
 
     let currentHour = shiftStart.getHours();
@@ -783,7 +787,7 @@ export const calculateWeeklyHourlyDeliveryStats = (shifts = []) => {
 
       if (hoursInThisSegment > 0) {
         const hourlyProfit = shiftEarnings * (hoursInThisSegment / ((shiftEnd.getTime() - shiftStart.getTime()) / (1000 * 60 * 60)));
-        
+
         const dayIndex = currentDay;
         const hourIndex = currentHour;
 

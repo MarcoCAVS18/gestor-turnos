@@ -39,9 +39,10 @@ const getUserDocRef = (userUid) => {
 // SUBSCRIPTION HELPERS
 // ============================================================================
 
-const createIncrementalSubscription = (query, setData, errorCallback, sortComparator, dataTransform = (d) => d) => {
+// Generic subscription helper that accepts any state setter name
+const createIncrementalSubscription = (query, stateSetter, errorCallback, sortComparator, dataTransform = (d) => d) => {
   return onSnapshot(query, { includeMetadataChanges: true }, (snapshot) => {
-    setData((currentData) => {
+    stateSetter((currentData) => {
       let updatedData = [...(currentData || [])];
       snapshot.docChanges().forEach((change) => {
         const docData = dataTransform({ id: change.doc.id, ...change.doc.data() });
@@ -170,7 +171,7 @@ export const subscribeToNormalData = (userUid, { setWorks, setShifts, setError }
   return () => unsubscribes.forEach(unsub => unsub());
 };
 
-export const subscribeToDeliveryData = (userUid, { setDeliveryWorks, setDeliveryShifts, setError }) => {
+export const subscribeToDeliveryData = (userUid, { setDeliveryWork, setDeliveryShifts, setError }) => {
   const { worksRef, shiftsRef } = getCollections();
 
   if (!userUid) return () => {};
@@ -181,7 +182,7 @@ export const subscribeToDeliveryData = (userUid, { setDeliveryWorks, setDelivery
   unsubscribes.push(
     createIncrementalSubscription(
       deliveryWorksQuery,
-      setDeliveryWorks,
+      setDeliveryWork,
       (error) => setError(error),
       (a, b) => b.createdAt - a.createdAt
     )
@@ -223,13 +224,20 @@ export const addJob = async (userUid, newJob, isDelivery = false) => {
       vehicle: newJob.vehicle || '',
       avatarColor: newJob.avatarColor || '#10B981',
     };
+  } else {
+    // For regular jobs, add rates if provided
+    if (newJob.rates) {
+      jobData.rates = newJob.rates;
+    }
   }
 
   if (!isDelivery && (!jobData.name || !jobData.name.trim())) {
     throw new Error('Work name is required');
   }
 
+  console.log('💾 Creating job in Firestore:', { isDelivery, jobData });
   const docRef = await addDoc(worksRef, jobData);
+  console.log('✅ Job created successfully with ID:', docRef.id);
   return { ...jobData, id: docRef.id };
 };
 
@@ -246,22 +254,38 @@ export const editJob = async (userUid, id, updatedData, isDelivery = false) => {
     dataWithMetadata.platform = updatedData.platform || '';
     dataWithMetadata.vehicle = updatedData.vehicle || '';
     dataWithMetadata.avatarColor = updatedData.avatarColor || '#10B981';
+  } else {
+    // For regular jobs, ensure rates are updated if provided
+    if (updatedData.rates) {
+      dataWithMetadata.rates = updatedData.rates;
+    }
   }
 
-  return updateDoc(jobRef, dataWithMetadata);
+  console.log('💾 Updating job in Firestore:', { id, isDelivery, dataWithMetadata });
+  await updateDoc(jobRef, dataWithMetadata);
+  console.log('✅ Job updated successfully');
 };
 
 export const deleteJob = async (userUid, id, isDelivery = false) => {
+  if (!id || !id.trim()) {
+    throw new Error('Work ID is required for deletion');
+  }
+
   const { worksRef, shiftsRef } = getCollections();
+
+  console.log('🗑️ Deleting job from Firestore:', { id, userUid, isDelivery });
 
   const jobRef = doc(worksRef, id);
 
+  // Delete all shifts associated with this job
   const shiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('workId', '==', id));
   const shiftsSnapshot = await getDocs(shiftsQuery);
+  console.log(`Found ${shiftsSnapshot.size} shifts to delete`);
   const deletePromises = shiftsSnapshot.docs.map(d => deleteDoc(d.ref));
   await Promise.all(deletePromises);
 
   await deleteDoc(jobRef);
+  console.log('✅ Job and associated shifts deleted successfully');
 };
 
 // ============================================================================
@@ -305,12 +329,16 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
       totalEarnings,
       netEarnings: totalEarnings - fuelExpense,
       fuelExpense,
+      orderCount: newShift.orderCount || 0,
+      kilometers: newShift.kilometers || 0,
       platform: newShift.platform || '',
       vehicle: newShift.vehicle || '',
     };
   }
 
+  console.log('💾 Creating shift in Firestore:', { isDelivery, shiftData });
   const docRef = await addDoc(shiftsRef, shiftData);
+  console.log('✅ Shift created successfully with ID:', docRef.id);
   return { ...shiftData, id: docRef.id };
 };
 
@@ -346,12 +374,16 @@ export const editShift = async (userUid, id, updatedData, isDelivery = false) =>
       totalEarnings,
       netEarnings: totalEarnings - fuelExpense,
       fuelExpense,
+      orderCount: updatedData.orderCount || 0,
+      kilometers: updatedData.kilometers || 0,
       platform: updatedData.platform || '',
       vehicle: updatedData.vehicle || '',
     };
   }
 
-  return updateDoc(shiftRef, dataWithMetadata);
+  console.log('💾 Updating shift in Firestore:', { id, isDelivery, dataWithMetadata });
+  await updateDoc(shiftRef, dataWithMetadata);
+  console.log('✅ Shift updated successfully');
 };
 
 export const deleteShift = async (userUid, id, isDelivery = false) => {

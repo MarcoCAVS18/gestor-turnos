@@ -10,7 +10,7 @@ const WeeklyStatsGrid = ({ data = {} }) => {
   const colors = useThemeColors();
 
   const safeData = {
-    totalEarnings: (data && typeof data.totalEarnings === 'number' && !isNaN(data.totalEarnings)) ? data.totalEarnings : 0,
+    totalEarned: (data && typeof data.totalEarned === 'number' && !isNaN(data.totalEarned)) ? data.totalEarned : 0,
     hoursWorked: (data && typeof data.hoursWorked === 'number') ? data.hoursWorked : 0,
     daysWorked: (data && typeof data.daysWorked === 'number') ? data.daysWorked : 0,
     totalShifts: (data && typeof data.totalShifts === 'number') ? data.totalShifts : 0
@@ -20,7 +20,7 @@ const WeeklyStatsGrid = ({ data = {} }) => {
     {
       icon: DollarSign,
       label: 'Total earned',
-      value: formatCurrency(safeData.totalEarnings),
+      value: formatCurrency(safeData.totalEarned),
       color: colors.primary
     },
     {

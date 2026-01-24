@@ -63,6 +63,7 @@ export const useDashboardStats = () => {
         daysWorked: 0
       },
       allWork,
+      allWorks: allWork, // Alias for compatibility
       allShifts
     };
 
@@ -86,10 +87,10 @@ export const useDashboardStats = () => {
         // 1. Calculate Earnings
         let earnings = 0;
         if (shift.type === 'delivery' || work.type === 'delivery') {
-          earnings = parseFloat(shift.totalEarnings || shift.totalEarned || 0);
+          earnings = parseFloat(shift.totalEarnings || 0);
         } else if (typeof calculatePayment === 'function') {
           const result = calculatePayment(shift);
-          earnings = result.totalWithDiscount || result.totalConDescuento || 0;
+          earnings = result.totalWithDiscount || 0;
         }
 
         // 2. Calculate Hours (Using your utility)
@@ -170,6 +171,7 @@ export const useDashboardStats = () => {
           daysWorked: monthCounters.dates.size
         },
         allWork,
+        allWorks: allWork, // Alias for compatibility
         allShifts
       };
 

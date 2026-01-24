@@ -60,7 +60,7 @@ const Works = () => {
             {traditionalWorks.length > 0 && (
               <div>
                 <div className="flex items-center mb-4">
-                  <div 
+                  <div
                     className="w-1 h-6 rounded-full mr-3"
                     style={{ backgroundColor: thematicColors?.primary || '#EC4899' }}
                   />
@@ -71,12 +71,12 @@ const Works = () => {
                     {traditionalWorks.length}
                   </span>
                 </div>
-                
-                {/* Column layout for traditional works */}
-                <div className="space-y-4">
+
+                {/* Grid of cards - max 2 per row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {traditionalWorks.map((work) => {
                     const isSharing = sharing[work.id] || false;
-                    
+
                     return (
                       <WorkCard
                         key={work.id}
@@ -97,7 +97,7 @@ const Works = () => {
             {deliveryWork.length > 0 && (
               <div>
                 <div className="flex items-center mb-4">
-                  <div 
+                  <div
                     className="w-1 h-6 rounded-full mr-3"
                     style={{ backgroundColor: '#10B981' }}
                   />
@@ -108,12 +108,12 @@ const Works = () => {
                     {deliveryWork.length}
                   </span>
                 </div>
-                
-                {/* Column layout for delivery works */}
-                <div className="space-y-4">
+
+                {/* Grid of cards - max 2 per row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {deliveryWork.map((work) => {
                     const isSharing = sharing[work.id] || false;
-                    
+
                     return (
                       <DeliveryWorkCard
                         key={work.id}

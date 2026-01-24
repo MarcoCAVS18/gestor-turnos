@@ -11,7 +11,7 @@ import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 import Button from '../../ui/Button'; 
 
-const RecentActivityCard = ({ stats, allWorks, allShifts }) => {
+const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
   const isMobile = useIsMobile(); 
@@ -21,12 +21,16 @@ const RecentActivityCard = ({ stats, allWorks, allShifts }) => {
   // Get recent shifts
   const recentShifts = useMemo(() => {
     if (!Array.isArray(allShifts)) return [];
-    
+
     return allShifts
       .sort((a, b) => {
-        const dateA = new Date((a.startTime || a.date) + 'T' + a.startTime);
-        const dateB = new Date((b.startTime || b.date) + 'T' + b.startTime);
-        return dateB - dateA;
+        const dateA = (a.startDate || a.date) || '';
+        const dateB = (b.startDate || b.date) || '';
+        const timeA = a.startTime || '00:00';
+        const timeB = b.startTime || '00:00';
+        const fullDateA = new Date(`${dateA}T${timeA}`);
+        const fullDateB = new Date(`${dateB}T${timeB}`);
+        return fullDateB - fullDateA; // Most recent first
       })
       .slice(0, limit);
   }, [allShifts, limit]);
@@ -61,15 +65,26 @@ const RecentActivityCard = ({ stats, allWorks, allShifts }) => {
     if (shift.type === 'delivery') {
       return shift.totalEarnings || 0;
     }
-    
+
     const work = getWork(shift.workId);
     if (!work) return 0;
-    
-    const [startHour, startMin] = shift.startTime.split(':').map(Number);
-    const [endHour, endMin] = shift.endTime.split(':').map(Number);
+
+    // Use the proper calculatePayment function if available
+    if (calculatePayment) {
+      try {
+        const result = calculatePayment(shift);
+        return result.totalWithDiscount || 0;
+      } catch (error) {
+        console.error('Error calculating shift earnings:', error);
+      }
+    }
+
+    // Fallback: simple calculation with baseRate
+    const [startHour, startMin] = (shift.startTime || '00:00').split(':').map(Number);
+    const [endHour, endMin] = (shift.endTime || '00:00').split(':').map(Number);
     let hours = (endHour + endMin/60) - (startHour + startMin/60);
     if (hours < 0) hours += 24;
-    
+
     return hours * (work.baseRate || 0);
   };
 
@@ -133,7 +148,7 @@ const RecentActivityCard = ({ stats, allWorks, allShifts }) => {
         {recentShifts.map((shift, index) => {
           const work = getWork(shift.workId);
           const earnings = calculateShiftEarnings(shift);
-          const relativeDate = formatRelativeDate(shift.startTime || shift.date);
+          const relativeDate = formatRelativeDate(shift.startDate || shift.date);
 
           return (
             <Flex variant="between"

@@ -18,13 +18,13 @@ const CalendarGrid = ({
   // Function to get job colors
   const getJobColors = (dayShifts, allJobs) => {
     const uniqueColors = new Set();
-    
+
     if (!dayShifts || dayShifts.length === 0) {
       return [];
     }
-    
+
     dayShifts.forEach(shift => {
-      const job = allJobs.find(t => t.id === shift.jobId);
+      const job = allJobs.find(t => t.id === shift.workId);
       if (job) {
         // For delivery jobs, use specific color
         if (job.type === 'delivery' || shift.type === 'delivery') {
@@ -42,7 +42,7 @@ const CalendarGrid = ({
         }
       }
     });
-    
+
     return Array.from(uniqueColors).slice(0, 3); // Maximum 3 colors
   };
 

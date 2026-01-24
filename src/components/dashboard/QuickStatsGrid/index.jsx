@@ -41,7 +41,7 @@ const QuickStatsGrid = ({ stats, className }) => {
       ],
       average: [
         { label: 'Per Hour', value: `$${stats.averagePerHour.toFixed(0)}`, icon: Clock, iconColor: '#6366f1' },
-        { label: 'Week Earn.', value: `$${(currentWeek?.totalEarnings || 0).toLocaleString()}`, icon: TrendingUp, iconColor: '#ec4899' }
+        { label: 'Week Earn.', value: `$${(currentWeek?.totalEarned || 0).toLocaleString()}`, icon: TrendingUp, iconColor: '#ec4899' }
       ]
     };
   }, [stats, works, deliveryWork]);
@@ -49,7 +49,7 @@ const QuickStatsGrid = ({ stats, className }) => {
   const cardsData = [
     {
       id: 'works',
-      type: 'works', // Changed from 'jobs' to match the prop in QuickStatCard
+      type: 'jobs',
       icon: Briefcase,
       label: 'Works',
       value: totalWorks,

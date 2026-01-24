@@ -18,7 +18,7 @@ const ThisWeekSummaryCard = ({ stats, className }) => {
 
   // Get data for this week from stats
   const currentWeek = stats.currentWeek || {};
-  const totalWeek = currentWeek.totalEarnings || 0;
+  const totalWeek = currentWeek.totalEarned || 0;
   const hoursWeek = currentWeek.hoursWorked || 0;
   const shiftsWeek = currentWeek.totalShifts || 0; 
 

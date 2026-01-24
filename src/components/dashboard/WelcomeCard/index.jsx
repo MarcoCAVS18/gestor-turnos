@@ -7,7 +7,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
-const WelcomeCard = ({ totalEarnings, isFeatureVisible = false, className }) => {
+const WelcomeCard = ({ totalEarned, isFeatureVisible = false, className }) => {
   const { currentUser } = useAuth();
   const { userEmoji } = useApp();
   const colors = useThemeColors();
@@ -47,11 +47,11 @@ const WelcomeCard = ({ totalEarnings, isFeatureVisible = false, className }) => 
             
             <div>
               <p className="text-xs text-gray-500 pt-4 mb-1">Total earned</p>
-              <p 
+              <p
                 className="text-4xl font-bold"
                 style={{ color: colors.primary }}
               >
-                {formatCurrency(totalEarnings)}
+                {formatCurrency(totalEarned || 0)}
               </p>
             </div>
           </div>
@@ -69,11 +69,11 @@ const WelcomeCard = ({ totalEarnings, isFeatureVisible = false, className }) => 
             </div>
             <div className="text-right">
               <p className="text-sm text-gray-500">Total earned</p>
-              <p 
+              <p
                 className="text-2xl font-bold"
                 style={{ color: colors.primary }}
               >
-                {formatCurrency(totalEarnings)}
+                {formatCurrency(totalEarned || 0)}
               </p>
             </div>
           </div>
