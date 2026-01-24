@@ -12,8 +12,8 @@ export const useCombinedStats = (***REMOVED***
   previousData,
 ***REMOVED***) => ***REMOVED***
   const ***REMOVED***
-    turnos,
-    turnosDelivery,
+    shifts,
+    deliveryShifts,
     allWork,
     calculatePayment,
     shiftRanges,
@@ -22,16 +22,16 @@ export const useCombinedStats = (***REMOVED***
 
   const weeklyStats = useMemo(() => ***REMOVED***
     return calculateWeeklyStats(***REMOVED***
-      turnos,
-      turnosDelivery,
+      shifts,
+      deliveryShifts,
       allWork,
       calculatePayment,
       shiftRanges,
       weekOffset,
     ***REMOVED***);
   ***REMOVED***, [
-    turnos,
-    turnosDelivery,
+    shifts,
+    deliveryShifts,
     allWork,
     calculatePayment,
     shiftRanges,
@@ -42,8 +42,8 @@ export const useCombinedStats = (***REMOVED***
     const validDeliveryWork = Array.isArray(deliveryWork)
       ? deliveryWork
       : [];
-    const validDeliveryShifts = Array.isArray(turnosDelivery)
-      ? turnosDelivery
+    const validDeliveryShifts = Array.isArray(deliveryShifts)
+      ? deliveryShifts
       : [];
 
     if (validDeliveryShifts.length === 0) ***REMOVED***
@@ -113,7 +113,7 @@ export const useCombinedStats = (***REMOVED***
         (t) => t.id === shift.workId
       );
       if (!work) ***REMOVED***
-        console.warn('⚠️ Delivery work not found for shift:', shift.id);
+        console.warn('Delivery work not found for shift:', shift.id);
         return;
       ***REMOVED***
 
@@ -285,7 +285,7 @@ export const useCombinedStats = (***REMOVED***
     ***REMOVED***;
 
     return result;
-  ***REMOVED***, [deliveryWork, turnosDelivery, period]);
+  ***REMOVED***, [deliveryWork, deliveryShifts, period]);
 
   return ***REMOVED*** weeklyStats, deliveryStats, weeklyHoursGoal, previousData ***REMOVED***;
 ***REMOVED***;

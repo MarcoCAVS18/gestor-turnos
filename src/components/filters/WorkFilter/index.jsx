@@ -6,13 +6,13 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
 
 const WorkFilter = (***REMOVED*** value, onChange ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** works, deliveryWorks ***REMOVED*** = useApp();
+  const ***REMOVED*** works, deliveryWork ***REMOVED*** = useApp();
   const colors = useThemeColors();
   
   // Combine all works
   const allWorks = [
     ...works.map(t => (***REMOVED*** ...t, type: t.type || 'traditional' ***REMOVED***)),
-    ...deliveryWorks.map(t => (***REMOVED*** ...t, type: 'delivery' ***REMOVED***))
+    ...deliveryWork.map(t => (***REMOVED*** ...t, type: 'delivery' ***REMOVED***))
   ];
 
   return (

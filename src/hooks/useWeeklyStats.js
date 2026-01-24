@@ -5,16 +5,16 @@ import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** calculateWeeklyStats ***REMOVED*** from '../utils/statsCalculations';
 
 export const useWeeklyStats = (weekOffset = 0) => ***REMOVED***
-  const ***REMOVED*** calculatePayment, allWorks, turnos, turnosDelivery, shiftRanges ***REMOVED*** = useApp();
+  const ***REMOVED*** calculatePayment, allWorks, shifts, deliveryShifts, shiftRanges ***REMOVED*** = useApp();
 
   return useMemo(() => ***REMOVED***
     return calculateWeeklyStats(***REMOVED***
-      turnos,
-      turnosDelivery,
+      shifts,
+      deliveryShifts,
       allWorks,
       calculatePayment,
       shiftRanges,
       weekOffset,
     ***REMOVED***);
-  ***REMOVED***, [allWorks, turnos, turnosDelivery, weekOffset, calculatePayment, shiftRanges]);
+  ***REMOVED***, [allWorks, shifts, deliveryShifts, weekOffset, calculatePayment, shiftRanges]);
 ***REMOVED***;

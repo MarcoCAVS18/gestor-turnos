@@ -14,12 +14,12 @@ export const useCalculations = () => ***REMOVED***
 
 export const CalculationsProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   // Consume data from other contexts
-  const ***REMOVED*** trabajos ***REMOVED*** = useDataContext();
-  const ***REMOVED*** trabajosDelivery ***REMOVED*** = useDeliveryContext();
+  const ***REMOVED*** works ***REMOVED*** = useDataContext();
+  const ***REMOVED*** deliveryWork ***REMOVED*** = useDeliveryContext();
   const ***REMOVED*** shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes ***REMOVED*** = useConfigContext();
 
   // Combine all work to pass to calculation functions
-  const allJobs = useMemo(() => [...trabajos, ...trabajosDelivery], [trabajos, trabajosDelivery]);
+  const allJobs = useMemo(() => [...works, ...deliveryWork], [works, deliveryWork]);
 
   // Create memoized and pre-configured versions of the calculation functions
   const calculatePayment = useCallback((shift) => ***REMOVED***

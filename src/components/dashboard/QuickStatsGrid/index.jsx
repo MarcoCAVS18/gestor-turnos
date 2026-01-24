@@ -11,15 +11,15 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import QuickStatCard from '../QuickStatCard';
 
 const QuickStatsGrid = (***REMOVED*** stats, className ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors, works, deliveryWorks ***REMOVED*** = useApp();
+  const ***REMOVED*** thematicColors, works, deliveryWork ***REMOVED*** = useApp();
   
-  const totalWorks = (works?.length || 0) + (deliveryWorks?.length || 0);
+  const totalWorks = (works?.length || 0) + (deliveryWork?.length || 0);
   
   const detailedData = useMemo(() => ***REMOVED***
     // 1. Data for WORKS
     const traditionalCount = works?.length || 0;
-    const deliveryCount = deliveryWorks?.length || 0;
-    const platformsSet = new Set(deliveryWorks?.map(t => t.platform || t.name || "App").filter(Boolean));
+    const deliveryCount = deliveryWork?.length || 0;
+    const platformsSet = new Set(deliveryWork?.map(t => t.platform || t.name || "App").filter(Boolean));
     const platformsList = Array.from(platformsSet);
 
     // 2. Extract pre-calculated data from the useDashboardStats hook
@@ -44,7 +44,7 @@ const QuickStatsGrid = (***REMOVED*** stats, className ***REMOVED***) => ***REMO
         ***REMOVED*** label: 'Week Earn.', value: `$$***REMOVED***(currentWeek?.totalEarnings || 0).toLocaleString()***REMOVED***`, icon: TrendingUp, iconColor: '#ec4899' ***REMOVED***
       ]
     ***REMOVED***;
-  ***REMOVED***, [stats, works, deliveryWorks]);
+  ***REMOVED***, [stats, works, deliveryWork]);
 
   const cardsData = [
     ***REMOVED***

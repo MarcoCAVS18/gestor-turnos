@@ -10,7 +10,7 @@ import WorkEmptyState from '../components/work/WorkEmptyState';
 import WorkCard from '../components/cards/work/WorkCard';
 import DeliveryWorkCard from '../components/cards/work/DeliveryWorkCard';
 import WorkModal from '../components/modals/work/WorkModal';
-import DeleteAlert from '../components/alerts/AlertaEliminacion';
+import DeleteAlert from '../components/alerts/DeleteAlert';
 import ***REMOVED*** generateWorkDetails ***REMOVED*** from '../utils/workUtils';
 
 const Works = () => ***REMOVED***

@@ -10,10 +10,10 @@ import ***REMOVED*** localDateToISO ***REMOVED*** from '../utils/calendarUtils';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 import Calendario from '../components/calendar/Calendar';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
-import ModalTurno from '../components/modals/shift/ModalTurno';
+import ShiftModal from '../components/modals/shift/ShiftModal';
 import ***REMOVED*** useTurnManager ***REMOVED*** from '../hooks/useTurnManager';
 import ***REMOVED*** useDeleteManager ***REMOVED*** from '../hooks/useDeleteManager';
-import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
+import DeleteAlert from '../components/alerts/DeleteAlert';
 import Loader from '../components/other/Loader';
 
 const CalendarView = () => ***REMOVED***
@@ -164,14 +164,14 @@ const CalendarView = () => ***REMOVED***
         />
       </motion.div>
       
-      <ModalTurno 
+      <ShiftModal 
         isOpen=***REMOVED***isModalOpen***REMOVED*** 
         onClose=***REMOVED***closeModal***REMOVED*** 
         shift=***REMOVED***selectedShift***REMOVED***
         initialDate=***REMOVED***initialDate***REMOVED***
       />
       
-      <AlertaEliminacion
+      <DeleteAlert
         visible=***REMOVED***showDeleteModal***REMOVED***
         onCancel=***REMOVED***cancelDeletion***REMOVED***
         onConfirm=***REMOVED***confirmDeletion***REMOVED***

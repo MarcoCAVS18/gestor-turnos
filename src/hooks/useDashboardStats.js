@@ -6,7 +6,7 @@ import ***REMOVED*** formatRelativeDate ***REMOVED*** from '../utils/time';
 import ***REMOVED*** calculateShiftHours ***REMOVED*** from '../utils/time/timeCalculations';
 
 export const useDashboardStats = () => ***REMOVED***
-  const ***REMOVED*** trabajos, deliveryWork, turnos, deliveryShifts, calculatePayment ***REMOVED*** = useApp();
+  const ***REMOVED*** works, deliveryWork, shifts, deliveryShifts, calculatePayment ***REMOVED*** = useApp();
 
   // Function to get dates of the current week (Monday to Sunday)
   const timeRanges = useMemo(() => ***REMOVED***
@@ -33,9 +33,9 @@ export const useDashboardStats = () => ***REMOVED***
 
   const stats = useMemo(() => ***REMOVED***
     // Defensive validation
-    const validShifts = Array.isArray(turnos) ? turnos : [];
+    const validShifts = Array.isArray(shifts) ? shifts : [];
     const validDeliveryShifts = Array.isArray(deliveryShifts) ? deliveryShifts : [];
-    const allWork = [...(trabajos || []), ...(deliveryWork || [])];
+    const allWork = [...(works || []), ...(deliveryWork || [])];
     const allShifts = [...validShifts, ...validDeliveryShifts];
 
     // Initial structure
@@ -47,7 +47,7 @@ export const useDashboardStats = () => ***REMOVED***
       mostProfitableWork: null,
       nextShift: null,
       weeklyTrend: 0,
-      favoriteWork: [],
+      favoriteWorks: [],
       monthlyProjection: 0,
 
       currentWeek: ***REMOVED***
@@ -132,7 +132,7 @@ export const useDashboardStats = () => ***REMOVED***
       const mostProfitableWork = Object.values(earningsByWork)
         .sort((a, b) => b.earnings - a.earnings)[0] || null;
 
-      const favoriteWork = Object.values(earningsByWork)
+      const favoriteWorks = Object.values(earningsByWork)
         .sort((a, b) => b.shifts - a.shifts)
         .slice(0, 3);
 
@@ -154,7 +154,7 @@ export const useDashboardStats = () => ***REMOVED***
         totalShifts: allShifts.length,
         mostProfitableWork,
         nextShift,
-        favoriteWork,
+        favoriteWorks,
         monthlyProjection,
 
         currentWeek: ***REMOVED***
@@ -177,7 +177,7 @@ export const useDashboardStats = () => ***REMOVED***
       console.error('Error calculating statistics:', error);
       return defaultStats;
     ***REMOVED***
-  ***REMOVED***, [trabajos, deliveryWork, turnos, deliveryShifts, calculatePayment, timeRanges]);
+  ***REMOVED***, [works, deliveryWork, shifts, deliveryShifts, calculatePayment, timeRanges]);
 
   const formatDate = useMemo(() => formatRelativeDate, []);
 

@@ -2,6 +2,8 @@
 
 import ***REMOVED*** determineShiftType ***REMOVED*** from './shiftDetailsUtils';
 import ***REMOVED*** createSafeDate ***REMOVED*** from './time';
+import ***REMOVED*** formatCurrency ***REMOVED*** from './currency';
+import ***REMOVED*** formatHoursDecimal as formatHours ***REMOVED*** from './time/timeCalculations';
 
 /**
  * Formats a given number of minutes into a string like "1H 30M".
@@ -248,3 +250,5 @@ export const findMostEfficientVehicle = (vehicles) => ***REMOVED***
     return current.efficiency > best.efficiency ? current : best;
   ***REMOVED***, vehicles[0]);
 ***REMOVED***;
+
+export ***REMOVED*** formatCurrency, formatHours ***REMOVED***;
