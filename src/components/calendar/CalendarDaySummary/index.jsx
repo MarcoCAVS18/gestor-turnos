@@ -83,12 +83,6 @@ const CalendarDaySummary = ({
 
   return (
     <div className="mt-6">
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-lg font-semibold">
-          Shifts of the selected day
-        </h3>
-      </div>
-      
       {safeShiftsOfDay.length > 0 ? (
         <Card className="overflow-hidden" padding="none">
           {/* Day header */}
@@ -129,7 +123,7 @@ const CalendarDaySummary = ({
                         </p>
                       </div>
                       <span className="text-sm text-gray-400">
-                        {shift.type === 'delivery' ? formatCurrency(shift.totalEarning || 0) : '--'}
+                        {shift.type === 'delivery' ? formatCurrency(shift.totalEarnings || 0) : '--'}
                       </span>
                     </Flex>
                   </div>

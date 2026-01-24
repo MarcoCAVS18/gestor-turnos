@@ -32,7 +32,7 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, typ
             transition={{ duration: 0.2 }}
             className="absolute inset-0 flex flex-col items-center justify-center p-2 md:p-4 text-center"
           >
-            {/* flex-grow ensures content is vertically centered even if the card is very tall */}
+            {/* flex-grow ensures content is vertically centered even if card is very tall */}
             <div className="flex-grow flex flex-col items-center justify-center w-full">
               {/* Responsive icon circle */}
               <div className="p-2 md:p-3 rounded-full bg-gray-50 group-hover:bg-gray-100 transition-colors mb-1 md:mb-2">
@@ -51,7 +51,7 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, typ
               </div>
             </div>
 
-            {/* "View more" stuck to the bottom */}
+            {/* "View more" stuck to bottom */}
             <div className="mt-auto pt-1 flex flex-col items-center opacity-60 group-hover:opacity-100 transition-opacity">
                <span className="text-[9px] md:text-[10px] text-gray-400 font-medium mb-0.5">View more</span>
                <ChevronDown size={12} className="text-gray-400 animate-bounce md:w-[14px] md:h-[14px]" />
@@ -82,7 +82,7 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, typ
                       <Store className="w-3 h-3 md:w-[14px] md:h-[14px] text-blue-500" />
                       <span className="text-[10px] md:text-xs text-gray-600 font-medium">Traditional</span>
                     </div>
-                    <span className="text-xs md:text-sm font-bold text-gray-800">{details.traditional}</span>
+                    <span className="text-xs md:text-sm font-bold text-gray-800">{details?.traditional || 0}</span>
                   </div>
                   <div className="w-full bg-white p-1.5 md:p-2 rounded-lg shadow-sm border border-gray-100">
                     <div className="flex items-center justify-between mb-1">
@@ -90,9 +90,9 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, typ
                         <Bike className="w-3 h-3 md:w-[14px] md:h-[14px] text-orange-500" />
                         <span className="text-[10px] md:text-xs text-gray-600 font-medium">Delivery</span>
                       </div>
-                      <span className="text-xs md:text-sm font-bold text-gray-800">{details.delivery}</span>
+                      <span className="text-xs md:text-sm font-bold text-gray-800">{details?.delivery || 0}</span>
                     </div>
-                    {details.platforms.length > 0 && (
+                    {details?.platforms && details.platforms.length > 0 && (
                       <div className="flex flex-wrap gap-1 justify-center mt-1 pt-1 border-t border-gray-50">
                         {details.platforms.slice(0, 3).map((p, i) => (
                           <span key={i} className="text-[9px] md:text-[10px] bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded-full border border-orange-100 max-w-[70px] truncate">
@@ -101,12 +101,12 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, typ
                         ))}
                          {details.platforms.length > 3 && (
                            <span className="text-[9px] text-gray-400">+{details.platforms.length - 3}</span>
-                        )}
+                         )}
                       </div>
                     )}
                   </div>
                 </>
-              ) : (
+              ) : Array.isArray(details) && details.length > 0 ? (
                 details.map((item, idx) => (
                   <div key={idx} className="w-full flex items-center justify-between bg-white p-1.5 md:p-2.5 rounded-lg shadow-sm border border-gray-100">
                     <div className="flex items-center gap-1.5 md:gap-2">
@@ -116,6 +116,8 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, typ
                     <span className="text-xs md:text-sm font-bold text-gray-800 whitespace-nowrap">{item.value}</span>
                   </div>
                 ))
+              ) : (
+                <div className="text-gray-400 text-xs">No data available</div>
               )}
             </div>
           </motion.div>

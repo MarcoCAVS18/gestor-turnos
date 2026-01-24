@@ -175,7 +175,7 @@ export function generateShiftDetails(shift, allJobs) {
   ];
 
   if (shift.type === 'delivery') {
-    details.push(`${shift.numberOfOrders || 0} orders`);
+    details.push(`${shift.orderCount || 0} orders`);
   }
 
   return details;

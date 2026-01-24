@@ -7,7 +7,7 @@
  * @returns {number} - The gross earnings.
  */
 export const getShiftGrossEarnings = (shift) => {
-  if (shift.type !== 'delivery' && shift.tipo !== 'delivery') {
+  if (shift.type !== 'delivery') {
     // For non-delivery shifts, we assume there's a 'total' field from a calculation
     // or we can just return 0 if it's not about earnings.
     // This function is primarily for delivery gross earnings.

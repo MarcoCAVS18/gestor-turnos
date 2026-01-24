@@ -19,14 +19,15 @@ export const useDeleteManager = (deleteFunction) => {
 
   const confirmDeletion = async () => {
     if (!itemToDelete) return;
-    
+
     setDeleting(true);
     try {
-      await deleteFunction(itemToDelete.id);
+      await deleteFunction(itemToDelete);
       setShowDeleteModal(false);
       setItemToDelete(null);
     } catch (error) {
-      console.error('Error en deleteManager:', error);
+      console.error('Error in deleteManager:', error);
+      throw error; // Re-throw to allow parent to handle
     } finally {
       setDeleting(false);
     }

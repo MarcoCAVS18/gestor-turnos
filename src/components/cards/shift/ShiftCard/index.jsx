@@ -25,6 +25,7 @@ const ShiftCard = (props) => {
   return (
     <BaseShiftCard
       {...props}
+      job={work} 
       type="traditional"
       shiftData={shiftData}
       earningValue={shiftData.totalWithDiscount}

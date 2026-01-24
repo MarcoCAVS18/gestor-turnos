@@ -1,46 +1,87 @@
 // src/components/shifts/WeeklyShiftsSection/index.jsx
 
 import React from 'react';
-// FIXED IMPORTS
-import { formatCurrency, formatHours } from '../../../utils/statsCalculations'; 
-import { formatShiftsCount } from '../../../utils/pluralization';
-import  Card  from '../../ui/Card';
+import { Calendar } from 'lucide-react';
+import ShiftCard from '../../cards/shift/ShiftCard';
+import DeliveryShiftCard from '../../cards/shift/DeliveryShiftCard';
+import { createSafeDate } from '../../../utils/time';
 
-const WeeklyShiftsSection = ({ weeklyStats }) => {
-  if (!weeklyStats) return null;
+const WeeklyShiftsSection = ({ weekRange, shifts, allJobs, onEditShift, onDeleteShift, thematicColors }) => {
+  // Get dates of shifts and sort them
+  const dates = Object.keys(shifts || {}).sort((a, b) => new Date(b) - new Date(a));
+
+  if (!dates || dates.length === 0) {
+    return null;
+  }
 
   return (
-    <Card className="p-6">
-      <h3 className="text-lg font-bold mb-4">Weekly Overview</h3>
-
-      <div className="grid grid-cols-2 gap-4">
-        {/* Total Earnings */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <p className="text-sm text-gray-600 mb-1">Total Earnings</p>
-          <p className="text-2xl font-bold text-gray-900">{formatCurrency(weeklyStats.totalEarned)}</p>
-        </div>
-
-        {/* Total Shifts */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <p className="text-sm text-gray-600 mb-1">
-             {formatShiftsCount(weeklyStats.totalShifts, true)}
-          </p>
-          <p className="text-2xl font-bold text-gray-900">{weeklyStats.totalShifts}</p>
+    <div className="space-y-4">
+      {/* Week header */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-3">
+        <div className="flex items-center gap-2">
+          <Calendar size={20} style={{ color: thematicColors?.base || '#EC4899' }} />
+          <h3 className="font-semibold text-gray-900">
+            {weekRange}
+          </h3>
         </div>
       </div>
 
-      {/* Detailed Stats */}
-      <div className="space-y-2 text-sm mt-6">
-        <div className="flex justify-between">
-          <span className="text-gray-600">Total Hours Worked</span>
-          <span className="font-semibold">{formatHours(weeklyStats.hoursWorked)}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-gray-600">Days Worked</span>
-          <span className="font-semibold">{weeklyStats.daysWorked}</span>
-        </div>
-      </div>
-    </Card>
+      {/* Days with shifts */}
+      {dates.map(date => {
+        const dateObj = createSafeDate(date);
+        const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+        const formattedDate = dateObj.toLocaleDateString('en-US', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+
+        const dayShifts = shifts[date] || [];
+
+        return (
+          <div key={date} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            {/* Day header */}
+            <div className="px-4 py-3 border-b border-gray-200" style={{ backgroundColor: thematicColors?.transparent5 }}>
+              <div className="flex items-center gap-2">
+                <Calendar size={20} style={{ color: thematicColors?.base }} />
+                <h3 className="font-semibold text-gray-900 capitalize">
+                  {dayOfWeek}, {formattedDate}
+                </h3>
+              </div>
+            </div>
+
+            {/* Shift cards for this day - Grid layout */}
+            <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {dayShifts.map(shift => {
+                const work = allJobs.find(w => w.id === shift.workId);
+
+                if (shift.type === 'delivery') {
+                  return (
+                    <DeliveryShiftCard
+                      key={shift.id}
+                      shift={shift}
+                      work={work}
+                      onEdit={onEditShift}
+                      onDelete={onDeleteShift}
+                    />
+                  );
+                }
+
+                return (
+                  <ShiftCard
+                    key={shift.id}
+                    shift={shift}
+                    work={work}
+                    onEdit={onEditShift}
+                    onDelete={onDeleteShift}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 };
 

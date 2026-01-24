@@ -10,7 +10,10 @@ export const useShare = () => {
   const [messages, setMessages] = useState({});
 
   const shareWork = useCallback(async (work) => {
-    if (!currentUser || !work) return;
+    if (!currentUser || !work) {
+      console.error('Cannot share: missing currentUser or work', { currentUser: !!currentUser, work: !!work });
+      return;
+    }
 
     try {
       setSharing(prev => ({ ...prev, [work.id]: true }));
@@ -19,14 +22,15 @@ export const useShare = () => {
       await shareWorkNative(currentUser.uid, work);
 
     } catch (error) {
+      console.error('Error sharing work:', error);
       setMessages(prev => ({
         ...prev,
-        [work.id]: 'Error sharing work'
+        [work.id]: `Error sharing work: ${error.message}`
       }));
-      
+
       setTimeout(() => {
         setMessages(prev => ({ ...prev, [work.id]: '' }));
-      }, 3000);
+      }, 5000);
     } finally {
       setSharing(prev => ({ ...prev, [work.id]: false }));
     }

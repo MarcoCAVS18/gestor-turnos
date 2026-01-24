@@ -14,7 +14,7 @@ export const useDeliveryContext = () => {
 export const DeliveryProvider = ({ children }) => {
   const { currentUser } = useAuth();
 
-  const [deliveryWork, setDeliveryWork] = useState([]);
+  const [deliveryWork, setDeliveryWorks] = useState([]);
   const [deliveryShifts, setDeliveryShifts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -26,7 +26,7 @@ export const DeliveryProvider = ({ children }) => {
       const unsubscribe = firebaseService.subscribeToDeliveryData(
         currentUser.uid,
         {
-          setDeliveryWork,
+          setDeliveryWork: setDeliveryWorks,
           setDeliveryShifts,
           setError,
         }
@@ -41,7 +41,7 @@ export const DeliveryProvider = ({ children }) => {
         unsubscribe();
       };
     } else {
-      setDeliveryWork([]);
+      setDeliveryWorks([]);
       setDeliveryShifts([]);
       setLoading(false);
     }
