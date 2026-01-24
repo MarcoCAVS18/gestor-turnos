@@ -16,7 +16,7 @@ const ShiftModal = (***REMOVED*** isOpen, onClose, shift, workId, initialDate **
     addDeliveryShift,
     editDeliveryShift,
     works,
-    deliveryWorks
+    deliveryWork
   ***REMOVED*** = useApp();
 
   const [selectedWorkId, setSelectedWorkId] = useState(workId || '');
@@ -27,8 +27,8 @@ const ShiftModal = (***REMOVED*** isOpen, onClose, shift, workId, initialDate **
   const formId = useId();
 
   const allWorks = useMemo(() => ***REMOVED***
-    return [...works, ...deliveryWorks];
-  ***REMOVED***, [works, deliveryWorks]);
+    return [...works, ...deliveryWork];
+  ***REMOVED***, [works, deliveryWork]);
 
   useEffect(() => ***REMOVED***
     if (shift?.type === 'delivery') ***REMOVED***

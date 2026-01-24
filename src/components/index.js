@@ -35,11 +35,11 @@ export ***REMOVED*** default as WorkForm ***REMOVED*** from './forms/work/Trabaj
 export ***REMOVED*** default as ShiftForm ***REMOVED*** from './forms/shift/TurnoForm';
 
 // Modal Components
-export ***REMOVED*** default as WorkModal ***REMOVED*** from './modals/work/ModalTrabajo';
-export ***REMOVED*** default as ShiftModal ***REMOVED*** from './modals/shift/ModalTurno';
+export ***REMOVED*** default as WorkModal ***REMOVED*** from './modals/work/WorkModal';
+export ***REMOVED*** default as ShiftModal ***REMOVED*** from './modals/shift/ShiftModal';
 
 // Alert Components
-export ***REMOVED*** default as DeleteAlert ***REMOVED*** from './alerts/AlertaEliminacion';
+export ***REMOVED*** default as DeleteAlert ***REMOVED*** from './alerts/DeleteAlert';
 
 // Calendar Components
 export ***REMOVED*** default as Calendario ***REMOVED*** from './calendar/Calendar';

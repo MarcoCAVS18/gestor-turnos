@@ -12,7 +12,7 @@ import ***REMOVED*** List, Plus, ChevronDown, ChevronUp ***REMOVED*** from 'luci
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
 import ShiftFilters from '../components/filters/ShiftFilters';
 import ShiftModal from '../components/modals/shift/ShiftModal';
-import DeleteAlert from '../components/alerts/AlertaEliminacion';
+import DeleteAlert from '../components/alerts/DeleteAlert';
 import WeeklyShiftsSection from '../components/shifts/WeeklyShiftsSection';
 import ***REMOVED*** generateShiftDetails ***REMOVED*** from '../utils/shiftDetailsUtils';
 import Flex from '../components/ui/Flex';
@@ -29,7 +29,7 @@ const Shifts = () => ***REMOVED***
     thematicColors, 
     shiftsByDate,
     works,
-    deliveryWorks 
+    deliveryWork
   ***REMOVED*** = useApp();
   
   const [weeksShown, setWeeksShown] = useState(WEEKS_PER_PAGE);
@@ -64,7 +64,7 @@ const Shifts = () => ***REMOVED***
 
   // Process shift data (use filtered if active filters)
   const shiftsToDisplay = hasActiveFilters ? filteredShifts : shiftsByDate;
-  const allJobs = useMemo(() => [...works, ...deliveryWorks], [works, deliveryWorks]);
+  const allJobs = useMemo(() => [...works, ...deliveryWork], [works, deliveryWork]);
 
   // Function to get Monday of a date
   const getMondayOfWeek = (dateStr) => ***REMOVED***

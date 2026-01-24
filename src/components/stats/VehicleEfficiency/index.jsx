@@ -1,12 +1,9 @@
 // src/components/stats/VehicleEfficiency/index.jsx
 
 import React from 'react';
-import ***REMOVED*** Car, TrendingUp, Zap ***REMOVED*** from 'lucide-react';
-// FIXED IMPORTS: Assuming calculateCostPerKm and calculateVehicleEarningsPerHour are in statsCalculations.js
-import ***REMOVED*** calculateCostPerKm ***REMOVED*** from '../../../utils/statsCalculations'; 
-import ***REMOVED*** calculateAveragePerHour ***REMOVED*** from '../../../utils/statsCalculations';
-import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/statsCalculations'; // Assuming formatCurrency is here now
-import ***REMOVED*** Card ***REMOVED*** from '../../ui/Card';
+import ***REMOVED*** Car, Zap ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/statsCalculations';
+import Card from '../../ui/Card';
 
 const VehicleEfficiency = (***REMOVED*** vehicleStats ***REMOVED***) => ***REMOVED***
   if (!vehicleStats) return null;

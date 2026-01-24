@@ -8,6 +8,7 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
     "firebase": "^11.7.3",
+    "firebase-admin": "^13.6.0",
     "framer-motion": "^12.12.1",
     "git-filter-repo": "^0.0.30",
     "gsap": "^3.13.0",

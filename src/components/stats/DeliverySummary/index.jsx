@@ -5,9 +5,8 @@ import ***REMOVED*** TrendingUp ***REMOVED*** from 'lucide-react';
 // FIXED IMPORTS: Assuming the formatting functions are in statsCalculations.js or pluralization.js
 // If you get an error for formatCurrency, try changing the path to '../../../utils/statsCalculations'
 import ***REMOVED*** formatCurrency, formatHours ***REMOVED*** from '../../../utils/statsCalculations'; 
-import ***REMOVED*** formatShiftsCount ***REMOVED*** from '../../../utils/pluralization';
 
-import ***REMOVED*** Card ***REMOVED*** from '../../ui/Card';
+import Card from '../../ui/Card';
 
 const DeliverySummary = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
   if (!deliveryStats) return null;

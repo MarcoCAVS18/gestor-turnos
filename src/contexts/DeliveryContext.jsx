@@ -29,8 +29,16 @@ export const DeliveryProvider = (***REMOVED*** children ***REMOVED***) => ***REM
           setError,
         ***REMOVED***
       );
-      setLoading(false); // Data is loaded via snapshot
-      return () => unsubscribe();
+      
+      // Data loads via snapshot, add delay to ensure first snapshot loads
+      const timeoutId = setTimeout(() => ***REMOVED***
+        setLoading(false);
+      ***REMOVED***, 1000);
+      
+      return () => ***REMOVED***
+        clearTimeout(timeoutId);
+        unsubscribe();
+      ***REMOVED***;
     ***REMOVED*** else ***REMOVED***
       // Clear data if no user
       setDeliveryWork([]);

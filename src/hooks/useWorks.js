@@ -8,7 +8,7 @@ import ***REMOVED*** useDeleteManager ***REMOVED*** from './useDeleteManager';
 export const useWorks = () => ***REMOVED***
   const ***REMOVED***
     works = [], 
-    deliveryWorks = [], 
+    deliveryWork = [], 
     loading,
     deleteJob,
     deleteDeliveryJob,
@@ -21,8 +21,8 @@ export const useWorks = () => ***REMOVED***
 
   // Combine all works
   const allWorks = useMemo(() => ***REMOVED***
-    return [...works, ...deliveryWorks];
-  ***REMOVED***, [works, deliveryWorks]);
+    return [...works, ...deliveryWork];
+  ***REMOVED***, [works, deliveryWork]);
 
   // Delete function
   const handleDeleteWork = async (work) => ***REMOVED***

@@ -5,7 +5,7 @@ import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** calculateShiftHours ***REMOVED*** from '../utils/time';
 
 export const useCalculations = () => ***REMOVED***
-  const ***REMOVED*** trabajos, shiftRanges, defaultDiscount ***REMOVED*** = useApp();
+  const ***REMOVED*** works, shiftRanges, defaultDiscount ***REMOVED*** = useApp();
 
   // Use centralized utility
   const calculateHours = useCallback((start, end) => ***REMOVED***
@@ -13,7 +13,7 @@ export const useCalculations = () => ***REMOVED***
   ***REMOVED***, []);
 
   const calculatePayment = useCallback((shift) => ***REMOVED***
-    const work = trabajos.find(t => t.id === shift.workId);
+    const work = works.find(t => t.id === shift.workId);
     if (!work) return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0 ***REMOVED***;
 
     const ***REMOVED*** startTime, endTime ***REMOVED*** = shift;
@@ -76,7 +76,7 @@ export const useCalculations = () => ***REMOVED***
       totalWithDiscount,
       hours
     ***REMOVED***;
-  ***REMOVED***, [trabajos, shiftRanges, defaultDiscount]);
+  ***REMOVED***, [works, shiftRanges, defaultDiscount]);
 
   const calculateDayTotal = useCallback((dayShifts) => ***REMOVED***
     return dayShifts.reduce((total, shift) => ***REMOVED***

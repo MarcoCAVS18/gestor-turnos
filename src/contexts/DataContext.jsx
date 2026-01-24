@@ -34,10 +34,15 @@ export const DataProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
         ***REMOVED***
       );
       
-      // Data loads via snapshot, we can remove the initial loading state here if preferred
-      setLoading(false); 
+      // Data loads via snapshot, add delay to ensure first snapshot loads
+      const timeoutId = setTimeout(() => ***REMOVED***
+        setLoading(false);
+      ***REMOVED***, 1000);
       
-      return () => unsubscribe();
+      return () => ***REMOVED***
+        clearTimeout(timeoutId);
+        unsubscribe();
+      ***REMOVED***;
     ***REMOVED*** else ***REMOVED***
       // Clear data if no user
       setWorks([]);

@@ -7,11 +7,11 @@ import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeC
 import Flex from '../../ui/Flex';
 
 const FiltersSummary = (***REMOVED*** filters, onRemoveFilter, onClearAll, statistics ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** works, deliveryWorks ***REMOVED*** = useApp();
+  const ***REMOVED*** works, deliveryWork ***REMOVED*** = useApp();
   const colors = useThemeColors();
   
   // Combine works to get names
-  const allWorks = [...works, ...deliveryWorks];
+  const allWorks = [...works, ...deliveryWork];
   
   // Check if there are active filters
   const hasActiveFilters = filters.work !== 'all' || 

@@ -15,16 +15,16 @@ export const useStats = () => ***REMOVED***
 
 export const StatsProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   // Hooks from data and configuration contexts
-  const ***REMOVED*** trabajos, turnos, loading: dataLoading ***REMOVED*** = useDataContext();
-  const ***REMOVED*** trabajosDelivery, turnosDelivery, loading: deliveryLoading ***REMOVED*** = useDeliveryContext();
+  const ***REMOVED*** works, shifts, loading: dataLoading ***REMOVED*** = useDataContext();
+  const ***REMOVED*** deliveryWork, deliveryShifts, loading: deliveryLoading ***REMOVED*** = useDeliveryContext();
   const ***REMOVED*** shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes, deliveryEnabled, weeklyHoursGoal, thematicColors, loading: configLoading ***REMOVED*** = useConfigContext();
 
   // State for week control
   const [weekOffset, setWeekOffset] = useState(0);
 
   // Combine all work and shifts
-  const allWork = useMemo(() => [...trabajos, ...trabajosDelivery], [trabajos, trabajosDelivery]);
-  const allShifts = useMemo(() => [...turnos, ...turnosDelivery], [turnos, turnosDelivery]);
+  const allWork = useMemo(() => [...works, ...deliveryWork], [works, deliveryWork]);
+  const allShifts = useMemo(() => [...shifts, ...deliveryShifts], [shifts, deliveryShifts]);
 
   // Unified loading
   const loading = useMemo(() => dataLoading || deliveryLoading || configLoading, [dataLoading, deliveryLoading, configLoading]);
@@ -44,42 +44,42 @@ export const StatsProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVE
   // Calculate weekly statistics for the current and previous week
   const currentData = useMemo(() => ***REMOVED***
     return calculationService.calculateWeeklyStats(***REMOVED***
-      turnos,
-      turnosDelivery,
+      shifts,
+      deliveryShifts,
       allWork,
       calculatePayment,
       shiftRanges,
       weekOffset: weekOffset,
     ***REMOVED***);
-  ***REMOVED***, [turnos, turnosDelivery, allWork, calculatePayment, shiftRanges, weekOffset]);
+  ***REMOVED***, [shifts, deliveryShifts, allWork, calculatePayment, shiftRanges, weekOffset]);
 
   const previousData = useMemo(() => ***REMOVED***
     return calculationService.calculateWeeklyStats(***REMOVED***
-      turnos,
-      turnosDelivery,
+      shifts,
+      deliveryShifts,
       allWork,
       calculatePayment,
       shiftRanges,
       weekOffset: weekOffset - 1,
     ***REMOVED***);
-  ***REMOVED***, [turnos, turnosDelivery, allWork, calculatePayment, shiftRanges, weekOffset]);
+  ***REMOVED***, [shifts, deliveryShifts, allWork, calculatePayment, shiftRanges, weekOffset]);
 
   // Calculate delivery statistics
   const deliveryStats = useMemo(() => ***REMOVED***
     return calculationService.calculateDeliveryStats(***REMOVED***
-      trabajosDelivery,
-      turnosDelivery,
+      deliveryWork,
+      deliveryShifts,
       period: 'month' // Hardcoded to 'month' as it was in Stats.jsx
     ***REMOVED***);
-  ***REMOVED***, [trabajosDelivery, turnosDelivery]);
+  ***REMOVED***, [deliveryWork, deliveryShifts]);
 
   // NEW: Calculate data for weekly evolution chart
   const weeklyEvolutionData = useMemo(() => ***REMOVED***
     const weekNames = ['This week', 'Last week', '2 weeks ago', '3 weeks ago'];
     return [0, -1, -2, -3].map((offset, index) => ***REMOVED***
       const stats = calculationService.calculateWeeklyStats(***REMOVED***
-        turnos,
-        turnosDelivery,
+        shifts,
+        deliveryShifts,
         allWork,
         calculatePayment,
         shiftRanges,
@@ -90,7 +90,7 @@ export const StatsProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVE
         earnings: stats.totalEarned || 0
       ***REMOVED***;
     ***REMOVED***).reverse(); // Reverse to have the oldest week first
-  ***REMOVED***, [turnos, turnosDelivery, allWork, calculatePayment, shiftRanges]);
+  ***REMOVED***, [shifts, deliveryShifts, allWork, calculatePayment, shiftRanges]);
 
 
   // Memoized `shiftsByDate` (existing logic)
@@ -130,8 +130,8 @@ export const StatsProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVE
   
   // Memoized function to calculate monthly stats (existing logic)
   const calculateMonthlyStats = useCallback((year, month) => ***REMOVED***
-    return calculationService.calculateMonthlyStats(year, month, turnos, turnosDelivery, calculatePayment);
-  ***REMOVED***, [turnos, turnosDelivery, calculatePayment]);
+    return calculationService.calculateMonthlyStats(year, month, shifts, deliveryShifts, calculatePayment);
+  ***REMOVED***, [shifts, deliveryShifts, calculatePayment]);
 
   // Memoized value for current month's stats (existing logic)
   const currentMonthStats = useMemo(() => ***REMOVED***

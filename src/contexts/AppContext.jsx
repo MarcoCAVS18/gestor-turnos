@@ -42,8 +42,8 @@ export const useApp = () => ***REMOVED***
   const stats = useStats();
 
   const allWorks = useMemo(() => ***REMOVED***
-    return [...(data.works || []), ...(delivery.deliveryWorks || [])];
-  ***REMOVED***, [data.works, delivery.deliveryWorks]);
+    return [...(data.works || []), ...(delivery.deliveryWork || [])];
+  ***REMOVED***, [data.works, delivery.deliveryWork]);
 
   return ***REMOVED***
     ...config,

@@ -1,6 +1,6 @@
 // src/pages/Settings.jsx
 
-import ***REMOVED*** Settings ***REMOVED*** from 'lucide-react';
+import ***REMOVED*** Settings as SettingsIcon ***REMOVED*** from 'lucide-react';
 import PageHeader from '../components/layout/PageHeader';
 import ProfileSection from '../components/settings/ProfileSection';
 import ProfilePhotoSection from '../components/settings/ProfilePhotoSection';
@@ -20,7 +20,7 @@ const Settings = () => ***REMOVED***
       <PageHeader
         title="Settings"
         subtitle="Customize your experience and manage your account"
-        icon=***REMOVED***Settings***REMOVED***
+        icon=***REMOVED***SettingsIcon***REMOVED***
       />
 
       ***REMOVED***/* MAIN CONTAINER WITH FULL HEIGHT */***REMOVED***

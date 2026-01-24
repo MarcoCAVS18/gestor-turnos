@@ -22,9 +22,9 @@ import SmokoTimeCard from '../components/stats/SmokoTimeCard';
 // Delivery Components
 import DeliverySummary from '../components/stats/DeliverySummary';
 import VehicleEfficiency from '../components/stats/VehicleEfficiency';
-import FuelTracking from '../components/stats/FuelTracking';
+import FuelEfficiency from '../components/stats/FuelEfficiency';
 import PlatformComparison from '../components/stats/PlatformComparison';
-import DeliveryTimeAnalysis from '../components/stats/DeliveryTimeAnalysis';
+import DeliveryHourlyAnalysis from '../components/stats/DeliveryHourlyAnalysis';
 
 const Statistics = () => ***REMOVED***
   const ***REMOVED***
@@ -167,17 +167,17 @@ const Statistics = () => ***REMOVED***
                   </div>
                   <div className="flex-grow flex flex-col">
                     ***REMOVED***/* HERE IS THE KEY CHANGE: We pass currentWeekShifts */***REMOVED***
-                    <DeliveryTimeAnalysis
+                    <DeliveryHourlyAnalysis
                       shifts=***REMOVED***currentData.shifts || []***REMOVED***
                       className="h-full"
                     />
                   </div>
                   <div className="flex-none">
-                    <FuelTracking deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
+                    <FuelEfficiency deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
                   </div>
                 </div>
                 <div className="flex flex-col gap-6 h-full">
-                  <VehicleEfficiency deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
+                  <VehicleEfficiency vehicleStats=***REMOVED***deliveryStats.statsByVehicle***REMOVED*** />
                   <PlatformComparison deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
                 </div>
               </div>
@@ -185,10 +185,10 @@ const Statistics = () => ***REMOVED***
               ***REMOVED***/* MOBILE */***REMOVED***
               <div className="block lg:hidden space-y-6">
                 <DeliverySummary deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
-                <DeliveryTimeAnalysis shifts=***REMOVED***currentWeekShifts***REMOVED*** />
-                <VehicleEfficiency deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
+                <DeliveryHourlyAnalysis shifts=***REMOVED***currentWeekShifts***REMOVED*** />
+                <VehicleEfficiency vehicleStats=***REMOVED***deliveryStats.statsByVehicle***REMOVED*** />
                 <PlatformComparison deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
-                <FuelTracking deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
+                <FuelEfficiency deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
               </div>
             </div>
           </>

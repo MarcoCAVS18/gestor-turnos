@@ -8,8 +8,8 @@ import BaseStatsCard from '../../cards/base/BaseStatsCard';
 import Flex from '../../ui/Flex';
 
 const DailyDistribution = (***REMOVED*** currentData, loading, thematicColors ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** earningsPerDay, totalEarned ***REMOVED*** = currentData;
-
+  const ***REMOVED*** earningsPerDay, totalEarned ***REMOVED*** = currentData || ***REMOVED******REMOVED***;
+  
   const isEmpty = !totalEarned || totalEarned === 0;
 
   return (
@@ -27,7 +27,7 @@ const DailyDistribution = (***REMOVED*** currentData, loading, thematicColors **
             ***REMOVED***Object.entries(earningsPerDay).map(([day, data]) => (
               <div key=***REMOVED***day***REMOVED*** className="p-2 bg-gray-50 rounded-lg">
                 <div className="grid grid-cols-4 gap-x-2 items-center">
-                  <span className="text-sm font-medium text-gray-700 col-span-1 truncate">***REMOVED***day***REMOVED***</span>                  
+                  <span className="text-sm font-medium text-gray-700 col-span-1 truncate">***REMOVED***day***REMOVED***</span>
                   <Flex variant="end" className="col-span-1">
                     <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1 flex-shrink-0" style=***REMOVED******REMOVED*** color: thematicColors?.primary ***REMOVED******REMOVED*** />
                     <span className="text-sm font-bold text-right" style=***REMOVED******REMOVED*** color: thematicColors?.primary ***REMOVED******REMOVED***>
