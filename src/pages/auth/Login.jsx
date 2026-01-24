@@ -64,9 +64,15 @@ const Login = () => {
     try {
       await loginWithGoogle();
       navigate(redirectTo);
-    } catch (err) {
-      setError('Error signing in with Google');
       setGoogleLoading(false);
+    } catch (err) {
+      // Use => specific error message from AuthContext, or fallback
+      const errorMessage = err.message || 'Error signing in with Google';
+      setError(errorMessage);
+      setGoogleLoading(false);
+
+      // Log error for debugging
+      console.error('Google login error:', err);
     }
   };
 

@@ -158,7 +158,7 @@ const DeliveryShiftForm = ({
   }, [errors, onWorkChange]);
 
   const traditionalWorks = works.filter(t => t.type !== 'delivery');
-  const deliveryWorks = works.filter(t => t.type === 'delivery');
+  const deliveryWork = works.filter(t => t.type === 'delivery');
 
   return (
     <BaseForm
@@ -177,9 +177,9 @@ const DeliveryShiftForm = ({
         >
           <option value="">Select work</option>
 
-          {deliveryWorks.length > 0 && (
+          {deliveryWork.length > 0 && (
             <optgroup label="Delivery Works">
-              {deliveryWorks.map(work => (
+              {deliveryWork.map(work => (
                 <option key={work.id} value={work.id}>
                   {work.name} {work.vehicle ? `(${work.vehicle})` : ''}
                 </option>

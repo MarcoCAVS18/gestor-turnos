@@ -33,7 +33,7 @@ const Works = () => {
 
   // Separate traditional and delivery works
   const traditionalWorks = allWorks.filter(work => work.type !== 'delivery');
-  const deliveryWorks = allWorks.filter(work => work.type === 'delivery');
+  const deliveryWork = allWorks.filter(work => work.type === 'delivery');
 
   return (
     <LoadingWrapper loading={loading}>
@@ -94,7 +94,7 @@ const Works = () => {
             )}
 
             {/* Delivery Works */}
-            {deliveryWorks.length > 0 && (
+            {deliveryWork.length > 0 && (
               <div>
                 <div className="flex items-center mb-4">
                   <div 
@@ -105,13 +105,13 @@ const Works = () => {
                     Delivery Works
                   </h2>
                   <span className="ml-2 px-2 py-1 bg-green-100 text-green-600 text-xs rounded-full">
-                    {deliveryWorks.length}
+                    {deliveryWork.length}
                   </span>
                 </div>
                 
                 {/* Column layout for delivery works */}
                 <div className="space-y-4">
-                  {deliveryWorks.map((work) => {
+                  {deliveryWork.map((work) => {
                     const isSharing = sharing[work.id] || false;
                     
                     return (
