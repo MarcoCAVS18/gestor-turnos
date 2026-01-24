@@ -1,57 +1,57 @@
 // src/components/ui/WavyText/index.jsx
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
+import React, { useState, useEffect } from 'react';
 import './index.css';
 
-const WavyText = (***REMOVED*** text, color, initialDelay = 0 ***REMOVED***) => ***REMOVED***
+const WavyText = ({ text, color, initialDelay = 0 }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isThemedColor, setIsThemedColor] = useState(true);
 
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     let interval;
-    const timeout = setTimeout(() => ***REMOVED***
+    const timeout = setTimeout(() => {
       setIsAnimating(true); // Trigger first animation
-      interval = setInterval(() => ***REMOVED***
+      interval = setInterval(() => {
         setIsAnimating(true);
-      ***REMOVED***, 5000); // Trigger subsequent animations
-    ***REMOVED***, initialDelay);
+      }, 5000); // Trigger subsequent animations
+    }, initialDelay);
 
-    return () => ***REMOVED***
+    return () => {
       clearTimeout(timeout);
       clearInterval(interval);
-    ***REMOVED***;
-  ***REMOVED***, [initialDelay]);
+    };
+  }, [initialDelay]);
 
-  useEffect(() => ***REMOVED***
-    if (isAnimating) ***REMOVED***
+  useEffect(() => {
+    if (isAnimating) {
       const animationDuration = 1500; 
       const delayIncrement = 100; 
       const totalDuration = animationDuration + (text.length * delayIncrement);
 
-      const timeout = setTimeout(() => ***REMOVED***
+      const timeout = setTimeout(() => {
         setIsAnimating(false);
         setIsThemedColor(prev => !prev);
-      ***REMOVED***, totalDuration);
+      }, totalDuration);
 
       return () => clearTimeout(timeout);
-    ***REMOVED***
-  ***REMOVED***, [isAnimating, text]);
+    }
+  }, [isAnimating, text]);
 
   return (
-    <div className=***REMOVED***`wavy-text $***REMOVED***isAnimating ? 'wavy-text--animating' : ''***REMOVED***`***REMOVED***>
-      ***REMOVED***text.split('').map((char, index) => (
+    <div className={`wavy-text ${isAnimating ? 'wavy-text--animating' : ''}`}>
+      {text.split('').map((char, index) => (
         <span
-          key=***REMOVED***index***REMOVED***
-          style=***REMOVED******REMOVED***
-            animationDelay: `$***REMOVED***index * 0.1***REMOVED***s`,
+          key={index}
+          style={{
+            animationDelay: `${index * 0.1}s`,
             color: isThemedColor ? color : '#000',
-          ***REMOVED******REMOVED***
+          }}
         >
-          ***REMOVED***char***REMOVED***
+          {char}
         </span>
-      ))***REMOVED***
+      ))}
     </div>
   );
-***REMOVED***;
+};
 
 export default WavyText;

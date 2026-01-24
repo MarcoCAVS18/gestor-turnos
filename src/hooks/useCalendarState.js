@@ -1,75 +1,75 @@
 // src/hooks/useCalendarState.js
 
-import ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED***
+import { useState, useEffect } from 'react';
+import {
   createLocalDate,
   localDateToISO,
   dateIsToday
-***REMOVED*** from '../utils/calendarUtils';
-import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
+} from '../utils/calendarUtils';
+import { createSafeDate } from '../utils/time';
 
-export const useCalendarState = (shifts, onSelectedDay) => ***REMOVED***
+export const useCalendarState = (shifts, onSelectedDay) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth());
   const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
   const [selectedDay, setSelectedDay] = useState(null);
 
   // Update current date every minute
-  useEffect(() => ***REMOVED***
-    const interval = setInterval(() => ***REMOVED***
+  useEffect(() => {
+    const interval = setInterval(() => {
       const newDate = new Date();
       setCurrentDate(newDate);
       
-      if (newDate.getDate() !== currentDate.getDate()) ***REMOVED***
+      if (newDate.getDate() !== currentDate.getDate()) {
         setCurrentMonth(newDate.getMonth());
         setCurrentYear(newDate.getFullYear());
-      ***REMOVED***
-    ***REMOVED***, 60000);
+      }
+    }, 60000);
 
     return () => clearInterval(interval);
-  ***REMOVED***, [currentDate]);
+  }, [currentDate]);
 
   // Get shifts of the day considering night shifts
-  const getShiftsOfDay = (date, allShifts) => ***REMOVED***
+  const getShiftsOfDay = (date, allShifts) => {
     const dateStr = localDateToISO(date);
     
-    return allShifts.filter(shift => ***REMOVED***
+    return allShifts.filter(shift => {
       // Check main date
       const mainDate = shift.startDate || shift.date;
-      if (mainDate === dateStr) ***REMOVED***
+      if (mainDate === dateStr) {
         return true;
-      ***REMOVED***
+      }
       
       // Check if it is a night shift ending on this date
       const isNightShift = shift.crossesMidnight || 
         (shift.startTime && shift.endTime && 
          shift.startTime.split(':')[0] > shift.endTime.split(':')[0]);
       
-      if (isNightShift) ***REMOVED***
+      if (isNightShift) {
         // If it has explicit endDate, use it
-        if (shift.endDate && shift.endDate === dateStr) ***REMOVED***
+        if (shift.endDate && shift.endDate === dateStr) {
           return true;
-        ***REMOVED***
+        }
         
         // If it doesn't have endDate but is night shift, calculate if it ends today
-        if (!shift.endDate && mainDate) ***REMOVED***
+        if (!shift.endDate && mainDate) {
           const startDateObj = createSafeDate(mainDate);
           const calculatedEndDate = new Date(startDateObj);
           calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
           const endDateStr = calculatedEndDate.toISOString().split('T')[0];
           
-          if (endDateStr === dateStr) ***REMOVED***
+          if (endDateStr === dateStr) {
             return true;
-          ***REMOVED***
-        ***REMOVED***
-      ***REMOVED***
+          }
+        }
+      }
       
       return false;
-    ***REMOVED***);
-  ***REMOVED***;
+    });
+  };
 
   // Get days of the month considering night shifts
-  const getDaysOfMonth = () => ***REMOVED***
+  const getDaysOfMonth = () => {
     const firstDay = createLocalDate(currentYear, currentMonth, 1);
     const lastDay = createLocalDate(currentYear, currentMonth + 1, 0);
 
@@ -79,67 +79,67 @@ export const useCalendarState = (shifts, onSelectedDay) => ***REMOVED***
     const days = [];
 
     // Days from previous month
-    for (let i = startDay; i > 0; i--) ***REMOVED***
+    for (let i = startDay; i > 0; i--) {
       const date = createLocalDate(currentYear, currentMonth, -i + 1);
       const shiftsOfDay = getShiftsOfDay(date, shifts);
-      days.push(***REMOVED***
+      days.push({
         date,
         day: date.getDate(),
         currentMonth: false,
         hasShifts: shiftsOfDay.length > 0,
         shiftsOfDay
-      ***REMOVED***);
-    ***REMOVED***
+      });
+    }
 
     // Days of current month
-    for (let i = 1; i <= lastDay.getDate(); i++) ***REMOVED***
+    for (let i = 1; i <= lastDay.getDate(); i++) {
       const date = createLocalDate(currentYear, currentMonth, i);
       const shiftsOfDay = getShiftsOfDay(date, shifts);
-      days.push(***REMOVED***
+      days.push({
         date,
         day: i,
         currentMonth: true,
         hasShifts: shiftsOfDay.length > 0,
         shiftsOfDay,
         isToday: dateIsToday(date, currentDate)
-      ***REMOVED***);
-    ***REMOVED***
+      });
+    }
 
     // Complete the last week
     const remainingDays = 42 - days.length;
-    for (let i = 1; i <= remainingDays; i++) ***REMOVED***
+    for (let i = 1; i <= remainingDays; i++) {
       const date = createLocalDate(currentYear, currentMonth + 1, i);
       const shiftsOfDay = getShiftsOfDay(date, shifts);
-      days.push(***REMOVED***
+      days.push({
         date,
         day: i,
         currentMonth: false,
         hasShifts: shiftsOfDay.length > 0,
         shiftsOfDay
-      ***REMOVED***);
-    ***REMOVED***
+      });
+    }
 
     return days;
-  ***REMOVED***;
+  };
 
   // Handlers
-  const changeMonth = (increment) => ***REMOVED***
+  const changeMonth = (increment) => {
     let newMonth = currentMonth + increment;
     let newYear = currentYear;
 
-    if (newMonth < 0) ***REMOVED***
+    if (newMonth < 0) {
       newMonth = 11;
       newYear--;
-    ***REMOVED*** else if (newMonth > 11) ***REMOVED***
+    } else if (newMonth > 11) {
       newMonth = 0;
       newYear++;
-    ***REMOVED***
+    }
 
     setCurrentMonth(newMonth);
     setCurrentYear(newYear);
-  ***REMOVED***;
+  };
 
-  const goToToday = () => ***REMOVED***
+  const goToToday = () => {
     const today = new Date();
     setCurrentDate(today);
     setCurrentMonth(today.getMonth());
@@ -148,21 +148,21 @@ export const useCalendarState = (shifts, onSelectedDay) => ***REMOVED***
     const dateStr = localDateToISO(today);
     setSelectedDay(dateStr);
     
-    if (onSelectedDay) ***REMOVED***
+    if (onSelectedDay) {
       onSelectedDay(today);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  const goToDay = (date) => ***REMOVED***
+  const goToDay = (date) => {
     const dateStr = localDateToISO(date);
     setSelectedDay(dateStr);
     
-    if (onSelectedDay) ***REMOVED***
+    if (onSelectedDay) {
       onSelectedDay(date);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  return ***REMOVED***
+  return {
     currentDate,
     currentMonth,
     currentYear,
@@ -171,5 +171,5 @@ export const useCalendarState = (shifts, onSelectedDay) => ***REMOVED***
     changeMonth,
     goToToday,
     goToDay
-  ***REMOVED***;
-***REMOVED***;
+  };
+};

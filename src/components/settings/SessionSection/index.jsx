@@ -1,29 +1,29 @@
 // src/components/settings/SessionSection/index.jsx
 
 import React from 'react';
-import ***REMOVED*** LogOut ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useNavigate, Link ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** useAuth ***REMOVED*** from '../../../contexts/AuthContext';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import { LogOut } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../../../contexts/AuthContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
-const SessionSection = (***REMOVED*** onError, className = '' ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** logout ***REMOVED*** = useAuth();
+const SessionSection = ({ onError, className = '' }) => {
+  const { logout } = useAuth();
   const colors = useThemeColors();
   const navigate = useNavigate();
 
-  const handleLogout = async () => ***REMOVED***
-    try ***REMOVED***
+  const handleLogout = async () => {
+    try {
       await logout();
       navigate('/login');
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       onError?.('Error logging out: ' + error.message);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   return (
-    <SettingsSection icon=***REMOVED***LogOut***REMOVED*** title="Session" className=***REMOVED***className***REMOVED***>
+    <SettingsSection icon={LogOut} title="Session" className={className}>
       <div className="flex flex-row items-center justify-between flex-1 w-full mt-4">
         <Link 
           to="/delete-account"
@@ -32,16 +32,16 @@ const SessionSection = (***REMOVED*** onError, className = '' ***REMOVED***) => 
           Delete account
         </Link>
         <Button
-          onClick=***REMOVED***handleLogout***REMOVED***
+          onClick={handleLogout}
           variant="outline"
-          icon=***REMOVED***LogOut***REMOVED***
-          themeColor=***REMOVED***colors.primary***REMOVED***
+          icon={LogOut}
+          themeColor={colors.primary}
         >
           Log out
         </Button>
       </div>
     </SettingsSection>
   );
-***REMOVED***;
+};
 
 export default SessionSection;

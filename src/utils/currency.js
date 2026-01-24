@@ -2,49 +2,49 @@
 
 /**
  * Formatea un número como moneda australiana
- * @param ***REMOVED***number***REMOVED*** amount - Cantidad a formatear
- * @param ***REMOVED***object***REMOVED*** options - Opciones adicionales de formateo
- * @returns ***REMOVED***string***REMOVED*** - Cantidad formateada como moneda
+ * @param {number} amount - Cantidad a formatear
+ * @param {object} options - Opciones adicionales de formateo
+ * @returns {string} - Cantidad formateada como moneda
  */
-export const formatCurrency = (amount, options = ***REMOVED******REMOVED***) => ***REMOVED***
-  if (amount === null || amount === undefined || isNaN(amount)) ***REMOVED***
+export const formatCurrency = (amount, options = {}) => {
+  if (amount === null || amount === undefined || isNaN(amount)) {
     return '$0';
-  ***REMOVED***
+  }
 
-  const defaultOptions = ***REMOVED***
+  const defaultOptions = {
     style: 'currency',
     currency: 'AUD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  ***REMOVED***;
+  };
   
-  return new Intl.NumberFormat('en-AU', ***REMOVED***
+  return new Intl.NumberFormat('en-AU', {
     ...defaultOptions,
     ...options
-  ***REMOVED***).format(amount);
-***REMOVED***;
+  }).format(amount);
+};
 
 /**
  * Formatea una cantidad con decimales para mostrar precisión
- * @param ***REMOVED***number***REMOVED*** amount - Cantidad a formatear
- * @returns ***REMOVED***string***REMOVED*** - Cantidad formateada con 2 decimales
+ * @param {number} amount - Cantidad a formatear
+ * @returns {string} - Cantidad formateada con 2 decimales
  */
-export const formatCurrencyPrecise = (amount) => ***REMOVED***
-  return formatCurrency(amount, ***REMOVED***
+export const formatCurrencyPrecise = (amount) => {
+  return formatCurrency(amount, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
-  ***REMOVED***);
-***REMOVED***;
+  });
+};
 
 /**
  * Formatea una cantidad con símbolo personalizado (retrocompatibilidad)
- * @param ***REMOVED***number***REMOVED*** amount - Cantidad a formatear
- * @param ***REMOVED***string***REMOVED*** symbol - Símbolo de moneda (default: '$')
- * @returns ***REMOVED***string***REMOVED*** - Cantidad formateada
+ * @param {number} amount - Cantidad a formatear
+ * @param {string} symbol - Símbolo de moneda (default: '$')
+ * @returns {string} - Cantidad formateada
  */
-export const formatCurrencyWithSymbol = (amount, symbol = '$') => ***REMOVED***
-  if (amount === null || amount === undefined || isNaN(amount)) ***REMOVED***
-    return `$***REMOVED***symbol***REMOVED***0.00`;
-  ***REMOVED***
-  return `$***REMOVED***symbol***REMOVED***$***REMOVED***Number(amount).toFixed(2)***REMOVED***`;
-***REMOVED***;
+export const formatCurrencyWithSymbol = (amount, symbol = '$') => {
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    return `${symbol}0.00`;
+  }
+  return `${symbol}${Number(amount).toFixed(2)}`;
+};

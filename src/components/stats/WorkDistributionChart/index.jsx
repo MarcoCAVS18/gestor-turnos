@@ -1,15 +1,15 @@
 // src/components/stats/WorkDistributionChart/index.jsx
 
 import React from 'react';
-import ***REMOVED*** PieChart, Cell, ResponsiveContainer, Tooltip, Legend ***REMOVED*** from 'recharts';
+import { PieChart, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 
-const WorkDistributionChart = (***REMOVED*** worksDistribution = [] ***REMOVED***) => ***REMOVED***
+const WorkDistributionChart = ({ worksDistribution = [] }) => {
   // Verify that worksDistribution is an array
   const data = Array.isArray(worksDistribution) ? worksDistribution : [];
   
-  if (data.length === 0) ***REMOVED***
+  if (data.length === 0) {
     return (
       <Card>
         <h3 className="text-lg font-semibold mb-4">Work Distribution</h3>
@@ -21,7 +21,7 @@ const WorkDistributionChart = (***REMOVED*** worksDistribution = [] ***REMOVED**
         </Flex>
       </Card>
     );
-  ***REMOVED***
+  }
 
   // Predefined colors for the chart
   const COLORS = [
@@ -30,33 +30,33 @@ const WorkDistributionChart = (***REMOVED*** worksDistribution = [] ***REMOVED**
   ];
 
   // Ensure all data has color
-  const dataWithColor = data.map((item, index) => (***REMOVED***
+  const dataWithColor = data.map((item, index) => ({
     ...item,
     color: item.color || COLORS[index % COLORS.length]
-  ***REMOVED***));
+  }));
 
-  const renderLabel = (entry) => ***REMOVED***
-    return entry.percentage > 5 ? `$***REMOVED***entry.percentage***REMOVED***%` : '';
-  ***REMOVED***;
+  const renderLabel = (entry) => {
+    return entry.percentage > 5 ? `${entry.percentage}%` : '';
+  };
 
   // Custom Tooltip
-  const CustomTooltip = (***REMOVED*** active, payload ***REMOVED***) => ***REMOVED***
-    if (active && payload && payload.length) ***REMOVED***
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
         <div className="bg-white p-3 border rounded-lg shadow-lg">
-          <p className="font-semibold">***REMOVED***data.name***REMOVED***</p>
+          <p className="font-semibold">{data.name}</p>
           <p className="text-sm text-gray-600">
-            ***REMOVED***data.hours.toFixed(1)***REMOVED*** hrs (***REMOVED***data.percentage***REMOVED***%)
+            {data.hours.toFixed(1)} hrs ({data.percentage}%)
           </p>
           <p className="text-sm font-medium text-green-600">
-            ***REMOVED***data.earnings.toFixed(2)***REMOVED***
+            {data.earnings.toFixed(2)}
           </p>
         </div>
       );
-    ***REMOVED***
+    }
     return null;
-  ***REMOVED***;
+  };
 
   return (
     <Card>
@@ -65,41 +65,41 @@ const WorkDistributionChart = (***REMOVED*** worksDistribution = [] ***REMOVED**
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart
-            data=***REMOVED***dataWithColor***REMOVED***
+            data={dataWithColor}
               cx="50%"
               cy="50%"
-              labelLine=***REMOVED***false***REMOVED***
-              label=***REMOVED***renderLabel***REMOVED***
-              outerRadius=***REMOVED***80***REMOVED***
+              labelLine={false}
+              label={renderLabel}
+              outerRadius={80}
               fill="#8884d8"
               dataKey="hours"
             >
-              ***REMOVED***dataWithColor.map((entry, index) => (
-                <Cell key=***REMOVED***`cell-$***REMOVED***index***REMOVED***`***REMOVED*** fill=***REMOVED***entry.color***REMOVED*** />
-              ))***REMOVED***
+              {dataWithColor.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
             </PieChart>
-            <Tooltip content=***REMOVED***<CustomTooltip />***REMOVED*** />
+            <Tooltip content={<CustomTooltip />} />
             <Legend />
           </ResponsiveContainer>
       </div>
 
-      ***REMOVED***/* Summary */***REMOVED***
+      {/* Summary */}
       <div className="mt-4 pt-3 border-t border-gray-100">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
             <span className="text-gray-600">Total works:</span>
-            <span className="font-medium ml-1">***REMOVED***dataWithColor.length***REMOVED***</span>
+            <span className="font-medium ml-1">{dataWithColor.length}</span>
           </div>
           <div>
             <span className="text-gray-600">Total hours:</span>
             <span className="font-medium ml-1">
-              ***REMOVED***data.reduce((sum, item) => sum + item.hours, 0).toFixed(1)***REMOVED***h
+              {data.reduce((sum, item) => sum + item.hours, 0).toFixed(1)}h
             </span>
           </div>
         </div>
       </div>
     </Card>
   );
-***REMOVED***;
+};
 
 export default WorkDistributionChart;

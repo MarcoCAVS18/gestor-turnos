@@ -1,28 +1,28 @@
 // src/constants/app.js
 
-export const DEFAULT_USER_SETTINGS = ***REMOVED***
+export const DEFAULT_USER_SETTINGS = {
   colorPrincipal: '#EC4899',
   emojiUsuario: '😊',
   descuentoDefault: 15,
-  rangosTurnos: ***REMOVED***
+  rangosTurnos: {
     diurnoInicio: 6,
     diurnoFin: 14,
     tardeInicio: 14,
     tardeFin: 20,
     nocheInicio: 20
-  ***REMOVED***
-***REMOVED***;
+  }
+};
 
 export const COMMON_EMOJIS = [
   '😊', '😎', '🚀', '💼', '⭐', '🔥', 
   '💻', '📊', '🎯', '💪', '🌟', '⚡'
 ];
 
-export const SHIFT_RANGES = ***REMOVED***
-  DIURNO: ***REMOVED*** start: 6, end: 14, label: 'Morning Shift' ***REMOVED***,
-  TARDE: ***REMOVED*** start: 14, end: 20, label: 'Afternoon Shift' ***REMOVED***,
-  NOCHE: ***REMOVED*** start: 20, end: 24, label: 'Night Shift' ***REMOVED***
-***REMOVED***;
+export const SHIFT_RANGES = {
+  DIURNO: { start: 6, end: 14, label: 'Morning Shift' },
+  TARDE: { start: 14, end: 20, label: 'Afternoon Shift' },
+  NOCHE: { start: 20, end: 24, label: 'Night Shift' }
+};
 
 export const DAYS_OF_WEEK = [
   'Sunday', 'Monday', 'Tuesday', 'Wednesday', 

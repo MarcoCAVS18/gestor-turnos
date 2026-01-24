@@ -1,30 +1,30 @@
 // src/components/ui/Switch/index.jsx
 
 import React from 'react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import { useApp } from '../../../contexts/AppContext';
 
-const Switch = (***REMOVED*** checked, onChange, disabled = false, size = 'md' ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+const Switch = ({ checked, onChange, disabled = false, size = 'md' }) => {
+  const { thematicColors } = useApp();
   
-  const getSizeClasses = () => ***REMOVED***
-    const sizes = ***REMOVED***
-      sm: ***REMOVED*** container: 'h-5 w-9', toggle: 'h-3 w-3', translate: 'translate-x-4' ***REMOVED***,
-      md: ***REMOVED*** container: 'h-6 w-11', toggle: 'h-4 w-4', translate: 'translate-x-6' ***REMOVED***,
-      lg: ***REMOVED*** container: 'h-7 w-14', toggle: 'h-5 w-5', translate: 'translate-x-8' ***REMOVED***
-    ***REMOVED***;
+  const getSizeClasses = () => {
+    const sizes = {
+      sm: { container: 'h-5 w-9', toggle: 'h-3 w-3', translate: 'translate-x-4' },
+      md: { container: 'h-6 w-11', toggle: 'h-4 w-4', translate: 'translate-x-6' },
+      lg: { container: 'h-7 w-14', toggle: 'h-5 w-5', translate: 'translate-x-8' }
+    };
     return sizes[size] || sizes.md;
-  ***REMOVED***;
+  };
 
   const sizeClasses = getSizeClasses();
 
-  const handleClick = (e) => ***REMOVED***
+  const handleClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
     
-    if (!disabled && onChange) ***REMOVED***
+    if (!disabled && onChange) {
       onChange(!checked);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   const activeColor = thematicColors?.base || '#EC4899';
 
@@ -32,27 +32,27 @@ const Switch = (***REMOVED*** checked, onChange, disabled = false, size = 'md' *
     <button
       type="button"
       role="switch"
-      aria-checked=***REMOVED***checked***REMOVED***
-      onClick=***REMOVED***handleClick***REMOVED***
-      className=***REMOVED***`relative inline-flex $***REMOVED***sizeClasses.container***REMOVED*** items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 $***REMOVED***
+      aria-checked={checked}
+      onClick={handleClick}
+      className={`relative inline-flex ${sizeClasses.container} items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
         disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-      ***REMOVED***`***REMOVED***
-      style=***REMOVED******REMOVED***
+      }`}
+      style={{
         backgroundColor: checked ? activeColor : '#D1D5DB',
         '--tw-ring-color': activeColor
-      ***REMOVED******REMOVED***
-      disabled=***REMOVED***disabled***REMOVED***
+      }}
+      disabled={disabled}
     >
       <span
-        className=***REMOVED***`inline-block $***REMOVED***sizeClasses.toggle***REMOVED*** transform rounded-full bg-white shadow-lg transition-transform duration-200 $***REMOVED***
+        className={`inline-block ${sizeClasses.toggle} transform rounded-full bg-white shadow-lg transition-transform duration-200 ${
           checked ? sizeClasses.translate : 'translate-x-1'
-        ***REMOVED***`***REMOVED***
-        style=***REMOVED******REMOVED***
+        }`}
+        style={{
           boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.1)'
-        ***REMOVED******REMOVED***
+        }}
       />
     </button>
   );
-***REMOVED***;
+};
 
 export default Switch;

@@ -1,23 +1,23 @@
 // src/components/dashboard/ThisWeekSummaryCard/index.jsx 
 
 import React from 'react';
-import ***REMOVED*** Calendar, TrendingUp, Target, ArrowRight ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
-import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
+import { Calendar, TrendingUp, Target, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { formatCurrency } from '../../../utils/currency';
 import Flex from '../../ui/Flex';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 import ProgressBar from '../../ui/ProgressBar';
 import Button from '../../ui/Button';
 
-const ThisWeekSummaryCard = (***REMOVED*** stats, className ***REMOVED***) => ***REMOVED***
+const ThisWeekSummaryCard = ({ stats, className }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
-  const ***REMOVED*** weeklyHoursGoal ***REMOVED*** = useApp(); 
+  const { weeklyHoursGoal } = useApp(); 
 
   // Get data for this week from stats
-  const currentWeek = stats.currentWeek || ***REMOVED******REMOVED***;
+  const currentWeek = stats.currentWeek || {};
   const totalWeek = currentWeek.totalEarnings || 0;
   const hoursWeek = currentWeek.hoursWorked || 0;
   const shiftsWeek = currentWeek.totalShifts || 0; 
@@ -31,64 +31,64 @@ const ThisWeekSummaryCard = (***REMOVED*** stats, className ***REMOVED***) => **
   const limitedProgress = Math.min(Math.max(progressHours, 0), 100);
 
   // Function to navigate to settings
-  const goToSettings = () => ***REMOVED***
+  const goToSettings = () => {
     navigate('/ajustes');
-  ***REMOVED***;
+  };
 
-  const getProgressBarColor = (progress) => ***REMOVED***
+  const getProgressBarColor = (progress) => {
     if (progress >= 75) return '#10B981';
     if (progress >= 50) return colors.primary;
     return '#F59E0B';
-  ***REMOVED***;
+  };
 
   return (
-    <Card className=***REMOVED***className***REMOVED***>
+    <Card className={className}>
       <div className="flex flex-col h-full">
-        <div> ***REMOVED***/* Content wrapper */***REMOVED***
+        <div> {/* Content wrapper */}
           <Flex variant="between" className="mb-4">
             <h3 className="text-lg font-semibold flex items-center">
-              <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-2" />
+              <Calendar size={20} style={{ color: colors.primary }} className="mr-2" />
               This week
             </h3>
           </Flex>
 
           <div className="space-y-4">
-            ***REMOVED***/* Main earnings */***REMOVED***
+            {/* Main earnings */}
             <div className="text-center">
               <p
                 className="text-2xl font-bold"
-                style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
+                style={{ color: colors.primary }}
               >
-                ***REMOVED***formatCurrency(totalWeek)***REMOVED***
+                {formatCurrency(totalWeek)}
               </p>
               <p className="text-sm text-gray-600">Total earned</p>
             </div>
 
-            ***REMOVED***/* Hours progress - Only if there is a goal */***REMOVED***
-            ***REMOVED***hasHoursGoal ? (
+            {/* Hours progress - Only if there is a goal */}
+            {hasHoursGoal ? (
               <div className="space-y-2">
                 <Flex variant="between" className="text-sm">
                   <span className="text-gray-600">Progress: </span>
-                  <span className="font-medium">***REMOVED***hoursWeek.toFixed(1)***REMOVED***h / ***REMOVED***goalHours***REMOVED***h</span>
+                  <span className="font-medium">{hoursWeek.toFixed(1)}h / {goalHours}h</span>
                 </Flex>
 
                 <ProgressBar
-                  value=***REMOVED***limitedProgress***REMOVED***
-                  color=***REMOVED***getProgressBarColor(limitedProgress)***REMOVED***
+                  value={limitedProgress}
+                  color={getProgressBarColor(limitedProgress)}
                 />
               </div>
             ) : (
               <div className="text-center">
                 <Flex variant="center" className="mb-2">
-                  <Target size=***REMOVED***16***REMOVED*** className="text-gray-400 mr-1" />
-                  <span className="text-lg font-semibold text-gray-700">***REMOVED***hoursWeek.toFixed(1)***REMOVED***h</span>
+                  <Target size={16} className="text-gray-400 mr-1" />
+                  <span className="text-lg font-semibold text-gray-700">{hoursWeek.toFixed(1)}h</span>
                 </Flex>
                 <div
                   className="p-2 rounded-lg border border-dashed transition-all duration-200"
-                  style=***REMOVED******REMOVED***
+                  style={{
                     borderColor: colors.transparent30,
                     backgroundColor: colors.transparent5
-                  ***REMOVED******REMOVED***
+                  }}
                 >
                   <p className="text-xs text-gray-600 mb-1">
                     No weekly goal yet?
@@ -97,57 +97,57 @@ const ThisWeekSummaryCard = (***REMOVED*** stats, className ***REMOVED***) => **
                     Setting one helps you stay on track
                   </p>
                   <Button
-                    onClick=***REMOVED***goToSettings***REMOVED***
+                    onClick={goToSettings}
                     variant="ghost-animated"
                     size="sm"
-                    icon=***REMOVED***ArrowRight***REMOVED***
+                    icon={ArrowRight}
                     iconPosition="right"
-                    themeColor=***REMOVED***colors.primary***REMOVED***
+                    themeColor={colors.primary}
                     className="-ml-2"
                   >
                     Set up
                   </Button>
                 </div>
               </div>
-            )***REMOVED***
+            )}
 
-            ***REMOVED***/* Basic stats - Show shifts completed */***REMOVED***
+            {/* Basic stats - Show shifts completed */}
             <Flex variant="between" className=" text-sm">
               <div className="text-center">
-                <p className="font-semibold text-gray-800">***REMOVED***shiftsWeek***REMOVED***</p>
+                <p className="font-semibold text-gray-800">{shiftsWeek}</p>
                 <p className="text-xs text-gray-500">shifts</p>
               </div>
               
-              ***REMOVED***hasHoursGoal && (
+              {hasHoursGoal && (
                 <div className="text-center">
-                  <p className="font-semibold text-gray-800">***REMOVED***Math.ceil(limitedProgress)***REMOVED***%</p>
+                  <p className="font-semibold text-gray-800">{Math.ceil(limitedProgress)}%</p>
                   <p className="text-xs text-gray-500">goal</p>
                 </div>
-              )***REMOVED***
+              )}
               
               <div className="text-center">
-                <p className="font-semibold text-gray-800">***REMOVED***hoursWeek.toFixed(1)***REMOVED***h</p>
+                <p className="font-semibold text-gray-800">{hoursWeek.toFixed(1)}h</p>
                 <p className="text-xs text-gray-500">hours</p>
               </div>
             </Flex>
 
-            ***REMOVED***/* Motivational message */***REMOVED***
-            ***REMOVED***totalWeek > 0 && hasHoursGoal && (
-              <div className="text-center p-2 rounded-lg" style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10 ***REMOVED******REMOVED***>
+            {/* Motivational message */}
+            {totalWeek > 0 && hasHoursGoal && (
+              <div className="text-center p-2 rounded-lg" style={{ backgroundColor: colors.transparent10 }}>
                 <Flex variant="center">
-                  <TrendingUp size=***REMOVED***12***REMOVED*** style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** className="mr-1" />
-                  <p className="text-xs font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                    ***REMOVED***limitedProgress >= 75 ? 'Excellent progress!' : 'Good pace!'***REMOVED***
+                  <TrendingUp size={12} style={{ color: colors.primary }} className="mr-1" />
+                  <p className="text-xs font-medium" style={{ color: colors.primary }}>
+                    {limitedProgress >= 75 ? 'Excellent progress!' : 'Good pace!'}
                   </p>
                 </Flex>
               </div>
-            )***REMOVED***
+            )}
           </div>
         </div>
         <div className="flex-grow" /> 
       </div>
     </Card>
   );
-***REMOVED***;
+};
 
 export default ThisWeekSummaryCard;

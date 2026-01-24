@@ -1,24 +1,24 @@
 // src/hooks/useIsMobile.js
 
-import ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
+import { useState, useEffect } from 'react';
 
 /**
  * Hook personalizado para detectar si el dispositivo es móvil
  *
- * @param ***REMOVED***number***REMOVED*** breakpoint - Punto de corte en píxeles (default: 768)
- * @returns ***REMOVED***boolean***REMOVED*** - true si el ancho de la ventana es menor al breakpoint
+ * @param {number} breakpoint - Punto de corte en píxeles (default: 768)
+ * @returns {boolean} - true si el ancho de la ventana es menor al breakpoint
  *
  * @example
  * const isMobile = useIsMobile(); // usa 768px por defecto
  * const isSmallScreen = useIsMobile(640); // usa 640px como breakpoint
  */
-export const useIsMobile = (breakpoint = 768) => ***REMOVED***
+export const useIsMobile = (breakpoint = 768) => {
   const [isMobile, setIsMobile] = useState(false);
 
-  useEffect(() => ***REMOVED***
-    const checkMobile = () => ***REMOVED***
+  useEffect(() => {
+    const checkMobile = () => {
       setIsMobile(window.innerWidth < breakpoint);
-    ***REMOVED***;
+    };
 
     checkMobile();
 
@@ -26,7 +26,7 @@ export const useIsMobile = (breakpoint = 768) => ***REMOVED***
 
     // Cleanup
     return () => window.removeEventListener('resize', checkMobile);
-  ***REMOVED***, [breakpoint]);
+  }, [breakpoint]);
 
   return isMobile;
-***REMOVED***;
+};

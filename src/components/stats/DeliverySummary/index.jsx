@@ -1,14 +1,14 @@
 // src/components/stats/DeliverySummary/index.jsx
 
 import React from 'react';
-import ***REMOVED*** TrendingUp ***REMOVED*** from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
 // FIXED IMPORTS: Assuming the formatting functions are in statsCalculations.js or pluralization.js
 // If you get an error for formatCurrency, try changing the path to '../../../utils/statsCalculations'
-import ***REMOVED*** formatCurrency, formatHours ***REMOVED*** from '../../../utils/statsCalculations'; 
+import { formatCurrency, formatHours } from '../../../utils/statsCalculations'; 
 
 import Card from '../../ui/Card';
 
-const DeliverySummary = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVED***
+const DeliverySummary = ({ deliveryStats }) => {
   if (!deliveryStats) return null;
 
   return (
@@ -20,41 +20,41 @@ const DeliverySummary = (***REMOVED*** deliveryStats ***REMOVED***) => ***REMOVE
             <TrendingUp className="w-4 h-4 text-green-500" />
             <span>Total Earnings:</span>
           </span>
-          <span className="font-bold text-gray-900">***REMOVED***formatCurrency(deliveryStats.totalEarned)***REMOVED***</span>
+          <span className="font-bold text-gray-900">{formatCurrency(deliveryStats.totalEarned)}</span>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-4">
-        ***REMOVED***/* Total Shifts */***REMOVED***
+        {/* Total Shifts */}
         <div className="bg-gray-50 p-4 rounded-lg">
           <p className="text-sm text-gray-600 mb-1">Total Shifts</p>
-          <p className="text-2xl font-bold text-gray-900">***REMOVED***deliveryStats.totalShifts***REMOVED***</p>
+          <p className="text-2xl font-bold text-gray-900">{deliveryStats.totalShifts}</p>
         </div>
 
-        ***REMOVED***/* Total Hours */***REMOVED***
+        {/* Total Hours */}
         <div className="bg-gray-50 p-4 rounded-lg">
           <p className="text-sm text-gray-600 mb-1">Total Hours</p>
-          <p className="text-2xl font-bold text-gray-900">***REMOVED***formatHours(deliveryStats.totalHours)***REMOVED***</p>
+          <p className="text-2xl font-bold text-gray-900">{formatHours(deliveryStats.totalHours)}</p>
         </div>
       </div>
 
-      ***REMOVED***/* Detailed Stats */***REMOVED***
+      {/* Detailed Stats */}
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
           <span className="text-gray-600">Total Orders</span>
-          <span className="font-semibold">***REMOVED***deliveryStats.totalOrders***REMOVED***</span>
+          <span className="font-semibold">{deliveryStats.totalOrders}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-600">Total Tips</span>
-          <span className="font-semibold">***REMOVED***formatCurrency(deliveryStats.totalTips)***REMOVED***</span>
+          <span className="font-semibold">{formatCurrency(deliveryStats.totalTips)}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-600">Net Earnings</span>`
-          <span className="font-semibold text-gray-900">***REMOVED***formatCurrency(deliveryStats.netEarnings)***REMOVED***</span>
+          <span className="font-semibold text-gray-900">{formatCurrency(deliveryStats.netEarnings)}</span>
         </div>
       </div>
     </Card>
   );
-***REMOVED***;
+};
 
 export default DeliverySummary;

@@ -1,40 +1,40 @@
 // src/hooks/useShare.js
 
-import ***REMOVED*** useState, useCallback ***REMOVED*** from 'react';
-import ***REMOVED*** shareWorkNative ***REMOVED*** from '../services/shareService';
-import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
+import { useState, useCallback } from 'react';
+import { shareWorkNative } from '../services/shareService';
+import { useAuth } from '../contexts/AuthContext';
 
-export const useShare = () => ***REMOVED***
-  const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
-  const [sharing, setSharing] = useState(***REMOVED******REMOVED***);
-  const [messages, setMessages] = useState(***REMOVED******REMOVED***);
+export const useShare = () => {
+  const { currentUser } = useAuth();
+  const [sharing, setSharing] = useState({});
+  const [messages, setMessages] = useState({});
 
-  const shareWork = useCallback(async (work) => ***REMOVED***
+  const shareWork = useCallback(async (work) => {
     if (!currentUser || !work) return;
 
-    try ***REMOVED***
-      setSharing(prev => (***REMOVED*** ...prev, [work.id]: true ***REMOVED***));
-      setMessages(prev => (***REMOVED*** ...prev, [work.id]: '' ***REMOVED***));
+    try {
+      setSharing(prev => ({ ...prev, [work.id]: true }));
+      setMessages(prev => ({ ...prev, [work.id]: '' }));
 
       await shareWorkNative(currentUser.uid, work);
 
-    ***REMOVED*** catch (error) ***REMOVED***
-      setMessages(prev => (***REMOVED***
+    } catch (error) {
+      setMessages(prev => ({
         ...prev,
         [work.id]: 'Error sharing work'
-      ***REMOVED***));
+      }));
       
-      setTimeout(() => ***REMOVED***
-        setMessages(prev => (***REMOVED*** ...prev, [work.id]: '' ***REMOVED***));
-      ***REMOVED***, 3000);
-    ***REMOVED*** finally ***REMOVED***
-      setSharing(prev => (***REMOVED*** ...prev, [work.id]: false ***REMOVED***));
-    ***REMOVED***
-  ***REMOVED***, [currentUser]);
+      setTimeout(() => {
+        setMessages(prev => ({ ...prev, [work.id]: '' }));
+      }, 3000);
+    } finally {
+      setSharing(prev => ({ ...prev, [work.id]: false }));
+    }
+  }, [currentUser]);
 
-  return ***REMOVED***
+  return {
     sharing,
     messages,
     shareWork
-  ***REMOVED***;
-***REMOVED***;
+  };
+};

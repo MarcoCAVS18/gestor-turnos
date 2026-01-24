@@ -1,43 +1,43 @@
 // src/pages/SharedWork.jsx
 
-import ***REMOVED*** Share2, Plus, ArrowLeft, AlertCircle ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** useSharedWork ***REMOVED*** from '../hooks/useSharedWork';
-import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
+import { Share2, Plus, ArrowLeft, AlertCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useSharedWork } from '../hooks/useSharedWork';
+import { useAuth } from '../contexts/AuthContext';
 import WorkPreviewCard from '../components/shared/WorkPreviewCard';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Loader from '../components/other/Loader';
 import PageHeader from '../components/layout/PageHeader';
 
-const SharedWork = () => ***REMOVED***
-  const ***REMOVED*** sharedWork, loading, error, adding, addWork ***REMOVED*** = useSharedWork();
-  const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
+const SharedWork = () => {
+  const { sharedWork, loading, error, adding, addWork } = useSharedWork();
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
 
   // If no authenticated user, redirect to login
-  if (!currentUser) ***REMOVED***
+  if (!currentUser) {
     return (
       <div className="max-w-md mx-auto px-4 py-6">
         <Card className="text-center py-8">
-          <AlertCircle size=***REMOVED***48***REMOVED*** className="mx-auto mb-4 text-yellow-500" />
+          <AlertCircle size={48} className="mx-auto mb-4 text-yellow-500" />
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Sign In</h2>
           <p className="text-gray-600 mb-6">
             You need to sign in to add this work to your account
           </p>
           <div className="space-y-3">
             <Button
-              onClick=***REMOVED***() => navigate('/login', ***REMOVED*** 
-                state: ***REMOVED*** redirectTo: window.location.pathname ***REMOVED*** 
-              ***REMOVED***)***REMOVED***
+              onClick={() => navigate('/login', { 
+                state: { redirectTo: window.location.pathname } 
+              })}
               className="w-full"
             >
               Sign In
             </Button>
             <Button
-              onClick=***REMOVED***() => navigate('/register', ***REMOVED*** 
-                state: ***REMOVED*** redirectTo: window.location.pathname ***REMOVED*** 
-              ***REMOVED***)***REMOVED***
+              onClick={() => navigate('/register', { 
+                state: { redirectTo: window.location.pathname } 
+              })}
               variant="outline"
               className="w-full"
             >
@@ -47,68 +47,68 @@ const SharedWork = () => ***REMOVED***
         </Card>
       </div>
     );
-  ***REMOVED***
+  }
 
-  if (loading) ***REMOVED***
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Loader />
       </div>
     );
-  ***REMOVED***
+  }
 
-  if (error) ***REMOVED***
+  if (error) {
     return (
       <div className="max-w-md mx-auto px-4 py-6">
         <Card className="text-center py-8">
-          <Share2 size=***REMOVED***48***REMOVED*** className="mx-auto mb-4 text-red-400" />
+          <Share2 size={48} className="mx-auto mb-4 text-red-400" />
           <h2 className="text-xl font-semibold text-gray-800 mb-2">Error</h2>
-          <p className="text-gray-600 mb-6">***REMOVED***error***REMOVED***</p>
+          <p className="text-gray-600 mb-6">{error}</p>
           <Button
-            onClick=***REMOVED***() => navigate('/works')***REMOVED***
+            onClick={() => navigate('/works')}
             variant="outline"
-            icon=***REMOVED***ArrowLeft***REMOVED***
+            icon={ArrowLeft}
           >
             Go to my works
           </Button>
         </Card>
       </div>
     );
-  ***REMOVED***
+  }
 
   return (
     <div className="max-w-md mx-auto px-4 py-6 space-y-6">
       <PageHeader
         title="Shared Work"
         subtitle="Details of the work shared with you."
-        icon=***REMOVED***Share2***REMOVED***
+        icon={Share2}
       />
-      ***REMOVED***/* Work preview */***REMOVED***
-      ***REMOVED***sharedWork && <WorkPreviewCard work=***REMOVED***sharedWork***REMOVED*** />***REMOVED***
+      {/* Work preview */}
+      {sharedWork && <WorkPreviewCard work={sharedWork} />}
 
-      ***REMOVED***/* Action buttons */***REMOVED***
+      {/* Action buttons */}
       <div className="space-y-3">
         <Button
-          onClick=***REMOVED***addWork***REMOVED***
-          disabled=***REMOVED***adding***REMOVED***
-          loading=***REMOVED***adding***REMOVED***
+          onClick={addWork}
+          disabled={adding}
+          loading={adding}
           className="w-full"
-          icon=***REMOVED***Plus***REMOVED***
+          icon={Plus}
         >
-          ***REMOVED***adding ? 'Adding...' : 'Add to my works'***REMOVED***
+          {adding ? 'Adding...' : 'Add to my works'}
         </Button>
         
         <Button
-          onClick=***REMOVED***() => navigate('/works')***REMOVED***
+          onClick={() => navigate('/works')}
           variant="outline"
           className="w-full"
-          icon=***REMOVED***ArrowLeft***REMOVED***
+          icon={ArrowLeft}
         >
           Go to my works
         </Button>
       </div>
 
-      ***REMOVED***/* Help message */***REMOVED***
+      {/* Help message */}
       <Card className="text-center py-4" padding="sm">
         <p className="text-xs text-gray-500">
           By adding this work, it will be copied to your account with all its configurations.
@@ -116,6 +116,6 @@ const SharedWork = () => ***REMOVED***
       </Card>
     </div>
   );
-***REMOVED***;
+};
 
 export default SharedWork;

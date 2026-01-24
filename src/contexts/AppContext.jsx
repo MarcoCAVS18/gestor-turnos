@@ -1,19 +1,19 @@
 // src/contexts/AppContext.jsx
 
-import React, ***REMOVED*** createContext, useMemo ***REMOVED*** from 'react';
+import React, { createContext, useMemo } from 'react';
 
-import ***REMOVED*** AuthProvider ***REMOVED*** from './AuthContext';
-import ***REMOVED*** ConfigProvider, useConfigContext ***REMOVED*** from './ConfigContext';
-import ***REMOVED*** DataProvider, useDataContext ***REMOVED*** from './DataContext';
-import ***REMOVED*** DeliveryProvider, useDeliveryContext ***REMOVED*** from './DeliveryContext';
-import ***REMOVED*** CalculationsProvider, useCalculations ***REMOVED*** from './CalculationsContext';
-import ***REMOVED*** StatsProvider, useStats ***REMOVED*** from './StatsContext';
+import { AuthProvider } from './AuthContext';
+import { ConfigProvider, useConfigContext } from './ConfigContext';
+import { DataProvider, useDataContext } from './DataContext';
+import { DeliveryProvider, useDeliveryContext } from './DeliveryContext';
+import { CalculationsProvider, useCalculations } from './CalculationsContext';
+import { StatsProvider, useStats } from './StatsContext';
 
 // 1. Create a new "Master" context
 const AppContext = createContext(null);
 
 // 2. The main AppProvider now composes all other providers
-export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
+export const AppProvider = ({ children }) => {
   return (
     <AuthProvider>
       <ConfigProvider>
@@ -21,7 +21,7 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
           <DeliveryProvider>
             <CalculationsProvider>
               <StatsProvider>
-                ***REMOVED***children***REMOVED***
+                {children}
               </StatsProvider>
             </CalculationsProvider>
           </DeliveryProvider>
@@ -29,23 +29,23 @@ export const AppProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED*
       </ConfigProvider>
     </AuthProvider>
   );
-***REMOVED***;
+};
 
 // 3. The main useApp hook now composes all other hooks
 // This provides a single point of access and maintains backward compatibility
 // with components that used the old monolithic context.
-export const useApp = () => ***REMOVED***
+export const useApp = () => {
   const config = useConfigContext();
   const data = useDataContext();
   const delivery = useDeliveryContext();
   const calculations = useCalculations();
   const stats = useStats();
 
-  const allWorks = useMemo(() => ***REMOVED***
+  const allWorks = useMemo(() => {
     return [...(data.works || []), ...(delivery.deliveryWork || [])];
-  ***REMOVED***, [data.works, delivery.deliveryWork]);
+  }, [data.works, delivery.deliveryWork]);
 
-  return ***REMOVED***
+  return {
     ...config,
     ...data,
     ...delivery,
@@ -59,9 +59,9 @@ export const useApp = () => ***REMOVED***
     // For backward compatibility, some components might still be using old names.
     // We can provide aliases here if needed. For example:
     // shiftRanges: config.shiftRanges,
-  ***REMOVED***;
-***REMOVED***;
+  };
+};
 
 // This is a placeholder to keep the export structure.
 // The actual context value is now composed by the `useApp` hook.
-export ***REMOVED*** AppContext ***REMOVED***;
+export { AppContext };

@@ -1,9 +1,9 @@
 // src/pages/Statistics.jsx
 
-import React, ***REMOVED*** useMemo ***REMOVED*** from 'react';
+import React, { useMemo } from 'react';
 import PageHeader from '../components/layout/PageHeader';
-import ***REMOVED*** Truck, BarChart ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useStats ***REMOVED*** from '../contexts/StatsContext';
+import { Truck, BarChart } from 'lucide-react';
+import { useStats } from '../contexts/StatsContext';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import WeekNavigator from '../components/stats/WeekNavigator';
 import StatsProgressBar from '../components/stats/StatsProgressBar';
@@ -12,7 +12,7 @@ import WeeklyComparison from '../components/stats/WeeklyComparison';
 import DailyDistribution from '../components/stats/DailyDistribution';
 import ShiftTypeStats from '../components/stats/ShiftTypeStats';
 import InteractiveCharts from '../components/stats/InteractiveCharts';
-import ***REMOVED*** useIsMobile ***REMOVED*** from '../hooks/useIsMobile';
+import { useIsMobile } from '../hooks/useIsMobile';
 import MostProductiveDay from '../components/stats/MostProductiveDay';
 
 // Smoko Cards
@@ -26,8 +26,8 @@ import FuelEfficiency from '../components/stats/FuelEfficiency';
 import PlatformComparison from '../components/stats/PlatformComparison';
 import DeliveryHourlyAnalysis from '../components/stats/DeliveryHourlyAnalysis';
 
-const Statistics = () => ***REMOVED***
-  const ***REMOVED***
+const Statistics = () => {
+  const {
     loading,
     currentData,
     previousData,
@@ -40,13 +40,13 @@ const Statistics = () => ***REMOVED***
     smokoEnabled,
     smokoMinutes,
     allShifts,
-  ***REMOVED*** = useStats();
+  } = useStats();
 
   const isMobile = useIsMobile();
   const hasDelivery = deliveryEnabled && deliveryStats.shiftsCompleted > 0;
 
   // Filter actual shifts of the selected week ---
-  const currentWeekShifts = useMemo(() => ***REMOVED***
+  const currentWeekShifts = useMemo(() => {
     if (!currentData.weekStart || !currentData.weekEnd || !allShifts) return [];
 
     // Convert week start and end dates to Date objects
@@ -57,145 +57,145 @@ const Statistics = () => ***REMOVED***
     end.setHours(23, 59, 59, 999);
 
     // Filter shifts that fall in this range
-    return allShifts.filter(shift => ***REMOVED***
+    return allShifts.filter(shift => {
       const shiftDate = new Date(shift.startDate || shift.date);
       return shiftDate >= start && shiftDate <= end;
-    ***REMOVED***);
-  ***REMOVED***, [allShifts, currentData.weekStart, currentData.weekEnd]);
+    });
+  }, [allShifts, currentData.weekStart, currentData.weekEnd]);
   // ------------------------------------------------------------------
 
   const weekNavigatorComponent = (
     <WeekNavigator
-      weekOffset=***REMOVED***weekOffset***REMOVED***
-      onWeekChange=***REMOVED***setWeekOffset***REMOVED***
-      weekStart=***REMOVED***currentData.weekStart***REMOVED***
-      weekEnd=***REMOVED***currentData.weekEnd***REMOVED***
+      weekOffset={weekOffset}
+      onWeekChange={setWeekOffset}
+      weekStart={currentData.weekStart}
+      weekEnd={currentData.weekEnd}
     />
   );
 
   return (
-    <LoadingWrapper loading=***REMOVED***loading***REMOVED***>
+    <LoadingWrapper loading={loading}>
       <div className="px-4 py-6 space-y-6">
         <PageHeader
           title="Statistics"
           subtitle="Analyze your performance and projections"
-          icon=***REMOVED***BarChart***REMOVED***
-          rightContent=***REMOVED***
+          icon={BarChart}
+          rightContent={
             !isMobile ? (
-              <div className="lg:w-2/5 lg:max-w-md">***REMOVED***weekNavigatorComponent***REMOVED***</div>
+              <div className="lg:w-2/5 lg:max-w-md">{weekNavigatorComponent}</div>
             ) : undefined
-          ***REMOVED***
+          }
         />
 
-        ***REMOVED***isMobile && (
+        {isMobile && (
           <div className="lg:hidden -mt-4">
             <WeekNavigator
-              weekOffset=***REMOVED***weekOffset***REMOVED***
-              onWeekChange=***REMOVED***setWeekOffset***REMOVED***
-              weekStart=***REMOVED***currentData.weekStart***REMOVED***
-              weekEnd=***REMOVED***currentData.weekEnd***REMOVED***
+              weekOffset={weekOffset}
+              onWeekChange={setWeekOffset}
+              weekStart={currentData.weekStart}
+              weekEnd={currentData.weekEnd}
               variant="transparent"
             />
           </div>
-        )***REMOVED***
+        )}
 
-        ***REMOVED***/* --- MAIN LAYOUT (GENERAL) --- */***REMOVED***
+        {/* --- MAIN LAYOUT (GENERAL) --- */}
         <div className="space-y-6">
 
-          ***REMOVED***/* DESKTOP: 3 column grid */***REMOVED***
+          {/* DESKTOP: 3 column grid */}
           <div className="hidden lg:grid lg:grid-cols-3 lg:gap-6">
-            ***REMOVED***/* COLUMN 1 */***REMOVED***
+            {/* COLUMN 1 */}
             <div className="lg:col-span-1 flex flex-col gap-6">
-              <StatsProgressBar className="flex-grow" currentData=***REMOVED***currentData***REMOVED*** weeklyHoursGoal=***REMOVED***weeklyHoursGoal***REMOVED*** />
-              <ShiftTypeStats className="flex-grow" currentData=***REMOVED***currentData***REMOVED*** loading=***REMOVED***loading***REMOVED*** />
+              <StatsProgressBar className="flex-grow" currentData={currentData} weeklyHoursGoal={weeklyHoursGoal} />
+              <ShiftTypeStats className="flex-grow" currentData={currentData} loading={loading} />
             </div>
 
-            ***REMOVED***/* COLUMN 2 */***REMOVED***
+            {/* COLUMN 2 */}
             <div className="lg:col-span-1">
-              <WeeklyComparison className="h-full" currentData=***REMOVED***currentData***REMOVED*** previousData=***REMOVED***previousData***REMOVED*** thematicColors=***REMOVED***thematicColors***REMOVED*** />
+              <WeeklyComparison className="h-full" currentData={currentData} previousData={previousData} thematicColors={thematicColors} />
             </div>
 
-            ***REMOVED***/* COLUMN 3 */***REMOVED***
+            {/* COLUMN 3 */}
             <div className="lg:col-span-1 flex flex-col gap-6">
-              <WeeklyStatsGrid className="flex-grow" currentData=***REMOVED***currentData***REMOVED*** thematicColors=***REMOVED***thematicColors***REMOVED*** loading=***REMOVED***loading***REMOVED*** />
-              <MostProductiveDay className="flex-grow" currentData=***REMOVED***currentData***REMOVED*** thematicColors=***REMOVED***thematicColors***REMOVED*** loading=***REMOVED***loading***REMOVED*** />
+              <WeeklyStatsGrid className="flex-grow" currentData={currentData} thematicColors={thematicColors} loading={loading} />
+              <MostProductiveDay className="flex-grow" currentData={currentData} thematicColors={thematicColors} loading={loading} />
               <div className="flex-grow grid grid-cols-2 gap-4">
-                <SmokoStatusCard className="h-full" smokoEnabled=***REMOVED***smokoEnabled***REMOVED*** thematicColors=***REMOVED***thematicColors***REMOVED*** loading=***REMOVED***loading***REMOVED*** />
-                <SmokoTimeCard className="h-full" smokoEnabled=***REMOVED***smokoEnabled***REMOVED*** smokoMinutes=***REMOVED***smokoMinutes***REMOVED*** thematicColors=***REMOVED***thematicColors***REMOVED*** loading=***REMOVED***loading***REMOVED*** />
+                <SmokoStatusCard className="h-full" smokoEnabled={smokoEnabled} thematicColors={thematicColors} loading={loading} />
+                <SmokoTimeCard className="h-full" smokoEnabled={smokoEnabled} smokoMinutes={smokoMinutes} thematicColors={thematicColors} loading={loading} />
               </div>
             </div>
           </div>
 
-          ***REMOVED***/* MOBILE */***REMOVED***
+          {/* MOBILE */}
           <div className="block lg:hidden space-y-6">
-            <StatsProgressBar currentData=***REMOVED***currentData***REMOVED*** weeklyHoursGoal=***REMOVED***weeklyHoursGoal***REMOVED*** />
-            <WeeklyStatsGrid currentData=***REMOVED***currentData***REMOVED*** thematicColors=***REMOVED***thematicColors***REMOVED*** loading=***REMOVED***loading***REMOVED*** />
-            <MostProductiveDay currentData=***REMOVED***currentData***REMOVED*** thematicColors=***REMOVED***thematicColors***REMOVED*** loading=***REMOVED***loading***REMOVED*** />
+            <StatsProgressBar currentData={currentData} weeklyHoursGoal={weeklyHoursGoal} />
+            <WeeklyStatsGrid currentData={currentData} thematicColors={thematicColors} loading={loading} />
+            <MostProductiveDay currentData={currentData} thematicColors={thematicColors} loading={loading} />
             <div className="grid grid-cols-2 gap-4">
-              <SmokoStatusCard smokoEnabled=***REMOVED***smokoEnabled***REMOVED*** thematicColors=***REMOVED***thematicColors***REMOVED*** loading=***REMOVED***loading***REMOVED*** />
-              <SmokoTimeCard smokoEnabled=***REMOVED***smokoEnabled***REMOVED*** smokoMinutes=***REMOVED***smokoMinutes***REMOVED*** thematicColors=***REMOVED***thematicColors***REMOVED*** loading=***REMOVED***loading***REMOVED*** />
+              <SmokoStatusCard smokoEnabled={smokoEnabled} thematicColors={thematicColors} loading={loading} />
+              <SmokoTimeCard smokoEnabled={smokoEnabled} smokoMinutes={smokoMinutes} thematicColors={thematicColors} loading={loading} />
             </div>
-            <WeeklyComparison currentData=***REMOVED***currentData***REMOVED*** previousData=***REMOVED***previousData***REMOVED*** thematicColors=***REMOVED***thematicColors***REMOVED*** />
-            <ShiftTypeStats currentData=***REMOVED***currentData***REMOVED*** loading=***REMOVED***loading***REMOVED*** />
+            <WeeklyComparison currentData={currentData} previousData={previousData} thematicColors={thematicColors} />
+            <ShiftTypeStats currentData={currentData} loading={loading} />
           </div>
         </div>
 
-        ***REMOVED***/* CHARTS */***REMOVED***
+        {/* CHARTS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="h-96">
-            <InteractiveCharts currentData=***REMOVED***currentData***REMOVED*** earningsByWork=***REMOVED***currentData.earningsByWork || []***REMOVED*** />
+            <InteractiveCharts currentData={currentData} earningsByWork={currentData.earningsByWork || []} />
           </div>
-          <DailyDistribution currentData=***REMOVED***currentData***REMOVED*** thematicColors=***REMOVED***thematicColors***REMOVED*** loading=***REMOVED***loading***REMOVED*** />
+          <DailyDistribution currentData={currentData} thematicColors={thematicColors} loading={loading} />
         </div>
 
-        ***REMOVED***/* --- DELIVERY SECTION --- */***REMOVED***
-        ***REMOVED***hasDelivery && (
+        {/* --- DELIVERY SECTION --- */}
+        {hasDelivery && (
           <>
             <PageHeader
               title="Delivery Statistics"
               subtitle="Analyze your delivery earnings and efficiency"
-              icon=***REMOVED***Truck***REMOVED***
+              icon={Truck}
               className="pt-8"
             />
 
             <div className="space-y-6">
-              ***REMOVED***/* DESKTOP */***REMOVED***
+              {/* DESKTOP */}
               <div className="hidden lg:grid lg:grid-cols-2 lg:gap-6 items-stretch">
                 <div className="flex flex-col gap-6 h-full">
                   <div className="flex-none">
-                    <DeliverySummary deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
+                    <DeliverySummary deliveryStats={deliveryStats} />
                   </div>
                   <div className="flex-grow flex flex-col">
-                    ***REMOVED***/* HERE IS THE KEY CHANGE: We pass currentWeekShifts */***REMOVED***
+                    {/* HERE IS THE KEY CHANGE: We pass currentWeekShifts */}
                     <DeliveryHourlyAnalysis
-                      shifts=***REMOVED***currentData.shifts || []***REMOVED***
+                      shifts={currentData.shifts || []}
                       className="h-full"
                     />
                   </div>
                   <div className="flex-none">
-                    <FuelEfficiency deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
+                    <FuelEfficiency deliveryStats={deliveryStats} />
                   </div>
                 </div>
                 <div className="flex flex-col gap-6 h-full">
-                  <VehicleEfficiency vehicleStats=***REMOVED***deliveryStats.statsByVehicle***REMOVED*** />
-                  <PlatformComparison deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
+                  <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
+                  <PlatformComparison deliveryStats={deliveryStats} />
                 </div>
               </div>
 
-              ***REMOVED***/* MOBILE */***REMOVED***
+              {/* MOBILE */}
               <div className="block lg:hidden space-y-6">
-                <DeliverySummary deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
-                <DeliveryHourlyAnalysis shifts=***REMOVED***currentWeekShifts***REMOVED*** />
-                <VehicleEfficiency vehicleStats=***REMOVED***deliveryStats.statsByVehicle***REMOVED*** />
-                <PlatformComparison deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
-                <FuelEfficiency deliveryStats=***REMOVED***deliveryStats***REMOVED*** />
+                <DeliverySummary deliveryStats={deliveryStats} />
+                <DeliveryHourlyAnalysis shifts={currentWeekShifts} />
+                <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
+                <PlatformComparison deliveryStats={deliveryStats} />
+                <FuelEfficiency deliveryStats={deliveryStats} />
               </div>
             </div>
           </>
-        )***REMOVED***
+        )}
       </div>
     </LoadingWrapper>
   );
-***REMOVED***;
+};
 
 export default Statistics;

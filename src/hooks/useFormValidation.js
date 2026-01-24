@@ -1,60 +1,60 @@
 // src/hooks/useFormValidation.js
 
-import ***REMOVED*** useState, useCallback ***REMOVED*** from 'react';
+import { useState, useCallback } from 'react';
 
-export const useFormValidation = (validationRules = ***REMOVED******REMOVED***) => ***REMOVED***
-  const [errors, setErrors] = useState(***REMOVED******REMOVED***);
-  const [touched, setTouched] = useState(***REMOVED******REMOVED***);
+export const useFormValidation = (validationRules = {}) => {
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
 
-  const validateField = useCallback((fieldName, value) => ***REMOVED***
+  const validateField = useCallback((fieldName, value) => {
     const rules = validationRules[fieldName];
     if (!rules) return '';
 
-    for (const rule of rules) ***REMOVED***
+    for (const rule of rules) {
       const error = rule(value);
       if (error) return error;
-    ***REMOVED***
+    }
 
     return '';
-  ***REMOVED***, [validationRules]);
+  }, [validationRules]);
 
-  const validateForm = useCallback((values) => ***REMOVED***
-    const newErrors = ***REMOVED******REMOVED***;
+  const validateForm = useCallback((values) => {
+    const newErrors = {};
     let isValid = true;
 
-    Object.keys(validationRules).forEach(fieldName => ***REMOVED***
+    Object.keys(validationRules).forEach(fieldName => {
       const error = validateField(fieldName, values[fieldName]);
-      if (error) ***REMOVED***
+      if (error) {
         newErrors[fieldName] = error;
         isValid = false;
-      ***REMOVED***
-    ***REMOVED***);
+      }
+    });
 
     setErrors(newErrors);
     return isValid;
-  ***REMOVED***, [validateField, validationRules]);
+  }, [validateField, validationRules]);
 
-  const handleFieldChange = useCallback((fieldName, value) => ***REMOVED***
-    setTouched(prev => (***REMOVED*** ...prev, [fieldName]: true ***REMOVED***));
+  const handleFieldChange = useCallback((fieldName, value) => {
+    setTouched(prev => ({ ...prev, [fieldName]: true }));
     
     const error = validateField(fieldName, value);
-    setErrors(prev => (***REMOVED***
+    setErrors(prev => ({
       ...prev,
       [fieldName]: error
-    ***REMOVED***));
-  ***REMOVED***, [validateField]);
+    }));
+  }, [validateField]);
 
-  const resetValidation = useCallback(() => ***REMOVED***
-    setErrors(***REMOVED******REMOVED***);
-    setTouched(***REMOVED******REMOVED***);
-  ***REMOVED***, []);
+  const resetValidation = useCallback(() => {
+    setErrors({});
+    setTouched({});
+  }, []);
 
-  return ***REMOVED***
+  return {
     errors,
     touched,
     validateForm,
     handleFieldChange,
     resetValidation,
     hasErrors: Object.keys(errors).some(key => errors[key])
-  ***REMOVED***;
-***REMOVED***;
+  };
+};

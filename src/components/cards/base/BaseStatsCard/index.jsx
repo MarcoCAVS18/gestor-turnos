@@ -2,10 +2,10 @@
 import React from 'react';
 import Card from '../../../ui/Card';
 import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
+import { useThemeColors } from '../../../../hooks/useThemeColors';
 import Flex from '../../../ui/Flex';
 
-const BaseStatsCard = (***REMOVED***
+const BaseStatsCard = ({
   title,
   icon: IconComponent,
   loading = false,
@@ -14,38 +14,38 @@ const BaseStatsCard = (***REMOVED***
   emptyDescription = 'Los datos aparecerán aquí una vez que se registren',
   children,
   className = ''
-***REMOVED***) => ***REMOVED***
+}) => {
   const colors = useThemeColors();
   const primaryColor = colors ? colors.primary : '#121212';
 
   return (
-    <Card className=***REMOVED***`flex flex-col $***REMOVED***className***REMOVED***`***REMOVED***>
-      ***REMOVED***title && (
+    <Card className={`flex flex-col ${className}`}>
+      {title && (
         <h3 className="text-lg font-semibold mb-4 flex items-center flex-shrink-0">
-          ***REMOVED***IconComponent && <IconComponent size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: primaryColor ***REMOVED******REMOVED*** className="mr-2" />***REMOVED***
-          ***REMOVED***title***REMOVED***
+          {IconComponent && <IconComponent size={20} style={{ color: primaryColor }} className="mr-2" />}
+          {title}
         </h3>
-      )***REMOVED***
+      )}
 
       <Flex variant="center" className="flex-1 min-h-0">
-        ***REMOVED***loading ? (
+        {loading ? (
           <Flex variant="center" className="py-8">
             <LoadingSpinner />
           </Flex>
         ) : empty ? (
           <div className="text-center py-8 text-gray-500">
-            ***REMOVED***IconComponent && <IconComponent size=***REMOVED***48***REMOVED*** className="mx-auto mb-3 opacity-30" />***REMOVED***
-            <p>***REMOVED***emptyMessage***REMOVED***</p>
-            <p className="text-sm">***REMOVED***emptyDescription***REMOVED***</p>
+            {IconComponent && <IconComponent size={48} className="mx-auto mb-3 opacity-30" />}
+            <p>{emptyMessage}</p>
+            <p className="text-sm">{emptyDescription}</p>
           </div>
         ) : (
           <div className="w-full h-full">
-            ***REMOVED***children***REMOVED***
+            {children}
           </div>
-        )***REMOVED***
+        )}
       </Flex>
     </Card>
   );
-***REMOVED***;
+};
 
 export default BaseStatsCard;

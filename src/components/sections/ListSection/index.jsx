@@ -4,7 +4,7 @@ import React from 'react';
 import PageHeader from '../../layout/PageHeader';
 import EmptyState from '../../states/EmptyState';
 
-const ListSection = (***REMOVED***
+const ListSection = ({
   title,
   subtitle,
   action,
@@ -12,24 +12,24 @@ const ListSection = (***REMOVED***
   emptyState,
   renderItem,
   className = ''
-***REMOVED***) => ***REMOVED***
+}) => {
   return (
-    <div className=***REMOVED***`px-4 py-6 $***REMOVED***className***REMOVED***`***REMOVED***>
+    <div className={`px-4 py-6 ${className}`}>
       <PageHeader
-        title=***REMOVED***title***REMOVED***
-        subtitle=***REMOVED***subtitle***REMOVED***
-        action=***REMOVED***action***REMOVED***
+        title={title}
+        subtitle={subtitle}
+        action={action}
       />
 
-      ***REMOVED***items.length > 0 ? (
+      {items.length > 0 ? (
         <div className="space-y-4">
-          ***REMOVED***items.map(renderItem)***REMOVED***
+          {items.map(renderItem)}
         </div>
       ) : (
-        <EmptyState ***REMOVED***...emptyState***REMOVED*** />
-      )***REMOVED***
+        <EmptyState {...emptyState} />
+      )}
     </div>
   );
-***REMOVED***;
+};
 
 export default ListSection;

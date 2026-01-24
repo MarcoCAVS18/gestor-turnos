@@ -1,63 +1,63 @@
 // src/components/sections/DaySection/index.jsx
 
-import React, ***REMOVED*** forwardRef ***REMOVED*** from 'react';
-import ***REMOVED*** Calendar ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
+import React, { forwardRef } from 'react';
+import { Calendar } from 'lucide-react';
+import { useApp } from '../../../contexts/AppContext';
 import ShiftCard from '../../cards/shift/ShiftCard';
 import DeliveryShiftCard from '../../cards/shift/DeliveryShiftCard';
-import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../utils/time';
+import { createSafeDate } from '../../../utils/time';
 
-const DaySection = forwardRef((***REMOVED*** date, shifts, works, onEditShift, onDeleteShift ***REMOVED***, ref) => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+const DaySection = forwardRef(({ date, shifts, works, onEditShift, onDeleteShift }, ref) => {
+  const { thematicColors } = useApp();
 
   const dateObj = createSafeDate(date);
-  const dayOfWeek = dateObj.toLocaleDateString('en-US', ***REMOVED*** weekday: 'long' ***REMOVED***);
-  const formattedDate = dateObj.toLocaleDateString('en-US', ***REMOVED*** 
+  const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+  const formattedDate = dateObj.toLocaleDateString('en-US', { 
     day: 'numeric', 
     month: 'long', 
     year: 'numeric' 
-  ***REMOVED***);
+  });
 
   return (
-    <div ref=***REMOVED***ref***REMOVED*** className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-      <div className="p-4 border-b border-gray-200" style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent5 ***REMOVED******REMOVED***>
+    <div ref={ref} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      <div className="p-4 border-b border-gray-200" style={{ backgroundColor: thematicColors?.transparent5 }}>
         <div className="flex items-center gap-2">
-          <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** />
+          <Calendar size={20} style={{ color: thematicColors?.base }} />
           <h3 className="font-semibold text-gray-900 capitalize">
-            ***REMOVED***dayOfWeek***REMOVED***, ***REMOVED***formattedDate***REMOVED***
+            {dayOfWeek}, {formattedDate}
           </h3>
         </div>
       </div>
 
       <div className="p-4 space-y-3">
-        ***REMOVED***shifts.map(shift => ***REMOVED***
+        {shifts.map(shift => {
           const work = works.find(w => w.id === shift.workId);
           
-          if (shift.type === 'delivery') ***REMOVED***
+          if (shift.type === 'delivery') {
             return (
               <DeliveryShiftCard
-                key=***REMOVED***shift.id***REMOVED***
-                shift=***REMOVED***shift***REMOVED***
-                work=***REMOVED***work***REMOVED***
-                onEdit=***REMOVED***onEditShift***REMOVED***
-                onDelete=***REMOVED***onDeleteShift***REMOVED***
+                key={shift.id}
+                shift={shift}
+                work={work}
+                onEdit={onEditShift}
+                onDelete={onDeleteShift}
               />
             );
-          ***REMOVED***
+          }
           
           return (
             <ShiftCard
-              key=***REMOVED***shift.id***REMOVED***
-              shift=***REMOVED***shift***REMOVED***
-              work=***REMOVED***work***REMOVED***
-              onEdit=***REMOVED***onEditShift***REMOVED***
-              onDelete=***REMOVED***onDeleteShift***REMOVED***
+              key={shift.id}
+              shift={shift}
+              work={work}
+              onEdit={onEditShift}
+              onDelete={onDeleteShift}
             />
           );
-        ***REMOVED***)***REMOVED***
+        })}
       </div>
     </div>
   );
-***REMOVED***);
+});
 
 export default DaySection;

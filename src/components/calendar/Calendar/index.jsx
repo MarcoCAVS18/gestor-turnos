@@ -1,30 +1,30 @@
 // src/components/calendar/Calendar/index.jsx
 
 import React from 'react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import ***REMOVED*** useCalendarState ***REMOVED*** from '../../../hooks/useCalendarState';
+import { useApp } from '../../../contexts/AppContext';
+import { useCalendarState } from '../../../hooks/useCalendarState';
 import Card from '../../ui/Card';
 import CalendarHeader from '../CalendarHeader';
 import CalendarGrid from '../CalendarGrid';
 
-const Calendar = (***REMOVED*** onDaySelected ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** shiftsByDate, allJobs, thematicColors ***REMOVED*** = useApp();
+const Calendar = ({ onDaySelected }) => {
+  const { shiftsByDate, allJobs, thematicColors } = useApp();
   
   // Get all combined shifts from context
-  const allShifts = React.useMemo(() => ***REMOVED***
+  const allShifts = React.useMemo(() => {
     if (!shiftsByDate) return [];
     
     const shifts = [];
-    Object.entries(shiftsByDate).forEach(([date, dayShifts]) => ***REMOVED***
-      if (Array.isArray(dayShifts)) ***REMOVED***
+    Object.entries(shiftsByDate).forEach(([date, dayShifts]) => {
+      if (Array.isArray(dayShifts)) {
         shifts.push(...dayShifts);
-      ***REMOVED***
-    ***REMOVED***);
+      }
+    });
     
     return shifts;
-  ***REMOVED***, [shiftsByDate]);
+  }, [shiftsByDate]);
   
-  const ***REMOVED***
+  const {
     currentDate,
     currentMonth,
     currentYear,
@@ -33,30 +33,30 @@ const Calendar = (***REMOVED*** onDaySelected ***REMOVED***) => ***REMOVED***
     changeMonth,
     goToToday,
     goToDay
-  ***REMOVED*** = useCalendarState(allShifts, onDaySelected);
+  } = useCalendarState(allShifts, onDaySelected);
 
   const days = getDaysOfMonth();
 
   return (
     <Card className="overflow-hidden">
       <CalendarHeader
-        currentMonth=***REMOVED***currentMonth***REMOVED***
-        currentYear=***REMOVED***currentYear***REMOVED***
-        onChangeMonth=***REMOVED***changeMonth***REMOVED***
-        onGoToToday=***REMOVED***goToToday***REMOVED***
-        thematicColors=***REMOVED***thematicColors***REMOVED***
+        currentMonth={currentMonth}
+        currentYear={currentYear}
+        onChangeMonth={changeMonth}
+        onGoToToday={goToToday}
+        thematicColors={thematicColors}
       />
 
       <CalendarGrid
-        days=***REMOVED***days***REMOVED***
-        currentDate=***REMOVED***currentDate***REMOVED***
-        currentSelectedDay=***REMOVED***currentSelectedDay***REMOVED***
-        jobs=***REMOVED***allJobs || []***REMOVED***
-        thematicColors=***REMOVED***thematicColors***REMOVED***
-        onDayClick=***REMOVED***goToDay***REMOVED***
+        days={days}
+        currentDate={currentDate}
+        currentSelectedDay={currentSelectedDay}
+        jobs={allJobs || []}
+        thematicColors={thematicColors}
+        onDayClick={goToDay}
       />
     </Card>
   );
-***REMOVED***;
+};
 
 export default Calendar;

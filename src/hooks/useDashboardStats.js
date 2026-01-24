@@ -1,15 +1,15 @@
 // src/hooks/useDashboardStats.js
 
-import ***REMOVED*** useMemo ***REMOVED*** from 'react';
-import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
-import ***REMOVED*** formatRelativeDate ***REMOVED*** from '../utils/time';
-import ***REMOVED*** calculateShiftHours ***REMOVED*** from '../utils/time/timeCalculations';
+import { useMemo } from 'react';
+import { useApp } from '../contexts/AppContext';
+import { formatRelativeDate } from '../utils/time';
+import { calculateShiftHours } from '../utils/time/timeCalculations';
 
-export const useDashboardStats = () => ***REMOVED***
-  const ***REMOVED*** works, deliveryWork, shifts, deliveryShifts, calculatePayment ***REMOVED*** = useApp();
+export const useDashboardStats = () => {
+  const { works, deliveryWork, shifts, deliveryShifts, calculatePayment } = useApp();
 
   // Function to get dates of the current week (Monday to Sunday)
-  const timeRanges = useMemo(() => ***REMOVED***
+  const timeRanges = useMemo(() => {
     const today = new Date();
     
     // --- WEEK ---
@@ -28,10 +28,10 @@ export const useDashboardStats = () => ***REMOVED***
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
     const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
 
-    return ***REMOVED*** weekStart, weekEnd, monthStart, monthEnd ***REMOVED***;
-  ***REMOVED***, []);
+    return { weekStart, weekEnd, monthStart, monthEnd };
+  }, []);
 
-  const stats = useMemo(() => ***REMOVED***
+  const stats = useMemo(() => {
     // Defensive validation
     const validShifts = Array.isArray(shifts) ? shifts : [];
     const validDeliveryShifts = Array.isArray(deliveryShifts) ? deliveryShifts : [];
@@ -39,7 +39,7 @@ export const useDashboardStats = () => ***REMOVED***
     const allShifts = [...validShifts, ...validDeliveryShifts];
 
     // Initial structure
-    const defaultStats = ***REMOVED***
+    const defaultStats = {
       totalEarned: 0,
       hoursWorked: 0,
       averagePerHour: 0,
@@ -50,47 +50,47 @@ export const useDashboardStats = () => ***REMOVED***
       favoriteWorks: [],
       monthlyProjection: 0,
 
-      currentWeek: ***REMOVED***
+      currentWeek: {
         totalEarned: 0,
         hoursWorked: 0,
         totalShifts: 0,
         daysWorked: 0
-      ***REMOVED***,
-      currentMonth: ***REMOVED***
+      },
+      currentMonth: {
         totalEarned: 0,
         hoursWorked: 0,
         totalShifts: 0,
         daysWorked: 0
-      ***REMOVED***,
+      },
       allWork,
       allShifts
-    ***REMOVED***;
+    };
 
     if (allShifts.length === 0) return defaultStats;
 
-    try ***REMOVED***
+    try {
       let totalEarned = 0;
       let totalHours = 0;
-      const earningsByWork = ***REMOVED******REMOVED***;
+      const earningsByWork = {};
       
       // Temporary counters
-      const weekCounters = ***REMOVED*** earnings: 0, hours: 0, shifts: 0, dates: new Set() ***REMOVED***;
-      const monthCounters = ***REMOVED*** earnings: 0, hours: 0, shifts: 0, dates: new Set() ***REMOVED***;
+      const weekCounters = { earnings: 0, hours: 0, shifts: 0, dates: new Set() };
+      const monthCounters = { earnings: 0, hours: 0, shifts: 0, dates: new Set() };
       
-      const ***REMOVED*** weekStart, weekEnd, monthStart, monthEnd ***REMOVED*** = timeRanges;
+      const { weekStart, weekEnd, monthStart, monthEnd } = timeRanges;
 
-      allShifts.forEach(shift => ***REMOVED***
+      allShifts.forEach(shift => {
         const work = allWork.find(t => t.id === shift.workId);
         if (!work) return;
 
         // 1. Calculate Earnings
         let earnings = 0;
-        if (shift.type === 'delivery' || work.type === 'delivery') ***REMOVED***
+        if (shift.type === 'delivery' || work.type === 'delivery') {
           earnings = parseFloat(shift.totalEarnings || shift.totalEarned || 0);
-        ***REMOVED*** else if (typeof calculatePayment === 'function') ***REMOVED***
+        } else if (typeof calculatePayment === 'function') {
           const result = calculatePayment(shift);
           earnings = result.totalWithDiscount || result.totalConDescuento || 0;
-        ***REMOVED***
+        }
 
         // 2. Calculate Hours (Using your utility)
         const hours = calculateShiftHours(shift.startTime, shift.endTime);
@@ -100,33 +100,33 @@ export const useDashboardStats = () => ***REMOVED***
         totalHours += hours;
 
         // 4. Work Statistics (for favorites/profitable)
-        if (!earningsByWork[work.id]) ***REMOVED***
-          earningsByWork[work.id] = ***REMOVED*** work, earnings: 0, hours: 0, shifts: 0 ***REMOVED***;
-        ***REMOVED***
+        if (!earningsByWork[work.id]) {
+          earningsByWork[work.id] = { work, earnings: 0, hours: 0, shifts: 0 };
+        }
         earningsByWork[work.id].earnings += earnings;
         earningsByWork[work.id].hours += hours;
         earningsByWork[work.id].shifts += 1;
 
         // 5. Temporal Analysis (Week vs Month)
         const shiftDateStr = shift.startDate || shift.date;
-        const shiftDate = new Date(`$***REMOVED***shiftDateStr***REMOVED***T00:00:00`);
+        const shiftDate = new Date(`${shiftDateStr}T00:00:00`);
 
         // --- Current Week ---
-        if (shiftDate >= weekStart && shiftDate <= weekEnd) ***REMOVED***
+        if (shiftDate >= weekStart && shiftDate <= weekEnd) {
           weekCounters.shifts++;
           weekCounters.earnings += earnings;
           weekCounters.hours += hours;
           weekCounters.dates.add(shiftDateStr);
-        ***REMOVED***
+        }
 
         // --- Current Month ---
-        if (shiftDate >= monthStart && shiftDate <= monthEnd) ***REMOVED***
+        if (shiftDate >= monthStart && shiftDate <= monthEnd) {
           monthCounters.shifts++;
           monthCounters.earnings += earnings;
           monthCounters.hours += hours;
           monthCounters.dates.add(shiftDateStr);
-        ***REMOVED***
-      ***REMOVED***);
+        }
+      });
 
       // Derived calculations
       const mostProfitableWork = Object.values(earningsByWork)
@@ -147,7 +147,7 @@ export const useDashboardStats = () => ***REMOVED***
         ? (monthCounters.earnings / currentDay) * daysInMonth 
         : 0;
 
-      return ***REMOVED***
+      return {
         totalEarned,
         hoursWorked: totalHours,
         averagePerHour: totalHours > 0 ? totalEarned / totalHours : 0,
@@ -157,29 +157,29 @@ export const useDashboardStats = () => ***REMOVED***
         favoriteWorks,
         monthlyProjection,
 
-        currentWeek: ***REMOVED***
+        currentWeek: {
           totalEarned: weekCounters.earnings,
           hoursWorked: weekCounters.hours,
           totalShifts: weekCounters.shifts,
           daysWorked: weekCounters.dates.size
-        ***REMOVED***,
-        currentMonth: ***REMOVED***
+        },
+        currentMonth: {
           totalEarned: monthCounters.earnings,
           hoursWorked: monthCounters.hours,
           totalShifts: monthCounters.shifts,
           daysWorked: monthCounters.dates.size
-        ***REMOVED***,
+        },
         allWork,
         allShifts
-      ***REMOVED***;
+      };
 
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       console.error('Error calculating statistics:', error);
       return defaultStats;
-    ***REMOVED***
-  ***REMOVED***, [works, deliveryWork, shifts, deliveryShifts, calculatePayment, timeRanges]);
+    }
+  }, [works, deliveryWork, shifts, deliveryShifts, calculatePayment, timeRanges]);
 
   const formatDate = useMemo(() => formatRelativeDate, []);
 
-  return ***REMOVED*** ...stats, formatDate ***REMOVED***;
-***REMOVED***;
+  return { ...stats, formatDate };
+};

@@ -1,23 +1,23 @@
 // src/contexts/StatsContext.jsx
 
-import React, ***REMOVED*** createContext, useContext, useState, useMemo, useCallback ***REMOVED*** from 'react';
-import ***REMOVED*** useDataContext ***REMOVED*** from './DataContext';
-import ***REMOVED*** useDeliveryContext ***REMOVED*** from './DeliveryContext';
-import ***REMOVED*** useConfigContext ***REMOVED*** from './ConfigContext';
+import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
+import { useDataContext } from './DataContext';
+import { useDeliveryContext } from './DeliveryContext';
+import { useConfigContext } from './ConfigContext';
 import * as calculationService from '../services/calculationService';
-import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
+import { createSafeDate } from '../utils/time';
 
 const StatsContext = createContext();
 
-export const useStats = () => ***REMOVED***
+export const useStats = () => {
   return useContext(StatsContext);
-***REMOVED***;
+};
 
-export const StatsProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
+export const StatsProvider = ({ children }) => {
   // Hooks from data and configuration contexts
-  const ***REMOVED*** works, shifts, loading: dataLoading ***REMOVED*** = useDataContext();
-  const ***REMOVED*** deliveryWork, deliveryShifts, loading: deliveryLoading ***REMOVED*** = useDeliveryContext();
-  const ***REMOVED*** shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes, deliveryEnabled, weeklyHoursGoal, thematicColors, loading: configLoading ***REMOVED*** = useConfigContext();
+  const { works, shifts, loading: dataLoading } = useDataContext();
+  const { deliveryWork, deliveryShifts, loading: deliveryLoading } = useDeliveryContext();
+  const { shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes, deliveryEnabled, weeklyHoursGoal, thematicColors, loading: configLoading } = useConfigContext();
 
   // State for week control
   const [weekOffset, setWeekOffset] = useState(0);
@@ -30,7 +30,7 @@ export const StatsProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVE
   const loading = useMemo(() => dataLoading || deliveryLoading || configLoading, [dataLoading, deliveryLoading, configLoading]);
 
   // Create a pre-configured payment calculation function
-  const calculatePayment = useCallback((shift) => ***REMOVED***
+  const calculatePayment = useCallback((shift) => {
     return calculationService.calculatePayment(
       shift,
       allWork,
@@ -39,107 +39,107 @@ export const StatsProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVE
       smokoEnabled,
       smokoMinutes
     );
-  ***REMOVED***, [allWork, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes]);
+  }, [allWork, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes]);
 
   // Calculate weekly statistics for the current and previous week
-  const currentData = useMemo(() => ***REMOVED***
-    return calculationService.calculateWeeklyStats(***REMOVED***
+  const currentData = useMemo(() => {
+    return calculationService.calculateWeeklyStats({
       shifts,
       deliveryShifts,
       allWork,
       calculatePayment,
       shiftRanges,
       weekOffset: weekOffset,
-    ***REMOVED***);
-  ***REMOVED***, [shifts, deliveryShifts, allWork, calculatePayment, shiftRanges, weekOffset]);
+    });
+  }, [shifts, deliveryShifts, allWork, calculatePayment, shiftRanges, weekOffset]);
 
-  const previousData = useMemo(() => ***REMOVED***
-    return calculationService.calculateWeeklyStats(***REMOVED***
+  const previousData = useMemo(() => {
+    return calculationService.calculateWeeklyStats({
       shifts,
       deliveryShifts,
       allWork,
       calculatePayment,
       shiftRanges,
       weekOffset: weekOffset - 1,
-    ***REMOVED***);
-  ***REMOVED***, [shifts, deliveryShifts, allWork, calculatePayment, shiftRanges, weekOffset]);
+    });
+  }, [shifts, deliveryShifts, allWork, calculatePayment, shiftRanges, weekOffset]);
 
   // Calculate delivery statistics
-  const deliveryStats = useMemo(() => ***REMOVED***
-    return calculationService.calculateDeliveryStats(***REMOVED***
+  const deliveryStats = useMemo(() => {
+    return calculationService.calculateDeliveryStats({
       deliveryWork,
       deliveryShifts,
       period: 'month' // Hardcoded to 'month' as it was in Stats.jsx
-    ***REMOVED***);
-  ***REMOVED***, [deliveryWork, deliveryShifts]);
+    });
+  }, [deliveryWork, deliveryShifts]);
 
   // NEW: Calculate data for weekly evolution chart
-  const weeklyEvolutionData = useMemo(() => ***REMOVED***
+  const weeklyEvolutionData = useMemo(() => {
     const weekNames = ['This week', 'Last week', '2 weeks ago', '3 weeks ago'];
-    return [0, -1, -2, -3].map((offset, index) => ***REMOVED***
-      const stats = calculationService.calculateWeeklyStats(***REMOVED***
+    return [0, -1, -2, -3].map((offset, index) => {
+      const stats = calculationService.calculateWeeklyStats({
         shifts,
         deliveryShifts,
         allWork,
         calculatePayment,
         shiftRanges,
         weekOffset: offset,
-      ***REMOVED***);
-      return ***REMOVED***
+      });
+      return {
         week: weekNames[index],
         earnings: stats.totalEarned || 0
-      ***REMOVED***;
-    ***REMOVED***).reverse(); // Reverse to have the oldest week first
-  ***REMOVED***, [shifts, deliveryShifts, allWork, calculatePayment, shiftRanges]);
+      };
+    }).reverse(); // Reverse to have the oldest week first
+  }, [shifts, deliveryShifts, allWork, calculatePayment, shiftRanges]);
 
 
   // Memoized `shiftsByDate` (existing logic)
-  const shiftsByDate = useMemo(() => ***REMOVED***
-    const shiftsMap = ***REMOVED******REMOVED***;
-    allShifts.forEach(shift => ***REMOVED***
+  const shiftsByDate = useMemo(() => {
+    const shiftsMap = {};
+    allShifts.forEach(shift => {
       const mainDate = shift.startDate || shift.date;
-      if (mainDate) ***REMOVED***
-        if (!shiftsMap[mainDate]) ***REMOVED***
+      if (mainDate) {
+        if (!shiftsMap[mainDate]) {
           shiftsMap[mainDate] = [];
-        ***REMOVED***
+        }
         shiftsMap[mainDate].push(shift);
-      ***REMOVED***
+      }
 
       const isNight = shift.crossesMidnight || (shift.startTime && shift.endTime && shift.startTime.split(':')[0] > shift.endTime.split(':')[0]);
 
-      if (isNight && mainDate) ***REMOVED***
+      if (isNight && mainDate) {
         let endDate = shift.endDate;
-        if (!endDate) ***REMOVED***
+        if (!endDate) {
           const startDateObj = createSafeDate(mainDate);
           const calculatedEndDate = new Date(startDateObj);
           calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
           endDate = calculatedEndDate.toISOString().split('T')[0];
-        ***REMOVED***
-        if (endDate && endDate !== mainDate) ***REMOVED***
-          if (!shiftsMap[endDate]) ***REMOVED***
+        }
+        if (endDate && endDate !== mainDate) {
+          if (!shiftsMap[endDate]) {
             shiftsMap[endDate] = [];
-          ***REMOVED***
-          if (!shiftsMap[endDate].some(s => s.id === shift.id)) ***REMOVED***
+          }
+          if (!shiftsMap[endDate].some(s => s.id === shift.id)) {
             shiftsMap[endDate].push(shift);
-          ***REMOVED***
-        ***REMOVED***
-      ***REMOVED***
-    ***REMOVED***);
+          }
+        }
+      }
+    });
     return shiftsMap;
-  ***REMOVED***, [allShifts]);
+  }, [allShifts]);
   
   // Memoized function to calculate monthly stats (existing logic)
-  const calculateMonthlyStats = useCallback((year, month) => ***REMOVED***
+  const calculateMonthlyStats = useCallback((year, month) => {
     return calculationService.calculateMonthlyStats(year, month, shifts, deliveryShifts, calculatePayment);
-  ***REMOVED***, [shifts, deliveryShifts, calculatePayment]);
+  }, [shifts, deliveryShifts, calculatePayment]);
 
   // Memoized value for current month's stats (existing logic)
-  const currentMonthStats = useMemo(() => ***REMOVED***
+  const currentMonthStats = useMemo(() => {
     const now = new Date();
     return calculateMonthlyStats(now.getFullYear(), now.getMonth());
-  ***REMOVED***, [calculateMonthlyStats]);
+  }, [calculateMonthlyStats]);
 
-  const value = ***REMOVED***
+  const value = {
     // Loading state
     loading,
     
@@ -169,11 +169,11 @@ export const StatsProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVE
 
     // To not break other dependencies that might use it directly
     calculatePayment, 
-  ***REMOVED***;
+  };
 
   return (
-    <StatsContext.Provider value=***REMOVED***value***REMOVED***>
-      ***REMOVED***children***REMOVED***
+    <StatsContext.Provider value={value}>
+      {children}
     </StatsContext.Provider>
   );
-***REMOVED***;
+};

@@ -1,56 +1,56 @@
 // src/hooks/useSwipeActions.js
 
-import ***REMOVED*** useState, useRef, useCallback ***REMOVED*** from 'react';
+import { useState, useRef, useCallback } from 'react';
 
-export const useSwipeActions = (threshold = 80) => ***REMOVED***
+export const useSwipeActions = (threshold = 80) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentX, setCurrentX] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const startX = useRef(null);
 
-  const handleTouchStart = useCallback((e) => ***REMOVED***
+  const handleTouchStart = useCallback((e) => {
     startX.current = e.touches[0].clientX;
     setIsDragging(true);
-  ***REMOVED***, []);
+  }, []);
 
-  const handleTouchMove = useCallback((e) => ***REMOVED***
+  const handleTouchMove = useCallback((e) => {
     if (!isDragging || startX.current === null) return;
 
     const currentXPos = e.touches[0].clientX;
     const diffX = startX.current - currentXPos;
 
-    if (diffX > 0) ***REMOVED***
+    if (diffX > 0) {
       setCurrentX(Math.min(diffX, threshold));
-    ***REMOVED*** else ***REMOVED***
+    } else {
       setCurrentX(0);
-    ***REMOVED***
-  ***REMOVED***, [isDragging, threshold]);
+    }
+  }, [isDragging, threshold]);
 
-  const handleTouchEnd = useCallback(() => ***REMOVED***
+  const handleTouchEnd = useCallback(() => {
     setIsDragging(false);
 
-    if (currentX > threshold / 2) ***REMOVED***
+    if (currentX > threshold / 2) {
       setIsOpen(true);
       setCurrentX(threshold);
-    ***REMOVED*** else ***REMOVED***
+    } else {
       setIsOpen(false);
       setCurrentX(0);
-    ***REMOVED***
+    }
 
     startX.current = null;
-  ***REMOVED***, [currentX, threshold]);
+  }, [currentX, threshold]);
 
-  const closeSwipe = useCallback(() => ***REMOVED***
+  const closeSwipe = useCallback(() => {
     setIsOpen(false);
     setCurrentX(0);
-  ***REMOVED***, []);
+  }, []);
 
-  const openSwipe = useCallback(() => ***REMOVED***
+  const openSwipe = useCallback(() => {
     setIsOpen(true);
     setCurrentX(threshold);
-  ***REMOVED***, [threshold]);
+  }, [threshold]);
 
-  return ***REMOVED***
+  return {
     isOpen,
     currentX,
     isDragging,
@@ -59,5 +59,5 @@ export const useSwipeActions = (threshold = 80) => ***REMOVED***
     handleTouchEnd,
     closeSwipe,
     openSwipe
-  ***REMOVED***;
-***REMOVED***;
+  };
+};

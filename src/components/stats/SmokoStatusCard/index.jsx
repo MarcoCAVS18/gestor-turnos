@@ -1,38 +1,38 @@
 // src/components/stats/SmokoStatusCard/index.jsx
 
 import React from 'react';
-import ***REMOVED*** useNavigate ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** Coffee ***REMOVED*** from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Coffee } from 'lucide-react';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
 import WavyText from '../../ui/WavyText';
 
-const SmokoStatusCard = (***REMOVED*** smokoEnabled, loading, thematicColors, className = '' ***REMOVED***) => ***REMOVED***
+const SmokoStatusCard = ({ smokoEnabled, loading, thematicColors, className = '' }) => {
   const navigate = useNavigate();
   const statusText = smokoEnabled ? 'ACTIVE' : 'INACTIVE';
 
-  const handleClick = () => ***REMOVED***
+  const handleClick = () => {
     navigate('/ajustes');
-  ***REMOVED***;
+  };
 
   return (
-    <div onClick=***REMOVED***handleClick***REMOVED*** className=***REMOVED***`$***REMOVED***className***REMOVED*** cursor-pointer`***REMOVED***>
+    <div onClick={handleClick} className={`${className} cursor-pointer`}>
       <BaseStatsCard
-        icon=***REMOVED***Coffee***REMOVED***
+        icon={Coffee}
         title="Break"
-        loading=***REMOVED***loading***REMOVED***
+        loading={loading}
       >
         <div className="text-center w-full">
           <div className="text-4xl font-bold">
-            ***REMOVED***smokoEnabled ? (
-              <WavyText text=***REMOVED***statusText***REMOVED*** color=***REMOVED***thematicColors?.base***REMOVED*** />
+            {smokoEnabled ? (
+              <WavyText text={statusText} color={thematicColors?.base} />
             ) : (
-              <span className="text-gray-500">***REMOVED***statusText***REMOVED***</span>
-            )***REMOVED***
+              <span className="text-gray-500">{statusText}</span>
+            )}
           </div>
         </div>
       </BaseStatsCard>
     </div>
   );
-***REMOVED***;
+};
 
 export default SmokoStatusCard;

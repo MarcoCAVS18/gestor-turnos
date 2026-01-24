@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const PrivacyPolicy = () => ***REMOVED***
+const PrivacyPolicy = () => {
   return (
     <div className="max-w-3xl mx-auto p-6 md:p-12 bg-white min-h-screen">
       <div className="mb-8 border-b pb-4">
@@ -46,12 +46,12 @@ const PrivacyPolicy = () => ***REMOVED***
 
         <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">5. Contact Us</h2>
         <p>
-          If you have any questions about this Privacy Policy, please contact us at***REMOVED***' '***REMOVED***
+          If you have any questions about this Privacy Policy, please contact us at{' '}
           <a href="mailto:privacy@gestapp.com" className="text-pink-600 hover:underline">privacy@gestapp.com</a>.
         </p>
       </div>
     </div>
   );
-***REMOVED***;
+};
 
 export default PrivacyPolicy;

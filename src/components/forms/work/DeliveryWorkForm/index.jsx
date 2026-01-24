@@ -1,14 +1,14 @@
 // src/components/forms/DeliveryWorkForm/index.jsx
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import ***REMOVED*** Truck, Clock ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** calculateShiftHours, formatHoursDecimal ***REMOVED*** from '../../../../utils/time';
+import React, { useState, useEffect } from 'react';
+import { useApp } from '../../../contexts/AppContext';
+import { Truck, Clock } from 'lucide-react';
+import { calculateShiftHours, formatHoursDecimal } from '../../../../utils/time';
 
-const DeliveryWorkForm = (***REMOVED*** isOpen, onClose, onSubmit, workId = null, initialData = null ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** thematicColors, vehicles = [], deliveryPlatforms = [] ***REMOVED*** = useApp();
+const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialData = null }) => {
+  const { thematicColors, vehicles = [], deliveryPlatforms = [] } = useApp();
   
-  const [formData, setFormData] = useState(***REMOVED***
+  const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
     startTime: '',
     endTime: '',
@@ -21,26 +21,26 @@ const DeliveryWorkForm = (***REMOVED*** isOpen, onClose, onSubmit, workId = null
     tips: 0,
     expenses: 0,
     notes: ''
-  ***REMOVED***);
+  });
 
-  const [errors, setErrors] = useState(***REMOVED******REMOVED***);
+  const [errors, setErrors] = useState({});
 
   // Calculate worked hours using centralized utility
   const workedHours = formData.startTime && formData.endTime
     ? calculateShiftHours(formData.startTime, formData.endTime)
     : 0;
 
-  useEffect(() => ***REMOVED***
-    if (initialData) ***REMOVED***
-      setFormData(***REMOVED***
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
         ...initialData,
         date: initialData.date || new Date().toISOString().split('T')[0]
-      ***REMOVED***);
-    ***REMOVED***
-  ***REMOVED***, [initialData]);
+      });
+    }
+  }, [initialData]);
 
-  const validateForm = () => ***REMOVED***
-    const newErrors = ***REMOVED******REMOVED***;
+  const validateForm = () => {
+    const newErrors = {};
     
     if (!formData.startTime) newErrors.startTime = 'Required';
     if (!formData.endTime) newErrors.endTime = 'Required';
@@ -48,46 +48,46 @@ const DeliveryWorkForm = (***REMOVED*** isOpen, onClose, onSubmit, workId = null
     if (!formData.vehicle) newErrors.vehicle = 'Select a vehicle';
     if (formData.earnings <= 0) newErrors.earnings = 'Must be greater than 0';
     
-    if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime) ***REMOVED***
+    if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime) {
       newErrors.endTime = 'Must be after start';
-    ***REMOVED***
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  ***REMOVED***;
+  };
 
-  const handleSubmit = (e) => ***REMOVED***
+  const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!validateForm()) ***REMOVED***
+    if (!validateForm()) {
       return;
-    ***REMOVED***
+    }
 
-    const shiftData = ***REMOVED***
+    const shiftData = {
       ...formData,
       id: workId || Date.now().toString(),
       workedHours: workedHours,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
-    ***REMOVED***;
+    };
 
     onSubmit(shiftData);
     onClose();
-  ***REMOVED***;
+  };
 
-  const handleInputChange = (field, value) => ***REMOVED***
-    setFormData(prev => (***REMOVED***
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
       ...prev,
       [field]: value
-    ***REMOVED***));
+    }));
     
-    if (errors[field]) ***REMOVED***
-      setErrors(prev => (***REMOVED***
+    if (errors[field]) {
+      setErrors(prev => ({
         ...prev,
         [field]: undefined
-      ***REMOVED***));
-    ***REMOVED***
-  ***REMOVED***;
+      }));
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -97,110 +97,110 @@ const DeliveryWorkForm = (***REMOVED*** isOpen, onClose, onSubmit, workId = null
         <div className="p-6">
           <Flex variant="between" className="mb-6">
             <h2 className="text-lg font-bold flex items-center">
-              <Truck size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="mr-2" />
-              ***REMOVED***workId ? 'Edit' : 'New'***REMOVED*** Shift
+              <Truck size={20} style={{ color: thematicColors?.base }} className="mr-2" />
+              {workId ? 'Edit' : 'New'} Shift
             </h2>
             <button
-              onClick=***REMOVED***onClose***REMOVED***
+              onClick={onClose}
               className="text-gray-500 hover:text-gray-700 text-xl"
             >
               ×
             </button>
           </Flex>
 
-          <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className="space-y-4">
-            ***REMOVED***/* Date */***REMOVED***
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Date */}
             <div>
               <label className="block text-sm font-medium mb-1">Date</label>
               <input
                 type="date"
-                value=***REMOVED***formData.date***REMOVED***
-                onChange=***REMOVED***(e) => handleInputChange('date', e.target.value)***REMOVED***
+                value={formData.date}
+                onChange={(e) => handleInputChange('date', e.target.value)}
                 className="w-full p-2 border rounded-lg text-sm"
               />
             </div>
 
-            ***REMOVED***/* Times */***REMOVED***
+            {/* Times */}
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="block text-xs font-medium mb-1">Start</label>
                 <input
                   type="time"
-                  value=***REMOVED***formData.startTime***REMOVED***
-                  onChange=***REMOVED***(e) => handleInputChange('startTime', e.target.value)***REMOVED***
-                  className=***REMOVED***`w-full p-2 border rounded-lg text-sm $***REMOVED***errors.startTime ? 'border-red-500' : ''***REMOVED***`***REMOVED***
+                  value={formData.startTime}
+                  onChange={(e) => handleInputChange('startTime', e.target.value)}
+                  className={`w-full p-2 border rounded-lg text-sm ${errors.startTime ? 'border-red-500' : ''}`}
                 />
-                ***REMOVED***errors.startTime && <p className="text-red-500 text-xs">***REMOVED***errors.startTime***REMOVED***</p>***REMOVED***
+                {errors.startTime && <p className="text-red-500 text-xs">{errors.startTime}</p>}
               </div>
               <div>
                 <label className="block text-xs font-medium mb-1">End</label>
                 <input
                   type="time"
-                  value=***REMOVED***formData.endTime***REMOVED***
-                  onChange=***REMOVED***(e) => handleInputChange('endTime', e.target.value)***REMOVED***
-                  className=***REMOVED***`w-full p-2 border rounded-lg text-sm $***REMOVED***errors.endTime ? 'border-red-500' : ''***REMOVED***`***REMOVED***
+                  value={formData.endTime}
+                  onChange={(e) => handleInputChange('endTime', e.target.value)}
+                  className={`w-full p-2 border rounded-lg text-sm ${errors.endTime ? 'border-red-500' : ''}`}
                 />
-                ***REMOVED***errors.endTime && <p className="text-red-500 text-xs">***REMOVED***errors.endTime***REMOVED***</p>***REMOVED***
+                {errors.endTime && <p className="text-red-500 text-xs">{errors.endTime}</p>}
               </div>
             </div>
 
-            ***REMOVED***/* Time worked */***REMOVED***
-            ***REMOVED***workedHours > 0 && (
+            {/* Time worked */}
+            {workedHours > 0 && (
               <Flex className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg">
-                <Clock size=***REMOVED***14***REMOVED*** className="mr-1" />
-                Time: ***REMOVED***formatHoursDecimal(workedHours)***REMOVED***
+                <Clock size={14} className="mr-1" />
+                Time: {formatHoursDecimal(workedHours)}
               </Flex>
-            )***REMOVED***
+            )}
             
-            ***REMOVED***/* PLATFORM */***REMOVED***
+            {/* PLATFORM */}
             <div>
               <label className="block text-sm font-medium mb-1">
                 🚗 Platform *
               </label>
               <select
-                value=***REMOVED***formData.platform***REMOVED***
-                onChange=***REMOVED***(e) => handleInputChange('platform', e.target.value)***REMOVED***
-                className=***REMOVED***`w-full p-3 border rounded-lg text-sm $***REMOVED***errors.platform ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
+                value={formData.platform}
+                onChange={(e) => handleInputChange('platform', e.target.value)}
+                className={`w-full p-3 border rounded-lg text-sm ${errors.platform ? 'border-red-500' : 'border-gray-300'}`}
               >
                 <option value="">-- Select Platform --</option>
-                ***REMOVED***deliveryPlatforms.map(platform => (
-                  <option key=***REMOVED***platform.id***REMOVED*** value=***REMOVED***platform.name***REMOVED***>
-                    ***REMOVED***platform.name***REMOVED***
+                {deliveryPlatforms.map(platform => (
+                  <option key={platform.id} value={platform.name}>
+                    {platform.name}
                   </option>
-                ))***REMOVED***
+                ))}
               </select>
-              ***REMOVED***errors.platform && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.platform***REMOVED***</p>***REMOVED***
+              {errors.platform && <p className="text-red-500 text-xs mt-1">{errors.platform}</p>}
             </div>
 
-            ***REMOVED***/* VEHICLE */***REMOVED***
+            {/* VEHICLE */}
             <div>
               <label className="block text-sm font-medium mb-1">
                 🚴 Vehicle *
               </label>
               <select
-                value=***REMOVED***formData.vehicle***REMOVED***
-                onChange=***REMOVED***(e) => handleInputChange('vehicle', e.target.value)***REMOVED***
-                className=***REMOVED***`w-full p-3 border rounded-lg text-sm $***REMOVED***errors.vehicle ? 'border-red-500' : 'border-gray-300'***REMOVED***`***REMOVED***
+                value={formData.vehicle}
+                onChange={(e) => handleInputChange('vehicle', e.target.value)}
+                className={`w-full p-3 border rounded-lg text-sm ${errors.vehicle ? 'border-red-500' : 'border-gray-300'}`}
               >
                 <option value="">-- Select Vehicle --</option>
-                ***REMOVED***vehicles.map(vehicle => (
-                  <option key=***REMOVED***vehicle.id***REMOVED*** value=***REMOVED***vehicle.name***REMOVED***>
-                    ***REMOVED***vehicle.name***REMOVED***
+                {vehicles.map(vehicle => (
+                  <option key={vehicle.id} value={vehicle.name}>
+                    {vehicle.name}
                   </option>
-                ))***REMOVED***
+                ))}
               </select>
-              ***REMOVED***errors.vehicle && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.vehicle***REMOVED***</p>***REMOVED***
+              {errors.vehicle && <p className="text-red-500 text-xs mt-1">{errors.vehicle}</p>}
             </div>
             
-            ***REMOVED***/* Orders and Kilometers */***REMOVED***
+            {/* Orders and Kilometers */}
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="block text-xs font-medium mb-1">Orders</label>
                 <input
                   type="number"
                   min="1"
-                  value=***REMOVED***formData.orders***REMOVED***
-                  onChange=***REMOVED***(e) => handleInputChange('orders', parseInt(e.target.value) || 1)***REMOVED***
+                  value={formData.orders}
+                  onChange={(e) => handleInputChange('orders', parseInt(e.target.value) || 1)}
                   className="w-full p-2 border rounded-lg text-sm"
                 />
               </div>
@@ -210,29 +210,29 @@ const DeliveryWorkForm = (***REMOVED*** isOpen, onClose, onSubmit, workId = null
                   type="number"
                   min="0"
                   step="0.1"
-                  value=***REMOVED***formData.kilometers***REMOVED***
-                  onChange=***REMOVED***(e) => handleInputChange('kilometers', parseFloat(e.target.value) || 0)***REMOVED***
+                  value={formData.kilometers}
+                  onChange={(e) => handleInputChange('kilometers', parseFloat(e.target.value) || 0)}
                   className="w-full p-2 border rounded-lg text-sm"
                 />
               </div>
             </div>
 
-            ***REMOVED***/* Earnings */***REMOVED***
+            {/* Earnings */}
             <div>
               <label className="block text-sm font-medium mb-1">💰 Earnings *</label>
               <input
                 type="number"
                 min="0"
                 step="0.01"
-                value=***REMOVED***formData.earnings***REMOVED***
-                onChange=***REMOVED***(e) => handleInputChange('earnings', parseFloat(e.target.value) || 0)***REMOVED***
-                className=***REMOVED***`w-full p-2 border rounded-lg text-sm $***REMOVED***errors.earnings ? 'border-red-500' : ''***REMOVED***`***REMOVED***
+                value={formData.earnings}
+                onChange={(e) => handleInputChange('earnings', parseFloat(e.target.value) || 0)}
+                className={`w-full p-2 border rounded-lg text-sm ${errors.earnings ? 'border-red-500' : ''}`}
                 placeholder="0.00"
               />
-              ***REMOVED***errors.earnings && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.earnings***REMOVED***</p>***REMOVED***
+              {errors.earnings && <p className="text-red-500 text-xs mt-1">{errors.earnings}</p>}
             </div>
 
-            ***REMOVED***/* Tips and Expenses */***REMOVED***
+            {/* Tips and Expenses */}
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="block text-xs font-medium mb-1">Tips</label>
@@ -240,8 +240,8 @@ const DeliveryWorkForm = (***REMOVED*** isOpen, onClose, onSubmit, workId = null
                   type="number"
                   min="0"
                   step="0.01"
-                  value=***REMOVED***formData.tips***REMOVED***
-                  onChange=***REMOVED***(e) => handleInputChange('tips', parseFloat(e.target.value) || 0)***REMOVED***
+                  value={formData.tips}
+                  onChange={(e) => handleInputChange('tips', parseFloat(e.target.value) || 0)}
                   className="w-full p-2 border rounded-lg text-sm"
                   placeholder="0.00"
                 />
@@ -252,19 +252,19 @@ const DeliveryWorkForm = (***REMOVED*** isOpen, onClose, onSubmit, workId = null
                   type="number"
                   min="0"
                   step="0.01"
-                  value=***REMOVED***formData.expenses***REMOVED***
-                  onChange=***REMOVED***(e) => handleInputChange('expenses', parseFloat(e.target.value) || 0)***REMOVED***
+                  value={formData.expenses}
+                  onChange={(e) => handleInputChange('expenses', parseFloat(e.target.value) || 0)}
                   className="w-full p-2 border rounded-lg text-sm"
                   placeholder="0.00"
                 />
               </div>
             </div>
 
-            ***REMOVED***/* Buttons */***REMOVED***
+            {/* Buttons */}
             <div className="flex space-x-2 pt-4">
               <button
                 type="button"
-                onClick=***REMOVED***onClose***REMOVED***
+                onClick={onClose}
                 className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm"
               >
                 Cancel
@@ -272,9 +272,9 @@ const DeliveryWorkForm = (***REMOVED*** isOpen, onClose, onSubmit, workId = null
               <button
                 type="submit"
                 className="flex-1 py-2 px-4 text-white rounded-lg hover:opacity-90 text-sm"
-                style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base || '#3B82F6' ***REMOVED******REMOVED***
+                style={{ backgroundColor: thematicColors?.base || '#3B82F6' }}
               >
-                ***REMOVED***workId ? 'Update' : 'Save'***REMOVED***
+                {workId ? 'Update' : 'Save'}
               </button>
             </div>
           </form>
@@ -282,6 +282,6 @@ const DeliveryWorkForm = (***REMOVED*** isOpen, onClose, onSubmit, workId = null
       </div>
     </Flex>
   );
-***REMOVED***;
+};
 
 export default DeliveryWorkForm;

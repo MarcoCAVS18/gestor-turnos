@@ -1,55 +1,55 @@
 // src/components/settings/CustomizationSection/index.jsx - REFACTORED
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** Settings, Smile ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import React, { useState, useEffect } from 'react';
+import { Settings, Smile } from 'lucide-react';
+import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card'; 
 
 const COLORS = [
-  ***REMOVED*** name: 'Pink', value: '#EC4899' ***REMOVED***, 
-  ***REMOVED*** name: 'Indigo', value: '#6366F1' ***REMOVED***, 
-  ***REMOVED*** name: 'Red', value: '#EF4444' ***REMOVED***, 
-  ***REMOVED*** name: 'Green', value: '#10B981' ***REMOVED***, 
-  ***REMOVED*** name: 'Purple', value: '#8B5CF6' ***REMOVED***, 
-  ***REMOVED*** name: 'Blue', value: '#3B82F6' ***REMOVED*** 
+  { name: 'Pink', value: '#EC4899' }, 
+  { name: 'Indigo', value: '#6366F1' }, 
+  { name: 'Red', value: '#EF4444' }, 
+  { name: 'Green', value: '#10B981' }, 
+  { name: 'Purple', value: '#8B5CF6' }, 
+  { name: 'Blue', value: '#3B82F6' } 
 ];
 
 const COMMON_EMOJIS = ['😊', '😎', '🚀', '💼', '⭐', '🔥', '💻', '📊'];
 
-const CustomizationSection = () => ***REMOVED***
-  const ***REMOVED*** 
+const CustomizationSection = () => {
+  const { 
     primaryColor: appColor, 
     userEmoji: appEmoji, 
     savePreferences
-  ***REMOVED*** = useApp();
+  } = useApp();
   
   const colors = useThemeColors();
   const [emojiInput, setEmojiInput] = useState(appEmoji);
 
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     setEmojiInput(appEmoji);
-  ***REMOVED***, [appEmoji]);
+  }, [appEmoji]);
 
-  const changeColor = (newColor) => ***REMOVED***
-    savePreferences(***REMOVED*** primaryColor: newColor ***REMOVED***);
-  ***REMOVED***;
+  const changeColor = (newColor) => {
+    savePreferences({ primaryColor: newColor });
+  };
 
-  const changeEmoji = (newEmoji) => ***REMOVED***
+  const changeEmoji = (newEmoji) => {
     setEmojiInput(newEmoji);
-    savePreferences(***REMOVED*** userEmoji: newEmoji ***REMOVED***);
-  ***REMOVED***;
+    savePreferences({ userEmoji: newEmoji });
+  };
 
-  const handleEmojiChange = (e) => ***REMOVED***
+  const handleEmojiChange = (e) => {
     const value = e.target.value;
     setEmojiInput(value);
     
-    if (value.trim() === '') ***REMOVED***
-      savePreferences(***REMOVED*** userEmoji: '😊' ***REMOVED***);
-    ***REMOVED*** else ***REMOVED***
-      savePreferences(***REMOVED*** userEmoji: value ***REMOVED***);
-    ***REMOVED***
-  ***REMOVED***;
+    if (value.trim() === '') {
+      savePreferences({ userEmoji: '😊' });
+    } else {
+      savePreferences({ userEmoji: value });
+    }
+  };
 
   return (
     <Card className="flex flex-col">
@@ -59,7 +59,7 @@ const CustomizationSection = () => ***REMOVED***
       </div>
       <div className="flex-1">
         <div className="space-y-6">
-          ***REMOVED***/* Emoji selection */***REMOVED***
+          {/* Emoji selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Your personal emoji
@@ -67,10 +67,10 @@ const CustomizationSection = () => ***REMOVED***
             <div className="flex items-center">
               <input
                 type="text"
-                value=***REMOVED***emojiInput***REMOVED***
-                onChange=***REMOVED***handleEmojiChange***REMOVED***
+                value={emojiInput}
+                onChange={handleEmojiChange}
                 className="w-16 h-10 border border-gray-300 rounded-md shadow-sm px-3 focus:outline-none focus:ring-2 text-xl"
-                style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+                style={{ '--tw-ring-color': colors.primary }}
               />
               <p className="ml-3 text-sm text-gray-500">
                 <Smile className="inline h-4 w-4 mb-1 mr-1" />
@@ -79,47 +79,47 @@ const CustomizationSection = () => ***REMOVED***
             </div>
             
             <div className="flex flex-wrap gap-2 mt-2">
-              ***REMOVED***COMMON_EMOJIS.map(emoji => (
+              {COMMON_EMOJIS.map(emoji => (
                 <button
-                  key=***REMOVED***emoji***REMOVED***
-                  onClick=***REMOVED***() => changeEmoji(emoji)***REMOVED***
+                  key={emoji}
+                  onClick={() => changeEmoji(emoji)}
                   className="w-8 h-8 rounded-md flex items-center justify-center text-lg hover:bg-gray-100 transition-colors"
                 >
-                  ***REMOVED***emoji***REMOVED***
+                  {emoji}
                 </button>
-              ))***REMOVED***
+              ))}
             </div>
           </div>
           
-          ***REMOVED***/* Color selection */***REMOVED***
+          {/* Color selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Primary color
             </label>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              ***REMOVED***COLORS.map((color) => (
+              {COLORS.map((color) => (
                 <button
-                  key=***REMOVED***color.value***REMOVED***
-                  onClick=***REMOVED***() => changeColor(color.value)***REMOVED***
-                  className=***REMOVED***`p-3 flex flex-col items-center rounded-lg border transition-all $***REMOVED***
+                  key={color.value}
+                  onClick={() => changeColor(color.value)}
+                  className={`p-3 flex flex-col items-center rounded-lg border transition-all ${
                     appColor === color.value 
                       ? 'border-gray-600 shadow-md' 
                       : 'border-gray-200'
-                  ***REMOVED***`***REMOVED***
+                  }`}
                 >
                   <div 
                     className="w-8 h-8 rounded-full mb-1" 
-                    style=***REMOVED******REMOVED*** backgroundColor: color.value ***REMOVED******REMOVED***
+                    style={{ backgroundColor: color.value }}
                   />
-                  <span className="text-xs">***REMOVED***color.name***REMOVED***</span>
+                  <span className="text-xs">{color.name}</span>
                 </button>
-              ))***REMOVED***
+              ))}
             </div>
           </div>
         </div>
       </div>
     </Card>
   );
-***REMOVED***;
+};
 
 export default CustomizationSection;

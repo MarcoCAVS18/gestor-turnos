@@ -1,6 +1,6 @@
 // src/services/firebaseService.js
 
-import ***REMOVED***
+import {
   doc,
   getDoc,
   setDoc,
@@ -13,53 +13,53 @@ import ***REMOVED***
   onSnapshot,
   getDocs,
   where,
-***REMOVED*** from 'firebase/firestore';
-import ***REMOVED*** db ***REMOVED*** from './firebase';
-import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
+} from 'firebase/firestore';
+import { db } from './firebase';
+import { createSafeDate } from '../utils/time';
 
 // --- HELPERS ---
 
-const getUserSubcollections = (userUid) => ***REMOVED***
+const getUserSubcollections = (userUid) => {
   if (!userUid) return null;
-  return ***REMOVED***
+  return {
     worksRef: collection(db, 'users', userUid, 'works'),
     shiftsRef: collection(db, 'users', userUid, 'shifts'),
     deliveryWorksRef: collection(db, 'users', userUid, 'works-delivery'),
     deliveryShiftsRef: collection(db, 'users', userUid, 'shifts-delivery'),
     userDocRef: doc(db, 'users', userUid),
-  ***REMOVED***;
-***REMOVED***;
+  };
+};
 
-const createIncrementalSubscription = (query, setData, errorCallback, sortComparator, dataTransform = (d) => d) => ***REMOVED***
-    return onSnapshot(query, ***REMOVED*** includeMetadataChanges: true ***REMOVED***, (snapshot) => ***REMOVED***
-        setData((currentData) => ***REMOVED***
+const createIncrementalSubscription = (query, setData, errorCallback, sortComparator, dataTransform = (d) => d) => {
+    return onSnapshot(query, { includeMetadataChanges: true }, (snapshot) => {
+        setData((currentData) => {
             let updatedData = [...(currentData || [])];
-            snapshot.docChanges().forEach((change) => ***REMOVED***
-                const docData = dataTransform(***REMOVED*** id: change.doc.id, ...change.doc.data() ***REMOVED***);
+            snapshot.docChanges().forEach((change) => {
+                const docData = dataTransform({ id: change.doc.id, ...change.doc.data() });
                 const index = updatedData.findIndex((t) => t.id === docData.id);
 
-                if (change.type === 'added') ***REMOVED***
+                if (change.type === 'added') {
                     if (index === -1) updatedData.push(docData);
-                ***REMOVED*** else if (change.type === 'modified') ***REMOVED***
+                } else if (change.type === 'modified') {
                     if (index !== -1) updatedData[index] = docData;
-                ***REMOVED*** else if (change.type === 'removed') ***REMOVED***
+                } else if (change.type === 'removed') {
                     updatedData = updatedData.filter((t) => t.id !== change.doc.id);
-                ***REMOVED***
-            ***REMOVED***);
+                }
+            });
             return updatedData.sort(sortComparator);
-        ***REMOVED***);
-    ***REMOVED***, (err) => errorCallback('Error loading data: ' + err.message));
-***REMOVED***;
+        });
+    }, (err) => errorCallback('Error loading data: ' + err.message));
+};
 
 // --- USER & SETTINGS ---
 
-export const ensureUserDocument = async (user) => ***REMOVED***
+export const ensureUserDocument = async (user) => {
   if (!user) return null;
 
   const userDocRef = doc(db, 'users', user.uid);
   const userDocSnapshot = await getDoc(userDocRef);
 
-  const defaultSettings = ***REMOVED***
+  const defaultSettings = {
     primaryColor: '#EC4899',
     userEmoji: '😊',
     defaultDiscount: 15,
@@ -67,35 +67,35 @@ export const ensureUserDocument = async (user) => ***REMOVED***
     deliveryEnabled: false,
     smokoEnabled: false,
     smokoMinutes: 30,
-    shiftRanges: ***REMOVED***
+    shiftRanges: {
       dayStart: 6,
       dayEnd: 14,
       afternoonStart: 14,
       afternoonEnd: 20,
       nightStart: 20,
-    ***REMOVED***,
-  ***REMOVED***;
+    },
+  };
 
-  if (userDocSnapshot.exists()) ***REMOVED***
+  if (userDocSnapshot.exists()) {
     const userData = userDocSnapshot.data();
-    return ***REMOVED*** ...defaultSettings, ...(userData.settings || ***REMOVED******REMOVED***) ***REMOVED***;
-  ***REMOVED*** else ***REMOVED***
-    const defaultUserData = ***REMOVED***
+    return { ...defaultSettings, ...(userData.settings || {}) };
+  } else {
+    const defaultUserData = {
       email: user.email,
       displayName: user.displayName || 'User',
       createdAt: new Date(),
       settings: defaultSettings,
-    ***REMOVED***;
+    };
     await setDoc(userDocRef, defaultUserData);
     return defaultSettings;
-  ***REMOVED***
-***REMOVED***;
+  }
+};
 
-export const savePreferences = async (userUid, preferences) => ***REMOVED***
+export const savePreferences = async (userUid, preferences) => {
     const userDocRef = doc(db, 'users', userUid);
-    const updatedData = ***REMOVED*** updatedAt: new Date() ***REMOVED***;
+    const updatedData = { updatedAt: new Date() };
 
-    const prefMap = ***REMOVED***
+    const prefMap = {
         primaryColor: 'settings.primaryColor',
         userEmoji: 'settings.userEmoji',
         defaultDiscount: 'settings.defaultDiscount',
@@ -104,33 +104,33 @@ export const savePreferences = async (userUid, preferences) => ***REMOVED***
         weeklyHoursGoal: 'settings.weeklyHoursGoal',
         smokoEnabled: 'settings.smokoEnabled',
         smokoMinutes: 'settings.smokoMinutes',
-    ***REMOVED***;
+    };
 
-    for (const key in preferences) ***REMOVED***
-        if (Object.prototype.hasOwnProperty.call(prefMap, key)) ***REMOVED***
+    for (const key in preferences) {
+        if (Object.prototype.hasOwnProperty.call(prefMap, key)) {
             updatedData[prefMap[key]] = preferences[key];
-        ***REMOVED***
-    ***REMOVED***
+        }
+    }
 
-    if (Object.keys(updatedData).length > 1) ***REMOVED***
+    if (Object.keys(updatedData).length > 1) {
         await updateDoc(userDocRef, updatedData);
-    ***REMOVED***
-***REMOVED***;
+    }
+};
 
-export const updateWeeklyHoursGoal = (userUid, newGoal) => ***REMOVED***
+export const updateWeeklyHoursGoal = (userUid, newGoal) => {
     const userDocRef = doc(db, 'users', userUid);
-    return updateDoc(userDocRef, ***REMOVED***
+    return updateDoc(userDocRef, {
         'settings.weeklyHoursGoal': newGoal,
         updatedAt: new Date()
-    ***REMOVED***);
-***REMOVED***;
+    });
+};
 
 
 // --- DATA SUBSCRIPTIONS ---
 
-export const subscribeToNormalData = (userUid, ***REMOVED*** setWorks, setShifts, setError ***REMOVED***) => ***REMOVED***
+export const subscribeToNormalData = (userUid, { setWorks, setShifts, setError }) => {
   const collections = getUserSubcollections(userUid);
-  if (!collections) return () => ***REMOVED******REMOVED***;
+  if (!collections) return () => {};
   const unsubscribes = [];
 
   const worksQuery = query(collections.worksRef, orderBy('name', 'asc'));
@@ -154,11 +154,11 @@ export const subscribeToNormalData = (userUid, ***REMOVED*** setWorks, setShifts
   );
 
   return () => unsubscribes.forEach(unsub => unsub());
-***REMOVED***;
+};
 
-export const subscribeToDeliveryData = (userUid, ***REMOVED*** setDeliveryWorks, setDeliveryShifts, setError ***REMOVED***) => ***REMOVED***
+export const subscribeToDeliveryData = (userUid, { setDeliveryWorks, setDeliveryShifts, setError }) => {
   const collections = getUserSubcollections(userUid);
-  if (!collections) return () => ***REMOVED******REMOVED***;
+  if (!collections) return () => {};
   const unsubscribes = [];
 
   const deliveryWorksQuery = query(collections.deliveryWorksRef, orderBy('createdAt', 'desc'));
@@ -178,55 +178,55 @@ export const subscribeToDeliveryData = (userUid, ***REMOVED*** setDeliveryWorks,
       setDeliveryShifts,
       (error) => setError(error),
       (a, b) => new Date(b.date) - new Date(a.date),
-      (d) => (***REMOVED*** ...d, type: 'delivery' ***REMOVED***)
+      (d) => ({ ...d, type: 'delivery' })
     )
   );
 
   return () => unsubscribes.forEach(unsub => unsub());
-***REMOVED***;
+};
 
 // --- WORKS ---
 
-export const addJob = async (userUid, newJob, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** worksRef, deliveryWorksRef ***REMOVED*** = getUserSubcollections(userUid);
+export const addJob = async (userUid, newJob, isDelivery = false) => {
+  const { worksRef, deliveryWorksRef } = getUserSubcollections(userUid);
   const targetRef = isDelivery ? deliveryWorksRef : worksRef;
 
-  let jobData = ***REMOVED***
+  let jobData = {
     ...newJob,
     createdAt: new Date(),
     updatedAt: new Date(),
-  ***REMOVED***;
+  };
 
-  if (isDelivery) ***REMOVED***
-    jobData = ***REMOVED***
+  if (isDelivery) {
+    jobData = {
       ...jobData,
       type: 'delivery',
       platform: newJob.platform || '',
       vehicle: newJob.vehicle || '',
       avatarColor: newJob.avatarColor || '#10B981',
-      statistics: ***REMOVED*** /* default stats */ ***REMOVED***
-    ***REMOVED***;
-  ***REMOVED*** else ***REMOVED***
+      statistics: { /* default stats */ }
+    };
+  } else {
     if (!newJob.name || !newJob.name.trim()) throw new Error('Work name is required');
-    jobData = ***REMOVED***
+    jobData = {
       ...jobData,
       active: true
-    ***REMOVED***;
-  ***REMOVED***
+    };
+  }
 
   const docRef = await addDoc(targetRef, jobData);
-  return ***REMOVED*** ...jobData, id: docRef.id ***REMOVED***;
-***REMOVED***;
+  return { ...jobData, id: docRef.id };
+};
 
-export const editJob = (userUid, id, updatedData, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** worksRef, deliveryWorksRef ***REMOVED*** = getUserSubcollections(userUid);
+export const editJob = (userUid, id, updatedData, isDelivery = false) => {
+  const { worksRef, deliveryWorksRef } = getUserSubcollections(userUid);
   const targetRef = isDelivery ? deliveryWorksRef : worksRef;
-  const dataWithMetadata = ***REMOVED*** ...updatedData, updatedAt: new Date() ***REMOVED***;
+  const dataWithMetadata = { ...updatedData, updatedAt: new Date() };
   return updateDoc(doc(targetRef, id), dataWithMetadata);
-***REMOVED***;
+};
 
-export const deleteJob = async (userUid, id, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** worksRef, shiftsRef, deliveryWorksRef, deliveryShiftsRef ***REMOVED*** = getUserSubcollections(userUid);
+export const deleteJob = async (userUid, id, isDelivery = false) => {
+  const { worksRef, shiftsRef, deliveryWorksRef, deliveryShiftsRef } = getUserSubcollections(userUid);
   const jobRef = isDelivery ? doc(deliveryWorksRef, id) : doc(worksRef, id);
   const shiftsCollectionRef = isDelivery ? deliveryShiftsRef : shiftsRef;
 
@@ -236,22 +236,22 @@ export const deleteJob = async (userUid, id, isDelivery = false) => ***REMOVED**
   await Promise.all(deletePromises);
 
   await deleteDoc(jobRef);
-***REMOVED***;
+};
 
 // --- SHIFTS ---
 
-export const addShift = async (userUid, newShift, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** shiftsRef, deliveryShiftsRef ***REMOVED*** = getUserSubcollections(userUid);
+export const addShift = async (userUid, newShift, isDelivery = false) => {
+  const { shiftsRef, deliveryShiftsRef } = getUserSubcollections(userUid);
   const targetRef = isDelivery ? deliveryShiftsRef : shiftsRef;
   
   const crossesMidnight = newShift.crossesMidnight || (newShift.startTime && newShift.endTime && newShift.startTime.split(':')[0] > newShift.endTime.split(':')[0]);
   let endDate = newShift.endDate;
-  if (!endDate && crossesMidnight) ***REMOVED***
+  if (!endDate && crossesMidnight) {
     const startDate = createSafeDate(newShift.startDate || newShift.date);
     endDate = new Date(startDate.setDate(startDate.getDate() + 1)).toISOString().split('T')[0];
-  ***REMOVED***
+  }
 
-  let shiftData = ***REMOVED***
+  let shiftData = {
     ...newShift,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -259,67 +259,67 @@ export const addShift = async (userUid, newShift, isDelivery = false) => ***REMO
     startDate: newShift.startDate || newShift.date,
     endDate: endDate || newShift.startDate || newShift.date,
     crossesMidnight,
-  ***REMOVED***;
+  };
 
-  if (isDelivery) ***REMOVED***
+  if (isDelivery) {
     const baseEarnings = newShift.baseEarnings || 0;
     const tips = newShift.tips || 0;
     const totalEarnings = baseEarnings + tips;
     const fuelExpense = newShift.fuelExpense || 0;
     
-    shiftData = ***REMOVED***
+    shiftData = {
       ...shiftData,
       type: 'delivery',
       baseEarnings: baseEarnings,
       tips: tips,
       totalEarnings: totalEarnings,
       netEarnings: totalEarnings - fuelExpense,
-    ***REMOVED***;
-  ***REMOVED***
+    };
+  }
 
   const docRef = await addDoc(targetRef, shiftData);
-  return ***REMOVED*** ...shiftData, id: docRef.id ***REMOVED***;
-***REMOVED***;
+  return { ...shiftData, id: docRef.id };
+};
 
-export const editShift = (userUid, id, updatedData, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** shiftsRef, deliveryShiftsRef ***REMOVED*** = getUserSubcollections(userUid);
+export const editShift = (userUid, id, updatedData, isDelivery = false) => {
+  const { shiftsRef, deliveryShiftsRef } = getUserSubcollections(userUid);
   const targetRef = isDelivery ? deliveryShiftsRef : shiftsRef;
 
   const crossesMidnight = updatedData.crossesMidnight || (updatedData.startTime && updatedData.endTime && updatedData.startTime.split(':')[0] > updatedData.endTime.split(':')[0]);
   let endDate = updatedData.endDate;
-  if (!endDate && crossesMidnight) ***REMOVED***
+  if (!endDate && crossesMidnight) {
     const startDate = createSafeDate(updatedData.startDate || updatedData.date);
     endDate = new Date(startDate.setDate(startDate.getDate() + 1)).toISOString().split('T')[0];
-  ***REMOVED***
+  }
 
-  let dataWithMetadata = ***REMOVED***
+  let dataWithMetadata = {
     ...updatedData,
     updatedAt: new Date(),
     date: updatedData.startDate || updatedData.date,
     endDate: endDate || updatedData.startDate || updatedData.date,
     crossesMidnight,
-  ***REMOVED***;
+  };
 
-  if (isDelivery) ***REMOVED***
+  if (isDelivery) {
     const baseEarnings = updatedData.baseEarnings || 0;
     const tips = updatedData.tips || 0;
     const totalEarnings = baseEarnings + tips;
     const fuelExpense = updatedData.fuelExpense || 0;
 
-    dataWithMetadata = ***REMOVED***
+    dataWithMetadata = {
       ...dataWithMetadata,
       baseEarnings: baseEarnings,
       tips: tips,
       totalEarnings: totalEarnings,
       netEarnings: totalEarnings - fuelExpense,
-    ***REMOVED***;
-  ***REMOVED***
+    };
+  }
 
   return updateDoc(doc(targetRef, id), dataWithMetadata);
-***REMOVED***;
+};
 
-export const deleteShift = (userUid, id, isDelivery = false) => ***REMOVED***
-  const ***REMOVED*** shiftsRef, deliveryShiftsRef ***REMOVED*** = getUserSubcollections(userUid);
+export const deleteShift = (userUid, id, isDelivery = false) => {
+  const { shiftsRef, deliveryShiftsRef } = getUserSubcollections(userUid);
   const targetRef = isDelivery ? deliveryShiftsRef : shiftsRef;
   return deleteDoc(doc(targetRef, id));
-***REMOVED***;
+};

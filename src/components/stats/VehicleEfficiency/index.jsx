@@ -1,11 +1,11 @@
 // src/components/stats/VehicleEfficiency/index.jsx
 
 import React from 'react';
-import ***REMOVED*** Car, Zap ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/statsCalculations';
+import { Car, Zap } from 'lucide-react';
+import { formatCurrency } from '../../../utils/statsCalculations';
 import Card from '../../ui/Card';
 
-const VehicleEfficiency = (***REMOVED*** vehicleStats ***REMOVED***) => ***REMOVED***
+const VehicleEfficiency = ({ vehicleStats }) => {
   if (!vehicleStats) return null;
 
   // Find most efficient vehicle
@@ -18,37 +18,37 @@ const VehicleEfficiency = (***REMOVED*** vehicleStats ***REMOVED***) => ***REMOV
         <div className="text-sm text-gray-500">Cost per KM</div>
       </div>
 
-      ***REMOVED***/* Efficiency List */***REMOVED***
+      {/* Efficiency List */}
       <div className="space-y-3">
-        ***REMOVED***Object.entries(vehicleStats).map(([vehicleName, stats]) => ***REMOVED***
+        {Object.entries(vehicleStats).map(([vehicleName, stats]) => {
           const isBest = stats.efficiency === mostEfficient.efficiency;
           
           return (
-            <div key=***REMOVED***vehicleName***REMOVED*** className=***REMOVED***`p-3 rounded-lg border $***REMOVED***isBest ? 'border-green-500 bg-green-50' : 'border-gray-200'***REMOVED***`***REMOVED***>
+            <div key={vehicleName} className={`p-3 rounded-lg border ${isBest ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Car className="w-4 h-4 text-gray-500" />
-                  <span className="font-medium">***REMOVED***vehicleName***REMOVED***</span>
+                  <span className="font-medium">{vehicleName}</span>
                 </div>
-                ***REMOVED***isBest && <Zap className="w-4 h-4 text-green-500" />***REMOVED***
+                {isBest && <Zap className="w-4 h-4 text-green-500" />}
               </div>
               
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-gray-500">Efficiency</p>
-                  <p className="font-semibold">***REMOVED***stats.efficiency.toFixed(2)***REMOVED*** km/$</p>
+                  <p className="font-semibold">{stats.efficiency.toFixed(2)} km/$</p>
                 </div>
                 <div>
                   <p className="text-gray-500">Total Spent</p>
-                  <p className="font-semibold">***REMOVED***formatCurrency(stats.totalExpenses)***REMOVED***</p>
+                  <p className="font-semibold">{formatCurrency(stats.totalExpenses)}</p>
                 </div>
               </div>
             </div>
           );
-        ***REMOVED***)***REMOVED***
+        })}
       </div>
     </Card>
   );
-***REMOVED***;
+};
 
 export default VehicleEfficiency;

@@ -1,18 +1,18 @@
 // src/contexts/ConfigContext.jsx
 
-import React, ***REMOVED*** createContext, useContext, useState, useEffect, useCallback, useMemo ***REMOVED*** from 'react';
-import ***REMOVED*** useAuth ***REMOVED*** from './AuthContext';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { useAuth } from './AuthContext';
 import * as firebaseService from '../services/firebaseService';
-import ***REMOVED*** generateColorVariations ***REMOVED*** from '../utils/colorUtils';
+import { generateColorVariations } from '../utils/colorUtils';
 
 const ConfigContext = createContext();
 
-export const useConfigContext = () => ***REMOVED***
+export const useConfigContext = () => {
   return useContext(ConfigContext);
-***REMOVED***;
+};
 
-export const ConfigProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
+export const ConfigProvider = ({ children }) => {
+  const { currentUser } = useAuth();
 
   // Personalization preference and configuration states
   const [loading, setLoading] = useState(true);
@@ -20,59 +20,59 @@ export const ConfigProvider = (***REMOVED*** children ***REMOVED***) => ***REMOV
   const [primaryColor, setPrimaryColor] = useState('#EC4899');
   const [userEmoji, setUserEmoji] = useState('😊');
   const [defaultDiscount, setDefaultDiscount] = useState(15);
-  const [taxesPerWork, setTaxesPerWork] = useState(***REMOVED******REMOVED***);
+  const [taxesPerWork, setTaxesPerWork] = useState({});
   const [weeklyHoursGoal, setWeeklyHoursGoal] = useState(null);
   const [deliveryEnabled, setDeliveryEnabled] = useState(false);
   const [smokoEnabled, setSmokoEnabled] = useState(false);
   const [smokoMinutes, setSmokoMinutes] = useState(30);
-  const [shiftRanges, setShiftRanges] = useState(***REMOVED***
+  const [shiftRanges, setShiftRanges] = useState({
     dayStart: 6,
     dayEnd: 14,
     afternoonStart: 14,
     afternoonEnd: 20,
     nightStart: 20
-  ***REMOVED***);
+  });
 
   // Load initial user configuration from Firebase
-  useEffect(() => ***REMOVED***
-    const loadConfig = async () => ***REMOVED***
-      if (currentUser) ***REMOVED***
-        try ***REMOVED***
+  useEffect(() => {
+    const loadConfig = async () => {
+      if (currentUser) {
+        try {
           setLoading(true);
           const settings = await firebaseService.ensureUserDocument(currentUser);
-          if (settings) ***REMOVED***
+          if (settings) {
             setPrimaryColor(settings.primaryColor);
             setUserEmoji(settings.userEmoji);
             setDefaultDiscount(settings.defaultDiscount);
-            setTaxesPerWork(settings.taxesPerWork || ***REMOVED******REMOVED***);
+            setTaxesPerWork(settings.taxesPerWork || {});
             setWeeklyHoursGoal(settings.weeklyHoursGoal);
             setDeliveryEnabled(settings.deliveryEnabled);
             setSmokoEnabled(settings.smokoEnabled || false);
             setSmokoMinutes(settings.smokoMinutes || 30);
             setShiftRanges(settings.shiftRanges);
-          ***REMOVED***
-        ***REMOVED*** catch (err) ***REMOVED***
+          }
+        } catch (err) {
           console.error("Error loading user configuration:", err);
           setError("Error loading configuration: " + err.message);
-        ***REMOVED*** finally ***REMOVED***
+        } finally {
           setLoading(false);
-        ***REMOVED***
-      ***REMOVED*** else ***REMOVED***
+        }
+      } else {
         setLoading(false);
-      ***REMOVED***
-    ***REMOVED***;
+      }
+    };
     loadConfig();
-  ***REMOVED***, [currentUser]);
+  }, [currentUser]);
 
   // Generates color variations based on the primary color
-  const thematicColors = useMemo(() => ***REMOVED***
+  const thematicColors = useMemo(() => {
     return generateColorVariations(primaryColor);
-  ***REMOVED***, [primaryColor]);
+  }, [primaryColor]);
 
   // Save user preferences
-  const savePreferences = useCallback(async (preferences) => ***REMOVED***
+  const savePreferences = useCallback(async (preferences) => {
     if (!currentUser) throw new Error("Unauthenticated user");
-    try ***REMOVED***
+    try {
       // Optimistic update
       if (preferences.primaryColor !== undefined) setPrimaryColor(preferences.primaryColor);
       if (preferences.userEmoji !== undefined) setUserEmoji(preferences.userEmoji);
@@ -85,15 +85,15 @@ export const ConfigProvider = (***REMOVED*** children ***REMOVED***) => ***REMOV
       if (preferences.smokoMinutes !== undefined) setSmokoMinutes(preferences.smokoMinutes);
       
       await firebaseService.savePreferences(currentUser.uid, preferences);
-    ***REMOVED*** catch (err) ***REMOVED***
+    } catch (err) {
       console.error("Error saving preferences:", err);
       setError("Error saving preferences: " + err.message);
       // TODO: Implement rollback logic for optimistic update
       throw err;
-    ***REMOVED***
-  ***REMOVED***, [currentUser]);
+    }
+  }, [currentUser]);
 
-  const value = ***REMOVED***
+  const value = {
     loading,
     error,
     primaryColor,
@@ -108,8 +108,8 @@ export const ConfigProvider = (***REMOVED*** children ***REMOVED***) => ***REMOV
     thematicColors,
     savePreferences,
     // Note: updateWeeklyHoursGoal can be merged into savePreferences
-    updateWeeklyHoursGoal: (goal) => savePreferences(***REMOVED*** weeklyHoursGoal: goal ***REMOVED***),
-  ***REMOVED***;
+    updateWeeklyHoursGoal: (goal) => savePreferences({ weeklyHoursGoal: goal }),
+  };
 
-  return <ConfigContext.Provider value=***REMOVED***value***REMOVED***>***REMOVED***children***REMOVED***</ConfigContext.Provider>;
-***REMOVED***;
+  return <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>;
+};

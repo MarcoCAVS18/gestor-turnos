@@ -2,45 +2,45 @@
 
 /**
  * Convierte un color hex a valores RGB
- * @param ***REMOVED***string***REMOVED*** hex
- * @returns ***REMOVED***Object***REMOVED***
+ * @param {string} hex
+ * @returns {Object}
  */
-export const hexToRgb = (hex) => ***REMOVED***
-    const result = /^#?([a-f\d]***REMOVED***2***REMOVED***)([a-f\d]***REMOVED***2***REMOVED***)([a-f\d]***REMOVED***2***REMOVED***)$/i.exec(hex);
-    return result ? ***REMOVED***
+export const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
       r: parseInt(result[1], 16),
       g: parseInt(result[2], 16),
       b: parseInt(result[3], 16)
-    ***REMOVED*** : null;
-  ***REMOVED***;
+    } : null;
+  };
   
   /**
    * Convierte valores RGB a hex
-   * @param ***REMOVED***number***REMOVED*** r 
-   * @param ***REMOVED***number***REMOVED*** g 
-   * @param ***REMOVED***number***REMOVED*** b 
-   * @returns ***REMOVED***string***REMOVED***
+   * @param {number} r 
+   * @param {number} g 
+   * @param {number} b 
+   * @returns {string}
    */
-  export const rgbToHex = (r, g, b) => ***REMOVED***
-    const toHex = (n) => ***REMOVED***
+  export const rgbToHex = (r, g, b) => {
+    const toHex = (n) => {
       const hex = Math.round(Math.max(0, Math.min(255, n))).toString(16);
       return hex.length === 1 ? '0' + hex : hex;
-    ***REMOVED***;
-    return `#$***REMOVED***toHex(r)***REMOVED***$***REMOVED***toHex(g)***REMOVED***$***REMOVED***toHex(b)***REMOVED***`;
-  ***REMOVED***;
+    };
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  };
   
   /**
    * Genera variaciones de un color base
-   * @param ***REMOVED***string***REMOVED*** baseColor 
-   * @returns ***REMOVED***Object***REMOVED***
+   * @param {string} baseColor 
+   * @returns {Object}
    */
-  export const generateColorVariations = (baseColor) => ***REMOVED***
+  export const generateColorVariations = (baseColor) => {
     const rgb = hexToRgb(baseColor);
     if (!rgb) return null;
   
-    const ***REMOVED*** r, g, b ***REMOVED*** = rgb;
+    const { r, g, b } = rgb;
   
-    return ***REMOVED***
+    return {
       base: baseColor,
       
       // Variaciones más claras
@@ -70,9 +70,9 @@ export const hexToRgb = (hex) => ***REMOVED***
       ),
       
       // Variaciones con opacidad
-      transparent10: `rgba($***REMOVED***r***REMOVED***, $***REMOVED***g***REMOVED***, $***REMOVED***b***REMOVED***, 0.1)`,
-      transparent20: `rgba($***REMOVED***r***REMOVED***, $***REMOVED***g***REMOVED***, $***REMOVED***b***REMOVED***, 0.2)`,
-      transparent50: `rgba($***REMOVED***r***REMOVED***, $***REMOVED***g***REMOVED***, $***REMOVED***b***REMOVED***, 0.5)`,
+      transparent10: `rgba(${r}, ${g}, ${b}, 0.1)`,
+      transparent20: `rgba(${r}, ${g}, ${b}, 0.2)`,
+      transparent50: `rgba(${r}, ${g}, ${b}, 0.5)`,
       
       // Color de texto contrastante
       textContrast: getContrastText(r, g, b),
@@ -90,26 +90,26 @@ export const hexToRgb = (hex) => ***REMOVED***
         Math.max(0, g - 60),
         Math.max(0, b - 60)
       )
-    ***REMOVED***;
-  ***REMOVED***;
+    };
+  };
   
   /**
    * Determina si usar texto blanco o negro basado en el color de fondo
-   * @param ***REMOVED***number***REMOVED*** r
-   * @param ***REMOVED***number***REMOVED*** g
-   * @param ***REMOVED***number***REMOVED*** b
-   * @returns ***REMOVED***string***REMOVED*** 
+   * @param {number} r
+   * @param {number} g
+   * @param {number} b
+   * @returns {string} 
    */
-  const getContrastText = (r, g, b) => ***REMOVED***
+  const getContrastText = (r, g, b) => {
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
     return luminance > 0.5 ? '#000000' : '#ffffff';
-  ***REMOVED***;
+  };
   
   /**
    * Hook personalizado para usar colores temáticos
-   * @param ***REMOVED***string***REMOVED*** colorPrincipal 
-   * @returns ***REMOVED***Object***REMOVED***
+   * @param {string} colorPrincipal 
+   * @returns {Object}
    */
-  export const useThemeColors = (colorPrincipal) => ***REMOVED***
+  export const useThemeColors = (colorPrincipal) => {
     return generateColorVariations(colorPrincipal);
-  ***REMOVED***;
+  };

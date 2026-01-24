@@ -1,7 +1,7 @@
 // src/contexts/AuthContext.jsx
 
-import React, ***REMOVED*** createContext, useContext, useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** 
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut, 
@@ -10,69 +10,69 @@ import ***REMOVED***
   updateProfile,
   GoogleAuthProvider,
   signInWithPopup
-***REMOVED*** from 'firebase/auth';
-import ***REMOVED*** auth, db ***REMOVED*** from '../services/firebase';
-import ***REMOVED*** doc, setDoc, getDoc, updateDoc ***REMOVED*** from 'firebase/firestore';
-import ***REMOVED*** uploadProfilePhoto, deleteProfilePhoto, getDefaultProfilePhoto ***REMOVED*** from '../services/profilePhotoService';
+} from 'firebase/auth';
+import { auth, db } from '../services/firebase';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { uploadProfilePhoto, deleteProfilePhoto, getDefaultProfilePhoto } from '../services/profilePhotoService';
 
 // Create the context
 const AuthContext = createContext();
 
 // Custom hook to use the context
-export const useAuth = () => ***REMOVED***
+export const useAuth = () => {
   return useContext(AuthContext);
-***REMOVED***;
+};
 
 // Context provider
-export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
+export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [profilePhotoURL, setProfilePhotoURL] = useState(getDefaultProfilePhoto());
 
   // Register user
-  const signup = async (email, password, displayName) => ***REMOVED***
-    try ***REMOVED***
+  const signup = async (email, password, displayName) => {
+    try {
       setError('');
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       
       // Update profile with displayName
-      await updateProfile(userCredential.user, ***REMOVED*** displayName ***REMOVED***);
+      await updateProfile(userCredential.user, { displayName });
       
       // Create user document in Firestore
-      await setDoc(doc(db, 'users', userCredential.user.uid), ***REMOVED***
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
         email,
         displayName,
         createdAt: new Date(),
-        settings: ***REMOVED***
+        settings: {
           defaultDiscount: 15,
           currency: '$',
           primaryColor: '#EC4899'
-        ***REMOVED***
-      ***REMOVED***);
+        }
+      });
       
       return userCredential.user;
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       setError('Error registering user: ' + error.message);
       throw error;
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   // Sign in with email and password
-  const login = async (email, password) => ***REMOVED***
-    try ***REMOVED***
+  const login = async (email, password) => {
+    try {
       setError('');
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return userCredential.user;
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       setError('Error signing in: ' + error.message);
       throw error;
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
   
   // Function to sign in with Google
-  const loginWithGoogle = async () => ***REMOVED***
-    try ***REMOVED***
+  const loginWithGoogle = async () => {
+    try {
       setError('');
       // Create a new provider instance each time
       const provider = new GoogleAuthProvider();
@@ -82,9 +82,9 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
       provider.addScope('email');
       
       // Additional configuration
-      provider.setCustomParameters(***REMOVED***
+      provider.setCustomParameters({
         'prompt': 'select_account'
-      ***REMOVED***);
+      });
       
       // Use signInWithPopup instead of signInWithRedirect for better error handling
       const result = await signInWithPopup(auth, provider);
@@ -92,74 +92,74 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
       // Check if it's the first time the user signs in with Google
       const userDoc = await getDoc(doc(db, 'users', result.user.uid));
       
-      if (!userDoc.exists()) ***REMOVED***
+      if (!userDoc.exists()) {
         // If first time, create user document in Firestore
-        await setDoc(doc(db, 'users', result.user.uid), ***REMOVED***
+        await setDoc(doc(db, 'users', result.user.uid), {
           email: result.user.email,
           displayName: result.user.displayName || 'User',
           createdAt: new Date(),
           signupMethod: 'google',
-          settings: ***REMOVED***
+          settings: {
             defaultDiscount: 15,
             currency: '$',
             primaryColor: '#EC4899'
-          ***REMOVED***
-        ***REMOVED***);
-      ***REMOVED***
+          }
+        });
+      }
       
       return result.user;
-    ***REMOVED*** catch (error) ***REMOVED***
-      if (error.code === 'auth/popup-closed-by-user') ***REMOVED***
+    } catch (error) {
+      if (error.code === 'auth/popup-closed-by-user') {
         setError('Sign in process was cancelled. Please try again.');
-      ***REMOVED*** else if (error.code === 'auth/popup-blocked') ***REMOVED***
+      } else if (error.code === 'auth/popup-blocked') {
         setError('The browser blocked the popup. Please allow popups and try again.');
-      ***REMOVED*** else ***REMOVED***
+      } else {
         setError('Error signing in with Google: ' + error.message);
-      ***REMOVED***
+      }
       throw error;
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   // Sign out
-  const logout = async () => ***REMOVED***
-    try ***REMOVED***
+  const logout = async () => {
+    try {
       setError('');
       await signOut(auth);
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       setError('Error signing out: ' + error.message);
       throw error;
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   // Reset password
-  const resetPassword = async (email) => ***REMOVED***
-    try ***REMOVED***
+  const resetPassword = async (email) => {
+    try {
       setError('');
       await sendPasswordResetEmail(auth, email);
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       setError('Error resetting password: ' + error.message);
       throw error;
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   // Get user data
-  const getUserData = async (userId) => ***REMOVED***
-    try ***REMOVED***
+  const getUserData = async (userId) => {
+    try {
       const userDoc = await getDoc(doc(db, 'users', userId));
-      if (userDoc.exists()) ***REMOVED***
+      if (userDoc.exists()) {
         return userDoc.data();
-      ***REMOVED*** else ***REMOVED***
+      } else {
         return null;
-      ***REMOVED***
-    ***REMOVED*** catch (error) ***REMOVED***
+      }
+    } catch (error) {
       setError('Error getting user data: ' + error.message);
       throw error;
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   // Update user name
-  const updateUserName = async (displayName) => ***REMOVED***
-    try ***REMOVED***
+  const updateUserName = async (displayName) => {
+    try {
       setError('');
 
       // Validate there is a user and a valid displayName
@@ -167,27 +167,27 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
       if (!displayName.trim()) throw new Error('Name cannot be empty');
 
       // Update displayName in Firebase Auth
-      await updateProfile(currentUser, ***REMOVED*** displayName ***REMOVED***);
+      await updateProfile(currentUser, { displayName });
 
       // Update in Firestore as well
       const userDocRef = doc(db, 'users', currentUser.uid);
-      await updateDoc(userDocRef, ***REMOVED***
+      await updateDoc(userDocRef, {
         displayName,
         updatedAt: new Date()
-      ***REMOVED***);
+      });
 
-      setCurrentUser(***REMOVED***...currentUser, displayName***REMOVED***);
+      setCurrentUser({...currentUser, displayName});
 
       return true;
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       setError('Error updating name: ' + error.message);
       throw error;
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   // Update profile photo
-  const updateProfilePhoto = async (file) => ***REMOVED***
-    try ***REMOVED***
+  const updateProfilePhoto = async (file) => {
+    try {
       setError('');
 
       if (!currentUser) throw new Error('No logged in user');
@@ -196,29 +196,29 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
       const photoURL = await uploadProfilePhoto(currentUser.uid, file);
 
       // Update in Firebase Auth
-      await updateProfile(currentUser, ***REMOVED*** photoURL ***REMOVED***);
+      await updateProfile(currentUser, { photoURL });
 
       // Update in Firestore
       const userDocRef = doc(db, 'users', currentUser.uid);
-      await updateDoc(userDocRef, ***REMOVED***
+      await updateDoc(userDocRef, {
         photoURL,
         updatedAt: new Date()
-      ***REMOVED***);
+      });
 
       // Update local state
       setProfilePhotoURL(photoURL);
-      setCurrentUser(***REMOVED***...currentUser, photoURL***REMOVED***);
+      setCurrentUser({...currentUser, photoURL});
 
       return photoURL;
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       setError('Error updating profile photo: ' + error.message);
       throw error;
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   // Remove profile photo
-  const removeProfilePhoto = async () => ***REMOVED***
-    try ***REMOVED***
+  const removeProfilePhoto = async () => {
+    try {
       setError('');
   
       if (!currentUser) throw new Error('No logged in user');
@@ -232,14 +232,14 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
       await deleteProfilePhoto(currentPhotoURL);
   
       // Update in Firebase Auth to null
-      await updateProfile(currentUser, ***REMOVED*** photoURL: null ***REMOVED***);
+      await updateProfile(currentUser, { photoURL: null });
   
       // Update in Firestore
       const userDocRef = doc(db, 'users', currentUser.uid);
-      await updateDoc(userDocRef, ***REMOVED***
+      await updateDoc(userDocRef, {
         photoURL: null,
         updatedAt: new Date()
-      ***REMOVED***);
+      });
   
       // Force reload user state to get updated URL
       await auth.currentUser.reload();
@@ -251,51 +251,51 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
       setCurrentUser(updatedUser); // Use updated user
   
       return true;
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       setError('Error removing profile photo: ' + error.message);
       throw error;
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   // Load user profile photo
-  const loadProfilePhoto = async (user) => ***REMOVED***
-    try ***REMOVED***
-      if (!user) ***REMOVED***
+  const loadProfilePhoto = async (user) => {
+    try {
+      if (!user) {
         setProfilePhotoURL(getDefaultProfilePhoto());
         return;
-      ***REMOVED***
+      }
 
       // First check if there is photoURL in Firebase Auth
-      if (user.photoURL && user.photoURL.trim() !== '') ***REMOVED***
+      if (user.photoURL && user.photoURL.trim() !== '') {
         setProfilePhotoURL(user.photoURL);
         return;
-      ***REMOVED***
+      }
 
       // If not, check in Firestore
       const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists() && userDoc.data().photoURL && userDoc.data().photoURL.trim() !== '') ***REMOVED***
+      if (userDoc.exists() && userDoc.data().photoURL && userDoc.data().photoURL.trim() !== '') {
         setProfilePhotoURL(userDoc.data().photoURL);
-      ***REMOVED*** else ***REMOVED***
+      } else {
         setProfilePhotoURL(getDefaultProfilePhoto());
-      ***REMOVED***
-    ***REMOVED*** catch (error) ***REMOVED***
+      }
+    } catch (error) {
       console.error('Error loading profile photo:', error);
       setProfilePhotoURL(getDefaultProfilePhoto());
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   // Monitor authentication state changes
-  useEffect(() => ***REMOVED***
-    const unsubscribe = onAuthStateChanged(auth, (user) => ***REMOVED***
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       loadProfilePhoto(user);
       setLoading(false);
-    ***REMOVED***);
+    });
 
     return unsubscribe;
-  ***REMOVED***, []);
+  }, []);
 
-  const value = ***REMOVED***
+  const value = {
     currentUser,
     loading,
     error,
@@ -309,17 +309,17 @@ export const AuthProvider = (***REMOVED*** children ***REMOVED***) => ***REMOVED
     updateUserName,
     updateProfilePhoto,
     removeProfilePhoto
-  ***REMOVED***;
+  };
 
   return (
-    <AuthContext.Provider value=***REMOVED***value***REMOVED***>
-      ***REMOVED***loading ? (
+    <AuthContext.Provider value={value}>
+      {loading ? (
         <div className="hidden">Loading authentication state...</div> 
       ) : (
         children
-      )***REMOVED***
+      )}
     </AuthContext.Provider>
   );
-***REMOVED***;
+};
 
 export default AuthProvider;

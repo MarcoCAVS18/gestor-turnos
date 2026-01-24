@@ -11,198 +11,198 @@
 @tailwind components;
 @tailwind utilities;
 
-body ***REMOVED***
+body {
   font-family: 'Poppins', sans-serif;
-***REMOVED***
+}
 
-@layer base ***REMOVED***
-  html ***REMOVED***
+@layer base {
+  html {
     @apply font-poppins;
-  ***REMOVED***
-***REMOVED***
+  }
+}
 
 /* Agregar esto a src/index.css o crear un archivo separado */
 
 /* Remover fondo gris de todos los inputs */
 input, 
 select, 
-textarea ***REMOVED***
+textarea {
   background-color: white !important;
   border: 1px solid #d1d5db; /* gray-300 */
-***REMOVED***
+}
 
 input:focus, 
 select:focus, 
-textarea:focus ***REMOVED***
+textarea:focus {
   background-color: white !important;
   outline: none;
   border-color: transparent;
   box-shadow: 0 0 0 2px var(--tw-ring-color, #EC4899);
-***REMOVED***
+}
 
 /* Específico para inputs en modales */
 .modal input,
 .modal select,
-.modal textarea ***REMOVED***
+.modal textarea {
   background-color: white !important;
   border: 1px solid #d1d5db;
-***REMOVED***
+}
 
 /* Para inputs de tiempo y fecha */
 input[type="time"],
-input[type="date"] ***REMOVED***
+input[type="date"] {
   background-color: white !important;
   color: #374151; /* gray-700 */
-***REMOVED***
+}
 
 input[type="time"]:focus,
-input[type="date"]:focus ***REMOVED***
+input[type="date"]:focus {
   background-color: white !important;
-***REMOVED***
+}
 
 /* Arreglar scroll horizontal en modales */
-.modal-content ***REMOVED***
+.modal-content {
   max-width: 100%;
   overflow-x: hidden;
-***REMOVED***
+}
 
 /* Optimizaciones para formularios móviles */
-@media (max-width: 767px) ***REMOVED***
+@media (max-width: 767px) {
   /* Inputs más grandes en móvil */
   .mobile-form input,
   .mobile-form select,
-  .mobile-form textarea ***REMOVED***
+  .mobile-form textarea {
     min-height: 44px; /* Apple recomienda mínimo 44px para touch targets */
     font-size: 16px; /* Previene zoom automático en iOS */
     padding: 12px 16px;
-  ***REMOVED***
+  }
 
   /* Labels más legibles */
-  .mobile-form label ***REMOVED***
+  .mobile-form label {
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 8px;
     display: block;
-  ***REMOVED***
+  }
 
   /* Botones más grandes y accesibles */
-  .mobile-form button ***REMOVED***
+  .mobile-form button {
     min-height: 48px;
     font-size: 16px;
     font-weight: 600;
     padding: 12px 24px;
-  ***REMOVED***
+  }
 
   /* Espaciado entre campos */
   .mobile-form .form-group,
-  .mobile-form > div ***REMOVED***
+  .mobile-form > div {
     margin-bottom: 20px;
-  ***REMOVED***
+  }
 
   /* Grid de campos más amigable */
-  .mobile-form .grid ***REMOVED***
+  .mobile-form .grid {
     gap: 16px;
-  ***REMOVED***
+  }
 
 
 
   /* Selectores de color más grandes */
-  .mobile-form .color-selector button ***REMOVED***
+  .mobile-form .color-selector button {
     min-width: 48px;
     min-height: 48px;
-  ***REMOVED***
+  }
 
   /* Mejor contraste para texto de ayuda */
   .mobile-form .help-text,
-  .mobile-form .text-xs ***REMOVED***
+  .mobile-form .text-xs {
     font-size: 13px;
     line-height: 1.4;
-  ***REMOVED***
-***REMOVED***
+  }
+}
 
 /* Modal específicos para móvil */
-@media (max-width: 767px) ***REMOVED***
-  .mobile-modal ***REMOVED***
+@media (max-width: 767px) {
+  .mobile-modal {
     border-radius: 0 !important;
     height: 100vh !important;
     max-height: none !important;
     margin: 0 !important;
-  ***REMOVED***
+  }
 
-  .mobile-modal .modal-header ***REMOVED***
+  .mobile-modal .modal-header {
     padding: 16px 20px;
     border-bottom: 1px solid #e5e7eb;
     background: white;
     position: sticky;
     top: 0;
     z-index: 10;
-  ***REMOVED***
+  }
 
-  .mobile-modal .modal-content ***REMOVED***
+  .mobile-modal .modal-content {
     padding: 20px;
     overflow-y: auto;
     flex: 1;
-  ***REMOVED***
+  }
 
-  .mobile-modal .modal-footer ***REMOVED***
+  .mobile-modal .modal-footer {
     padding: 16px 20px;
     border-top: 1px solid #e5e7eb;
     background: white;
     position: sticky;
     bottom: 0;
-  ***REMOVED***
+  }
 
   /* Footer de botones en móvil */
-  .mobile-modal .button-group ***REMOVED***
+  .mobile-modal .button-group {
     display: flex;
     gap: 12px;
     flex-direction: column;
-  ***REMOVED***
+  }
 
-  .mobile-modal .button-group button ***REMOVED***
+  .mobile-modal .button-group button {
     width: 100%;
     justify-content: center;
-  ***REMOVED***
-***REMOVED***
+  }
+}
 
 /* Mejoras para seleccionadores específicos */
-@media (max-width: 767px) ***REMOVED***
+@media (max-width: 767px) {
   /* Selector de tipo de trabajo */
-  .trabajo-type-selector button ***REMOVED***
+  .trabajo-type-selector button {
     padding: 20px;
     min-height: 120px;
     text-align: left;
-  ***REMOVED***
+  }
 
   /* Selector de plataforma delivery */
-  .platform-selector ***REMOVED***
+  .platform-selector {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-  ***REMOVED***
+  }
 
-  .platform-selector button ***REMOVED***
+  .platform-selector button {
     min-height: 80px;
     padding: 12px;
-  ***REMOVED***
+  }
 
   /* Selector de vehículo */
-  .vehicle-selector ***REMOVED***
+  .vehicle-selector {
     grid-template-columns: 1fr;
     gap: 12px;
-  ***REMOVED***
+  }
 
-  .vehicle-selector button ***REMOVED***
+  .vehicle-selector button {
     min-height: 70px;
     padding: 16px;
-  ***REMOVED***
-***REMOVED***
+  }
+}
 
 /* Safe area para dispositivos con notch */
-@supports (padding: max(0px)) ***REMOVED***
-  @media (max-width: 767px) ***REMOVED***
-    .mobile-modal ***REMOVED***
+@supports (padding: max(0px)) {
+  @media (max-width: 767px) {
+    .mobile-modal {
       padding-top: max(0px, env(safe-area-inset-top));
       padding-bottom: max(0px, env(safe-area-inset-bottom));
-    ***REMOVED***
-  ***REMOVED***
-***REMOVED***
+    }
+  }
+}

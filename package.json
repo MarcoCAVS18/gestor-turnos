@@ -1,8 +1,8 @@
-***REMOVED***
+{
   "name": "gestion-turnos",
   "version": "0.1.0",
   "private": true,
-  "dependencies": ***REMOVED***
+  "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
@@ -25,20 +25,20 @@
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5",
     "xlsx-js-style": "^1.2.0"
-  ***REMOVED***,
-  "scripts": ***REMOVED***
+  },
+  "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build && cp _redirects build/ || true",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  ***REMOVED***,
-  "eslintConfig": ***REMOVED***
+  },
+  "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
     ]
-  ***REMOVED***,
-  "browserslist": ***REMOVED***
+  },
+  "browserslist": {
     "production": [
       ">0.2%",
       "not dead",
@@ -49,11 +49,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  ***REMOVED***,
-  "devDependencies": ***REMOVED***
+  },
+  "devDependencies": {
     "@tailwindcss/postcss": "^4.1.7",
     "autoprefixer": "^10.4.21",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.1"
-  ***REMOVED***
-***REMOVED***
+  }
+}

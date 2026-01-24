@@ -1,38 +1,38 @@
 // src/components/dashboard/FeatureAnnouncementCard/index.jsx
 
-import React, ***REMOVED*** useMemo ***REMOVED*** from 'react';
-import ***REMOVED*** Sparkles, Clock, Timer, ArrowRight ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
-import ***REMOVED*** generateColorVariations ***REMOVED*** from '../../../utils/colorUtils';
+import React, { useMemo } from 'react';
+import { Sparkles, Clock, Timer, ArrowRight } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { generateColorVariations } from '../../../utils/colorUtils';
 import Button from '../../ui/Button';
 import BaseAnnouncementCard from '../../cards/base/BaseAnnouncementCard';
 
-const FeatureAnnouncementCard = (***REMOVED*** onClick, className ***REMOVED***) => ***REMOVED***
+const FeatureAnnouncementCard = ({ onClick, className }) => {
   const colors = useThemeColors();
   
-  const palette = useMemo(() => ***REMOVED***
-    return generateColorVariations(colors.primary) || ***REMOVED***
+  const palette = useMemo(() => {
+    return generateColorVariations(colors.primary) || {
       lighter: colors.primary,
       base: colors.primary,
       dark: colors.primaryDark,
       darker: colors.primaryDark
-    ***REMOVED***;
-  ***REMOVED***, [colors.primary, colors.primaryDark]);
+    };
+  }, [colors.primary, colors.primaryDark]);
 
-  const gradient = `linear-gradient(135deg, $***REMOVED***palette.lighter***REMOVED*** 0%, $***REMOVED***colors.primary***REMOVED*** 50%, $***REMOVED***palette.darker***REMOVED*** 100%)`;
+  const gradient = `linear-gradient(135deg, ${palette.lighter} 0%, ${colors.primary} 50%, ${palette.darker} 100%)`;
 
   return (
     <BaseAnnouncementCard
-      onClick=***REMOVED***onClick***REMOVED***
-      gradient=***REMOVED***gradient***REMOVED***
-      className=***REMOVED***className***REMOVED***
-      decorativeIcon=***REMOVED***Timer***REMOVED***
+      onClick={onClick}
+      gradient={gradient}
+      className={className}
+      decorativeIcon={Timer}
     >
       <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between gap-6 h-full">
-        ***REMOVED***/* Left Side: Text Content */***REMOVED***
+        {/* Left Side: Text Content */}
         <div className="flex-1 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 border border-white/20 backdrop-blur-md text-white text-xs font-bold tracking-wide uppercase shadow-sm">
-            <Sparkles size=***REMOVED***12***REMOVED*** className="text-yellow-300" />
+            <Sparkles size={12} className="text-yellow-300" />
             <span>New Feature</span>
           </div>
 
@@ -47,32 +47,32 @@ const FeatureAnnouncementCard = (***REMOVED*** onClick, className ***REMOVED***)
 
           <div className="pt-2">
             <Button 
-                onClick=***REMOVED***(e) => ***REMOVED***
+                onClick={(e) => {
                     e.stopPropagation();
                     onClick?.();
-                ***REMOVED******REMOVED***
+                }}
                 variant='solid'
                 className="bg-white border-none font-semibold shadow-md active:scale-95 transition-transform hover:bg-gray-50"
-                themeColor=***REMOVED***colors.primary***REMOVED***
-                icon=***REMOVED***ArrowRight***REMOVED***
+                themeColor={colors.primary}
+                icon={ArrowRight}
             >
               Try now
             </Button>
           </div>
         </div>
 
-        ***REMOVED***/* Right Side: Illustration / Iconography (Now more subtle) */***REMOVED***
+        {/* Right Side: Illustration / Iconography (Now more subtle) */}
         <div className="hidden sm:flex flex-col items-center justify-center relative opacity-50 group-hover/card:opacity-100 transition-opacity">
             <div 
                 className="absolute -bottom-2 -left-4 w-12 h-12 rounded-xl backdrop-blur-sm border border-white/20 flex items-center justify-center transform -rotate-12 shadow-lg animate-pulse"
-                style=***REMOVED******REMOVED*** backgroundColor: palette.light ***REMOVED******REMOVED***
+                style={{ backgroundColor: palette.light }}
             >
-                <Clock size=***REMOVED***24***REMOVED*** className="text-white" />
+                <Clock size={24} className="text-white" />
             </div>
         </div>
       </div>
     </BaseAnnouncementCard>
   );
-***REMOVED***;
+};
 
 export default FeatureAnnouncementCard;

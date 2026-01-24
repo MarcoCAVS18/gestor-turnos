@@ -1,10 +1,10 @@
 // src/components/ui/ActionsMenu/index.jsx
 
-import React, ***REMOVED*** useState ***REMOVED*** from 'react';
-import ***REMOVED*** MoreVertical ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import React, { useState } from 'react';
+import { MoreVertical } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
-const ActionsMenu = (***REMOVED*** actions = [] ***REMOVED***) => ***REMOVED***
+const ActionsMenu = ({ actions = [] }) => {
   const colors = useThemeColors();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -13,54 +13,54 @@ const ActionsMenu = (***REMOVED*** actions = [] ***REMOVED***) => ***REMOVED***
   return (
     <div className="relative">
       <button
-        onClick=***REMOVED***(e) => ***REMOVED***
+        onClick={(e) => {
           e.stopPropagation();
           setIsOpen(!isOpen);
-        ***REMOVED******REMOVED***
+        }}
         className="p-2 rounded-lg transition-colors flex-shrink-0"
-        style=***REMOVED******REMOVED*** 
+        style={{ 
           backgroundColor: isOpen ? colors.transparent10 : 'transparent',
           color: isOpen ? colors.primary : '#6B7280'
-        ***REMOVED******REMOVED***
+        }}
       >
-        <MoreVertical size=***REMOVED***16***REMOVED*** />
+        <MoreVertical size={16} />
       </button>
 
-      ***REMOVED***isOpen && (
+      {isOpen && (
         <>
           <div 
             className="fixed inset-0 z-10" 
-            onClick=***REMOVED***() => setIsOpen(false)***REMOVED***
+            onClick={() => setIsOpen(false)}
           />
           <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border z-20 py-1 min-w-[140px]">
-            ***REMOVED***actions.map((action, index) => (
+            {actions.map((action, index) => (
               <button
-                key=***REMOVED***index***REMOVED***
-                onClick=***REMOVED***(e) => ***REMOVED***
+                key={index}
+                onClick={(e) => {
                   e.stopPropagation();
                   setIsOpen(false);
-                  if (!action.disabled) ***REMOVED***
+                  if (!action.disabled) {
                     action.onClick();
-                  ***REMOVED***
-                ***REMOVED******REMOVED***
-                disabled=***REMOVED***action.disabled***REMOVED*** 
-                className=***REMOVED***`w-full px-3 py-2 text-left text-sm flex items-center transition-colors $***REMOVED***
+                  }
+                }}
+                disabled={action.disabled} 
+                className={`w-full px-3 py-2 text-left text-sm flex items-center transition-colors ${
                   action.disabled 
                     ? 'opacity-50 cursor-not-allowed'
                     : action.variant === 'danger' 
                       ? 'hover:bg-red-50 text-red-600' 
                       : 'hover:bg-gray-50'
-                ***REMOVED***`***REMOVED***
+                }`}
               >
-                ***REMOVED***action.icon && <action.icon size=***REMOVED***14***REMOVED*** className="mr-2" />***REMOVED***
-                ***REMOVED***action.label***REMOVED***
+                {action.icon && <action.icon size={14} className="mr-2" />}
+                {action.label}
               </button>
-            ))***REMOVED***
+            ))}
           </div>
         </>
-      )***REMOVED***
+      )}
     </div>
   );
-***REMOVED***;
+};
 
 export default ActionsMenu;

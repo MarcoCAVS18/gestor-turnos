@@ -1,11 +1,11 @@
 // src/components/alerts/DeleteAlert/index.jsx
 
 import React from 'react';
-import ***REMOVED*** AlertTriangle ***REMOVED*** from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 
-const DeleteAlert = (***REMOVED***
+const DeleteAlert = ({
   visible,
   onCancel,
   onConfirm,
@@ -16,69 +16,69 @@ const DeleteAlert = (***REMOVED***
   warning,
   confirmText = 'Delete',
   cancelText = 'Cancel'
-***REMOVED***) => ***REMOVED***
+}) => {
 
   if (!visible) return null;
 
-  const finalTitle = title || `Delete $***REMOVED***type***REMOVED***?`;
+  const finalTitle = title || `Delete ${type}?`;
 
   return (
     <Flex variant="center" className="fixed inset-0 bg-black bg-opacity-50 p-4 z-[9999]">
       <div className="bg-white rounded-xl shadow-xl max-w-sm w-full animate-fadeIn">
         <div className="p-6">
           <Flex variant="center" className="w-12 h-12 bg-red-100 rounded-full mx-auto mb-4">
-            <AlertTriangle size=***REMOVED***24***REMOVED*** className="text-red-600" />
+            <AlertTriangle size={24} className="text-red-600" />
           </Flex>
 
           <h3 className="text-lg font-semibold text-center text-gray-900 mb-2">
-            ***REMOVED***finalTitle***REMOVED***
+            {finalTitle}
           </h3>
 
-          ***REMOVED***details.length > 0 && (
+          {details.length > 0 && (
             <div className="bg-gray-50 rounded-lg p-3 mb-4">
               <div className="text-sm space-y-1">
-                ***REMOVED***details.map((detail, index) => (
+                {details.map((detail, index) => (
                   <p
-                    key=***REMOVED***index***REMOVED***
-                    className=***REMOVED***index === 0 ? "font-medium text-gray-900" : "text-gray-600"***REMOVED***
+                    key={index}
+                    className={index === 0 ? "font-medium text-gray-900" : "text-gray-600"}
                   >
-                    ***REMOVED***detail***REMOVED***
+                    {detail}
                   </p>
-                ))***REMOVED***
+                ))}
               </div>
             </div>
-          )***REMOVED***
+          )}
 
-          ***REMOVED***warning && (
+          {warning && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
               <p className="text-sm text-yellow-800">
-                <AlertTriangle size=***REMOVED***16***REMOVED*** className="inline mr-1" />Warning: The selected job will be permanently deleted.
+                <AlertTriangle size={16} className="inline mr-1" />Warning: The selected job will be permanently deleted.
               </p>
             </div>
-          )***REMOVED***
+          )}
 
           <div className="flex gap-3">
             <Button
-              onClick=***REMOVED***onCancel***REMOVED***
+              onClick={onCancel}
               variant="outline"
               className="flex-1"
-              disabled=***REMOVED***deleting***REMOVED***
+              disabled={deleting}
             >
-              ***REMOVED***cancelText***REMOVED***
+              {cancelText}
             </Button>
             <Button
-              onClick=***REMOVED***onConfirm***REMOVED***
+              onClick={onConfirm}
               variant="danger"
               className="flex-1"
-              loading=***REMOVED***deleting***REMOVED***
+              loading={deleting}
             >
-              ***REMOVED***confirmText***REMOVED***
+              {confirmText}
             </Button>
           </div>
         </div>
       </div>
     </Flex>
   );
-***REMOVED***;
+};
 
 export default DeleteAlert;

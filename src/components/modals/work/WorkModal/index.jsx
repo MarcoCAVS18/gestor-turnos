@@ -1,16 +1,16 @@
 // src/components/modals/work/WorkModal/index.jsx
 
-import React, ***REMOVED*** useState, useEffect, useId ***REMOVED*** from 'react';
-import ***REMOVED*** Pen, Plus ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
-import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
+import React, { useState, useEffect, useId } from 'react';
+import { Pen, Plus } from 'lucide-react';
+import { useApp } from '../../../../contexts/AppContext';
+import { useIsMobile } from '../../../../hooks/useIsMobile';
 import BaseModal from '../../base/BaseModal';
 import WorkForm from '../../../forms/work/WorkForm';
 import WorkTypeSelector from '../../base/WorkTypeSelector';
 import DeliveryWorkModal from '../DeliveryWorkModal';
 
-const WorkModal = (***REMOVED*** isOpen, onClose, work ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** addJob, editJob, deliveryEnabled ***REMOVED*** = useApp();
+const WorkModal = ({ isOpen, onClose, work }) => {
+  const { addJob, editJob, deliveryEnabled } = useApp();
   const isMobile = useIsMobile();
   const [showSelector, setShowSelector] = useState(false);
   const [selectedType, setSelectedType] = useState(null);
@@ -18,101 +18,101 @@ const WorkModal = (***REMOVED*** isOpen, onClose, work ***REMOVED***) => ***REMO
   const formId = useId();
 
   // Determine if showing selector
-  useEffect(() => ***REMOVED***
-    if (isOpen && !work && deliveryEnabled) ***REMOVED***
+  useEffect(() => {
+    if (isOpen && !work && deliveryEnabled) {
       setShowSelector(true);
       setSelectedType(null);
-    ***REMOVED*** else ***REMOVED***
+    } else {
       setShowSelector(false);
-      if (isOpen && !work && !deliveryEnabled) ***REMOVED***
+      if (isOpen && !work && !deliveryEnabled) {
         setSelectedType('traditional');
-      ***REMOVED***
-    ***REMOVED***
-  ***REMOVED***, [isOpen, work, deliveryEnabled]);
+      }
+    }
+  }, [isOpen, work, deliveryEnabled]);
 
-  const handleSelectType = (type) => ***REMOVED***
+  const handleSelectType = (type) => {
     setSelectedType(type);
     setShowSelector(false);
-  ***REMOVED***;
+  };
 
-  const handleSave = async (workData) => ***REMOVED***
-    try ***REMOVED***
+  const handleSave = async (workData) => {
+    try {
       setLoading(true);
 
-      if (work) ***REMOVED***
+      if (work) {
         await editJob(work.id, workData);
-      ***REMOVED*** else ***REMOVED***
+      } else {
         await addJob(workData);
-      ***REMOVED***
+      }
 
       setSelectedType(null);
       setShowSelector(false);
       setLoading(false);
       onClose();
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       setLoading(false);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  const handleClose = () => ***REMOVED***
+  const handleClose = () => {
     setSelectedType(null);
     setShowSelector(false);
     setLoading(false);
     onClose();
-  ***REMOVED***;
+  };
 
   if (!isOpen) return null;
 
   // If it is an existing delivery work, use the delivery modal directly
-  if (work && work.type === 'delivery') ***REMOVED***
+  if (work && work.type === 'delivery') {
     return (
       <DeliveryWorkModal
-        isOpen=***REMOVED***true***REMOVED***
-        onClose=***REMOVED***handleClose***REMOVED***
-        work=***REMOVED***work***REMOVED***
+        isOpen={true}
+        onClose={handleClose}
+        work={work}
       />
     );
-  ***REMOVED***
+  }
 
   // If delivery was selected as type
-  if (selectedType === 'delivery') ***REMOVED***
+  if (selectedType === 'delivery') {
     return (
       <DeliveryWorkModal
-        isOpen=***REMOVED***true***REMOVED***
-        onClose=***REMOVED***handleClose***REMOVED***
-        work=***REMOVED***null***REMOVED***
+        isOpen={true}
+        onClose={handleClose}
+        work={null}
       />
     );
-  ***REMOVED***
+  }
 
   return (
     <BaseModal
-      isOpen=***REMOVED***isOpen***REMOVED***
-      onClose=***REMOVED***handleClose***REMOVED***
-      title=***REMOVED***work ? 'Edit Work' : 'New Work'***REMOVED***
-      icon=***REMOVED***work ? Pen : Plus***REMOVED***
-      loading=***REMOVED***loading***REMOVED***
+      isOpen={isOpen}
+      onClose={handleClose}
+      title={work ? 'Edit Work' : 'New Work'}
+      icon={work ? Pen : Plus}
+      loading={loading}
       maxWidth="lg"
-      showActions=***REMOVED***!showSelector***REMOVED***
-      onCancel=***REMOVED***handleClose***REMOVED***
-      formId=***REMOVED***formId***REMOVED***
-      saveText=***REMOVED***work ? 'Save Changes' : 'Create Work'***REMOVED***
+      showActions={!showSelector}
+      onCancel={handleClose}
+      formId={formId}
+      saveText={work ? 'Save Changes' : 'Create Work'}
     >
-      ***REMOVED***showSelector ? (
+      {showSelector ? (
         <WorkTypeSelector
-          onSelectType=***REMOVED***handleSelectType***REMOVED***
-          isMobile=***REMOVED***isMobile***REMOVED***
+          onSelectType={handleSelectType}
+          isMobile={isMobile}
         />
       ) : (
         <WorkForm
-          id=***REMOVED***formId***REMOVED***
-          work=***REMOVED***work***REMOVED***
-          onSubmit=***REMOVED***handleSave***REMOVED***
-          isMobile=***REMOVED***isMobile***REMOVED***
+          id={formId}
+          work={work}
+          onSubmit={handleSave}
+          isMobile={isMobile}
         />
-      )***REMOVED***
+      )}
     </BaseModal>
   );
-***REMOVED***;
+};
 
 export default WorkModal;

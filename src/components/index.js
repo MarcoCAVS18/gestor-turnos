@@ -1,99 +1,99 @@
 // src/components/index.js
 
 // UI Components
-export ***REMOVED*** default as Button ***REMOVED*** from './ui/Button';
-export ***REMOVED*** default as Input ***REMOVED*** from './ui/Input';
-export ***REMOVED*** default as ThemeInput ***REMOVED*** from './ui/ThemeInput';
-export ***REMOVED*** default as Modal ***REMOVED*** from './ui/Modal';
-export ***REMOVED*** default as Card ***REMOVED*** from './ui/Card';
-export ***REMOVED*** default as ActionsMenu ***REMOVED*** from './ui/ActionsMenu';
-export ***REMOVED*** default as NotificationBanner ***REMOVED*** from './ui/NotificationBanner';
-export ***REMOVED*** default as ProgressBar ***REMOVED*** from './ui/ProgressBar';
+export { default as Button } from './ui/Button';
+export { default as Input } from './ui/Input';
+export { default as ThemeInput } from './ui/ThemeInput';
+export { default as Modal } from './ui/Modal';
+export { default as Card } from './ui/Card';
+export { default as ActionsMenu } from './ui/ActionsMenu';
+export { default as NotificationBanner } from './ui/NotificationBanner';
+export { default as ProgressBar } from './ui/ProgressBar';
 
 // Layout Components  
-export ***REMOVED*** default as Header ***REMOVED*** from './layout/Header';
-export ***REMOVED*** default as Navigation ***REMOVED*** from './layout/Navegacion';
-export ***REMOVED*** default as PageHeader ***REMOVED*** from './layout/PageHeader';
-export ***REMOVED*** default as LoadingWrapper ***REMOVED*** from './layout/LoadingWrapper';
+export { default as Header } from './layout/Header';
+export { default as Navigation } from './layout/Navegacion';
+export { default as PageHeader } from './layout/PageHeader';
+export { default as LoadingWrapper } from './layout/LoadingWrapper';
 
 // Card Components
-export ***REMOVED*** default as StatCard ***REMOVED*** from './cards/StatCard';
-export ***REMOVED*** default as WorkCard ***REMOVED*** from './cards/work/WorkCard';
-export ***REMOVED*** default as ShiftCard ***REMOVED*** from './cards/shift/ShiftCard';
-export ***REMOVED*** default as WorkDetailsCard ***REMOVED*** from './forms/TrabajoCard';
+export { default as StatCard } from './cards/StatCard';
+export { default as WorkCard } from './cards/work/WorkCard';
+export { default as ShiftCard } from './cards/shift/ShiftCard';
+export { default as WorkDetailsCard } from './forms/TrabajoCard';
 
 // Work Components
-export ***REMOVED*** default as WorkAvatar ***REMOVED*** from './work/WorkAvatar';
-export ***REMOVED*** default as WorkRates ***REMOVED*** from './work/WorkRates';
+export { default as WorkAvatar } from './work/WorkAvatar';
+export { default as WorkRates } from './work/WorkRates';
 
 // Shift Components
-export ***REMOVED*** default as ShiftDetails ***REMOVED*** from './shift/ShiftDetails';
-export ***REMOVED*** default as ShiftTypeBadge ***REMOVED*** from './shift/ShiftTypeBadge';
+export { default as ShiftDetails } from './shift/ShiftDetails';
+export { default as ShiftTypeBadge } from './shift/ShiftTypeBadge';
 
 // Form Components
-export ***REMOVED*** default as WorkForm ***REMOVED*** from './forms/work/TrabajoForm';
-export ***REMOVED*** default as ShiftForm ***REMOVED*** from './forms/shift/TurnoForm';
+export { default as WorkForm } from './forms/work/TrabajoForm';
+export { default as ShiftForm } from './forms/shift/TurnoForm';
 
 // Modal Components
-export ***REMOVED*** default as WorkModal ***REMOVED*** from './modals/work/WorkModal';
-export ***REMOVED*** default as ShiftModal ***REMOVED*** from './modals/shift/ShiftModal';
+export { default as WorkModal } from './modals/work/WorkModal';
+export { default as ShiftModal } from './modals/shift/ShiftModal';
 
 // Alert Components
-export ***REMOVED*** default as DeleteAlert ***REMOVED*** from './alerts/DeleteAlert';
+export { default as DeleteAlert } from './alerts/DeleteAlert';
 
 // Calendar Components
-export ***REMOVED*** default as Calendario ***REMOVED*** from './calendar/Calendar';
-export ***REMOVED*** default as CalendarDaySummary ***REMOVED*** from './calendar/CalendarDaySummary';
+export { default as Calendario } from './calendar/Calendar';
+export { default as CalendarDaySummary } from './calendar/CalendarDaySummary';
 
 // Section Components
-export ***REMOVED*** default as StatsSection ***REMOVED*** from './sections/StatsSection';
-export ***REMOVED*** default as ListSection ***REMOVED*** from './sections/ListSection';
-export ***REMOVED*** default as DaySection ***REMOVED*** from './sections/DaySection';
+export { default as StatsSection } from './sections/StatsSection';
+export { default as ListSection } from './sections/ListSection';
+export { default as DaySection } from './sections/DaySection';
 
 // Settings Components
-export ***REMOVED*** default as SettingsSection ***REMOVED*** from './settings/SettingsSection';
-export ***REMOVED*** default as ProfileSection ***REMOVED*** from './settings/ProfileSection';
-export ***REMOVED*** default as CustomizationSection ***REMOVED*** from './settings/CustomizationSection';
-export ***REMOVED*** default as TurnRangeSection ***REMOVED*** from './settings/TurnRangeSection';
-export ***REMOVED*** default as PreferencesSection ***REMOVED*** from './settings/PreferencesSection';
-export ***REMOVED*** default as SessionSection ***REMOVED*** from './settings/SessionSection';
-export ***REMOVED*** default as FooterSection ***REMOVED*** from './settings/FooterSection';
+export { default as SettingsSection } from './settings/SettingsSection';
+export { default as ProfileSection } from './settings/ProfileSection';
+export { default as CustomizationSection } from './settings/CustomizationSection';
+export { default as TurnRangeSection } from './settings/TurnRangeSection';
+export { default as PreferencesSection } from './settings/PreferencesSection';
+export { default as SessionSection } from './settings/SessionSection';
+export { default as FooterSection } from './settings/FooterSection';
 
 // Stats Components
-export ***REMOVED*** default as WeekNavigator ***REMOVED*** from './stats/WeekNavigator';
-export ***REMOVED*** default as StatsProgressBar ***REMOVED*** from './stats/StatsProgressBar';
-export ***REMOVED*** default as WeeklyStatsGrid ***REMOVED*** from './stats/WeeklyStatsGrid';
-export ***REMOVED*** default as WorkDistributionChart ***REMOVED*** from './stats/WorkDistributionChart';
-export ***REMOVED*** default as DailyBreakdownCard ***REMOVED*** from './stats/DailyBreakdownCard';
+export { default as WeekNavigator } from './stats/WeekNavigator';
+export { default as StatsProgressBar } from './stats/StatsProgressBar';
+export { default as WeeklyStatsGrid } from './stats/WeeklyStatsGrid';
+export { default as WorkDistributionChart } from './stats/WorkDistributionChart';
+export { default as DailyBreakdownCard } from './stats/DailyBreakdownCard';
 
 // Delivery Stats Components
-export ***REMOVED*** default as ResumenDelivery ***REMOVED*** from './stats/ResumenDelivery';
-export ***REMOVED*** default as EficienciaVehiculos ***REMOVED*** from './stats/EficienciaVehiculos';
-export ***REMOVED*** default as ComparacionPlataformas ***REMOVED*** from './stats/ComparacionPlataformas';
-export ***REMOVED*** default as SeguimientoCombustible ***REMOVED*** from './stats/SeguimientoCombustible';
+export { default as ResumenDelivery } from './stats/ResumenDelivery';
+export { default as EficienciaVehiculos } from './stats/EficienciaVehiculos';
+export { default as ComparacionPlataformas } from './stats/ComparacionPlataformas';
+export { default as SeguimientoCombustible } from './stats/SeguimientoCombustible';
 
 // Dashboard Components
-export ***REMOVED*** default as WelcomeCard ***REMOVED*** from './dashboard/WelcomeCard';
-export ***REMOVED*** default as QuickStatsGrid ***REMOVED*** from './dashboard/QuickStatsGrid';
-export ***REMOVED*** default as WeeklyStatsCard ***REMOVED*** from './dashboard/WeeklyStatsCard';
-export ***REMOVED*** default as NextShiftCard ***REMOVED*** from './dashboard/NextShiftCard';
-export ***REMOVED*** default as TopWorkCard ***REMOVED*** from './dashboard/TopWorkCard';
-export ***REMOVED*** default as FavoriteWorksCard ***REMOVED*** from './dashboard/FavoriteWorksCard';
-export ***REMOVED*** default as ProjectionCard ***REMOVED*** from './dashboard/ProjectionCard';
-export ***REMOVED*** default as QuickActionsCard ***REMOVED*** from './dashboard/QuickActionsCard';
+export { default as WelcomeCard } from './dashboard/WelcomeCard';
+export { default as QuickStatsGrid } from './dashboard/QuickStatsGrid';
+export { default as WeeklyStatsCard } from './dashboard/WeeklyStatsCard';
+export { default as NextShiftCard } from './dashboard/NextShiftCard';
+export { default as TopWorkCard } from './dashboard/TopWorkCard';
+export { default as FavoriteWorksCard } from './dashboard/FavoriteWorksCard';
+export { default as ProjectionCard } from './dashboard/ProjectionCard';
+export { default as QuickActionsCard } from './dashboard/QuickActionsCard';
 
 // Shared Components
-export ***REMOVED*** default as WorkPreviewCard ***REMOVED*** from './shared/WorkPreviewCard';
+export { default as WorkPreviewCard } from './shared/WorkPreviewCard';
 
 // State Components
-export ***REMOVED*** default as EmptyState ***REMOVED*** from './states/EmptyState';
+export { default as EmptyState } from './states/EmptyState';
 
 // Other Components
-export ***REMOVED*** default as Loader ***REMOVED*** from './other/Loader';
-export ***REMOVED*** default as DebugPanel ***REMOVED*** from './other/DebugPanel';
+export { default as Loader } from './other/Loader';
+export { default as DebugPanel } from './other/DebugPanel';
 
 // Legacy Components
-export ***REMOVED*** default as DynamicButton ***REMOVED*** from './DynamicButton';
+export { default as DynamicButton } from './DynamicButton';
 
 // Auth Components
-export ***REMOVED*** default as PrivateRoute ***REMOVED*** from './auth/PrivateRoute';
+export { default as PrivateRoute } from './auth/PrivateRoute';

@@ -1,14 +1,14 @@
-/** @type ***REMOVED***import('tailwindcss').Config***REMOVED*** */
-module.exports = ***REMOVED***
+/** @type {import('tailwindcss').Config} */
+module.exports = {
     content: [
-      "./src/**/*.***REMOVED***js,jsx,ts,tsx***REMOVED***",
+      "./src/**/*.{js,jsx,ts,tsx}",
     ],
-    theme: ***REMOVED***
-      extend: ***REMOVED***
-        fontFamily: ***REMOVED***
+    theme: {
+      extend: {
+        fontFamily: {
           'poppins': ['Poppins', 'sans-serif'],
-        ***REMOVED***,
-      ***REMOVED***,
-    ***REMOVED***,
+        },
+      },
+    },
     plugins: [],
-  ***REMOVED***
+  }

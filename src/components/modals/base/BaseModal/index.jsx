@@ -1,14 +1,14 @@
 // src/components/modals/base/BaseModal/index.jsx
 // Unified base component for all modals
 
-import React, ***REMOVED*** useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** X ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
-import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
+import React, { useEffect } from 'react';
+import { X } from 'lucide-react';
+import { useThemeColors } from '../../../../hooks/useThemeColors';
+import { useIsMobile } from '../../../../hooks/useIsMobile';
 import Flex from '../../../ui/Flex';
 import Button from '../../../ui/Button';
 
-const BaseModal = (***REMOVED***
+const BaseModal = ({
   isOpen,
   onClose,
   title,
@@ -24,167 +24,167 @@ const BaseModal = (***REMOVED***
   cancelText = 'Cancel',
   formId,
   isSaveDisabled = false, 
-***REMOVED***) => ***REMOVED***
+}) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile();
 
   // Prevent body scroll when modal is open
-  useEffect(() => ***REMOVED***
-    if (isOpen) ***REMOVED***
+  useEffect(() => {
+    if (isOpen) {
       document.body.style.overflow = 'hidden';
-    ***REMOVED*** else ***REMOVED***
+    } else {
       document.body.style.overflow = 'unset';
-    ***REMOVED***
+    }
 
-    return () => ***REMOVED***
+    return () => {
       document.body.style.overflow = 'unset';
-    ***REMOVED***;
-  ***REMOVED***, [isOpen]);
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   // Generate loading text by default
-  const generateLoadingText = (text) => ***REMOVED***
-    if (text.endsWith('ing')) ***REMOVED***
+  const generateLoadingText = (text) => {
+    if (text.endsWith('ing')) {
       return text + '...';
-    ***REMOVED***
+    }
     // Special cases
     if (text.toLowerCase().includes('create')) return 'Creating...';
-    return `$***REMOVED***text***REMOVED***...`;
-  ***REMOVED***;
+    return `${text}...`;
+  };
 
   const finalSaveLoadingText = saveLoadingText || generateLoadingText(saveText);
 
   // Set max width according to prop
-  const maxWidthClasses = ***REMOVED***
+  const maxWidthClasses = {
     sm: 'max-w-sm',
     md: 'max-w-md',
     lg: 'max-w-lg',
     xl: 'max-w-xl'
-  ***REMOVED***;
+  };
 
-  const modalConfig = ***REMOVED***
+  const modalConfig = {
     mobileFullScreen: isMobile,
     zIndex: 9999
-  ***REMOVED***;
+  };
 
   return (
     <Flex variant="center"
       className="fixed inset-0 bg-black bg-opacity-50 p-4"
-      style=***REMOVED******REMOVED*** zIndex: modalConfig.zIndex ***REMOVED******REMOVED***
+      style={{ zIndex: modalConfig.zIndex }}
     >
       <div
-        className=***REMOVED***`
+        className={`
           bg-white shadow-2xl w-full relative
-          $***REMOVED***isMobile
+          ${isMobile
             ? 'h-full max-w-none rounded-none'
-            : `$***REMOVED***maxWidthClasses[maxWidth]***REMOVED*** max-h-[90vh] rounded-xl`
-          ***REMOVED***
-          $***REMOVED***isMobile ? 'overflow-hidden flex flex-col' : ''***REMOVED***
-        `***REMOVED***
+            : `${maxWidthClasses[maxWidth]} max-h-[90vh] rounded-xl`
+          }
+          ${isMobile ? 'overflow-hidden flex flex-col' : ''}
+        `}
       >
 
-        ***REMOVED***/* Header */***REMOVED***
+        {/* Header */}
         <Flex variant="between"
-          className=***REMOVED***`
+          className={`
             sticky top-0 bg-white border-b z-10
-            $***REMOVED***isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'***REMOVED***
-          `***REMOVED***
-          style=***REMOVED******REMOVED***
+            ${isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'}
+          `}
+          style={{
             borderBottomColor: colors.transparent20
-          ***REMOVED******REMOVED***
+          }}
         >
           <div className="flex-1 pr-4 min-w-0">
-            ***REMOVED***typeof title === 'string' ? (
+            {typeof title === 'string' ? (
               <div className="flex items-center">
-                ***REMOVED***Icon && <Icon className="mr-2 h-5 w-5" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED*** />***REMOVED***
+                {Icon && <Icon className="mr-2 h-5 w-5" style={{ color: colors.primary }} />}
                 <h2
-                  className=***REMOVED***`font-semibold truncate $***REMOVED***isMobile ? 'text-lg' : 'text-xl'***REMOVED***`***REMOVED***
-                  style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
+                  className={`font-semibold truncate ${isMobile ? 'text-lg' : 'text-xl'}`}
+                  style={{ color: colors.primary }}
                 >
-                  ***REMOVED***title***REMOVED***
+                  {title}
                 </h2>
               </div>
             ) : (
               title
-            )***REMOVED***
+            )}
 
-            ***REMOVED***/* Optional subtitle */***REMOVED***
-            ***REMOVED***subtitle && (
+            {/* Optional subtitle */}
+            {subtitle && (
               <p className="text-sm font-normal text-gray-600 mt-1">
-                ***REMOVED***subtitle***REMOVED***
+                {subtitle}
               </p>
-            )***REMOVED***
+            )}
           </div>
 
           <button
-            onClick=***REMOVED***onClose***REMOVED***
+            onClick={onClose}
             className="flex-shrink-0 p-2 rounded-lg transition-colors"
-            style=***REMOVED******REMOVED***
+            style={{
               backgroundColor: 'transparent',
               color: colors.primary
-            ***REMOVED******REMOVED***
-            onMouseEnter=***REMOVED***(e) => ***REMOVED***
+            }}
+            onMouseEnter={(e) => {
               e.target.style.backgroundColor = colors.transparent10;
-            ***REMOVED******REMOVED***
-            onMouseLeave=***REMOVED***(e) => ***REMOVED***
+            }}
+            onMouseLeave={(e) => {
               e.target.style.backgroundColor = 'transparent';
-            ***REMOVED******REMOVED***
-            disabled=***REMOVED***loading***REMOVED***
+            }}
+            disabled={loading}
           >
-            <X size=***REMOVED***isMobile ? 24 : 20***REMOVED*** />
+            <X size={isMobile ? 24 : 20} />
           </button>
         </Flex>
 
-        ***REMOVED***/* Content with optimized scroll */***REMOVED***
-        <div className=***REMOVED***`
-          $***REMOVED***isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4 overflow-y-auto'***REMOVED***
-        `***REMOVED***>
-          ***REMOVED***children***REMOVED***
+        {/* Content with optimized scroll */}
+        <div className={`
+          ${isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4 overflow-y-auto'}
+        `}>
+          {children}
         </div>
         
-        ***REMOVED***/* Actions Footer */***REMOVED***
-        ***REMOVED***showActions && (
+        {/* Actions Footer */}
+        {showActions && (
           <div
-            className=***REMOVED***`
+            className={`
               border-t
-              $***REMOVED***isMobile
+              ${isMobile
                 ? 'sticky bottom-0 bg-white p-4'
                 : 'p-4 mt-auto'
-              ***REMOVED***
-            `***REMOVED***
-            style=***REMOVED******REMOVED*** borderTopColor: colors.transparent20 ***REMOVED******REMOVED***
+              }
+            `}
+            style={{ borderTopColor: colors.transparent20 }}
           >
-            <div className=***REMOVED***`
+            <div className={`
               w-full
-              $***REMOVED***isMobile ? 'flex flex-col-reverse gap-2' : 'flex justify-end gap-3'***REMOVED***
-            `***REMOVED***>
+              ${isMobile ? 'flex flex-col-reverse gap-2' : 'flex justify-end gap-3'}
+            `}>
               <Button
                 variant="outline"
-                onClick=***REMOVED***onCancel***REMOVED***
-                disabled=***REMOVED***loading***REMOVED***
-                isMobile=***REMOVED***isMobile***REMOVED***
-                className=***REMOVED***isMobile ? '' : 'flex-none'***REMOVED***
+                onClick={onCancel}
+                disabled={loading}
+                isMobile={isMobile}
+                className={isMobile ? '' : 'flex-none'}
               >
-                ***REMOVED***cancelText***REMOVED***
+                {cancelText}
               </Button>
               <Button
                 type="submit"
-                form=***REMOVED***formId***REMOVED***
-                loading=***REMOVED***loading***REMOVED***
-                loadingText=***REMOVED***finalSaveLoadingText***REMOVED***
-                disabled=***REMOVED***loading || isSaveDisabled***REMOVED*** // Use the new prop
-                isMobile=***REMOVED***isMobile***REMOVED***
-                className=***REMOVED***isMobile ? '' : 'flex-none'***REMOVED***
+                form={formId}
+                loading={loading}
+                loadingText={finalSaveLoadingText}
+                disabled={loading || isSaveDisabled} // Use the new prop
+                isMobile={isMobile}
+                className={isMobile ? '' : 'flex-none'}
               >
-                ***REMOVED***saveText***REMOVED***
+                {saveText}
               </Button>
             </div>
           </div>
-        )***REMOVED***
+        )}
       </div>
     </Flex>
   );
-***REMOVED***;
+};
 
 export default BaseModal;

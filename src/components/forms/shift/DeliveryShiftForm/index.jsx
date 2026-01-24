@@ -1,11 +1,11 @@
 // src/components/forms/shift/DeliveryShiftForm/index.jsx
 
-import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
-import ***REMOVED*** Truck, Calendar, Clock, DollarSign, Package, Navigation, Fuel, Heart ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
-import BaseForm, ***REMOVED*** FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses ***REMOVED*** from '../../base/BaseForm';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Truck, Calendar, Clock, DollarSign, Package, Navigation, Fuel, Heart } from 'lucide-react';
+import { useThemeColors } from '../../../../hooks/useThemeColors';
+import BaseForm, { FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses } from '../../base/BaseForm';
 
-const DeliveryShiftForm = (***REMOVED***
+const DeliveryShiftForm = ({
   id,
   shift,
   workId,
@@ -15,11 +15,11 @@ const DeliveryShiftForm = (***REMOVED***
   onDirtyChange,
   isMobile = false,
   initialDate
-***REMOVED***) => ***REMOVED***
+}) => {
   const colors = useThemeColors();
 
   const [initialFormData, setInitialFormData] = useState(null);
-  const [formData, setFormData] = useState(***REMOVED***
+  const [formData, setFormData] = useState({
     workId: workId || '',
     startDate: '',
     startTime: '',
@@ -30,14 +30,14 @@ const DeliveryShiftForm = (***REMOVED***
     kilometers: '',
     fuelExpense: '',
     notes: ''
-  ***REMOVED***);
+  });
 
-  const [errors, setErrors] = useState(***REMOVED******REMOVED***);
+  const [errors, setErrors] = useState({});
 
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     if (!initialFormData || !onDirtyChange) return;
 
-    if (shift) ***REMOVED***
+    if (shift) {
       const isDirty =
         formData.workId !== initialFormData.workId ||
         formData.startDate !== initialFormData.startDate ||
@@ -50,26 +50,26 @@ const DeliveryShiftForm = (***REMOVED***
         String(formData.fuelExpense) !== String(initialFormData.fuelExpense) ||
         formData.notes !== initialFormData.notes;
       onDirtyChange(isDirty);
-    ***REMOVED*** else ***REMOVED***
+    } else {
       onDirtyChange(true);
-    ***REMOVED***
-  ***REMOVED***, [formData, initialFormData, onDirtyChange, shift]);
+    }
+  }, [formData, initialFormData, onDirtyChange, shift]);
 
-  const vehicleNeedsFuel = useCallback((vehicle) => ***REMOVED***
+  const vehicleNeedsFuel = useCallback((vehicle) => {
     if (!vehicle) return false;
     const vehicleLower = vehicle.toLowerCase();
     return vehicleLower.includes('motorcycle') || 
            vehicleLower.includes('car') || 
            vehicleLower.includes('auto');
-  ***REMOVED***, []);
+  }, []);
 
   const selectedWork = works.find(t => t.id === formData.workId);
   const showFuel = selectedWork ? vehicleNeedsFuel(selectedWork.vehicle) : true;
 
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     let initialData;
-    if (shift) ***REMOVED***
-      initialData = ***REMOVED***
+    if (shift) {
+      initialData = {
         workId: shift.workId || '',
         startDate: shift.startDate || shift.date || '',
         startTime: shift.startTime || '',
@@ -80,12 +80,12 @@ const DeliveryShiftForm = (***REMOVED***
         kilometers: shift.kilometers?.toString() || '',
         fuelExpense: shift.fuelExpense?.toString() || '',
         notes: shift.notes || ''
-      ***REMOVED***;
-    ***REMOVED*** else ***REMOVED***
+      };
+    } else {
       const dateStr = initialDate instanceof Date 
         ? initialDate.toISOString().split('T')[0] 
         : initialDate;
-      initialData = ***REMOVED***
+      initialData = {
         workId: workId || '',
         startDate: dateStr,
         startTime: '',
@@ -96,239 +96,239 @@ const DeliveryShiftForm = (***REMOVED***
         kilometers: '',
         fuelExpense: '',
         notes: ''
-      ***REMOVED***;
-    ***REMOVED***
+      };
+    }
     setFormData(initialData);
     setInitialFormData(initialData);
-  ***REMOVED***, [shift, workId, initialDate]);
+  }, [shift, workId, initialDate]);
 
-  useEffect(() => ***REMOVED***
-    if (!showFuel && formData.fuelExpense) ***REMOVED***
-      setFormData(prev => (***REMOVED*** ...prev, fuelExpense: '' ***REMOVED***));
-    ***REMOVED***
-  ***REMOVED***, [showFuel, formData.fuelExpense]);
+  useEffect(() => {
+    if (!showFuel && formData.fuelExpense) {
+      setFormData(prev => ({ ...prev, fuelExpense: '' }));
+    }
+  }, [showFuel, formData.fuelExpense]);
 
-  const validateForm = () => ***REMOVED***
-    const newErrors = ***REMOVED******REMOVED***;
+  const validateForm = () => {
+    const newErrors = {};
 
-    if (!formData.workId) ***REMOVED***
+    if (!formData.workId) {
       newErrors.workId = 'Select a work';
-    ***REMOVED***
-    if (!formData.startDate) ***REMOVED***
+    }
+    if (!formData.startDate) {
       newErrors.startDate = 'Date is required';
-    ***REMOVED***
-    if (!formData.startTime) ***REMOVED***
+    }
+    if (!formData.startTime) {
       newErrors.startTime = 'Start time is required';
-    ***REMOVED***
-    if (!formData.endTime) ***REMOVED***
+    }
+    if (!formData.endTime) {
       newErrors.endTime = 'End time is required';
-    ***REMOVED***
-    if (!formData.baseEarnings || parseFloat(formData.baseEarnings) <= 0) ***REMOVED***
+    }
+    if (!formData.baseEarnings || parseFloat(formData.baseEarnings) <= 0) {
       newErrors.baseEarnings = 'Earnings (without tips) are required and must be greater than 0';
-    ***REMOVED***
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  ***REMOVED***;
+  };
 
-  const handleSubmit = (e) => ***REMOVED***
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (validateForm()) ***REMOVED***
-      const dataToSubmit = ***REMOVED***
+    if (validateForm()) {
+      const dataToSubmit = {
         ...formData,
         baseEarnings: parseFloat(formData.baseEarnings) || 0,
         tips: parseFloat(formData.tips) || 0,
         orderCount: parseInt(formData.orderCount) || 0,
         kilometers: parseFloat(formData.kilometers) || 0,
         fuelExpense: showFuel ? (parseFloat(formData.fuelExpense) || 0) : 0
-      ***REMOVED***;
+      };
       onSubmit(dataToSubmit);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  const handleInputChange = useCallback((field, value) => ***REMOVED***
-    setFormData(prev => (***REMOVED*** ...prev, [field]: value ***REMOVED***));
-    if (errors[field]) ***REMOVED***
-      setErrors(prev => (***REMOVED*** ...prev, [field]: undefined ***REMOVED***));
-    ***REMOVED***
+  const handleInputChange = useCallback((field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
 
-    if (field === 'workId') ***REMOVED***
+    if (field === 'workId') {
       onWorkChange?.(value);
-    ***REMOVED***
-  ***REMOVED***, [errors, onWorkChange]);
+    }
+  }, [errors, onWorkChange]);
 
   const traditionalWorks = works.filter(t => t.type !== 'delivery');
   const deliveryWorks = works.filter(t => t.type === 'delivery');
 
   return (
     <BaseForm
-      id=***REMOVED***id***REMOVED***
-      onSubmit=***REMOVED***handleSubmit***REMOVED***
-      isMobile=***REMOVED***isMobile***REMOVED***
+      id={id}
+      onSubmit={handleSubmit}
+      isMobile={isMobile}
     >
       <FormSection>
-        <FormLabel icon=***REMOVED***Truck***REMOVED***>Work</FormLabel>
+        <FormLabel icon={Truck}>Work</FormLabel>
         <select
-          value=***REMOVED***formData.workId***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('workId', e.target.value)***REMOVED***
-          className=***REMOVED***getInputClasses(isMobile, errors.workId)***REMOVED***
-          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+          value={formData.workId}
+          onChange={(e) => handleInputChange('workId', e.target.value)}
+          className={getInputClasses(isMobile, errors.workId)}
+          style={{ '--tw-ring-color': colors.primary }}
           required
         >
           <option value="">Select work</option>
 
-          ***REMOVED***deliveryWorks.length > 0 && (
+          {deliveryWorks.length > 0 && (
             <optgroup label="Delivery Works">
-              ***REMOVED***deliveryWorks.map(work => (
-                <option key=***REMOVED***work.id***REMOVED*** value=***REMOVED***work.id***REMOVED***>
-                  ***REMOVED***work.name***REMOVED*** ***REMOVED***work.vehicle ? `($***REMOVED***work.vehicle***REMOVED***)` : ''***REMOVED***
+              {deliveryWorks.map(work => (
+                <option key={work.id} value={work.id}>
+                  {work.name} {work.vehicle ? `(${work.vehicle})` : ''}
                 </option>
-              ))***REMOVED***
+              ))}
             </optgroup>
-          )***REMOVED***
+          )}
 
-          ***REMOVED***traditionalWorks.length > 0 && (
+          {traditionalWorks.length > 0 && (
             <optgroup label="Traditional Works">
-              ***REMOVED***traditionalWorks.map(work => (
-                <option key=***REMOVED***work.id***REMOVED*** value=***REMOVED***work.id***REMOVED***>
-                  ***REMOVED***work.name***REMOVED***
+              {traditionalWorks.map(work => (
+                <option key={work.id} value={work.id}>
+                  {work.name}
                 </option>
-              ))***REMOVED***
+              ))}
             </optgroup>
-          )***REMOVED***
+          )}
         </select>
-        <FormError error=***REMOVED***errors.workId***REMOVED*** />
+        <FormError error={errors.workId} />
       </FormSection>
 
       <FormSection>
-        <FormLabel icon=***REMOVED***Calendar***REMOVED***>Shift date</FormLabel>
+        <FormLabel icon={Calendar}>Shift date</FormLabel>
         <input
           type="date"
-          value=***REMOVED***formData.startDate***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('startDate', e.target.value)***REMOVED***
-          className=***REMOVED***getInputClasses(isMobile, errors.startDate)***REMOVED***
-          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+          value={formData.startDate}
+          onChange={(e) => handleInputChange('startDate', e.target.value)}
+          className={getInputClasses(isMobile, errors.startDate)}
+          style={{ '--tw-ring-color': colors.primary }}
           required
         />
-        <FormError error=***REMOVED***errors.startDate***REMOVED*** />
+        <FormError error={errors.startDate} />
       </FormSection>
 
-      <FormGrid columns=***REMOVED***2***REMOVED***>
+      <FormGrid columns={2}>
         <FormField>
-          <FormLabel icon=***REMOVED***Clock***REMOVED***>Start time</FormLabel>
+          <FormLabel icon={Clock}>Start time</FormLabel>
           <input
             type="time"
-            value=***REMOVED***formData.startTime***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('startTime', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile, errors.startTime)***REMOVED***
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            value={formData.startTime}
+            onChange={(e) => handleInputChange('startTime', e.target.value)}
+            className={getInputClasses(isMobile, errors.startTime)}
+            style={{ '--tw-ring-color': colors.primary }}
             required
           />
-          <FormError error=***REMOVED***errors.startTime***REMOVED*** />
+          <FormError error={errors.startTime} />
         </FormField>
 
         <FormField>
-          <FormLabel icon=***REMOVED***Clock***REMOVED***>End time</FormLabel>
+          <FormLabel icon={Clock}>End time</FormLabel>
           <input
             type="time"
-            value=***REMOVED***formData.endTime***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('endTime', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile, errors.endTime)***REMOVED***
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            value={formData.endTime}
+            onChange={(e) => handleInputChange('endTime', e.target.value)}
+            className={getInputClasses(isMobile, errors.endTime)}
+            style={{ '--tw-ring-color': colors.primary }}
             required
           />
-          <FormError error=***REMOVED***errors.endTime***REMOVED*** />
+          <FormError error={errors.endTime} />
         </FormField>
       </FormGrid>
 
-      <FormGrid columns=***REMOVED***2***REMOVED***>
+      <FormGrid columns={2}>
         <FormField>
-          <FormLabel icon=***REMOVED***DollarSign***REMOVED***>Earnings (without tips)</FormLabel>
+          <FormLabel icon={DollarSign}>Earnings (without tips)</FormLabel>
           <input
             type="number"
             step="0.01"
-            value=***REMOVED***formData.baseEarnings***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('baseEarnings', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile, errors.baseEarnings)***REMOVED***
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            value={formData.baseEarnings}
+            onChange={(e) => handleInputChange('baseEarnings', e.target.value)}
+            className={getInputClasses(isMobile, errors.baseEarnings)}
+            style={{ '--tw-ring-color': colors.primary }}
             placeholder="0.00"
             required
           />
-          <FormError error=***REMOVED***errors.baseEarnings***REMOVED*** />
+          <FormError error={errors.baseEarnings} />
         </FormField>
 
         <FormField>
-          <FormLabel icon=***REMOVED***Heart***REMOVED***>Tips</FormLabel>
+          <FormLabel icon={Heart}>Tips</FormLabel>
           <input
             type="number"
             step="0.01"
-            value=***REMOVED***formData.tips***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('tips', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile)***REMOVED***
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            value={formData.tips}
+            onChange={(e) => handleInputChange('tips', e.target.value)}
+            className={getInputClasses(isMobile)}
+            style={{ '--tw-ring-color': colors.primary }}
             placeholder="0.00"
           />
         </FormField>
       </FormGrid>
 
-      <FormGrid columns=***REMOVED***2***REMOVED***>
+      <FormGrid columns={2}>
         <FormField>
-          <FormLabel icon=***REMOVED***Package***REMOVED***>Order count</FormLabel>
+          <FormLabel icon={Package}>Order count</FormLabel>
           <input
             type="number"
-            value=***REMOVED***formData.orderCount***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('orderCount', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile)***REMOVED***
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            value={formData.orderCount}
+            onChange={(e) => handleInputChange('orderCount', e.target.value)}
+            className={getInputClasses(isMobile)}
+            style={{ '--tw-ring-color': colors.primary }}
             placeholder="0"
             min="0"
           />
         </FormField>
 
         <FormField>
-          <FormLabel icon=***REMOVED***Navigation***REMOVED***>Kilometers driven</FormLabel>
+          <FormLabel icon={Navigation}>Kilometers driven</FormLabel>
           <input
             type="number"
             step="0.1"
-            value=***REMOVED***formData.kilometers***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('kilometers', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile)***REMOVED***
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            value={formData.kilometers}
+            onChange={(e) => handleInputChange('kilometers', e.target.value)}
+            className={getInputClasses(isMobile)}
+            style={{ '--tw-ring-color': colors.primary }}
             placeholder="0.0"
             min="0"
           />
         </FormField>
       </FormGrid>
 
-      ***REMOVED***showFuel && (
+      {showFuel && (
         <FormSection>
-          <FormLabel icon=***REMOVED***Fuel***REMOVED***>Fuel expenses</FormLabel>
+          <FormLabel icon={Fuel}>Fuel expenses</FormLabel>
           <input
             type="number"
             step="0.01"
-            value=***REMOVED***formData.fuelExpense***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('fuelExpense', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile)***REMOVED***
-            style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
+            value={formData.fuelExpense}
+            onChange={(e) => handleInputChange('fuelExpense', e.target.value)}
+            className={getInputClasses(isMobile)}
+            style={{ '--tw-ring-color': colors.primary }}
             placeholder="0.00"
             min="0"
           />
         </FormSection>
-      )***REMOVED***
+      )}
 
       <FormSection>
         <FormLabel>Notes (optional)</FormLabel>
         <textarea
-          value=***REMOVED***formData.notes***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('notes', e.target.value)***REMOVED***
-          className=***REMOVED***`$***REMOVED***getInputClasses(isMobile)***REMOVED*** resize-none border-gray-300`***REMOVED***
-          style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
-          rows=***REMOVED***isMobile ? "3" : "2"***REMOVED***
+          value={formData.notes}
+          onChange={(e) => handleInputChange('notes', e.target.value)}
+          className={`${getInputClasses(isMobile)} resize-none border-gray-300`}
+          style={{ '--tw-ring-color': colors.primary }}
+          rows={isMobile ? "3" : "2"}
           placeholder="Additional notes about the shift..."
         />
       </FormSection>
     </BaseForm>
   );
-***REMOVED***;
+};
 
 export default DeliveryShiftForm;

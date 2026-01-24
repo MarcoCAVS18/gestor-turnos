@@ -1,47 +1,47 @@
 // src/hooks/useDebug.js
 
-import ***REMOVED*** useCallback ***REMOVED*** from 'react';
+import { useCallback } from 'react';
 
-export const useDebug = () => ***REMOVED***
+export const useDebug = () => {
   const isDebugMode = process.env.REACT_APP_DEBUG_MODE === 'true';
   const environment = process.env.REACT_APP_ENVIRONMENT || 'production';
 
-  const debugLog = useCallback((...args) => ***REMOVED***
-    if (isDebugMode) ***REMOVED***
-    ***REMOVED***
-  ***REMOVED***, [isDebugMode]);
+  const debugLog = useCallback((...args) => {
+    if (isDebugMode) {
+    }
+  }, [isDebugMode]);
 
-  const debugWarn = useCallback((...args) => ***REMOVED***
-    if (isDebugMode) ***REMOVED***
+  const debugWarn = useCallback((...args) => {
+    if (isDebugMode) {
       console.warn('[DEBUG]', ...args);
-    ***REMOVED***
-  ***REMOVED***, [isDebugMode]);
+    }
+  }, [isDebugMode]);
 
-  const debugError = useCallback((...args) => ***REMOVED***
-    if (isDebugMode) ***REMOVED***
+  const debugError = useCallback((...args) => {
+    if (isDebugMode) {
       console.error('[DEBUG]', ...args);
-    ***REMOVED***
-  ***REMOVED***, [isDebugMode]);
+    }
+  }, [isDebugMode]);
 
-  const debugTable = useCallback((data) => ***REMOVED***
-    if (isDebugMode && console.table) ***REMOVED***
+  const debugTable = useCallback((data) => {
+    if (isDebugMode && console.table) {
       console.table(data);
-    ***REMOVED***
-  ***REMOVED***, [isDebugMode]);
+    }
+  }, [isDebugMode]);
 
-  const debugTime = useCallback((label) => ***REMOVED***
-    if (isDebugMode) ***REMOVED***
+  const debugTime = useCallback((label) => {
+    if (isDebugMode) {
       console.time(label);
-    ***REMOVED***
-  ***REMOVED***, [isDebugMode]);
+    }
+  }, [isDebugMode]);
 
-  const debugTimeEnd = useCallback((label) => ***REMOVED***
-    if (isDebugMode) ***REMOVED***
+  const debugTimeEnd = useCallback((label) => {
+    if (isDebugMode) {
       console.timeEnd(label);
-    ***REMOVED***
-  ***REMOVED***, [isDebugMode]);
+    }
+  }, [isDebugMode]);
 
-  return ***REMOVED***
+  return {
     isDebugMode,
     environment,
     debugLog,
@@ -50,5 +50,5 @@ export const useDebug = () => ***REMOVED***
     debugTable,
     debugTime,
     debugTimeEnd
-  ***REMOVED***;
-***REMOVED***;
+  };
+};

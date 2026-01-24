@@ -2,9 +2,9 @@
 
 import React from 'react';
 
-const Flex = (***REMOVED*** variant, children, className = '', ...props ***REMOVED***) => ***REMOVED***
-  const getVariantClasses = () => ***REMOVED***
-    switch (variant) ***REMOVED***
+const Flex = ({ variant, children, className = '', ...props }) => {
+  const getVariantClasses = () => {
+    switch (variant) {
       case 'center':
         return 'flex items-center justify-center';
       case 'between':
@@ -17,16 +17,16 @@ const Flex = (***REMOVED*** variant, children, className = '', ...props ***REMOV
         return 'flex items-start justify-between';
       default:
         return 'flex items-center';
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  const combinedClassName = `$***REMOVED***getVariantClasses()***REMOVED*** $***REMOVED***className***REMOVED***`.trim();
+  const combinedClassName = `${getVariantClasses()} ${className}`.trim();
 
   return (
-    <div className=***REMOVED***combinedClassName***REMOVED*** ***REMOVED***...props***REMOVED***>
-      ***REMOVED***children***REMOVED***
+    <div className={combinedClassName} {...props}>
+      {children}
     </div>
   );
-***REMOVED***;
+};
 
 export default Flex;

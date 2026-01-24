@@ -2,11 +2,11 @@
 
 import React from 'react';
 // FIXED IMPORTS
-import ***REMOVED*** formatCurrency, formatHours ***REMOVED*** from '../../../utils/statsCalculations'; 
-import ***REMOVED*** formatShiftsCount ***REMOVED*** from '../../../utils/pluralization';
+import { formatCurrency, formatHours } from '../../../utils/statsCalculations'; 
+import { formatShiftsCount } from '../../../utils/pluralization';
 import  Card  from '../../ui/Card';
 
-const WeeklyShiftsSection = (***REMOVED*** weeklyStats ***REMOVED***) => ***REMOVED***
+const WeeklyShiftsSection = ({ weeklyStats }) => {
   if (!weeklyStats) return null;
 
   return (
@@ -14,34 +14,34 @@ const WeeklyShiftsSection = (***REMOVED*** weeklyStats ***REMOVED***) => ***REMO
       <h3 className="text-lg font-bold mb-4">Weekly Overview</h3>
 
       <div className="grid grid-cols-2 gap-4">
-        ***REMOVED***/* Total Earnings */***REMOVED***
+        {/* Total Earnings */}
         <div className="bg-gray-50 p-4 rounded-lg">
           <p className="text-sm text-gray-600 mb-1">Total Earnings</p>
-          <p className="text-2xl font-bold text-gray-900">***REMOVED***formatCurrency(weeklyStats.totalEarned)***REMOVED***</p>
+          <p className="text-2xl font-bold text-gray-900">{formatCurrency(weeklyStats.totalEarned)}</p>
         </div>
 
-        ***REMOVED***/* Total Shifts */***REMOVED***
+        {/* Total Shifts */}
         <div className="bg-gray-50 p-4 rounded-lg">
           <p className="text-sm text-gray-600 mb-1">
-             ***REMOVED***formatShiftsCount(weeklyStats.totalShifts, true)***REMOVED***
+             {formatShiftsCount(weeklyStats.totalShifts, true)}
           </p>
-          <p className="text-2xl font-bold text-gray-900">***REMOVED***weeklyStats.totalShifts***REMOVED***</p>
+          <p className="text-2xl font-bold text-gray-900">{weeklyStats.totalShifts}</p>
         </div>
       </div>
 
-      ***REMOVED***/* Detailed Stats */***REMOVED***
+      {/* Detailed Stats */}
       <div className="space-y-2 text-sm mt-6">
         <div className="flex justify-between">
           <span className="text-gray-600">Total Hours Worked</span>
-          <span className="font-semibold">***REMOVED***formatHours(weeklyStats.hoursWorked)***REMOVED***</span>
+          <span className="font-semibold">{formatHours(weeklyStats.hoursWorked)}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-600">Days Worked</span>
-          <span className="font-semibold">***REMOVED***weeklyStats.daysWorked***REMOVED***</span>
+          <span className="font-semibold">{weeklyStats.daysWorked}</span>
         </div>
       </div>
     </Card>
   );
-***REMOVED***;
+};
 
 export default WeeklyShiftsSection;

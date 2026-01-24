@@ -1,6 +1,6 @@
 // src/pages/Settings.jsx
 
-import ***REMOVED*** Settings as SettingsIcon ***REMOVED*** from 'lucide-react';
+import { Settings as SettingsIcon } from 'lucide-react';
 import PageHeader from '../components/layout/PageHeader';
 import ProfileSection from '../components/settings/ProfileSection';
 import ProfilePhotoSection from '../components/settings/ProfilePhotoSection';
@@ -14,26 +14,26 @@ import DeliverySection from '../components/settings/DeliverySection';
 import SmokoSection from '../components/settings/SmokoSection';
 import IntegrationsBanner from '../components/settings/IntegrationsBanner';
 
-const Settings = () => ***REMOVED***
+const Settings = () => {
   return (
     <div className="px-4 py-6 space-y-6">
       <PageHeader
         title="Settings"
         subtitle="Customize your experience and manage your account"
-        icon=***REMOVED***SettingsIcon***REMOVED***
+        icon={SettingsIcon}
       />
 
-      ***REMOVED***/* MAIN CONTAINER WITH FULL HEIGHT */***REMOVED***
+      {/* MAIN CONTAINER WITH FULL HEIGHT */}
       <div className="h-full">
-        ***REMOVED***/* MAIN RESPONSIVE LAYOUT */***REMOVED***
+        {/* MAIN RESPONSIVE LAYOUT */}
         <div className="space-y-6">
 
-          ***REMOVED***/* DESKTOP: Dynamic grid with different distributions */***REMOVED***
+          {/* DESKTOP: Dynamic grid with different distributions */}
           <div className="hidden lg:block space-y-6">
 
-            ***REMOVED***/* FIRST ROW: 3 columns with vertical containers */***REMOVED***
+            {/* FIRST ROW: 3 columns with vertical containers */}
             <div className="grid grid-cols-3 gap-6">
-              ***REMOVED***/* CONTAINER 1: Profile Photo + Profile + Goals + Work Configuration */***REMOVED***
+              {/* CONTAINER 1: Profile Photo + Profile + Goals + Work Configuration */}
               <div className="flex flex-col gap-6 h-full">
                 <ProfilePhotoSection
                   className="flex-grow"
@@ -47,7 +47,7 @@ const Settings = () => ***REMOVED***
                 />
               </div>
 
-              ***REMOVED***/* CONTAINER 2: Integrations Banner + Customization + Smoko + Session */***REMOVED***
+              {/* CONTAINER 2: Integrations Banner + Customization + Smoko + Session */}
               <div className="flex flex-col gap-6 h-full">
                 <IntegrationsBanner className="flex-grow" />
                 <CustomizationSection className="flex-grow" />
@@ -59,7 +59,7 @@ const Settings = () => ***REMOVED***
                 />
               </div>
 
-              ***REMOVED***/* CONTAINER 3: Delivery + Shift Range */***REMOVED***
+              {/* CONTAINER 3: Delivery + Shift Range */}
               <div className="flex flex-col gap-6 h-full">
                 <DeliverySection
                   className="flex-grow"
@@ -72,7 +72,7 @@ const Settings = () => ***REMOVED***
 
           </div>
 
-          ***REMOVED***/* MOBILE: Vertical stack */***REMOVED***
+          {/* MOBILE: Vertical stack */}
           <div className="block lg:hidden space-y-6">
             <IntegrationsBanner />
             <ProfilePhotoSection
@@ -105,6 +105,6 @@ const Settings = () => ***REMOVED***
       <FooterSection />
     </div>
   );
-***REMOVED***;
+};
 
 export default Settings;

@@ -1,47 +1,47 @@
 // src/components/layout/LoadingWrapper/index.jsx
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
+import React, { useState, useEffect } from 'react';
 import Loader from '../../other/Loader';
-import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 
-const LoadingWrapper = (***REMOVED***
+const LoadingWrapper = ({
   loading,
   delay = 3000,
   children,
   className = ''
-***REMOVED***) => ***REMOVED***
+}) => {
   const [showLoading, setShowLoading] = useState(true);
   const isMobile = useIsMobile();
 
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     let timer;
     
-    if (loading) ***REMOVED***
+    if (loading) {
       setShowLoading(true);
-    ***REMOVED*** else ***REMOVED***
-      timer = setTimeout(() => ***REMOVED***
+    } else {
+      timer = setTimeout(() => {
         setShowLoading(false);
-      ***REMOVED***, delay);
-    ***REMOVED***
+      }, delay);
+    }
     
-    return () => ***REMOVED***
+    return () => {
       if (timer) clearTimeout(timer);
-    ***REMOVED***;
-  ***REMOVED***, [loading, delay]);
+    };
+  }, [loading, delay]);
 
-  if (showLoading) ***REMOVED***
+  if (showLoading) {
     return (
-      <div className=***REMOVED***`
+      <div className={`
         flex justify-center items-center 
-        $***REMOVED***isMobile ? 'h-screen pb-24 pt-16' : 'h-screen'***REMOVED*** 
-        $***REMOVED***className***REMOVED***
-      `***REMOVED***>
-        <Loader fullScreen=***REMOVED***false***REMOVED*** />
+        ${isMobile ? 'h-screen pb-24 pt-16' : 'h-screen'} 
+        ${className}
+      `}>
+        <Loader fullScreen={false} />
       </div>
     );
-  ***REMOVED***
+  }
 
   return children;
-***REMOVED***;
+};
 
 export default LoadingWrapper;

@@ -1,52 +1,52 @@
 // src/hooks/useSharedWork.js
 
-import ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** useParams, useNavigate ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
-import ***REMOVED*** useAuth ***REMOVED*** from '../contexts/AuthContext';
-import ***REMOVED*** getSharedWork, acceptSharedWork ***REMOVED*** from '../services/shareService';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useApp } from '../contexts/AppContext';
+import { useAuth } from '../contexts/AuthContext';
+import { getSharedWork, acceptSharedWork } from '../services/shareService';
 
-export const useSharedWork = () => ***REMOVED***
-  const ***REMOVED*** token ***REMOVED*** = useParams();
+export const useSharedWork = () => {
+  const { token } = useParams();
   const navigate = useNavigate();
-  const ***REMOVED*** currentUser ***REMOVED*** = useAuth();
-  const ***REMOVED*** reloadJobs ***REMOVED*** = useApp(); 
+  const { currentUser } = useAuth();
+  const { reloadJobs } = useApp(); 
   
   const [sharedWork, setSharedWork] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [adding, setAdding] = useState(false);
 
-  useEffect(() => ***REMOVED***
-    const loadSharedWork = async () => ***REMOVED***
-      if (!token) ***REMOVED***
+  useEffect(() => {
+    const loadSharedWork = async () => {
+      if (!token) {
         setError('Invalid link token');
         setLoading(false);
         return;
-      ***REMOVED***
+      }
 
-      try ***REMOVED***
+      try {
         
         const data = await getSharedWork(token);
         
         setSharedWork(data);
-      ***REMOVED*** catch (err) ***REMOVED***
+      } catch (err) {
         setError(err.message || 'Error loading shared work');
-      ***REMOVED*** finally ***REMOVED***
+      } finally {
         setLoading(false);
-      ***REMOVED***
-    ***REMOVED***;
+      }
+    };
 
     loadSharedWork();
-  ***REMOVED***, [token]);
+  }, [token]);
 
-  const addWork = async () => ***REMOVED***
-    if (!sharedWork || !currentUser) ***REMOVED***
+  const addWork = async () => {
+    if (!sharedWork || !currentUser) {
       setError('No work to add or user not authenticated');
       return;
-    ***REMOVED***
+    }
     
-    try ***REMOVED***
+    try {
       setAdding(true);
       setError('');
             
@@ -54,26 +54,26 @@ export const useSharedWork = () => ***REMOVED***
       await acceptSharedWork(currentUser.uid, token);
             
       // Reload jobs in the context
-      if (reloadJobs) ***REMOVED***
+      if (reloadJobs) {
         await reloadJobs();
-      ***REMOVED***
+      }
       
       // Navigate to the work list
       navigate('/works');
       
-    ***REMOVED*** catch (err) ***REMOVED***
+    } catch (err) {
       setError('Error adding work: ' + err.message);
-    ***REMOVED*** finally ***REMOVED***
+    } finally {
       setAdding(false);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
-  return ***REMOVED***
+  return {
     sharedWork: sharedWork?.workData,
     loading,
     error,
     adding,
     addWork,
     tokenInfo: sharedWork
-  ***REMOVED***;
-***REMOVED***;
+  };
+};

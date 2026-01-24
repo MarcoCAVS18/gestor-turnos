@@ -7,48 +7,48 @@ import WeeklyStatsGrid from '../../stats/WeeklyStatsGrid';
 import WorkDistributionChart from '../../stats/WorkDistributionChart';
 import DailyBreakdownCard from '../../stats/DailyBreakdownCard';
 
-const StatsSection = (***REMOVED*** weekStatsData = ***REMOVED******REMOVED***, works = [] ***REMOVED***) => ***REMOVED***
-  const ***REMOVED***
+const StatsSection = ({ weekStatsData = {}, works = [] }) => {
+  const {
     currentWeek = 0,
     weeklyHours = 0,
     totalEarnings = 0,
     workDistribution = [],
-    shiftsPerDay = ***REMOVED******REMOVED***,
+    shiftsPerDay = {},
     averageHoursPerDay = 0,
     mostFrequentWork = null
-  ***REMOVED*** = weekStatsData;
+  } = weekStatsData;
 
   return (
     <div className="space-y-6">
-      <WeekNavigator currentWeek=***REMOVED***currentWeek***REMOVED*** />
+      <WeekNavigator currentWeek={currentWeek} />
       
-      ***REMOVED***/* Progress bar */***REMOVED***
+      {/* Progress bar */}
       <StatsProgressBar 
-        weeklyHours=***REMOVED***weeklyHours***REMOVED***
-        hoursGoal=***REMOVED***40***REMOVED***
-        totalEarnings=***REMOVED***totalEarnings***REMOVED***
+        weeklyHours={weeklyHours}
+        hoursGoal={40}
+        totalEarnings={totalEarnings}
       />
       
-      ***REMOVED***/* Weekly stats grid */***REMOVED***
+      {/* Weekly stats grid */}
       <WeeklyStatsGrid 
-        weeklyHours=***REMOVED***weeklyHours***REMOVED***
-        totalEarnings=***REMOVED***totalEarnings***REMOVED***
-        averageHoursPerDay=***REMOVED***averageHoursPerDay***REMOVED***
-        mostFrequentWork=***REMOVED***mostFrequentWork***REMOVED***
+        weeklyHours={weeklyHours}
+        totalEarnings={totalEarnings}
+        averageHoursPerDay={averageHoursPerDay}
+        mostFrequentWork={mostFrequentWork}
       />
       
-      ***REMOVED***/* Distribution chart */***REMOVED***
+      {/* Distribution chart */}
       <WorkDistributionChart 
-        workDistribution=***REMOVED***workDistribution***REMOVED***
+        workDistribution={workDistribution}
       />
       
-      ***REMOVED***/* Daily breakdown */***REMOVED***
+      {/* Daily breakdown */}
       <DailyBreakdownCard 
-        shiftsPerDay=***REMOVED***shiftsPerDay***REMOVED***
-        works=***REMOVED***works***REMOVED***
+        shiftsPerDay={shiftsPerDay}
+        works={works}
       />
     </div>
   );
-***REMOVED***;
+};
 
 export default StatsSection;

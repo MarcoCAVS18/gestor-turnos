@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const TermsOfService = () => ***REMOVED***
+const TermsOfService = () => {
   return (
     <div className="max-w-3xl mx-auto p-6 md:p-12 bg-white min-h-screen">
       <div className="mb-8 border-b pb-4">
@@ -57,6 +57,6 @@ const TermsOfService = () => ***REMOVED***
       </div>
     </div>
   );
-***REMOVED***;
+};
 
 export default TermsOfService;

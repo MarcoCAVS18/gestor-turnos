@@ -1,76 +1,76 @@
 // src/components/settings/TurnRangeSection/index.jsx
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** Clock, Sun, Sunset, Moon, Check ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
+import React, { useState, useEffect } from 'react';
+import { Clock, Sun, Sunset, Moon, Check } from 'lucide-react';
+import { useApp } from '../../../contexts/AppContext';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
-const TimeSelect = (***REMOVED*** label, value, onChange, icon: Icon, iconColor, colors ***REMOVED***) => ***REMOVED***
+const TimeSelect = ({ label, value, onChange, icon: Icon, iconColor, colors }) => {
   return (
     <div>
       <label className="block text-sm text-gray-600 mb-1 flex items-center">
-        ***REMOVED***Icon && <Icon className="h-4 w-4 mr-1" style=***REMOVED******REMOVED*** color: iconColor ***REMOVED******REMOVED*** />***REMOVED***
-        ***REMOVED***label***REMOVED***
+        {Icon && <Icon className="h-4 w-4 mr-1" style={{ color: iconColor }} />}
+        {label}
       </label>
       <select
-        value=***REMOVED***value***REMOVED***
-        onChange=***REMOVED***(e) => onChange(parseInt(e.target.value))***REMOVED***
+        value={value}
+        onChange={(e) => onChange(parseInt(e.target.value))}
         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 transition-colors"
-        style=***REMOVED******REMOVED*** 
+        style={{ 
           '--tw-ring-color': colors.primary
-        ***REMOVED******REMOVED***
+        }}
       >
-        ***REMOVED***Array.from(***REMOVED***length: 24***REMOVED***, (_, i) => (
-          <option key=***REMOVED***i***REMOVED*** value=***REMOVED***i***REMOVED***>***REMOVED***i.toString().padStart(2, '0')***REMOVED***:00</option>
-        ))***REMOVED***
+        {Array.from({length: 24}, (_, i) => (
+          <option key={i} value={i}>{i.toString().padStart(2, '0')}:00</option>
+        ))}
       </select>
     </div>
   );
-***REMOVED***;
+};
 
-const TurnRange = (***REMOVED*** title, icon: Icon, iconColor, children, colors ***REMOVED***) => ***REMOVED***
+const TurnRange = ({ title, icon: Icon, iconColor, children, colors }) => {
   return (
     <div 
       className="border rounded-lg p-4"
-      style=***REMOVED******REMOVED*** borderColor: colors.transparent20 ***REMOVED******REMOVED***
+      style={{ borderColor: colors.transparent20 }}
     >
       <div className="flex items-center mb-3">
-        <Icon className="h-5 w-5 mr-2" style=***REMOVED******REMOVED*** color: iconColor ***REMOVED******REMOVED*** />
-        <h3 className="font-medium">***REMOVED***title***REMOVED***</h3>
+        <Icon className="h-5 w-5 mr-2" style={{ color: iconColor }} />
+        <h3 className="font-medium">{title}</h3>
       </div>
-      ***REMOVED***children***REMOVED***
+      {children}
     </div>
   );
-***REMOVED***;
+};
 
-const ShiftRangeSection = (***REMOVED*** onError, onSuccess, className ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** 
+const ShiftRangeSection = ({ onError, onSuccess, className }) => {
+  const { 
     shiftRanges,
     savePreferences
-  ***REMOVED*** = useApp();
+  } = useApp();
   
   const colors = useThemeColors();
-  const [shiftRangesState, setShiftRangesState] = useState(shiftRanges || ***REMOVED***
+  const [shiftRangesState, setShiftRangesState] = useState(shiftRanges || {
     dayStart: 6,
     dayEnd: 14,
     afternoonStart: 14,
     afternoonEnd: 20,
     nightStart: 20
-  ***REMOVED***);
+  });
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
-  useEffect(() => ***REMOVED***
-    if (shiftRanges) ***REMOVED***
+  useEffect(() => {
+    if (shiftRanges) {
       setShiftRangesState(shiftRanges);
-    ***REMOVED***
-  ***REMOVED***, [shiftRanges]);
+    }
+  }, [shiftRanges]);
 
   // Detect changes to enable/disable the button
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     if (!shiftRanges) return;
     
     const hasChanged = 
@@ -83,114 +83,114 @@ const ShiftRangeSection = (***REMOVED*** onError, onSuccess, className ***REMOVE
     setHasChanges(hasChanged);
     
     // Hide success icon if there are new changes
-    if (hasChanged && showSuccess) ***REMOVED***
+    if (hasChanged && showSuccess) {
       setShowSuccess(false);
-    ***REMOVED***
-  ***REMOVED***, [shiftRangesState, shiftRanges, showSuccess]);
+    }
+  }, [shiftRangesState, shiftRanges, showSuccess]);
 
-  const validateRanges = (ranges) => ***REMOVED***
-    if (ranges.dayStart >= ranges.dayEnd) ***REMOVED***
+  const validateRanges = (ranges) => {
+    if (ranges.dayStart >= ranges.dayEnd) {
       return 'The day shift start time must be earlier than the end time';
-    ***REMOVED***
-    if (ranges.afternoonStart >= ranges.afternoonEnd) ***REMOVED***
+    }
+    if (ranges.afternoonStart >= ranges.afternoonEnd) {
       return 'The afternoon shift start time must be earlier than the end time';
-    ***REMOVED***
-    if (ranges.dayEnd > ranges.afternoonStart) ***REMOVED***
+    }
+    if (ranges.dayEnd > ranges.afternoonStart) {
       return 'The afternoon shift must start after or at the same time the day shift ends';
-    ***REMOVED***
-    if (ranges.afternoonEnd > ranges.nightStart) ***REMOVED***
+    }
+    if (ranges.afternoonEnd > ranges.nightStart) {
       return 'The night shift must start after or at the same time the afternoon shift ends';
-    ***REMOVED***
+    }
     return null;
-  ***REMOVED***;
+  };
 
-  const handleSave = async () => ***REMOVED***
-    try ***REMOVED***
+  const handleSave = async () => {
+    try {
       setLoading(true);
       
       const validationError = validateRanges(shiftRangesState);
-      if (validationError) ***REMOVED***
+      if (validationError) {
         onError?.(validationError);
         return;
-      ***REMOVED***
+      }
       
-      await savePreferences(***REMOVED*** shiftRanges: shiftRangesState ***REMOVED***);
+      await savePreferences({ shiftRanges: shiftRangesState });
       
       // Show success and hide after a while
       setShowSuccess(true);
       setHasChanges(false);
       onSuccess?.('Shift ranges saved successfully.');
       
-      setTimeout(() => ***REMOVED***
+      setTimeout(() => {
         setShowSuccess(false);
-      ***REMOVED***, 3000);
+      }, 3000);
       
-    ***REMOVED*** catch (error) ***REMOVED***
+    } catch (error) {
       onError?.('Error saving ranges: ' + error.message);
-    ***REMOVED*** finally ***REMOVED***
+    } finally {
       setLoading(false);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   // Helper function to update ranges
-  const updateRange = (key, value) => ***REMOVED***
-    setShiftRangesState(prev => (***REMOVED***
+  const updateRange = (key, value) => {
+    setShiftRangesState(prev => ({
       ...prev,
       [key]: value
-    ***REMOVED***));
-  ***REMOVED***;
+    }));
+  };
 
   return (
-    <SettingsSection icon=***REMOVED***Clock***REMOVED*** title="Shift Ranges" className=***REMOVED***className***REMOVED***>
+    <SettingsSection icon={Clock} title="Shift Ranges" className={className}>
       <p className="text-sm text-gray-600 mb-4">
         Configure the time ranges for automatic shift type detection.
         Existing shift tags will be updated automatically.
       </p>
       
       <div className="space-y-4 mb-6">
-        ***REMOVED***/* Day Shift */***REMOVED***
-        <TurnRange title="Day Shift" icon=***REMOVED***Sun***REMOVED*** iconColor="#F59E0B" colors=***REMOVED***colors***REMOVED***>
+        {/* Day Shift */}
+        <TurnRange title="Day Shift" icon={Sun} iconColor="#F59E0B" colors={colors}>
           <div className="grid grid-cols-2 gap-4">
             <TimeSelect
               label="Start time"
-              value=***REMOVED***shiftRangesState.dayStart***REMOVED***
-              onChange=***REMOVED***(value) => updateRange('dayStart', value)***REMOVED***
-              colors=***REMOVED***colors***REMOVED***
+              value={shiftRangesState.dayStart}
+              onChange={(value) => updateRange('dayStart', value)}
+              colors={colors}
             />
             <TimeSelect
               label="End time"
-              value=***REMOVED***shiftRangesState.dayEnd***REMOVED***
-              onChange=***REMOVED***(value) => updateRange('dayEnd', value)***REMOVED***
-              colors=***REMOVED***colors***REMOVED***
+              value={shiftRangesState.dayEnd}
+              onChange={(value) => updateRange('dayEnd', value)}
+              colors={colors}
             />
           </div>
         </TurnRange>
         
-        ***REMOVED***/* Afternoon Shift */***REMOVED***
-        <TurnRange title="Afternoon Shift" icon=***REMOVED***Sunset***REMOVED*** iconColor="#F97316" colors=***REMOVED***colors***REMOVED***>
+        {/* Afternoon Shift */}
+        <TurnRange title="Afternoon Shift" icon={Sunset} iconColor="#F97316" colors={colors}>
           <div className="grid grid-cols-2 gap-4">
             <TimeSelect
               label="Start time"
-              value=***REMOVED***shiftRangesState.afternoonStart***REMOVED***
-              onChange=***REMOVED***(value) => updateRange('afternoonStart', value)***REMOVED***
-              colors=***REMOVED***colors***REMOVED***
+              value={shiftRangesState.afternoonStart}
+              onChange={(value) => updateRange('afternoonStart', value)}
+              colors={colors}
             />
             <TimeSelect
               label="End time"
-              value=***REMOVED***shiftRangesState.afternoonEnd***REMOVED***
-              onChange=***REMOVED***(value) => updateRange('afternoonEnd', value)***REMOVED***
-              colors=***REMOVED***colors***REMOVED***
+              value={shiftRangesState.afternoonEnd}
+              onChange={(value) => updateRange('afternoonEnd', value)}
+              colors={colors}
             />
           </div>
         </TurnRange>
         
-        ***REMOVED***/* Night Shift */***REMOVED***
-        <TurnRange title="Night Shift" icon=***REMOVED***Moon***REMOVED*** iconColor="#6366F1" colors=***REMOVED***colors***REMOVED***>
+        {/* Night Shift */}
+        <TurnRange title="Night Shift" icon={Moon} iconColor="#6366F1" colors={colors}>
           <TimeSelect
             label="Start time"
-            value=***REMOVED***shiftRangesState.nightStart***REMOVED***
-            onChange=***REMOVED***(value) => updateRange('nightStart', value)***REMOVED***
-            colors=***REMOVED***colors***REMOVED***
+            value={shiftRangesState.nightStart}
+            onChange={(value) => updateRange('nightStart', value)}
+            colors={colors}
           />
           <p className="text-xs text-gray-500 mt-1">
             The night shift extends until the end of the day
@@ -199,19 +199,19 @@ const ShiftRangeSection = (***REMOVED*** onError, onSuccess, className ***REMOVE
       </div>
 
       <Button
-        onClick=***REMOVED***handleSave***REMOVED***
-        disabled=***REMOVED***loading || !hasChanges***REMOVED***
-        loading=***REMOVED***loading***REMOVED***
+        onClick={handleSave}
+        disabled={loading || !hasChanges}
+        loading={loading}
         className="w-full relative"
-        themeColor=***REMOVED***colors.primary***REMOVED***
-        icon=***REMOVED***showSuccess ? Check : undefined***REMOVED***
+        themeColor={colors.primary}
+        icon={showSuccess ? Check : undefined}
       >
-        ***REMOVED***loading ? 'Saving...' : 
+        {loading ? 'Saving...' : 
          showSuccess ? 'Saved correctly' :
-         hasChanges ? 'Save shift ranges' : 'No changes'***REMOVED***
+         hasChanges ? 'Save shift ranges' : 'No changes'}
       </Button>
     </SettingsSection>
   );
-***REMOVED***;
+};
 
 export default ShiftRangeSection;

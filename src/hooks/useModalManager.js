@@ -1,44 +1,44 @@
 // src/hooks/useModalManager.js
 
-import ***REMOVED*** useState, useCallback ***REMOVED*** from 'react';
+import { useState, useCallback } from 'react';
 
-const useModalManager = () => ***REMOVED***
+const useModalManager = () => {
   const [isWorkModalOpen, setIsWorkModalOpen] = useState(false);
   const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
   const [selectedWork, setSelectedWork] = useState(null);
   const [selectedShift, setSelectedShift] = useState(null);
 
-  const openNewWorkModal = useCallback(() => ***REMOVED***
+  const openNewWorkModal = useCallback(() => {
     setSelectedWork(null);
     setIsWorkModalOpen(true);
-  ***REMOVED***, []);
+  }, []);
 
-  const openNewShiftModal = useCallback(() => ***REMOVED***
+  const openNewShiftModal = useCallback(() => {
     setSelectedShift(null);
     setIsShiftModalOpen(true);
-  ***REMOVED***, []);
+  }, []);
 
-  const openEditWorkModal = useCallback((work) => ***REMOVED***
+  const openEditWorkModal = useCallback((work) => {
     setSelectedWork(work);
     setIsWorkModalOpen(true);
-  ***REMOVED***, []);
+  }, []);
 
-  const openEditShiftModal = useCallback((shift) => ***REMOVED***
+  const openEditShiftModal = useCallback((shift) => {
     setSelectedShift(shift);
     setIsShiftModalOpen(true);
-  ***REMOVED***, []);
+  }, []);
 
-  const closeWorkModal = useCallback(() => ***REMOVED***
+  const closeWorkModal = useCallback(() => {
     setIsWorkModalOpen(false);
     setSelectedWork(null);
-  ***REMOVED***, []);
+  }, []);
 
-  const closeShiftModal = useCallback(() => ***REMOVED***
+  const closeShiftModal = useCallback(() => {
     setIsShiftModalOpen(false);
     setSelectedShift(null);
-  ***REMOVED***, []);
+  }, []);
 
-  return ***REMOVED***
+  return {
     isWorkModalOpen,
     isShiftModalOpen,
     selectedWork,
@@ -49,7 +49,7 @@ const useModalManager = () => ***REMOVED***
     openEditShiftModal,
     closeWorkModal,
     closeShiftModal,
-  ***REMOVED***;
-***REMOVED***;
+  };
+};
 
 export default useModalManager;

@@ -2,32 +2,32 @@
 
 import React from 'react';
 
-const NotificationBanner = (***REMOVED*** message, type = 'success', onClose ***REMOVED***) => ***REMOVED***
+const NotificationBanner = ({ message, type = 'success', onClose }) => {
   if (!message) return null;
 
-  const getStyles = () => ***REMOVED***
-    const styles = ***REMOVED***
+  const getStyles = () => {
+    const styles = {
       success: 'bg-green-50 text-green-800 border-green-200',
       error: 'bg-red-50 text-red-600 border-red-200'
-    ***REMOVED***;
+    };
     return styles[type] || styles.success;
-  ***REMOVED***;
+  };
 
   return (
-    <div className=***REMOVED***`mb-4 p-3 rounded-md border $***REMOVED***getStyles()***REMOVED***`***REMOVED***>
+    <div className={`mb-4 p-3 rounded-md border ${getStyles()}`}>
       <div className="flex justify-between items-center">
-        <span className="text-sm">***REMOVED***message***REMOVED***</span>
-        ***REMOVED***onClose && (
+        <span className="text-sm">{message}</span>
+        {onClose && (
           <button
-            onClick=***REMOVED***onClose***REMOVED***
+            onClick={onClose}
             className="ml-2 text-current opacity-70 hover:opacity-100"
           >
             ×
           </button>
-        )***REMOVED***
+        )}
       </div>
     </div>
   );
-***REMOVED***;
+};
 
 export default NotificationBanner;

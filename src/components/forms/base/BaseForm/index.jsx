@@ -10,51 +10,51 @@ import React from 'react';
  * - Optimized mobile styles (prevents zoom on iOS)
  * - Integrated responsive grid
  *
- * @param ***REMOVED***Object***REMOVED*** props
- * @param ***REMOVED***string***REMOVED*** props.id - Form ID to link with external buttons
- * @param ***REMOVED***Function***REMOVED*** props.onSubmit - Function to execute when submitting the form
- * @param ***REMOVED***boolean***REMOVED*** props.isMobile - If in mobile view
- * @param ***REMOVED***ReactNode***REMOVED*** props.children - Form content
- * @param ***REMOVED***string***REMOVED*** props.className - Additional classes for the container
+ * @param {Object} props
+ * @param {string} props.id - Form ID to link with external buttons
+ * @param {Function} props.onSubmit - Function to execute when submitting the form
+ * @param {boolean} props.isMobile - If in mobile view
+ * @param {ReactNode} props.children - Form content
+ * @param {string} props.className - Additional classes for the container
  */
-const BaseForm = (***REMOVED***
+const BaseForm = ({
   id,
   onSubmit,
   isMobile = false,
   children,
   className = ''
-***REMOVED***) => ***REMOVED***
+}) => {
   return (
     <div
-      className=***REMOVED***`w-full $***REMOVED***isMobile ? 'mobile-form' : ''***REMOVED*** $***REMOVED***className***REMOVED***`***REMOVED***
-      style=***REMOVED******REMOVED***
+      className={`w-full ${isMobile ? 'mobile-form' : ''} ${className}`}
+      style={{
         maxWidth: '100%',
         overflowX: 'hidden'
-      ***REMOVED******REMOVED***
+      }}
     >
-      <form id=***REMOVED***id***REMOVED*** onSubmit=***REMOVED***onSubmit***REMOVED*** className="space-y-4 w-full">
-        ***REMOVED***/* Form content */***REMOVED***
-        ***REMOVED***children***REMOVED***
+      <form id={id} onSubmit={onSubmit} className="space-y-4 w-full">
+        {/* Form content */}
+        {children}
       </form>
 
-      ***REMOVED***/* Additional styles for mobile - prevents zoom on iOS */***REMOVED***
-      ***REMOVED***isMobile && (
-        <style jsx>***REMOVED***`
+      {/* Additional styles for mobile - prevents zoom on iOS */}
+      {isMobile && (
+        <style jsx>{`
           .mobile-form input[type="date"],
           .mobile-form input[type="time"],
           .mobile-form input[type="number"],
           .mobile-form input[type="text"],
           .mobile-form select,
-          .mobile-form textarea ***REMOVED***
+          .mobile-form textarea {
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
             background-image: none;
             font-size: 16px !important;
-          ***REMOVED***
+          }
 
           .mobile-form input[type="time"]::-webkit-calendar-picker-indicator,
-          .mobile-form input[type="date"]::-webkit-calendar-picker-indicator ***REMOVED***
+          .mobile-form input[type="date"]::-webkit-calendar-picker-indicator {
             background: transparent;
             bottom: 0;
             color: transparent;
@@ -65,20 +65,20 @@ const BaseForm = (***REMOVED***
             right: 0;
             top: 0;
             width: auto;
-          ***REMOVED***
-        `***REMOVED***</style>
-      )***REMOVED***
+          }
+        `}</style>
+      )}
     </div>
   );
-***REMOVED***;
+};
 
 /**
  * FormSection - Helper component for form sections
  * Provides a container with consistent styles
  */
-export const FormSection = (***REMOVED*** children, className = '' ***REMOVED***) => (
-  <div className=***REMOVED***`w-full $***REMOVED***className***REMOVED***`***REMOVED***>
-    ***REMOVED***children***REMOVED***
+export const FormSection = ({ children, className = '' }) => (
+  <div className={`w-full ${className}`}>
+    {children}
   </div>
 );
 
@@ -86,10 +86,10 @@ export const FormSection = (***REMOVED*** children, className = '' ***REMOVED***
  * FormGrid - Helper component for responsive grids
  * Automatically handles mobile/desktop layout
  */
-export const FormGrid = (***REMOVED*** children, columns = 2, className = '' ***REMOVED***) => (
+export const FormGrid = ({ children, columns = 2, className = '' }) => (
   <div className="w-full">
-    <div className=***REMOVED***`grid grid-cols-$***REMOVED***columns***REMOVED*** gap-4 $***REMOVED***className***REMOVED***`***REMOVED***>
-      ***REMOVED***children***REMOVED***
+    <div className={`grid grid-cols-${columns} gap-4 ${className}`}>
+      {children}
     </div>
   </div>
 );
@@ -98,51 +98,51 @@ export const FormGrid = (***REMOVED*** children, columns = 2, className = '' ***
  * FormField - Helper component for individual fields
  * Provides consistent structure with label, input, and error
  */
-export const FormField = (***REMOVED***
+export const FormField = ({
   children,
   className = ''
-***REMOVED***) => (
-  <div className=***REMOVED***`w-full min-w-0 $***REMOVED***className***REMOVED***`***REMOVED***>
-    ***REMOVED***children***REMOVED***
+}) => (
+  <div className={`w-full min-w-0 ${className}`}>
+    {children}
   </div>
 );
 
 /**
  * FormLabel - Helper component for consistent labels
  */
-export const FormLabel = (***REMOVED***
+export const FormLabel = ({
   children,
   icon: Icon,
   className = ''
-***REMOVED***) => (
-  <label className=***REMOVED***`block text-sm font-medium text-gray-700 mb-2 $***REMOVED***className***REMOVED***`***REMOVED***>
-    ***REMOVED***Icon && <Icon size=***REMOVED***16***REMOVED*** className="inline mr-2" />***REMOVED***
-    ***REMOVED***children***REMOVED***
+}) => (
+  <label className={`block text-sm font-medium text-gray-700 mb-2 ${className}`}>
+    {Icon && <Icon size={16} className="inline mr-2" />}
+    {children}
   </label>
 );
 
 /**
  * FormError - Helper component to display errors
  */
-export const FormError = (***REMOVED*** error, size = 'xs' ***REMOVED***) => ***REMOVED***
+export const FormError = ({ error, size = 'xs' }) => {
   if (!error) return null;
   return (
-    <p className=***REMOVED***`text-red-500 text-$***REMOVED***size***REMOVED*** mt-1`***REMOVED***>***REMOVED***error***REMOVED***</p>
+    <p className={`text-red-500 text-${size} mt-1`}>{error}</p>
   );
-***REMOVED***;
+};
 
 /**
  * getInputClasses - Helper function for input classes
  * Provides consistent classes for all inputs
  */
-export const getInputClasses = (isMobile = false, hasError = false) => ***REMOVED***
+export const getInputClasses = (isMobile = false, hasError = false) => {
   const baseClasses = `
     w-full px-3 py-3 border rounded-lg text-base transition-colors
     focus:outline-none focus:ring-2 focus:border-transparent
-    $***REMOVED***isMobile ? 'text-base min-h-[44px]' : 'text-sm py-2'***REMOVED***
-    $***REMOVED***hasError ? 'border-red-500' : 'border-gray-300'***REMOVED***
+    ${isMobile ? 'text-base min-h-[44px]' : 'text-sm py-2'}
+    ${hasError ? 'border-red-500' : 'border-gray-300'}
   `;
   return baseClasses.trim();
-***REMOVED***;
+};
 
 export default BaseForm;

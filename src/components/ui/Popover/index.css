@@ -1,4 +1,4 @@
-.popover-content ***REMOVED***
+.popover-content {
   position: absolute;
   background-color: white;
   border: 1px solid #e2e8f0;
@@ -11,28 +11,28 @@
   opacity: 0;
   transform: scale(0.95);
   pointer-events: none;
-***REMOVED***
+}
 
-.popover-content[style*="top"] ***REMOVED***
+.popover-content[style*="top"] {
   opacity: 1;
   transform: scale(1);
   pointer-events: auto;
-***REMOVED***
+}
 
-.popover-title ***REMOVED***
+.popover-title {
   padding: 12px 16px;
   border-bottom: 1px solid #f1f5f9;
   font-weight: 600;
   font-size: 1rem;
   color: #1e293b;
-***REMOVED***
+}
 
-.popover-body ***REMOVED***
+.popover-body {
   padding: 12px 16px;
   font-size: 0.875rem;
-***REMOVED***
+}
 
-.popover-arrow ***REMOVED***
+.popover-arrow {
   position: absolute;
   width: 10px;
   height: 10px;
@@ -40,37 +40,37 @@
   transform: rotate(45deg);
   border-style: solid;
   border-color: #e2e8f0;
-***REMOVED***
+}
 
 /* Positioning */
-.popover-bottom .popover-arrow ***REMOVED***
+.popover-bottom .popover-arrow {
   top: -5px;
   left: calc(50% - 5px);
   border-width: 1px 0 0 1px;
-***REMOVED***
+}
 
-.popover-top .popover-arrow ***REMOVED***
+.popover-top .popover-arrow {
   bottom: -5px;
   left: calc(50% - 5px);
   border-width: 0 1px 1px 0;
-***REMOVED***
+}
 
-.popover-right .popover-arrow ***REMOVED***
+.popover-right .popover-arrow {
   left: -5px;
   top: calc(50% - 5px);
   border-width: 0 0 1px 1px;
-***REMOVED***
+}
 
-.popover-left .popover-arrow ***REMOVED***
+.popover-left .popover-arrow {
   right: -5px;
   top: calc(50% - 5px);
   border-width: 1px 1px 0 0;
-***REMOVED***
+}
 
-.popover-footer ***REMOVED***
+.popover-footer {
   padding: 8px 16px;
   border-top: 1px solid #f1f5f9;
   font-size: 0.75rem;
   color: #64748b;
   text-align: right;
-***REMOVED***
+}

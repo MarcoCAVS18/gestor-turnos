@@ -1,14 +1,14 @@
 // src/hooks/useThemeColors.js
 
-import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
+import { useApp } from '../contexts/AppContext';
 
 /**
  * Hook that provides the application's theme colors
  * with consistent fallback values
- * @returns ***REMOVED***object***REMOVED*** Object with theme colors and utilities
+ * @returns {object} Object with theme colors and utilities
  */
-export const useThemeColors = () => ***REMOVED***
-  const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
+export const useThemeColors = () => {
+  const { thematicColors } = useApp();
   
   // Main base color
   const primary = thematicColors?.base || '#EC4899';
@@ -16,17 +16,17 @@ export const useThemeColors = () => ***REMOVED***
   // Automatically derive colors if not available
   const primaryDark = thematicColors?.dark || darkenColor(primary, 20);
   
-  return ***REMOVED***
+  return {
     // Main colors
     primary,
     primaryDark,
     
     // Transparencies
-    transparent5: thematicColors?.transparent5 || `$***REMOVED***primary***REMOVED***0D`, // 5% opacity
-    transparent10: thematicColors?.transparent10 || `$***REMOVED***primary***REMOVED***1A`, // 10% opacity
-    transparent20: thematicColors?.transparent20 || `$***REMOVED***primary***REMOVED***33`, // 20% opacity
-    transparent30: thematicColors?.transparent30 || `$***REMOVED***primary***REMOVED***4D`, // 30% opacity
-    transparent50: thematicColors?.transparent50 || `$***REMOVED***primary***REMOVED***80`, // 50% opacity
+    transparent5: thematicColors?.transparent5 || `${primary}0D`, // 5% opacity
+    transparent10: thematicColors?.transparent10 || `${primary}1A`, // 10% opacity
+    transparent20: thematicColors?.transparent20 || `${primary}33`, // 20% opacity
+    transparent30: thematicColors?.transparent30 || `${primary}4D`, // 30% opacity
+    transparent50: thematicColors?.transparent50 || `${primary}80`, // 50% opacity
     
     // Text colors
     textContrast: thematicColors?.textContrast || '#ffffff',
@@ -34,17 +34,17 @@ export const useThemeColors = () => ***REMOVED***
     // Utilities
     getRingColor: () => primary,
     getHoverColor: () => primaryDark,
-    getBorderColor: () => thematicColors?.transparent20 || `$***REMOVED***primary***REMOVED***33`,
-  ***REMOVED***;
-***REMOVED***;
+    getBorderColor: () => thematicColors?.transparent20 || `${primary}33`,
+  };
+};
 
 /**
  * Helper function to darken a hexadecimal color
- * @param ***REMOVED***string***REMOVED*** hex - Hexadecimal color (ex: '#EC4899')
- * @param ***REMOVED***number***REMOVED*** percent - Darkening percentage (0-100)
- * @returns ***REMOVED***string***REMOVED*** Darkened color
+ * @param {string} hex - Hexadecimal color (ex: '#EC4899')
+ * @param {number} percent - Darkening percentage (0-100)
+ * @returns {string} Darkened color
  */
-function darkenColor(hex, percent) ***REMOVED***
+function darkenColor(hex, percent) {
   // Remove the # if present
   const color = hex.replace('#', '');
   
@@ -60,5 +60,5 @@ function darkenColor(hex, percent) ***REMOVED***
   const newB = Math.round(b * factor);
   
   // Convert back to hex
-  return `#$***REMOVED***newR.toString(16).padStart(2, '0')***REMOVED***$***REMOVED***newG.toString(16).padStart(2, '0')***REMOVED***$***REMOVED***newB.toString(16).padStart(2, '0')***REMOVED***`;
-***REMOVED***
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+}

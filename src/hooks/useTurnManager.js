@@ -1,37 +1,37 @@
 // src/hooks/useShiftManager.js
 
-import ***REMOVED*** useState ***REMOVED*** from 'react';
+import { useState } from 'react';
 
-export const useTurnManager = () => ***REMOVED***
+export const useTurnManager = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedShift, setSelectedShift] = useState(null);
   const [initialDate, setInitialDate] = useState(null);
 
-  const openNewModal = () => ***REMOVED***
+  const openNewModal = () => {
     setSelectedShift(null);
     setInitialDate(null);
     setIsModalOpen(true);
-  ***REMOVED***;
+  };
 
-  const openEditModal = (shift) => ***REMOVED***
+  const openEditModal = (shift) => {
     setSelectedShift(shift);
     setInitialDate(null);
     setIsModalOpen(true);
-  ***REMOVED***;
+  };
 
-  const openModalWithDate = (date) => ***REMOVED***
+  const openModalWithDate = (date) => {
     setSelectedShift(null);
     setInitialDate(date);
     setIsModalOpen(true);
-  ***REMOVED***;
+  };
 
-  const closeModal = () => ***REMOVED***
+  const closeModal = () => {
     setIsModalOpen(false);
     setSelectedShift(null);
     setInitialDate(null);
-  ***REMOVED***;
+  };
 
-  return ***REMOVED***
+  return {
     isModalOpen,
     selectedShift,
     initialDate,
@@ -39,5 +39,5 @@ export const useTurnManager = () => ***REMOVED***
     openEditModal,
     openModalWithDate,
     closeModal
-  ***REMOVED***;
-***REMOVED***;
+  };
+};

@@ -4,45 +4,45 @@ import React from 'react';
 import Button from '../../ui/Button';
 import Card from '../../ui/Card';
 
-const EmptyStateContent = (***REMOVED*** icon: Icon, title, description, action ***REMOVED***) => (
+const EmptyStateContent = ({ icon: Icon, title, description, action }) => (
   <>
-    ***REMOVED***Icon && <Icon size=***REMOVED***48***REMOVED*** className="mx-auto text-gray-400 mb-4" />***REMOVED***
-    <h3 className="text-lg font-semibold text-gray-600 mb-2">***REMOVED***title***REMOVED***</h3>
-    <p className="text-gray-500 mb-6">***REMOVED***description***REMOVED***</p>
-    ***REMOVED***action && (
+    {Icon && <Icon size={48} className="mx-auto text-gray-400 mb-4" />}
+    <h3 className="text-lg font-semibold text-gray-600 mb-2">{title}</h3>
+    <p className="text-gray-500 mb-6">{description}</p>
+    {action && (
       <Button 
-        onClick=***REMOVED***action.onClick***REMOVED***
+        onClick={action.onClick}
         className="flex items-center gap-2"
-        icon=***REMOVED***action.icon***REMOVED***
-        variant=***REMOVED***action.variant || 'primary'***REMOVED***
+        icon={action.icon}
+        variant={action.variant || 'primary'}
       >
-        ***REMOVED***action.label***REMOVED***
+        {action.label}
       </Button>
-    )***REMOVED***
+    )}
   </>
 );
 
-const EmptyState = (***REMOVED*** 
+const EmptyState = ({ 
   icon: Icon, 
   title, 
   description, 
   action,
   className = '',
   contained = false 
-***REMOVED***) => ***REMOVED***
-  if (contained) ***REMOVED***
+}) => {
+  if (contained) {
     return (
-      <div className=***REMOVED***`text-center $***REMOVED***className***REMOVED***`***REMOVED***>
-        <EmptyStateContent icon=***REMOVED***Icon***REMOVED*** title=***REMOVED***title***REMOVED*** description=***REMOVED***description***REMOVED*** action=***REMOVED***action***REMOVED*** />
+      <div className={`text-center ${className}`}>
+        <EmptyStateContent icon={Icon} title={title} description={description} action={action} />
       </div>
     );
-  ***REMOVED***
+  }
 
   return (
-    <Card className=***REMOVED***`text-center py-12 $***REMOVED***className***REMOVED***`***REMOVED***>
-      <EmptyStateContent icon=***REMOVED***Icon***REMOVED*** title=***REMOVED***title***REMOVED*** description=***REMOVED***description***REMOVED*** action=***REMOVED***action***REMOVED*** />
+    <Card className={`text-center py-12 ${className}`}>
+      <EmptyStateContent icon={Icon} title={title} description={description} action={action} />
     </Card>
   );
-***REMOVED***;
+};
 
 export default EmptyState;

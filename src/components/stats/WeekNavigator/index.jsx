@@ -1,40 +1,40 @@
 // src/components/stats/WeekNavigator/index.jsx
 
 import React from 'react';
-import ***REMOVED*** ChevronLeft, ChevronRight ***REMOVED*** from 'lucide-react';
-import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../hooks/useThemeColors';
-import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile'; // Import hook
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
+import { useIsMobile } from '../../../hooks/useIsMobile'; // Import hook
 
-const WeekNavigator = (***REMOVED***
+const WeekNavigator = ({
   weekOffset = 0,
   onWeekChange,
   startDate,
   endDate,
   variant = 'default', // 'default' or 'transparent'
-***REMOVED***) => ***REMOVED***
+}) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile(); // Use hook
 
-  const changeWeek = typeof onWeekChange === 'function' ? onWeekChange : () => ***REMOVED******REMOVED***;
+  const changeWeek = typeof onWeekChange === 'function' ? onWeekChange : () => {};
   const validStartDate = startDate instanceof Date ? startDate : new Date();
   const validEndDate = endDate instanceof Date ? endDate : new Date();
 
-  const getWeekTitle = () => ***REMOVED***
+  const getWeekTitle = () => {
     if (weekOffset === 0) return 'This week';
     if (weekOffset === -1) return 'Last week';
     // ... (rest of the logic)
     if (weekOffset === 1) return 'Next week';
-    if (weekOffset > 1) return `In $***REMOVED***weekOffset***REMOVED*** weeks`;
-    return `$***REMOVED***Math.abs(weekOffset)***REMOVED*** weeks ago`;
-  ***REMOVED***;
+    if (weekOffset > 1) return `In ${weekOffset} weeks`;
+    return `${Math.abs(weekOffset)} weeks ago`;
+  };
 
-  const formatDate = (date) => ***REMOVED***
-    try ***REMOVED***
-      return date.toLocaleDateString('en-US', ***REMOVED*** day: 'numeric', month: 'long' ***REMOVED***);
-    ***REMOVED*** catch (error) ***REMOVED***
+  const formatDate = (date) => {
+    try {
+      return date.toLocaleDateString('en-US', { day: 'numeric', month: 'long' });
+    } catch (error) {
       return 'Invalid date';
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   const isTransparent = variant === 'transparent';
 
@@ -51,51 +51,51 @@ const WeekNavigator = (***REMOVED***
   // Unify buttons to avoid duplication
   const renderNavButton = (direction) => (
     <button
-      onClick=***REMOVED***() => changeWeek(weekOffset + (direction === 'left' ? -1 : 1))***REMOVED***
-      className=***REMOVED***`p-2 rounded-full transition-colors $***REMOVED***isMobile && !isTransparent ? 'p-3' : ''***REMOVED***`***REMOVED***
-      style=***REMOVED******REMOVED*** backgroundColor: colors.transparent10, color: colors.primary ***REMOVED******REMOVED***
+      onClick={() => changeWeek(weekOffset + (direction === 'left' ? -1 : 1))}
+      className={`p-2 rounded-full transition-colors ${isMobile && !isTransparent ? 'p-3' : ''}`}
+      style={{ backgroundColor: colors.transparent10, color: colors.primary }}
     >
-      ***REMOVED***direction === 'left' ? <ChevronLeft size=***REMOVED***20***REMOVED*** /> : <ChevronRight size=***REMOVED***20***REMOVED*** />***REMOVED***
+      {direction === 'left' ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
     </button>
   );
 
   // Conditional rendering based on isMobile and variant
-  if (isMobile && isTransparent) ***REMOVED***
+  if (isMobile && isTransparent) {
     // Layout for mobile and transparent (below title)
     return (
       <div className="flex items-center justify-between w-full">
-        ***REMOVED***renderNavButton('left')***REMOVED***
+        {renderNavButton('left')}
         <div className="text-center">
-          <h2 className="text-lg font-semibold">***REMOVED***getWeekTitle()***REMOVED***</h2>
+          <h2 className="text-lg font-semibold">{getWeekTitle()}</h2>
           <p className="text-sm text-gray-500">
-            ***REMOVED***formatDate(validStartDate)***REMOVED*** - ***REMOVED***formatDate(validEndDate)***REMOVED***
+            {formatDate(validStartDate)} - {formatDate(validEndDate)}
           </p>
         </div>
-        ***REMOVED***renderNavButton('right')***REMOVED***
+        {renderNavButton('right')}
       </div>
     );
-  ***REMOVED***
+  }
 
   // Original layout for desktop or when not transparent on mobile
   return (
-    <div className=***REMOVED***containerClasses***REMOVED***>
+    <div className={containerClasses}>
       <div className="flex flex-row items-center justify-between">
-        ***REMOVED***/* Left Button */***REMOVED***
-        ***REMOVED***renderNavButton('left')***REMOVED***
+        {/* Left Button */}
+        {renderNavButton('left')}
 
-        ***REMOVED***/* Center Content */***REMOVED***
+        {/* Center Content */}
         <div className="text-center">
-          <h2 className=***REMOVED***titleClasses***REMOVED***>***REMOVED***getWeekTitle()***REMOVED***</h2>
-          <p className=***REMOVED***subtitleClasses***REMOVED***>
-            ***REMOVED***formatDate(validStartDate)***REMOVED*** - ***REMOVED***formatDate(validEndDate)***REMOVED***
+          <h2 className={titleClasses}>{getWeekTitle()}</h2>
+          <p className={subtitleClasses}>
+            {formatDate(validStartDate)} - {formatDate(validEndDate)}
           </p>
         </div>
 
-        ***REMOVED***/* Right Button */***REMOVED***
-        ***REMOVED***renderNavButton('right')***REMOVED***
+        {/* Right Button */}
+        {renderNavButton('right')}
       </div>
     </div>
   );
-***REMOVED***;
+};
 
 export default WeekNavigator;

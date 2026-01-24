@@ -1,16 +1,16 @@
 // src/pages/auth/ForgotPassword.jsx
 
-import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
-import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
-import ***REMOVED*** useAuth ***REMOVED*** from '../../contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 // New structured import
 import Button from '../../components/ui/Button';
 import Flex from '../../components/ui/Flex';
 import Logo from '../../components/icons/Logo';
 
-const ForgotPassword = () => ***REMOVED***
-  const ***REMOVED*** resetPassword ***REMOVED*** = useAuth();
+const ForgotPassword = () => {
+  const { resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -21,40 +21,40 @@ const ForgotPassword = () => ***REMOVED***
   const [emailValid, setEmailValid] = useState(false);
 
   // Validate email when it changes
-  useEffect(() => ***REMOVED***
+  useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setEmailValid(emailRegex.test(email));
-  ***REMOVED***, [email]);
+  }, [email]);
 
-  const handleSubmit = async (e) => ***REMOVED***
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!emailValid) ***REMOVED***
+    if (!emailValid) {
       return setError('Please enter a valid email');
-    ***REMOVED***
+    }
 
-    try ***REMOVED***
+    try {
       setError('');
       setLoading(true);
       await resetPassword(email);
       
       // Redirect to login with success message
-      navigate('/login', ***REMOVED*** 
-        state: ***REMOVED*** 
+      navigate('/login', { 
+        state: { 
           emailSent: true,
           email: email
-        ***REMOVED*** 
-      ***REMOVED***);
-    ***REMOVED*** catch (error) ***REMOVED***
+        } 
+      });
+    } catch (error) {
       console.error('Error sending recovery email:', error);
       setError('Could not send recovery email. Check your email address.');
       setLoading(false);
-    ***REMOVED***
-  ***REMOVED***;
+    }
+  };
 
   return (
     <div className="fixed inset-0">
-      ***REMOVED***/* Background video */***REMOVED***
+      {/* Background video */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black opacity-50 z-10"></div>
         <video 
@@ -69,7 +69,7 @@ const ForgotPassword = () => ***REMOVED***
         </video>
       </div>
       
-      ***REMOVED***/* Recovery content */***REMOVED***
+      {/* Recovery content */}
       <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-12 overflow-y-auto">
         <Logo />
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">
@@ -78,19 +78,19 @@ const ForgotPassword = () => ***REMOVED***
             Enter your email address and we will send you a link to reset your password.
           </p>
           
-          ***REMOVED***error && (
+          {error && (
             <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
-              ***REMOVED***error***REMOVED***
+              {error}
             </div>
-          )***REMOVED***
+          )}
           
-          <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-gray-700 mb-2">Email</label>
               <input
                 type="email"
-                value=***REMOVED***email***REMOVED***
-                onChange=***REMOVED***(e) => setEmail(e.target.value)***REMOVED***
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded focus:ring-pink-500 focus:border-pink-500"
                 placeholder="your@email.com"
                 required
@@ -100,17 +100,17 @@ const ForgotPassword = () => ***REMOVED***
             <div className="flex items-center space-x-4">
               <Button
                 type="button"
-                onClick=***REMOVED***() => navigate('/login')***REMOVED***
+                onClick={() => navigate('/login')}
                 variant="outline"
-                disabled=***REMOVED***loading***REMOVED***
+                disabled={loading}
               >
                 Cancel
               </Button>
               
               <Button
                 type="submit"
-                disabled=***REMOVED***loading || !emailValid***REMOVED***
-                loading=***REMOVED***loading***REMOVED***
+                disabled={loading || !emailValid}
+                loading={loading}
                 className="flex-1"
               >
                 Recover password
@@ -121,6 +121,6 @@ const ForgotPassword = () => ***REMOVED***
       </Flex>
     </div>
   );
-***REMOVED***;
+};
 
 export default ForgotPassword;
