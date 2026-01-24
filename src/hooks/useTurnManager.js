@@ -1,43 +1,43 @@
-// src/hooks/useTurnManager.js
+// src/hooks/useShiftManager.js
 
 import ***REMOVED*** useState ***REMOVED*** from 'react';
 
 export const useTurnManager = () => ***REMOVED***
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [turnoSeleccionado, setTurnoSeleccionado] = useState(null);
-  const [fechaInicial, setFechaInicial] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedShift, setSelectedShift] = useState(null);
+  const [initialDate, setInitialDate] = useState(null);
 
-  const abrirModalNuevo = () => ***REMOVED***
-    setTurnoSeleccionado(null);
-    setFechaInicial(null);
-    setModalAbierto(true);
+  const openNewModal = () => ***REMOVED***
+    setSelectedShift(null);
+    setInitialDate(null);
+    setIsModalOpen(true);
   ***REMOVED***;
 
-  const abrirModalEditar = (turno) => ***REMOVED***
-    setTurnoSeleccionado(turno);
-    setFechaInicial(null);
-    setModalAbierto(true);
+  const openEditModal = (shift) => ***REMOVED***
+    setSelectedShift(shift);
+    setInitialDate(null);
+    setIsModalOpen(true);
   ***REMOVED***;
 
-  const abrirModalConFecha = (fecha) => ***REMOVED***
-    setTurnoSeleccionado(null);
-    setFechaInicial(fecha);
-    setModalAbierto(true);
+  const openModalWithDate = (date) => ***REMOVED***
+    setSelectedShift(null);
+    setInitialDate(date);
+    setIsModalOpen(true);
   ***REMOVED***;
 
-  const cerrarModal = () => ***REMOVED***
-    setModalAbierto(false);
-    setTurnoSeleccionado(null);
-    setFechaInicial(null);
+  const closeModal = () => ***REMOVED***
+    setIsModalOpen(false);
+    setSelectedShift(null);
+    setInitialDate(null);
   ***REMOVED***;
 
   return ***REMOVED***
-    modalAbierto,
-    turnoSeleccionado,
-    fechaInicial,
-    abrirModalNuevo,
-    abrirModalEditar,
-    abrirModalConFecha,
-    cerrarModal
+    isModalOpen,
+    selectedShift,
+    initialDate,
+    openNewModal,
+    openEditModal,
+    openModalWithDate,
+    closeModal
   ***REMOVED***;
 ***REMOVED***;

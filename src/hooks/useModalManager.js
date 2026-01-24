@@ -1,52 +1,52 @@
 import ***REMOVED*** useState, useCallback ***REMOVED*** from 'react';
 
 const useModalManager = () => ***REMOVED***
-  const [modalTrabajoAbierto, setModalTrabajoAbierto] = useState(false);
-  const [modalTurnoAbierto, setModalTurnoAbierto] = useState(false);
-  const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(null);
-  const [turnoSeleccionado, setTurnoSeleccionado] = useState(null);
+  const [isWorkModalOpen, setIsWorkModalOpen] = useState(false);
+  const [isShiftModalOpen, setIsShiftModalOpen] = useState(false);
+  const [selectedWork, setSelectedWork] = useState(null);
+  const [selectedShift, setSelectedShift] = useState(null);
 
-  const abrirModalNuevoTrabajo = useCallback(() => ***REMOVED***
-    setTrabajoSeleccionado(null);
-    setModalTrabajoAbierto(true);
+  const openNewWorkModal = useCallback(() => ***REMOVED***
+    setSelectedWork(null);
+    setIsWorkModalOpen(true);
   ***REMOVED***, []);
 
-  const abrirModalNuevoTurno = useCallback(() => ***REMOVED***
-    setTurnoSeleccionado(null);
-    setModalTurnoAbierto(true);
+  const openNewShiftModal = useCallback(() => ***REMOVED***
+    setSelectedShift(null);
+    setIsShiftModalOpen(true);
   ***REMOVED***, []);
 
-  const abrirModalEditarTrabajo = useCallback((trabajo) => ***REMOVED***
-    setTrabajoSeleccionado(trabajo);
-    setModalTrabajoAbierto(true);
+  const openEditWorkModal = useCallback((work) => ***REMOVED***
+    setSelectedWork(work);
+    setIsWorkModalOpen(true);
   ***REMOVED***, []);
 
-  const abrirModalEditarTurno = useCallback((turno) => ***REMOVED***
-    setTurnoSeleccionado(turno);
-    setModalTurnoAbierto(true);
+  const openEditShiftModal = useCallback((shift) => ***REMOVED***
+    setSelectedShift(shift);
+    setIsShiftModalOpen(true);
   ***REMOVED***, []);
 
-  const cerrarModalTrabajo = useCallback(() => ***REMOVED***
-    setModalTrabajoAbierto(false);
-    setTrabajoSeleccionado(null);
+  const closeWorkModal = useCallback(() => ***REMOVED***
+    setIsWorkModalOpen(false);
+    setSelectedWork(null);
   ***REMOVED***, []);
 
-  const cerrarModalTurno = useCallback(() => ***REMOVED***
-    setModalTurnoAbierto(false);
-    setTurnoSeleccionado(null);
+  const closeShiftModal = useCallback(() => ***REMOVED***
+    setIsShiftModalOpen(false);
+    setSelectedShift(null);
   ***REMOVED***, []);
 
   return ***REMOVED***
-    modalTrabajoAbierto,
-    modalTurnoAbierto,
-    trabajoSeleccionado,
-    turnoSeleccionado,
-    abrirModalNuevoTrabajo,
-    abrirModalNuevoTurno,
-    abrirModalEditarTrabajo,
-    abrirModalEditarTurno,
-    cerrarModalTrabajo,
-    cerrarModalTurno,
+    isWorkModalOpen,
+    isShiftModalOpen,
+    selectedWork,
+    selectedShift,
+    openNewWorkModal,
+    openNewShiftModal,
+    openEditWorkModal,
+    openEditShiftModal,
+    closeWorkModal,
+    closeShiftModal,
   ***REMOVED***;
 ***REMOVED***;
 

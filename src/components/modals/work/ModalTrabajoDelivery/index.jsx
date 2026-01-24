@@ -1,4 +1,4 @@
-// ModalTrabajoDelivery - Refactorizado con BaseModal
+// DeliveryWorkModal - Refactored with BaseModal
 
 import ***REMOVED*** useCallback, useEffect, useState ***REMOVED*** from 'react';
 import ***REMOVED*** Pen, Plus ***REMOVED*** from 'lucide-react';
@@ -11,29 +11,29 @@ import VehicleSelector from '../../../delivery/VehicleSelector';
 import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
 import Flex from '../../../ui/Flex';
 
-const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
+const DeliveryWorkModal = (***REMOVED*** isOpen, onClose, work ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** addDeliveryJob, editDeliveryJob ***REMOVED*** = useApp();
   const isMobile = useIsMobile();
   const colors = useThemeColors();
   const [loading, setLoading] = useState(false);
 
-  const manejarGuardado = async (datosDelivery) => ***REMOVED***
+  const handleSave = async (deliveryData) => ***REMOVED***
     try ***REMOVED***
       setLoading(true);
-      if (trabajo) ***REMOVED***
-        await editDeliveryJob(trabajo.id, datosDelivery);
+      if (work) ***REMOVED***
+        await editDeliveryJob(work.id, deliveryData);
       ***REMOVED*** else ***REMOVED***
-        await addDeliveryJob(datosDelivery);
+        await addDeliveryJob(deliveryData);
       ***REMOVED***
       setLoading(false);
       onClose();
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al guardar trabajo delivery:', error);
+      console.error('Error saving delivery work:', error);
       setLoading(false);
     ***REMOVED***
   ***REMOVED***;
 
-  const manejarCerrar = () => ***REMOVED***
+  const handleClose = () => ***REMOVED***
     setLoading(false);
     onClose();
   ***REMOVED***;
@@ -43,18 +43,18 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
   return (
     <BaseModal
       isOpen=***REMOVED***isOpen***REMOVED***
-      onClose=***REMOVED***manejarCerrar***REMOVED***
-      title=***REMOVED***trabajo ? 'Editar Trabajo Delivery' : 'Nuevo Trabajo Delivery'***REMOVED***
-      icon=***REMOVED***trabajo ? Pen : Plus***REMOVED***
+      onClose=***REMOVED***handleClose***REMOVED***
+      title=***REMOVED***work ? 'Edit Delivery Work' : 'New Delivery Work'***REMOVED***
+      icon=***REMOVED***work ? Pen : Plus***REMOVED***
       loading=***REMOVED***loading***REMOVED***
-      loadingText="Guardando..."
+      loadingText="Saving..."
       showFooter=***REMOVED***true***REMOVED***
       maxWidth="md"
     >
-      <TrabajoDeliveryFormContent
-        trabajo=***REMOVED***trabajo***REMOVED***
-        onSubmit=***REMOVED***manejarGuardado***REMOVED***
-        onCancel=***REMOVED***manejarCerrar***REMOVED***
+      <DeliveryWorkFormContent
+        work=***REMOVED***work***REMOVED***
+        onSubmit=***REMOVED***handleSave***REMOVED***
+        onCancel=***REMOVED***handleClose***REMOVED***
         thematicColors=***REMOVED***colors***REMOVED***
         isMobile=***REMOVED***isMobile***REMOVED***
       />
@@ -62,80 +62,78 @@ const ModalTrabajoDelivery = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED*
   );
 ***REMOVED***;
 
-const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, thematicColors, isMobile ***REMOVED***) => ***REMOVED***
+const DeliveryWorkFormContent = (***REMOVED*** work, onSubmit, onCancel, thematicColors, isMobile ***REMOVED***) => ***REMOVED***
   const [formData, setFormData] = useState(***REMOVED***
-    nombre: '',
-    plataforma: '',
-    vehiculo: '',
-    descripcion: '',
-    colorAvatar: '#10B981',
-    configuracion: ***REMOVED***
-      calculaPorKm: false,
-      tarifaPorKm: 0,
-      calculaPorPedido: true,
-      tarifaBasePedido: 0,
-      incluyePropinas: true,
-      rastreaCombustible: true
+    name: '',
+    platform: '',
+    vehicle: '',
+    description: '',
+    avatarColor: '#10B981',
+    configuration: ***REMOVED***
+      calculateByKm: false,
+      ratePerKm: 0,
+      calculateByOrder: true,
+      baseRatePerOrder: 0,
+      includeTips: true,
+      trackFuel: true
     ***REMOVED***
   ***REMOVED***);
 
   const [errors, setErrors] = useState(***REMOVED******REMOVED***);
-  const [guardando, setGuardando] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  // Función para determinar si el vehículo necesita combustible
-  const vehiculoNecesitaCombustible = (vehiculo) => ***REMOVED***
-    const vehiculoLower = vehiculo.toLowerCase();
-    return vehiculoLower.includes('moto') ||
-           vehiculoLower.includes('auto') ||
-           vehiculoLower.includes('carro') ||
-           vehiculoLower.includes('coche');
+  // Function to determine if the vehicle needs fuel
+  const vehicleNeedsFuel = (vehicle) => ***REMOVED***
+    const vehicleLower = vehicle.toLowerCase();
+    return vehicleLower.includes('motorcycle') ||
+           vehicleLower.includes('car');
   ***REMOVED***;
 
   useEffect(() => ***REMOVED***
-    if (trabajo) ***REMOVED***
+    if (work) ***REMOVED***
       setFormData(***REMOVED***
-        nombre: trabajo.nombre || '',
-        plataforma: trabajo.plataforma || '',
-        vehiculo: trabajo.vehiculo || '',
-        descripcion: trabajo.descripcion || '',
-        colorAvatar: trabajo.colorAvatar || '#10B981',
-        configuracion: trabajo.configuracion || ***REMOVED***
-          calculaPorKm: false,
-          tarifaPorKm: 0,
-          calculaPorPedido: true,
-          tarifaBasePedido: 0,
-          incluyePropinas: true,
-          rastreaCombustible: vehiculoNecesitaCombustible(trabajo.vehiculo || '')
+        name: work.name || '',
+        platform: work.platform || '',
+        vehicle: work.vehicle || '',
+        description: work.description || '',
+        avatarColor: work.avatarColor || '#10B981',
+        configuration: work.configuration || ***REMOVED***
+          calculateByKm: false,
+          ratePerKm: 0,
+          calculateByOrder: true,
+          baseRatePerOrder: 0,
+          includeTips: true,
+          trackFuel: vehicleNeedsFuel(work.vehicle || '')
         ***REMOVED***
       ***REMOVED***);
     ***REMOVED***
-  ***REMOVED***, [trabajo]);
+  ***REMOVED***, [work]);
 
-  // Actualizar automáticamente el rastreo de combustible cuando cambia el vehículo
+  // Automatically update fuel tracking when vehicle changes
   useEffect(() => ***REMOVED***
-    if (formData.vehiculo) ***REMOVED***
-      const necesitaCombustible = vehiculoNecesitaCombustible(formData.vehiculo);
+    if (formData.vehicle) ***REMOVED***
+      const needsFuel = vehicleNeedsFuel(formData.vehicle);
       setFormData(prev => (***REMOVED***
         ...prev,
-        configuracion: ***REMOVED***
-          ...prev.configuracion,
-          rastreaCombustible: necesitaCombustible
+        configuration: ***REMOVED***
+          ...prev.configuration,
+          trackFuel: needsFuel
         ***REMOVED***
       ***REMOVED***));
     ***REMOVED***
-  ***REMOVED***, [formData.vehiculo]);
+  ***REMOVED***, [formData.vehicle]);
 
-  const validarFormulario = () => ***REMOVED***
+  const validateForm = () => ***REMOVED***
     const newErrors = ***REMOVED******REMOVED***;
 
-    if (!formData.nombre.trim()) ***REMOVED***
-      newErrors.nombre = 'El nombre es requerido';
+    if (!formData.name.trim()) ***REMOVED***
+      newErrors.name = 'Name is required';
     ***REMOVED***
-    if (!formData.plataforma) ***REMOVED***
-      newErrors.plataforma = 'Selecciona una plataforma';
+    if (!formData.platform) ***REMOVED***
+      newErrors.platform = 'Select a platform';
     ***REMOVED***
-    if (!formData.vehiculo) ***REMOVED***
-      newErrors.vehiculo = 'Selecciona un vehículo';
+    if (!formData.vehicle) ***REMOVED***
+      newErrors.vehicle = 'Select a vehicle';
     ***REMOVED***
 
     setErrors(newErrors);
@@ -145,17 +143,17 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
   const handleSubmit = async (e) => ***REMOVED***
     e.preventDefault();
 
-    if (!validarFormulario()) ***REMOVED***
+    if (!validateForm()) ***REMOVED***
       return;
     ***REMOVED***
 
-    setGuardando(true);
+    setSaving(true);
 
     try ***REMOVED***
       await onSubmit(formData);
     ***REMOVED*** catch (error) ***REMOVED***
       console.error('Error:', error);
-      setGuardando(false);
+      setSaving(false);
     ***REMOVED***
   ***REMOVED***;
 
@@ -176,118 +174,118 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
   const handleConfigChange = (field, value) => ***REMOVED***
     setFormData(prev => (***REMOVED***
       ...prev,
-      configuracion: ***REMOVED***
-        ...prev.configuracion,
+      configuration: ***REMOVED***
+        ...prev.configuration,
         [field]: value
       ***REMOVED***
     ***REMOVED***));
   ***REMOVED***;
 
-  // Determinar si mostrar la opción de combustible
-  const mostrarOpcionCombustible = vehiculoNecesitaCombustible(formData.vehiculo);
+  // Determine if showing the fuel option
+  const showFuelOption = vehicleNeedsFuel(formData.vehicle);
 
   return (
     <form onSubmit=***REMOVED***handleSubmit***REMOVED*** className=***REMOVED***`space-y-6 $***REMOVED***isMobile ? 'mobile-form' : ''***REMOVED***`***REMOVED***>
-      ***REMOVED***/* Nombre del trabajo */***REMOVED***
+      ***REMOVED***/* Job Name */***REMOVED***
       <div>
         <label className="block text-sm font-medium mb-2">
-          Nombre del trabajo
+          Job Name
         </label>
         <input
           type="text"
-          value=***REMOVED***formData.nombre***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('nombre', e.target.value)***REMOVED***
+          value=***REMOVED***formData.name***REMOVED***
+          onChange=***REMOVED***(e) => handleInputChange('name', e.target.value)***REMOVED***
           className=***REMOVED***`
             w-full border rounded-lg text-sm transition-colors
             $***REMOVED***isMobile ? 'p-3 text-base' : 'p-3'***REMOVED***
-            $***REMOVED***errors.nombre ? 'border-red-500' : 'border-gray-300'***REMOVED***
+            $***REMOVED***errors.name ? 'border-red-500' : 'border-gray-300'***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED***
             '--tw-ring-color': thematicColors.primary,
-            borderColor: errors.nombre ? '#EF4444' : undefined
+            borderColor: errors.name ? '#EF4444' : undefined
           ***REMOVED******REMOVED***
-          placeholder="ej: Delivery Zona Norte"
+          placeholder="e.g., North Zone Delivery"
         />
-        ***REMOVED***errors.nombre && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.nombre***REMOVED***</p>***REMOVED***
+        ***REMOVED***errors.name && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.name***REMOVED***</p>***REMOVED***
       </div>
 
-      ***REMOVED***/* Selector de plataforma */***REMOVED***
+      ***REMOVED***/* Platform Selector */***REMOVED***
       <div>
         <PlatformSelector
-          selectedPlatform=***REMOVED***formData.plataforma***REMOVED***
-          onPlatformSelect=***REMOVED***(plataforma) => handleInputChange('plataforma', plataforma)***REMOVED***
+          selectedPlatform=***REMOVED***formData.platform***REMOVED***
+          onPlatformSelect=***REMOVED***(platform) => handleInputChange('platform', platform)***REMOVED***
         />
-        ***REMOVED***errors.plataforma && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.plataforma***REMOVED***</p>***REMOVED***
+        ***REMOVED***errors.platform && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.platform***REMOVED***</p>***REMOVED***
       </div>
 
-      ***REMOVED***/* Selector de vehículo */***REMOVED***
+      ***REMOVED***/* Vehicle Selector */***REMOVED***
       <div>
         <VehicleSelector
-          selectedVehicle=***REMOVED***formData.vehiculo***REMOVED***
-          onVehicleSelect=***REMOVED***(vehiculo) => handleInputChange('vehiculo', vehiculo)***REMOVED***
+          selectedVehicle=***REMOVED***formData.vehicle***REMOVED***
+          onVehicleSelect=***REMOVED***(vehicle) => handleInputChange('vehicle', vehicle)***REMOVED***
         />
-        ***REMOVED***errors.vehiculo && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.vehiculo***REMOVED***</p>***REMOVED***
+        ***REMOVED***errors.vehicle && <p className="text-red-500 text-xs mt-1">***REMOVED***errors.vehicle***REMOVED***</p>***REMOVED***
       </div>
 
-      ***REMOVED***/* Configuración de cálculos */***REMOVED***
+      ***REMOVED***/* Calculation settings */***REMOVED***
       <div
         className="space-y-3 p-4 rounded-lg"
         style=***REMOVED******REMOVED*** backgroundColor: thematicColors.transparent5 ***REMOVED******REMOVED***
       >
-        <h3 className="text-sm font-medium text-gray-700">Configuración de cálculos</h3>
+        <h3 className="text-sm font-medium text-gray-700">Calculation settings</h3>
 
         <label className="flex items-center space-x-3">
           <input
             type="checkbox"
-            checked=***REMOVED***formData.configuracion.incluyePropinas***REMOVED***
-            onChange=***REMOVED***(e) => handleConfigChange('incluyePropinas', e.target.checked)***REMOVED***
+            checked=***REMOVED***formData.configuration.includeTips***REMOVED***
+            onChange=***REMOVED***(e) => handleConfigChange('includeTips', e.target.checked)***REMOVED***
             className="rounded w-4 h-4"
             style=***REMOVED******REMOVED*** accentColor: thematicColors.primary ***REMOVED******REMOVED***
           />
-          <span className="text-sm">Incluir propinas en el registro</span>
+          <span className="text-sm">Include tips in the record</span>
         </label>
 
-        ***REMOVED***/* Solo mostrar opción de combustible si el vehículo lo requiere */***REMOVED***
-        ***REMOVED***mostrarOpcionCombustible && (
+        ***REMOVED***/* Only show fuel option if the vehicle requires it */***REMOVED***
+        ***REMOVED***showFuelOption && (
           <label className="flex items-center space-x-3">
             <input
               type="checkbox"
-              checked=***REMOVED***formData.configuracion.rastreaCombustible***REMOVED***
-              onChange=***REMOVED***(e) => handleConfigChange('rastreaCombustible', e.target.checked)***REMOVED***
+              checked=***REMOVED***formData.configuration.trackFuel***REMOVED***
+              onChange=***REMOVED***(e) => handleConfigChange('trackFuel', e.target.checked)***REMOVED***
               className="rounded w-4 h-4"
               style=***REMOVED******REMOVED*** accentColor: thematicColors.primary ***REMOVED******REMOVED***
             />
-            <span className="text-sm">Rastrear gastos de combustible</span>
+            <span className="text-sm">Track fuel expenses</span>
           </label>
         )***REMOVED***
 
-        ***REMOVED***/* Mensaje informativo para vehículos sin combustible */***REMOVED***
-        ***REMOVED***!mostrarOpcionCombustible && formData.vehiculo && (
+        ***REMOVED***/* Informational message for vehicles without fuel */***REMOVED***
+        ***REMOVED***!showFuelOption && formData.vehicle && (
           <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded border border-blue-200">
-            Este vehículo no requiere combustible, por lo que no se incluirán gastos relacionados.
+            This vehicle does not require fuel, so related expenses will not be included.
           </div>
         )***REMOVED***
       </div>
 
-      ***REMOVED***/* Descripción opcional */***REMOVED***
+      ***REMOVED***/* Description (optional) */***REMOVED***
       <div>
         <label className="block text-sm font-medium mb-2">
-          Descripción (opcional)
+          Description (optional)
         </label>
         <textarea
-          value=***REMOVED***formData.descripcion***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('descripcion', e.target.value)***REMOVED***
+          value=***REMOVED***formData.description***REMOVED***
+          onChange=***REMOVED***(e) => handleInputChange('description', e.target.value)***REMOVED***
           className=***REMOVED***`
             w-full border rounded-lg text-sm border-gray-300 resize-none
             $***REMOVED***isMobile ? 'p-3 text-base' : 'p-2'***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED*** '--tw-ring-color': thematicColors.primary ***REMOVED******REMOVED***
           rows=***REMOVED***isMobile ? "3" : "2"***REMOVED***
-          placeholder="ej: Trabajo de delivery en zona céntrica..."
+          placeholder="e.g., Delivery job in the downtown area..."
         />
       </div>
 
-      ***REMOVED***/* Botones */***REMOVED***
+      ***REMOVED***/* Buttons */***REMOVED***
       <div className=***REMOVED***`flex pt-4 $***REMOVED***isMobile ? 'flex-col space-y-3' : 'space-x-3'***REMOVED***`***REMOVED***>
         <button
           type="button"
@@ -297,13 +295,13 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
             text-sm font-medium rounded-lg transition-colors
             $***REMOVED***isMobile ? 'py-3 px-4 w-full' : 'flex-1 py-3 px-4'***REMOVED***
           `***REMOVED***
-          disabled=***REMOVED***guardando***REMOVED***
+          disabled=***REMOVED***saving***REMOVED***
         >
-          Cancelar
+          Cancel
         </button>
         <button
           type="submit"
-          disabled=***REMOVED***guardando***REMOVED***
+          disabled=***REMOVED***saving***REMOVED***
           className=***REMOVED***`
             text-white rounded-lg hover:opacity-90 text-sm font-medium
             disabled:opacity-50 transition-colors
@@ -311,23 +309,23 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
           `***REMOVED***
           style=***REMOVED******REMOVED*** backgroundColor: thematicColors.primary ***REMOVED******REMOVED***
           onMouseEnter=***REMOVED***(e) => ***REMOVED***
-            if (!guardando) ***REMOVED***
+            if (!saving) ***REMOVED***
               e.target.style.backgroundColor = thematicColors.primaryDark;
             ***REMOVED***
           ***REMOVED******REMOVED***
           onMouseLeave=***REMOVED***(e) => ***REMOVED***
-            if (!guardando) ***REMOVED***
+            if (!saving) ***REMOVED***
               e.target.style.backgroundColor = thematicColors.primary;
             ***REMOVED***
           ***REMOVED******REMOVED***
         >
-          ***REMOVED***guardando ? (
+          ***REMOVED***saving ? (
             <Flex variant="center" className="space-x-2">
               <LoadingSpinner size="h-4 w-4" color="border-white" />
-              <span>Guardando...</span>
+              <span>Saving...</span>
             </Flex>
           ) : (
-            trabajo ? 'Actualizar' : 'Crear'
+            work ? 'Update' : 'Create'
           )***REMOVED***
         </button>
       </div>
@@ -335,4 +333,4 @@ const TrabajoDeliveryFormContent = (***REMOVED*** trabajo, onSubmit, onCancel, t
   );
 ***REMOVED***;
 
-export default ModalTrabajoDelivery;
+export default DeliveryWorkModal;

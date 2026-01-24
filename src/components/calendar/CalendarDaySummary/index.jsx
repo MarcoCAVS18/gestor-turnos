@@ -6,92 +6,92 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/currency';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../hooks/useIsMobile';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../utils/time';
-import TarjetaTurno from '../../cards/shift/TarjetaTurno';
-import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
+import ShiftCard from '../../cards/shift/TarjetaTurno';
+import DeliveryShiftCard from '../../cards/shift/TarjetaTurnoDelivery';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 import ***REMOVED*** getShiftGrossEarnings ***REMOVED*** from '../../../utils/shiftUtils';
 
 const CalendarDaySummary = (***REMOVED*** 
-  fechaSeleccionada, 
-  turnos, 
-  formatearFecha, 
-  onNuevoTurno,
+  selectedDate, 
+  shifts, 
+  formatDate, 
+  onNewShift,
   onEdit,
   onDelete
 ***REMOVED***) => ***REMOVED***
-  const ***REMOVED*** todosLosTrabajos, calculatePayment, thematicColors ***REMOVED*** = useApp();
+  const ***REMOVED*** allWorks, calculatePayment, thematicColors ***REMOVED*** = useApp();
   const isMobile = useIsMobile();
 
-  // Función para calcular total del día
-  const calcularTotalDia = (turnosList) => ***REMOVED***
-    if (!Array.isArray(turnosList)) return 0;
+  // Function to calculate day total
+  const calculateDayTotal = (shiftsList) => ***REMOVED***
+    if (!Array.isArray(shiftsList)) return 0;
     
-    return turnosList.reduce((total, turno) => ***REMOVED***
-      if (!turno) return total;
+    return shiftsList.reduce((total, shift) => ***REMOVED***
+      if (!shift) return total;
       
       try ***REMOVED***
-        if (turno.tipo === 'delivery') ***REMOVED***
-          return total + getShiftGrossEarnings(turno);
+        if (shift.type === 'delivery') ***REMOVED***
+          return total + getShiftGrossEarnings(shift);
         ***REMOVED*** else ***REMOVED***
-          const resultado = calculatePayment ? calculatePayment(turno) : ***REMOVED*** totalWithDiscount: 0 ***REMOVED***;
-          return total + (resultado.totalWithDiscount || resultado.totalConDescuento || 0);
+          const result = calculatePayment ? calculatePayment(shift) : ***REMOVED*** totalWithDiscount: 0 ***REMOVED***;
+          return total + (result.totalWithDiscount || 0);
         ***REMOVED***
       ***REMOVED*** catch (error) ***REMOVED***
-        console.warn('Error calculando pago para turno:', turno.id, error);
+        console.warn('Error calculating payment for shift:', shift.id, error);
         return total;
       ***REMOVED***
     ***REMOVED***, 0);
   ***REMOVED***;
 
-  // Función para obtener trabajo de forma segura
-  const obtenerTrabajo = (trabajoId) => ***REMOVED***
-    if (!todosLosTrabajos || !Array.isArray(todosLosTrabajos)) return null;
-    return todosLosTrabajos.find(t => t && t.id === trabajoId) || null;
+  // Function to get work safely
+  const getWork = (workId) => ***REMOVED***
+    if (!allWorks || !Array.isArray(allWorks)) return null;
+    return allWorks.find(w => w && w.id === workId) || null;
   ***REMOVED***;
 
   const shortFormattedDate = useMemo(() => ***REMOVED***
-    if (!fechaSeleccionada) return '';
+    if (!selectedDate) return '';
 
-    const dateObj = createSafeDate(fechaSeleccionada);
+    const dateObj = createSafeDate(selectedDate);
     
-    const hoy = new Date();
-    const ayer = new Date(hoy);
-    ayer.setDate(hoy.getDate() - 1);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
     
     let prefix = '';
-    if (dateObj.toDateString() === hoy.toDateString()) ***REMOVED***
-        prefix = 'Hoy, ';
-    ***REMOVED*** else if (dateObj.toDateString() === ayer.toDateString()) ***REMOVED***
-        prefix = 'Ayer, ';
+    if (dateObj.toDateString() === today.toDateString()) ***REMOVED***
+        prefix = 'Today, ';
+    ***REMOVED*** else if (dateObj.toDateString() === yesterday.toDateString()) ***REMOVED***
+        prefix = 'Yesterday, ';
     ***REMOVED***
 
-    const formatted = dateObj.toLocaleDateString('es-ES', ***REMOVED***
+    const formatted = dateObj.toLocaleDateString('en-US', ***REMOVED***
       month: 'short',
       day: 'numeric'
     ***REMOVED***);
     
     return prefix + formatted;
-  ***REMOVED***, [fechaSeleccionada]);
+  ***REMOVED***, [selectedDate]);
 
 
 
-  // Validar y filtrar turnos
-  const turnosSegurosDia = Array.isArray(turnos) ? turnos.filter(turno => turno && turno.id) : [];
-  const totalDia = calcularTotalDia(turnosSegurosDia);
+  // Validate and filter shifts
+  const safeShiftsOfDay = Array.isArray(shifts) ? shifts.filter(shift => shift && shift.id) : [];
+  const dayTotal = calculateDayTotal(safeShiftsOfDay);
 
   return (
     <div className="mt-6">
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-lg font-semibold">
-          Turnos del día seleccionado
+          Shifts of the selected day
         </h3>
       </div>
       
-      ***REMOVED***turnosSegurosDia.length > 0 ? (
+      ***REMOVED***safeShiftsOfDay.length > 0 ? (
         <Card className="overflow-hidden" padding="none">
-          ***REMOVED***/* Header del día */***REMOVED***
+          ***REMOVED***/* Day header */***REMOVED***
           <div 
             className="px-4 py-3 border-b rounded-t-xl"
             style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.transparent10 || 'rgba(236, 72, 153, 0.1)' ***REMOVED******REMOVED***
@@ -100,55 +100,55 @@ const CalendarDaySummary = (***REMOVED***
               <div className="flex items-center">
                 <Calendar size=***REMOVED***18***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base || '#EC4899' ***REMOVED******REMOVED*** className="mr-2" />
                 <h3 className="font-semibold">
-                  ***REMOVED***isMobile ? shortFormattedDate : (formatearFecha ? formatearFecha(fechaSeleccionada) : fechaSeleccionada)***REMOVED***
+                  ***REMOVED***isMobile ? shortFormattedDate : (formatDate ? formatDate(selectedDate) : selectedDate)***REMOVED***
                 </h3>
               </div>
               <div className="flex items-center text-sm">
                 <Clock size=***REMOVED***14***REMOVED*** className="mr-1 text-blue-500" />
-                <span className="mr-3">***REMOVED***turnosSegurosDia.length***REMOVED*** turno***REMOVED***turnosSegurosDia.length !== 1 ? 's' : ''***REMOVED***</span>
+                <span className="mr-3">***REMOVED***safeShiftsOfDay.length***REMOVED*** shift***REMOVED***safeShiftsOfDay.length !== 1 ? 's' : ''***REMOVED***</span>
                 <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1 text-green-500" />
-                <span className="font-medium">***REMOVED***formatCurrency(totalDia)***REMOVED***</span>
+                <span className="font-medium">***REMOVED***formatCurrency(dayTotal)***REMOVED***</span>
               </div>
             </Flex>
           </div>
           
-          ***REMOVED***/* Grid de turnos - 3 columnas */***REMOVED***
+          ***REMOVED***/* Shifts grid - 3 columns */***REMOVED***
           <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            ***REMOVED***turnosSegurosDia.map(turno => ***REMOVED***
-              const trabajo = obtenerTrabajo(turno.trabajoId);
+            ***REMOVED***safeShiftsOfDay.map(shift => ***REMOVED***
+              const work = getWork(shift.workId);
               
-              // Si no encontramos el trabajo, mostrar información limitada
-              if (!trabajo) ***REMOVED***
+              // If we don't find the work, show limited information
+              if (!work) ***REMOVED***
                 return (
-                  <div key=***REMOVED***turno.id***REMOVED*** className="p-3 border border-gray-200 rounded-lg bg-gray-50">
+                  <div key=***REMOVED***shift.id***REMOVED*** className="p-3 border border-gray-200 rounded-lg bg-gray-50">
                     <Flex variant="between">
                       <div>
-                        <p className="font-medium text-gray-600">Trabajo eliminado</p>
+                        <p className="font-medium text-gray-600">Work deleted</p>
                         <p className="text-sm text-gray-500">
-                          ***REMOVED***turno.horaInicio***REMOVED*** - ***REMOVED***turno.horaFin***REMOVED***
+                          ***REMOVED***shift.startTime***REMOVED*** - ***REMOVED***shift.endTime***REMOVED***
                         </p>
                       </div>
                       <span className="text-sm text-gray-400">
-                        ***REMOVED***turno.tipo === 'delivery' ? formatCurrency(turno.gananciaTotal || 0) : '--'***REMOVED***
+                        ***REMOVED***shift.type === 'delivery' ? formatCurrency(shift.totalEarning || 0) : '--'***REMOVED***
                       </span>
                     </Flex>
                   </div>
                 );
               ***REMOVED***
               
-              // Determinar qué componente usar
-              const TarjetaComponent = (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') 
-                ? TarjetaTurnoDelivery 
-                : TarjetaTurno;
+              // Determine which component to use
+              const CardComponent = (shift.type === 'delivery' || work.type === 'delivery') 
+                ? DeliveryShiftCard 
+                : ShiftCard;
               
               return (
-                <div key=***REMOVED***turno.id***REMOVED*** className="w-full">
-                  <TarjetaComponent
-                    turno=***REMOVED***turno***REMOVED***
-                    trabajo=***REMOVED***trabajo***REMOVED***
-                    fecha=***REMOVED***fechaSeleccionada***REMOVED***
-                    onEdit=***REMOVED***() => onEdit(turno)***REMOVED***
-                    onDelete=***REMOVED***() => onDelete(turno)***REMOVED***
+                <div key=***REMOVED***shift.id***REMOVED*** className="w-full">
+                  <CardComponent
+                    shift=***REMOVED***shift***REMOVED***
+                    work=***REMOVED***work***REMOVED***
+                    date=***REMOVED***selectedDate***REMOVED***
+                    onEdit=***REMOVED***() => onEdit(shift)***REMOVED***
+                    onDelete=***REMOVED***() => onDelete(shift)***REMOVED***
                     variant="compact"
                   />
                 </div>
@@ -160,25 +160,25 @@ const CalendarDaySummary = (***REMOVED***
         <Card className="text-center py-6">
           <SearchX size=***REMOVED***48***REMOVED*** className="mx-auto mb-4 text-gray-300" />
           <p className="text-gray-500 mb-4">
-            No hay turnos para ***REMOVED***
-              formatearFecha ? (
+            No shifts for ***REMOVED***
+              formatDate ? (
                 (() => ***REMOVED***
-                  const formattedDate = formatearFecha(fechaSeleccionada);
-                  if (formattedDate.startsWith('Hoy') || formattedDate.startsWith('Ayer')) ***REMOVED***
+                  const formattedDate = formatDate(selectedDate);
+                  if (formattedDate.startsWith('Today') || formattedDate.startsWith('Yesterday')) ***REMOVED***
                     return formattedDate;
                   ***REMOVED***
-                  return `el $***REMOVED***formattedDate***REMOVED***`;
+                  return `the $***REMOVED***formattedDate***REMOVED***`;
                 ***REMOVED***)()
-              ) : 'esta fecha'
+              ) : 'this date'
             ***REMOVED***
           </p>
           <Button
-            onClick=***REMOVED***() => onNuevoTurno?.(new Date(fechaSeleccionada + 'T12:00:00'))***REMOVED***
+            onClick=***REMOVED***() => onNewShift?.(new Date(selectedDate + 'T12:00:00'))***REMOVED***
             className="flex items-center gap-2 mx-auto"
             icon=***REMOVED***PlusCircle***REMOVED***
             themeColor=***REMOVED***thematicColors?.base***REMOVED***
           >
-            Agregar turno
+            Add shift
           </Button>
         </Card>
       )***REMOVED***

@@ -1,4 +1,4 @@
-// src/components/forms/shift/TurnoForm/index.jsx - REFACTORIZADO CON BaseForm
+// src/components/forms/shift/ShiftForm/index.jsx - REFACTORED WITH BaseForm
 
 import React, ***REMOVED*** useState, useEffect, useCallback ***REMOVED*** from 'react';
 import ***REMOVED*** Briefcase, Calendar, Clock, FileText, Coffee, Pencil, Check ***REMOVED*** from 'lucide-react';
@@ -8,124 +8,124 @@ import ***REMOVED*** createSafeDate, calculateShiftHours ***REMOVED*** from '../
 import BaseForm, ***REMOVED*** FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses ***REMOVED*** from '../../base/BaseForm';
 import Flex from '../../../ui/Flex';
 
-const TurnoForm = (***REMOVED***
+const ShiftForm = (***REMOVED***
   id,
-  turno,
-  trabajoId,
-  trabajos = [],
+  shift,
+  workId,
+  works = [],
   onSubmit,
-  onTrabajoChange,
-  onDirtyChange, // Nueva prop
+  onWorkChange,
+  onDirtyChange, // New prop
   isMobile = false,
-  fechaInicial
+  initialDate
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
-  const ***REMOVED*** smokoEnabled, smokoMinutes ***REMOVED*** = useApp(); // NUEVO
+  const ***REMOVED*** smokoEnabled, smokoMinutes ***REMOVED*** = useApp(); // NEW
 
   const [initialFormData, setInitialFormData] = useState(null);
   const [formData, setFormData] = useState(***REMOVED***
-    trabajoId: trabajoId || '',
-    fechaInicio: '',
-    horaInicio: '',
-    horaFin: '',
-    cruzaMedianoche: false,
-    fechaFin: '',
-    tuvoDescanso: true, // NUEVO - por defecto asume que tuvo descanso
-    descansoMinutos: smokoMinutes, // NUEVO - editable
-    notas: ''
+    workId: workId || '',
+    startDate: '',
+    startTime: '',
+    endTime: '',
+    crossesMidnight: false,
+    endDate: '',
+    hadBreak: true, // NEW - by default assumes break was taken
+    breakMinutes: smokoMinutes, // NEW - editable
+    notes: ''
   ***REMOVED***);
 
-  const [isEditingDescanso, setIsEditingDescanso] = useState(false);
+  const [isEditingBreak, setIsEditingBreak] = useState(false);
   const [errors, setErrors] = useState(***REMOVED******REMOVED***);
 
-  // Efecto para detectar si el formulario está "sucio" (modificado)
+  // Effect to detect if the form is "dirty" (modified)
   useEffect(() => ***REMOVED***
     if (!initialFormData || !onDirtyChange) return;
 
-    // Solo se considera sucio si es un turno existente
-    if (turno) ***REMOVED***
+    // Only considered dirty if it is an existing shift
+    if (shift) ***REMOVED***
       const isDirty =
-        formData.trabajoId !== initialFormData.trabajoId ||
-        formData.fechaInicio !== initialFormData.fechaInicio ||
-        formData.horaInicio !== initialFormData.horaInicio ||
-        formData.horaFin !== initialFormData.horaFin ||
-        formData.tuvoDescanso !== initialFormData.tuvoDescanso ||
-        Number(formData.descansoMinutos) !== Number(initialFormData.descansoMinutos) ||
-        formData.notas !== initialFormData.notas;
+        formData.workId !== initialFormData.workId ||
+        formData.startDate !== initialFormData.startDate ||
+        formData.startTime !== initialFormData.startTime ||
+        formData.endTime !== initialFormData.endTime ||
+        formData.hadBreak !== initialFormData.hadBreak ||
+        Number(formData.breakMinutes) !== Number(initialFormData.breakMinutes) ||
+        formData.notes !== initialFormData.notes;
       onDirtyChange(isDirty);
     ***REMOVED*** else ***REMOVED***
-      onDirtyChange(true); // Para nuevos turnos, el botón siempre está activo
+      onDirtyChange(true); // For new shifts, the button is always active
     ***REMOVED***
-  ***REMOVED***, [formData, initialFormData, onDirtyChange, turno]);
+  ***REMOVED***, [formData, initialFormData, onDirtyChange, shift]);
 
 
-  // Función para calcular duración del turno - USANDO UTILIDAD CENTRALIZADA
-  const calcularDuracionTurno = useCallback(() => ***REMOVED***
-    if (!formData.horaInicio || !formData.horaFin) return null;
+  // Function to calculate shift duration - USING CENTRALIZED UTILITY
+  const calculateShiftDuration = useCallback(() => ***REMOVED***
+    if (!formData.startTime || !formData.endTime) return null;
 
-    const totalHoras = calculateShiftHours(formData.horaInicio, formData.horaFin);
-    const totalMinutos = Math.round(totalHoras * 60);
+    const totalHours = calculateShiftHours(formData.startTime, formData.endTime);
+    const totalMinutes = Math.round(totalHours * 60);
 
-    // Aplicar descuento de smoko si está habilitado
-    let minutosReales = totalMinutos;
-    const descanso = formData.descansoMinutos || 0;
+    // Apply smoko discount if enabled
+    let actualMinutes = totalMinutes;
+    const breakDuration = formData.breakMinutes || 0;
 
-    if (smokoEnabled && formData.tuvoDescanso && totalMinutos > descanso) ***REMOVED***
-      minutosReales = totalMinutos - descanso;
+    if (smokoEnabled && formData.hadBreak && totalMinutes > breakDuration) ***REMOVED***
+      actualMinutes = totalMinutes - breakDuration;
     ***REMOVED***
 
     return ***REMOVED***
-      totalMinutos,
-      minutosReales,
-      horas: Math.floor(minutosReales / 60),
-      minutos: minutosReales % 60,
-      smokoAplicado: smokoEnabled && formData.tuvoDescanso && totalMinutos > descanso,
-      minutosDescontados: descanso
+      totalMinutes,
+      actualMinutes,
+      hours: Math.floor(actualMinutes / 60),
+      minutes: actualMinutes % 60,
+      smokoApplied: smokoEnabled && formData.hadBreak && totalMinutes > breakDuration,
+      minutesDiscounted: breakDuration
     ***REMOVED***;
-  ***REMOVED***, [formData.horaInicio, formData.horaFin, formData.tuvoDescanso, smokoEnabled, formData.descansoMinutos]);
+  ***REMOVED***, [formData.startTime, formData.endTime, formData.hadBreak, smokoEnabled, formData.breakMinutes]);
 
-  const duracion = calcularDuracionTurno();
+  const duration = calculateShiftDuration();
 
-  // Detectar turnos nocturnos automáticamente
+  // Detect night shifts automatically
   useEffect(() => ***REMOVED***
-    if (formData.horaInicio && formData.horaFin) ***REMOVED***
-      const [horaI] = formData.horaInicio.split(':').map(Number);
-      const [horaF] = formData.horaFin.split(':').map(Number);
+    if (formData.startTime && formData.endTime) ***REMOVED***
+      const [startHour] = formData.startTime.split(':').map(Number);
+      const [endHour] = formData.endTime.split(':').map(Number);
       
-      const esNocturno = horaI > horaF;
+      const isNightShift = startHour > endHour;
       
-      if (esNocturno !== formData.cruzaMedianoche) ***REMOVED***
+      if (isNightShift !== formData.crossesMidnight) ***REMOVED***
         setFormData(prev => (***REMOVED***
           ...prev,
-          cruzaMedianoche: esNocturno,
-          fechaFin: esNocturno && prev.fechaInicio 
-            ? calcularFechaFin(prev.fechaInicio)
+          crossesMidnight: isNightShift,
+          endDate: isNightShift && prev.startDate 
+            ? calculateEndDate(prev.startDate)
             : ''
         ***REMOVED***));
       ***REMOVED***
     ***REMOVED***
-  ***REMOVED***, [formData.horaInicio, formData.horaFin, formData.fechaInicio, formData.cruzaMedianoche]);
+  ***REMOVED***, [formData.startTime, formData.endTime, formData.startDate, formData.crossesMidnight]);
 
-  const calcularFechaFin = (fechaInicio) => ***REMOVED***
-    const fecha = createSafeDate(fechaInicio);
-    fecha.setDate(fecha.getDate() + 1);
-    return fecha.toISOString().split('T')[0];
+  const calculateEndDate = (startDate) => ***REMOVED***
+    const date = createSafeDate(startDate);
+    date.setDate(date.getDate() + 1);
+    return date.toISOString().split('T')[0];
   ***REMOVED***;
 
-  const validarFormulario = () => ***REMOVED***
+  const validateForm = () => ***REMOVED***
     const newErrors = ***REMOVED******REMOVED***;
 
-    if (!formData.trabajoId) ***REMOVED***
-      newErrors.trabajoId = 'Selecciona un trabajo';
+    if (!formData.workId) ***REMOVED***
+      newErrors.workId = 'Select a job';
     ***REMOVED***
-    if (!formData.fechaInicio) ***REMOVED***
-      newErrors.fechaInicio = 'La fecha es requerida';
+    if (!formData.startDate) ***REMOVED***
+      newErrors.startDate = 'Date is required';
     ***REMOVED***
-    if (!formData.horaInicio) ***REMOVED***
-      newErrors.horaInicio = 'La hora de inicio es requerida';
+    if (!formData.startTime) ***REMOVED***
+      newErrors.startTime = 'Start time is required';
     ***REMOVED***
-    if (!formData.horaFin) ***REMOVED***
-      newErrors.horaFin = 'La hora de fin es requerida';
+    if (!formData.endTime) ***REMOVED***
+      newErrors.endTime = 'End time is required';
     ***REMOVED***
 
     setErrors(newErrors);
@@ -134,7 +134,7 @@ const TurnoForm = (***REMOVED***
 
   const handleSubmit = (e) => ***REMOVED***
     e.preventDefault();
-    if (validarFormulario()) ***REMOVED***
+    if (validateForm()) ***REMOVED***
       onSubmit(formData);
     ***REMOVED***
   ***REMOVED***;
@@ -145,50 +145,50 @@ const TurnoForm = (***REMOVED***
       setErrors(prev => (***REMOVED*** ...prev, [field]: undefined ***REMOVED***));
     ***REMOVED***
 
-    // Notificar cambio de trabajo al componente padre
-    if (field === 'trabajoId') ***REMOVED***
-      onTrabajoChange?.(value);
+    // Notify parent component of work change
+    if (field === 'workId') ***REMOVED***
+      onWorkChange?.(value);
     ***REMOVED***
-  ***REMOVED***, [errors, onTrabajoChange]);
+  ***REMOVED***, [errors, onWorkChange]);
 
-  // Inicializar formulario - ACTUALIZADO
+  // Initialize form - UPDATED
   useEffect(() => ***REMOVED***
     let initialData;
-    if (turno) ***REMOVED***
+    if (shift) ***REMOVED***
       initialData = ***REMOVED***
-        trabajoId: turno.trabajoId || '',
-        fechaInicio: turno.fechaInicio || turno.fecha || '',
-        horaInicio: turno.horaInicio || '',
-        horaFin: turno.horaFin || '',
-        cruzaMedianoche: turno.cruzaMedianoche || false,
-        fechaFin: turno.fechaFin || '',
-        tuvoDescanso: turno.tuvoDescanso !== undefined ? turno.tuvoDescanso : true,
-        descansoMinutos: turno.descansoMinutos !== undefined ? turno.descansoMinutos : smokoMinutes,
-        notas: turno.notas || ''
+        workId: shift.workId || '',
+        startDate: shift.startDate || shift.date || '',
+        startTime: shift.startTime || '',
+        endTime: shift.endTime || '',
+        crossesMidnight: shift.crossesMidnight || false,
+        endDate: shift.endDate || '',
+        hadBreak: shift.hadBreak !== undefined ? shift.hadBreak : true,
+        breakMinutes: shift.breakMinutes !== undefined ? shift.breakMinutes : smokoMinutes,
+        notes: shift.notes || ''
       ***REMOVED***;
     ***REMOVED*** else ***REMOVED***
-      const fechaStr = fechaInicial 
-        ? (fechaInicial instanceof Date ? fechaInicial.toISOString().split('T')[0] : fechaInicial)
+      const dateStr = initialDate 
+        ? (initialDate instanceof Date ? initialDate.toISOString().split('T')[0] : initialDate)
         : new Date().toISOString().split('T')[0];
 
       initialData = ***REMOVED***
-        trabajoId: trabajoId || '',
-        fechaInicio: fechaStr,
-        horaInicio: '',
-        horaFin: '',
-        cruzaMedianoche: false,
-        fechaFin: '',
-        tuvoDescanso: true,
-        descansoMinutos: smokoMinutes,
-        notas: ''
+        workId: workId || '',
+        startDate: dateStr,
+        startTime: '',
+        endTime: '',
+        crossesMidnight: false,
+        endDate: '',
+        hadBreak: true,
+        breakMinutes: smokoMinutes,
+        notes: ''
       ***REMOVED***;
     ***REMOVED***
     setFormData(initialData);
     setInitialFormData(initialData);
-  ***REMOVED***, [turno, trabajoId, fechaInicial, smokoMinutes]);
+  ***REMOVED***, [shift, workId, initialDate, smokoMinutes]);
 
-  const trabajosTradicionales = trabajos.filter(t => t.tipo !== 'delivery');
-  const trabajosDelivery = trabajos.filter(t => t.tipo === 'delivery');
+  const traditionalWorks = works.filter(w => w.type !== 'delivery');
+  const deliveryWorks = works.filter(w => w.type === 'delivery');
 
   return (
     <BaseForm
@@ -196,109 +196,109 @@ const TurnoForm = (***REMOVED***
       onSubmit=***REMOVED***handleSubmit***REMOVED***
       isMobile=***REMOVED***isMobile***REMOVED***
     >
-      ***REMOVED***/* Selección de trabajo */***REMOVED***
+      ***REMOVED***/* Work selection */***REMOVED***
       <FormSection>
-        <FormLabel icon=***REMOVED***Briefcase***REMOVED***>Trabajo</FormLabel>
+        <FormLabel icon=***REMOVED***Briefcase***REMOVED***>Work</FormLabel>
         <select
-          value=***REMOVED***formData.trabajoId***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('trabajoId', e.target.value)***REMOVED***
-          className=***REMOVED***getInputClasses(isMobile, errors.trabajoId)***REMOVED***
+          value=***REMOVED***formData.workId***REMOVED***
+          onChange=***REMOVED***(e) => handleInputChange('workId', e.target.value)***REMOVED***
+          className=***REMOVED***getInputClasses(isMobile, errors.workId)***REMOVED***
           style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
           required
         >
-          <option value="">Seleccionar trabajo</option>
+          <option value="">Select work</option>
 
-          ***REMOVED***trabajosTradicionales.length > 0 && (
-            <optgroup label="Trabajos Tradicionales">
-              ***REMOVED***trabajosTradicionales.map(trabajo => (
-                <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
-                  ***REMOVED***trabajo.nombre***REMOVED***
+          ***REMOVED***traditionalWorks.length > 0 && (
+            <optgroup label="Traditional Works">
+              ***REMOVED***traditionalWorks.map(work => (
+                <option key=***REMOVED***work.id***REMOVED*** value=***REMOVED***work.id***REMOVED***>
+                  ***REMOVED***work.name***REMOVED***
                 </option>
               ))***REMOVED***
             </optgroup>
           )***REMOVED***
 
-          ***REMOVED***trabajosDelivery.length > 0 && (
-            <optgroup label="Trabajos de Delivery">
-              ***REMOVED***trabajosDelivery.map(trabajo => (
-                <option key=***REMOVED***trabajo.id***REMOVED*** value=***REMOVED***trabajo.id***REMOVED***>
-                  ***REMOVED***trabajo.nombre***REMOVED***
+          ***REMOVED***deliveryWorks.length > 0 && (
+            <optgroup label="Delivery Works">
+              ***REMOVED***deliveryWorks.map(work => (
+                <option key=***REMOVED***work.id***REMOVED*** value=***REMOVED***work.id***REMOVED***>
+                  ***REMOVED***work.name***REMOVED***
                 </option>
               ))***REMOVED***
             </optgroup>
           )***REMOVED***
         </select>
-        <FormError error=***REMOVED***errors.trabajoId***REMOVED*** />
+        <FormError error=***REMOVED***errors.workId***REMOVED*** />
       </FormSection>
 
-      ***REMOVED***/* CONTENEDOR DE FECHAS RESPONSIVO */***REMOVED***
+      ***REMOVED***/* RESPONSIVE DATE CONTAINER */***REMOVED***
       <FormGrid columns=***REMOVED***2***REMOVED***>
-        ***REMOVED***/* Fecha de inicio */***REMOVED***
-        <FormField className=***REMOVED***!formData.cruzaMedianoche ? 'col-span-2' : ''***REMOVED***>
-          <FormLabel icon=***REMOVED***Calendar***REMOVED***>Fecha de inicio</FormLabel>
+        ***REMOVED***/* Start date */***REMOVED***
+        <FormField className=***REMOVED***!formData.crossesMidnight ? 'col-span-2' : ''***REMOVED***>
+          <FormLabel icon=***REMOVED***Calendar***REMOVED***>Start date</FormLabel>
           <input
             type="date"
-            value=***REMOVED***formData.fechaInicio***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('fechaInicio', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile, errors.fechaInicio)***REMOVED***
+            value=***REMOVED***formData.startDate***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('startDate', e.target.value)***REMOVED***
+            className=***REMOVED***getInputClasses(isMobile, errors.startDate)***REMOVED***
             style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
             required
           />
-          <FormError error=***REMOVED***errors.fechaInicio***REMOVED*** />
+          <FormError error=***REMOVED***errors.startDate***REMOVED*** />
         </FormField>
 
-        ***REMOVED***/* Fecha de fin - solo mostrar si es nocturno */***REMOVED***
-        ***REMOVED***formData.cruzaMedianoche && (
+        ***REMOVED***/* End date - only show if it's a night shift */***REMOVED***
+        ***REMOVED***formData.crossesMidnight && (
           <FormField>
-            <FormLabel icon=***REMOVED***Calendar***REMOVED***>Fecha de fin</FormLabel>
+            <FormLabel icon=***REMOVED***Calendar***REMOVED***>End date</FormLabel>
             <input
               type="date"
-              value=***REMOVED***formData.fechaFin || calcularFechaFin(formData.fechaInicio)***REMOVED***
-              onChange=***REMOVED***(e) => handleInputChange('fechaFin', e.target.value)***REMOVED***
+              value=***REMOVED***formData.endDate || calculateEndDate(formData.startDate)***REMOVED***
+              onChange=***REMOVED***(e) => handleInputChange('endDate', e.target.value)***REMOVED***
               className=***REMOVED***getInputClasses(isMobile)***REMOVED***
               style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
               disabled
             />
             <p className="text-xs text-gray-500 mt-1">
-              Se calcula automáticamente para turnos nocturnos
+              Calculated automatically for night shifts
             </p>
           </FormField>
         )***REMOVED***
       </FormGrid>
 
-      ***REMOVED***/* CONTENEDOR DE HORAS RESPONSIVO */***REMOVED***
+      ***REMOVED***/* RESPONSIVE TIME CONTAINER */***REMOVED***
       <FormGrid columns=***REMOVED***2***REMOVED***>
-        ***REMOVED***/* Hora de inicio */***REMOVED***
+        ***REMOVED***/* Start time */***REMOVED***
         <FormField>
-          <FormLabel icon=***REMOVED***Clock***REMOVED***>Hora de inicio</FormLabel>
+          <FormLabel icon=***REMOVED***Clock***REMOVED***>Start time</FormLabel>
           <input
             type="time"
-            value=***REMOVED***formData.horaInicio***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('horaInicio', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile, errors.horaInicio)***REMOVED***
+            value=***REMOVED***formData.startTime***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('startTime', e.target.value)***REMOVED***
+            className=***REMOVED***getInputClasses(isMobile, errors.startTime)***REMOVED***
             style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
             required
           />
-          <FormError error=***REMOVED***errors.horaInicio***REMOVED*** />
+          <FormError error=***REMOVED***errors.startTime***REMOVED*** />
         </FormField>
 
-        ***REMOVED***/* Hora de fin */***REMOVED***
+        ***REMOVED***/* End time */***REMOVED***
         <FormField>
-          <FormLabel icon=***REMOVED***Clock***REMOVED***>Hora de fin</FormLabel>
+          <FormLabel icon=***REMOVED***Clock***REMOVED***>End time</FormLabel>
           <input
             type="time"
-            value=***REMOVED***formData.horaFin***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('horaFin', e.target.value)***REMOVED***
-            className=***REMOVED***getInputClasses(isMobile, errors.horaFin)***REMOVED***
+            value=***REMOVED***formData.endTime***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('endTime', e.target.value)***REMOVED***
+            className=***REMOVED***getInputClasses(isMobile, errors.endTime)***REMOVED***
             style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
             required
           />
-          <FormError error=***REMOVED***errors.horaFin***REMOVED*** />
+          <FormError error=***REMOVED***errors.endTime***REMOVED*** />
         </FormField>
       </FormGrid>
 
-***REMOVED***/* NUEVA SECCIÓN: DESCANSO (SMOKO) - OPTIMIZADA PARA MÓVIL */***REMOVED***
-***REMOVED***smokoEnabled && duracion && duracion.totalMinutos > 0 && (
+***REMOVED***/* NEW SECTION: BREAK (SMOKO) - OPTIMIZED FOR MOBILE */***REMOVED***
+***REMOVED***smokoEnabled && duration && duration.totalMinutes > 0 && (
   <div className="w-full">
     <div 
       className=***REMOVED***`
@@ -310,7 +310,7 @@ const TurnoForm = (***REMOVED***
         borderColor: colors.transparent20 
       ***REMOVED******REMOVED***
     >
-      ***REMOVED***/* Header con título y toggle customizado */***REMOVED***
+      ***REMOVED***/* Header with title and custom toggle */***REMOVED***
       <Flex variant="between" className=***REMOVED***`
         $***REMOVED***isMobile ? 'pb-2 border-b border-gray-200' : ''***REMOVED***
       `***REMOVED***>
@@ -321,21 +321,21 @@ const TurnoForm = (***REMOVED***
             className="mr-2 flex-shrink-0" 
           />
           <span className=***REMOVED***`font-medium text-gray-700 $***REMOVED***isMobile ? 'text-base' : 'text-sm'***REMOVED***`***REMOVED***>
-            ¿Tuviste descanso?
+            Did you have a break?
           </span>
         </div>
 
-        ***REMOVED***/* Toggle Switch Customizado */***REMOVED***
+        ***REMOVED***/* Custom Toggle Switch */***REMOVED***
         <label className="relative inline-flex items-center cursor-pointer">
-          ***REMOVED***/* Input oculto */***REMOVED***
+          ***REMOVED***/* Hidden input */***REMOVED***
           <input
             type="checkbox"
-            checked=***REMOVED***formData.tuvoDescanso***REMOVED***
-            onChange=***REMOVED***(e) => handleInputChange('tuvoDescanso', e.target.checked)***REMOVED***
+            checked=***REMOVED***formData.hadBreak***REMOVED***
+            onChange=***REMOVED***(e) => handleInputChange('hadBreak', e.target.checked)***REMOVED***
             className="sr-only peer"
           />
           
-          ***REMOVED***/* Switch personalizado */***REMOVED***
+          ***REMOVED***/* Custom switch */***REMOVED***
           <div className=***REMOVED***`
             relative bg-gray-200 rounded-full peer 
             peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2
@@ -349,28 +349,28 @@ const TurnoForm = (***REMOVED***
           `***REMOVED***
           style=***REMOVED******REMOVED***
             '--tw-ring-color': colors.primary,
-            backgroundColor: formData.tuvoDescanso ? colors.primary : undefined
+            backgroundColor: formData.hadBreak ? colors.primary : undefined
           ***REMOVED******REMOVED***
           />
           
-          ***REMOVED***/* Texto del toggle */***REMOVED***
+          ***REMOVED***/* Toggle text */***REMOVED***
           <span className=***REMOVED***`
             ml-3 font-medium
             $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***
-            $***REMOVED***formData.tuvoDescanso ? 'text-green-700' : 'text-gray-600'***REMOVED***
+            $***REMOVED***formData.hadBreak ? 'text-green-700' : 'text-gray-600'***REMOVED***
           `***REMOVED***>
-            ***REMOVED***formData.tuvoDescanso ? 'Sí' : 'No'***REMOVED***
+            ***REMOVED***formData.hadBreak ? 'Yes' : 'No'***REMOVED***
           </span>
         </label>
       </Flex>
 
-      ***REMOVED***/* Información del cálculo - LAYOUT RESPONSIVO */***REMOVED***
+      ***REMOVED***/* Calculation information - RESPONSIVE LAYOUT */***REMOVED***
       <div className=***REMOVED***`
         $***REMOVED***isMobile ? 'space-y-3' : 'space-y-2'***REMOVED***
         $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***
         text-gray-600
       `***REMOVED***>
-        ***REMOVED***/* Tiempo programado */***REMOVED***
+        ***REMOVED***/* Scheduled time */***REMOVED***
         <Flex variant="between" className=***REMOVED***`
           p-2 rounded
           $***REMOVED***isMobile ? 'bg-blue-50' : 'bg-gray-50'***REMOVED***
@@ -383,16 +383,16 @@ const TurnoForm = (***REMOVED***
             style=***REMOVED******REMOVED*** backgroundColor: colors.transparent20, color: colors.primary ***REMOVED******REMOVED***>
               <Clock size=***REMOVED***isMobile ? 12 : 10***REMOVED*** />
             </Flex>
-            <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Tiempo programado:</span>
+            <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Scheduled time:</span>
           </div>
           <span className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***>
-            ***REMOVED***Math.floor(duracion.totalMinutos / 60)***REMOVED***h ***REMOVED***duracion.totalMinutos % 60***REMOVED***min
+            ***REMOVED***Math.floor(duration.totalMinutes / 60)***REMOVED***h ***REMOVED***duration.totalMinutes % 60***REMOVED***min
           </span>
         </Flex>
 
-        ***REMOVED***formData.tuvoDescanso ? (
+        ***REMOVED***formData.hadBreak ? (
           <>
-            ***REMOVED***/* Descanso configurado (AHORA EDITABLE CON CLIC) */***REMOVED***
+            ***REMOVED***/* Configured break (NOW EDITABLE WITH CLICK) */***REMOVED***
             <Flex variant="between" className=***REMOVED***`p-2 rounded items-center $***REMOVED***isMobile ? 'bg-orange-50' : 'bg-gray-50'***REMOVED***`***REMOVED***>
               <div className="flex items-center">
                 <Flex variant="center" className=***REMOVED***`
@@ -402,37 +402,37 @@ const TurnoForm = (***REMOVED***
                 style=***REMOVED******REMOVED*** backgroundColor: '#FED7AA', color: '#EA580C' ***REMOVED******REMOVED***>
                   <Coffee size=***REMOVED***isMobile ? 10 : 8***REMOVED*** />
                 </Flex>
-                <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Descanso:</span>
+                <span className=***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***>Break:</span>
               </div>
 
-              ***REMOVED***isEditingDescanso ? (
+              ***REMOVED***isEditingBreak ? (
                 <div className="flex items-center">
                   <input
                     type="number"
-                    value=***REMOVED***formData.descansoMinutos***REMOVED***
-                    onChange=***REMOVED***(e) => handleInputChange('descansoMinutos', e.target.value === '' ? 0 : parseInt(e.target.value, 10))***REMOVED***
+                    value=***REMOVED***formData.breakMinutes***REMOVED***
+                    onChange=***REMOVED***(e) => handleInputChange('breakMinutes', e.target.value === '' ? 0 : parseInt(e.target.value, 10))***REMOVED***
                     className=***REMOVED***`$***REMOVED***getInputClasses(isMobile)***REMOVED*** py-1 px-2 w-20 text-center font-semibold`***REMOVED***
                     style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
                     autoFocus
-                    onBlur=***REMOVED***() => setIsEditingDescanso(false)***REMOVED***
+                    onBlur=***REMOVED***() => setIsEditingBreak(false)***REMOVED***
                   />
-                  <button type="button" onClick=***REMOVED***() => setIsEditingDescanso(false)***REMOVED*** className="ml-2 text-green-600">
+                  <button type="button" onClick=***REMOVED***() => setIsEditingBreak(false)***REMOVED*** className="ml-2 text-green-600">
                     <Check size=***REMOVED***18***REMOVED*** />
                   </button>
                 </div>
               ) : (
                 <div className="flex items-center">
                   <span className=***REMOVED***`font-semibold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***>
-                    ***REMOVED***formData.descansoMinutos***REMOVED*** minutos
+                    ***REMOVED***formData.breakMinutes***REMOVED*** minutes
                   </span>
-                  <button type="button" onClick=***REMOVED***() => setIsEditingDescanso(true)***REMOVED*** className="ml-2 text-gray-500 hover:text-gray-700">
+                  <button type="button" onClick=***REMOVED***() => setIsEditingBreak(true)***REMOVED*** className="ml-2 text-gray-500 hover:text-gray-700">
                     <Pencil size=***REMOVED***14***REMOVED*** />
                   </button>
                 </div>
               )***REMOVED***
             </Flex>
 
-            ***REMOVED***/* Tiempo pagado */***REMOVED***
+            ***REMOVED***/* Paid time */***REMOVED***
             <Flex variant="between" className=***REMOVED***`
               p-2 rounded border
               $***REMOVED***isMobile ? 'bg-green-50 border-green-200' : 'bg-gray-50'***REMOVED***
@@ -451,17 +451,17 @@ const TurnoForm = (***REMOVED***
                 </Flex>
                 <span className=***REMOVED***`font-medium $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
                       style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                  Tiempo pagado:
+                  Paid time:
                 </span>
               </Flex>
               <span className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
                     style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                ***REMOVED***duracion.horas***REMOVED***h ***REMOVED***duracion.minutos***REMOVED***min
+                ***REMOVED***duration.hours***REMOVED***h ***REMOVED***duration.minutes***REMOVED***min
               </span>
             </Flex>
           </>
         ) : (
-          /* Sin descuento aplicado */
+          /* No discount applied */
           <Flex variant="between" className=***REMOVED***`
             p-2 rounded border
             $***REMOVED***isMobile ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'***REMOVED***
@@ -480,16 +480,16 @@ const TurnoForm = (***REMOVED***
               </Flex>
               <span className=***REMOVED***`font-medium $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
                     style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                Tiempo pagado:
+                Paid time:
               </span>
             </Flex>
             <div className="text-right">
               <div className=***REMOVED***`font-bold $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED***`***REMOVED***
                    style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                ***REMOVED***Math.floor(duracion.totalMinutos / 60)***REMOVED***h ***REMOVED***duracion.totalMinutos % 60***REMOVED***min
+                ***REMOVED***Math.floor(duration.totalMinutes / 60)***REMOVED***h ***REMOVED***duration.totalMinutes % 60***REMOVED***min
               </div>
               <div className=***REMOVED***`$***REMOVED***isMobile ? 'text-xs' : 'text-[10px]'***REMOVED*** text-gray-500`***REMOVED***>
-                (sin descuento)
+                (no discount)
               </div>
             </div>
           </Flex>
@@ -499,13 +499,13 @@ const TurnoForm = (***REMOVED***
   </div>
 )***REMOVED***
 
-      ***REMOVED***/* Campo de notas */***REMOVED***
+      ***REMOVED***/* Notes field */***REMOVED***
       <FormSection>
-        <FormLabel icon=***REMOVED***FileText***REMOVED***>Notas (opcional)</FormLabel>
+        <FormLabel icon=***REMOVED***FileText***REMOVED***>Notes (optional)</FormLabel>
         <textarea
-          value=***REMOVED***formData.notas***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('notas', e.target.value)***REMOVED***
-          placeholder="Agregar notas sobre este turno..."
+          value=***REMOVED***formData.notes***REMOVED***
+          onChange=***REMOVED***(e) => handleInputChange('notes', e.target.value)***REMOVED***
+          placeholder="Add notes about this shift..."
           className=***REMOVED***`$***REMOVED***getInputClasses(isMobile)***REMOVED*** border-gray-300 resize-none`***REMOVED***
           style=***REMOVED******REMOVED*** '--tw-ring-color': colors.primary ***REMOVED******REMOVED***
           rows=***REMOVED***3***REMOVED***
@@ -515,4 +515,4 @@ const TurnoForm = (***REMOVED***
   );
 ***REMOVED***;
 
-export default TurnoForm;
+export default ShiftForm;

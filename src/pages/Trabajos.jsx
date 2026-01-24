@@ -1,63 +1,63 @@
-// src/pages/Trabajos.jsx - Versión mejorada con layout en columnas
+// src/pages/Works.jsx - Improved version with column layout
 
 import React from 'react';
-import ***REMOVED*** useTrabajos ***REMOVED*** from '../hooks/useTrabajos';
+import ***REMOVED*** useWorks ***REMOVED*** from '../hooks/useTrabajos';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import ShareMessages from '../components/work/ShareMessages';
 import PageHeader from '../components/layout/PageHeader'; // Added import
 import ***REMOVED*** Briefcase, Plus ***REMOVED*** from 'lucide-react'; // Added icons
 import WorkEmptyState from '../components/work/WorkEmptyState';
-import TarjetaTrabajo from '../components/cards/work/TarjetaTrabajo';
-import TarjetaDelivery from '../components/cards/work/TarjetaTrabajoDelivery';
-import ModalTrabajo from '../components/modals/work/ModalTrabajo';
-import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
+import WorkCard from '../components/cards/work/TarjetaTrabajo';
+import DeliveryWorkCard from '../components/cards/work/TarjetaTrabajoDelivery';
+import WorkModal from '../components/modals/work/ModalTrabajo';
+import DeleteAlert from '../components/alerts/AlertaEliminacion';
 import ***REMOVED*** generateWorkDetails ***REMOVED*** from '../utils/workUtils';
 
-const Trabajos = () => ***REMOVED***
+const Works = () => ***REMOVED***
   const ***REMOVED***
     loading,
-    todosLosTrabajos,
-    modalAbierto,
-    trabajoSeleccionado,
+    allWorks,
+    isModalOpen,
+    selectedWork,
     thematicColors,
     sharing,
     messages,
-    abrirModalNuevo,
-    abrirModalEditar,
-    cerrarModal,
+    openNewModal,
+    openEditModal,
+    closeModal,
     handleShareWork,
     deleteManager
-  ***REMOVED*** = useTrabajos();
+  ***REMOVED*** = useWorks();
 
-  const tieneTrabajos = todosLosTrabajos.length > 0;
+  const hasWorks = allWorks.length > 0;
 
-  // Separar trabajos tradicionales y de delivery
-  const trabajosTradicionales = todosLosTrabajos.filter(trabajo => trabajo.tipo !== 'delivery');
-  const trabajosDelivery = todosLosTrabajos.filter(trabajo => trabajo.tipo === 'delivery');
+  // Separate traditional and delivery works
+  const traditionalWorks = allWorks.filter(work => work.type !== 'delivery');
+  const deliveryWorks = allWorks.filter(work => work.type === 'delivery');
 
   return (
     <LoadingWrapper loading=***REMOVED***loading***REMOVED***>
       <div className="px-4 py-6 pb-32 space-y-6">
-        ***REMOVED***/* Mensajes de compartir */***REMOVED***
+        ***REMOVED***/* Share messages */***REMOVED***
         <ShareMessages messages=***REMOVED***messages***REMOVED*** />
 
         ***REMOVED***/* Header */***REMOVED***
         <PageHeader
-          title="Trabajos"
-          subtitle="Administra tus diferentes trabajos o empleos."
+          title="Works"
+          subtitle="Manage your different jobs or employments."
           icon=***REMOVED***Briefcase***REMOVED***
-          action=***REMOVED******REMOVED*** onClick: abrirModalNuevo, icon: Plus, label: 'Nuevo Trabajo' ***REMOVED******REMOVED***
+          action=***REMOVED******REMOVED*** onClick: openNewModal, icon: Plus, label: 'New Work' ***REMOVED******REMOVED***
         />
 
-        ***REMOVED***/* Contenido principal */***REMOVED***
-        ***REMOVED***!tieneTrabajos ? (
+        ***REMOVED***/* Main content */***REMOVED***
+        ***REMOVED***!hasWorks ? (
           <WorkEmptyState 
-            onNuevoTrabajo=***REMOVED***abrirModalNuevo***REMOVED***
+            onNewWork=***REMOVED***openNewModal***REMOVED***
           />
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            ***REMOVED***/* Trabajos Tradicionales */***REMOVED***
-            ***REMOVED***trabajosTradicionales.length > 0 && (
+            ***REMOVED***/* Traditional Works */***REMOVED***
+            ***REMOVED***traditionalWorks.length > 0 && (
               <div>
                 <div className="flex items-center mb-4">
                   <div 
@@ -65,23 +65,23 @@ const Trabajos = () => ***REMOVED***
                     style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.primary || '#EC4899' ***REMOVED******REMOVED***
                   />
                   <h2 className="text-lg font-semibold text-gray-800">
-                    Trabajos Tradicionales
+                    Traditional Works
                   </h2>
                   <span className="ml-2 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
-                    ***REMOVED***trabajosTradicionales.length***REMOVED***
+                    ***REMOVED***traditionalWorks.length***REMOVED***
                   </span>
                 </div>
                 
-                ***REMOVED***/* Layout en columnas para trabajos tradicionales */***REMOVED***
+                ***REMOVED***/* Column layout for traditional works */***REMOVED***
                 <div className="space-y-4">
-                  ***REMOVED***trabajosTradicionales.map((trabajo) => ***REMOVED***
-                    const isSharing = sharing[trabajo.id] || false;
+                  ***REMOVED***traditionalWorks.map((work) => ***REMOVED***
+                    const isSharing = sharing[work.id] || false;
                     
                     return (
-                      <TarjetaTrabajo
-                        key=***REMOVED***trabajo.id***REMOVED***
-                        trabajo=***REMOVED***trabajo***REMOVED***
-                        onEdit=***REMOVED***abrirModalEditar***REMOVED***
+                      <WorkCard
+                        key=***REMOVED***work.id***REMOVED***
+                        work=***REMOVED***work***REMOVED***
+                        onEdit=***REMOVED***openEditModal***REMOVED***
                         onDelete=***REMOVED***deleteManager.startDeletion***REMOVED***
                         onShare=***REMOVED***handleShareWork***REMOVED***
                         showActions=***REMOVED***true***REMOVED***
@@ -93,8 +93,8 @@ const Trabajos = () => ***REMOVED***
               </div>
             )***REMOVED***
 
-            ***REMOVED***/* Trabajos de Delivery */***REMOVED***
-            ***REMOVED***trabajosDelivery.length > 0 && (
+            ***REMOVED***/* Delivery Works */***REMOVED***
+            ***REMOVED***deliveryWorks.length > 0 && (
               <div>
                 <div className="flex items-center mb-4">
                   <div 
@@ -102,23 +102,23 @@ const Trabajos = () => ***REMOVED***
                     style=***REMOVED******REMOVED*** backgroundColor: '#10B981' ***REMOVED******REMOVED***
                   />
                   <h2 className="text-lg font-semibold text-gray-800">
-                    Trabajos de Delivery
+                    Delivery Works
                   </h2>
                   <span className="ml-2 px-2 py-1 bg-green-100 text-green-600 text-xs rounded-full">
-                    ***REMOVED***trabajosDelivery.length***REMOVED***
+                    ***REMOVED***deliveryWorks.length***REMOVED***
                   </span>
                 </div>
                 
-                ***REMOVED***/* Layout en columnas para trabajos de delivery */***REMOVED***
+                ***REMOVED***/* Column layout for delivery works */***REMOVED***
                 <div className="space-y-4">
-                  ***REMOVED***trabajosDelivery.map((trabajo) => ***REMOVED***
-                    const isSharing = sharing[trabajo.id] || false;
+                  ***REMOVED***deliveryWorks.map((work) => ***REMOVED***
+                    const isSharing = sharing[work.id] || false;
                     
                     return (
-                      <TarjetaDelivery
-                        key=***REMOVED***trabajo.id***REMOVED***
-                        trabajo=***REMOVED***trabajo***REMOVED***
-                        onEdit=***REMOVED***abrirModalEditar***REMOVED***
+                      <DeliveryWorkCard
+                        key=***REMOVED***work.id***REMOVED***
+                        work=***REMOVED***work***REMOVED***
+                        onEdit=***REMOVED***openEditModal***REMOVED***
                         onDelete=***REMOVED***deleteManager.startDeletion***REMOVED***
                         onShare=***REMOVED***handleShareWork***REMOVED***
                         showActions=***REMOVED***true***REMOVED***
@@ -133,28 +133,28 @@ const Trabajos = () => ***REMOVED***
         )***REMOVED***
       </div>
 
-      ***REMOVED***/* Modales */***REMOVED***
-      <ModalTrabajo
-        isOpen=***REMOVED***modalAbierto***REMOVED***
-        onClose=***REMOVED***cerrarModal***REMOVED***
-        trabajo=***REMOVED***trabajoSeleccionado***REMOVED***
+      ***REMOVED***/* Modals */***REMOVED***
+      <WorkModal
+        isOpen=***REMOVED***isModalOpen***REMOVED***
+        onClose=***REMOVED***closeModal***REMOVED***
+        work=***REMOVED***selectedWork***REMOVED***
       />
 
-      <AlertaEliminacion
+      <DeleteAlert
         visible=***REMOVED***deleteManager.showDeleteModal***REMOVED***
         onCancel=***REMOVED***deleteManager.cancelDeletion***REMOVED***
         onConfirm=***REMOVED***deleteManager.confirmDeletion***REMOVED***
-        eliminando=***REMOVED***deleteManager.deleting***REMOVED***
-        tipo="trabajo"
-        detalles=***REMOVED***generateWorkDetails(deleteManager.itemToDelete)***REMOVED***
-        advertencia=***REMOVED***
-          deleteManager.itemToDelete?.tipo === 'delivery'
-            ? "Se eliminarán también todos los turnos de delivery asociados a este trabajo."
-            : "Se eliminarán también todos los turnos asociados a este trabajo."
+        deleting=***REMOVED***deleteManager.deleting***REMOVED***
+        type="work"
+        details=***REMOVED***generateWorkDetails(deleteManager.itemToDelete)***REMOVED***
+        warning=***REMOVED***
+          deleteManager.itemToDelete?.type === 'delivery'
+            ? "All delivery shifts associated with this job will also be deleted."
+            : "All shifts associated with this job will also be deleted."
         ***REMOVED***
       />
     </LoadingWrapper>
   );
 ***REMOVED***;
 
-export default Trabajos;
+export default Works;

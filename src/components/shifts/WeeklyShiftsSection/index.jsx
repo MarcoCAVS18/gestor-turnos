@@ -2,98 +2,98 @@
 
 import React from 'react';
 import ***REMOVED*** Calendar ***REMOVED*** from 'lucide-react';
-import TarjetaTurno from '../../cards/shift/TarjetaTurno';
-import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
+import ShiftCard from '../../cards/shift/TarjetaTurno';
+import DeliveryShiftCard from '../../cards/shift/TarjetaTurnoDelivery';
 import ***REMOVED*** formatTurnosCount ***REMOVED*** from '../../../utils/pluralization';
 import Flex from '../../ui/Flex';
 
 const WeeklyShiftsSection = (***REMOVED*** 
-  rangoSemana, 
-  turnos, 
-  totalTurnos, 
+  weekRange, 
+  shifts, 
+  totalShifts, 
   allJobs, 
   onEditShift, 
   onDeleteShift, 
   thematicColors 
 ***REMOVED***) => ***REMOVED***
   
-  // Convertir objeto de turnos a array ordenado por fecha
-  const turnosOrdenados = Object.entries(turnos)
-    .sort(([fechaA], [fechaB]) => new Date(fechaB) - new Date(fechaA))
-    .flatMap(([fecha, turnosDia]) => 
-      turnosDia.map(turno => (***REMOVED*** ...turno, fecha ***REMOVED***))
+  // Convert shifts object to array sorted by date
+  const sortedShifts = Object.entries(shifts)
+    .sort(([dateA], [dateB]) => new Date(dateB) - new Date(dateA))
+    .flatMap(([date, shiftsOfDay]) => 
+      shiftsOfDay.map(shift => (***REMOVED*** ...shift, date ***REMOVED***))
     );
 
-  // Calcular estadísticas de la semana
-  const estadisticasSemana = React.useMemo(() => ***REMOVED***
-    let totalGanancias = 0;
-    let totalHoras = 0;
+  // Calculate week statistics
+  const weekStats = React.useMemo(() => ***REMOVED***
+    let totalEarnings = 0;
+    let totalHours = 0;
 
-    turnosOrdenados.forEach(turno => ***REMOVED***
-      // Para turnos de delivery
-      if (turno.tipo === 'delivery') ***REMOVED***
-        totalGanancias += turno.gananciaTotal || 0;
+    sortedShifts.forEach(shift => ***REMOVED***
+      // For delivery shifts
+      if (shift.type === 'delivery') ***REMOVED***
+        totalEarnings += shift.totalEarning || 0;
         
-        // Calcular horas para delivery
-        if (turno.horaInicio && turno.horaFin) ***REMOVED***
-          const [horaI, minI] = turno.horaInicio.split(':').map(Number);
-          const [horaF, minF] = turno.horaFin.split(':').map(Number);
-          let horas = (horaF + minF/60) - (horaI + minI/60);
-          if (horas < 0) horas += 24;
-          totalHoras += horas;
+        // Calculate hours for delivery
+        if (shift.startTime && shift.endTime) ***REMOVED***
+          const [startHour, startMinute] = shift.startTime.split(':').map(Number);
+          const [endHour, endMinute] = shift.endTime.split(':').map(Number);
+          let hours = (endHour + endMinute/60) - (startHour + startMinute/60);
+          if (hours < 0) hours += 24;
+          totalHours += hours;
         ***REMOVED***
       ***REMOVED*** else ***REMOVED***
-        // Para turnos tradicionales, necesitaríamos calcular con las tarifas
-        // Por simplicidad, estimamos basándonos en horas
-        if (turno.horaInicio && turno.horaFin) ***REMOVED***
-          const [horaI, minI] = turno.horaInicio.split(':').map(Number);
-          const [horaF, minF] = turno.horaFin.split(':').map(Number);
-          let horas = (horaF + minF/60) - (horaI + minI/60);
-          if (horas < 0) horas += 24;
-          totalHoras += horas;
+        // For traditional shifts, we would need to calculate with the rates
+        // For simplicity, we estimate based on hours
+        if (shift.startTime && shift.endTime) ***REMOVED***
+          const [startHour, startMinute] = shift.startTime.split(':').map(Number);
+          const [endHour, endMinute] = shift.endTime.split(':').map(Number);
+          let hours = (endHour + endMinute/60) - (startHour + startMinute/60);
+          if (hours < 0) hours += 24;
+          totalHours += hours;
           
-          // Estimación de ganancia (esto se puede mejorar)
-          const trabajo = allJobs.find(j => j.id === turno.trabajoId);
-          if (trabajo) ***REMOVED***
-            totalGanancias += horas * (trabajo.tarifaBase || 0);
+          // Earning estimation (this can be improved)
+          const job = allJobs.find(j => j.id === shift.jobId);
+          if (job) ***REMOVED***
+            totalEarnings += hours * (job.baseRate || 0);
           ***REMOVED***
         ***REMOVED***
       ***REMOVED***
     ***REMOVED***);
 
     return ***REMOVED***
-      totalGanancias,
-      totalHoras,
-      promedioPorHora: totalHoras > 0 ? totalGanancias / totalHoras : 0
+      totalEarnings,
+      totalHours,
+      averagePerHour: totalHours > 0 ? totalEarnings / totalHours : 0
     ***REMOVED***;
-  ***REMOVED***, [turnosOrdenados, allJobs]);
+  ***REMOVED***, [sortedShifts, allJobs]);
 
-  // Función para renderizar el turno correcto según el tipo
-  const renderTurno = (turno, index) => ***REMOVED***
-    const trabajo = allJobs.find(j => j.id === turno.trabajoId);
+  // Function to render the correct shift according to the type
+  const renderShift = (shift, index) => ***REMOVED***
+    const job = allJobs.find(j => j.id === shift.jobId);
     
-    // Props comunes para ambos tipos de tarjeta
+    // Common props for both card types
     const commonProps = ***REMOVED***
-      turno: turno,
-      trabajo: trabajo,
-      fecha: turno.fecha,
-      onEdit: () => onEditShift(turno),
-      onDelete: () => onDeleteShift(turno),
+      shift: shift,
+      work: job,
+      date: shift.date,
+      onEdit: () => onEditShift(shift),
+      onDelete: () => onDeleteShift(shift),
       variant: 'default',
       compact: true
     ***REMOVED***;
 
-    // Determinar si es delivery y renderizar el componente apropiado
-    if (turno.tipo === 'delivery') ***REMOVED***
-      return <TarjetaTurnoDelivery key=***REMOVED***`$***REMOVED***turno.id***REMOVED***-$***REMOVED***index***REMOVED***`***REMOVED*** ***REMOVED***...commonProps***REMOVED*** />;
+    // Determine if it is delivery and render the appropriate component
+    if (shift.type === 'delivery') ***REMOVED***
+      return <DeliveryShiftCard key=***REMOVED***`$***REMOVED***shift.id***REMOVED***-$***REMOVED***index***REMOVED***`***REMOVED*** ***REMOVED***...commonProps***REMOVED*** />;
     ***REMOVED***
     
-    return <TarjetaTurno key=***REMOVED***`$***REMOVED***turno.id***REMOVED***-$***REMOVED***index***REMOVED***`***REMOVED*** ***REMOVED***...commonProps***REMOVED*** />;
+    return <ShiftCard key=***REMOVED***`$***REMOVED***shift.id***REMOVED***-$***REMOVED***index***REMOVED***`***REMOVED*** ***REMOVED***...commonProps***REMOVED*** />;
   ***REMOVED***;
 
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden">
-      ***REMOVED***/* Header de la semana */***REMOVED***
+      ***REMOVED***/* Week Header */***REMOVED***
       <div 
         className="px-6 py-4 border-b"
         style=***REMOVED******REMOVED*** 
@@ -112,37 +112,37 @@ const WeeklyShiftsSection = (***REMOVED***
                 className="font-semibold text-lg"
                 style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED***
               >
-                Semana ***REMOVED***rangoSemana***REMOVED***
+                Week ***REMOVED***weekRange***REMOVED***
               </h3>
               <p className="text-sm text-gray-600">
-                ***REMOVED***formatTurnosCount(totalTurnos)***REMOVED***
+                ***REMOVED***formatTurnosCount(totalShifts)***REMOVED***
               </p>
             </div>
           </Flex>
 
-          ***REMOVED***/* Estadísticas de la semana */***REMOVED***
+          ***REMOVED***/* Week statistics */***REMOVED***
           <div className="text-right">
             <Flex className="space-x-2 text-sm text-gray-600">
-              <span>$***REMOVED***estadisticasSemana.totalGanancias.toFixed(2)***REMOVED***</span>
+              <span>$***REMOVED***weekStats.totalEarnings.toFixed(2)***REMOVED***</span>
             </Flex>
             <p className="text-xs text-gray-500">
-              ***REMOVED***estadisticasSemana.totalHoras.toFixed(1)***REMOVED***h
+              ***REMOVED***weekStats.totalHours.toFixed(1)***REMOVED***h
             </p>
           </div>
         </Flex>
       </div>
 
-      ***REMOVED***/* Grid de turnos - 3 columnas con nuevos componentes */***REMOVED***
+      ***REMOVED***/* Shifts grid - 3 columns with new components */***REMOVED***
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          ***REMOVED***turnosOrdenados.map((turno, index) => renderTurno(turno, index))***REMOVED***
+          ***REMOVED***sortedShifts.map((shift, index) => renderShift(shift, index))***REMOVED***
         </div>
 
-        ***REMOVED***/* Mensaje si no hay turnos */***REMOVED***
-        ***REMOVED***turnosOrdenados.length === 0 && (
+        ***REMOVED***/* Message if there are no shifts */***REMOVED***
+        ***REMOVED***sortedShifts.length === 0 && (
           <div className="text-center py-8 text-gray-500">
             <Calendar size=***REMOVED***32***REMOVED*** className="mx-auto mb-2 text-gray-300" />
-            <p>No hay turnos en esta semana</p>
+            <p>No shifts this week</p>
           </div>
         )***REMOVED***
       </div>

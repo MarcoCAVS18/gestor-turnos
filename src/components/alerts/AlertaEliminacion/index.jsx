@@ -1,26 +1,26 @@
-// src/components/alerts/AlertaEliminacion/index.jsx
+// src/components/alerts/DeleteAlert/index.jsx
 
 import React from 'react';
 import ***REMOVED*** AlertTriangle ***REMOVED*** from 'lucide-react';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 
-const AlertaEliminacion = (***REMOVED***
+const DeleteAlert = (***REMOVED***
   visible,
   onCancel,
   onConfirm,
-  eliminando = false,
-  tipo = 'elemento',
-  titulo,
-  detalles = [],
-  advertencia,
-  textoConfirmar = 'Eliminar',
-  textoCancelar = 'Cancelar'
+  deleting = false,
+  type = 'item',
+  title,
+  details = [],
+  warning,
+  confirmText = 'Delete',
+  cancelText = 'Cancel'
 ***REMOVED***) => ***REMOVED***
 
   if (!visible) return null;
 
-  const tituloFinal = titulo || `¿Eliminar $***REMOVED***tipo***REMOVED***?`;
+  const finalTitle = title || `Delete $***REMOVED***type***REMOVED***?`;
 
   return (
     <Flex variant="center" className="fixed inset-0 bg-black bg-opacity-50 p-4 z-[9999]">
@@ -31,28 +31,28 @@ const AlertaEliminacion = (***REMOVED***
           </Flex>
 
           <h3 className="text-lg font-semibold text-center text-gray-900 mb-2">
-            ***REMOVED***tituloFinal***REMOVED***
+            ***REMOVED***finalTitle***REMOVED***
           </h3>
 
-          ***REMOVED***detalles.length > 0 && (
+          ***REMOVED***details.length > 0 && (
             <div className="bg-gray-50 rounded-lg p-3 mb-4">
               <div className="text-sm space-y-1">
-                ***REMOVED***detalles.map((detalle, index) => (
+                ***REMOVED***details.map((detail, index) => (
                   <p
                     key=***REMOVED***index***REMOVED***
                     className=***REMOVED***index === 0 ? "font-medium text-gray-900" : "text-gray-600"***REMOVED***
                   >
-                    ***REMOVED***detalle***REMOVED***
+                    ***REMOVED***detail***REMOVED***
                   </p>
                 ))***REMOVED***
               </div>
             </div>
           )***REMOVED***
 
-          ***REMOVED***advertencia && (
+          ***REMOVED***warning && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
               <p className="text-sm text-yellow-800">
-                <AlertTriangle size=***REMOVED***16***REMOVED*** className="inline mr-1" />Advertencia: Se eliminará permanentemente el trabajo seleccionado.
+                <AlertTriangle size=***REMOVED***16***REMOVED*** className="inline mr-1" />Warning: The selected job will be permanently deleted.
               </p>
             </div>
           )***REMOVED***
@@ -62,17 +62,17 @@ const AlertaEliminacion = (***REMOVED***
               onClick=***REMOVED***onCancel***REMOVED***
               variant="outline"
               className="flex-1"
-              disabled=***REMOVED***eliminando***REMOVED***
+              disabled=***REMOVED***deleting***REMOVED***
             >
-              ***REMOVED***textoCancelar***REMOVED***
+              ***REMOVED***cancelText***REMOVED***
             </Button>
             <Button
               onClick=***REMOVED***onConfirm***REMOVED***
               variant="danger"
               className="flex-1"
-              loading=***REMOVED***eliminando***REMOVED***
+              loading=***REMOVED***deleting***REMOVED***
             >
-              ***REMOVED***textoConfirmar***REMOVED***
+              ***REMOVED***confirmText***REMOVED***
             </Button>
           </div>
         </div>
@@ -81,4 +81,4 @@ const AlertaEliminacion = (***REMOVED***
   );
 ***REMOVED***;
 
-export default AlertaEliminacion;
+export default DeleteAlert;

@@ -5,7 +5,7 @@ import ***REMOVED*** Bike, Car, User, Truck ***REMOVED*** from 'lucide-react';
 import MotorbikeIcon from '../../icons/MotorbikeIcon';
 import Flex from '../../ui/Flex';
 
-const WorkAvatar = (***REMOVED*** nombre, color, size = 'md', iconName ***REMOVED***) => ***REMOVED***
+const WorkAvatar = (***REMOVED*** name, color, size = 'md', iconName ***REMOVED***) => ***REMOVED***
   const sizes = ***REMOVED***
     sm: 'w-8 h-8 text-sm',
     md: 'w-12 h-12 text-lg',
@@ -21,27 +21,27 @@ const WorkAvatar = (***REMOVED*** nombre, color, size = 'md', iconName ***REMOVE
   const currentIconSize = iconSizes[size] || iconSizes.md;
 
   const iconMap = ***REMOVED***
-    bicicleta: <Bike size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
-    moto: <MotorbikeIcon size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
-    auto: <Car size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
-    'a_pie': <User size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
+    bicycle: <Bike size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
+    motorbike: <MotorbikeIcon size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
+    car: <Car size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
+    'on_foot': <User size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />,
     default: <Truck size=***REMOVED***currentIconSize***REMOVED*** className="text-white" />
   ***REMOVED***;
 
-  const nombreSeguro = nombre || 'T';
-  const colorSeguro = color || '#EC4899';
-  const sizeSeguro = sizes[size] || sizes.md;
+  const safeName = name || 'W';
+  const safeColor = color || '#EC4899';
+  const safeSize = sizes[size] || sizes.md;
 
-  const inicial = nombreSeguro.toString().charAt(0).toUpperCase() || 'T';
+  const initial = safeName.toString().charAt(0).toUpperCase() || 'W';
 
   const content = iconName && iconMap[iconName] 
     ? iconMap[iconName] 
-    : <span className="text-white font-bold">***REMOVED***inicial***REMOVED***</span>;
+    : <span className="text-white font-bold">***REMOVED***initial***REMOVED***</span>;
 
   return (
     <Flex variant="center" 
-      className=***REMOVED***`$***REMOVED***sizeSeguro***REMOVED*** rounded-lg`***REMOVED***
-      style=***REMOVED******REMOVED*** backgroundColor: colorSeguro ***REMOVED******REMOVED***
+      className=***REMOVED***`$***REMOVED***safeSize***REMOVED*** rounded-lg`***REMOVED***
+      style=***REMOVED******REMOVED*** backgroundColor: safeColor ***REMOVED******REMOVED***
     >
       ***REMOVED***content***REMOVED***
     </Flex>

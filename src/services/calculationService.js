@@ -1,6 +1,6 @@
 // src/services/calculationService.js
 import ***REMOVED*** getShiftGrossEarnings ***REMOVED*** from '../utils/shiftUtils';
-import ***REMOVED*** determinarTipoTurno ***REMOVED*** from '../utils/shiftDetailsUtils';
+import ***REMOVED*** determineShiftType ***REMOVED*** from '../utils/shiftDetailsUtils';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 import ***REMOVED*** getMonthRange ***REMOVED*** from '../utils/time';
 import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../constants/delivery';
@@ -8,10 +8,10 @@ import ***REMOVED*** DELIVERY_PLATFORMS_AUSTRALIA ***REMOVED*** from '../constan
 
 
 /**
- * Calcula las horas trabajadas entre una hora de inicio y fin.
- * @param ***REMOVED***string***REMOVED*** start - Hora de inicio (e.g., "08:00")
- * @param ***REMOVED***string***REMOVED*** end - Hora de fin (e.g., "16:00")
- * @returns ***REMOVED***number***REMOVED*** - Total de horas
+ * Calculates the hours worked between a start and end time.
+ * @param ***REMOVED***string***REMOVED*** start - Start time (e.g., "08:00")
+ * @param ***REMOVED***string***REMOVED*** end - End time (e.g., "16:00")
+ * @returns ***REMOVED***number***REMOVED*** - Total hours
  */
 export const calculateHours = (start, end) => ***REMOVED***
   if (!start || !end) return 0;
@@ -21,7 +21,7 @@ export const calculateHours = (start, end) => ***REMOVED***
   let startMinutes = startHour * 60 + startMin;
   let endMinutes = endHour * 60 + endMin;
 
-  // Si el turno cruza la medianoche
+  // If the shift crosses midnight
   if (endMinutes <= startMinutes) ***REMOVED***
     endMinutes += 24 * 60;
   ***REMOVED***
@@ -30,59 +30,59 @@ export const calculateHours = (start, end) => ***REMOVED***
 ***REMOVED***;
 
 /**
- * Calcula el pago de un turno, considerando rangos horarios, tarifas y descansos.
- * @param ***REMOVED***object***REMOVED*** shift - El objeto del turno.
- * @param ***REMOVED***Array***REMOVED*** allJobs - Array de todos los trabajos (normales y delivery).
- * @param ***REMOVED***object***REMOVED*** shiftRanges - Configuración de los rangos horarios.
- * @param ***REMOVED***number***REMOVED*** defaultDiscount - Descuento por defecto.
- * @param ***REMOVED***boolean***REMOVED*** smokoEnabled - Si el descanso (smoko) está habilitado.
- * @param ***REMOVED***number***REMOVED*** smokoMinutes - Duración del descanso en minutos.
- * @returns ***REMOVED***object***REMOVED*** - Objeto con el detalle del pago.
+ * Calculates the payment for a shift, considering time ranges, rates, and breaks.
+ * @param ***REMOVED***object***REMOVED*** shift - The shift object.
+ * @param ***REMOVED***Array***REMOVED*** allJobs - Array of all jobs (normal and delivery).
+ * @param ***REMOVED***object***REMOVED*** shiftRanges - Configuration of time ranges.
+ * @param ***REMOVED***number***REMOVED*** defaultDiscount - Default discount.
+ * @param ***REMOVED***boolean***REMOVED*** smokoEnabled - Whether the break (smoko) is enabled.
+ * @param ***REMOVED***number***REMOVED*** smokoMinutes - Break duration in minutes.
+ * @returns ***REMOVED***object***REMOVED*** - Object with payment details.
  */
 export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes) => ***REMOVED***
-  const job = allJobs.find(j => j.id === shift.trabajoId);
+  const work = allJobs.find(j => j.id === shift.workId);
 
-  if (!job) return ***REMOVED***
+  if (!work) return ***REMOVED***
     total: 0,
     totalWithDiscount: 0,
     hours: 0,
     tips: 0,
     isDelivery: false,
-    breakdown: ***REMOVED*** diurno: 0, tarde: 0, noche: 0, sabado: 0, domingo: 0 ***REMOVED***,
+    breakdown: ***REMOVED*** day: 0, afternoon: 0, night: 0, saturday: 0, sunday: 0 ***REMOVED***,
     appliedRates: ***REMOVED******REMOVED***
   ***REMOVED***;
 
-  // Si es un turno de delivery, devuelve las ganancias totales directamente
-  if (shift.type === 'delivery' || shift.tipo === 'delivery') ***REMOVED***
-    const hours = calculateHours(shift.horaInicio, shift.horaFin);
+  // If it's a delivery shift, return total earnings directly
+  if (shift.type === 'delivery') ***REMOVED***
+    const hours = calculateHours(shift.startTime, shift.endTime);
     const grossEarnings = getShiftGrossEarnings(shift);
     return ***REMOVED***
       total: grossEarnings,
       totalWithDiscount: grossEarnings,
       hours,
-      tips: shift.propinas || 0,
+      tips: shift.tips || 0,
       isDelivery: true,
       breakdown: ***REMOVED*** delivery: grossEarnings ***REMOVED***,
-      appliedRates: ***REMOVED*** 'delivery': shift.gananciaPorHora || (grossEarnings / hours) || 0 ***REMOVED***
+      appliedRates: ***REMOVED*** 'delivery': shift.earningPerHour || (grossEarnings / hours) || 0 ***REMOVED***
     ***REMOVED***;
   ***REMOVED***
 
-  const ***REMOVED*** horaInicio, horaFin, fechaInicio, cruzaMedianoche = false, tuvoDescanso = true ***REMOVED*** = shift;
+  const ***REMOVED*** startTime, endTime, startDate, crossesMidnight = false, hadBreak = true ***REMOVED*** = shift;
 
-  // Prioriza el descanso específico del turno, si no, usa el global.
-  const finalSmokoMinutes = shift.descansoMinutos ?? smokoMinutes;
+  // Prioritize shift-specific break, otherwise use global.
+  const finalSmokoMinutes = shift.breakMinutes ?? smokoMinutes;
 
-  if (!horaInicio || !horaFin || !fechaInicio) ***REMOVED***
+  if (!startTime || !endTime || !startDate) ***REMOVED***
     return ***REMOVED*** total: 0, totalWithDiscount: 0, hours: 0, tips: 0, isDelivery: false, appliedRates: ***REMOVED******REMOVED*** ***REMOVED***;
   ***REMOVED***
 
-  const [startHour, startMin] = horaInicio.split(':').map(n => parseInt(n));
-  const [endHour, endMin] = horaFin.split(':').map(n => parseInt(n));
+  const [startHour, startMin] = startTime.split(':').map(n => parseInt(n));
+  const [endHour, endMin] = endTime.split(':').map(n => parseInt(n));
 
   let startMinutes = startHour * 60 + startMin;
   let endMinutes = endHour * 60 + endMin;
 
-  if (cruzaMedianoche) ***REMOVED***
+  if (crossesMidnight) ***REMOVED***
     endMinutes += 24 * 60;
   ***REMOVED*** else if (endMinutes <= startMinutes) ***REMOVED***
     endMinutes += 24 * 60;
@@ -90,27 +90,27 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
 
   const totalMinutes = endMinutes - startMinutes;
   let workingMinutes = totalMinutes;
-  if (smokoEnabled && tuvoDescanso && totalMinutes > finalSmokoMinutes) ***REMOVED***
+  if (smokoEnabled && hadBreak && totalMinutes > finalSmokoMinutes) ***REMOVED***
     workingMinutes = totalMinutes - finalSmokoMinutes;
   ***REMOVED***
 
   const hours = workingMinutes / 60;
 
-  const date = createSafeDate(fechaInicio);
+  const date = createSafeDate(startDate);
   const dayOfWeek = date.getDay();
 
   let total = 0;
-  let breakdown = ***REMOVED*** diurno: 0, tarde: 0, noche: 0, sabado: 0, domingo: 0 ***REMOVED***;
+  let breakdown = ***REMOVED*** day: 0, afternoon: 0, night: 0, saturday: 0, sunday: 0 ***REMOVED***;
   let appliedRates = ***REMOVED******REMOVED***;
 
-  if (dayOfWeek === 0) ***REMOVED*** // Domingo
-    total = hours * job.tarifas.domingo;
-    breakdown.domingo = total;
-    appliedRates['domingo'] = job.tarifas.domingo;
-  ***REMOVED*** else if (dayOfWeek === 6) ***REMOVED*** // Sábado
-    total = hours * job.tarifas.sabado;
-    breakdown.sabado = total;
-    appliedRates['sabado'] = job.tarifas.sabado;
+  if (dayOfWeek === 0) ***REMOVED*** // Sunday
+    total = hours * work.rates.sunday;
+    breakdown.sunday = total;
+    appliedRates['sunday'] = work.rates.sunday;
+  ***REMOVED*** else if (dayOfWeek === 6) ***REMOVED*** // Saturday
+    total = hours * work.rates.saturday;
+    breakdown.saturday = total;
+    appliedRates['saturday'] = work.rates.saturday;
   ***REMOVED*** else ***REMOVED***
     const ranges = shiftRanges || ***REMOVED***
       dayStart: 6, dayEnd: 14,
@@ -128,18 +128,18 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     for (let minute = 0; minute < minutesToProcess; minute++) ***REMOVED***
       const actualMinute = startMinutes + (minute * totalMinutes / workingMinutes);
       const currentMinuteInDay = Math.floor(actualMinute) % (24 * 60);
-      let rate = job.tarifaBase;
-      let rateType = 'noche';
+      let rate = work.baseRate;
+      let rateType = 'night';
 
       if (currentMinuteInDay >= dayStartMin && currentMinuteInDay < dayEndMin) ***REMOVED***
-        rate = job.tarifas.diurno;
-        rateType = 'diurno';
+        rate = work.rates.day;
+        rateType = 'day';
       ***REMOVED*** else if (currentMinuteInDay >= afternoonStartMin && currentMinuteInDay < afternoonEndMin) ***REMOVED***
-        rate = job.tarifas.tarde;
-        rateType = 'tarde';
+        rate = work.rates.afternoon;
+        rateType = 'afternoon';
       ***REMOVED*** else ***REMOVED***
-        rate = job.tarifas.noche;
-        rateType = 'noche';
+        rate = work.rates.night;
+        rateType = 'night';
       ***REMOVED***
       
       if(rate > 0) appliedRates[rateType] = rate;
@@ -168,9 +168,9 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     breakdown,
     hoursBreakdown,
     appliedRates,
-    isNightShift: cruzaMedianoche || false,
-    smokoApplied: smokoEnabled && tuvoDescanso && totalMinutes > finalSmokoMinutes,
-    smokoMinutes: smokoEnabled && tuvoDescanso ? finalSmokoMinutes : 0,
+    isNightShift: crossesMidnight || false,
+    smokoApplied: smokoEnabled && hadBreak && totalMinutes > finalSmokoMinutes,
+    smokoMinutes: smokoEnabled && hadBreak ? finalSmokoMinutes : 0,
     totalMinutesWorked: workingMinutes,
     totalMinutesScheduled: totalMinutes
   ***REMOVED***;
@@ -371,7 +371,7 @@ export const calculateWeeklyStats = (***REMOVED***
     if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') tipoTurno = 'delivery';
     else if (fechaTurno.getDay() === 6) tipoTurno = 'sabado';
     else if (fechaTurno.getDay() === 0) tipoTurno = 'domingo';
-    else if (shiftRanges) tipoTurno = determinarTipoTurno(turno, shiftRanges);
+    else if (shiftRanges) tipoTurno = determineShiftType(turno, shiftRanges);
 
     if (!acc.tiposDeTurno[tipoTurno]) ***REMOVED***
       acc.tiposDeTurno[tipoTurno] = ***REMOVED*** turnos: 0, horas: 0, ganancia: 0 ***REMOVED***;

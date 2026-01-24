@@ -1,4 +1,4 @@
-// src/components/cards/shift/TarjetaTurno/index.jsx 
+// src/components/cards/shift/ShiftCard/index.jsx 
 
 import React from 'react';
 import ***REMOVED***  Coffee, DollarSign ***REMOVED*** from 'lucide-react';
@@ -8,19 +8,19 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext'
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
 
-const TarjetaTurno = (props) => ***REMOVED***
-  const ***REMOVED*** turno, trabajo ***REMOVED*** = props;
+const ShiftCard = (props) => ***REMOVED***
+  const ***REMOVED*** shift, work ***REMOVED*** = props;
   const ***REMOVED*** calculatePayment, smokoEnabled, currencySymbol, defaultDiscount ***REMOVED*** = useApp(); 
 
-  // Calcular información del turno
+  // Calculate shift information
   const shiftData = React.useMemo(() => ***REMOVED***
-    if (!turno || !trabajo) ***REMOVED***
+    if (!shift || !work) ***REMOVED***
       return ***REMOVED*** hours: 0, totalWithDiscount: 0 ***REMOVED***;
     ***REMOVED***
 
-    const result = calculatePayment(turno);
+    const result = calculatePayment(shift);
     return ***REMOVED*** ...result, defaultDiscount ***REMOVED***;
-  ***REMOVED***, [turno, trabajo, calculatePayment, defaultDiscount]);
+  ***REMOVED***, [shift, work, calculatePayment, defaultDiscount]);
 
   return (
     <BaseShiftCard
@@ -28,11 +28,11 @@ const TarjetaTurno = (props) => ***REMOVED***
       type="traditional"
       shiftData=***REMOVED***shiftData***REMOVED***
       earningValue=***REMOVED***shiftData.totalWithDiscount***REMOVED***
-      earningLabel=***REMOVED***'Ganancia Estimada'***REMOVED***
+      earningLabel=***REMOVED***'Estimated Earnings'***REMOVED***
       currencySymbol=***REMOVED***currencySymbol***REMOVED***
     >
       ***REMOVED******REMOVED***
-        // Badge de Smoko - Solo mostrar si está aplicado
+        // Smoko Badge - Only show if applied
         mobileBadge: smokoEnabled && shiftData.smokoApplied && (
           <Badge variant="warning" size="xs" icon=***REMOVED***Coffee***REMOVED***>
             -***REMOVED***shiftData.smokoMinutes***REMOVED***min
@@ -45,20 +45,20 @@ const TarjetaTurno = (props) => ***REMOVED***
           </Badge>
         ),
 
-        mobileStats: trabajo.tarifaBase > 0 && (
+        mobileStats: work.baseRate > 0 && (
           <Flex variant="start" className="pt-2 border-t border-gray-100 mt-2">
             <Flex variant="center" className="text-sm text-gray-600">
               <DollarSign size=***REMOVED***12***REMOVED*** className="mr-1 text-green-500" />
-              <span>***REMOVED***formatCurrency(trabajo.tarifaBase, currencySymbol)***REMOVED***/hr</span>
+              <span>***REMOVED***formatCurrency(work.baseRate, currencySymbol)***REMOVED***/hr</span>
             </Flex>
           </Flex>
         ),
 
-        desktopStats: trabajo.tarifaBase > 0 && (
+        desktopStats: work.baseRate > 0 && (
           <Flex variant="start" className="mb-2">
             <Flex variant="center" className="text-sm text-gray-600">
               <DollarSign size=***REMOVED***14***REMOVED*** className="mr-1 text-green-500" />
-              <span>***REMOVED***formatCurrency(trabajo.tarifaBase, currencySymbol)***REMOVED***/hr</span>
+              <span>***REMOVED***formatCurrency(work.baseRate, currencySymbol)***REMOVED***/hr</span>
             </Flex>
           </Flex>
         ),
@@ -67,4 +67,4 @@ const TarjetaTurno = (props) => ***REMOVED***
   );
 ***REMOVED***;
 
-export default TarjetaTurno;
+export default ShiftCard;

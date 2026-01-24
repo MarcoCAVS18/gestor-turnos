@@ -10,10 +10,10 @@ import Flex from '../../ui/Flex';
 const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick, colors ***REMOVED***) => ***REMOVED***
   const getVehicleIcon = (vehicleId) => ***REMOVED***
     const icons = ***REMOVED***
-      'bicicleta': Bike,
-      'moto': MotorbikeIcon, 
-      'auto': Car,
-      'a_pie': User
+      'bicycle': Bike,
+      'motorbike': MotorbikeIcon, 
+      'car': Car,
+      'on_foot': User
     ***REMOVED***;
     return icons[vehicleId] || Car; 
   ***REMOVED***;
@@ -23,7 +23,7 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick, colors ***REM
   return (
     <button
       type="button"
-      onClick=***REMOVED***() => onClick(vehicle.nombre)***REMOVED*** 
+      onClick=***REMOVED***() => onClick(vehicle.name)***REMOVED*** 
       className=***REMOVED***`relative p-3 rounded-lg border-2 transition-all duration-200 w-full h-16 flex flex-col items-center justify-center $***REMOVED***
         isSelected 
           ? 'border-pink-500 bg-pink-50 shadow-md' 
@@ -34,9 +34,9 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick, colors ***REM
         backgroundColor: isSelected ? colors.transparent10 : undefined
       ***REMOVED******REMOVED***
     >
-      ***REMOVED***/* Layout horizontal para compactar */***REMOVED***
+      ***REMOVED***/* Horizontal layout for compactness */***REMOVED***
       <div className="flex items-center space-x-2">
-        ***REMOVED***/* Contenedor del ícono más pequeño */***REMOVED***
+        ***REMOVED***/* Smaller icon container */***REMOVED***
         <Flex variant="center" 
           className="w-6 h-6 rounded flex-shrink-0"
           style=***REMOVED******REMOVED*** backgroundColor: vehicle.color + '20' ***REMOVED******REMOVED*** 
@@ -44,13 +44,13 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick, colors ***REM
           <Icon size=***REMOVED***14***REMOVED*** style=***REMOVED******REMOVED*** color: vehicle.color ***REMOVED******REMOVED*** />
         </Flex>
         
-        ***REMOVED***/* Nombre del vehículo */***REMOVED***
+        ***REMOVED***/* Vehicle name */***REMOVED***
         <p className="font-medium text-xs text-center leading-tight text-gray-800 truncate">
-          ***REMOVED***vehicle.nombre***REMOVED***
+          ***REMOVED***vehicle.name***REMOVED***
         </p>
       </div>
       
-      ***REMOVED***/* Check de selección más pequeño */***REMOVED***
+      ***REMOVED***/* Smaller selection check */***REMOVED***
       ***REMOVED***isSelected && (
         <Flex variant="center"
           className="absolute -top-1 -right-1 w-4 h-4 rounded-full shadow-sm"
@@ -66,7 +66,7 @@ const VehicleButton = (***REMOVED*** vehicle, isSelected, onClick, colors ***REM
 const VehicleSelector = (***REMOVED*** 
   selectedVehicle, 
   onVehicleSelect, 
-  title = "Selecciona tu vehículo",
+  title = "Select your vehicle",
   className = "" 
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -75,22 +75,22 @@ const VehicleSelector = (***REMOVED***
     <div className=***REMOVED***`space-y-3 $***REMOVED***className***REMOVED***`***REMOVED***>
       <h3 className="text-sm font-medium text-gray-700">***REMOVED***title***REMOVED***</h3>
       
-      ***REMOVED***/* Grid 2x2 - dos columnas en todos los tamaños */***REMOVED***
+      ***REMOVED***/* Grid 2x2 - two columns on all sizes */***REMOVED***
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         ***REMOVED***DELIVERY_VEHICLES.map(vehicle => (
           <VehicleButton
             key=***REMOVED***vehicle.id***REMOVED*** 
             vehicle=***REMOVED***vehicle***REMOVED*** 
-            isSelected=***REMOVED***selectedVehicle === vehicle.nombre***REMOVED***
+            isSelected=***REMOVED***selectedVehicle === vehicle.name***REMOVED***
             onClick=***REMOVED***onVehicleSelect***REMOVED***
             colors=***REMOVED***colors***REMOVED***
           />
         ))***REMOVED***
       </div>
       
-      ***REMOVED***/* Texto de ayuda opcional */***REMOVED***
+      ***REMOVED***/* Optional help text */***REMOVED***
       <p className="text-xs text-gray-500 text-center mt-2">
-        Selecciona el vehículo que usarás para tus entregas
+        Select the vehicle you will use for your deliveries
       </p>
     </div>
   );

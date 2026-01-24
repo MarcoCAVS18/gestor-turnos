@@ -8,7 +8,7 @@ import Flex from './components/ui/Flex';
 import useModalManager from './hooks/useModalManager';
 import './styles/animation.css';
 
-// Componentes de autenticación
+// Auth Components
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
@@ -20,22 +20,22 @@ import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import TermsOfService from './pages/legal/TermsOfService';
 import DeleteAccount from './pages/legal/DeleteAccount';
 
-// Componentes principales
+// Main Components
 import Header from './components/layout/Header';
-import Navegacion from './components/layout/Navegacion';
+import Navigation from './components/layout/Navegacion';
 import Dashboard from './pages/Dashboard';
-import Trabajos from './pages/Trabajos';
-import Turnos from './pages/Turnos';
-import Estadisticas from './pages/Estadisticas';
-import CalendarioView from './pages/CalendarioView';
-import Ajustes from './pages/Ajustes';
-import TrabajoCompartido from './pages/TrabajoCompartido';
+import Works from './pages/Trabajos';
+import Shifts from './pages/Turnos';
+import Statistics from './pages/Estadisticas';
+import CalendarView from './pages/CalendarioView';
+import Settings from './pages/Ajustes';
+import SharedWork from './pages/TrabajoCompartido';
 
-// Modales
-import ModalTrabajo from './components/modals/work/ModalTrabajo';
-import ModalTurno from './components/modals/shift/ModalTurno';
+// Modals
+import WorkModal from './components/modals/work/ModalTrabajo';
+import ShiftModal from './components/modals/shift/ModalTurno';
 
-// Ruta pública que permite acceso sin autenticación
+// Public route that allows access without authentication
 const PublicRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** loading ***REMOVED*** = useAuth();
 
@@ -50,63 +50,63 @@ const PublicRoute = (***REMOVED*** children ***REMOVED***) => ***REMOVED***
   return children;
 ***REMOVED***;
 
-// Layout general de la app
+// General app layout
 function AppLayout() ***REMOVED***
   const location = useLocation();
-  const vistaActual = location.pathname.substring(1); // Removes the leading '/'
+  const currentView = location.pathname.substring(1); // Removes the leading '/'
 
   const ***REMOVED***
-    modalTrabajoAbierto,
-    modalTurnoAbierto,
-    trabajoSeleccionado,
-    turnoSeleccionado,
-    abrirModalNuevoTrabajo,
-    abrirModalNuevoTurno,
-    abrirModalEditarTrabajo,
-    abrirModalEditarTurno,
-    cerrarModalTrabajo,
-    cerrarModalTurno,
+    isWorkModalOpen,
+    isShiftModalOpen,
+    selectedWork,
+    selectedShift,
+    openNewWorkModal,
+    openNewShiftModal,
+    openEditWorkModal,
+    openEditShiftModal,
+    closeWorkModal,
+    closeShiftModal,
   ***REMOVED*** = useModalManager();
 
   return (
     <div className="min-h-screen bg-gray-100 font-poppins">
-      ***REMOVED***/* Header solo en mobile */***REMOVED***
+      ***REMOVED***/* Header only on mobile */***REMOVED***
       <div className="md:hidden">
         <Header
-          vistaActual=***REMOVED***vistaActual***REMOVED***
-          abrirModalNuevoTrabajo=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
-          abrirModalNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED***
+          currentView=***REMOVED***currentView***REMOVED***
+          openNewWorkModal=***REMOVED***openNewWorkModal***REMOVED***
+          openNewShiftModal=***REMOVED***openNewShiftModal***REMOVED***
         />
       </div>
 
-      ***REMOVED***/* Contenido principal */***REMOVED***
+      ***REMOVED***/* Main content */***REMOVED***
       <main className="max-w-md mx-auto px-4 pb-20 md:max-w-none md:ml-72 md:px-6 md:pb-6">
-        <Outlet context=***REMOVED******REMOVED*** abrirModalEditarTrabajo, abrirModalEditarTurno ***REMOVED******REMOVED*** />
+        <Outlet context=***REMOVED******REMOVED*** openEditWorkModal, openEditShiftModal ***REMOVED******REMOVED*** />
       </main>
 
-      ***REMOVED***/* Navegación */***REMOVED***
-      <Navegacion
-        abrirModalNuevoTrabajo=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
-        abrirModalNuevoTurno=***REMOVED***abrirModalNuevoTurno***REMOVED***
+      ***REMOVED***/* Navigation */***REMOVED***
+      <Navigation
+        openNewWorkModal=***REMOVED***openNewWorkModal***REMOVED***
+        openNewShiftModal=***REMOVED***openNewShiftModal***REMOVED***
       />
 
-      <ModalTrabajo
-        isOpen=***REMOVED***modalTrabajoAbierto***REMOVED***
-        onClose=***REMOVED***cerrarModalTrabajo***REMOVED***
-        trabajo=***REMOVED***trabajoSeleccionado***REMOVED***
+      <WorkModal
+        isOpen=***REMOVED***isWorkModalOpen***REMOVED***
+        onClose=***REMOVED***closeWorkModal***REMOVED***
+        work=***REMOVED***selectedWork***REMOVED***
       />
 
-      <ModalTurno
-        isOpen=***REMOVED***modalTurnoAbierto***REMOVED***
-        onClose=***REMOVED***cerrarModalTurno***REMOVED***
-        turno=***REMOVED***turnoSeleccionado***REMOVED***
+      <ShiftModal
+        isOpen=***REMOVED***isShiftModalOpen***REMOVED***
+        onClose=***REMOVED***closeShiftModal***REMOVED***
+        shift=***REMOVED***selectedShift***REMOVED***
       />
 
     </div>
   );
 ***REMOVED***
 
-// App principal
+// Main App
 function App() ***REMOVED***
   const ***REMOVED*** loading ***REMOVED*** = useAuth();
 
@@ -122,7 +122,7 @@ function App() ***REMOVED***
     <Router>
       <ScrollToTop />
       <Routes>
-        ***REMOVED***/* Autenticación */***REMOVED***
+        ***REMOVED***/* Authentication */***REMOVED***
         <Route path="/login" element=***REMOVED***<Login />***REMOVED*** />
         <Route path="/register" element=***REMOVED***<Register />***REMOVED*** />
         <Route path="/forgot-password" element=***REMOVED***<ForgotPassword />***REMOVED*** />
@@ -133,15 +133,15 @@ function App() ***REMOVED***
         <Route path="/terms" element=***REMOVED***<TermsOfService />***REMOVED*** />
         <Route path="/delete-account" element=***REMOVED***<DeleteAccount />***REMOVED*** />
 
-        ***REMOVED***/* RUTA ESPECIAL para trabajos compartidos - ACCESO PÚBLICO */***REMOVED***
+        ***REMOVED***/* SPECIAL ROUTE for shared works - PUBLIC ACCESS */***REMOVED***
         <Route
-          path="/compartir/:token"
+          path="/share/:token"
           element=***REMOVED***
             <PublicRoute>
               <AppProvider>
                 <div className="min-h-screen bg-gray-100 font-poppins">
                   <main className="max-w-md mx-auto">
-                    <TrabajoCompartido />
+                    <SharedWork />
                   </main>
                 </div>
               </AppProvider>
@@ -149,17 +149,17 @@ function App() ***REMOVED***
           ***REMOVED***
         />
 
-        ***REMOVED***/* Rutas protegidas */***REMOVED***
+        ***REMOVED***/* Protected routes */***REMOVED***
         <Route element=***REMOVED***<ProtectedLayout><AppLayout /></ProtectedLayout>***REMOVED***>
           <Route path="/dashboard" element=***REMOVED***<Dashboard />***REMOVED*** />
-          <Route path="/trabajos" element=***REMOVED***<Trabajos />***REMOVED*** />
-          <Route path="/turnos" element=***REMOVED***<Turnos />***REMOVED*** />
-          <Route path="/estadisticas" element=***REMOVED***<Estadisticas />***REMOVED*** />
-          <Route path="/calendario" element=***REMOVED***<CalendarioView />***REMOVED*** />
-          <Route path="/ajustes" element=***REMOVED***<Ajustes />***REMOVED*** />
+          <Route path="/works" element=***REMOVED***<Works />***REMOVED*** />
+          <Route path="/shifts" element=***REMOVED***<Shifts />***REMOVED*** />
+          <Route path="/statistics" element=***REMOVED***<Statistics />***REMOVED*** />
+          <Route path="/calendar" element=***REMOVED***<CalendarView />***REMOVED*** />
+          <Route path="/settings" element=***REMOVED***<Settings />***REMOVED*** />
         </Route>
 
-        ***REMOVED***/* Redirecciones */***REMOVED***
+        ***REMOVED***/* Redirections */***REMOVED***
         <Route path="/" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
         <Route path="*" element=***REMOVED***<Navigate to="/dashboard" replace />***REMOVED*** />
       </Routes>

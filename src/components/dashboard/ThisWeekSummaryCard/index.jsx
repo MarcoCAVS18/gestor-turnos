@@ -9,6 +9,7 @@ import Flex from '../../ui/Flex';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 import ProgressBar from '../../ui/ProgressBar';
+import Button from '../../ui/Button';
 
 const ThisWeekSummaryCard = (***REMOVED*** stats, className ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
@@ -84,12 +85,11 @@ const ThisWeekSummaryCard = (***REMOVED*** stats, className ***REMOVED***) => **
                   <span className="text-lg font-semibold text-gray-700">***REMOVED***horasSemana.toFixed(1)***REMOVED***h</span>
                 </Flex>
                 <div
-                  className="p-2 rounded-lg border border-dashed cursor-pointer hover:border-solid transition-all duration-200"
+                  className="p-2 rounded-lg border border-dashed transition-all duration-200"
                   style=***REMOVED******REMOVED***
                     borderColor: colors.transparent30,
                     backgroundColor: colors.transparent5
                   ***REMOVED******REMOVED***
-                  onClick=***REMOVED***irAjustes***REMOVED***
                 >
                   <p className="text-xs text-gray-600 mb-1">
                     ¿Sin meta semanal?
@@ -97,11 +97,17 @@ const ThisWeekSummaryCard = (***REMOVED*** stats, className ***REMOVED***) => **
                   <p className="text-xs text-gray-600 mb-2">
                     Establecer una, te ayuda a mantener el rumbo
                   </p>
-
-                  <Flex variant="center" className="text-xs font-medium" style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***>
-                    <span>Configurar</span>
-                    <ArrowRight size=***REMOVED***10***REMOVED*** className="ml-1" />
-                  </Flex>
+                  <Button
+                    onClick=***REMOVED***irAjustes***REMOVED***
+                    variant="ghost-animated"
+                    size="sm"
+                    icon=***REMOVED***ArrowRight***REMOVED***
+                    iconPosition="right"
+                    themeColor=***REMOVED***colors.primary***REMOVED***
+                    className="-ml-2"
+                  >
+                    Configurar
+                  </Button>
                 </div>
               </div>
             )***REMOVED***

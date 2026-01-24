@@ -1,52 +1,52 @@
-// src/components/modals/work/ModalTrabajo/index.jsx - Refactorizado con BaseModal
+// src/components/modals/work/WorkModal/index.jsx - Refactored with BaseModal
 
 import React, ***REMOVED*** useState, useEffect, useId ***REMOVED*** from 'react';
 import ***REMOVED*** Pen, Plus ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext';
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
 import BaseModal from '../../base/BaseModal';
-import TrabajoForm from '../../../forms/work/TrabajoForm';
-import SelectorTipoTrabajo from '../../base/SelectorTipoTrabajo';
-import ModalTrabajoDelivery from '../ModalTrabajoDelivery';
+import WorkForm from '../../../forms/work/TrabajoForm';
+import WorkTypeSelector from '../../base/SelectorTipoTrabajo';
+import DeliveryWorkModal from '../ModalTrabajoDelivery';
 
-const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => ***REMOVED***
+const WorkModal = (***REMOVED*** isOpen, onClose, work ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** addJob, editJob, deliveryEnabled ***REMOVED*** = useApp();
   const isMobile = useIsMobile();
-  const [mostrarSelector, setMostrarSelector] = useState(false);
-  const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
+  const [showSelector, setShowSelector] = useState(false);
+  const [selectedType, setSelectedType] = useState(null);
   const [loading, setLoading] = useState(false);
   const formId = useId();
 
-  // Determinar si mostrar selector
+  // Determine if showing selector
   useEffect(() => ***REMOVED***
-    if (isOpen && !trabajo && deliveryEnabled) ***REMOVED***
-      setMostrarSelector(true);
-      setTipoSeleccionado(null);
+    if (isOpen && !work && deliveryEnabled) ***REMOVED***
+      setShowSelector(true);
+      setSelectedType(null);
     ***REMOVED*** else ***REMOVED***
-      setMostrarSelector(false);
-      if (isOpen && !trabajo && !deliveryEnabled) ***REMOVED***
-        setTipoSeleccionado('tradicional');
+      setShowSelector(false);
+      if (isOpen && !work && !deliveryEnabled) ***REMOVED***
+        setSelectedType('traditional');
       ***REMOVED***
     ***REMOVED***
-  ***REMOVED***, [isOpen, trabajo, deliveryEnabled]);
+  ***REMOVED***, [isOpen, work, deliveryEnabled]);
 
-  const manejarSeleccionTipo = (tipo) => ***REMOVED***
-    setTipoSeleccionado(tipo);
-    setMostrarSelector(false);
+  const handleSelectType = (type) => ***REMOVED***
+    setSelectedType(type);
+    setShowSelector(false);
   ***REMOVED***;
 
-  const manejarGuardado = async (datosTrabajo) => ***REMOVED***
+  const handleSave = async (workData) => ***REMOVED***
     try ***REMOVED***
       setLoading(true);
 
-      if (trabajo) ***REMOVED***
-        await editJob(trabajo.id, datosTrabajo);
+      if (work) ***REMOVED***
+        await editJob(work.id, workData);
       ***REMOVED*** else ***REMOVED***
-        await addJob(datosTrabajo);
+        await addJob(workData);
       ***REMOVED***
 
-      setTipoSeleccionado(null);
-      setMostrarSelector(false);
+      setSelectedType(null);
+      setShowSelector(false);
       setLoading(false);
       onClose();
     ***REMOVED*** catch (error) ***REMOVED***
@@ -54,33 +54,33 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
     ***REMOVED***
   ***REMOVED***;
 
-  const manejarCerrar = () => ***REMOVED***
-    setTipoSeleccionado(null);
-    setMostrarSelector(false);
+  const handleClose = () => ***REMOVED***
+    setSelectedType(null);
+    setShowSelector(false);
     setLoading(false);
     onClose();
   ***REMOVED***;
 
   if (!isOpen) return null;
 
-  // Si es un trabajo de delivery existente, usar el modal de delivery directamente
-  if (trabajo && trabajo.tipo === 'delivery') ***REMOVED***
+  // If it is an existing delivery work, use the delivery modal directly
+  if (work && work.type === 'delivery') ***REMOVED***
     return (
-      <ModalTrabajoDelivery
+      <DeliveryWorkModal
         isOpen=***REMOVED***true***REMOVED***
-        onClose=***REMOVED***manejarCerrar***REMOVED***
-        trabajo=***REMOVED***trabajo***REMOVED***
+        onClose=***REMOVED***handleClose***REMOVED***
+        work=***REMOVED***work***REMOVED***
       />
     );
   ***REMOVED***
 
-  // Si se seleccionó delivery como tipo
-  if (tipoSeleccionado === 'delivery') ***REMOVED***
+  // If delivery was selected as type
+  if (selectedType === 'delivery') ***REMOVED***
     return (
-      <ModalTrabajoDelivery
+      <DeliveryWorkModal
         isOpen=***REMOVED***true***REMOVED***
-        onClose=***REMOVED***manejarCerrar***REMOVED***
-        trabajo=***REMOVED***null***REMOVED***
+        onClose=***REMOVED***handleClose***REMOVED***
+        work=***REMOVED***null***REMOVED***
       />
     );
   ***REMOVED***
@@ -88,26 +88,26 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
   return (
     <BaseModal
       isOpen=***REMOVED***isOpen***REMOVED***
-      onClose=***REMOVED***manejarCerrar***REMOVED***
-      title=***REMOVED***trabajo ? 'Editar Trabajo' : 'Nuevo Trabajo'***REMOVED***
-      icon=***REMOVED***trabajo ? Pen : Plus***REMOVED***
+      onClose=***REMOVED***handleClose***REMOVED***
+      title=***REMOVED***work ? 'Edit Work' : 'New Work'***REMOVED***
+      icon=***REMOVED***work ? Pen : Plus***REMOVED***
       loading=***REMOVED***loading***REMOVED***
       maxWidth="lg"
-      showActions=***REMOVED***!mostrarSelector***REMOVED***
-      onCancel=***REMOVED***manejarCerrar***REMOVED***
+      showActions=***REMOVED***!showSelector***REMOVED***
+      onCancel=***REMOVED***handleClose***REMOVED***
       formId=***REMOVED***formId***REMOVED***
-      saveText=***REMOVED***trabajo ? 'Guardar Cambios' : 'Crear Trabajo'***REMOVED***
+      saveText=***REMOVED***work ? 'Save Changes' : 'Create Work'***REMOVED***
     >
-      ***REMOVED***mostrarSelector ? (
-        <SelectorTipoTrabajo
-          onSelectTipo=***REMOVED***manejarSeleccionTipo***REMOVED***
+      ***REMOVED***showSelector ? (
+        <WorkTypeSelector
+          onSelectType=***REMOVED***handleSelectType***REMOVED***
           isMobile=***REMOVED***isMobile***REMOVED***
         />
       ) : (
-        <TrabajoForm
+        <WorkForm
           id=***REMOVED***formId***REMOVED***
-          trabajo=***REMOVED***trabajo***REMOVED***
-          onSubmit=***REMOVED***manejarGuardado***REMOVED***
+          work=***REMOVED***work***REMOVED***
+          onSubmit=***REMOVED***handleSave***REMOVED***
           isMobile=***REMOVED***isMobile***REMOVED***
         />
       )***REMOVED***
@@ -115,4 +115,4 @@ const ModalTrabajo = (***REMOVED*** isOpen, onClose, trabajo ***REMOVED***) => *
   );
 ***REMOVED***;
 
-export default ModalTrabajo;
+export default WorkModal;
