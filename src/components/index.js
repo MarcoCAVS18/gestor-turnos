@@ -12,15 +12,15 @@ export ***REMOVED*** default as ProgressBar ***REMOVED*** from './ui/ProgressBar
 
 // Layout Components  
 export ***REMOVED*** default as Header ***REMOVED*** from './layout/Header';
-export ***REMOVED*** default as Navegacion ***REMOVED*** from './layout/Navegacion';
+export ***REMOVED*** default as Navigation ***REMOVED*** from './layout/Navegacion';
 export ***REMOVED*** default as PageHeader ***REMOVED*** from './layout/PageHeader';
 export ***REMOVED*** default as LoadingWrapper ***REMOVED*** from './layout/LoadingWrapper';
 
 // Card Components
 export ***REMOVED*** default as StatCard ***REMOVED*** from './cards/StatCard';
-export ***REMOVED*** default as TarjetaTrabajo ***REMOVED*** from './cards/work/TarjetaTrabajo';
-export ***REMOVED*** default as TarjetaTurno ***REMOVED*** from './cards/shift/TarjetaTurno';
-export ***REMOVED*** default as TrabajoCard ***REMOVED*** from './forms/TrabajoCard';
+export ***REMOVED*** default as WorkCard ***REMOVED*** from './cards/work/TarjetaTrabajo';
+export ***REMOVED*** default as ShiftCard ***REMOVED*** from './cards/shift/TarjetaTurno';
+export ***REMOVED*** default as WorkDetailsCard ***REMOVED*** from './forms/TrabajoCard';
 
 // Work Components
 export ***REMOVED*** default as WorkAvatar ***REMOVED*** from './work/WorkAvatar';
@@ -31,15 +31,15 @@ export ***REMOVED*** default as ShiftDetails ***REMOVED*** from './shift/ShiftDe
 export ***REMOVED*** default as ShiftTypeBadge ***REMOVED*** from './shift/ShiftTypeBadge';
 
 // Form Components
-export ***REMOVED*** default as TrabajoForm ***REMOVED*** from './forms/work/TrabajoForm';
-export ***REMOVED*** default as TurnoForm ***REMOVED*** from './forms/shift/TurnoForm';
+export ***REMOVED*** default as WorkForm ***REMOVED*** from './forms/work/TrabajoForm';
+export ***REMOVED*** default as ShiftForm ***REMOVED*** from './forms/shift/TurnoForm';
 
 // Modal Components
-export ***REMOVED*** default as ModalTrabajo ***REMOVED*** from './modals/work/ModalTrabajo';
-export ***REMOVED*** default as ModalTurno ***REMOVED*** from './modals/shift/ModalTurno';
+export ***REMOVED*** default as WorkModal ***REMOVED*** from './modals/work/ModalTrabajo';
+export ***REMOVED*** default as ShiftModal ***REMOVED*** from './modals/shift/ModalTurno';
 
 // Alert Components
-export ***REMOVED*** default as AlertaEliminacion ***REMOVED*** from './alerts/AlertaEliminacion';
+export ***REMOVED*** default as DeleteAlert ***REMOVED*** from './alerts/AlertaEliminacion';
 
 // Calendar Components
 export ***REMOVED*** default as Calendario ***REMOVED*** from './calendar/Calendario';

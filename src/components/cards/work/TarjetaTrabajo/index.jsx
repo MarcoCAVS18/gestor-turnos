@@ -1,4 +1,4 @@
-// src/components/cards/TarjetaTrabajo/index.jsx - Refactorizado usando BaseWorkCard
+// src/components/cards/WorkCard/index.jsx - Refactored using BaseWorkCard
 
 import React from 'react';
 import ***REMOVED*** Sun, Moon ***REMOVED*** from 'lucide-react';
@@ -6,58 +6,58 @@ import BaseWorkCard from '../../base/BaseWorkCard';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
 
-const TarjetaTrabajo = (props) => ***REMOVED***
-  const ***REMOVED*** trabajo ***REMOVED*** = props;
+const WorkCard = (props) => ***REMOVED***
+  const ***REMOVED*** work ***REMOVED*** = props;
 
-  // Información de tarifas
-  const tarifaBase = trabajo?.tarifaBase || trabajo?.salario || 0;
-  const tarifaNoche = trabajo?.tarifas?.noche || trabajo?.tarifaBase || trabajo?.salario || 0;
-  const tieneTarifaNocturna = tarifaNoche !== tarifaBase && tarifaNoche > 0;
+  // Rate information
+  const baseRate = work?.baseRate || work?.salary || 0;
+  const nightRate = work?.rates?.night || work?.baseRate || work?.salary || 0;
+  const hasNightRate = nightRate !== baseRate && nightRate > 0;
 
   return (
     <BaseWorkCard ***REMOVED***...props***REMOVED*** type="traditional">
-      ***REMOVED***/* Información de tarifas */***REMOVED***
+      ***REMOVED***/* Rate information */***REMOVED***
       <div className="space-y-2">
-        ***REMOVED***/* Tarifa base */***REMOVED***
+        ***REMOVED***/* Base rate */***REMOVED***
         <Flex variant="between">
           <Flex variant="center">
             <Sun size=***REMOVED***14***REMOVED*** className="text-yellow-500 mr-2" />
-            <span className="text-sm text-gray-600">Tarifa base:</span>
+            <span className="text-sm text-gray-600">Base rate:</span>
           </Flex>
-          <span className="text-sm font-medium">***REMOVED***formatCurrency(tarifaBase)***REMOVED***/hora</span>
+          <span className="text-sm font-medium">***REMOVED***formatCurrency(baseRate)***REMOVED***/hour</span>
         </Flex>
 
-        ***REMOVED***/* Tarifa nocturna si es diferente */***REMOVED***
-        ***REMOVED***tieneTarifaNocturna && (
+        ***REMOVED***/* Night rate if different */***REMOVED***
+        ***REMOVED***hasNightRate && (
           <Flex variant="between">
             <Flex variant="center">
               <Moon size=***REMOVED***14***REMOVED*** className="text-indigo-500 mr-2" />
-              <span className="text-sm text-gray-600">Tarifa noche:</span>
+              <span className="text-sm text-gray-600">Night rate:</span>
             </Flex>
-            <span className="text-sm font-medium">***REMOVED***formatCurrency(tarifaNoche)***REMOVED***/hora</span>
+            <span className="text-sm font-medium">***REMOVED***formatCurrency(nightRate)***REMOVED***/hour</span>
           </Flex>
         )***REMOVED***
 
-        ***REMOVED***/* Información adicional de tarifas si existen */***REMOVED***
-        ***REMOVED***trabajo?.tarifas && (
+        ***REMOVED***/* Additional rate information if it exists */***REMOVED***
+        ***REMOVED***work?.rates && (
           <div className="mt-3 pt-3 border-t border-gray-100">
             <div className="grid grid-cols-3 gap-2 text-xs">
-              ***REMOVED***trabajo.tarifas.sabado && trabajo.tarifas.sabado !== tarifaBase && (
+              ***REMOVED***work.rates.saturday && work.rates.saturday !== baseRate && (
                 <Flex variant="between">
-                  <span className="text-gray-500">Sábado:</span>
-                  <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas.sabado)***REMOVED***/h</span>
+                  <span className="text-gray-500">Saturday:</span>
+                  <span className="font-medium">***REMOVED***formatCurrency(work.rates.saturday)***REMOVED***/h</span>
                 </Flex>
               )***REMOVED***
-              ***REMOVED***trabajo.tarifas.domingo && trabajo.tarifas.domingo !== tarifaBase && (
+              ***REMOVED***work.rates.sunday && work.rates.sunday !== baseRate && (
                 <Flex variant="between">
-                  <span className="text-gray-500">Domingo:</span>
-                  <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas.domingo)***REMOVED***/h</span>
+                  <span className="text-gray-500">Sunday:</span>
+                  <span className="font-medium">***REMOVED***formatCurrency(work.rates.sunday)***REMOVED***/h</span>
                 </Flex>
               )***REMOVED***
-              ***REMOVED***trabajo.tarifas.feriados && trabajo.tarifas.feriados !== tarifaBase && (
+              ***REMOVED***work.rates.holidays && work.rates.holidays !== baseRate && (
                 <Flex variant="between">
-                  <span className="text-gray-500">Feriados:</span>
-                  <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas.feriados)***REMOVED***/h</span>
+                  <span className="text-gray-500">Holidays:</span>
+                  <span className="font-medium">***REMOVED***formatCurrency(work.rates.holidays)***REMOVED***/h</span>
                 </Flex>
               )***REMOVED***
             </div>
@@ -68,4 +68,4 @@ const TarjetaTrabajo = (props) => ***REMOVED***
   );
 ***REMOVED***;
 
-export default TarjetaTrabajo;
+export default WorkCard;

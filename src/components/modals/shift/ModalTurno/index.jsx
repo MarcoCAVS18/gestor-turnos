@@ -1,4 +1,4 @@
-// src/components/modals/shift/ModalTurno/index.jsx - Refactorizado con BaseModal
+// src/components/modals/shift/ShiftModal/index.jsx - Refactored with BaseModal
 
 import React, ***REMOVED*** useState, useEffect, useMemo, useId ***REMOVED*** from 'react';
 import ***REMOVED*** Pen, Plus ***REMOVED*** from 'lucide-react';
@@ -6,118 +6,118 @@ import ***REMOVED*** useApp ***REMOVED*** from '../../../../contexts/AppContext'
 import ***REMOVED*** useIsMobile ***REMOVED*** from '../../../../hooks/useIsMobile';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../../utils/time';
 import BaseModal from '../../base/BaseModal';
-import TurnoForm from '../../../forms/shift/TurnoForm';
-import TurnoDeliveryForm from '../../../forms/shift/TurnoDeliveryForm';
+import ShiftForm from '../../../forms/shift/TurnoForm';
+import DeliveryShiftForm from '../../../forms/shift/TurnoDeliveryForm';
 
-const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicial ***REMOVED***) => ***REMOVED***
+const ShiftModal = (***REMOVED*** isOpen, onClose, shift, workId, initialDate ***REMOVED***) => ***REMOVED***
   const ***REMOVED***
     addShift,
     editShift,
     addDeliveryShift,
     editDeliveryShift,
-    trabajos,
-    trabajosDelivery
+    works,
+    deliveryWorks
   ***REMOVED*** = useApp();
 
-  const [trabajoSeleccionadoId, setTrabajoSeleccionadoId] = useState(trabajoId || '');
-  const [formularioTipo, setFormularioTipo] = useState('tradicional');
+  const [selectedWorkId, setSelectedWorkId] = useState(workId || '');
+  const [formType, setFormType] = useState('traditional');
   const [loading, setLoading] = useState(false);
   const [isFormDirty, setIsFormDirty] = useState(false);
   const isMobile = useIsMobile();
   const formId = useId();
 
-  const todosLosTrabajos = useMemo(() => ***REMOVED***
-    return [...trabajos, ...trabajosDelivery];
-  ***REMOVED***, [trabajos, trabajosDelivery]);
+  const allWorks = useMemo(() => ***REMOVED***
+    return [...works, ...deliveryWorks];
+  ***REMOVED***, [works, deliveryWorks]);
 
   useEffect(() => ***REMOVED***
-    if (turno?.tipo === 'delivery') ***REMOVED***
-      setFormularioTipo('delivery');
+    if (shift?.type === 'delivery') ***REMOVED***
+      setFormType('delivery');
       return;
     ***REMOVED***
 
-    if (trabajoSeleccionadoId) ***REMOVED***
-      const trabajo = todosLosTrabajos.find(t => t.id === trabajoSeleccionadoId);
+    if (selectedWorkId) ***REMOVED***
+      const work = allWorks.find(w => w.id === selectedWorkId);
 
-      if (trabajo) ***REMOVED***
-        const esDelivery = trabajo.tipo === 'delivery' || trabajo.type === 'delivery';
-        const nuevoTipo = esDelivery ? 'delivery' : 'tradicional';
+      if (work) ***REMOVED***
+        const isDelivery = work.type === 'delivery';
+        const newType = isDelivery ? 'delivery' : 'traditional';
 
-        if (formularioTipo !== nuevoTipo) ***REMOVED***
-          setFormularioTipo(nuevoTipo);
+        if (formType !== newType) ***REMOVED***
+          setFormType(newType);
         ***REMOVED***
       ***REMOVED*** else ***REMOVED***
-        setFormularioTipo('tradicional');
+        setFormType('traditional');
       ***REMOVED***
     ***REMOVED*** else ***REMOVED***
-      setFormularioTipo('tradicional');
+      setFormType('traditional');
     ***REMOVED***
-  ***REMOVED***, [trabajoSeleccionadoId, todosLosTrabajos, turno, formularioTipo]);
+  ***REMOVED***, [selectedWorkId, allWorks, shift, formType]);
 
   useEffect(() => ***REMOVED***
     if (!isOpen) ***REMOVED***
-      setTrabajoSeleccionadoId('');
-      setFormularioTipo('tradicional');
+      setSelectedWorkId('');
+      setFormType('traditional');
       setLoading(false);
       setIsFormDirty(false);
-    ***REMOVED*** else if (turno) ***REMOVED***
-      setTrabajoSeleccionadoId(turno.trabajoId || '');
-    ***REMOVED*** else if (trabajoId) ***REMOVED***
-      setTrabajoSeleccionadoId(trabajoId);
+    ***REMOVED*** else if (shift) ***REMOVED***
+      setSelectedWorkId(shift.workId || '');
+    ***REMOVED*** else if (workId) ***REMOVED***
+      setSelectedWorkId(workId);
     ***REMOVED***
-  ***REMOVED***, [isOpen, turno, trabajoId]);
+  ***REMOVED***, [isOpen, shift, workId]);
 
-  const manejarGuardado = async (datosTurno) => ***REMOVED***
+  const handleSave = async (shiftData) => ***REMOVED***
     try ***REMOVED***
       setLoading(true);
 
-      let datosFinales = ***REMOVED*** ...datosTurno ***REMOVED***;
+      let finalData = ***REMOVED*** ...shiftData ***REMOVED***;
 
-      if (fechaInicial && !turno) ***REMOVED***
-        let fechaStr;
-        if (fechaInicial instanceof Date) ***REMOVED***
-          const year = fechaInicial.getFullYear();
-          const month = String(fechaInicial.getMonth() + 1).padStart(2, '0');
-          const day = String(fechaInicial.getDate()).padStart(2, '0');
-          fechaStr = `$***REMOVED***year***REMOVED***-$***REMOVED***month***REMOVED***-$***REMOVED***day***REMOVED***`;
+      if (initialDate && !shift) ***REMOVED***
+        let dateStr;
+        if (initialDate instanceof Date) ***REMOVED***
+          const year = initialDate.getFullYear();
+          const month = String(initialDate.getMonth() + 1).padStart(2, '0');
+          const day = String(initialDate.getDate()).padStart(2, '0');
+          dateStr = `$***REMOVED***year***REMOVED***-$***REMOVED***month***REMOVED***-$***REMOVED***day***REMOVED***`;
         ***REMOVED*** else ***REMOVED***
-          fechaStr = fechaInicial;
+          dateStr = initialDate;
         ***REMOVED***
 
-        if (!datosFinales.fechaInicio && !datosFinales.fecha) ***REMOVED***
-          datosFinales.fechaInicio = fechaStr;
+        if (!finalData.startDate && !finalData.date) ***REMOVED***
+          finalData.startDate = dateStr;
         ***REMOVED***
       ***REMOVED***
 
-      if (formularioTipo === 'delivery') ***REMOVED***
-        if (turno) ***REMOVED***
-          await editDeliveryShift(turno.id, datosFinales);
+      if (formType === 'delivery') ***REMOVED***
+        if (shift) ***REMOVED***
+          await editDeliveryShift(shift.id, finalData);
         ***REMOVED*** else ***REMOVED***
-          await addDeliveryShift(datosFinales);
+          await addDeliveryShift(finalData);
         ***REMOVED*** 
       ***REMOVED*** else ***REMOVED***
-        if (turno) ***REMOVED***
-          await editShift(turno.id, datosFinales);
+        if (shift) ***REMOVED***
+          await editShift(shift.id, finalData);
         ***REMOVED*** else ***REMOVED***
-          await addShift(datosFinales);
+          await addShift(finalData);
         ***REMOVED***
       ***REMOVED***
 
       setLoading(false);
       onClose();
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al guardar turno:', error);
+      console.error('Error saving shift:', error);
       setLoading(false);
     ***REMOVED***
   ***REMOVED***;
 
-  const manejarCambioTrabajo = (nuevoTrabajoId) => ***REMOVED***
-    setTrabajoSeleccionadoId(nuevoTrabajoId);
+  const handleWorkChange = (newWorkId) => ***REMOVED***
+    setSelectedWorkId(newWorkId);
   ***REMOVED***;
 
-  const manejarCerrar = () => ***REMOVED***
-    setTrabajoSeleccionadoId('');
-    setFormularioTipo('tradicional');
+  const handleClose = () => ***REMOVED***
+    setSelectedWorkId('');
+    setFormType('traditional');
     setLoading(false);
     setIsFormDirty(false);
     onClose();
@@ -125,68 +125,68 @@ const ModalTurno = (***REMOVED*** isOpen, onClose, turno, trabajoId, fechaInicia
 
   if (!isOpen) return null;
 
-  const titulo = turno ? 'Editar Turno' : 'Nuevo Turno';
-  const subtitulo = formularioTipo === 'delivery' ? '• Delivery' : null;
+  const title = shift ? 'Edit Shift' : 'New Shift';
+  const subtitle = formType === 'delivery' ? '• Delivery' : null;
 
-  let fechaSubtitle = null;
-  if (fechaInicial && !turno) ***REMOVED***
-    fechaSubtitle = fechaInicial instanceof Date
-      ? fechaInicial.toLocaleDateString('es-ES', ***REMOVED***
+  let dateSubtitle = null;
+  if (initialDate && !shift) ***REMOVED***
+    dateSubtitle = initialDate instanceof Date
+      ? initialDate.toLocaleDateString('en-US', ***REMOVED***
           weekday: 'short',
           day: 'numeric',
           month: 'short'
         ***REMOVED***)
-      : createSafeDate(fechaInicial).toLocaleDateString('es-ES', ***REMOVED***
+      : createSafeDate(initialDate).toLocaleDateString('en-US', ***REMOVED***
           weekday: 'short',
           day: 'numeric',
           month: 'short'
         ***REMOVED***);
   ***REMOVED***
 
-  const subtituloFinal = [subtitulo, fechaSubtitle].filter(Boolean).join(' ');
+  const finalSubtitle = [subtitle, dateSubtitle].filter(Boolean).join(' ');
 
   return (
     <BaseModal
       isOpen=***REMOVED***isOpen***REMOVED***
-      onClose=***REMOVED***manejarCerrar***REMOVED***
-      title=***REMOVED***titulo***REMOVED***
-      icon=***REMOVED***turno ? Pen : Plus***REMOVED***
-      subtitle=***REMOVED***subtituloFinal || undefined***REMOVED***
+      onClose=***REMOVED***handleClose***REMOVED***
+      title=***REMOVED***title***REMOVED***
+      icon=***REMOVED***shift ? Pen : Plus***REMOVED***
+      subtitle=***REMOVED***finalSubtitle || undefined***REMOVED***
       loading=***REMOVED***loading***REMOVED***
       maxWidth="md"
       showActions=***REMOVED***true***REMOVED***
-      onCancel=***REMOVED***manejarCerrar***REMOVED***
+      onCancel=***REMOVED***handleClose***REMOVED***
       formId=***REMOVED***formId***REMOVED***
-      saveText=***REMOVED***turno ? 'Guardar Cambios' : 'Crear Turno'***REMOVED***
-      isSaveDisabled=***REMOVED***turno ? !isFormDirty : false***REMOVED***
+      saveText=***REMOVED***shift ? 'Save Changes' : 'Create Shift'***REMOVED***
+      isSaveDisabled=***REMOVED***shift ? !isFormDirty : false***REMOVED***
     >
-      ***REMOVED***formularioTipo === 'delivery' ? (
-        <TurnoDeliveryForm
+      ***REMOVED***formType === 'delivery' ? (
+        <DeliveryShiftForm
           id=***REMOVED***formId***REMOVED***
-          turno=***REMOVED***turno***REMOVED***
-          trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
-          trabajos=***REMOVED***todosLosTrabajos***REMOVED***
-          onSubmit=***REMOVED***manejarGuardado***REMOVED***
-          onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
+          shift=***REMOVED***shift***REMOVED***
+          workId=***REMOVED***selectedWorkId***REMOVED***
+          works=***REMOVED***allWorks***REMOVED***
+          onSubmit=***REMOVED***handleSave***REMOVED***
+          onWorkChange=***REMOVED***handleWorkChange***REMOVED***
           onDirtyChange=***REMOVED***setIsFormDirty***REMOVED***
           isMobile=***REMOVED***isMobile***REMOVED***
-          fechaInicial=***REMOVED***fechaInicial***REMOVED***
+          initialDate=***REMOVED***initialDate***REMOVED***
         />
       ) : (
-        <TurnoForm
+        <ShiftForm
           id=***REMOVED***formId***REMOVED***
-          turno=***REMOVED***turno***REMOVED***
-          trabajoId=***REMOVED***trabajoSeleccionadoId***REMOVED***
-          trabajos=***REMOVED***todosLosTrabajos***REMOVED***
-          onSubmit=***REMOVED***manejarGuardado***REMOVED***
-          onTrabajoChange=***REMOVED***manejarCambioTrabajo***REMOVED***
+          shift=***REMOVED***shift***REMOVED***
+          workId=***REMOVED***selectedWorkId***REMOVED***
+          works=***REMOVED***allWorks***REMOVED***
+          onSubmit=***REMOVED***handleSave***REMOVED***
+          onWorkChange=***REMOVED***handleWorkChange***REMOVED***
           onDirtyChange=***REMOVED***setIsFormDirty***REMOVED***
           isMobile=***REMOVED***isMobile***REMOVED***
-          fechaInicial=***REMOVED***fechaInicial***REMOVED***
+          initialDate=***REMOVED***initialDate***REMOVED***
         />
       )***REMOVED***
     </BaseModal>
   );
 ***REMOVED***;
 
-export default ModalTurno;
+export default ShiftModal;

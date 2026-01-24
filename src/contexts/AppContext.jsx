@@ -40,9 +40,9 @@ export const useApp = () => ***REMOVED***
   const calculations = useCalculations();
   const stats = useStats();
 
-  const allTrabajos = useMemo(() => ***REMOVED***
-    return [...data.trabajos, ...delivery.trabajosDelivery];
-  ***REMOVED***, [data.trabajos, delivery.trabajosDelivery]);
+  const allWorks = useMemo(() => ***REMOVED***
+    return [...(data.works || []), ...(delivery.deliveryWorks || [])];
+  ***REMOVED***, [data.works, delivery.deliveryWorks]);
 
   return ***REMOVED***
     ...config,
@@ -52,12 +52,12 @@ export const useApp = () => ***REMOVED***
     ...stats,
 
     // Re-create combined properties that existed in the old context
-    todosLosTrabajos: allTrabajos,
-    eliminarTurno: data.deleteShift,
+    allWorks: allWorks,
+    deleteShift: data.deleteShift,
 
     // For backward compatibility, some components might still be using old names.
     // We can provide aliases here if needed. For example:
-    // rangosTurnos: config.shiftRanges,
+    // shiftRanges: config.shiftRanges,
   ***REMOVED***;
 ***REMOVED***;
 

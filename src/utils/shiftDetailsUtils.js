@@ -2,182 +2,182 @@
 
 import ***REMOVED*** createSafeDate ***REMOVED*** from './time';
 
-// Función para detectar si un turno cruza medianoche
-export function checkIfShiftCrossesMidnight(turno) ***REMOVED***
-  if (!turno.horaInicio || !turno.horaFin) return false;
+// Function to detect if a shift crosses midnight
+export function checkIfShiftCrossesMidnight(shift) ***REMOVED***
+  if (!shift.startTime || !shift.endTime) return false;
   
-  // Si ya tiene la propiedad cruzaMedianoche, usarla
-  if (turno.cruzaMedianoche !== undefined) ***REMOVED***
-    return turno.cruzaMedianoche;
+  // If it already has the crossesMidnight property, use it
+  if (shift.crossesMidnight !== undefined) ***REMOVED***
+    return shift.crossesMidnight;
   ***REMOVED***
   
-  // Si tiene fechaInicio y fechaFin diferentes, cruza medianoche
-  if (turno.fechaInicio && turno.fechaFin && turno.fechaInicio !== turno.fechaFin) ***REMOVED***
+  // If startDate and endDate are different, it crosses midnight
+  if (shift.startDate && shift.endDate && shift.startDate !== shift.endDate) ***REMOVED***
     return true;
   ***REMOVED***
   
-  // Calcular basándose en las horas
-  const [horaInicio] = turno.horaInicio.split(':').map(Number);
-  const [horaFin] = turno.horaFin.split(':').map(Number);
+  // Calculate based on hours
+  const [startHour] = shift.startTime.split(':').map(Number);
+  const [endHour] = shift.endTime.split(':').map(Number);
   
-  return horaFin < horaInicio;
+  return endHour < startHour;
 ***REMOVED***
 
-// Función para determinar tipo de turno por hora específica
-export function getTipoTurnoByHour(hora, shiftRanges) ***REMOVED***
+// Function to determine shift type by specific hour
+export function getShiftTypeByHour(hour, shiftRanges) ***REMOVED***
   const ranges = shiftRanges || ***REMOVED***
     dayStart: 6, dayEnd: 14,
     afternoonStart: 14, afternoonEnd: 20,
     nightStart: 20
   ***REMOVED***;
 
-  if (hora >= ranges.dayStart && hora < ranges.dayEnd) ***REMOVED***
-    return 'diurno';
-  ***REMOVED*** else if (hora >= ranges.afternoonStart && hora < ranges.afternoonEnd) ***REMOVED***
-    return 'tarde';
+  if (hour >= ranges.dayStart && hour < ranges.dayEnd) ***REMOVED***
+    return 'day';
+  ***REMOVED*** else if (hour >= ranges.afternoonStart && hour < ranges.afternoonEnd) ***REMOVED***
+    return 'afternoon';
   ***REMOVED*** else ***REMOVED***
-    return 'noche';
+    return 'night';
   ***REMOVED***
 ***REMOVED***
 
-// Función principal para determinar el tipo de turno - ESTA ES LA ÚNICA QUE DEBES USAR
-export function determinarTipoTurno(turno, shiftRanges) ***REMOVED***
-  if (!turno) return 'noche';
+// Main function to determine shift type - THIS IS THE ONLY ONE YOU SHOULD USE
+export function determineShiftType(shift, shiftRanges) ***REMOVED***
+  if (!shift) return 'night';
   
-  // Si es delivery, retornar delivery
-  if (turno.tipo === 'delivery' || turno.type === 'delivery') ***REMOVED***
+  // If it's delivery, return delivery
+  if (shift.type === 'delivery') ***REMOVED***
     return 'delivery';
   ***REMOVED***
   
-  // Determinar por fecha (fin de semana)
-  const fechaClave = turno.fechaInicio || turno.fecha;
-  if (fechaClave) ***REMOVED***
-    const [year, month, day] = fechaClave.split('-');
+  // Determine by date (weekend)
+  const keyDate = shift.startDate || shift.date;
+  if (keyDate) ***REMOVED***
+    const [year, month, day] = keyDate.split('-');
     const date = new Date(year, month - 1, day);
     const dayOfWeek = date.getDay();
     
-    if (dayOfWeek === 0) return 'domingo';
-    if (dayOfWeek === 6) return 'sabado';
+    if (dayOfWeek === 0) return 'sunday';
+    if (dayOfWeek === 6) return 'saturday';
   ***REMOVED***
   
-  // Determinar por hora de inicio y fin para detectar turnos mixtos
-  if (turno.horaInicio && turno.horaFin) ***REMOVED***
-    const [horaInicio, minutoInicio] = turno.horaInicio.split(':').map(Number);
-    const [horaFin, minutoFin] = turno.horaFin.split(':').map(Number);
+  // Determine by start and end time to detect mixed shifts
+  if (shift.startTime && shift.endTime) ***REMOVED***
+    const [startHour, startMinute] = shift.startTime.split(':').map(Number);
+    const [endHour, endMinute] = shift.endTime.split(':').map(Number);
     
-    const inicioMinutos = horaInicio * 60 + minutoInicio;
-    let finMinutos = horaFin * 60 + minutoFin;
+    const startMinutes = startHour * 60 + startMinute;
+    let endMinutes = endHour * 60 + endMinute;
     
-    // Si cruza medianoche
-    if (finMinutos <= inicioMinutos) ***REMOVED***
-      finMinutos += 24 * 60;
+    // If crosses midnight
+    if (endMinutes <= startMinutes) ***REMOVED***
+      endMinutes += 24 * 60;
     ***REMOVED***
     
-    const tiposEncontrados = new Set();
+    const foundTypes = new Set();
     
-    // Revisar cada hora del turno para ver si cambia de tipo
-    for (let minutos = inicioMinutos; minutos < finMinutos; minutos += 60) ***REMOVED***
-      const horaActual = Math.floor((minutos % (24 * 60)) / 60);
-      const tipo = getTipoTurnoByHour(horaActual, shiftRanges);
-      tiposEncontrados.add(tipo);
+    // Check each hour of the shift to see if type changes
+    for (let minutes = startMinutes; minutes < endMinutes; minutes += 60) ***REMOVED***
+      const currentHour = Math.floor((minutes % (24 * 60)) / 60);
+      const type = getShiftTypeByHour(currentHour, shiftRanges);
+      foundTypes.add(type);
     ***REMOVED***
     
-    // Si hay más de un tipo, es mixto
-    if (tiposEncontrados.size > 1) ***REMOVED***
-      return 'mixto';
+    // If there is more than one type, it is mixed
+    if (foundTypes.size > 1) ***REMOVED***
+      return 'mixed';
     ***REMOVED***
     
-    // Si solo hay un tipo, retornar ese tipo
-    return Array.from(tiposEncontrados)[0] || 'noche';
+    // If there is only one type, return that type
+    return Array.from(foundTypes)[0] || 'night';
   ***REMOVED***
   
-  return 'noche';
+  return 'night';
 ***REMOVED***
 
-// Función que devuelve la etiqueta legible
-export function getTipoTurnoLabel(tipo) ***REMOVED***
+// Function that returns the readable label
+export function getShiftTypeLabel(type) ***REMOVED***
   const labels = ***REMOVED***
-    diurno: 'Diurno',
-    tarde: 'Tarde', 
-    noche: 'Noche',
-    sabado: 'Sábado',
-    domingo: 'Domingo',
+    day: 'Day',
+    afternoon: 'Afternoon', 
+    night: 'Night',
+    saturday: 'Saturday',
+    sunday: 'Sunday',
     delivery: 'Delivery',
-    mixto: 'Mixto'
+    mixed: 'Mixed'
   ***REMOVED***;
   
-  return labels[tipo] || 'Noche';
+  return labels[type] || 'Night';
 ***REMOVED***
 
-// ✅ Nueva función para pluralizar "turnos"
-export function formatTurnos(cantidad) ***REMOVED***
-  return `$***REMOVED***cantidad***REMOVED*** $***REMOVED***cantidad === 1 ? 'TURNO' : 'TURNOS'***REMOVED***`;
+// ✅ New function to pluralize "shifts"
+export function formatShifts(quantity) ***REMOVED***
+  return `$***REMOVED***quantity***REMOVED*** $***REMOVED***quantity === 1 ? 'SHIFT' : 'SHIFTS'***REMOVED***`;
 ***REMOVED***
 
-// Función para generar los detalles del turno para el modal de eliminación
-export function generateShiftDetails(turno, allJobs) ***REMOVED***
-  if (!turno) return [];
+// Function to generate shift details for the deletion modal
+export function generateShiftDetails(shift, allJobs) ***REMOVED***
+  if (!shift) return [];
 
-  const trabajo = allJobs.find(t => t.id === turno.trabajoId);
+  const work = allJobs.find(w => w.id === shift.workId);
 
-  // Verificar si el turno cruza medianoche
-  const cruzaMedianoche = checkIfShiftCrossesMidnight(turno);
+  // Check if the shift crosses midnight
+  const crossesMidnight = checkIfShiftCrossesMidnight(shift);
   
-  let fechaTexto = '';
+  let dateText = '';
   
-  if (cruzaMedianoche) ***REMOVED***
-    // Turno que cruza medianoche - mostrar ambas fechas
-    let fechaInicio, fechaFin;
+  if (crossesMidnight) ***REMOVED***
+    // Shift that crosses midnight - show both dates
+    let startDate, endDate;
     
-    if (turno.fechaInicio && turno.fechaFin && turno.fechaInicio !== turno.fechaFin) ***REMOVED***
-      // Usar las fechas existentes si son diferentes
-      fechaInicio = createSafeDate(turno.fechaInicio);
-      fechaFin = createSafeDate(turno.fechaFin);
+    if (shift.startDate && shift.endDate && shift.startDate !== shift.endDate) ***REMOVED***
+      // Use existing dates if different
+      startDate = createSafeDate(shift.startDate);
+      endDate = createSafeDate(shift.endDate);
     ***REMOVED*** else ***REMOVED***
-      // Calcular la fecha de fin basándose en la fecha de inicio
-      const fechaBase = turno.fechaInicio || turno.fecha;
-      fechaInicio = createSafeDate(fechaBase);
-      fechaFin = createSafeDate(fechaBase); // Crear desde la fecha base
-      fechaFin.setDate(fechaFin.getDate() + 1); // Sumar 1 día
+      // Calculate end date based on start date
+      const baseDate = shift.startDate || shift.date;
+      startDate = createSafeDate(baseDate);
+      endDate = createSafeDate(baseDate); // Create from base date
+      endDate.setDate(endDate.getDate() + 1); // Add 1 day
     ***REMOVED***
     
-    const fechaInicioStr = fechaInicio.toLocaleDateString('es-ES', ***REMOVED***
+    const startDateStr = startDate.toLocaleDateString('en-US', ***REMOVED***
       weekday: 'long', 
       day: 'numeric', 
       month: 'long'
     ***REMOVED***);
     
-    const fechaFinStr = fechaFin.toLocaleDateString('es-ES', ***REMOVED***
+    const endDateStr = endDate.toLocaleDateString('en-US', ***REMOVED***
       weekday: 'long', 
       day: 'numeric', 
       month: 'long'
     ***REMOVED***);
     
-    fechaTexto = `$***REMOVED***fechaInicioStr***REMOVED*** - $***REMOVED***fechaFinStr***REMOVED***`;
+    dateText = `$***REMOVED***startDateStr***REMOVED*** - $***REMOVED***endDateStr***REMOVED***`;
   ***REMOVED*** else ***REMOVED***
-    // Turno normal en un solo día
-    const fechaStr = turno.fechaInicio || turno.fecha;
-    if (fechaStr) ***REMOVED***
-      const fecha = createSafeDate(fechaStr);
-      fechaTexto = fecha.toLocaleDateString('es-ES', ***REMOVED***
+    // Normal shift on a single day
+    const dateStr = shift.startDate || shift.date;
+    if (dateStr) ***REMOVED***
+      const date = createSafeDate(dateStr);
+      dateText = date.toLocaleDateString('en-US', ***REMOVED***
         weekday: 'long',
         day: 'numeric',
         month: 'long'
       ***REMOVED***);
     ***REMOVED*** else ***REMOVED***
-      fechaTexto = 'Fecha no disponible';
+      dateText = 'Date not available';
     ***REMOVED***
   ***REMOVED***
 
-  const detalles = [
-    trabajo?.nombre || 'Trabajo no encontrado',
-    fechaTexto,
-    `$***REMOVED***turno.horaInicio***REMOVED*** - $***REMOVED***turno.horaFin***REMOVED***`
+  const details = [
+    work?.name || 'Work not found',
+    dateText,
+    `$***REMOVED***shift.startTime***REMOVED*** - $***REMOVED***shift.endTime***REMOVED***`
   ];
 
-  if (turno.tipo === 'delivery') ***REMOVED***
-    detalles.push(`$***REMOVED***turno.numeroPedidos || 0***REMOVED*** pedidos`);
+  if (shift.type === 'delivery') ***REMOVED***
+    details.push(`$***REMOVED***shift.numberOfOrders || 0***REMOVED*** orders`);
   ***REMOVED***
 
-  return detalles;
+  return details;
 ***REMOVED***

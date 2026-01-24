@@ -1,16 +1,16 @@
 import React, ***REMOVED*** forwardRef ***REMOVED*** from 'react';
 import ***REMOVED*** Calendar ***REMOVED*** from 'lucide-react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
-import TarjetaTurno from '../../cards/shift/TarjetaTurno';
-import TarjetaTurnoDelivery from '../../cards/shift/TarjetaTurnoDelivery';
+import ShiftCard from '../../cards/shift/TarjetaTurno';
+import DeliveryShiftCard from '../../cards/shift/TarjetaTurnoDelivery';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../../../utils/time';
 
-const DaySection = forwardRef((***REMOVED*** fecha, turnos, trabajos, onEditTurno, onDeleteTurno ***REMOVED***, ref) => ***REMOVED***
+const DaySection = forwardRef((***REMOVED*** date, shifts, works, onEditShift, onDeleteShift ***REMOVED***, ref) => ***REMOVED***
   const ***REMOVED*** thematicColors ***REMOVED*** = useApp();
 
-  const fechaObj = createSafeDate(fecha);
-  const diaSemana = fechaObj.toLocaleDateString('es-ES', ***REMOVED*** weekday: 'long' ***REMOVED***);
-  const fechaFormateada = fechaObj.toLocaleDateString('es-ES', ***REMOVED*** 
+  const dateObj = createSafeDate(date);
+  const dayOfWeek = dateObj.toLocaleDateString('en-US', ***REMOVED*** weekday: 'long' ***REMOVED***);
+  const formattedDate = dateObj.toLocaleDateString('en-US', ***REMOVED*** 
     day: 'numeric', 
     month: 'long', 
     year: 'numeric' 
@@ -22,34 +22,34 @@ const DaySection = forwardRef((***REMOVED*** fecha, turnos, trabajos, onEditTurn
         <div className="flex items-center gap-2">
           <Calendar size=***REMOVED***20***REMOVED*** style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** />
           <h3 className="font-semibold text-gray-900 capitalize">
-            ***REMOVED***diaSemana***REMOVED***, ***REMOVED***fechaFormateada***REMOVED***
+            ***REMOVED***dayOfWeek***REMOVED***, ***REMOVED***formattedDate***REMOVED***
           </h3>
         </div>
       </div>
 
       <div className="p-4 space-y-3">
-        ***REMOVED***turnos.map(turno => ***REMOVED***
-          const trabajo = trabajos.find(t => t.id === turno.trabajoId);
+        ***REMOVED***shifts.map(shift => ***REMOVED***
+          const work = works.find(w => w.id === shift.workId);
           
-          if (turno.tipo === 'delivery') ***REMOVED***
+          if (shift.type === 'delivery') ***REMOVED***
             return (
-              <TarjetaTurnoDelivery
-                key=***REMOVED***turno.id***REMOVED***
-                turno=***REMOVED***turno***REMOVED***
-                trabajo=***REMOVED***trabajo***REMOVED***
-                onEdit=***REMOVED***onEditTurno***REMOVED***
-                onDelete=***REMOVED***onDeleteTurno***REMOVED***
+              <DeliveryShiftCard
+                key=***REMOVED***shift.id***REMOVED***
+                shift=***REMOVED***shift***REMOVED***
+                work=***REMOVED***work***REMOVED***
+                onEdit=***REMOVED***onEditShift***REMOVED***
+                onDelete=***REMOVED***onDeleteShift***REMOVED***
               />
             );
           ***REMOVED***
           
           return (
-            <TarjetaTurno
-              key=***REMOVED***turno.id***REMOVED***
-              turno=***REMOVED***turno***REMOVED***
-              trabajo=***REMOVED***trabajo***REMOVED***
-              onEdit=***REMOVED***onEditTurno***REMOVED***
-              onDelete=***REMOVED***onDeleteTurno***REMOVED***
+            <ShiftCard
+              key=***REMOVED***shift.id***REMOVED***
+              shift=***REMOVED***shift***REMOVED***
+              work=***REMOVED***work***REMOVED***
+              onEdit=***REMOVED***onEditShift***REMOVED***
+              onDelete=***REMOVED***onDeleteShift***REMOVED***
             />
           );
         ***REMOVED***)***REMOVED***

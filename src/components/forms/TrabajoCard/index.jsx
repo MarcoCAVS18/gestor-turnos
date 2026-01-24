@@ -1,4 +1,4 @@
-// src/components/cards/TrabajoCard/index.jsx
+// src/components/cards/WorkDetailsCard/index.jsx
 
 import React from 'react';
 import ***REMOVED*** Edit, Trash2, Share2, Info ***REMOVED*** from 'lucide-react';
@@ -8,9 +8,9 @@ import ***REMOVED*** useShare ***REMOVED*** from '../../../hooks/useShare';
 import ***REMOVED*** formatCurrency ***REMOVED*** from '../../../utils/helpers';
 import Flex from '../../ui/Flex';
 
-const TrabajoCard = (***REMOVED*** 
-  trabajo, 
-  turnosCount = 0,
+const WorkDetailsCard = (***REMOVED*** 
+  work, 
+  shiftsCount = 0,
   onEdit, 
   onDelete,
   onToggleDetails 
@@ -18,19 +18,19 @@ const TrabajoCard = (***REMOVED***
   const ***REMOVED*** sharing, messages, shareWork ***REMOVED*** = useShare();
   const [showDetails, setShowDetails] = React.useState(false);
   
-  const isSharing = sharing[trabajo.id] || false;
-  const shareMessage = messages[trabajo.id] || '';
+  const isSharing = sharing[work.id] || false;
+  const shareMessage = messages[work.id] || '';
 
   const handleToggleDetails = () => ***REMOVED***
     setShowDetails(!showDetails);
     if (onToggleDetails) ***REMOVED***
-      onToggleDetails(trabajo.id, !showDetails);
+      onToggleDetails(work.id, !showDetails);
     ***REMOVED***
   ***REMOVED***;
 
   return (
     <Card
-      borderColor=***REMOVED***trabajo.color***REMOVED***
+      borderColor=***REMOVED***work.color***REMOVED***
       borderPosition="left"
       className="transition-all hover:shadow-lg"
     >
@@ -40,14 +40,14 @@ const TrabajoCard = (***REMOVED***
           <div className="flex items-center mb-2">
             <div 
               className="w-4 h-4 rounded-full mr-3"
-              style=***REMOVED******REMOVED*** backgroundColor: trabajo.color ***REMOVED******REMOVED***
+              style=***REMOVED******REMOVED*** backgroundColor: work.color ***REMOVED******REMOVED***
             />
             <h3 className="text-lg font-semibold text-gray-800">
-              ***REMOVED***trabajo.nombre***REMOVED***
+              ***REMOVED***work.name***REMOVED***
             </h3>
           </div>
           <p className="text-sm text-gray-500">
-            ***REMOVED***turnosCount***REMOVED*** ***REMOVED***turnosCount === 1 ? 'turno registrado' : 'turnos registrados'***REMOVED***
+            ***REMOVED***shiftsCount***REMOVED*** ***REMOVED***shiftsCount === 1 ? 'shift registered' : 'shifts registered'***REMOVED***
           </p>
         </div>
         
@@ -62,20 +62,20 @@ const TrabajoCard = (***REMOVED***
           <Button
             variant="ghost"
             size="sm"
-            onClick=***REMOVED***() => onEdit(trabajo)***REMOVED***
+            onClick=***REMOVED***() => onEdit(work)***REMOVED***
             icon=***REMOVED***Edit***REMOVED***
           />
           <Button
             variant="ghost"
             size="sm"
-            onClick=***REMOVED***() => shareWork(trabajo)***REMOVED***
+            onClick=***REMOVED***() => shareWork(work)***REMOVED***
             loading=***REMOVED***isSharing***REMOVED***
             icon=***REMOVED***Share2***REMOVED***
           />
           <Button
             variant="ghost"
             size="sm"
-            onClick=***REMOVED***() => onDelete(trabajo)***REMOVED***
+            onClick=***REMOVED***() => onDelete(work)***REMOVED***
             icon=***REMOVED***Trash2***REMOVED***
           />
         </div>
@@ -92,42 +92,42 @@ const TrabajoCard = (***REMOVED***
       <div className="grid grid-cols-2 gap-4 text-sm">
         <div className="space-y-2">
           <Flex variant="between">
-            <span className="text-gray-600">Tarifa base:</span>
-            <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifaBase)***REMOVED***</span>
+            <span className="text-gray-600">Base rate:</span>
+            <span className="font-medium">***REMOVED***formatCurrency(work.baseRate)***REMOVED***</span>
           </Flex>
           <Flex variant="between">
-            <span className="text-gray-600">Diurno:</span>
-            <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas?.diurno || 0)***REMOVED***</span>
+            <span className="text-gray-600">Day:</span>
+            <span className="font-medium">***REMOVED***formatCurrency(work.rates?.day || 0)***REMOVED***</span>
           </Flex>
           <Flex variant="between">
-            <span className="text-gray-600">Tarde:</span>
-            <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas?.tarde || 0)***REMOVED***</span>
+            <span className="text-gray-600">Afternoon:</span>
+            <span className="font-medium">***REMOVED***formatCurrency(work.rates?.afternoon || 0)***REMOVED***</span>
           </Flex>
         </div>
         <div className="space-y-2">
           <Flex variant="between">
-            <span className="text-gray-600">Noche:</span>
-            <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas?.noche || 0)***REMOVED***</span>
+            <span className="text-gray-600">Night:</span>
+            <span className="font-medium">***REMOVED***formatCurrency(work.rates?.night || 0)***REMOVED***</span>
           </Flex>
           <Flex variant="between">
-            <span className="text-gray-600">Sábado:</span>
-            <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas?.sabado || 0)***REMOVED***</span>
+            <span className="text-gray-600">Saturday:</span>
+            <span className="font-medium">***REMOVED***formatCurrency(work.rates?.saturday || 0)***REMOVED***</span>
           </Flex>
           <Flex variant="between">
-            <span className="text-gray-600">Domingo:</span>
-            <span className="font-medium">***REMOVED***formatCurrency(trabajo.tarifas?.domingo || 0)***REMOVED***</span>
+            <span className="text-gray-600">Sunday:</span>
+            <span className="font-medium">***REMOVED***formatCurrency(work.rates?.sunday || 0)***REMOVED***</span>
           </Flex>
         </div>
       </div>
       
       ***REMOVED***/* Description */***REMOVED***
-      ***REMOVED***trabajo.descripcion && (showDetails || trabajo.descripcion.length < 100) && (
+      ***REMOVED***work.description && (showDetails || work.description.length < 100) && (
         <div className="mt-3 p-3 bg-gray-50 rounded-lg">
-          <p className="text-sm text-gray-600">***REMOVED***trabajo.descripcion***REMOVED***</p>
+          <p className="text-sm text-gray-600">***REMOVED***work.description***REMOVED***</p>
         </div>
       )***REMOVED***
     </Card>
   );
 ***REMOVED***;
 
-export default TrabajoCard;
+export default WorkDetailsCard;

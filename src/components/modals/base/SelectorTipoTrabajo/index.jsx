@@ -3,12 +3,12 @@ import ***REMOVED*** Briefcase, Truck, Clock, DollarSign, Package, Navigation **
 import ***REMOVED*** useThemeColors ***REMOVED*** from '../../../../hooks/useThemeColors';
 import Flex from '../../../ui/Flex';
 
-const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***) => ***REMOVED***
-  // Usar colores del contexto si no se pasan como prop
+const WorkTypeSelector = (***REMOVED*** onSelectType, isMobile ***REMOVED***) => ***REMOVED***
+  // Use colors from context if not passed as prop
   const colors = useThemeColors();
 
-  const handleSelect = (tipo) => ***REMOVED***
-    onSelectTipo(tipo);
+  const handleSelect = (type) => ***REMOVED***
+    onSelectType(type);
   ***REMOVED***;
 
   return (
@@ -18,18 +18,18 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***)
           className=***REMOVED***`font-semibold mb-3 $***REMOVED***isMobile ? 'text-xl' : 'text-lg'***REMOVED***`***REMOVED***
           style=***REMOVED******REMOVED*** color: colors.primary ***REMOVED******REMOVED***
         >
-          ¿Qué tipo de trabajo quieres agregar?
+          What type of work do you want to add?
         </h3>
         <p className=***REMOVED***`text-gray-600 $***REMOVED***isMobile ? 'text-base' : 'text-sm'***REMOVED***`***REMOVED***>
-          Selecciona el tipo que mejor describe tu trabajo
+          Select the type that best describes your work
         </p>
       </div>
       
       <div className=***REMOVED***`grid grid-cols-1 $***REMOVED***isMobile ? 'gap-6' : 'gap-4'***REMOVED***`***REMOVED***>
-        ***REMOVED***/* Trabajo Tradicional */***REMOVED***
+        ***REMOVED***/* Traditional Work */***REMOVED***
         <button
           type="button"
-          onClick=***REMOVED***() => handleSelect('tradicional')***REMOVED***
+          onClick=***REMOVED***() => handleSelect('traditional')***REMOVED***
           className=***REMOVED***`
             border-2 rounded-xl hover:shadow-lg transition-all duration-300 group text-left
             transform hover:scale-105 active:scale-95
@@ -66,30 +66,30 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***)
             </div>
             <div className="flex-1">
               <h4 className=***REMOVED***`font-semibold mb-2 $***REMOVED***isMobile ? 'text-lg' : 'text-lg'***REMOVED***`***REMOVED***>
-                Trabajo por Horas
+                Hourly Work
               </h4>
               <p className=***REMOVED***`text-gray-600 mb-3 $***REMOVED***isMobile ? 'text-base leading-relaxed' : 'text-sm'***REMOVED***`***REMOVED***>
-                Para trabajos con tarifa fija por hora y diferentes tipos de turno
+                For jobs with a fixed hourly rate and different shift types
               </p>
               <ul className=***REMOVED***`space-y-2 $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED*** text-gray-500`***REMOVED***>
                 <li className="flex items-center">
                   <Clock size=***REMOVED***isMobile ? 14 : 12***REMOVED*** className="mr-2 text-blue-500 flex-shrink-0" />
-                  <span>Tarifas por tipo de turno (diurno, tarde, noche)</span>
+                  <span>Rates by shift type (day, afternoon, night)</span>
                 </li>
                 <li className="flex items-center">
                   <DollarSign size=***REMOVED***isMobile ? 14 : 12***REMOVED*** className="mr-2 text-green-500 flex-shrink-0" />
-                  <span>Tarifas especiales para fin de semana</span>
+                  <span>Special weekend rates</span>
                 </li>
                 <li className="flex items-center">
                   <Briefcase size=***REMOVED***isMobile ? 14 : 12***REMOVED*** className="mr-2 text-purple-500 flex-shrink-0" />
-                  <span>Cálculo automático con descuentos</span>
+                  <span>Automatic calculation with discounts</span>
                 </li>
               </ul>
             </div>
           </div>
         </button>
 
-        ***REMOVED***/* Trabajo Delivery */***REMOVED***
+        ***REMOVED***/* Delivery Work */***REMOVED***
         <button
           type="button"
           onClick=***REMOVED***() => handleSelect('delivery')***REMOVED***
@@ -129,23 +129,23 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***)
             </div>
             <div className="flex-1">
               <h4 className=***REMOVED***`font-semibold mb-2 $***REMOVED***isMobile ? 'text-lg' : 'text-lg'***REMOVED***`***REMOVED***>
-                Trabajo de Delivery
+                Delivery Work
               </h4>
               <p className=***REMOVED***`text-gray-600 mb-3 $***REMOVED***isMobile ? 'text-base leading-relaxed' : 'text-sm'***REMOVED***`***REMOVED***>
-                Para trabajos de reparto con ganancias variables por turno
+                For delivery jobs with variable earnings per shift
               </p>
               <ul className=***REMOVED***`space-y-2 $***REMOVED***isMobile ? 'text-sm' : 'text-xs'***REMOVED*** text-gray-500`***REMOVED***>
                 <li className="flex items-center">
                   <DollarSign size=***REMOVED***isMobile ? 14 : 12***REMOVED*** className="mr-2 text-green-500 flex-shrink-0" />
-                  <span>Registro de ganancias totales por turno</span>
+                  <span>Record of total earnings per shift</span>
                 </li>
                 <li className="flex items-center">
                   <Package size=***REMOVED***isMobile ? 14 : 12***REMOVED*** className="mr-2 text-blue-500 flex-shrink-0" />
-                  <span>Seguimiento de pedidos y kilómetros</span>
+                  <span>Tracking of orders and kilometers</span>
                 </li>
                 <li className="flex items-center">
                   <Navigation size=***REMOVED***isMobile ? 14 : 12***REMOVED*** className="mr-2 text-orange-500 flex-shrink-0" />
-                  <span>Control de propinas y gastos de combustible</span>
+                  <span>Control of tips and fuel expenses</span>
                 </li>
               </ul>
             </div>
@@ -153,17 +153,17 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***)
         </button>
       </div>
 
-      ***REMOVED***/* Botón de ayuda en móvil */***REMOVED***
+      ***REMOVED***/* Help button on mobile */***REMOVED***
       ***REMOVED***isMobile && (
         <div className="text-center pt-4">
           <button
             type="button"
             className="text-sm text-gray-500 underline"
             onClick=***REMOVED***() => ***REMOVED***
-              alert('Si tienes dudas sobre qué tipo elegir, puedes cambiar esto después en la configuración del trabajo.');
+              alert('If you have doubts about which type to choose, you can change this later in the job settings.');
             ***REMOVED******REMOVED***
           >
-            ¿No estás seguro cuál elegir?
+            Not sure which to choose?
           </button>
         </div>
       )***REMOVED***
@@ -171,4 +171,4 @@ const SelectorTipoTrabajo = (***REMOVED*** onSelectTipo, isMobile ***REMOVED***)
   );
 ***REMOVED***;
 
-export default SelectorTipoTrabajo;
+export default WorkTypeSelector;

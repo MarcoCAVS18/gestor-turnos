@@ -22,7 +22,7 @@ import ResumenDelivery from '../components/stats/ResumenDelivery';
 import EficienciaVehiculos from '../components/stats/EficienciaVehiculos';
 import SeguimientoCombustible from '../components/stats/SeguimientoCombustible';
 import ComparacionPlataformas from '../components/stats/ComparacionPlataformas';
-import AnalisisHorarioDelivery from '../components/stats/AnalisisHorarioDelivery';
+import AnalisisHorarioDelivery from '../components/stats/AanalisisHorarioDelivery';
 
 const Estadisticas = () => ***REMOVED***
   const ***REMOVED***
@@ -37,7 +37,7 @@ const Estadisticas = () => ***REMOVED***
     thematicColors,
     smokoEnabled,
     smokoMinutes,
-    allTurnos, // <--- IMPORTANTE: Necesitamos todos los turnos del contexto
+    allTurnos,
   ***REMOVED*** = useStats();
 
   const isMobile = useIsMobile();

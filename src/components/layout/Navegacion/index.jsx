@@ -1,4 +1,4 @@
-// src/components/layout/Navegacion/index.jsx
+// src/components/layout/Navigation/index.jsx
 
 import React, ***REMOVED*** useState, useRef, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** useNavigate, useLocation ***REMOVED*** from 'react-router-dom';
@@ -13,15 +13,15 @@ import Flex from '../../ui/Flex';
 import './index.css';
 
 
-const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno ***REMOVED***) => ***REMOVED***
+const Navigation = (***REMOVED*** openNewWorkModal, openNewShiftModal ***REMOVED***) => ***REMOVED***
   const navigate = useNavigate();
   const location = useLocation();
-  const ***REMOVED*** trabajos, trabajosDelivery ***REMOVED*** = useApp();
+  const ***REMOVED*** works, deliveryWorks ***REMOVED*** = useApp();
   const ***REMOVED*** profilePhotoURL, updateProfilePhoto ***REMOVED*** = useAuth();
   const colors = useThemeColors();
   const [isPhotoLoading, setIsPhotoLoading] = useState(false);
 
-  // Estado para el tooltip
+  // Tooltip state
   const [showTooltip, setShowTooltip] = useState(false);
   const [showPhotoEdit, setShowPhotoEdit] = useState(false);
   const fileInputRef = useRef(null);
@@ -42,33 +42,33 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
   const getCurrentView = () => ***REMOVED***
     const path = location.pathname;
     if (path === '/dashboard' || path === '/') return 'dashboard';
-    if (path === '/trabajos') return 'trabajos';
-    if (path === '/turnos') return 'turnos';
-    if (path === '/estadisticas') return 'estadisticas';
-    if (path === '/calendario') return 'calendario';
-    if (path === '/ajustes') return 'ajustes';
+    if (path === '/works') return 'works';
+    if (path === '/shifts') return 'shifts';
+    if (path === '/statistics') return 'statistics';
+    if (path === '/calendar') return 'calendar';
+    if (path === '/settings') return 'settings';
     return 'dashboard';
   ***REMOVED***;
   
   const currentView = getCurrentView();
   
-  // Verificar si hay trabajos creados
-  const totalTrabajos = (trabajos?.length || 0) + (trabajosDelivery?.length || 0);
-  const hayTrabajos = totalTrabajos > 0;
+  // Check if there are works created
+  const totalWorks = (works?.length || 0) + (deliveryWorks?.length || 0);
+  const hasWorks = totalWorks > 0;
   
   const navigateToView = (view) => ***REMOVED***
-    // Si intenta ir a turnos pero no hay trabajos, no hacer nada en desktop
-    if (view === 'turnos' && !hayTrabajos) ***REMOVED***
+    // If trying to go to shifts but there are no works, do nothing on desktop
+    if (view === 'shifts' && !hasWorks) ***REMOVED***
       return;
     ***REMOVED***
     
     const routes = ***REMOVED***
       'dashboard': '/dashboard',
-      'trabajos': '/trabajos',
-      'turnos': '/turnos',
-      'estadisticas': '/estadisticas',
-      'calendario': '/calendario',
-      'ajustes': '/ajustes'
+      'works': '/works',
+      'shifts': '/shifts',
+      'statistics': '/statistics',
+      'calendar': '/calendar',
+      'settings': '/settings'
     ***REMOVED***;
     
     window.scrollTo(***REMOVED*** top: 0, behavior: 'smooth' ***REMOVED***);
@@ -76,15 +76,15 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
     navigate(routes[view]);
   ***REMOVED***;
   
-  const getActiveTextStyle = (vista) => ***REMOVED***
-    return currentView === vista 
+  const getActiveTextStyle = (view) => ***REMOVED***
+    return currentView === view 
       ? ***REMOVED*** color: colors.primary ***REMOVED*** 
       : ***REMOVED*** color: '#6B7280' ***REMOVED***;
   ***REMOVED***;
 
-  const getActiveDesktopStyle = (vista) => ***REMOVED***
-    // Estilo especial para turnos cuando no hay trabajos
-    if (vista === 'turnos' && !hayTrabajos) ***REMOVED***
+  const getActiveDesktopStyle = (view) => ***REMOVED***
+    // Special style for shifts when there are no works
+    if (view === 'shifts' && !hasWorks) ***REMOVED***
       return ***REMOVED***
         backgroundColor: 'transparent',
         color: '#9CA3AF',
@@ -93,7 +93,7 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
       ***REMOVED***;
     ***REMOVED***
 
-    return currentView === vista
+    return currentView === view
       ? ***REMOVED***
           backgroundColor: colors.primary,
           color: 'white'
@@ -106,28 +106,28 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
   
   const calendarButtonStyle = ***REMOVED***
     backgroundColor: colors.primary,
-    borderColor: currentView === 'calendario' 
+    borderColor: currentView === 'calendar' 
       ? colors.primaryDark
       : 'white'
   ***REMOVED***;
 
-  // Manejar hover del botón de turnos
-  const handleTurnosMouseEnter = () => ***REMOVED***
-    if (!hayTrabajos) ***REMOVED***
+  // Handle shifts button hover
+  const handleShiftsMouseEnter = () => ***REMOVED***
+    if (!hasWorks) ***REMOVED***
       setShowTooltip(true);
     ***REMOVED***
   ***REMOVED***;
 
-  const handleTurnosMouseLeave = () => ***REMOVED***
+  const handleShiftsMouseLeave = () => ***REMOVED***
     setShowTooltip(false);
   ***REMOVED***;
 
-  // Función para navegar al dashboard desde el logo
+  // Function to navigate to dashboard from logo
   const handleLogoClick = () => ***REMOVED***
     navigateToView('dashboard');
   ***REMOVED***;
 
-  // Manejar subida de foto de perfil desde desktop
+  // Handle profile photo upload from desktop
   const handlePhotoUpload = async (event) => ***REMOVED***
     const file = event.target.files?.[0];
     if (!file) return;
@@ -136,7 +136,7 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
     try ***REMOVED***
       await updateProfilePhoto(file);
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al actualizar foto:', error);
+      console.error('Error updating photo:', error);
     ***REMOVED*** finally ***REMOVED***
       window.dispatchEvent(new CustomEvent('profile-photo-loading-end'));
       if (fileInputRef.current) ***REMOVED***
@@ -152,7 +152,7 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
   
   return (
     <>
-      ***REMOVED***/* NAVEGACIÓN MÓVIL */***REMOVED***
+      ***REMOVED***/* MOBILE NAVIGATION */***REMOVED***
       <nav className="navbar-container fixed bottom-0 left-0 right-0 bg-white px-4 py-6 md:hidden">
         <div className="grid grid-cols-5 items-center max-w-md mx-auto">
           <button
@@ -161,21 +161,21 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
             style=***REMOVED***getActiveTextStyle('dashboard')***REMOVED***
           >
             <Home size=***REMOVED***20***REMOVED*** />
-            <span className="text-xs mt-1">Inicio</span>
+            <span className="text-xs mt-1">Home</span>
           </button>
 
           <button
-            onClick=***REMOVED***() => navigateToView('trabajos')***REMOVED***
+            onClick=***REMOVED***() => navigateToView('works')***REMOVED***
             className="flex flex-col items-center justify-center transition-colors duration-200"
-            style=***REMOVED***getActiveTextStyle('trabajos')***REMOVED***
+            style=***REMOVED***getActiveTextStyle('works')***REMOVED***
           >
             <Briefcase size=***REMOVED***20***REMOVED*** />
-            <span className="text-xs mt-1">Trabajos</span>
+            <span className="text-xs mt-1">Works</span>
           </button>
 
           <div className="flex justify-center items-start -mt-6">
             <motion.button
-              onClick=***REMOVED***() => navigateToView('calendario')***REMOVED***
+              onClick=***REMOVED***() => navigateToView('calendar')***REMOVED***
               className="text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-4 transition-all duration-200"
               style=***REMOVED***calendarButtonStyle***REMOVED***
               whileTap=***REMOVED******REMOVED*** scale: 0.95 ***REMOVED******REMOVED***
@@ -189,31 +189,31 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
           </div>
 
           <button
-            onClick=***REMOVED***() => navigateToView('turnos')***REMOVED***
+            onClick=***REMOVED***() => navigateToView('shifts')***REMOVED***
             className="flex flex-col items-center justify-center transition-colors duration-200"
-            style=***REMOVED***getActiveTextStyle('turnos')***REMOVED***
+            style=***REMOVED***getActiveTextStyle('shifts')***REMOVED***
           >
             <Calendar size=***REMOVED***20***REMOVED*** />
-            <span className="text-xs mt-1">Turnos</span>
+            <span className="text-xs mt-1">Shifts</span>
           </button>
 
           <button
-            onClick=***REMOVED***() => navigateToView('estadisticas')***REMOVED***
+            onClick=***REMOVED***() => navigateToView('statistics')***REMOVED***
             className="flex flex-col items-center justify-center transition-colors duration-200"
-            style=***REMOVED***getActiveTextStyle('estadisticas')***REMOVED***
+            style=***REMOVED***getActiveTextStyle('statistics')***REMOVED***
           >
             <BarChart2 size=***REMOVED***20***REMOVED*** />
-            <span className="text-xs mt-1">Estadísticas</span>
+            <span className="text-xs mt-1">Statistics</span>
           </button>
         </div>
       </nav>
 
-      ***REMOVED***/* SIDEBAR DESKTOP */***REMOVED***
+      ***REMOVED***/* DESKTOP SIDEBAR */***REMOVED***
       <aside className="hidden md:flex md:flex-col w-72 bg-white border-r border-gray-200 shadow-sm h-screen fixed left-0 top-0 z-30">
         
-        ***REMOVED***/* HEADER DEL SIDEBAR - CON FOTO DE PERFIL */***REMOVED***
+        ***REMOVED***/* SIDEBAR HEADER - WITH PROFILE PHOTO */***REMOVED***
         <div className="p-6 border-b border-gray-100">
-          ***REMOVED***/* Input oculto para subir foto */***REMOVED***
+          ***REMOVED***/* Hidden input for photo upload */***REMOVED***
           <input
             ref=***REMOVED***fileInputRef***REMOVED***
             type="file"
@@ -226,7 +226,7 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
             onClick=***REMOVED***handleLogoClick***REMOVED***
             className="flex items-center space-x-4 hover:opacity-80 transition-opacity w-full text-left"
           >
-            ***REMOVED***/* Foto de perfil o Logo con hover edit */***REMOVED***
+            ***REMOVED***/* Profile photo or Logo with hover edit */***REMOVED***
             <div
               className="relative w-14 h-14 rounded-xl overflow-hidden shadow-lg group"
               onMouseEnter=***REMOVED***() => setShowPhotoEdit(true)***REMOVED***
@@ -237,7 +237,7 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
             >
               <img
                 src=***REMOVED***profilePhotoURL***REMOVED***
-                alt="Foto de perfil"
+                alt="Profile"
                 className=***REMOVED***`w-full h-full $***REMOVED***
                   profilePhotoURL?.includes('logo.svg')
                     ? 'object-contain p-2 filter brightness-0 invert'
@@ -250,7 +250,7 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
                 ***REMOVED***
               />
 
-              ***REMOVED***/* Overlay con ícono de editar al hacer hover */***REMOVED***
+              ***REMOVED***/* Overlay with edit icon on hover */***REMOVED***
               ***REMOVED***showPhotoEdit && (
                 <Flex variant="center"
                   onClick=***REMOVED***handleEditPhotoClick***REMOVED***
@@ -262,25 +262,25 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
               )***REMOVED***
             </div>
 
-            ***REMOVED***/* Título y subtítulo */***REMOVED***
+            ***REMOVED***/* Title and subtitle */***REMOVED***
             <div>
               <h1 className="text-xl font-bold text-gray-900">
                 GestAPP.
               </h1>
               <p className="text-xs text-gray-500 font-light">
-                Tu gestor de trabajos y turnos
+                Your work and shift manager
               </p>
             </div>
           </button>
         </div>
 
-        ***REMOVED***/* ACCIONES RÁPIDAS */***REMOVED***
-        ***REMOVED***(abrirModalNuevoTurno || abrirModalNuevoTrabajo) && (
+        ***REMOVED***/* QUICK ACTIONS */***REMOVED***
+        ***REMOVED***(openNewShiftModal || openNewWorkModal) && (
           <div className="p-4 border-b border-gray-100">
             <div className="space-y-2">
-              ***REMOVED***abrirModalNuevoTurno && hayTrabajos && (
+              ***REMOVED***openNewShiftModal && hasWorks && (
                 <button
-                  onClick=***REMOVED***abrirModalNuevoTurno***REMOVED***
+                  onClick=***REMOVED***openNewShiftModal***REMOVED***
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg transform hover:scale-105 btn-primary text-white"
                   style=***REMOVED******REMOVED*** 
                     backgroundColor: colors.primary
@@ -293,12 +293,12 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
                   ***REMOVED******REMOVED***
                 >
                   <PlusCircle size=***REMOVED***20***REMOVED*** />
-                  <span>Nuevo Turno</span>
+                  <span>New Shift</span>
                 </button>
               )***REMOVED***
-              ***REMOVED***abrirModalNuevoTrabajo && (
+              ***REMOVED***openNewWorkModal && (
                 <button
-                  onClick=***REMOVED***abrirModalNuevoTrabajo***REMOVED***
+                  onClick=***REMOVED***openNewWorkModal***REMOVED***
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md bg-white"
                   style=***REMOVED******REMOVED*** 
                     borderWidth: '2px',
@@ -314,14 +314,14 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
                   ***REMOVED******REMOVED***
                 >
                   <Briefcase size=***REMOVED***20***REMOVED*** />
-                  <span>Nuevo Trabajo</span>
+                  <span>New Work</span>
                 </button>
               )***REMOVED***
             </div>
           </div>
         )***REMOVED***
 
-        ***REMOVED***/* NAVEGACIÓN PRINCIPAL */***REMOVED***
+        ***REMOVED***/* MAIN NAVIGATION */***REMOVED***
         <nav className="flex-1 p-4">
           <div className="space-y-2">
             <motion.button
@@ -336,58 +336,58 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
             </motion.button>
 
             <motion.button
-              onClick=***REMOVED***() => navigateToView('trabajos')***REMOVED***
+              onClick=***REMOVED***() => navigateToView('works')***REMOVED***
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
-              style=***REMOVED***getActiveDesktopStyle('trabajos')***REMOVED***
+              style=***REMOVED***getActiveDesktopStyle('works')***REMOVED***
               whileHover=***REMOVED******REMOVED*** scale: 1.02 ***REMOVED******REMOVED***
               whileTap=***REMOVED******REMOVED*** scale: 0.98 ***REMOVED******REMOVED***
             >
               <Briefcase size=***REMOVED***20***REMOVED*** />
-              <span>Trabajos</span>
+              <span>Works</span>
             </motion.button>
 
             <motion.button
-              onClick=***REMOVED***() => navigateToView('calendario')***REMOVED***
+              onClick=***REMOVED***() => navigateToView('calendar')***REMOVED***
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
-              style=***REMOVED***getActiveDesktopStyle('calendario')***REMOVED***
+              style=***REMOVED***getActiveDesktopStyle('calendar')***REMOVED***
               whileHover=***REMOVED******REMOVED*** scale: 1.02 ***REMOVED******REMOVED***
               whileTap=***REMOVED******REMOVED*** scale: 0.98 ***REMOVED******REMOVED***
             >
               <CalendarDays size=***REMOVED***20***REMOVED*** />
-              <span>Calendario</span>
+              <span>Calendar</span>
               <div 
                 className="w-2 h-2 rounded-full ml-auto"
                 style=***REMOVED******REMOVED*** 
-                  backgroundColor: currentView === 'calendario' ? 'white' : colors.primary 
+                  backgroundColor: currentView === 'calendar' ? 'white' : colors.primary 
                 ***REMOVED******REMOVED***
               />
             </motion.button>
 
-            ***REMOVED***/* Botón de Turnos con validación y tooltip */***REMOVED***
+            ***REMOVED***/* Shifts button with validation and tooltip */***REMOVED***
             <div className="relative">
               <motion.button
-                onClick=***REMOVED***() => navigateToView('turnos')***REMOVED***
-                onMouseEnter=***REMOVED***handleTurnosMouseEnter***REMOVED***
-                onMouseLeave=***REMOVED***handleTurnosMouseLeave***REMOVED***
+                onClick=***REMOVED***() => navigateToView('shifts')***REMOVED***
+                onMouseEnter=***REMOVED***handleShiftsMouseEnter***REMOVED***
+                onMouseLeave=***REMOVED***handleShiftsMouseLeave***REMOVED***
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all"
-                style=***REMOVED***getActiveDesktopStyle('turnos')***REMOVED***
-                whileHover=***REMOVED***hayTrabajos ? ***REMOVED*** scale: 1.02 ***REMOVED*** : ***REMOVED******REMOVED******REMOVED***
-                whileTap=***REMOVED***hayTrabajos ? ***REMOVED*** scale: 0.98 ***REMOVED*** : ***REMOVED******REMOVED******REMOVED***
+                style=***REMOVED***getActiveDesktopStyle('shifts')***REMOVED***
+                whileHover=***REMOVED***hasWorks ? ***REMOVED*** scale: 1.02 ***REMOVED*** : ***REMOVED******REMOVED******REMOVED***
+                whileTap=***REMOVED***hasWorks ? ***REMOVED*** scale: 0.98 ***REMOVED*** : ***REMOVED******REMOVED******REMOVED***
               >
                 <Calendar size=***REMOVED***20***REMOVED*** />
-                <span>Turnos</span>
-                ***REMOVED***!hayTrabajos && (
+                <span>Shifts</span>
+                ***REMOVED***!hasWorks && (
                   <div className="ml-auto">
                     <div className="w-2 h-2 rounded-full bg-red-400"></div>
                   </div>
                 )***REMOVED***
               </motion.button>
 
-              ***REMOVED***/* Tooltip para cuando no hay trabajos */***REMOVED***
-              ***REMOVED***showTooltip && !hayTrabajos && (
+              ***REMOVED***/* Tooltip for when there are no jobs */***REMOVED***
+              ***REMOVED***showTooltip && !hasWorks && (
                 <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 z-50">
                   <div className="bg-gray-800 text-white text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
-                    Primero crea un trabajo para agregar turnos
+                    First create a job to add shifts
                     <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800"></div>
                   </div>
                 </div>
@@ -395,32 +395,32 @@ const Navegacion = (***REMOVED*** abrirModalNuevoTrabajo, abrirModalNuevoTurno *
             </div>
 
             <motion.button
-              onClick=***REMOVED***() => navigateToView('estadisticas')***REMOVED***
+              onClick=***REMOVED***() => navigateToView('statistics')***REMOVED***
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
-              style=***REMOVED***getActiveDesktopStyle('estadisticas')***REMOVED***
+              style=***REMOVED***getActiveDesktopStyle('statistics')***REMOVED***
               whileHover=***REMOVED******REMOVED*** scale: 1.02 ***REMOVED******REMOVED***
               whileTap=***REMOVED******REMOVED*** scale: 0.98 ***REMOVED******REMOVED***
             >
               <BarChart2 size=***REMOVED***20***REMOVED*** />
-              <span>Estadísticas</span>
+              <span>Statistics</span>
             </motion.button>
           </div>
         </nav>
 
-        ***REMOVED***/* FOOTER DEL SIDEBAR */***REMOVED***
+        ***REMOVED***/* SIDEBAR FOOTER */***REMOVED***
         <div className="p-4 border-t border-gray-100">
           <motion.button
-            onClick=***REMOVED***() => navigateToView('ajustes')***REMOVED***
+            onClick=***REMOVED***() => navigateToView('settings')***REMOVED***
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:bg-gray-50 text-gray-600"
             whileHover=***REMOVED******REMOVED*** scale: 1.02 ***REMOVED******REMOVED***
             whileTap=***REMOVED******REMOVED*** scale: 0.98 ***REMOVED******REMOVED***
           >
             <Settings size=***REMOVED***20***REMOVED*** />
-            <span>Configuración</span>
+            <span>Settings</span>
           </motion.button>
         </div>
       </aside>
     </>
   );
 ***REMOVED***;
-export default Navegacion;
+export default Navigation;

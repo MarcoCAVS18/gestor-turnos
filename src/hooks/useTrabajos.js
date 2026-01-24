@@ -1,13 +1,13 @@
-// src/hooks/useTrabajos.js
+// src/hooks/useWorks.js
 import ***REMOVED*** useState, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** useShare ***REMOVED*** from './useShare';
 import ***REMOVED*** useDeleteManager ***REMOVED*** from './useDeleteManager';
 
-export const useTrabajos = () => ***REMOVED***
+export const useWorks = () => ***REMOVED***
   const ***REMOVED***
-    trabajos = [], 
-    trabajosDelivery = [], 
+    works = [], 
+    deliveryWorks = [], 
     loading,
     deleteJob,
     deleteDeliveryJob,
@@ -15,68 +15,68 @@ export const useTrabajos = () => ***REMOVED***
   ***REMOVED*** = useApp();
 
   const ***REMOVED*** shareWork, sharing, messages ***REMOVED*** = useShare();
-  const [modalAbierto, setModalAbierto] = useState(false);
-  const [trabajoSeleccionado, setTrabajoSeleccionado] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedWork, setSelectedWork] = useState(null);
 
-  // Combinar todos los trabajos
-  const todosLosTrabajos = useMemo(() => ***REMOVED***
-    return [...trabajos, ...trabajosDelivery];
-  ***REMOVED***, [trabajos, trabajosDelivery]);
+  // Combine all works
+  const allWorks = useMemo(() => ***REMOVED***
+    return [...works, ...deliveryWorks];
+  ***REMOVED***, [works, deliveryWorks]);
 
-  // Función de eliminación
-  const handleDeleteTrabajo = async (trabajo) => ***REMOVED***
+  // Delete function
+  const handleDeleteWork = async (work) => ***REMOVED***
     try ***REMOVED***
-      if (trabajo.tipo === 'delivery') ***REMOVED***
-        await deleteDeliveryJob(trabajo.id);
+      if (work.type === 'delivery') ***REMOVED***
+        await deleteDeliveryJob(work.id);
       ***REMOVED*** else ***REMOVED***
-        await deleteJob(trabajo.id);
+        await deleteJob(work.id);
       ***REMOVED***
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error eliminando trabajo:', error);
+      console.error('Error deleting work:', error);
     ***REMOVED***
   ***REMOVED***;
 
-  const deleteManager = useDeleteManager(handleDeleteTrabajo);
+  const deleteManager = useDeleteManager(handleDeleteWork);
 
-  // Función de compartir
-  const handleShareWork = async (trabajo) => ***REMOVED***
+  // Share function
+  const handleShareWork = async (work) => ***REMOVED***
     try ***REMOVED***
-      await shareWork(trabajo);
+      await shareWork(work);
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error al compartir trabajo:', error);
+      console.error('Error sharing work:', error);
     ***REMOVED***
   ***REMOVED***;
 
-  // Funciones de modal
-  const abrirModalNuevo = () => ***REMOVED***
-    setTrabajoSeleccionado(null);
-    setModalAbierto(true);
+  // Modal functions
+  const openNewModal = () => ***REMOVED***
+    setSelectedWork(null);
+    setIsModalOpen(true);
   ***REMOVED***;
 
-  const abrirModalEditar = (trabajo) => ***REMOVED***
-    setTrabajoSeleccionado(trabajo);
-    setModalAbierto(true);
+  const openEditModal = (work) => ***REMOVED***
+    setSelectedWork(work);
+    setIsModalOpen(true);
   ***REMOVED***;
 
-  const cerrarModal = () => ***REMOVED***
-    setModalAbierto(false);
-    setTrabajoSeleccionado(null);
+  const closeModal = () => ***REMOVED***
+    setIsModalOpen(false);
+    setSelectedWork(null);
   ***REMOVED***;
 
   return ***REMOVED***
-    // Estados
+    // States
     loading,
-    todosLosTrabajos,
-    modalAbierto,
-    trabajoSeleccionado,
+    allWorks,
+    isModalOpen,
+    selectedWork,
     thematicColors,
     sharing,
     messages,
 
-    // Funciones
-    abrirModalNuevo,
-    abrirModalEditar,
-    cerrarModal,
+    // Functions
+    openNewModal,
+    openEditModal,
+    closeModal,
     handleShareWork,
     
     // Delete manager

@@ -1,5 +1,5 @@
 // src/utils/statsCalculations.js
-import ***REMOVED*** determinarTipoTurno ***REMOVED*** from './shiftDetailsUtils';
+import ***REMOVED*** determineShiftType ***REMOVED*** from './shiftDetailsUtils';
 import ***REMOVED*** createSafeDate ***REMOVED*** from './time';
 
 /**
@@ -117,7 +117,7 @@ export const calculateWeeklyStats = (***REMOVED***
     if (turno.tipo === 'delivery' || trabajo.tipo === 'delivery') tipoTurno = 'delivery';
     else if (fechaTurno.getDay() === 6) tipoTurno = 'sabado';
     else if (fechaTurno.getDay() === 0) tipoTurno = 'domingo';
-    else if (shiftRanges) tipoTurno = determinarTipoTurno(turno, shiftRanges);
+    else if (shiftRanges) tipoTurno = determineShiftType(turno, shiftRanges);
 
     if (!acc.tiposDeTurno[tipoTurno]) ***REMOVED***
       acc.tiposDeTurno[tipoTurno] = ***REMOVED*** turnos: 0, horas: 0, ganancia: 0 ***REMOVED***;

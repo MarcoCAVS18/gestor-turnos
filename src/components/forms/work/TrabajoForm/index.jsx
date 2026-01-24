@@ -1,4 +1,4 @@
-// src/components/forms/work/TrabajoForm/index.jsx - REFACTORIZADO CON BaseForm
+// src/components/forms/work/WorkForm/index.jsx - REFACTORED WITH BaseForm
 
 import React, ***REMOVED*** useState, useEffect ***REMOVED*** from 'react';
 import ***REMOVED*** Briefcase, DollarSign, Palette, FileText, Clock ***REMOVED*** from 'lucide-react';
@@ -9,66 +9,66 @@ import ***REMOVED*** PREDEFINED_COLORS ***REMOVED*** from '../../../../constants
 import ThemeInput from '../../../ui/ThemeInput';
 import BaseForm, ***REMOVED*** FormSection, FormGrid, FormLabel, FormError ***REMOVED*** from '../../base/BaseForm';
 
-const TrabajoForm = (***REMOVED*** 
+const WorkForm = (***REMOVED*** 
   id,
-  trabajo, 
+  work, 
   onSubmit, 
   isMobile 
 ***REMOVED***) => ***REMOVED***
   const colors = useThemeColors();
   
   const [formData, setFormData] = useState(***REMOVED***
-    nombre: '',
-    descripcion: '',
+    name: '',
+    description: '',
     color: colors.primary,
-    tarifaBase: '',
-    tarifas: ***REMOVED***
-      diurno: '',
-      tarde: '',
-      noche: '',
-      sabado: '',
-      domingo: '',
-      feriados: ''
+    baseRate: '',
+    rates: ***REMOVED***
+      day: '',
+      afternoon: '',
+      night: '',
+      saturday: '',
+      sunday: '',
+      holidays: ''
     ***REMOVED***
   ***REMOVED***);
 
   const validationRules = ***REMOVED***
-    nombre: [VALIDATION_RULES.required, VALIDATION_RULES.minLength(2)],
-    tarifaBase: [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
-    'tarifas.diurno': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
-    'tarifas.tarde': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
-    'tarifas.noche': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
-    'tarifas.sabado': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
-    'tarifas.domingo': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
-    'tarifas.feriados': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber]
+    name: [VALIDATION_RULES.required, VALIDATION_RULES.minLength(2)],
+    baseRate: [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
+    'rates.day': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
+    'rates.afternoon': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
+    'rates.night': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
+    'rates.saturday': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
+    'rates.sunday': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber],
+    'rates.holidays': [VALIDATION_RULES.required, VALIDATION_RULES.positiveNumber]
   ***REMOVED***;
 
   const ***REMOVED*** errors, validateForm, handleFieldChange ***REMOVED*** = useFormValidation(validationRules);
 
   useEffect(() => ***REMOVED***
-    if (trabajo) ***REMOVED***
+    if (work) ***REMOVED***
       setFormData(***REMOVED***
-        nombre: trabajo.nombre || '',
-        descripcion: trabajo.descripcion || '',
-        color: trabajo.color || colors.primary,
-        tarifaBase: trabajo.tarifaBase?.toString() || '',
-        tarifas: ***REMOVED***
-          diurno: trabajo.tarifas?.diurno?.toString() || '',
-          tarde: trabajo.tarifas?.tarde?.toString() || '',
-          noche: trabajo.tarifas?.noche?.toString() || '',
-          sabado: trabajo.tarifas?.sabado?.toString() || '',
-          domingo: trabajo.tarifas?.domingo?.toString() || '',
-          feriados: trabajo.tarifas?.feriados?.toString() || ''
+        name: work.name || '',
+        description: work.description || '',
+        color: work.color || colors.primary,
+        baseRate: work.baseRate?.toString() || '',
+        rates: ***REMOVED***
+          day: work.rates?.day?.toString() || '',
+          afternoon: work.rates?.afternoon?.toString() || '',
+          night: work.rates?.night?.toString() || '',
+          saturday: work.rates?.saturday?.toString() || '',
+          sunday: work.rates?.sunday?.toString() || '',
+          holidays: work.rates?.holidays?.toString() || ''
         ***REMOVED***
       ***REMOVED***);
     ***REMOVED*** else ***REMOVED***
-      // Para nuevos trabajos, usar el color temático por defecto
+      // For new jobs, use the default theme color
       setFormData(prev => (***REMOVED***
         ...prev,
         color: colors.primary
       ***REMOVED***));
     ***REMOVED***
-  ***REMOVED***, [trabajo, colors.primary]);
+  ***REMOVED***, [work, colors.primary]);
 
   const handleInputChange = (field, value) => ***REMOVED***
     setFormData(prev => (***REMOVED***
@@ -78,15 +78,15 @@ const TrabajoForm = (***REMOVED***
     handleFieldChange(field, value);
   ***REMOVED***;
 
-  const handleTarifaChange = (tipo, value) => ***REMOVED***
+  const handleRateChange = (type, value) => ***REMOVED***
     setFormData(prev => (***REMOVED***
       ...prev,
-      tarifas: ***REMOVED***
-        ...prev.tarifas,
-        [tipo]: value
+      rates: ***REMOVED***
+        ...prev.rates,
+        [type]: value
       ***REMOVED***
     ***REMOVED***));
-    handleFieldChange(`tarifas.$***REMOVED***tipo***REMOVED***`, value);
+    handleFieldChange(`rates.$***REMOVED***type***REMOVED***`, value);
   ***REMOVED***;
 
   const handleSubmit = (e) => ***REMOVED***
@@ -94,30 +94,30 @@ const TrabajoForm = (***REMOVED***
     
     const flatFormData = ***REMOVED***
       ...formData,
-      'tarifas.diurno': formData.tarifas.diurno,
-      'tarifas.tarde': formData.tarifas.tarde,
-      'tarifas.noche': formData.tarifas.noche,
-      'tarifas.sabado': formData.tarifas.sabado,
-      'tarifas.domingo': formData.tarifas.domingo,
-      'tarifas.feriados': formData.tarifas.feriados
+      'rates.day': formData.rates.day,
+      'rates.afternoon': formData.rates.afternoon,
+      'rates.night': formData.rates.night,
+      'rates.saturday': formData.rates.saturday,
+      'rates.sunday': formData.rates.sunday,
+      'rates.holidays': formData.rates.holidays
     ***REMOVED***;
 
     if (!validateForm(flatFormData)) return;
 
-    const datosCompletos = ***REMOVED***
+    const completeData = ***REMOVED***
       ...formData,
-      tarifaBase: parseFloat(formData.tarifaBase),
-      tarifas: ***REMOVED***
-        diurno: parseFloat(formData.tarifas.diurno),
-        tarde: parseFloat(formData.tarifas.tarde),
-        noche: parseFloat(formData.tarifas.noche),
-        sabado: parseFloat(formData.tarifas.sabado),
-        domingo: parseFloat(formData.tarifas.domingo),
-        feriados: parseFloat(formData.tarifas.feriados)
+      baseRate: parseFloat(formData.baseRate),
+      rates: ***REMOVED***
+        day: parseFloat(formData.rates.day),
+        afternoon: parseFloat(formData.rates.afternoon),
+        night: parseFloat(formData.rates.night),
+        saturday: parseFloat(formData.rates.saturday),
+        sunday: parseFloat(formData.rates.sunday),
+        holidays: parseFloat(formData.rates.holidays)
       ***REMOVED***
     ***REMOVED***;
 
-    onSubmit(datosCompletos);
+    onSubmit(completeData);
   ***REMOVED***;
 
   return (
@@ -126,27 +126,27 @@ const TrabajoForm = (***REMOVED***
       onSubmit=***REMOVED***handleSubmit***REMOVED***
       isMobile=***REMOVED***isMobile***REMOVED***
     >
-      ***REMOVED***/* Nombre de la empresa */***REMOVED***
+      ***REMOVED***/* Company Name */***REMOVED***
       <FormSection>
-        <FormLabel icon=***REMOVED***Briefcase***REMOVED***>Nombre de la empresa *</FormLabel>
+        <FormLabel icon=***REMOVED***Briefcase***REMOVED***>Company Name *</FormLabel>
         <ThemeInput
           type="text"
-          value=***REMOVED***formData.nombre***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('nombre', e.target.value)***REMOVED***
+          value=***REMOVED***formData.name***REMOVED***
+          onChange=***REMOVED***(e) => handleInputChange('name', e.target.value)***REMOVED***
           className=***REMOVED***`
             w-full border rounded-lg transition-colors
             $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
-            $***REMOVED***errors.nombre ? 'border-red-500' : 'border-gray-300'***REMOVED***
+            $***REMOVED***errors.name ? 'border-red-500' : 'border-gray-300'***REMOVED***
           `***REMOVED***
-          placeholder="Ej: Tech Company Inc."
+          placeholder="e.g., Tech Company Inc."
           required
         />
-        <FormError error=***REMOVED***errors.nombre***REMOVED*** size="sm" />
+        <FormError error=***REMOVED***errors.name***REMOVED*** size="sm" />
       </FormSection>
 
       ***REMOVED***/* Color */***REMOVED***
       <FormSection>
-        <FormLabel icon=***REMOVED***Palette***REMOVED***>Color del trabajo</FormLabel>
+        <FormLabel icon=***REMOVED***Palette***REMOVED***>Work Color</FormLabel>
         <div className="space-y-3">
           <div className=***REMOVED***`flex flex-wrap $***REMOVED***isMobile ? 'gap-3' : 'gap-2'***REMOVED***`***REMOVED***>
             ***REMOVED***PREDEFINED_COLORS.map(color => (
@@ -174,78 +174,78 @@ const TrabajoForm = (***REMOVED***
               onChange=***REMOVED***(e) => handleInputChange('color', e.target.value)***REMOVED***
               className=***REMOVED***`border border-gray-300 rounded cursor-pointer $***REMOVED***isMobile ? 'w-20 h-10' : 'w-16 h-8'***REMOVED***`***REMOVED***
             />
-            <span className="text-sm text-gray-500">o elige un color personalizado</span>
+            <span className="text-sm text-gray-500">or choose a custom color</span>
           </div>
         </div>
       </FormSection>
 
-      ***REMOVED***/* Tarifa base */***REMOVED***
+      ***REMOVED***/* Base rate */***REMOVED***
       <FormSection>
-        <FormLabel icon=***REMOVED***DollarSign***REMOVED***>Tarifa base por hora *</FormLabel>
+        <FormLabel icon=***REMOVED***DollarSign***REMOVED***>Base hourly rate *</FormLabel>
         <ThemeInput
           type="number"
-          value=***REMOVED***formData.tarifaBase***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('tarifaBase', e.target.value)***REMOVED***
+          value=***REMOVED***formData.baseRate***REMOVED***
+          onChange=***REMOVED***(e) => handleInputChange('baseRate', e.target.value)***REMOVED***
           className=***REMOVED***`
             w-full border rounded-lg transition-colors
             $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
-            $***REMOVED***errors.tarifaBase ? 'border-red-500' : 'border-gray-300'***REMOVED***
+            $***REMOVED***errors.baseRate ? 'border-red-500' : 'border-gray-300'***REMOVED***
           `***REMOVED***
           placeholder="15.00"
           step="0.01"
           min="0"
           required
         />
-        <FormError error=***REMOVED***errors.tarifaBase***REMOVED*** size="sm" />
+        <FormError error=***REMOVED***errors.baseRate***REMOVED*** size="sm" />
       </FormSection>
 
-      ***REMOVED***/* Tarifas específicas */***REMOVED***
+      ***REMOVED***/* Specific rates */***REMOVED***
       <FormSection>
         <FormLabel icon=***REMOVED***Clock***REMOVED***>
-          Tarifas por tipo de turno *
+          Rates by shift type *
         </FormLabel>
         <FormGrid columns=***REMOVED***2***REMOVED***>
           ***REMOVED***Object.entries(***REMOVED***
-            diurno: 'Diurno',
-            tarde: 'Tarde',
-            noche: 'Nocturno',
-            sabado: 'Sábado',
-            domingo: 'Domingo',
-            feriados: 'Feriados'
-          ***REMOVED***).map(([tipo, label]) => (
-            <div key=***REMOVED***tipo***REMOVED***>
+            day: 'Day',
+            afternoon: 'Afternoon',
+            night: 'Night',
+            saturday: 'Saturday',
+            sunday: 'Sunday',
+            holidays: 'Holidays'
+          ***REMOVED***).map(([type, label]) => (
+            <div key=***REMOVED***type***REMOVED***>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 ***REMOVED***label***REMOVED***
               </label>
               <ThemeInput
                 type="number"
-                value=***REMOVED***formData.tarifas[tipo]***REMOVED***
-                onChange=***REMOVED***(e) => handleTarifaChange(tipo, e.target.value)***REMOVED***
+                value=***REMOVED***formData.rates[type]***REMOVED***
+                onChange=***REMOVED***(e) => handleRateChange(type, e.target.value)***REMOVED***
                 className=***REMOVED***`
                   w-full border rounded-lg transition-colors
                   $***REMOVED***isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'***REMOVED***
-                  $***REMOVED***errors[`tarifas.$***REMOVED***tipo***REMOVED***`] ? 'border-red-500' : 'border-gray-300'***REMOVED***
+                  $***REMOVED***errors[`rates.$***REMOVED***type***REMOVED***`] ? 'border-red-500' : 'border-gray-300'***REMOVED***
                 `***REMOVED***
                 placeholder="0.00"
                 step="0.01"
                 min="0"
                 required
               />
-              ***REMOVED***errors[`tarifas.$***REMOVED***tipo***REMOVED***`] && (
-                <p className="mt-1 text-xs text-red-600">***REMOVED***errors[`tarifas.$***REMOVED***tipo***REMOVED***`]***REMOVED***</p>
+              ***REMOVED***errors[`rates.$***REMOVED***type***REMOVED***`] && (
+                <p className="mt-1 text-xs text-red-600">***REMOVED***errors[`rates.$***REMOVED***type***REMOVED***`]***REMOVED***</p>
               )***REMOVED***
             </div>
           ))***REMOVED***
         </FormGrid>
       </FormSection>
 
-      ***REMOVED***/* Descripción */***REMOVED***
+      ***REMOVED***/* Description */***REMOVED***
       <FormSection>
-        <FormLabel icon=***REMOVED***FileText***REMOVED***>Descripción (opcional)</FormLabel>
+        <FormLabel icon=***REMOVED***FileText***REMOVED***>Description (optional)</FormLabel>
         <textarea
-          value=***REMOVED***formData.descripcion***REMOVED***
-          onChange=***REMOVED***(e) => handleInputChange('descripcion', e.target.value)***REMOVED***
-          placeholder="Detalles adicionales sobre este trabajo..."
+          value=***REMOVED***formData.description***REMOVED***
+          onChange=***REMOVED***(e) => handleInputChange('description', e.target.value)***REMOVED***
+          placeholder="Additional details about this job..."
           rows=***REMOVED***isMobile ? 4 : 3***REMOVED***
           className=***REMOVED***`
             w-full border border-gray-300 rounded-lg transition-colors resize-none
@@ -260,4 +260,4 @@ const TrabajoForm = (***REMOVED***
   );
 ***REMOVED***;
 
-export default TrabajoForm;
+export default WorkForm;

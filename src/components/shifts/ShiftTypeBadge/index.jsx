@@ -1,65 +1,60 @@
-// src/components/shifts/ShiftTypeBadge/index.jsx - Corregido
+// src/components/shifts/ShiftTypeBadge/index.jsx - Corrected
 
 import React from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../../../contexts/AppContext';
 import ***REMOVED*** TURN_TYPE_COLORS ***REMOVED*** from '../../../constants/colors';
-import ***REMOVED*** determinarTipoTurno ***REMOVED*** from '../../../utils/shiftDetailsUtils';
+import ***REMOVED*** determineShiftType ***REMOVED*** from '../../../utils/shiftDetailsUtils';
 
-const ShiftTypeBadge = (***REMOVED*** tipoTurno, turno, size = 'sm' ***REMOVED***) => ***REMOVED***
+const ShiftTypeBadge = (***REMOVED*** shiftType, shift, size = 'sm' ***REMOVED***) => ***REMOVED***
   const ***REMOVED*** shiftRanges ***REMOVED*** = useApp();
   
-  // Determinar el tipo si se pasa el turno completo
-  const tipo = tipoTurno || determinarTipoTurno(turno, shiftRanges);
+  // Determine the type if the full shift is passed
+  const type = shiftType || determineShiftType(shift, shiftRanges);
   
-  // Mapeo directo a las constantes de colores
-  const getColorAndConfig = (tipoTurno) => ***REMOVED***
+  // Direct mapping to color constants
+  const getColorAndConfig = (shiftType) => ***REMOVED***
     const configs = ***REMOVED***
-      diurno: ***REMOVED***
-        color: TURN_TYPE_COLORS.Diurno,
-        label: 'Diurno',
-        bgColor: TURN_TYPE_COLORS.Diurno + '20'
+      day: ***REMOVED***
+        color: TURN_TYPE_COLORS.Day,
+        label: 'Day',
+        bgColor: TURN_TYPE_COLORS.Day + '20'
       ***REMOVED***,
-      tarde: ***REMOVED***
-        color: TURN_TYPE_COLORS.Tarde,
-        label: 'Tarde', 
-        bgColor: TURN_TYPE_COLORS.Tarde + '20'
+      afternoon: ***REMOVED***
+        color: TURN_TYPE_COLORS.Afternoon,
+        label: 'Afternoon', 
+        bgColor: TURN_TYPE_COLORS.Afternoon + '20'
       ***REMOVED***,
-      noche: ***REMOVED***
-        color: TURN_TYPE_COLORS.Nocturno,
-        label: 'Nocturno',
-        bgColor: TURN_TYPE_COLORS.Nocturno + '20'
+      night: ***REMOVED***
+        color: TURN_TYPE_COLORS.Night,
+        label: 'Night',
+        bgColor: TURN_TYPE_COLORS.Night + '20'
       ***REMOVED***,
-      nocturno: ***REMOVED***
-        color: TURN_TYPE_COLORS.Nocturno,
-        label: 'Nocturno',
-        bgColor: TURN_TYPE_COLORS.Nocturno + '20'
+      saturday: ***REMOVED***
+        color: TURN_TYPE_COLORS.Saturday,
+        label: 'Saturday',
+        bgColor: TURN_TYPE_COLORS.Saturday + '20'
       ***REMOVED***,
-      sabado: ***REMOVED***
-        color: TURN_TYPE_COLORS.Sábado,
-        label: 'Sábado',
-        bgColor: TURN_TYPE_COLORS.Sábado + '20'
-      ***REMOVED***,
-      domingo: ***REMOVED***
-        color: TURN_TYPE_COLORS.Domingo,
-        label: 'Domingo',
-        bgColor: TURN_TYPE_COLORS.Domingo + '20'
+      sunday: ***REMOVED***
+        color: TURN_TYPE_COLORS.Sunday,
+        label: 'Sunday',
+        bgColor: TURN_TYPE_COLORS.Sunday + '20'
       ***REMOVED***,
       delivery: ***REMOVED***
         color: '#e8a7f8ff',
         label: 'Delivery',
         bgColor: '#6329a5b1'
       ***REMOVED***,
-      mixto: ***REMOVED***
+      mixed: ***REMOVED***
         color: '#6B7280',
-        label: 'Mixto',
+        label: 'Mixed',
         bgColor: '#6B728020'
       ***REMOVED***
     ***REMOVED***;
     
-    return configs[tipoTurno] || configs.mixto;
+    return configs[shiftType] || configs.mixed;
   ***REMOVED***;
   
-  const tipoConfig = getColorAndConfig(tipo);
+  const typeConfig = getColorAndConfig(type);
   
   const sizeClasses = ***REMOVED***
     xs: 'px-1.5 py-0.5 text-xs',
@@ -72,20 +67,20 @@ const ShiftTypeBadge = (***REMOVED*** tipoTurno, turno, size = 'sm' ***REMOVED**
     <div 
       className=***REMOVED***`inline-flex items-center rounded-full font-medium $***REMOVED***sizeClasses[size]***REMOVED*** flex-shrink-0`***REMOVED***
       style=***REMOVED******REMOVED*** 
-        backgroundColor: tipoConfig.bgColor,
-        color: tipoConfig.color
+        backgroundColor: typeConfig.bgColor,
+        color: typeConfig.color
       ***REMOVED******REMOVED***
-      title=***REMOVED***`Turno $***REMOVED***tipoConfig.label***REMOVED***`***REMOVED***
+      title=***REMOVED***`Shift $***REMOVED***typeConfig.label***REMOVED***`***REMOVED***
     >
-      <span className="truncate">***REMOVED***tipoConfig.label***REMOVED***</span>
+      <span className="truncate">***REMOVED***typeConfig.label***REMOVED***</span>
       
-      ***REMOVED***/* Indicador especial para turnos nocturnos */***REMOVED***
-      ***REMOVED***turno?.cruzaMedianoche && tipo === 'noche' && (
+      ***REMOVED***/* Special indicator for night shifts */***REMOVED***
+      ***REMOVED***shift?.crossesMidnight && type === 'night' && (
         <span className="ml-1 text-xs opacity-75">🌙</span>
       )***REMOVED***
       
-      ***REMOVED***/* Indicador especial para turnos mixtos */***REMOVED***
-      ***REMOVED***tipo === 'mixto' && (
+      ***REMOVED***/* Special indicator for mixed shifts */***REMOVED***
+      ***REMOVED***type === 'mixed' && (
         <span className="ml-1 text-xs opacity-75">~</span>
       )***REMOVED***
     </div>

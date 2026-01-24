@@ -2,128 +2,128 @@ import React, ***REMOVED*** useState, useMemo ***REMOVED*** from 'react';
 import ***REMOVED*** useApp ***REMOVED*** from '../contexts/AppContext';
 import ***REMOVED*** useTurnManager ***REMOVED*** from '../hooks/useTurnManager';
 import ***REMOVED*** useDeleteManager ***REMOVED*** from '../hooks/useDeleteManager';
-import ***REMOVED*** useFilterTurnos ***REMOVED*** from '../hooks/useFilterTurnos';
+import ***REMOVED*** useShiftFilters ***REMOVED*** from '../hooks/useFilterTurnos';
 import ***REMOVED*** createSafeDate ***REMOVED*** from '../utils/time';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import PageHeader from '../components/layout/PageHeader'; // Added import
 import ***REMOVED*** List, Plus, ChevronDown, ChevronUp ***REMOVED*** from 'lucide-react'; // Added icons
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
-import FiltrosTurnos from '../components/filters/FiltrosTurnos';
-import ModalTurno from '../components/modals/shift/ModalTurno';
-import AlertaEliminacion from '../components/alerts/AlertaEliminacion';
+import ShiftFilters from '../components/filters/FiltrosTurnos';
+import ShiftModal from '../components/modals/shift/ModalTurno';
+import DeleteAlert from '../components/alerts/AlertaEliminacion';
 import WeeklyShiftsSection from '../components/shifts/WeeklyShiftsSection';
 import ***REMOVED*** generateShiftDetails ***REMOVED*** from '../utils/shiftDetailsUtils';
 import Flex from '../components/ui/Flex';
 
 import LoadingSpinner from '../components/ui/LoadingSpinner/LoadingSpinner';
 
-const WEEKS_PER_PAGE = 4; // Mostrar 4 semanas por página
+const WEEKS_PER_PAGE = 4; // Display 4 weeks per page
 
-const Turnos = () => ***REMOVED***
+const Shifts = () => ***REMOVED***
   const ***REMOVED*** 
     loading, 
     deleteShift, 
     deleteDeliveryShift, 
     thematicColors, 
-    turnosPorFecha,
-    trabajos,
-    trabajosDelivery 
+    shiftsByDate,
+    works,
+    deliveryWorks 
   ***REMOVED*** = useApp();
   
   const [weeksShown, setWeeksShown] = useState(WEEKS_PER_PAGE);
   const [expanding, setExpanding] = useState(false);
 
-  // Hook para gestión de filtros
+  // Hook for filter management
   const ***REMOVED***
     filters,
-    actualizarFiltros,
-    turnosFiltrados,
-    estadisticasFiltros,
-    tieneMetrosDeFiltrosActivos
-  ***REMOVED*** = useFilterTurnos(turnosPorFecha);
+    updateFilters,
+    filteredShifts,
+    filterStats,
+    hasActiveFilters
+  ***REMOVED*** = useShiftFilters(shiftsByDate);
 
-  // Hooks especializados
-  const ***REMOVED*** modalAbierto, turnoSeleccionado, abrirModalNuevo, abrirModalEditar, cerrarModal ***REMOVED*** = useTurnManager();
+  // Specialized hooks for modal management
+  const ***REMOVED*** isModalOpen, selectedShift, openNewModal, openEditModal, closeModal ***REMOVED*** = useTurnManager();
   
-  // Función de eliminación
-  const handleDeleteTurno = async (turno) => ***REMOVED***
+  // Delete function
+  const handleDeleteShift = async (shift) => ***REMOVED***
     try ***REMOVED***
-      if (turno.tipo === 'delivery') ***REMOVED***
-        await deleteDeliveryShift(turno.id);
+      if (shift.type === 'delivery') ***REMOVED***
+        await deleteDeliveryShift(shift.id);
       ***REMOVED*** else ***REMOVED***
-        await deleteShift(turno.id);
+        await deleteShift(shift.id);
       ***REMOVED***
     ***REMOVED*** catch (error) ***REMOVED***
-      console.error('Error eliminando turno:', error);
+      console.error('Error deleting shift:', error);
     ***REMOVED***
   ***REMOVED***;
 
-  const deleteManager = useDeleteManager(handleDeleteTurno);
+  const deleteManager = useDeleteManager(handleDeleteShift);
 
-  // Procesar datos de turnos (usar filtrados si hay filtros activos)
-  const turnosParaMostrar = tieneMetrosDeFiltrosActivos ? turnosFiltrados : turnosPorFecha;
-  const allJobs = useMemo(() => [...trabajos, ...trabajosDelivery], [trabajos, trabajosDelivery]);
+  // Process shift data (use filtered if active filters)
+  const shiftsToDisplay = hasActiveFilters ? filteredShifts : shiftsByDate;
+  const allJobs = useMemo(() => [...works, ...deliveryWorks], [works, deliveryWorks]);
 
-  // Función para obtener el lunes de una fecha
-  const obtenerLunesDeLaSemana = (fecha) => ***REMOVED***
-    const date = createSafeDate(fecha);
-    const diaSemana = date.getDay();
-    const diasHastaLunes = diaSemana === 0 ? -6 : -(diaSemana - 1);
-    const lunes = new Date(date);
-    lunes.setDate(date.getDate() + diasHastaLunes);
-    return lunes.toISOString().split('T')[0];
+  // Function to get Monday of a date
+  const getMondayOfWeek = (dateStr) => ***REMOVED***
+    const date = createSafeDate(dateStr);
+    const weekDay = date.getDay();
+    const daysUntilMonday = weekDay === 0 ? -6 : -(weekDay - 1);
+    const monday = new Date(date);
+    monday.setDate(date.getDate() + daysUntilMonday);
+    return monday.toISOString().split('T')[0];
   ***REMOVED***;
 
-  // Función para formatear el rango de semana
-  const formatearRangoSemana = (fechaLunes) => ***REMOVED***
-    const lunes = createSafeDate(fechaLunes);
-    const domingo = new Date(lunes);
-    domingo.setDate(lunes.getDate() + 6);
+  // Function to format week range
+  const formatWeekRange = (mondayDate) => ***REMOVED***
+    const monday = createSafeDate(mondayDate);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
 
-    const opcionesLunes = ***REMOVED*** day: 'numeric', month: 'short' ***REMOVED***;
-    const opcionesDomingo = ***REMOVED*** day: 'numeric', month: 'short', year: 'numeric' ***REMOVED***;
+    const mondayOptions = ***REMOVED*** day: 'numeric', month: 'short' ***REMOVED***;
+    const sundayOptions = ***REMOVED*** day: 'numeric', month: 'short', year: 'numeric' ***REMOVED***;
 
-    const lunesStr = lunes.toLocaleDateString('es-ES', opcionesLunes);
-    const domingoStr = domingo.toLocaleDateString('es-ES', opcionesDomingo);
+    const mondayStr = monday.toLocaleDateString('en-US', mondayOptions);
+    const sundayStr = sunday.toLocaleDateString('en-US', sundayOptions);
 
-    return `$***REMOVED***lunesStr***REMOVED*** - $***REMOVED***domingoStr***REMOVED***`;
+    return `$***REMOVED***mondayStr***REMOVED*** - $***REMOVED***sundayStr***REMOVED***`;
   ***REMOVED***;
 
-  // Agrupar turnos por semanas
-  const turnosPorSemana = useMemo(() => ***REMOVED***
-    const semanas = ***REMOVED******REMOVED***;
+  // Group shifts by weeks
+  const shiftsByWeek = useMemo(() => ***REMOVED***
+    const weeks = ***REMOVED******REMOVED***;
     
-    Object.entries(turnosParaMostrar || ***REMOVED******REMOVED***).forEach(([fecha, turnos]) => ***REMOVED***
-      const fechaLunes = obtenerLunesDeLaSemana(fecha);
+    Object.entries(shiftsToDisplay || ***REMOVED******REMOVED***).forEach(([date, shifts]) => ***REMOVED***
+      const mondayDate = getMondayOfWeek(date);
       
-      if (!semanas[fechaLunes]) ***REMOVED***
-        semanas[fechaLunes] = ***REMOVED******REMOVED***;
+      if (!weeks[mondayDate]) ***REMOVED***
+        weeks[mondayDate] = ***REMOVED******REMOVED***;
       ***REMOVED***
       
-      semanas[fechaLunes][fecha] = turnos;
+      weeks[mondayDate][date] = shifts;
     ***REMOVED***);
 
-    // Ordenar semanas por fecha (más reciente primero)
-    const semanasOrdenadas = Object.keys(semanas)
+    // Sort weeks by date (most recent first)
+    const sortedWeeks = Object.keys(weeks)
       .sort((a, b) => new Date(b) - new Date(a))
-      .map(fechaLunes => (***REMOVED***
-        fechaLunes,
-        rangoSemana: formatearRangoSemana(fechaLunes),
-        turnos: semanas[fechaLunes],
-        totalTurnos: Object.values(semanas[fechaLunes]).flat().length
+      .map(mondayDate => (***REMOVED***
+        mondayDate,
+        weekRange: formatWeekRange(mondayDate),
+        shifts: weeks[mondayDate],
+        totalShifts: Object.values(weeks[mondayDate]).flat().length
       ***REMOVED***));
 
-    return semanasOrdenadas;
-  ***REMOVED***, [turnosParaMostrar]);
+    return sortedWeeks;
+  ***REMOVED***, [shiftsToDisplay]);
 
-  const semanasParaMostrar = turnosPorSemana.slice(0, weeksShown);
-  const hayMasSemanas = turnosPorSemana.length > weeksShown;
-  const hayTurnos = turnosPorSemana.length > 0;
+  const weeksToDisplay = shiftsByWeek.slice(0, weeksShown);
+  const hasMoreWeeks = shiftsByWeek.length > weeksShown;
+  const hasShifts = shiftsByWeek.length > 0;
 
   const handleShowMoreWeeks = () => ***REMOVED***
     setExpanding(true);
     setTimeout(() => ***REMOVED***
-      setWeeksShown(prev => Math.min(prev + WEEKS_PER_PAGE, turnosPorSemana.length));
+      setWeeksShown(prev => Math.min(prev + WEEKS_PER_PAGE, shiftsByWeek.length));
       setExpanding(false);
     ***REMOVED***, 300);
   ***REMOVED***;
@@ -133,31 +133,31 @@ const Turnos = () => ***REMOVED***
     window.scrollTo(***REMOVED*** top: 0, behavior: 'smooth' ***REMOVED***);
   ***REMOVED***;
 
-  const testDelete = (turno) => ***REMOVED***
-    deleteManager.startDeletion(turno);
+  const testDelete = (shift) => ***REMOVED***
+    deleteManager.startDeletion(shift);
   ***REMOVED***;
 
   return (
     <LoadingWrapper loading=***REMOVED***loading***REMOVED***>
-      ***REMOVED***/* Contenedor principal con espaciado mejorado */***REMOVED***
+      ***REMOVED***/* Main container with improved spacing */***REMOVED***
       <div className="px-4 py-6 space-y-6">
         <PageHeader
-          title="Turnos"
-          subtitle="Gestiona y visualiza tus turnos registrados."
+          title="Shifts"
+          subtitle="Manage and visualize your registered shifts."
           icon=***REMOVED***List***REMOVED***
-          action=***REMOVED******REMOVED*** onClick: abrirModalNuevo, icon: Plus, label: 'Nuevo Turno' ***REMOVED******REMOVED***
+          action=***REMOVED******REMOVED*** onClick: openNewModal, icon: Plus, label: 'New Shift' ***REMOVED******REMOVED***
         />
 
-        ***REMOVED***/* Sistema de filtros */***REMOVED***
-        ***REMOVED***(Object.keys(turnosPorFecha || ***REMOVED******REMOVED***).length > 0) && (
-          <FiltrosTurnos
-            onFiltersChange=***REMOVED***actualizarFiltros***REMOVED***
+        ***REMOVED***/* Filter system */***REMOVED***
+        ***REMOVED***(Object.keys(shiftsByDate || ***REMOVED******REMOVED***).length > 0) && (
+          <ShiftFilters
+            onFiltersChange=***REMOVED***updateFilters***REMOVED***
             activeFilters=***REMOVED***filters***REMOVED***
           />
         )***REMOVED***
 
-        ***REMOVED***/* Estadísticas de filtrado */***REMOVED***
-        ***REMOVED***tieneMetrosDeFiltrosActivos && (
+        ***REMOVED***/* Filtering statistics */***REMOVED***
+        ***REMOVED***hasActiveFilters && (
           <div 
             className="p-3 rounded-lg border-l-4 text-sm"
             style=***REMOVED******REMOVED*** 
@@ -167,24 +167,24 @@ const Turnos = () => ***REMOVED***
           >
             <Flex variant="between">
               <span style=***REMOVED******REMOVED*** color: thematicColors?.base ***REMOVED******REMOVED*** className="font-medium">
-                Mostrando ***REMOVED***estadisticasFiltros.turnosFiltrados***REMOVED*** de ***REMOVED***estadisticasFiltros.totalTurnos***REMOVED*** turnos
+                Showing ***REMOVED***filterStats.filteredShiftsCount***REMOVED*** of ***REMOVED***filterStats.totalShifts***REMOVED*** shifts
               </span>
               <span className="text-gray-600">
-                ***REMOVED***turnosPorSemana.length***REMOVED*** semanas con turnos
+                ***REMOVED***shiftsByWeek.length***REMOVED*** weeks with shifts
               </span>
             </Flex>
           </div>
         )***REMOVED***
 
-        ***REMOVED***/* Contenido principal */***REMOVED***
-        ***REMOVED***!hayTurnos && !tieneMetrosDeFiltrosActivos ? (
+        ***REMOVED***/* Main content */***REMOVED***
+        ***REMOVED***!hasShifts && !hasActiveFilters ? (
           <ShiftsEmptyState 
             allJobs=***REMOVED***allJobs***REMOVED***
-            onNewShift=***REMOVED***abrirModalNuevo***REMOVED***
+            onNewShift=***REMOVED***openNewModal***REMOVED***
             thematicColors=***REMOVED***thematicColors***REMOVED***
           />
-        ) : !hayTurnos && tieneMetrosDeFiltrosActivos ? (
-          // Estado cuando hay filtros pero no resultados
+        ) : !hasShifts && hasActiveFilters ? (
+          // State when there are filters but no results
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
             <Flex 
               variant="center" 
@@ -194,39 +194,39 @@ const Turnos = () => ***REMOVED***
               <span className="text-2xl">🔍</span>
             </Flex>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
-              No hay turnos que coincidan con los filtros
+              No shifts matching filters
             </h3>
             <p className="text-gray-500 mb-6 max-w-md mx-auto">
-              Intenta ajustar los filtros para ver más resultados.
+              Try adjusting the filters to see more results.
             </p>
             <button
-              onClick=***REMOVED***() => actualizarFiltros(***REMOVED*** trabajo: 'todos', diasSemana: [], tipoTurno: 'todos' ***REMOVED***)***REMOVED***
+              onClick=***REMOVED***() => updateFilters(***REMOVED*** work: 'all', weekDays: [], shiftType: 'all' ***REMOVED***)***REMOVED***
               className="text-white px-6 py-3 rounded-lg transition-colors hover:opacity-90"
               style=***REMOVED******REMOVED*** backgroundColor: thematicColors?.base ***REMOVED******REMOVED***
             >
-              Limpiar filtros
+              Clear filters
             </button>
           </div>
         ) : (
           <>
-            ***REMOVED***/* Lista de turnos organizados por semanas */***REMOVED***
+            ***REMOVED***/* List of shifts organized by weeks */***REMOVED***
             <div className="space-y-8">
-              ***REMOVED***semanasParaMostrar.map((***REMOVED*** fechaLunes, rangoSemana, turnos, totalTurnos ***REMOVED***) => (
+              ***REMOVED***weeksToDisplay.map((***REMOVED*** mondayDate, weekRange, shifts, totalShifts ***REMOVED***) => (
                 <WeeklyShiftsSection
-                  key=***REMOVED***fechaLunes***REMOVED***
-                  rangoSemana=***REMOVED***rangoSemana***REMOVED***
-                  turnos=***REMOVED***turnos***REMOVED***
-                  totalTurnos=***REMOVED***totalTurnos***REMOVED***
+                  key=***REMOVED***mondayDate***REMOVED***
+                  weekRange=***REMOVED***weekRange***REMOVED***
+                  shifts=***REMOVED***shifts***REMOVED***
+                  totalShifts=***REMOVED***totalShifts***REMOVED***
                   allJobs=***REMOVED***allJobs***REMOVED***
-                  onEditShift=***REMOVED***abrirModalEditar***REMOVED***
+                  onEditShift=***REMOVED***openEditModal***REMOVED***
                   onDeleteShift=***REMOVED***testDelete***REMOVED***
                   thematicColors=***REMOVED***thematicColors***REMOVED***
                 />
               ))***REMOVED***
             </div>
 
-            ***REMOVED***/* Navegación (mostrar más/menos semanas) */***REMOVED***
-            ***REMOVED***hayMasSemanas && (
+            ***REMOVED***/* Navigation (show more/less weeks) */***REMOVED***
+            ***REMOVED***hasMoreWeeks && (
               <div className="relative flex flex-col items-center pt-8 pb-12">
                 <div
                   className="absolute top-0 left-0 right-0 h-16 rounded-lg opacity-30"
@@ -247,26 +247,26 @@ const Turnos = () => ***REMOVED***
                         style=***REMOVED******REMOVED*** borderColor: 'white' ***REMOVED******REMOVED***
                         color="border-transparent"
                       />
-                      <span>Cargando...</span>
+                      <span>Loading...</span>
                     </>
                   ) : (
                     <>
                       <ChevronDown size=***REMOVED***20***REMOVED*** />
-                      <span>Ver más semanas</span>
+                      <span>Show more weeks</span>
                     </>
                   )***REMOVED***
                 </button>
               </div>
             )***REMOVED***
 
-            ***REMOVED***!hayMasSemanas && weeksShown > WEEKS_PER_PAGE && (
+            ***REMOVED***!hasMoreWeeks && weeksShown > WEEKS_PER_PAGE && (
               <div className="flex justify-center py-4">
                 <button
                   onClick=***REMOVED***handleShowLessWeeks***REMOVED***
                   className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 rounded-full hover:bg-gray-100 transition-colors"
                 >
                   <ChevronUp size=***REMOVED***18***REMOVED*** />
-                  <span>Mostrar menos</span>
+                  <span>Show less</span>
                 </button>
               </div>
             )***REMOVED***
@@ -274,14 +274,14 @@ const Turnos = () => ***REMOVED***
         )***REMOVED***
       </div>
 
-      ***REMOVED***/* Modales */***REMOVED***
-      <ModalTurno 
-        isOpen=***REMOVED***modalAbierto***REMOVED*** 
-        onClose=***REMOVED***cerrarModal***REMOVED*** 
-        turno=***REMOVED***turnoSeleccionado***REMOVED*** 
+      ***REMOVED***/* Modals */***REMOVED***
+      <ShiftModal 
+        isOpen=***REMOVED***isModalOpen***REMOVED*** 
+        onClose=***REMOVED***closeModal***REMOVED*** 
+        shift=***REMOVED***selectedShift***REMOVED*** 
       />
 
-      <AlertaEliminacion
+      <DeleteAlert
         visible=***REMOVED***deleteManager.showDeleteModal***REMOVED***
         onCancel=***REMOVED***() => ***REMOVED***
           deleteManager.cancelDeletion();
@@ -289,12 +289,12 @@ const Turnos = () => ***REMOVED***
         onConfirm=***REMOVED***() => ***REMOVED***
           deleteManager.confirmDeletion();
         ***REMOVED******REMOVED***
-        eliminando=***REMOVED***deleteManager.deleting***REMOVED***
-        tipo="turno"
-        detalles=***REMOVED***generateShiftDetails(deleteManager.itemToDelete, allJobs)***REMOVED***
+        deleting=***REMOVED***deleteManager.deleting***REMOVED***
+        type="shift"
+        details=***REMOVED***generateShiftDetails(deleteManager.itemToDelete, allJobs)***REMOVED***
       />
     </LoadingWrapper>
   );
 ***REMOVED***;
 
-export default Turnos;
+export default Shifts;
