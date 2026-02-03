@@ -7,7 +7,7 @@ import { useApp } from '../../../contexts/AppContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import Flex from '../../ui/Flex';
 
-const Header = ({ setCurrentView }) => {
+const Header = () => {
   const { thematicColors } = useApp();
   const { profilePhotoURL } = useAuth();
   const navigate = useNavigate();
@@ -31,13 +31,11 @@ const Header = ({ setCurrentView }) => {
   }, [hasCustomPhoto]);
 
   const handleSettingsClick = () => {
-    navigate('/ajustes');
-    setCurrentView('settings');
+    navigate('/settings');
   };
 
   const handleLogoClick = () => {
     navigate('/dashboard');
-    setCurrentView('dashboard');
   };
 
   return (
