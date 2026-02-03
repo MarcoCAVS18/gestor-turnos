@@ -15,6 +15,7 @@ import { useTurnManager } from '../hooks/useTurnManager';
 import { useDeleteManager } from '../hooks/useDeleteManager';
 import DeleteAlert from '../components/alerts/DeleteAlert';
 import Loader from '../components/other/Loader';
+import Flex from '../components/ui/Flex';
 
 const CalendarView = () => {
   const { shiftsByDate, allWorks, thematicColors, loading, deleteShift } = useApp();
@@ -108,10 +109,17 @@ const CalendarView = () => {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.2 } }
   };
-  
+
+  if (loading) {
+    return (
+      <Flex variant="center" className="h-screen">
+        <Loader />
+      </Flex>
+    );
+  }
+
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
-      {loading && <Loader />}
       <PageHeader
         title="Calendar"
         subtitle={hasWorks ? "Visualize and manage your shifts by date" : null}
