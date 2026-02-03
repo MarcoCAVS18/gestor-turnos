@@ -123,29 +123,29 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
 
   return (
     <SettingsSection icon={Receipt} title="Payment and Tax Settings" className={className}>
-      <div className="space-y-5">
+      <div className="space-y-4">
 
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="block text-sm font-semibold text-gray-700">
-              Tax / Deductions Percentage (Default)
+              Tax / Deductions (%)
             </label>
-            
-            <Popover 
-              content={popoverContent} 
+
+            <Popover
+              content={popoverContent}
               title="What are these taxes?"
               position="top"
               trigger="click"
             >
               <button className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors focus:outline-none">
                 <Info size={14} />
-                <span>What should I put here?</span>
+                <span>Help</span>
               </button>
             </Popover>
           </div>
 
-          <div className="relative">
-            <div className="flex rounded-md shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex rounded-md shadow-sm w-28">
               <input
                 type="number"
                 min="0"
@@ -153,16 +153,16 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
                 step="0.5"
                 value={defaultTax}
                 onChange={(e) => setDefaultTax(Number(e.target.value))}
-                className="flex-1 px-3 py-2.5 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all text-gray-900 font-medium"
-                style={{ '--tw-ring-color': colors.primary, borderColor: loading ? 'transparent' : '' }}
-                placeholder="e.g.: 15"
+                className="w-full px-3 py-2 rounded-l-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all text-gray-900 font-medium text-center"
+                style={{ '--tw-ring-color': colors.primary }}
+                placeholder="15"
               />
-              <span className="inline-flex items-center px-4 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 font-medium">
+              <span className="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 font-medium">
                 %
               </span>
             </div>
-            <p className="mt-2 text-xs text-gray-500">
-              This value will be applied by default if you do not specify one for a specific job.
+            <p className="text-xs text-gray-500 flex-1">
+              Default value for all jobs without specific tax.
             </p>
           </div>
         </div>
@@ -195,30 +195,29 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
           </div>
         )}
         
-        <div className="pt-4 flex flex-wrap items-center gap-4">
-          <Button
-            onClick={handleSave}
-            disabled={loading || !hasChanges}
-            loading={loading}
-            className="w-full sm:w-auto min-w-[180px]"
-            themeColor={colors.primary}
-            icon={showSuccess ? Check : undefined}
-          >
-            {loading ? 'Saving...' : 
-             showSuccess ? 'Saved successfully' :
-             hasChanges ? 'Save Preferences' : 'No changes'}
-          </Button>
-
+        <div className="pt-3 flex flex-wrap items-center gap-3">
           {traditionalWorks.length > 1 && (
             <Button
               onClick={() => setShowMultiRate(prev => !prev)}
               variant="outline"
               themeColor={colors.primary}
-              className="w-full sm:w-auto"
+              size="sm"
             >
-              {showMultiRate ? 'Hide per-job settings' : 'Adjust per job'}
+              {showMultiRate ? 'Hide per-job' : 'Per job'}
             </Button>
           )}
+          <Button
+            onClick={handleSave}
+            disabled={loading || !hasChanges}
+            loading={loading}
+            themeColor={colors.primary}
+            size="sm"
+            icon={showSuccess ? Check : undefined}
+          >
+            {loading ? 'Saving...' :
+             showSuccess ? 'Saved' :
+             hasChanges ? 'Save' : 'No changes'}
+          </Button>
         </div>
       </div>
     </SettingsSection>

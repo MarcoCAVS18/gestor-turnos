@@ -15,9 +15,8 @@ import InteractiveCharts from '../components/stats/InteractiveCharts';
 import { useIsMobile } from '../hooks/useIsMobile';
 import MostProductiveDay from '../components/stats/MostProductiveDay';
 
-// Smoko Cards
+// Break Card
 import SmokoStatusCard from '../components/stats/SmokoStatusCard';
-import SmokoTimeCard from '../components/stats/SmokoTimeCard';
 
 // Delivery Components
 import DeliverySummary from '../components/stats/DeliverySummary';
@@ -118,21 +117,24 @@ const Statistics = () => {
           <div className="hidden lg:grid lg:grid-cols-3 lg:gap-6 lg:items-stretch">
             {/* LEFT SECTION (2/3): Weekly Comparison + Shift Types side by side, Weekly Progress below */}
             <div className="lg:col-span-2 flex flex-col gap-6">
-              <div className="grid grid-cols-2 gap-6">
-                <WeeklyComparison currentData={currentData} previousData={previousData} thematicColors={thematicColors} />
-                <ShiftTypeStats currentData={currentData} loading={loading} />
+              <div className="grid grid-cols-2 gap-6 flex-1">
+                <WeeklyComparison currentData={currentData} previousData={previousData} thematicColors={thematicColors} className="h-full" />
+                <ShiftTypeStats currentData={currentData} loading={loading} className="h-full" />
               </div>
               <StatsProgressBar currentData={currentData} weeklyHoursGoal={weeklyHoursGoal} />
             </div>
 
-            {/* RIGHT SECTION (1/3): Stats Grid, Most Productive Day, Smoko Cards */}
+            {/* RIGHT SECTION (1/3): Stats Grid, Most Productive Day, Break Cards */}
             <div className="lg:col-span-1 flex flex-col gap-6">
-              <WeeklyStatsGrid currentData={currentData} thematicColors={thematicColors} loading={loading} />
+              <WeeklyStatsGrid currentData={currentData} thematicColors={thematicColors} loading={loading} className="flex-1" />
               <MostProductiveDay currentData={currentData} thematicColors={thematicColors} loading={loading} />
-              <div className="grid grid-cols-2 gap-4">
-                <SmokoStatusCard smokoEnabled={smokoEnabled} thematicColors={thematicColors} loading={loading} />
-                <SmokoTimeCard smokoEnabled={smokoEnabled} smokoMinutes={smokoMinutes} thematicColors={thematicColors} loading={loading} />
-              </div>
+              <SmokoStatusCard
+                smokoEnabled={smokoEnabled}
+                thematicColors={thematicColors}
+                loading={loading}
+                shiftsWithBreak={currentData?.shifts?.filter(s => s.hadBreak || s.smoko)?.length || 0}
+                smokoMinutes={smokoMinutes}
+              />
             </div>
           </div>
 
@@ -141,10 +143,13 @@ const Statistics = () => {
             <StatsProgressBar currentData={currentData} weeklyHoursGoal={weeklyHoursGoal} />
             <WeeklyStatsGrid currentData={currentData} thematicColors={thematicColors} loading={loading} />
             <MostProductiveDay currentData={currentData} thematicColors={thematicColors} loading={loading} />
-            <div className="grid grid-cols-2 gap-4">
-              <SmokoStatusCard smokoEnabled={smokoEnabled} thematicColors={thematicColors} loading={loading} />
-              <SmokoTimeCard smokoEnabled={smokoEnabled} smokoMinutes={smokoMinutes} thematicColors={thematicColors} loading={loading} />
-            </div>
+            <SmokoStatusCard
+              smokoEnabled={smokoEnabled}
+              thematicColors={thematicColors}
+              loading={loading}
+              shiftsWithBreak={currentData?.shifts?.filter(s => s.hadBreak || s.smoko)?.length || 0}
+              smokoMinutes={smokoMinutes}
+            />
             <WeeklyComparison currentData={currentData} previousData={previousData} thematicColors={thematicColors} />
             <ShiftTypeStats currentData={currentData} loading={loading} />
           </div>

@@ -316,6 +316,12 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
     updatedAt: new Date(),
   };
 
+  // Add Live Mode fields if present
+  if (newShift.isLive) {
+    shiftData.isLive = true;
+    shiftData.liveSessionId = newShift.liveSessionId || null;
+  }
+
   if (isDelivery) {
     const baseEarnings = newShift.baseEarnings || 0;
     const tips = newShift.tips || 0;

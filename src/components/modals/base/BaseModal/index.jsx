@@ -164,6 +164,7 @@ const BaseModal = ({
                 onClick={onCancel}
                 disabled={loading}
                 isMobile={isMobile}
+                themeColor={colors.primary}
                 className={isMobile ? '' : 'flex-none'}
               >
                 {cancelText}
@@ -173,8 +174,9 @@ const BaseModal = ({
                 form={formId}
                 loading={loading}
                 loadingText={finalSaveLoadingText}
-                disabled={loading || isSaveDisabled} // Use the new prop
+                disabled={loading || isSaveDisabled}
                 isMobile={isMobile}
+                themeColor={colors.primary}
                 className={isMobile ? '' : 'flex-none'}
               >
                 {saveText}

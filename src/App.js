@@ -1,7 +1,7 @@
 // src/App.js
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
 import ProtectedLayout from './components/layout/ProtectedLayout/ProtectedLayout';
@@ -55,9 +55,6 @@ const PublicRoute = ({ children }) => {
 
 // General app layout
 function AppLayout() {
-  const location = useLocation();
-  const currentView = location.pathname.substring(1); // Removes leading '/'
-
   const {
     isWorkModalOpen,
     isShiftModalOpen,
@@ -75,11 +72,7 @@ function AppLayout() {
     <div className="min-h-screen bg-gray-100 font-poppins">
       {/* Header only on mobile */}
       <div className="md:hidden">
-        <Header
-          currentView={currentView}
-          openNewWorkModal={openNewWorkModal}
-          openNewShiftModal={openNewShiftModal}
-        />
+        <Header />
       </div>
 
       {/* Main content */}

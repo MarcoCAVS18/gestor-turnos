@@ -8,6 +8,7 @@ import { DataProvider, useDataContext } from './DataContext';
 import { DeliveryProvider, useDeliveryContext } from './DeliveryContext';
 import { CalculationsProvider, useCalculations } from './CalculationsContext';
 import { StatsProvider, useStats } from './StatsContext';
+import { LiveModeProvider, useLiveModeContext } from './LiveModeContext';
 
 // 1. Create a new "Master" context
 const AppContext = createContext(null);
@@ -21,7 +22,9 @@ export const AppProvider = ({ children }) => {
           <DeliveryProvider>
             <CalculationsProvider>
               <StatsProvider>
-                {children}
+                <LiveModeProvider>
+                  {children}
+                </LiveModeProvider>
               </StatsProvider>
             </CalculationsProvider>
           </DeliveryProvider>
@@ -40,6 +43,7 @@ export const useApp = () => {
   const delivery = useDeliveryContext();
   const calculations = useCalculations();
   const stats = useStats();
+  const liveMode = useLiveModeContext();
 
   const allWorks = useMemo(() => {
     return [...(data.works || []), ...(delivery.deliveryWork || [])];
@@ -55,6 +59,10 @@ export const useApp = () => {
     // Re-create combined properties that existed in the old context
     allWorks: allWorks,
     deleteShift: data.deleteShift,
+
+    // Live Mode
+    liveMode,
+    isLiveActive: liveMode?.isActive || false,
 
     // For backward compatibility, some components might still be using old names.
     // We can provide aliases here if needed. For example:

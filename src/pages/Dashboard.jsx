@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { LayoutDashboard } from 'lucide-react';
-// import { useNavigate } from 'react-router-dom'; // Uncomment when we have the route
 
 import PageHeader from '../components/layout/PageHeader';
 import { useDashboardStats } from '../hooks/useDashboardStats';
@@ -23,19 +22,34 @@ import ExportReportCard from '../components/dashboard/ExportReportCard';
 import FooterSection from '../components/settings/FooterSection';
 
 import FeatureAnnouncementCard from '../components/dashboard/FeatureAnnouncementCard';
+import LiveModeStartModal from '../components/modals/liveMode/LiveModeStartModal';
+import LiveModeActiveModal from '../components/modals/liveMode/LiveModeActiveModal';
 
 import Flex from '../components/ui/Flex';
+import { useLiveMode } from '../hooks/useLiveMode';
 
 const Dashboard = () => {
   const { loading, calculatePayment } = useApp();
   const stats = useDashboardStats();
-  // const navigate = useNavigate();
+  const { isActive } = useLiveMode();
+
   // eslint-disable-next-line no-unused-vars
   const [showFeatureAnnouncement, setShowFeatureAnnouncement] = useState(true);
 
-  const handleNavigateToLiveMode = () => {
-    console.log("Navigating to new Live Mode...");
-    // navigate('/live'); // Here we will go to the full navigation page
+  // Live Mode modal states
+  const [isLiveStartModalOpen, setIsLiveStartModalOpen] = useState(false);
+  const [isLiveActiveModalOpen, setIsLiveActiveModalOpen] = useState(false);
+
+  const handleOpenLiveMode = () => {
+    if (isActive) {
+      setIsLiveActiveModalOpen(true);
+    } else {
+      setIsLiveStartModalOpen(true);
+    }
+  };
+
+  const handleShowActiveLiveMode = () => {
+    setIsLiveActiveModalOpen(true);
   };
 
   const handleExport = async (format) => {
@@ -80,7 +94,7 @@ const Dashboard = () => {
             <>
               {/* --- WITH FEATURE --- */}
               <motion.div className="lg:col-span-4 h-full" variants={headerVariants} initial="hidden" animate="visible">
-                <FeatureAnnouncementCard onClick={handleNavigateToLiveMode} className="h-full" />
+                <FeatureAnnouncementCard onClick={handleOpenLiveMode} onShowActive={handleShowActiveLiveMode} className="h-full" />
               </motion.div>
               <motion.div className="lg:col-span-1 h-full" variants={headerVariants} initial="hidden" animate="visible">
                 <WelcomeCard totalEarned={stats.totalEarned} isFeatureVisible={true} className="h-full" />
@@ -124,7 +138,7 @@ const Dashboard = () => {
         <div className="block lg:hidden space-y-4">
           {showFeatureAnnouncement && (
             <motion.div variants={headerVariants} initial="hidden" animate="visible">
-              <FeatureAnnouncementCard onClick={handleNavigateToLiveMode} />
+              <FeatureAnnouncementCard onClick={handleOpenLiveMode} onShowActive={handleShowActiveLiveMode} />
             </motion.div>
           )}
           <motion.div variants={headerVariants} initial="hidden" animate="visible">
@@ -180,6 +194,16 @@ const Dashboard = () => {
       <Flex variant="end">
         <FooterSection />
       </Flex>
+
+      {/* Live Mode Modals */}
+      <LiveModeStartModal
+        isOpen={isLiveStartModalOpen}
+        onClose={() => setIsLiveStartModalOpen(false)}
+      />
+      <LiveModeActiveModal
+        isOpen={isLiveActiveModalOpen}
+        onClose={() => setIsLiveActiveModalOpen(false)}
+      />
     </div>
   );
 };

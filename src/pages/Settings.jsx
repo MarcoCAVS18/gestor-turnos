@@ -14,6 +14,7 @@ import DeliverySection from '../components/settings/DeliverySection';
 import DeliveryPlatformsSection from '../components/settings/DeliveryPlatformsSection';
 import SmokoSection from '../components/settings/SmokoSection';
 import IntegrationsBanner from '../components/settings/IntegrationsBanner';
+import UnusedDeliverySection from '../components/stats/UnusedDeliverySection';
 import { useApp } from '../contexts/AppContext';
 
 const Settings = () => {
@@ -67,10 +68,14 @@ const Settings = () => {
                 <DeliverySection
                   className="flex-grow"
                 />
-                {deliveryEnabled && (
+                {deliveryEnabled ? (
                   <DeliveryPlatformsSection
                     className="flex-grow"
                   />
+                ) : (
+                  <UnusedDeliverySection>
+                    <DeliveryPlatformsSection className="flex-grow" />
+                  </UnusedDeliverySection>
                 )}
                 <TurnRangeSection
                   className="flex-grow"
@@ -93,8 +98,12 @@ const Settings = () => {
 
             <DeliverySection />
 
-            {deliveryEnabled && (
+            {deliveryEnabled ? (
               <DeliveryPlatformsSection />
+            ) : (
+              <UnusedDeliverySection>
+                <DeliveryPlatformsSection />
+              </UnusedDeliverySection>
             )}
 
             <SmokoSection
