@@ -24,14 +24,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
-// Cloud Functions base URL
-const FUNCTIONS_URL = process.env.NODE_ENV === 'production'
-  ? 'https://us-central1-gestionturnos-7ec99.cloudfunctions.net'
-  : 'http://localhost:5001/gestionturnos-7ec99/us-central1';
+// Cloud Functions base URL - always use production URL
+// Local emulator would be: http://localhost:5001/gestionturnos-7ec99/us-central1
+const FUNCTIONS_URL = 'https://us-central1-gestionturnos-7ec99.cloudfunctions.net';
 
 const Integrations = () => {
   const { thematicColors } = useApp();
-  const { user } = useAuth();
+  const { currentUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -46,7 +45,8 @@ const Integrations = () => {
   });
   const [googleCalendar, setGoogleCalendar] = useState({
     connected: false,
-    loading: true,
+    loading: false,
+    initialLoading: true,
     syncing: false,
     error: null
   });
@@ -57,14 +57,15 @@ const Integrations = () => {
     const calendarStatus = params.get('calendar');
 
     if (calendarStatus === 'connected') {
-      setGoogleCalendar(prev => ({ ...prev, connected: true, loading: false }));
+      setGoogleCalendar(prev => ({ ...prev, connected: true, loading: false, initialLoading: false }));
       // Clean up URL
       navigate('/integraciones', { replace: true });
     } else if (calendarStatus === 'error') {
       setGoogleCalendar(prev => ({
         ...prev,
         error: 'Failed to connect. Please try again.',
-        loading: false
+        loading: false,
+        initialLoading: false
       }));
       navigate('/integraciones', { replace: true });
     }
@@ -72,30 +73,48 @@ const Integrations = () => {
 
   // Subscribe to user's calendar connection status
   useEffect(() => {
-    if (!user?.uid) return;
+    // Safety timeout - if no user after 3 seconds, stop loading
+    const timeout = setTimeout(() => {
+      setGoogleCalendar(prev => {
+        if (prev.initialLoading) {
+          return { ...prev, initialLoading: false };
+        }
+        return prev;
+      });
+    }, 3000);
+
+    if (!currentUser?.uid) {
+      return () => clearTimeout(timeout);
+    }
 
     const unsubscribe = onSnapshot(
-      doc(db, 'users', user.uid),
+      doc(db, 'users', currentUser.uid),
       (docSnap) => {
+        clearTimeout(timeout);
         if (docSnap.exists()) {
           const data = docSnap.data();
           setGoogleCalendar(prev => ({
             ...prev,
             connected: data.googleCalendarConnected || false,
-            loading: false
+            loading: false,
+            initialLoading: false
           }));
         } else {
-          setGoogleCalendar(prev => ({ ...prev, loading: false }));
+          setGoogleCalendar(prev => ({ ...prev, loading: false, initialLoading: false }));
         }
       },
       (error) => {
+        clearTimeout(timeout);
         console.error('Error listening to user:', error);
-        setGoogleCalendar(prev => ({ ...prev, loading: false }));
+        setGoogleCalendar(prev => ({ ...prev, loading: false, initialLoading: false }));
       }
     );
 
-    return () => unsubscribe();
-  }, [user?.uid]);
+    return () => {
+      clearTimeout(timeout);
+      unsubscribe();
+    };
+  }, [currentUser?.uid]);
 
   // Check notification permission on mount
   useEffect(() => {
@@ -110,9 +129,9 @@ const Integrations = () => {
 
   // Get Firebase auth token
   const getAuthToken = useCallback(async () => {
-    if (!user) return null;
-    return await user.getIdToken();
-  }, [user]);
+    if (!currentUser) return null;
+    return await currentUser.getIdToken();
+  }, [currentUser]);
 
   // Handle notification toggle
   const handleNotificationToggle = async (value) => {
@@ -404,7 +423,7 @@ const Integrations = () => {
           title="Google Calendar"
           description="Sync your shifts automatically with Google Calendar for easy access across devices."
           status={
-            googleCalendar.loading
+            googleCalendar.initialLoading
               ? 'Loading...'
               : googleCalendar.connected
                 ? 'Connected'
@@ -429,7 +448,16 @@ const Integrations = () => {
               </div>
             )}
 
-            {googleCalendar.connected ? (
+            {googleCalendar.initialLoading ? (
+              <Button
+                variant="secondary"
+                icon={Loader2}
+                disabled
+                className="w-full justify-center animate-pulse"
+              >
+                Loading...
+              </Button>
+            ) : googleCalendar.connected ? (
               <div className="space-y-2">
                 {/* Sync button */}
                 <Button
