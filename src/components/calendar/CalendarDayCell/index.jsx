@@ -28,36 +28,23 @@ const CalendarDayCell = ({
           : 'transparent'
       }}
     >
-      {/* Circle for current day */}
-      {isToday && (
-        <div
-          className="absolute inset-0 m-auto rounded-full w-10 h-10 animate-pulse"
-          style={{
-            border: `2px solid ${colors.primary}`
-          }}
-        />
-      )}
-
       {/* Container for day number */}
       <Flex variant="center"
         className="rounded-full w-8 h-8 transition-all duration-200"
         style={{
-          backgroundColor: isToday
+          backgroundColor: isSelected
             ? colors.primary
-            : (isSelected && !isToday)
-              ? colors.transparent20
-              : 'transparent',
-          color: isToday
+            : 'transparent',
+          color: isSelected
             ? colors.textContrast
             : 'inherit',
-          fontWeight: isToday ? 'bold' : 'normal',
-          transform: isToday ? 'scale(1.1)' : 'scale(1)',
-          boxShadow: isToday
-            ? `0 4px 12px ${colors.transparent50}`
+          fontWeight: isSelected ? 'bold' : 'normal',
+          border: isToday && !isSelected
+            ? `2px solid ${colors.primary}`
             : 'none'
         }}
       >
-        <span>{day.number}</span>
+        <span>{day.day}</span>
       </Flex>
 
       {/* Simplified shift indicators */}

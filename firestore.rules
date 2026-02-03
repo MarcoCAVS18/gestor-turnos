@@ -7,6 +7,12 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if request.auth != null; // Cualquiera logueado puede ver perfiles (necesario para la foto)
       allow write: if request.auth != null && request.auth.uid == userId; // Solo el dueño puede editar
+
+      // Private subcollection for sensitive data (OAuth tokens, etc.)
+      // Only accessible by Cloud Functions (server-side)
+      match /private/{document=**} {
+        allow read, write: if false; // Client cannot access, only Cloud Functions
+      }
     }
     
     // Works collection

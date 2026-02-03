@@ -65,7 +65,7 @@ const CalendarGrid = ({
           const isSelected = dayDateISO === currentSelectedDay;
           
           // Get colors correctly
-          const workColors = getJobColors(day.shiftsOfTheDay, jobs);
+          const workColors = getJobColors(day.shiftsOfDay, jobs);
 
           return (
             <CalendarDayCell

@@ -31,6 +31,7 @@ import Shifts from './pages/Shifts';
 import Statistics from './pages/Statistics';
 import CalendarView from './pages/CalendarView';
 import Settings from './pages/Settings';
+import Integrations from './pages/Integrations';
 import SharedWork from './pages/SharedWork';
 
 // Modals
@@ -158,6 +159,7 @@ function App() {
           <Route path="/statistics" element={<Statistics />} />
           <Route path="/calendar" element={<CalendarView />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/integraciones" element={<Integrations />} />
         </Route>
 
         {/* Redirections */}

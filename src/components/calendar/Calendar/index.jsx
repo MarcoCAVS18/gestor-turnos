@@ -7,7 +7,7 @@ import Card from '../../ui/Card';
 import CalendarHeader from '../CalendarHeader';
 import CalendarGrid from '../CalendarGrid';
 
-const Calendar = ({ onDaySelected }) => {
+const Calendar = ({ onSelectedDay }) => {
   const { shiftsByDate, allJobs, thematicColors } = useApp();
   
   // Get all combined shifts from context
@@ -28,12 +28,12 @@ const Calendar = ({ onDaySelected }) => {
     currentDate,
     currentMonth,
     currentYear,
-    currentSelectedDay,
+    selectedDay,
     getDaysOfMonth,
     changeMonth,
     goToToday,
     goToDay
-  } = useCalendarState(allShifts, onDaySelected);
+  } = useCalendarState(allShifts, onSelectedDay);
 
   const days = getDaysOfMonth();
 
@@ -42,6 +42,7 @@ const Calendar = ({ onDaySelected }) => {
       <CalendarHeader
         currentMonth={currentMonth}
         currentYear={currentYear}
+        selectedDay={selectedDay}
         onChangeMonth={changeMonth}
         onGoToToday={goToToday}
         thematicColors={thematicColors}
@@ -50,7 +51,7 @@ const Calendar = ({ onDaySelected }) => {
       <CalendarGrid
         days={days}
         currentDate={currentDate}
-        currentSelectedDay={currentSelectedDay}
+        currentSelectedDay={selectedDay}
         jobs={allJobs || []}
         thematicColors={thematicColors}
         onDayClick={goToDay}
