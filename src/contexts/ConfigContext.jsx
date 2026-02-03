@@ -1,9 +1,10 @@
 // src/contexts/ConfigContext.jsx
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from './AuthContext';
 import * as firebaseService from '../services/firebaseService';
 import { generateColorVariations } from '../utils/colorUtils';
+import { DELIVERY_PLATFORMS_AUSTRALIA } from '../constants/delivery';
 
 const ConfigContext = createContext();
 
@@ -25,6 +26,8 @@ export const ConfigProvider = ({ children }) => {
   const [deliveryEnabled, setDeliveryEnabled] = useState(false);
   const [smokoEnabled, setSmokoEnabled] = useState(false);
   const [smokoMinutes, setSmokoMinutes] = useState(30);
+  const [deliveryPlatforms, setDeliveryPlatforms] = useState(DELIVERY_PLATFORMS_AUSTRALIA);
+  const [defaultDeliveryPlatform, setDefaultDeliveryPlatform] = useState(null);
   const [shiftRanges, setShiftRanges] = useState({
     dayStart: 6,
     dayEnd: 14,
@@ -49,6 +52,8 @@ export const ConfigProvider = ({ children }) => {
             setDeliveryEnabled(settings.deliveryEnabled);
             setSmokoEnabled(settings.smokoEnabled || false);
             setSmokoMinutes(settings.smokoMinutes || 30);
+            setDeliveryPlatforms(settings.deliveryPlatforms?.length > 0 ? settings.deliveryPlatforms : DELIVERY_PLATFORMS_AUSTRALIA);
+            setDefaultDeliveryPlatform(settings.defaultDeliveryPlatform || null);
             setShiftRanges(settings.shiftRanges);
           }
         } catch (err) {
@@ -83,7 +88,9 @@ export const ConfigProvider = ({ children }) => {
       if (preferences.weeklyHoursGoal !== undefined) setWeeklyHoursGoal(preferences.weeklyHoursGoal);
       if (preferences.smokoEnabled !== undefined) setSmokoEnabled(preferences.smokoEnabled);
       if (preferences.smokoMinutes !== undefined) setSmokoMinutes(preferences.smokoMinutes);
-      
+      if (preferences.deliveryPlatforms !== undefined) setDeliveryPlatforms(preferences.deliveryPlatforms);
+      if (preferences.defaultDeliveryPlatform !== undefined) setDefaultDeliveryPlatform(preferences.defaultDeliveryPlatform);
+
       await firebaseService.savePreferences(currentUser.uid, preferences);
     } catch (err) {
       console.error("Error saving preferences:", err);
@@ -104,6 +111,8 @@ export const ConfigProvider = ({ children }) => {
     deliveryEnabled,
     smokoEnabled,
     smokoMinutes,
+    deliveryPlatforms,
+    defaultDeliveryPlatform,
     shiftRanges,
     thematicColors,
     savePreferences,

@@ -1,17 +1,14 @@
 // src/components/stats/SmokoStatusCard/index.jsx
 
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Coffee } from 'lucide-react';
+import { Coffee, Check, X } from 'lucide-react';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
-import WavyText from '../../ui/WavyText';
 
 const SmokoStatusCard = ({ smokoEnabled, loading, thematicColors, className = '' }) => {
   const navigate = useNavigate();
-  const statusText = smokoEnabled ? 'ACTIVE' : 'INACTIVE';
 
   const handleClick = () => {
-    navigate('/ajustes');
+    navigate('/settings');
   };
 
   return (
@@ -21,14 +18,27 @@ const SmokoStatusCard = ({ smokoEnabled, loading, thematicColors, className = ''
         title="Break"
         loading={loading}
       >
-        <div className="text-center w-full">
-          <div className="text-4xl font-bold">
+        <div className="flex flex-col items-center justify-center w-full gap-2">
+          <div
+            className={`w-12 h-12 rounded-full flex items-center justify-center ${
+              smokoEnabled
+                ? 'bg-green-100'
+                : 'bg-gray-100'
+            }`}
+          >
             {smokoEnabled ? (
-              <WavyText text={statusText} color={thematicColors?.base} />
+              <Check size={24} className="text-green-600" />
             ) : (
-              <span className="text-gray-500">{statusText}</span>
+              <X size={24} className="text-gray-400" />
             )}
           </div>
+          <span
+            className={`text-sm font-semibold ${
+              smokoEnabled ? 'text-green-600' : 'text-gray-400'
+            }`}
+          >
+            {smokoEnabled ? 'Active' : 'Inactive'}
+          </span>
         </div>
       </BaseStatsCard>
     </div>

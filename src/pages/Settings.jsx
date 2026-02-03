@@ -11,10 +11,13 @@ import PreferencesSection from '../components/settings/PreferencesSection';
 import SessionSection from '../components/settings/SessionSection';
 import FooterSection from '../components/settings/FooterSection';
 import DeliverySection from '../components/settings/DeliverySection';
+import DeliveryPlatformsSection from '../components/settings/DeliveryPlatformsSection';
 import SmokoSection from '../components/settings/SmokoSection';
 import IntegrationsBanner from '../components/settings/IntegrationsBanner';
+import { useApp } from '../contexts/AppContext';
 
 const Settings = () => {
+  const { deliveryEnabled } = useApp();
   return (
     <div className="px-4 py-6 space-y-6">
       <PageHeader
@@ -59,11 +62,16 @@ const Settings = () => {
                 />
               </div>
 
-              {/* CONTAINER 3: Delivery + Shift Range */}
+              {/* CONTAINER 3: Delivery + Platforms + Shift Range */}
               <div className="flex flex-col gap-6 h-full">
                 <DeliverySection
                   className="flex-grow"
                 />
+                {deliveryEnabled && (
+                  <DeliveryPlatformsSection
+                    className="flex-grow"
+                  />
+                )}
                 <TurnRangeSection
                   className="flex-grow"
                 />
@@ -84,6 +92,10 @@ const Settings = () => {
             <CustomizationSection />
 
             <DeliverySection />
+
+            {deliveryEnabled && (
+              <DeliveryPlatformsSection />
+            )}
 
             <SmokoSection
             />

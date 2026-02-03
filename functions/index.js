@@ -93,11 +93,11 @@ exports.googleAuthCallback = functions.https.onRequest(async (req, res) => {
 
     // Redirect back to the app
     const appUrl = process.env.APP_URL || 'https://gestionturnos-7ec99.web.app';
-    res.redirect(`${appUrl}/integraciones?calendar=connected`);
+    res.redirect(`${appUrl}/integrations?calendar=connected`);
   } catch (error) {
     console.error('OAuth callback error:', error);
     const appUrl = process.env.APP_URL || 'https://gestionturnos-7ec99.web.app';
-    res.redirect(`${appUrl}/integraciones?calendar=error`);
+    res.redirect(`${appUrl}/integrations?calendar=error`);
   }
 });
 

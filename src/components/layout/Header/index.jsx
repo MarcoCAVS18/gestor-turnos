@@ -1,6 +1,6 @@
 // src/components/layout/Header/index.jsx
 
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Settings } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
@@ -11,7 +11,25 @@ const Header = ({ setCurrentView }) => {
   const { thematicColors } = useApp();
   const { profilePhotoURL } = useAuth();
   const navigate = useNavigate();
-  
+  const [showSettingsIcon, setShowSettingsIcon] = useState(false);
+
+  const hasCustomPhoto = profilePhotoURL && !profilePhotoURL.includes('logo.svg');
+
+  // Animation: periodically show settings icon instead of profile photo
+  useEffect(() => {
+    if (!hasCustomPhoto) return;
+
+    const interval = setInterval(() => {
+      setShowSettingsIcon(true);
+      // Show gear icon for 2 seconds, then return to photo
+      setTimeout(() => {
+        setShowSettingsIcon(false);
+      }, 2000);
+    }, 12000); // Every 12 seconds
+
+    return () => clearInterval(interval);
+  }, [hasCustomPhoto]);
+
   const handleSettingsClick = () => {
     navigate('/ajustes');
     setCurrentView('settings');
@@ -23,7 +41,7 @@ const Header = ({ setCurrentView }) => {
   };
 
   return (
-    <header 
+    <header
       className="flex justify-between items-center px-4 py-4 text-white shadow-md"
       style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
     >
@@ -54,7 +72,7 @@ const Header = ({ setCurrentView }) => {
           </div>
         </button>
       </Flex>
-      
+
       {/* Profile/Settings button on the right */}
       <div className="flex gap-2">
         <button
@@ -62,19 +80,31 @@ const Header = ({ setCurrentView }) => {
           className="rounded-full p-1 transition-all duration-200 hover:bg-white hover:bg-opacity-20"
           title="Settings"
         >
-          {profilePhotoURL?.includes('logo.svg') ? (
+          {!hasCustomPhoto ? (
             // If it is the default logo, show gear icon
             <Flex variant="center" className="w-10 h-10">
               <Settings className="h-6 w-6 text-white" />
             </Flex>
           ) : (
-            // If has profile photo, show it
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-lg">
+            // If has profile photo, show animated container
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-lg relative">
+              {/* Profile photo */}
               <img
                 src={profilePhotoURL}
                 alt="Profile"
-                className="w-full h-full object-cover"
+                className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-500 ${
+                  showSettingsIcon ? 'opacity-0' : 'opacity-100'
+                }`}
               />
+              {/* Settings icon overlay */}
+              <Flex
+                variant="center"
+                className={`w-full h-full absolute inset-0 bg-white/20 transition-opacity duration-500 ${
+                  showSettingsIcon ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                <Settings className="h-5 w-5 text-white" />
+              </Flex>
             </div>
           )}
         </button>
