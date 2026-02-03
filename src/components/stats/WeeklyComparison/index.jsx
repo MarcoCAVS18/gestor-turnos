@@ -56,8 +56,8 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
   return (
     <Card className={`p-4 flex flex-col ${className}`}>
       <h3 className="font-semibold mb-4">Weekly Comparison</h3>
-      
-      <div className="flex-1 flex flex-col justify-between">
+
+      <div className="flex flex-col gap-2">
         {comparisons.map((comp, index) => {
           const Icon = getIcon(comp.change);
           const color = getColor(comp.change);

@@ -25,6 +25,7 @@ import VehicleEfficiency from '../components/stats/VehicleEfficiency';
 import FuelEfficiency from '../components/stats/FuelEfficiency';
 import PlatformComparison from '../components/stats/PlatformComparison';
 import DeliveryHourlyAnalysis from '../components/stats/DeliveryHourlyAnalysis';
+import UnusedDeliverySection from '../components/stats/UnusedDeliverySection';
 
 const Statistics = () => {
   const {
@@ -44,6 +45,17 @@ const Statistics = () => {
 
   const isMobile = useIsMobile();
   const hasDelivery = deliveryEnabled && deliveryStats.shiftsCompleted > 0;
+
+  // Check if vehicle/fuel components have actual data
+  const hasVehicleData = useMemo(() => {
+    if (!deliveryStats?.statsByVehicle) return false;
+    const vehicles = Object.values(deliveryStats.statsByVehicle);
+    return vehicles.some(v => v.totalExpenses > 0 || v.totalKilometers > 0);
+  }, [deliveryStats]);
+
+  const hasFuelData = useMemo(() => {
+    return (deliveryStats?.totalExpenses > 0 || deliveryStats?.totalKilometers > 0);
+  }, [deliveryStats]);
 
   // Filter actual shifts of the selected week ---
   const currentWeekShifts = useMemo(() => {
@@ -102,26 +114,24 @@ const Statistics = () => {
         {/* --- MAIN LAYOUT (GENERAL) --- */}
         <div className="space-y-6">
 
-          {/* DESKTOP: 3 column grid */}
-          <div className="hidden lg:grid lg:grid-cols-3 lg:gap-6">
-            {/* COLUMN 1 */}
-            <div className="lg:col-span-1 flex flex-col gap-6">
-              <StatsProgressBar className="flex-grow" currentData={currentData} weeklyHoursGoal={weeklyHoursGoal} />
-              <ShiftTypeStats className="flex-grow" currentData={currentData} loading={loading} />
+          {/* DESKTOP: 3 column grid (2/3 + 1/3) */}
+          <div className="hidden lg:grid lg:grid-cols-3 lg:gap-6 lg:items-stretch">
+            {/* LEFT SECTION (2/3): Weekly Comparison + Shift Types side by side, Weekly Progress below */}
+            <div className="lg:col-span-2 flex flex-col gap-6">
+              <div className="grid grid-cols-2 gap-6">
+                <WeeklyComparison currentData={currentData} previousData={previousData} thematicColors={thematicColors} />
+                <ShiftTypeStats currentData={currentData} loading={loading} />
+              </div>
+              <StatsProgressBar currentData={currentData} weeklyHoursGoal={weeklyHoursGoal} />
             </div>
 
-            {/* COLUMN 2 */}
-            <div className="lg:col-span-1">
-              <WeeklyComparison className="h-full" currentData={currentData} previousData={previousData} thematicColors={thematicColors} />
-            </div>
-
-            {/* COLUMN 3 */}
+            {/* RIGHT SECTION (1/3): Stats Grid, Most Productive Day, Smoko Cards */}
             <div className="lg:col-span-1 flex flex-col gap-6">
-              <WeeklyStatsGrid className="flex-grow" currentData={currentData} thematicColors={thematicColors} loading={loading} />
-              <MostProductiveDay className="flex-grow" currentData={currentData} thematicColors={thematicColors} loading={loading} />
-              <div className="flex-grow grid grid-cols-2 gap-4">
-                <SmokoStatusCard className="h-full" smokoEnabled={smokoEnabled} thematicColors={thematicColors} loading={loading} />
-                <SmokoTimeCard className="h-full" smokoEnabled={smokoEnabled} smokoMinutes={smokoMinutes} thematicColors={thematicColors} loading={loading} />
+              <WeeklyStatsGrid currentData={currentData} thematicColors={thematicColors} loading={loading} />
+              <MostProductiveDay currentData={currentData} thematicColors={thematicColors} loading={loading} />
+              <div className="grid grid-cols-2 gap-4">
+                <SmokoStatusCard smokoEnabled={smokoEnabled} thematicColors={thematicColors} loading={loading} />
+                <SmokoTimeCard smokoEnabled={smokoEnabled} smokoMinutes={smokoMinutes} thematicColors={thematicColors} loading={loading} />
               </div>
             </div>
           </div>
@@ -166,19 +176,34 @@ const Statistics = () => {
                     <DeliverySummary deliveryStats={deliveryStats} />
                   </div>
                   <div className="flex-grow flex flex-col">
-                    {/* HERE IS THE KEY CHANGE: We pass currentWeekShifts */}
                     <DeliveryHourlyAnalysis
                       shifts={currentData.shifts || []}
                       className="h-full"
                     />
                   </div>
-                  <div className="flex-none">
-                    <FuelEfficiency deliveryStats={deliveryStats} />
-                  </div>
                 </div>
                 <div className="flex flex-col gap-6 h-full">
-                  <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
                   <PlatformComparison deliveryStats={deliveryStats} />
+
+                  {/* Show Vehicle and Fuel if they have data */}
+                  {hasVehicleData && (
+                    <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
+                  )}
+                  {hasFuelData && (
+                    <FuelEfficiency deliveryStats={deliveryStats} />
+                  )}
+
+                  {/* Collapsible section for unused components */}
+                  {(!hasVehicleData || !hasFuelData) && (
+                    <UnusedDeliverySection>
+                      {!hasVehicleData && (
+                        <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
+                      )}
+                      {!hasFuelData && (
+                        <FuelEfficiency deliveryStats={deliveryStats} />
+                      )}
+                    </UnusedDeliverySection>
+                  )}
                 </div>
               </div>
 
@@ -186,9 +211,27 @@ const Statistics = () => {
               <div className="block lg:hidden space-y-6">
                 <DeliverySummary deliveryStats={deliveryStats} />
                 <DeliveryHourlyAnalysis shifts={currentWeekShifts} />
-                <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
                 <PlatformComparison deliveryStats={deliveryStats} />
-                <FuelEfficiency deliveryStats={deliveryStats} />
+
+                {/* Show Vehicle and Fuel if they have data */}
+                {hasVehicleData && (
+                  <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
+                )}
+                {hasFuelData && (
+                  <FuelEfficiency deliveryStats={deliveryStats} />
+                )}
+
+                {/* Collapsible section for unused components */}
+                {(!hasVehicleData || !hasFuelData) && (
+                  <UnusedDeliverySection>
+                    {!hasVehicleData && (
+                      <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
+                    )}
+                    {!hasFuelData && (
+                      <FuelEfficiency deliveryStats={deliveryStats} />
+                    )}
+                  </UnusedDeliverySection>
+                )}
               </div>
             </div>
           </>

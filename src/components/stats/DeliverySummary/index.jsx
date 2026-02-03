@@ -28,7 +28,7 @@ const DeliverySummary = ({ deliveryStats }) => {
         {/* Total Shifts */}
         <div className="bg-gray-50 p-4 rounded-lg">
           <p className="text-sm text-gray-600 mb-1">Total Shifts</p>
-          <p className="text-2xl font-bold text-gray-900">{deliveryStats.totalShifts}</p>
+          <p className="text-2xl font-bold text-gray-900">{deliveryStats.shiftsCompleted}</p>
         </div>
 
         {/* Total Hours */}

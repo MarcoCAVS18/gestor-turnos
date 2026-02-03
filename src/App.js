@@ -130,10 +130,6 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Legal Pages */}
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsOfService />} />
-        <Route path="/delete-account" element={<DeleteAccount />} />
 
         {/* SPECIAL ROUTE for shared works - PUBLIC ACCESS */}
         <Route
@@ -159,7 +155,11 @@ function App() {
           <Route path="/statistics" element={<Statistics />} />
           <Route path="/calendar" element={<CalendarView />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/integraciones" element={<Integrations />} />
+          <Route path="/integrations" element={<Integrations />} />
+          {/* Legal Pages */}
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/delete-account" element={<DeleteAccount />} />
         </Route>
 
         {/* Redirections */}

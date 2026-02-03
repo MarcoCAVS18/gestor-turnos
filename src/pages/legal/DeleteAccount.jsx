@@ -1,13 +1,23 @@
 // src/pages/legal/DeleteAccount.jsx
 
-import React from 'react';
+import BackLink from '../../components/ui/BackLink';
 
 const DeleteAccount = () => {
   return (
-    <div className="max-w-3xl mx-auto p-6 md:p-12 bg-white min-h-screen">
-      <div className="mb-8 border-b pb-4">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Account Deletion</h1>
-        <p className="text-lg text-gray-600">We are sorry to see you go.</p>
+    <div className="px-4 py-6 space-y-6">
+      <BackLink to="/settings">Back to Settings</BackLink>
+
+      <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b pb-4 gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Account Deletion</h1>
+          <p className="text-sm text-gray-600">We are sorry to see you go.</p>
+        </div>
+        <img
+          src="/assets/SVG/logo.svg"
+          alt="GestAPP"
+          className="w-16 h-16 sm:w-20 sm:h-20 opacity-20"
+          style={{ filter: 'grayscale(100%)' }}
+        />
       </div>
       
       <div className="prose prose-lg text-gray-700">

@@ -40,7 +40,7 @@ const WeekNavigator = ({
 
   const containerClasses = isTransparent
     ? 'p-4'
-    : 'bg-white rounded-xl shadow-md p-4';
+    : 'rounded-xl p-4';
 
   const titleClasses = isTransparent
     ? 'text-lg text-gray-700'

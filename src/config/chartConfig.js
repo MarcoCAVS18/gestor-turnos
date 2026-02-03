@@ -3,32 +3,32 @@
 import { TrendingUp, Clock, PieChart } from 'lucide-react';
 import { formatCurrency } from '../utils/currency';
 
-// Configuración estática de los tipos de gráficos disponibles
+// Static configuration of available chart types
 export const CHART_CONFIGS = [
   {
     id: 'evolution',
-    title: 'Evolución Semanal',
-    subtitle: 'Progreso de ganancias',
+    title: 'Weekly Evolution',
+    subtitle: 'Earnings progress',
     icon: TrendingUp,
     type: 'line'
   },
   {
     id: 'works',
-    title: 'Por Trabajos',
-    subtitle: 'Distribución de ganancias',
+    title: 'By Works',
+    subtitle: 'Earnings distribution',
     icon: PieChart,
     type: 'pie'
   },
   {
     id: 'daily',
-    title: 'Horas Diarias',
-    subtitle: 'Distribución semanal',
+    title: 'Daily Hours',
+    subtitle: 'Weekly distribution',
     icon: Clock,
     type: 'area'
   }
 ];
 
-// Colores planos para gráfico de torta, en caso de que el trabajo no tenga color
+// Flat colors for pie chart, in case the work doesn't have a color
 export const PIE_CHART_COLORS = [
   '#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4', '#84CC16'
 ];

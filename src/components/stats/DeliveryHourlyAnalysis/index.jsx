@@ -91,8 +91,15 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
             <BarChart2 size={32} className="text-gray-300" />
           </div>
           <p className="text-gray-600 font-medium mb-1">No data this week</p>
-          <Button onClick={() => navigate('/turnos')} variant="outline" themeColor={colors.primary} className="flex items-center gap-2 mt-4">
-            <PlusCircle size={16} /> Add shift
+          <Button
+            onClick={() => navigate('/shifts')}
+            variant="outline"
+            themeColor={colors.primary}
+            icon={PlusCircle}
+            iconPosition="left"
+            className="mt-4"
+          >
+            Add shift
           </Button>
         </div>
       </Card>

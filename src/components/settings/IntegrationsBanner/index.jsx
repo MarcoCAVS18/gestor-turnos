@@ -23,7 +23,7 @@ const IntegrationsBanner = ({ className }) => {
 
   return (
     <BaseAnnouncementCard
-      to="/integraciones"
+      to="/integrations"
       gradient={gradient}
       className={className}
       decorativeIcon={Share2}
