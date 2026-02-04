@@ -1,5 +1,7 @@
 // src/pages/Settings.jsx
 
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Settings as SettingsIcon } from 'lucide-react';
 import PageHeader from '../components/layout/PageHeader';
 import ProfileSection from '../components/settings/ProfileSection';
@@ -19,6 +21,20 @@ import { useApp } from '../contexts/AppContext';
 
 const Settings = () => {
   const { deliveryEnabled } = useApp();
+  const location = useLocation();
+
+  // Scroll to section based on URL hash
+  useEffect(() => {
+    if (location.hash) {
+      const elementId = location.hash.replace('#', '');
+      const element = document.getElementById(elementId);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+    }
+  }, [location.hash]);
   return (
     <div className="px-4 py-6 space-y-6">
       <PageHeader

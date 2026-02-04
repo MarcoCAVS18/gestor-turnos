@@ -57,6 +57,7 @@ const SmokoSection = ({ onError, onSuccess, className }) => {
 
   return (
     <SettingsSection
+      id="smoko-section"
       icon={Coffee}
       title="Smoko (Breaks)"
       className={className}

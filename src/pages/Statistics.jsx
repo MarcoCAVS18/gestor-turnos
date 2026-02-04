@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import PageHeader from '../components/layout/PageHeader';
-import { Truck, BarChart } from 'lucide-react';
+import { Bike, BarChart } from 'lucide-react';
 import { useStats } from '../contexts/StatsContext';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import WeekNavigator from '../components/stats/WeekNavigator';
@@ -169,7 +169,7 @@ const Statistics = () => {
             <PageHeader
               title="Delivery Statistics"
               subtitle="Analyze your delivery earnings and efficiency"
-              icon={Truck}
+              icon={Bike}
               className="pt-8"
             />
 

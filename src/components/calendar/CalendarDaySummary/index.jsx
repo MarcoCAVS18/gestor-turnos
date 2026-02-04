@@ -1,7 +1,8 @@
 // src/components/calendar/CalendarDaySummary/index.jsx
 
 import React, { useMemo } from 'react';
-import { PlusCircle, Calendar, Clock, DollarSign, SearchX } from 'lucide-react';
+import { PlusCircle, Plus, Calendar, Clock, DollarSign, SearchX, Briefcase } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../../contexts/AppContext';
 import { formatCurrency } from '../../../utils/currency';
 import { useIsMobile } from '../../../hooks/useIsMobile';
@@ -13,16 +14,20 @@ import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 import { getShiftGrossEarnings } from '../../../utils/shiftUtils';
 
-const CalendarDaySummary = ({ 
-  selectedDate, 
-  shifts, 
-  formatDate, 
+const CalendarDaySummary = ({
+  selectedDate,
+  shifts,
+  formatDate,
   onNewShift,
   onEdit,
   onDelete
 }) => {
   const { allWorks, calculatePayment, thematicColors } = useApp();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
+
+  // Check if user has any works to create shifts
+  const hasWorks = Array.isArray(allWorks) && allWorks.length > 0;
 
   // Function to calculate day total
   const calculateDayTotal = (shiftsList) => {
@@ -152,28 +157,50 @@ const CalendarDaySummary = ({
         </Card>
       ) : (
         <Card className="text-center py-6">
-          <SearchX size={48} className="mx-auto mb-4 text-gray-300" />
-          <p className="text-gray-500 mb-4">
-            No shifts for {
-              formatDate ? (
-                (() => {
-                  const formattedDate = formatDate(selectedDate);
-                  if (formattedDate.startsWith('Today') || formattedDate.startsWith('Yesterday')) {
-                    return formattedDate;
-                  }
-                  return `the ${formattedDate}`;
-                })()
-              ) : 'this date'
-            }
-          </p>
-          <Button
-            onClick={() => onNewShift?.(new Date(selectedDate + 'T12:00:00'))}
-            className="flex items-center gap-2 mx-auto"
-            icon={PlusCircle}
-            themeColor={thematicColors?.base}
-          >
-            Add shift
-          </Button>
+          {hasWorks ? (
+            <>
+              <SearchX size={48} className="mx-auto mb-4 text-gray-300" />
+              <p className="text-gray-500 mb-4">
+                No shifts for {
+                  formatDate ? (
+                    (() => {
+                      const formattedDate = formatDate(selectedDate);
+                      if (formattedDate.startsWith('Today') || formattedDate.startsWith('Yesterday')) {
+                        return formattedDate;
+                      }
+                      return `the ${formattedDate}`;
+                    })()
+                  ) : 'this date'
+                }
+              </p>
+              <Button
+                onClick={() => onNewShift?.(new Date(selectedDate + 'T12:00:00'))}
+                className="flex items-center gap-2 mx-auto"
+                icon={PlusCircle}
+                themeColor={thematicColors?.base}
+              >
+                Add shift
+              </Button>
+            </>
+          ) : (
+            /* No works available - show dotted card to add work */
+            <button
+              onClick={() => navigate('/works')}
+              className="w-full max-w-xs mx-auto aspect-[4/3] border-2 border-dashed border-gray-300 rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all flex flex-col items-center justify-center gap-3 group"
+            >
+              <div
+                className="w-14 h-14 rounded-full flex items-center justify-center transition-colors"
+                style={{ backgroundColor: thematicColors?.transparent10 }}
+              >
+                <Plus size={28} style={{ color: thematicColors?.base }} className="group-hover:scale-110 transition-transform" />
+              </div>
+              <div className="text-center">
+                <p className="font-medium text-gray-700 group-hover:text-gray-900">Add your first job</p>
+                <p className="text-sm text-gray-500">Create a job to start tracking shifts</p>
+              </div>
+              <Briefcase size={16} className="text-gray-400" />
+            </button>
+          )}
         </Card>
       )}
     </div>

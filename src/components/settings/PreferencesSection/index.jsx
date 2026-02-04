@@ -195,30 +195,31 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
           </div>
         )}
         
-        <div className="pt-3 flex flex-wrap items-center gap-3">
-          {traditionalWorks.length > 1 && (
+        {traditionalWorks.length > 1 && (
+          <div className="pt-3">
             <Button
               onClick={() => setShowMultiRate(prev => !prev)}
               variant="outline"
               themeColor={colors.primary}
               size="sm"
             >
-              {showMultiRate ? 'Hide per-job' : 'Per job'}
+              {showMultiRate ? 'Hide per-job rates' : 'Configure per-job rates'}
             </Button>
-          )}
-          <Button
-            onClick={handleSave}
-            disabled={loading || !hasChanges}
-            loading={loading}
-            themeColor={colors.primary}
-            size="sm"
-            icon={showSuccess ? Check : undefined}
-          >
-            {loading ? 'Saving...' :
-             showSuccess ? 'Saved' :
-             hasChanges ? 'Save' : 'No changes'}
-          </Button>
-        </div>
+          </div>
+        )}
+
+        <Button
+          onClick={handleSave}
+          disabled={loading || !hasChanges}
+          loading={loading}
+          className="w-full mt-4"
+          themeColor={colors.primary}
+          icon={showSuccess ? Check : undefined}
+        >
+          {loading ? 'Saving...' :
+           showSuccess ? 'Saved correctly' :
+           hasChanges ? 'Save tax settings' : 'No changes'}
+        </Button>
       </div>
     </SettingsSection>
   );

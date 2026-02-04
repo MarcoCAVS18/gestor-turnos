@@ -19,7 +19,7 @@ import PageHeader from '../components/layout/PageHeader';
 import Card from '../components/ui/Card';
 import Switch from '../components/ui/Switch';
 import Button from '../components/ui/Button';
-import { useApp } from '../contexts/AppContext';
+import { useConfigContext } from '../contexts/ConfigContext';
 import { useAuth } from '../contexts/AuthContext';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
@@ -29,7 +29,7 @@ import { db } from '../services/firebase';
 const FUNCTIONS_URL = 'https://us-central1-gestionturnos-7ec99.cloudfunctions.net';
 
 const Integrations = () => {
-  const { thematicColors } = useApp();
+  const { thematicColors } = useConfigContext();
   const { currentUser } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -91,6 +91,7 @@ const Integrations = () => {
       doc(db, 'users', currentUser.uid),
       (docSnap) => {
         clearTimeout(timeout);
+
         if (docSnap.exists()) {
           const data = docSnap.data();
           const isConnected = data.googleCalendarConnected || false;
@@ -274,12 +275,24 @@ const Integrations = () => {
         throw new Error('Failed to sync');
       }
 
-      const { synced, total } = await response.json();
+      const result = await response.json();
+      const { synced = 0, total, message } = result;
+
+      // Build appropriate message based on response
+      let syncMessage;
+      if (message) {
+        // Use message from backend if provided (e.g., "All shifts already synced")
+        syncMessage = message;
+      } else if (total !== undefined) {
+        syncMessage = `Synced ${synced} of ${total} shifts`;
+      } else {
+        syncMessage = synced > 0 ? `Synced ${synced} shifts` : 'All shifts are already synced';
+      }
 
       setGoogleCalendar(prev => ({
         ...prev,
         syncing: false,
-        syncMessage: `Synced ${synced} of ${total} shifts`
+        syncMessage
       }));
 
       // Clear message after 3 seconds

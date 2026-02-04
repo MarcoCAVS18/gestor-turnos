@@ -21,6 +21,7 @@ import ScrollToTop from './components/layout/ScrollToTop/index.jsx';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import TermsOfService from './pages/legal/TermsOfService';
 import DeleteAccount from './pages/legal/DeleteAccount';
+import ClearEverything from './pages/legal/ClearEverything';
 
 // Main Components
 import Header from './components/layout/Header';
@@ -153,6 +154,7 @@ function App() {
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/delete-account" element={<DeleteAccount />} />
+          <Route path="/clear-everything" element={<ClearEverything />} />
         </Route>
 
         {/* Redirections */}
