@@ -1,7 +1,7 @@
 // src/components/modals/liveMode/LiveModeActiveModal/index.jsx
 // Modal displaying active Live Mode session - Styled like FeatureAnnouncementCard
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   Play,
   Pause,
@@ -14,7 +14,8 @@ import {
   Moon,
   Briefcase,
   Timer,
-  X
+  X,
+  CircleDotDashed
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Flex from '../../../ui/Flex';
@@ -22,6 +23,7 @@ import Button from '../../../ui/Button';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { useLiveMode } from '../../../../hooks/useLiveMode';
+import { useConfigContext } from '../../../../contexts/ConfigContext';
 import { generateColorVariations } from '../../../../utils/colorUtils';
 import LiveModeFinishConfirmModal from '../LiveModeFinishConfirmModal';
 
@@ -36,6 +38,7 @@ const RATE_TYPE_CONFIG = {
 const LiveModeActiveModal = ({ isOpen, onClose }) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile();
+  const { smokoEnabled, smokoMinutes } = useConfigContext();
   const {
     isPaused,
     formattedTime,
@@ -44,6 +47,8 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
     rateType,
     selectedWork,
     loading,
+    liveSession,
+    elapsedTime,
     pauseSession,
     resumeSession,
     finishSession,
@@ -51,6 +56,9 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
 
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
+
+  // Frozen data when finish modal opens
+  const [frozenSessionData, setFrozenSessionData] = useState(null);
 
   const palette = useMemo(() => {
     return generateColorVariations(colors.primary) || {
@@ -81,21 +89,43 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleFinish = () => {
-    setShowFinishConfirm(true);
-  };
+  // Check if user had any pauses during the session
+  const hadPauses = (liveSession?.totalPauseDuration || 0) > 0;
 
-  const handleConfirmFinish = async () => {
+  // Should show smoko option: smoko enabled AND no pauses during session
+  const shouldOfferSmoko = smokoEnabled && !hadPauses;
+
+  const handleFinish = useCallback(() => {
+    // Freeze the current session data when opening finish modal
+    setFrozenSessionData({
+      time: formattedTime.formatted,
+      earnings: formattedEarnings,
+      workName: selectedWork?.name,
+      elapsedTime: elapsedTime,
+      hadPauses: hadPauses,
+      shouldOfferSmoko: shouldOfferSmoko,
+      smokoMinutes: smokoMinutes,
+    });
+    setShowFinishConfirm(true);
+  }, [formattedTime.formatted, formattedEarnings, selectedWork?.name, elapsedTime, hadPauses, shouldOfferSmoko, smokoMinutes]);
+
+  const handleConfirmFinish = async (deductSmoko = false) => {
     setActionLoading('finish');
     try {
-      await finishSession();
+      await finishSession(deductSmoko ? smokoMinutes : 0);
       setShowFinishConfirm(false);
+      setFrozenSessionData(null);
       onClose();
     } catch (err) {
       console.error('Error finishing session:', err);
     } finally {
       setActionLoading(null);
     }
+  };
+
+  const handleCloseFinishModal = () => {
+    setShowFinishConfirm(false);
+    setFrozenSessionData(null);
   };
 
   const handleHide = () => {
@@ -142,12 +172,14 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
                 <div className="flex-1">
                   {/* Status badge */}
                   <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 border border-white/20 backdrop-blur-md text-white text-xs font-bold tracking-wide uppercase shadow-sm">
-                    <motion.span
-                      animate={isPaused ? {} : { scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
+                    <motion.div
+                      animate={isPaused ? {} : { scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
                       transition={{ duration: 1.5, repeat: Infinity }}
-                      className={`w-2.5 h-2.5 rounded-full ${isPaused ? 'bg-yellow-400' : 'bg-green-400'}`}
-                    />
+                    >
+                      <CircleDotDashed size={14} className="text-red-400" />
+                    </motion.div>
                     <span>{isPaused ? 'Paused' : 'Live Active'}</span>
+                    {isPaused && <Pause size={12} />}
                   </div>
 
                   {/* Work name */}
@@ -272,10 +304,10 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
       {/* Finish Confirmation Modal */}
       <LiveModeFinishConfirmModal
         isOpen={showFinishConfirm}
-        onClose={() => setShowFinishConfirm(false)}
+        onClose={handleCloseFinishModal}
         onConfirm={handleConfirmFinish}
         loading={actionLoading === 'finish'}
-        sessionData={{
+        sessionData={frozenSessionData || {
           time: formattedTime.formatted,
           earnings: formattedEarnings,
           workName: selectedWork?.name,

@@ -4,6 +4,7 @@ import React from 'react';
 import { AlertTriangle } from 'lucide-react';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const DeleteAlert = ({
   visible,
@@ -17,6 +18,7 @@ const DeleteAlert = ({
   confirmText = 'Delete',
   cancelText = 'Cancel'
 }) => {
+  const colors = useThemeColors();
 
   if (!visible) return null;
 
@@ -63,6 +65,7 @@ const DeleteAlert = ({
               variant="outline"
               className="flex-1"
               disabled={deleting}
+              themeColor={colors.primary}
             >
               {cancelText}
             </Button>
@@ -71,6 +74,7 @@ const DeleteAlert = ({
               variant="danger"
               className="flex-1"
               loading={deleting}
+              themeColor={colors.primary}
             >
               {confirmText}
             </Button>

@@ -93,14 +93,27 @@ const Integrations = () => {
         clearTimeout(timeout);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setGoogleCalendar(prev => ({
-            ...prev,
-            connected: data.googleCalendarConnected || false,
-            loading: false,
-            initialLoading: false
-          }));
+          const isConnected = data.googleCalendarConnected || false;
+
+          // Only update if the connection status actually changed
+          setGoogleCalendar(prev => {
+            if (prev.connected === isConnected && !prev.initialLoading) {
+              return prev; // No change, don't trigger re-render
+            }
+            return {
+              ...prev,
+              connected: isConnected,
+              loading: false,
+              initialLoading: false
+            };
+          });
         } else {
-          setGoogleCalendar(prev => ({ ...prev, loading: false, initialLoading: false }));
+          setGoogleCalendar(prev => {
+            if (!prev.initialLoading && !prev.loading) {
+              return prev; // Already in final state
+            }
+            return { ...prev, loading: false, initialLoading: false };
+          });
         }
       },
       (error) => {
@@ -389,7 +402,7 @@ const Integrations = () => {
             </div>
 
             {shiftReminders.enabled && (
-              <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-2 border-t border-gray-100">
                 <span className="text-sm text-gray-600">Remind me</span>
                 <select
                   value={shiftReminders.minutesBefore}
@@ -397,7 +410,7 @@ const Integrations = () => {
                     ...prev,
                     minutesBefore: parseInt(e.target.value)
                   }))}
-                  className="text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-pink-500/20"
+                  className="w-full sm:w-auto text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500/20"
                 >
                   <option value={5}>5 minutes before</option>
                   <option value={10}>10 minutes before</option>

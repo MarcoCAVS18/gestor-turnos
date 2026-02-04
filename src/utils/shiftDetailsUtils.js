@@ -113,21 +113,42 @@ export function formatShifts(quantity) {
   return `${quantity} ${quantity === 1 ? 'SHIFT' : 'SHIFTS'}`;
 }
 
+// Function to calculate shift duration in hours
+function calculateDuration(startTime, endTime, crossesMidnight) {
+  if (!startTime || !endTime) return null;
+
+  const [startHour, startMinute] = startTime.split(':').map(Number);
+  const [endHour, endMinute] = endTime.split(':').map(Number);
+
+  let startMinutes = startHour * 60 + startMinute;
+  let endMinutes = endHour * 60 + endMinute;
+
+  if (crossesMidnight || endMinutes <= startMinutes) {
+    endMinutes += 24 * 60;
+  }
+
+  const totalMinutes = endMinutes - startMinutes;
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  return { hours, minutes, totalMinutes };
+}
+
 // Function to generate shift details for the deletion modal
-export function generateShiftDetails(shift, allJobs) {
+export function generateShiftDetails(shift, allJobs, shiftRanges) {
   if (!shift) return [];
 
   const work = allJobs.find(w => w.id === shift.workId);
 
   // Check if the shift crosses midnight
   const crossesMidnight = checkIfShiftCrossesMidnight(shift);
-  
+
   let dateText = '';
-  
+
   if (crossesMidnight) {
     // Shift that crosses midnight - show both dates
     let startDate, endDate;
-    
+
     if (shift.startDate && shift.endDate && shift.startDate !== shift.endDate) {
       // Use existing dates if different
       startDate = createSafeDate(shift.startDate);
@@ -137,22 +158,22 @@ export function generateShiftDetails(shift, allJobs) {
       const baseDate = shift.startDate || shift.date;
       startDate = createSafeDate(baseDate);
       endDate = createSafeDate(baseDate);
-      endDate.setDate(endDate.getDate() + 1); 
+      endDate.setDate(endDate.getDate() + 1);
     }
-    
+
     const startDateStr = startDate.toLocaleDateString('en-US', {
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long'
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short'
     });
-    
+
     const endDateStr = endDate.toLocaleDateString('en-US', {
-      weekday: 'long', 
-      day: 'numeric', 
-      month: 'long'
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short'
     });
-    
-    dateText = `${startDateStr} - ${endDateStr}`;
+
+    dateText = `${startDateStr} → ${endDateStr}`;
   } else {
     // Normal shift on a single day
     const dateStr = shift.startDate || shift.date;
@@ -168,14 +189,47 @@ export function generateShiftDetails(shift, allJobs) {
     }
   }
 
+  // Calculate duration
+  const duration = calculateDuration(shift.startTime, shift.endTime, crossesMidnight);
+  let durationText = '';
+  if (duration) {
+    durationText = duration.hours > 0
+      ? `${duration.hours}h ${duration.minutes}min`
+      : `${duration.minutes}min`;
+  }
+
+  // Determine shift type
+  const shiftType = determineShiftType(shift, shiftRanges);
+  const shiftTypeLabel = getShiftTypeLabel(shiftType);
+
+  // Build details array
   const details = [
     work?.name || 'Work not found',
-    dateText,
-    `${shift.startTime} - ${shift.endTime}`
+    `${dateText}`,
+    `${shift.startTime} - ${shift.endTime} (${durationText})`,
   ];
 
+  // Add shift type for regular shifts
+  if (shift.type !== 'delivery') {
+    details.push(`${shiftTypeLabel} shift`);
+  }
+
+  // Add break info if applicable
+  if (shift.hadBreak !== undefined) {
+    details.push(`Break: ${shift.hadBreak ? `Yes (${shift.breakMinutes || 0}min)` : 'No'}`);
+  }
+
+  // Add delivery-specific info
   if (shift.type === 'delivery') {
     details.push(`${shift.orderCount || 0} orders`);
+    if (shift.totalEarnings) {
+      details.push(`💰 $${shift.totalEarnings.toFixed(2)}`);
+    }
+  }
+
+  // Add live mode indicator
+  if (shift.isLive) {
+    details.push('Live tracked shift');
   }
 
   return details;

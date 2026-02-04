@@ -1,7 +1,7 @@
 // src/components/cards/base/BaseShiftCard/index.jsx
 
 import React, { useRef } from 'react';
-import { Edit, Edit2, Trash2, Clock, Calendar, Briefcase, Bike, ChevronDown, DollarSign } from 'lucide-react';
+import { Edit, Edit2, Trash2, Clock, Calendar, Briefcase, Bike, ChevronDown, DollarSign, CircleDotDashed } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Card from '../../../ui/Card';
 import ShiftTypeBadge from '../../../shifts/ShiftTypeBadge';
@@ -119,12 +119,24 @@ const BaseShiftCard = ({
     exit: { opacity: 0, scale: 1.05, filter: 'blur(4px)' }
   };
 
+  // Check if shift was created with Live Mode
+  const isLiveShift = shift.isLive === true;
+
   const cardContent = (
     <Card
       className="h-full min-h-[220px] relative overflow-hidden cursor-pointer group hover:shadow-lg transition-all duration-300 border-b-4 select-none"
       style={{ borderBottomColor: showDetails ? 'transparent' : avatarColor }}
       onClick={() => setShowDetails(!showDetails)}
     >
+      {/* Live Mode indicator - absolute positioned */}
+      {isLiveShift && (
+        <div className="absolute top-2 right-2 z-20">
+          <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
+            <CircleDotDashed size={12} className="text-white" />
+          </div>
+        </div>
+      )}
+
       <AnimatePresence mode="wait" initial={false}>
         {!showDetails ? (
           // --- SUMMARY VIEW - Horizontal layout ---

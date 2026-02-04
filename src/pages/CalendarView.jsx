@@ -8,6 +8,7 @@ import { useThemeColors } from '../hooks/useThemeColors';
 import PageHeader from '../components/layout/PageHeader';
 import { localDateToISO } from '../utils/calendarUtils';
 import { createSafeDate } from '../utils/time';
+import { generateShiftDetails } from '../utils/shiftDetailsUtils';
 import Calendario from '../components/calendar/Calendar';
 import CalendarDaySummary from '../components/calendar/CalendarDaySummary';
 import ShiftModal from '../components/modals/shift/ShiftModal';
@@ -78,19 +79,10 @@ const CalendarView = () => {
     return baseFormattedDate;
   }, []);
   
-  // Format itemToDelete for summary display
+  // Format itemToDelete for summary display using shared utility
   const deletionDetails = useMemo(() => {
-    if (!itemToDelete) return [];
-    
-    const work = allWorks.find(t => t.id === itemToDelete.workId);
-    const workName = work ? work.name : 'Unknown Work';
-    
-    return [
-      `Work shift for ${workName}`,
-      `Date: ${formatDate(itemToDelete.startDate)}`,
-      `Schedule: ${itemToDelete.startTime} - ${itemToDelete.endTime}`
-    ];
-  }, [itemToDelete, allWorks, formatDate]);
+    return generateShiftDetails(itemToDelete, allWorks);
+  }, [itemToDelete, allWorks]);
 
   const selectDay = (date) => {
     setSelectedDate(localDateToISO(date));
@@ -184,8 +176,8 @@ const CalendarView = () => {
         onCancel={cancelDeletion}
         onConfirm={confirmDeletion}
         deleting={deleting}
-        tipo="shift"
-        detalles={deletionDetails}
+        type="shift"
+        details={deletionDetails}
       />
     </div>
   );
