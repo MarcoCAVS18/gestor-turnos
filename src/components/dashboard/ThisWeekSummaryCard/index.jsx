@@ -1,8 +1,9 @@
-// src/components/dashboard/ThisWeekSummaryCard/index.jsx 
+// src/components/dashboard/ThisWeekSummaryCard/index.jsx
 
-import React from 'react';
+import { useState, useCallback } from 'react';
 import { Calendar, TrendingUp, Target, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import Flex from '../../ui/Flex';
@@ -11,16 +12,34 @@ import Card from '../../ui/Card';
 import ProgressBar from '../../ui/ProgressBar';
 import Button from '../../ui/Button';
 
+// Frases motivacionales cortas
+const MOTIVATIONAL_PHRASES = [
+  { good: 'Keep going!', excellent: 'On fire! 🔥' },
+  { good: 'Nice work!', excellent: 'Crushing it!' },
+  { good: 'Good pace!', excellent: 'Unstoppable!' },
+  { good: 'Stay strong!', excellent: 'Amazing!' },
+  { good: 'You got this!', excellent: 'Legend!' },
+  { good: 'Well done!', excellent: 'Superstar!' },
+  { good: 'Great effort!', excellent: 'Incredible!' },
+  { good: 'Solid work!', excellent: 'Top notch!' },
+  { good: 'Making moves!', excellent: 'Beast mode!' },
+  { good: 'On track!', excellent: 'Brilliant!' },
+];
+
 const ThisWeekSummaryCard = ({ stats, className }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
-  const { weeklyHoursGoal } = useApp(); 
+  const { weeklyHoursGoal } = useApp();
+
+  // State for motivational phrase animation
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // Get data for this week from stats
   const currentWeek = stats.currentWeek || {};
   const totalWeek = currentWeek.totalEarned || 0;
   const hoursWeek = currentWeek.hoursWorked || 0;
-  const shiftsWeek = currentWeek.totalShifts || 0; 
+  const shiftsWeek = currentWeek.totalShifts || 0;
 
   // Use the user's goal or show call-to-action if there is no goal
   const goalHours = weeklyHoursGoal;
@@ -29,6 +48,30 @@ const ThisWeekSummaryCard = ({ stats, className }) => {
   // Calculate progress only if there is a goal
   const progressHours = hasHoursGoal ? (hoursWeek / goalHours) * 100 : 0;
   const limitedProgress = Math.min(Math.max(progressHours, 0), 100);
+
+  // Get current phrase based on progress
+  const getCurrentPhrase = useCallback(() => {
+    const phrase = MOTIVATIONAL_PHRASES[phraseIndex];
+    return limitedProgress >= 75 ? phrase.excellent : phrase.good;
+  }, [phraseIndex, limitedProgress]);
+
+  // Handle click to change phrase with animation
+  const handlePhraseClick = useCallback(() => {
+    if (isAnimating) return;
+
+    setIsAnimating(true);
+
+    // Get next random phrase (different from current)
+    let newIndex;
+    do {
+      newIndex = Math.floor(Math.random() * MOTIVATIONAL_PHRASES.length);
+    } while (newIndex === phraseIndex && MOTIVATIONAL_PHRASES.length > 1);
+
+    setPhraseIndex(newIndex);
+
+    // Reset animation state
+    setTimeout(() => setIsAnimating(false), 400);
+  }, [isAnimating, phraseIndex]);
 
   // Function to navigate to settings
   const goToSettings = () => {
@@ -131,16 +174,34 @@ const ThisWeekSummaryCard = ({ stats, className }) => {
               </div>
             </Flex>
 
-            {/* Motivational message */}
+            {/* Motivational message - Clickable */}
             {totalWeek > 0 && hasHoursGoal && (
-              <div className="text-center p-2 rounded-lg" style={{ backgroundColor: colors.transparent10 }}>
+              <motion.div
+                className="text-center p-2 rounded-lg cursor-pointer select-none"
+                style={{ backgroundColor: colors.transparent10 }}
+                onClick={handlePhraseClick}
+                whileTap={{ scale: 0.97 }}
+              >
                 <Flex variant="center">
                   <TrendingUp size={12} style={{ color: colors.primary }} className="mr-1" />
-                  <p className="text-xs font-medium" style={{ color: colors.primary }}>
-                    {limitedProgress >= 75 ? 'Excellent progress!' : 'Good pace!'}
-                  </p>
+                  <AnimatePresence mode="wait">
+                    <motion.p
+                      key={phraseIndex}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{
+                        opacity: 1,
+                        scale: isAnimating ? [1, 1.15, 1] : 1,
+                      }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.3 }}
+                      className="text-xs font-medium"
+                      style={{ color: colors.primary }}
+                    >
+                      {getCurrentPhrase()}
+                    </motion.p>
+                  </AnimatePresence>
                 </Flex>
-              </div>
+              </motion.div>
             )}
           </div>
         </div>

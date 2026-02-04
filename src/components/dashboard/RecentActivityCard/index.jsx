@@ -109,7 +109,7 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
           </Flex>
           <p className="text-sm text-gray-600 mb-3">No recent shifts</p>
           <Button
-            onClick={() => navigate('/turnos')}
+            onClick={() => navigate('/shifts')}
             size="sm"
             variant="primary"
             themeColor={colors.primary}
@@ -154,7 +154,7 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
             <Flex variant="between"
               key={shift.id || index}
               className="p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer group"
-              onClick={() => navigate('/turnos')}
+              onClick={() => navigate('/shifts')}
             >
               <div className="flex items-center flex-1 min-w-0">
                 <div 

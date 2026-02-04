@@ -2,11 +2,13 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle, Pencil } from 'lucide-react';
+import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle, Pencil, CircleDotDashed } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useApp } from '../../../contexts/AppContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import { useLiveModeContext } from '../../../contexts/LiveModeContext';
+import LiveModeActiveModal from '../../modals/liveMode/LiveModeActiveModal';
 
 import Flex from '../../ui/Flex';
 
@@ -19,11 +21,13 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
   const { works, deliveryWork } = useApp();
   const { profilePhotoURL, updateProfilePhoto } = useAuth();
   const colors = useThemeColors();
+  const { isActive: isLiveModeActive, formattedTime, isPaused, selectedWork: liveWork } = useLiveModeContext();
   const [isPhotoLoading, setIsPhotoLoading] = useState(false);
 
   // Tooltip state
   const [showTooltip, setShowTooltip] = useState(false);
   const [showPhotoEdit, setShowPhotoEdit] = useState(false);
+  const [isLiveModalOpen, setIsLiveModalOpen] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -407,6 +411,43 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
           </div>
         </nav>
 
+        {/* LIVE MODE INDICATOR - Only when active */}
+        {isLiveModeActive && (
+          <div className="px-4 pb-2">
+            <motion.button
+              onClick={() => setIsLiveModalOpen(true)}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all"
+              style={{
+                backgroundColor: colors.transparent10,
+                color: colors.primary,
+              }}
+              whileHover={{ scale: 1.02, backgroundColor: colors.transparent20 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <motion.div
+                animate={isPaused ? {} : { rotate: 360 }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+              >
+                <CircleDotDashed size={20} className="text-red-500" />
+              </motion.div>
+              <div className="flex-1 text-left">
+                <p className="text-xs text-gray-500 font-normal">
+                  {isPaused ? 'Paused' : 'Live Mode'}
+                </p>
+                <p className="font-semibold font-mono text-sm">
+                  {formattedTime?.formatted || '00:00:00'}
+                </p>
+              </div>
+              {liveWork && (
+                <div
+                  className="w-3 h-3 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: liveWork.color || colors.primary }}
+                />
+              )}
+            </motion.button>
+          </div>
+        )}
+
         {/* SIDEBAR FOOTER */}
         <div className="p-4 border-t border-gray-100">
           <motion.button
@@ -420,6 +461,12 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
           </motion.button>
         </div>
       </aside>
+
+      {/* Live Mode Active Modal */}
+      <LiveModeActiveModal
+        isOpen={isLiveModalOpen}
+        onClose={() => setIsLiveModalOpen(false)}
+      />
     </>
   );
 };

@@ -1,11 +1,12 @@
 // src/components/modals/liveMode/LiveModeFinishConfirmModal/index.jsx
 // Modal to confirm finishing a Live Mode session - Styled like FeatureAnnouncementCard
 
-import React, { useMemo } from 'react';
-import { CheckCircle, Clock, DollarSign, Briefcase, AlertCircle, X, Timer } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { CheckCircle, Clock, DollarSign, Briefcase, AlertCircle, X, Timer, Coffee } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Button from '../../../ui/Button';
 import Flex from '../../../ui/Flex';
+import Switch from '../../../ui/Switch';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { generateColorVariations } from '../../../../utils/colorUtils';
@@ -20,6 +21,17 @@ const LiveModeFinishConfirmModal = ({
   const colors = useThemeColors();
   const isMobile = useIsMobile();
 
+  const {
+    time = '00:00:00',
+    earnings = '$0.00',
+    workName = 'Work',
+    shouldOfferSmoko = false,
+    smokoMinutes = 30,
+  } = sessionData;
+
+  // State for smoko deduction toggle
+  const [deductSmoko, setDeductSmoko] = useState(shouldOfferSmoko);
+
   const palette = useMemo(() => {
     return generateColorVariations(colors.primary) || {
       lighter: colors.primary,
@@ -30,8 +42,6 @@ const LiveModeFinishConfirmModal = ({
   }, [colors.primary, colors.primaryDark]);
 
   const gradient = `linear-gradient(135deg, ${palette.lighter} 0%, ${colors.primary} 50%, ${palette.darker} 100%)`;
-
-  const { time = '00:00:00', earnings = '$0.00', workName = 'Work' } = sessionData;
 
   if (!isOpen) return null;
 
@@ -132,11 +142,39 @@ const LiveModeFinishConfirmModal = ({
               </div>
             </div>
 
+            {/* Smoko deduction option */}
+            {shouldOfferSmoko && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-yellow-500/30 flex items-center justify-center">
+                      <Coffee size={18} className="text-yellow-300" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-white text-sm">Deduct smoko?</p>
+                      <p className="text-xs text-white/60">
+                        No breaks recorded • -{smokoMinutes} min
+                      </p>
+                    </div>
+                  </div>
+                  <Switch
+                    checked={deductSmoko}
+                    onChange={setDeductSmoko}
+                  />
+                </div>
+              </motion.div>
+            )}
+
             {/* Info note */}
             <div className="flex items-start gap-2 mt-4 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
               <AlertCircle size={16} className="text-yellow-300 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-white/80">
                 This shift will be saved to your history and marked as a live-tracked shift.
+                {deductSmoko && shouldOfferSmoko && ` ${smokoMinutes} minutes will be deducted for break time.`}
               </p>
             </div>
           </div>
@@ -153,7 +191,7 @@ const LiveModeFinishConfirmModal = ({
             </Button>
             <Button
               variant="solid"
-              onClick={onConfirm}
+              onClick={() => onConfirm(deductSmoko)}
               loading={loading}
               loadingText="Saving..."
               disabled={loading}

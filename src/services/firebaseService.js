@@ -322,6 +322,12 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
     shiftData.liveSessionId = newShift.liveSessionId || null;
   }
 
+  // Add break/smoko fields if present
+  if (newShift.hadBreak !== undefined) {
+    shiftData.hadBreak = newShift.hadBreak;
+    shiftData.breakMinutes = newShift.breakMinutes || 0;
+  }
+
   if (isDelivery) {
     const baseEarnings = newShift.baseEarnings || 0;
     const tips = newShift.tips || 0;

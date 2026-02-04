@@ -140,7 +140,17 @@ const ShiftForm = ({
   };
 
   const handleInputChange = useCallback((field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value };
+
+      // When enabling hadBreak and breakMinutes is 0, use the configured default
+      if (field === 'hadBreak' && value === true && prev.breakMinutes === 0) {
+        newData.breakMinutes = smokoMinutes;
+      }
+
+      return newData;
+    });
+
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
@@ -149,7 +159,7 @@ const ShiftForm = ({
     if (field === 'workId') {
       onWorkChange?.(value);
     }
-  }, [errors, onWorkChange]);
+  }, [errors, onWorkChange, smokoMinutes]);
 
   // Initialize form - UPDATED
   useEffect(() => {
@@ -259,9 +269,6 @@ const ShiftForm = ({
               style={{ '--tw-ring-color': colors.primary }}
               disabled
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Calculated automatically for night shifts
-            </p>
           </FormField>
         )}
       </FormGrid>

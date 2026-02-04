@@ -317,8 +317,33 @@ export const LiveModeProvider = ({ children }) => {
     }
   }, [liveSession]);
 
+  // Helper function to safely convert any timestamp format to Date
+  const toLocalDate = (timestamp) => {
+    if (!timestamp) return new Date();
+
+    // Already a Date
+    if (timestamp instanceof Date) return timestamp;
+
+    // Firestore Timestamp object (has toDate method)
+    if (typeof timestamp.toDate === 'function') return timestamp.toDate();
+
+    // Firestore Timestamp-like object (has seconds property)
+    if (timestamp.seconds !== undefined) {
+      return new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds || 0) / 1000000);
+    }
+
+    // ISO string or other parseable format
+    if (typeof timestamp === 'string' || typeof timestamp === 'number') {
+      return new Date(timestamp);
+    }
+
+    console.warn('⚠️ Unknown timestamp format:', timestamp);
+    return new Date();
+  };
+
   // Finish the current session and create a shift
-  const finishSession = useCallback(async () => {
+  // smokoMinutesToDeduct: number of minutes to deduct for smoko (0 if not applicable)
+  const finishSession = useCallback(async (smokoMinutesToDeduct = 0) => {
     if (!liveSession?.id) throw new Error('No active session');
     if (!currentUser?.uid) throw new Error('User not authenticated');
 
@@ -326,29 +351,36 @@ export const LiveModeProvider = ({ children }) => {
     setError(null);
 
     try {
-      // Calculate final values
-      const startTime = liveSession.startedAt instanceof Date
-        ? liveSession.startedAt
-        : new Date(liveSession.startedAt);
-
+      // Calculate final values - use helper for robust timestamp conversion
+      const startTime = toLocalDate(liveSession.startedAt);
       const endTime = new Date();
+
+      // Debug logging
+      console.log('🕐 Live session finish debug:', {
+        rawStartedAt: liveSession.startedAt,
+        convertedStartTime: startTime.toString(),
+        endTime: endTime.toString(),
+        startTimeLocal: `${startTime.getFullYear()}-${String(startTime.getMonth() + 1).padStart(2, '0')}-${String(startTime.getDate()).padStart(2, '0')} ${startTime.getHours()}:${startTime.getMinutes()}`,
+        endTimeLocal: `${endTime.getFullYear()}-${String(endTime.getMonth() + 1).padStart(2, '0')}-${String(endTime.getDate()).padStart(2, '0')} ${endTime.getHours()}:${endTime.getMinutes()}`,
+      });
 
       // Calculate final pause duration
       let finalPauseDuration = liveSession.totalPauseDuration || 0;
       if (liveSession.status === 'paused' && liveSession.pausedAt) {
-        const pauseStart = liveSession.pausedAt instanceof Date
-          ? liveSession.pausedAt
-          : new Date(liveSession.pausedAt);
+        const pauseStart = toLocalDate(liveSession.pausedAt);
         finalPauseDuration += (endTime.getTime() - pauseStart.getTime());
       }
 
-      // Format times
+      // Format times (using local timezone, not UTC)
       const formatTime = (date) => {
         return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
       };
 
       const formatDate = (date) => {
-        return date.toISOString().split('T')[0];
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
       };
 
       const startDate = formatDate(startTime);
@@ -366,7 +398,24 @@ export const LiveModeProvider = ({ children }) => {
         crossesMidnight,
         isLive: true,
         liveSessionId: liveSession.id,
+        // Smoko/break deduction
+        hadBreak: smokoMinutesToDeduct > 0,
+        breakMinutes: smokoMinutesToDeduct > 0 ? smokoMinutesToDeduct : 0,
       };
+
+      // Debug logging - this will help identify timezone issues
+      console.log('📝 Shift data being saved:', {
+        ...shiftData,
+        debugInfo: {
+          startTimeObj: startTime.toString(),
+          endTimeObj: endTime.toString(),
+          timezoneOffset: startTime.getTimezoneOffset(),
+          localStartDate: startDate,
+          localEndDate: endDate,
+          localStartTime: formatTime(startTime),
+          localEndTime: formatTime(endTime),
+        }
+      });
 
       // Add the shift
       await firebaseService.addShift(currentUser.uid, shiftData, false);

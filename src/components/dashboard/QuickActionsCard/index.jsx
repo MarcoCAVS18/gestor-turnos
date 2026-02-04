@@ -1,12 +1,12 @@
 // src/components/dashboard/QuickActionsCard/index.jsx
 
 import { useNavigate } from 'react-router-dom';
-import { Plus, Briefcase, Zap } from 'lucide-react';
+import { Plus, Briefcase, Zap, Timer } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
-const QuickActionsCard = ({ className }) => {
+const QuickActionsCard = ({ className, onOpenLiveMode }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
 
@@ -36,12 +36,13 @@ const QuickActionsCard = ({ className }) => {
           New work
         </Button>
         <Button
-          onClick={() => {}}
+          onClick={onOpenLiveMode}
           variant="solid"
           className="col-span-2 flex items-center justify-center gap-2"
+          icon={Timer}
           themeColor={colors.primary}
         >
-          Live Mode - Clock in and Clock out
+          Live Mode
         </Button>
       </div>
     </Card>

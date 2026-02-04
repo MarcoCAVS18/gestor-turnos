@@ -184,7 +184,7 @@ const Dashboard = () => {
                   className="flex-grow"
                 />
                 <ExportReportCard onExport={handleExport} />
-                <QuickActionsCard className="flex-grow" />
+                <QuickActionsCard className="flex-grow" onOpenLiveMode={handleOpenLiveMode} />
               </div>
             </div>
           </div>
