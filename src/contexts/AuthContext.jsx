@@ -228,13 +228,17 @@ export const AuthProvider = ({ children }) => {
   const removeProfilePhoto = async () => {
     try {
       setError('');
-  
+
       if (!currentUser) throw new Error('No logged in user');
-      
-      const currentPhotoURL = currentUser.photoURL;
-  
-      // If no photo, do nothing
-      if (!currentPhotoURL) return;
+
+      // Use profilePhotoURL from state as fallback (might be loaded from Firestore)
+      const currentPhotoURL = currentUser.photoURL || profilePhotoURL;
+      const defaultPhoto = getDefaultProfilePhoto();
+
+      // If no photo or is already default, do nothing
+      if (!currentPhotoURL || currentPhotoURL === defaultPhoto || currentPhotoURL.includes('logo.svg')) {
+        return;
+      }
   
       // Delete from Storage using => URL
       await deleteProfilePhoto(currentPhotoURL);
@@ -252,9 +256,8 @@ export const AuthProvider = ({ children }) => {
       // Force reload user state to get updated URL
       await auth.currentUser.reload();
       const updatedUser = auth.currentUser;
-  
+
       // Revert to default logo and update state
-      const defaultPhoto = getDefaultProfilePhoto();
       setProfilePhotoURL(defaultPhoto);
       setCurrentUser(updatedUser); // Use updated user
   

@@ -1,7 +1,8 @@
 // src/components/stats/DeliverySummary/index.jsx
 
 import React from 'react';
-import { TrendingUp } from 'lucide-react';
+import { TrendingUp, Package } from 'lucide-react';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 // FIXED IMPORTS: Assuming the formatting functions are in statsCalculations.js or pluralization.js
 // If you get an error for formatCurrency, try changing the path to '../../../utils/statsCalculations'
 import { formatCurrency, formatHours } from '../../../utils/statsCalculations'; 
@@ -9,12 +10,17 @@ import { formatCurrency, formatHours } from '../../../utils/statsCalculations';
 import Card from '../../ui/Card';
 
 const DeliverySummary = ({ deliveryStats }) => {
+  const colors = useThemeColors();
+
   if (!deliveryStats) return null;
 
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Delivery Summary</h3>
+        <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <Package size={20} style={{ color: colors.primary }} />
+          Delivery Summary
+        </h3>
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <span className="flex items-center gap-1">
             <TrendingUp className="w-4 h-4 text-green-500" />

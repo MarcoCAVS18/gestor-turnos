@@ -1,7 +1,7 @@
 // src/components/stats/WeeklyComparison/index.jsx
 
 import React from 'react';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, BarChart3 } from 'lucide-react';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
@@ -55,7 +55,10 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
 
   return (
     <Card className={`p-4 flex flex-col ${className}`}>
-      <h3 className="font-semibold mb-4">Weekly Comparison</h3>
+      <h3 className="font-semibold mb-4 flex items-center gap-2">
+        <BarChart3 size={20} style={{ color: thematicColors?.base }} />
+        Weekly Comparison
+      </h3>
 
       <div className="flex flex-col gap-2">
         {comparisons.map((comp, index) => {

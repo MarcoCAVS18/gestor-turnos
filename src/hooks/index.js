@@ -8,4 +8,5 @@ export { useFormValidation } from './useFormValidation';
 export { useSwipeActions } from './useSwipeActions';
 export { useShare } from './useShare';
 export { useLocalStorage } from './useLocalStorage';
-export { useWorks } from './useWorks'
+export { useWorks } from './useWorks';
+export { useClearProfile } from './useClearProfile';

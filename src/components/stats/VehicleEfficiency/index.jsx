@@ -1,11 +1,14 @@
 // src/components/stats/VehicleEfficiency/index.jsx
 
 import React from 'react';
-import { Car, Zap } from 'lucide-react';
+import { Car, Zap, Gauge } from 'lucide-react';
 import { formatCurrency } from '../../../utils/statsCalculations';
+import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 
 const VehicleEfficiency = ({ vehicleStats }) => {
+  const colors = useThemeColors();
+
   if (!vehicleStats) return null;
 
   // Find most efficient vehicle
@@ -14,7 +17,10 @@ const VehicleEfficiency = ({ vehicleStats }) => {
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">Vehicle Efficiency</h3>
+        <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+          <Gauge size={20} style={{ color: colors.primary }} />
+          Vehicle Efficiency
+        </h3>
         <div className="text-sm text-gray-500">Cost per KM</div>
       </div>
 

@@ -130,7 +130,7 @@ const BaseShiftCard = ({
     >
       {/* Live Mode indicator - absolute positioned */}
       {isLiveShift && (
-        <div className="absolute top-2 right-2 z-20">
+        <div className="absolute top-2 right-2 z-[5]">
           <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
             <CircleDotDashed size={12} className="text-white" />
           </div>

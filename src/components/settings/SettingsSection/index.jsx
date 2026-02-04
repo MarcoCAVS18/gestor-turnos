@@ -4,13 +4,14 @@ import React from 'react';
 import Card from '../../ui/Card';
 
 const SettingsSection = ({
+  id,
   icon: Icon,
   title,
   children,
   className = ''
 }) => {
   return (
-    <Card className={`flex flex-col ${className}`}>
+    <Card id={id} className={`flex flex-col ${className}`}>
       <div className="flex items-center mb-4">
         <Icon className="h-5 w-5 text-gray-500 mr-2" />
         <h2 className="text-lg font-semibold">{title}</h2>

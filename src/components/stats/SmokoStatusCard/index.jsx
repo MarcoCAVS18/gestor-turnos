@@ -17,7 +17,7 @@ const SmokoStatusCard = ({
   const colors = useThemeColors();
 
   const handleClick = () => {
-    navigate('/settings');
+    navigate('/settings#smoko-section');
   };
 
   const formatTime = (minutes) => {
@@ -50,12 +50,12 @@ const SmokoStatusCard = ({
       </div>
 
       {/* Horizontal stats row */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-2 sm:gap-4">
         {/* Status */}
-        <div className="flex-1 text-center">
-          <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Status</p>
+        <div className="flex-1 text-center min-w-0">
+          <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide mb-1 whitespace-nowrap">Status</p>
           <p
-            className="text-xl sm:text-2xl font-bold"
+            className="text-lg sm:text-2xl font-bold"
             style={{ color: smokoEnabled ? '#10B981' : '#9CA3AF' }}
           >
             {smokoEnabled ? 'ON' : 'OFF'}
@@ -63,16 +63,16 @@ const SmokoStatusCard = ({
         </div>
 
         {/* Divider */}
-        <div className="w-px h-12 bg-gray-200" />
+        <div className="w-px h-10 sm:h-12 bg-gray-200 flex-shrink-0" />
 
         {/* Duration */}
-        <div className="flex-1 text-center">
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <Clock size={12} className="text-gray-500" />
-            <p className="text-xs text-gray-500 uppercase tracking-wide">Duration</p>
+        <div className="flex-1 text-center min-w-0">
+          <div className="flex items-center justify-center gap-0.5 sm:gap-1 mb-1">
+            <Clock size={10} className="text-gray-500 flex-shrink-0 sm:w-3 sm:h-3" />
+            <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide whitespace-nowrap">Time</p>
           </div>
           <p
-            className="text-xl sm:text-2xl font-bold"
+            className="text-lg sm:text-2xl font-bold"
             style={{ color: smokoEnabled ? colors.primary : '#9CA3AF' }}
           >
             {smokoEnabled ? formatTime(smokoMinutes) : '-'}
@@ -80,16 +80,16 @@ const SmokoStatusCard = ({
         </div>
 
         {/* Divider */}
-        <div className="w-px h-12 bg-gray-200" />
+        <div className="w-px h-10 sm:h-12 bg-gray-200 flex-shrink-0" />
 
         {/* Shifts with break this week */}
-        <div className="flex-1 text-center">
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <Hash size={12} className="text-gray-500" />
-            <p className="text-xs text-gray-500 uppercase tracking-wide">This Week</p>
+        <div className="flex-1 text-center min-w-0">
+          <div className="flex items-center justify-center gap-0.5 sm:gap-1 mb-1">
+            <Hash size={10} className="text-gray-500 flex-shrink-0 sm:w-3 sm:h-3" />
+            <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide whitespace-nowrap">Week</p>
           </div>
           <p
-            className="text-xl sm:text-2xl font-bold"
+            className="text-lg sm:text-2xl font-bold"
             style={{ color: shiftsWithBreak > 0 ? colors.primary : '#9CA3AF' }}
           >
             {shiftsWithBreak}

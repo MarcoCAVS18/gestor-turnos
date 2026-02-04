@@ -536,3 +536,50 @@ export const getWorksStatistics = async (userUid = null) => {
 
   return workStats;
 };
+
+// ============================================================================
+// ACCOUNT MANAGEMENT
+// ============================================================================
+
+export const clearUserData = async (userUid) => {
+  if (!userUid) {
+    throw new Error('User ID is required');
+  }
+
+  const { worksRef, shiftsRef } = getCollections();
+
+  console.log('🧹 Clearing all user data (works and shifts)...');
+
+  // Delete all shifts for this user
+  const shiftsQuery = query(shiftsRef, where('userId', '==', userUid));
+  const shiftsSnapshot = await getDocs(shiftsQuery);
+  console.log(`Found ${shiftsSnapshot.size} shifts to delete`);
+
+  const shiftDeletePromises = shiftsSnapshot.docs.map(d => deleteDoc(d.ref));
+  await Promise.all(shiftDeletePromises);
+  console.log('✅ All shifts deleted');
+
+  // Delete all works for this user
+  const worksQuery = query(worksRef, where('userId', '==', userUid));
+  const worksSnapshot = await getDocs(worksQuery);
+  console.log(`Found ${worksSnapshot.size} works to delete`);
+
+  const workDeletePromises = worksSnapshot.docs.map(d => deleteDoc(d.ref));
+  await Promise.all(workDeletePromises);
+  console.log('✅ All works deleted');
+
+  // Update user document to mark data as cleared (preserving settings)
+  const userDocRef = getUserDocRef(userUid);
+  await updateDoc(userDocRef, {
+    dataCleared: true,
+    dataClearedAt: new Date(),
+    updatedAt: new Date(),
+  });
+
+  console.log('✅ User data cleared successfully. Preferences preserved.');
+
+  return {
+    shiftsDeleted: shiftsSnapshot.size,
+    worksDeleted: worksSnapshot.size,
+  };
+};
