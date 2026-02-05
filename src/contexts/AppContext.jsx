@@ -3,6 +3,7 @@
 import React, { createContext, useMemo } from 'react';
 
 import { AuthProvider } from './AuthContext';
+import { PremiumProvider, usePremium } from './PremiumContext';
 import { ConfigProvider, useConfigContext } from './ConfigContext';
 import { DataProvider, useDataContext } from './DataContext';
 import { DeliveryProvider, useDeliveryContext } from './DeliveryContext';
@@ -17,19 +18,21 @@ const AppContext = createContext(null);
 export const AppProvider = ({ children }) => {
   return (
     <AuthProvider>
-      <ConfigProvider>
-        <DataProvider>
-          <DeliveryProvider>
-            <CalculationsProvider>
-              <StatsProvider>
-                <LiveModeProvider>
-                  {children}
-                </LiveModeProvider>
-              </StatsProvider>
-            </CalculationsProvider>
-          </DeliveryProvider>
-        </DataProvider>
-      </ConfigProvider>
+      <PremiumProvider>
+        <ConfigProvider>
+          <DataProvider>
+            <DeliveryProvider>
+              <CalculationsProvider>
+                <StatsProvider>
+                  <LiveModeProvider>
+                    {children}
+                  </LiveModeProvider>
+                </StatsProvider>
+              </CalculationsProvider>
+            </DeliveryProvider>
+          </DataProvider>
+        </ConfigProvider>
+      </PremiumProvider>
     </AuthProvider>
   );
 };
@@ -44,6 +47,7 @@ export const useApp = () => {
   const calculations = useCalculations();
   const stats = useStats();
   const liveMode = useLiveModeContext();
+  const premium = usePremium();
 
   const allWorks = useMemo(() => {
     return [...(data.works || []), ...(delivery.deliveryWork || [])];
@@ -63,6 +67,10 @@ export const useApp = () => {
     // Live Mode
     liveMode,
     isLiveActive: liveMode?.isActive || false,
+
+    // Premium
+    premium,
+    isPremium: premium?.isPremium || false,
 
     // For backward compatibility, some components might still be using old names.
     // We can provide aliases here if needed. For example:

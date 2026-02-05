@@ -98,8 +98,6 @@ const cleanWorkData = (work) => {
  */
 export const createShareLink = async (userId, work) => {
   try {
-    console.log('📤 Creating share link for work:', { userId, workId: work?.id, workName: work?.name });
-
     if (!userId) {
       throw new Error('User ID is required to share work');
     }
@@ -111,7 +109,6 @@ export const createShareLink = async (userId, work) => {
 
     // Clean work data to avoid undefined
     const cleanWork = cleanWorkData(work);
-    console.log('✅ Cleaned work data:', cleanWork);
 
     // Create temporary document in Firestore with work data
     const shareDocRef = doc(db, 'shared_works', token);
@@ -128,18 +125,15 @@ export const createShareLink = async (userId, work) => {
       usageLimit: 10
     };
 
-    console.log('💾 Saving share data to Firestore...');
     await setDoc(shareDocRef, shareData);
 
     // Generate full URL
     const baseUrl = window.location.origin || 'https://gestorwork.netlify.app';
     const shareLink = `${baseUrl}/share/${token}`;
 
-    console.log('✅ Share link created successfully:', shareLink);
     return shareLink;
 
   } catch (error) {
-    console.error('❌ Error creating share link:', error);
     throw new Error(`Could not create share link: ${error.message}`);
   }
 };

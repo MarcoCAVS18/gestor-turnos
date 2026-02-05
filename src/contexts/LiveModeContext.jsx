@@ -7,6 +7,7 @@ import { useDataContext } from './DataContext';
 import { useConfigContext } from './ConfigContext';
 import * as liveSessionService from '../services/liveSessionService';
 import * as firebaseService from '../services/firebaseService';
+import * as premiumService from '../services/premiumService';
 
 const LiveModeContext = createContext();
 
@@ -33,6 +34,13 @@ export const LiveModeProvider = ({ children }) => {
   const [rateType, setRateType] = useState('day');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Premium/Usage state
+  const [liveModeUsage, setLiveModeUsage] = useState({
+    monthlyCount: 0,
+    remaining: premiumService.LIVE_MODE_FREE_LIMIT,
+    isPremium: false,
+  });
 
   // Refs
   const timerRef = useRef(null);
@@ -125,7 +133,6 @@ export const LiveModeProvider = ({ children }) => {
     if (!liveSession || autoCloseTriggeredRef.current) return;
 
     autoCloseTriggeredRef.current = true;
-    console.log('⏰ Auto-closing live session after 24 hours');
 
     try {
       await finishSession();
@@ -225,6 +232,33 @@ export const LiveModeProvider = ({ children }) => {
     return () => unsubscribe();
   }, [currentUser?.uid]);
 
+  // Load Live Mode usage on mount
+  useEffect(() => {
+    const loadUsage = async () => {
+      if (!currentUser?.uid) {
+        setLiveModeUsage({
+          monthlyCount: 0,
+          remaining: premiumService.LIVE_MODE_FREE_LIMIT,
+          isPremium: false,
+        });
+        return;
+      }
+
+      try {
+        const result = await premiumService.canUseLiveMode(currentUser.uid);
+        setLiveModeUsage({
+          monthlyCount: result.monthlyCount || 0,
+          remaining: result.remaining,
+          isPremium: result.isPremium,
+        });
+      } catch (err) {
+        console.error('Error loading Live Mode usage:', err);
+      }
+    };
+
+    loadUsage();
+  }, [currentUser?.uid]);
+
   // Start a new live session
   const startSession = useCallback(async (workId) => {
     if (!currentUser?.uid) throw new Error('User not authenticated');
@@ -234,9 +268,29 @@ export const LiveModeProvider = ({ children }) => {
     setError(null);
 
     try {
+      // Check Live Mode limit for free users
+      const usageResult = await premiumService.canUseLiveMode(currentUser.uid);
+
+      if (!usageResult.canUse) {
+        const errorMsg = `You have reached the limit of ${premiumService.LIVE_MODE_FREE_LIMIT} Live Mode sessions this month. Upgrade to Premium for unlimited sessions.`;
+        setError(errorMsg);
+        throw new Error(errorMsg);
+      }
+
       await requestNotificationPermission();
       const session = await liveSessionService.createLiveSession(currentUser.uid, workId);
       setLiveSession(session);
+
+      // Increment usage for free users
+      if (!usageResult.isPremium) {
+        await premiumService.incrementLiveModeUsage(currentUser.uid);
+        setLiveModeUsage({
+          monthlyCount: (usageResult.monthlyCount || 0) + 1,
+          remaining: Math.max(0, usageResult.remaining - 1),
+          isPremium: false,
+        });
+      }
+
       return session;
     } catch (err) {
       setError(err.message);
@@ -355,15 +409,6 @@ export const LiveModeProvider = ({ children }) => {
       const startTime = toLocalDate(liveSession.startedAt);
       const endTime = new Date();
 
-      // Debug logging
-      console.log('🕐 Live session finish debug:', {
-        rawStartedAt: liveSession.startedAt,
-        convertedStartTime: startTime.toString(),
-        endTime: endTime.toString(),
-        startTimeLocal: `${startTime.getFullYear()}-${String(startTime.getMonth() + 1).padStart(2, '0')}-${String(startTime.getDate()).padStart(2, '0')} ${startTime.getHours()}:${startTime.getMinutes()}`,
-        endTimeLocal: `${endTime.getFullYear()}-${String(endTime.getMonth() + 1).padStart(2, '0')}-${String(endTime.getDate()).padStart(2, '0')} ${endTime.getHours()}:${endTime.getMinutes()}`,
-      });
-
       // Calculate final pause duration
       let finalPauseDuration = liveSession.totalPauseDuration || 0;
       if (liveSession.status === 'paused' && liveSession.pausedAt) {
@@ -403,20 +448,6 @@ export const LiveModeProvider = ({ children }) => {
         breakMinutes: smokoMinutesToDeduct > 0 ? smokoMinutesToDeduct : 0,
       };
 
-      // Debug logging - this will help identify timezone issues
-      console.log('📝 Shift data being saved:', {
-        ...shiftData,
-        debugInfo: {
-          startTimeObj: startTime.toString(),
-          endTimeObj: endTime.toString(),
-          timezoneOffset: startTime.getTimezoneOffset(),
-          localStartDate: startDate,
-          localEndDate: endDate,
-          localStartTime: formatTime(startTime),
-          localEndTime: formatTime(endTime),
-        }
-      });
-
       // Add the shift
       await firebaseService.addShift(currentUser.uid, shiftData, false);
 
@@ -427,8 +458,6 @@ export const LiveModeProvider = ({ children }) => {
       setLiveSession(null);
       setElapsedTime(0);
       setCurrentEarnings(0);
-
-      console.log('✅ Live session finished and shift created');
     } catch (err) {
       setError(err.message);
       throw err;
@@ -479,6 +508,10 @@ export const LiveModeProvider = ({ children }) => {
     // Formatted values
     formattedTime,
     formattedEarnings,
+
+    // Premium/Usage state
+    liveModeUsage,
+    liveModeLimit: premiumService.LIVE_MODE_FREE_LIMIT,
 
     // Actions
     startSession,

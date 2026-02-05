@@ -3,6 +3,15 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// Premium button colors (imported inline to avoid circular deps)
+const PREMIUM_BTN_COLORS = {
+  primary: '#D4A000',
+  light: '#F5C518',
+  lighter: '#FFF3CD',
+  text: '#1a1a1a',
+};
+
+
 const Button = ({
   children,
   onClick,
@@ -25,21 +34,29 @@ const Button = ({
   const isGhost = variant === 'ghost' || variant === 'ghost-animated';
   const isOutline = variant === 'outline';
   const isSecondary = variant === 'secondary';
+  const isPremium = variant === 'premium';
+  const isCancel = variant === 'cancel';
 
   const shouldAnimateIcon = animatedChevron || variant === 'ghost-animated';
-  
+
   const heightMap = { sm: '32px', md: '44px', lg: '52px' };
   const fontSizeClasses = { sm: 'text-xs', md: 'text-sm', lg: 'text-base' };
-  
+
   const currentHeight = heightMap[size] || heightMap.md;
   const currentFontSize = fontSizeClasses[size] || fontSizeClasses.md;
-  const mainColor = themeColor || '#EC4899'; 
+  const mainColor = themeColor || '#EC4899';
 
   let currentBgColor = mainColor;
   let currentTextColor = 'white';
   let currentBorder = 'none';
+  let isPremiumGradient = false;
 
-  if (isGhost) {
+  if (isPremium) {
+    // Premium variant with gold gradient
+    isPremiumGradient = true;
+    currentTextColor = PREMIUM_BTN_COLORS.text;
+    currentBorder = 'none';
+  } else if (isGhost) {
     currentBgColor = 'transparent';
     currentTextColor = mainColor;
   } else if (isOutline) {
@@ -50,17 +67,32 @@ const Button = ({
     currentBgColor = 'white';
     currentTextColor = '#4B5563';
     currentBorder = `1px solid #E5E7EB`;
+  } else if (isCancel) {
+    // Cancel variant - transparent background, dark gray text (like ghost but gray)
+    currentBgColor = 'transparent';
+    currentTextColor = '#4B5563';
+    currentBorder = 'none';
   }
 
   const dynamicStyles = {
     ...style,
     height: currentHeight,
-    backgroundColor: bgColor || currentBgColor,
+    backgroundColor: isPremiumGradient ? undefined : (bgColor || currentBgColor),
     color: textColor || currentTextColor,
     border: currentBorder,
     minWidth: collapsed ? currentHeight : 'auto',
     padding: collapsed ? 0 : (size === 'sm' ? '0 0.75rem' : '0 1rem'),
     borderRadius: collapsed ? '9999px' : '12px',
+    // Premium gradient styles (no animation - solid gradient)
+    ...(isPremiumGradient && {
+      background: `linear-gradient(
+        135deg,
+        ${PREMIUM_BTN_COLORS.primary} 0%,
+        ${PREMIUM_BTN_COLORS.light} 50%,
+        ${PREMIUM_BTN_COLORS.primary} 100%
+      )`,
+      boxShadow: '0 4px 14px rgba(212, 160, 0, 0.4)',
+    }),
   };
 
   const renderIcon = (isForLoading = false) => (
@@ -87,20 +119,21 @@ const Button = ({
   );
 
   return (
-    <motion.button
-      layout
-      onClick={onClick}
-      disabled={disabled || loading}
-      initial={false}
-      className={`relative flex items-center justify-center overflow-hidden transition-all 
-        ${currentFontSize} font-medium
-        ${isGhost ? 'hover:bg-gray-100/10' : 'shadow-sm hover:shadow-md'} 
-        ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''}
-        ${className}`}
-      style={dynamicStyles}
-      transition={{ layout: { duration: 0.4, type: "spring", bounce: 0, stiffness: 300, damping: 30 } }}
-      {...props}
-    >
+      <motion.button
+        layout
+        onClick={onClick}
+        disabled={disabled || loading}
+        initial={false}
+        className={`relative flex items-center justify-center overflow-hidden transition-all
+          ${currentFontSize} font-medium
+          ${(isGhost || isCancel) ? 'hover:bg-gray-500/10' : 'shadow-sm hover:shadow-md'}
+          ${isPremium ? 'hover:scale-[1.02] hover:shadow-lg font-semibold' : ''}
+          ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''}
+          ${className}`}
+        style={dynamicStyles}
+        transition={{ layout: { duration: 0.4, type: "spring", bounce: 0, stiffness: 300, damping: 30 } }}
+        {...props}
+      >
       <motion.div 
         layout 
         className="flex items-center justify-center"

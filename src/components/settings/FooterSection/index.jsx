@@ -12,9 +12,9 @@ const FooterSection = () => {
       <div className="flex flex-col items-end gap-4">
         <div className="flex flex-wrap justify-end items-center gap-x-4 gap-y-2 text-xs sm:text-sm text-gray-500">
           
-          <button 
+          <button
             className="group flex items-center gap-1.5 font-bold text-amber-500 hover:text-amber-600 transition-colors cursor-pointer"
-            onClick={() => console.log('Open premium modal')}
+            onClick={() => navigate('/premium')}
           >
             <Crown size={14} className="group-hover:scale-110 transition-transform fill-current" />
             <span>Premium</span>

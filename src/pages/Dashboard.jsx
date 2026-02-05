@@ -61,8 +61,8 @@ const Dashboard = () => {
       } else if (format === 'xlsx') {
         await generateXLSXReport(stats, stats.allShifts, stats.allWorks, calculatePayment);
       }
-    } catch (error) {
-      console.error('Error exporting report:', error);
+    } catch {
+      // Export error - silently handled
     }
   };
 

@@ -2,13 +2,15 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle, Pencil, CircleDotDashed } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle, Pencil, CircleDotDashed, Crown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../../../contexts/AppContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useLiveModeContext } from '../../../contexts/LiveModeContext';
+import { usePremium, PREMIUM_COLORS } from '../../../contexts/PremiumContext';
 import LiveModeActiveModal from '../../modals/liveMode/LiveModeActiveModal';
+import PremiumModal from '../../modals/premium/PremiumModal';
 
 import Flex from '../../ui/Flex';
 
@@ -22,12 +24,14 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
   const { profilePhotoURL, updateProfilePhoto } = useAuth();
   const colors = useThemeColors();
   const { isActive: isLiveModeActive, formattedTime, isPaused, selectedWork: liveWork } = useLiveModeContext();
+  const { isPremium } = usePremium();
   const [isPhotoLoading, setIsPhotoLoading] = useState(false);
 
   // Tooltip state
   const [showTooltip, setShowTooltip] = useState(false);
   const [showPhotoEdit, setShowPhotoEdit] = useState(false);
   const [isLiveModalOpen, setIsLiveModalOpen] = useState(false);
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -411,42 +415,87 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
           </div>
         </nav>
 
-        {/* LIVE MODE INDICATOR - Only when active */}
-        {isLiveModeActive && (
-          <div className="px-4 pb-2">
-            <motion.button
-              onClick={() => setIsLiveModalOpen(true)}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all"
-              style={{
-                backgroundColor: colors.transparent10,
-                color: colors.primary,
-              }}
-              whileHover={{ scale: 1.02, backgroundColor: colors.transparent20 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <motion.div
-                animate={isPaused ? {} : { rotate: 360 }}
-                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+        {/* PREMIUM / LIVE MODE SECTION - Desktop only */}
+        <div className="px-4 pb-2">
+          <AnimatePresence mode="wait">
+            {isLiveModeActive ? (
+              // Live Mode Indicator
+              <motion.button
+                key="livemode"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                onClick={() => setIsLiveModalOpen(true)}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all"
+                style={{
+                  backgroundColor: colors.transparent10,
+                  color: colors.primary,
+                }}
+                whileHover={{ scale: 1.02, backgroundColor: colors.transparent20 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <CircleDotDashed size={20} className="text-red-500" />
-              </motion.div>
-              <div className="flex-1 text-left">
-                <p className="text-xs text-gray-500 font-normal">
-                  {isPaused ? 'Paused' : 'Live Mode'}
-                </p>
-                <p className="font-semibold font-mono text-sm">
-                  {formattedTime?.formatted || '00:00:00'}
-                </p>
-              </div>
-              {liveWork && (
-                <div
-                  className="w-3 h-3 rounded-full flex-shrink-0"
-                  style={{ backgroundColor: liveWork.color || colors.primary }}
-                />
-              )}
-            </motion.button>
-          </div>
-        )}
+                <motion.div
+                  animate={isPaused ? {} : { rotate: 360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                >
+                  <CircleDotDashed size={20} className="text-red-500" />
+                </motion.div>
+                <div className="flex-1 text-left">
+                  <p className="text-xs text-gray-500 font-normal">
+                    {isPaused ? 'Paused' : 'Live Mode'}
+                  </p>
+                  <p className="font-semibold font-mono text-sm">
+                    {formattedTime?.formatted || '00:00:00'}
+                  </p>
+                </div>
+                {liveWork && (
+                  <div
+                    className="w-3 h-3 rounded-full flex-shrink-0"
+                    style={{ backgroundColor: liveWork.color || colors.primary }}
+                  />
+                )}
+              </motion.button>
+            ) : !isPremium ? (
+              // Premium Upgrade Button (only for free users)
+              <motion.button
+                key="premium"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                onClick={() => setIsPremiumModalOpen(true)}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all"
+                style={{
+                  backgroundColor: PREMIUM_COLORS.lighter,
+                  color: PREMIUM_COLORS.primary,
+                  border: `1px solid ${PREMIUM_COLORS.light}`,
+                }}
+                whileHover={{
+                  scale: 1.02,
+                  boxShadow: `0 4px 12px ${PREMIUM_COLORS.primary}30`,
+                }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Crown size={20} style={{ color: PREMIUM_COLORS.gold }} />
+                <div className="flex-1 text-left">
+                  <p className="text-xs opacity-70 font-normal">
+                    Unlock all features
+                  </p>
+                  <p className="font-semibold text-sm">
+                    Upgrade to Premium
+                  </p>
+                </div>
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
+                </motion.div>
+              </motion.button>
+            ) : null}
+          </AnimatePresence>
+        </div>
 
         {/* SIDEBAR FOOTER */}
         <div className="p-4 border-t border-gray-100">
@@ -466,6 +515,12 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
       <LiveModeActiveModal
         isOpen={isLiveModalOpen}
         onClose={() => setIsLiveModalOpen(false)}
+      />
+
+      {/* Premium Modal */}
+      <PremiumModal
+        isOpen={isPremiumModalOpen}
+        onClose={() => setIsPremiumModalOpen(false)}
       />
     </>
   );

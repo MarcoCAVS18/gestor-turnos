@@ -2,8 +2,9 @@
 // Modal to start a new Live Mode session - Styled like FeatureAnnouncementCard
 
 import React, { useState, useMemo } from 'react';
-import { Play, Briefcase, AlertCircle, X, Timer, Sparkles } from 'lucide-react';
+import { Play, Briefcase, AlertCircle, X, Timer, Sparkles, Crown, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import Flex from '../../../ui/Flex';
 import Button from '../../../ui/Button';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
@@ -11,15 +12,21 @@ import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { useDataContext } from '../../../../contexts/DataContext';
 import { useLiveMode } from '../../../../hooks/useLiveMode';
 import { generateColorVariations } from '../../../../utils/colorUtils';
+import { PREMIUM_COLORS } from '../../../../contexts/PremiumContext';
 
 const LiveModeStartModal = ({ isOpen, onClose }) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const { works } = useDataContext();
-  const { startSession, isActive, loading, error } = useLiveMode();
+  const { startSession, isActive, loading, error, liveModeUsage, liveModeLimit } = useLiveMode();
 
   const [selectedWorkId, setSelectedWorkId] = useState('');
   const [localError, setLocalError] = useState(null);
+
+  // Check if user is premium
+  const isPremium = liveModeUsage?.isPremium || false;
+  const remaining = liveModeUsage?.remaining ?? liveModeLimit;
 
   // Filter only regular works (not delivery)
   const regularWorks = useMemo(() => {
@@ -263,6 +270,60 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
               </motion.div>
             )}
 
+            {/* Usage indicator for free users */}
+            {!isPremium && remaining > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20"
+              >
+                <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
+                <span className="text-sm text-white/80">
+                  <span className="font-semibold text-white">{remaining}</span> session{remaining !== 1 ? 's' : ''} remaining this month
+                </span>
+              </motion.div>
+            )}
+
+            {/* Premium upgrade prompt when limit reached */}
+            {!isPremium && remaining <= 0 && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-4 rounded-xl backdrop-blur-sm border-2"
+                style={{
+                  background: `linear-gradient(135deg, ${PREMIUM_COLORS.lighter}40 0%, ${PREMIUM_COLORS.primary}30 100%)`,
+                  borderColor: PREMIUM_COLORS.gold,
+                }}
+              >
+                <div className="flex items-start gap-3 mb-3">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{ backgroundColor: PREMIUM_COLORS.gold }}
+                  >
+                    <Crown size={20} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">Monthly limit reached</p>
+                    <p className="text-sm text-white/80 mt-0.5">
+                      Upgrade to Premium for unlimited Live Mode sessions
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant="premium"
+                  onClick={() => {
+                    onClose();
+                    navigate('/premium');
+                  }}
+                  className="w-full"
+                  icon={ArrowRight}
+                  iconPosition="right"
+                >
+                  Upgrade to Premium
+                </Button>
+              </motion.div>
+            )}
+
             {/* Action buttons */}
             <div className="flex gap-3 pt-2">
               <Button
@@ -277,7 +338,7 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
                 onClick={handleStart}
                 loading={loading}
                 loadingText="Starting..."
-                disabled={!selectedWorkId || isActive || loading}
+                disabled={!selectedWorkId || isActive || loading || (!isPremium && remaining <= 0)}
                 className="flex-1 bg-white hover:bg-gray-50 font-semibold shadow-lg"
                 themeColor={colors.primary}
                 icon={Play}

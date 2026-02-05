@@ -49,9 +49,7 @@ export const createLiveSession = async (userId, workId) => {
     updatedAt: serverTimestamp(),
   };
 
-  console.log('🎬 Creating live session:', sessionData);
   const docRef = await addDoc(liveSessionsRef, sessionData);
-  console.log('✅ Live session created with ID:', docRef.id);
 
   return {
     id: docRef.id,
@@ -109,9 +107,7 @@ export const pauseLiveSession = async (sessionId) => {
     updatedAt: serverTimestamp(),
   };
 
-  console.log('⏸️ Pausing live session:', sessionId);
   await updateDoc(sessionRef, updateData);
-  console.log('✅ Live session paused');
 };
 
 // ============================================================================
@@ -131,9 +127,7 @@ export const resumeLiveSession = async (sessionId, currentPauseDuration) => {
     updatedAt: serverTimestamp(),
   };
 
-  console.log('▶️ Resuming live session:', sessionId, 'Total pause duration:', currentPauseDuration);
   await updateDoc(sessionRef, updateData);
-  console.log('✅ Live session resumed');
 };
 
 // ============================================================================
@@ -153,9 +147,7 @@ export const completeLiveSession = async (sessionId, finalPauseDuration) => {
     updatedAt: serverTimestamp(),
   };
 
-  console.log('🏁 Completing live session:', sessionId);
   await updateDoc(sessionRef, updateData);
-  console.log('✅ Live session completed');
 };
 
 // ============================================================================
@@ -168,9 +160,7 @@ export const deleteLiveSession = async (sessionId) => {
   const liveSessionsRef = getLiveSessionsRef();
   const sessionRef = doc(liveSessionsRef, sessionId);
 
-  console.log('🗑️ Deleting live session:', sessionId);
   await deleteDoc(sessionRef);
-  console.log('✅ Live session deleted');
 };
 
 // ============================================================================

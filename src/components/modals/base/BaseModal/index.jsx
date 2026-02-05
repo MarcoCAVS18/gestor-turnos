@@ -160,11 +160,10 @@ const BaseModal = ({
               ${isMobile ? 'flex flex-col-reverse gap-2' : 'flex justify-end gap-3'}
             `}>
               <Button
-                variant="outline"
+                variant="cancel"
                 onClick={onCancel}
                 disabled={loading}
                 isMobile={isMobile}
-                themeColor={colors.primary}
                 className={isMobile ? '' : 'flex-none'}
               >
                 {cancelText}

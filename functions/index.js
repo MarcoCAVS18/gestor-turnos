@@ -6,6 +6,9 @@ const { google } = require('googleapis');
 const cors = require('cors')({ origin: true });
 require('dotenv').config();
 
+// Initialize Stripe
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 admin.initializeApp();
 const db = admin.firestore();
 
@@ -465,4 +468,279 @@ exports.syncAllShiftsToCalendar = functions.https.onRequest((req, res) => {
       res.status(500).json({ error: 'Failed to sync shifts' });
     }
   });
+});
+
+// ============================================
+// STRIPE FUNCTIONS - Premium Subscriptions
+// ============================================
+
+/**
+ * Create a Stripe Customer and Subscription
+ * Called when user submits payment form
+ */
+exports.createSubscription = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      // Verify Firebase Auth token
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const idToken = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const userId = decodedToken.uid;
+
+      const { paymentMethodId, email, name } = req.body;
+
+      if (!paymentMethodId || !email) {
+        return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      // Check if user already has a Stripe customer ID
+      const userDoc = await db.collection('users').doc(userId).get();
+      const userData = userDoc.data() || {};
+      let customerId = userData.subscription?.stripeCustomerId;
+
+      // Create or retrieve Stripe customer
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email: email,
+          name: name || undefined,
+          payment_method: paymentMethodId,
+          invoice_settings: {
+            default_payment_method: paymentMethodId,
+          },
+          metadata: {
+            firebaseUserId: userId,
+          },
+        });
+        customerId = customer.id;
+      } else {
+        // Attach new payment method to existing customer
+        await stripe.paymentMethods.attach(paymentMethodId, {
+          customer: customerId,
+        });
+        await stripe.customers.update(customerId, {
+          invoice_settings: {
+            default_payment_method: paymentMethodId,
+          },
+        });
+      }
+
+      // Create subscription with automatic invoicing
+      // IMPORTANT: Replace 'price_XXXXX' with your actual Stripe Price ID
+      // Create this in Stripe Dashboard: Products > Add product > $1.99/month recurring
+      const subscription = await stripe.subscriptions.create({
+        customer: customerId,
+        items: [{ price: process.env.STRIPE_PRICE_ID || 'price_XXXXX' }],
+        payment_behavior: 'default_incomplete',
+        payment_settings: {
+          payment_method_types: ['card'],
+          save_default_payment_method: 'on_subscription',
+        },
+        expand: ['latest_invoice.payment_intent'],
+        metadata: {
+          firebaseUserId: userId,
+        },
+      });
+
+      const invoice = subscription.latest_invoice;
+      const paymentIntent = invoice.payment_intent;
+
+      // If payment requires action (3D Secure, etc.)
+      if (paymentIntent.status === 'requires_action') {
+        return res.json({
+          status: 'requires_action',
+          clientSecret: paymentIntent.client_secret,
+          subscriptionId: subscription.id,
+        });
+      }
+
+      // Payment successful - update Firestore
+      if (paymentIntent.status === 'succeeded') {
+        const now = new Date();
+        const expiryDate = new Date(subscription.current_period_end * 1000);
+
+        await db.collection('users').doc(userId).update({
+          subscription: {
+            isPremium: true,
+            plan: 'premium',
+            status: 'active',
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscription.id,
+            startDate: now,
+            expiryDate: expiryDate,
+            paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
+          },
+        });
+
+        return res.json({
+          status: 'success',
+          subscriptionId: subscription.id,
+          message: 'Subscription created successfully! Invoice sent to your email.',
+        });
+      }
+
+      // Payment pending or failed
+      res.json({
+        status: paymentIntent.status,
+        subscriptionId: subscription.id,
+      });
+    } catch (error) {
+      console.error('Error creating subscription:', error);
+      res.status(500).json({
+        error: error.message || 'Failed to create subscription',
+      });
+    }
+  });
+});
+
+/**
+ * Cancel a subscription
+ */
+exports.cancelSubscription = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const idToken = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const userId = decodedToken.uid;
+
+      const userDoc = await db.collection('users').doc(userId).get();
+      const userData = userDoc.data();
+      const subscriptionId = userData?.subscription?.stripeSubscriptionId;
+
+      if (!subscriptionId) {
+        return res.status(400).json({ error: 'No active subscription found' });
+      }
+
+      // Cancel at period end (user keeps access until paid period ends)
+      await stripe.subscriptions.update(subscriptionId, {
+        cancel_at_period_end: true,
+      });
+
+      // Update Firestore
+      await db.collection('users').doc(userId).update({
+        'subscription.status': 'cancelling',
+      });
+
+      res.json({
+        status: 'success',
+        message: 'Subscription will be cancelled at the end of the billing period',
+      });
+    } catch (error) {
+      console.error('Error cancelling subscription:', error);
+      res.status(500).json({ error: 'Failed to cancel subscription' });
+    }
+  });
+});
+
+/**
+ * Stripe Webhook - Handle subscription events
+ * Set this URL in Stripe Dashboard: Webhooks > Add endpoint
+ */
+exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+  let event;
+
+  try {
+    // Verify webhook signature
+    if (endpointSecret) {
+      event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
+    } else {
+      // For testing without webhook signature verification
+      event = req.body;
+    }
+  } catch (err) {
+    console.error('Webhook signature verification failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case 'invoice.paid': {
+      const invoice = event.data.object;
+      const customerId = invoice.customer;
+
+      // Find user by Stripe customer ID
+      const usersSnapshot = await db.collection('users')
+        .where('subscription.stripeCustomerId', '==', customerId)
+        .limit(1)
+        .get();
+
+      if (!usersSnapshot.empty) {
+        const userDoc = usersSnapshot.docs[0];
+        const subscription = await stripe.subscriptions.retrieve(invoice.subscription);
+
+        await userDoc.ref.update({
+          'subscription.isPremium': true,
+          'subscription.status': 'active',
+          'subscription.expiryDate': new Date(subscription.current_period_end * 1000),
+        });
+
+        console.log(`Invoice paid for user ${userDoc.id}`);
+      }
+      break;
+    }
+
+    case 'invoice.payment_failed': {
+      const invoice = event.data.object;
+      const customerId = invoice.customer;
+
+      const usersSnapshot = await db.collection('users')
+        .where('subscription.stripeCustomerId', '==', customerId)
+        .limit(1)
+        .get();
+
+      if (!usersSnapshot.empty) {
+        const userDoc = usersSnapshot.docs[0];
+        await userDoc.ref.update({
+          'subscription.status': 'past_due',
+        });
+        console.log(`Payment failed for user ${userDoc.id}`);
+      }
+      break;
+    }
+
+    case 'customer.subscription.deleted': {
+      const subscription = event.data.object;
+      const customerId = subscription.customer;
+
+      const usersSnapshot = await db.collection('users')
+        .where('subscription.stripeCustomerId', '==', customerId)
+        .limit(1)
+        .get();
+
+      if (!usersSnapshot.empty) {
+        const userDoc = usersSnapshot.docs[0];
+        await userDoc.ref.update({
+          'subscription.isPremium': false,
+          'subscription.status': 'cancelled',
+          'subscription.plan': 'free',
+        });
+        console.log(`Subscription cancelled for user ${userDoc.id}`);
+      }
+      break;
+    }
+
+    default:
+      console.log(`Unhandled event type: ${event.type}`);
+  }
+
+  res.json({ received: true });
 });

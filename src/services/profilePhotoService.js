@@ -72,9 +72,8 @@ export const uploadProfilePhoto = async (userId, file) => {
  * @param {string} photoURL - URL of the profile photo to delete
  */
 export const deleteProfilePhoto = async (photoURL) => {
-  // If there is no URL, there is nothing to do
+  // If there is no URL or it's the default logo, nothing to do
   if (!photoURL || photoURL.includes('logo.svg')) {
-    console.log('No profile photo to delete or it is the default one.');
     return;
   }
 

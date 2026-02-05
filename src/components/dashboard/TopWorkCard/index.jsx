@@ -9,7 +9,23 @@ import Flex from '../../ui/Flex';
 const TopWorkCard = ({ mostProfitableWork }) => {
   const colors = useThemeColors();
 
-  if (!mostProfitableWork) return null;
+  // Empty state
+  if (!mostProfitableWork) {
+    return (
+      <Card>
+        <h3 className="text-lg font-semibold mb-4 flex items-center">
+          <Award size={20} style={{ color: colors.primary }} className="mr-2" />
+          Most profitable work
+        </h3>
+        <Flex variant="center" className="py-4">
+          <div className="text-center text-gray-400">
+            <Award size={32} className="mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No data yet</p>
+          </div>
+        </Flex>
+      </Card>
+    );
+  }
 
   return (
     <Card>
