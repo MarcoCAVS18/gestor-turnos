@@ -74,6 +74,7 @@ const Works = () => {
     allWorks,
     isModalOpen,
     selectedWork,
+    defaultWorkType,
     thematicColors,
     sharing,
     messages,
@@ -108,7 +109,7 @@ const Works = () => {
           title="Works"
           subtitle="Manage your different jobs or employments."
           icon={Briefcase}
-          action={{ onClick: openNewModal, icon: Plus, label: 'New Work' }}
+          action={{ onClick: () => openNewModal(), icon: Plus, label: 'New Work' }}
         />
 
         {/* Main content - Always show grids */}
@@ -155,7 +156,7 @@ const Works = () => {
               {traditionalWorks.length === 0 && (
                 <>
                   <EmptyWorkCard
-                    onClick={openNewModal}
+                    onClick={() => openNewModal('traditional')}
                     icon={Briefcase}
                     title="Add your first job"
                     subtitle="Create a work to start tracking"
@@ -166,7 +167,7 @@ const Works = () => {
                     <PremiumLockedCard onClick={handlePremiumClick} />
                   ) : (
                     <EmptyWorkCard
-                      onClick={openNewModal}
+                      onClick={() => openNewModal('traditional')}
                       icon={Briefcase}
                       title="Add another job"
                       subtitle="Track multiple jobs"
@@ -215,14 +216,14 @@ const Works = () => {
               {deliveryWorks.length === 0 && (
                 <>
                   <EmptyWorkCard
-                    onClick={openNewModal}
+                    onClick={() => openNewModal('delivery')}
                     icon={Truck}
                     title="Add delivery platform"
                     subtitle="Track your deliveries"
                     themeColor={deliveryColor}
                   />
                   <EmptyWorkCard
-                    onClick={openNewModal}
+                    onClick={() => openNewModal('delivery')}
                     icon={Truck}
                     title="Add another platform"
                     subtitle="Multiple apps supported"
@@ -234,7 +235,7 @@ const Works = () => {
               {/* Show one empty card if only one delivery work */}
               {deliveryWorks.length === 1 && (
                 <EmptyWorkCard
-                  onClick={openNewModal}
+                  onClick={() => openNewModal('delivery')}
                   icon={Truck}
                   title="Add another platform"
                   subtitle="Multiple apps supported"
@@ -251,6 +252,7 @@ const Works = () => {
         isOpen={isModalOpen}
         onClose={closeModal}
         work={selectedWork}
+        defaultWorkType={defaultWorkType}
       />
 
       <DeleteAlert

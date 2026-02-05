@@ -68,11 +68,11 @@ const Card = ({
 
   const getVariantClasses = () => {
     const variants = {
-      default: 'bg-white border-gray-200',
-      elevated: 'bg-white',
-      outlined: 'bg-white border-2 border-gray-300',
+      default: 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700',
+      elevated: 'bg-white dark:bg-slate-800',
+      outlined: 'bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-slate-600',
       ghost: 'bg-transparent',
-      gradient: 'bg-gradient-to-br from-white to-gray-50 border-gray-200',
+      gradient: 'bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 border-gray-200 dark:border-slate-700',
       transparent: 'bg-transparent border-none shadow-none'
     };
     return variants[variant] || variants.default;

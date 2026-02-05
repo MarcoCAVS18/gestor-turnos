@@ -18,6 +18,7 @@ export const useWorks = () => {
   const { shareWork, sharing, messages } = useShare();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWork, setSelectedWork] = useState(null);
+  const [defaultWorkType, setDefaultWorkType] = useState(null);
 
   // Combine all works
   const allWorks = useMemo(() => {
@@ -49,19 +50,23 @@ export const useWorks = () => {
   };
 
   // Modal functions
-  const openNewModal = () => {
+  // type: 'traditional' | 'delivery' | null (null shows selector)
+  const openNewModal = (type = null) => {
     setSelectedWork(null);
+    setDefaultWorkType(type);
     setIsModalOpen(true);
   };
 
   const openEditModal = (work) => {
     setSelectedWork(work);
+    setDefaultWorkType(null);
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedWork(null);
+    setDefaultWorkType(null);
   };
 
   return {
@@ -70,6 +75,7 @@ export const useWorks = () => {
     allWorks,
     isModalOpen,
     selectedWork,
+    defaultWorkType,
     thematicColors,
     sharing,
     messages,
@@ -79,7 +85,7 @@ export const useWorks = () => {
     openEditModal,
     closeModal,
     handleShareWork,
-    
+
     // Delete manager
     deleteManager
   };

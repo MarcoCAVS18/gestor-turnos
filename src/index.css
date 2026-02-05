@@ -206,3 +206,199 @@ input[type="date"]:focus {
     }
   }
 }
+
+/* ============================================================================
+   DARK MODE STYLES
+   ============================================================================ */
+
+/* CSS Variables for theming */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-modal: #ffffff;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-tertiary: #6b7280;
+  --text-muted: #9ca3af;
+
+  --border-primary: #e5e7eb;
+  --border-secondary: #d1d5db;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --bg-card: #1e293b;
+  --bg-input: #1e293b;
+  --bg-modal: #1e293b;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #e2e8f0;
+  --text-tertiary: #94a3b8;
+  --text-muted: #64748b;
+
+  --border-primary: #334155;
+  --border-secondary: #475569;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+/* Global Dark Mode Styles */
+.dark body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Cards and Containers */
+.dark .bg-white {
+  background-color: var(--bg-card) !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: var(--bg-secondary) !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Text Colors */
+.dark .text-gray-900,
+.dark .text-gray-800 {
+  color: var(--text-primary) !important;
+}
+
+.dark .text-gray-700,
+.dark .text-gray-600 {
+  color: var(--text-secondary) !important;
+}
+
+.dark .text-gray-500 {
+  color: var(--text-tertiary) !important;
+}
+
+.dark .text-gray-400 {
+  color: var(--text-muted) !important;
+}
+
+/* Borders */
+.dark .border-gray-200,
+.dark .border-gray-100 {
+  border-color: var(--border-primary) !important;
+}
+
+.dark .border-gray-300 {
+  border-color: var(--border-secondary) !important;
+}
+
+/* Inputs in dark mode */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-secondary) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark input::placeholder,
+.dark select::placeholder,
+.dark textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  background-color: var(--bg-input) !important;
+  border-color: transparent !important;
+}
+
+/* Modal dark mode */
+.dark .modal input,
+.dark .modal select,
+.dark .modal textarea {
+  background-color: var(--bg-tertiary) !important;
+  border-color: var(--border-secondary) !important;
+}
+
+/* Inputs de tiempo y fecha en dark mode */
+.dark input[type="time"],
+.dark input[type="date"] {
+  background-color: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Mobile modal dark mode */
+@media (max-width: 767px) {
+  .dark .mobile-modal .modal-header {
+    background: var(--bg-card);
+    border-bottom-color: var(--border-primary);
+  }
+
+  .dark .mobile-modal .modal-footer {
+    background: var(--bg-card);
+    border-top-color: var(--border-primary);
+  }
+}
+
+/* Hover states */
+.dark .hover\:bg-gray-50:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.dark .hover\:bg-gray-100:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Dividers */
+.dark .divide-gray-200 > * + * {
+  border-color: var(--border-primary);
+}
+
+/* Ring colors in dark mode */
+.dark .ring-gray-200 {
+  --tw-ring-color: var(--border-primary);
+}
+
+/* Focus ring */
+.dark .focus\:ring-gray-200:focus {
+  --tw-ring-color: var(--border-secondary);
+}
+
+/* Backdrop */
+.dark .bg-black\/50,
+.dark .bg-black\/60 {
+  background-color: var(--bg-overlay) !important;
+}
+
+/* Scrollbar dark mode */
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--border-secondary);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

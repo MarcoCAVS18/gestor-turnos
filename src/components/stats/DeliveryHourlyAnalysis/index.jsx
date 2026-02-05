@@ -2,18 +2,20 @@
 
 import React, { useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, Sun, Moon, Sunset, Sunrise, BarChart2, PlusCircle } from 'lucide-react';
+import { Clock, Sun, Moon, Sunset, Sunrise, BarChart2, PlusCircle, Lock, Crown } from 'lucide-react';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 import Popover from '../../ui/Popover';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import { usePremium, PREMIUM_COLORS } from '../../../contexts/PremiumContext';
 import { formatCurrency } from '../../../utils/currency';
 import { calculateWeeklyHourlyDeliveryStats } from '../../../services/calculationService';
 
 const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
+  const { isPremium } = usePremium();
 
   // 1. Calculate base statistics
   const weeklyHourlyStats = useMemo(() => {
@@ -78,6 +80,96 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
   }, [maxTotalProfit, colors.primary]);
 
   const hasData = useMemo(() => weeklyHourlyStats.some(day => day.hourlyData.some(hour => hour.totalHours > 0)), [weeklyHourlyStats]);
+
+  // Premium locked state for non-premium users
+  if (!isPremium) {
+    return (
+      <Card className={`flex flex-col ${className} relative overflow-hidden`}>
+        <button
+          onClick={() => navigate('/premium')}
+          className="w-full text-left"
+        >
+          {/* Blur overlay */}
+          <div className="absolute inset-0 backdrop-blur-[2px] bg-white/60 z-10 rounded-xl" />
+
+          {/* Lock badge */}
+          <div
+            className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full"
+            style={{ backgroundColor: `${PREMIUM_COLORS.gold}20` }}
+          >
+            <Crown size={14} style={{ color: PREMIUM_COLORS.gold }} />
+            <span className="text-sm font-medium" style={{ color: PREMIUM_COLORS.primary }}>Premium</span>
+          </div>
+
+          {/* Blurred content preview */}
+          <div className="opacity-50">
+            <h3 className="text-lg font-semibold flex items-center mb-4">
+              <Clock size={20} style={{ color: colors.primary }} className="mr-2" />
+              Hourly Profitability
+            </h3>
+
+            {/* Fake heatmap preview */}
+            <div className="space-y-6">
+              {/* Fake best moment card */}
+              <div className="bg-gradient-to-r from-gray-50 to-white p-4 rounded-lg border border-gray-100">
+                <Flex variant="between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-yellow-100 rounded-full text-yellow-600">
+                      <Sun size={24} />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Best moment</p>
+                      <p className="font-bold text-gray-400 text-lg">--- --:-- - --:--</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-2xl font-bold text-gray-400">$--</span>
+                    <p className="text-xs text-gray-400">/hour</p>
+                  </div>
+                </Flex>
+              </div>
+
+              {/* Fake heatmap grid */}
+              <div className="w-full">
+                <div
+                  className="grid gap-x-[2px] gap-y-1"
+                  style={{ gridTemplateColumns: '40px repeat(12, 1fr)' }}
+                >
+                  <div className="text-[10px] text-gray-400">#</div>
+                  {Array.from({ length: 12 }).map((_, i) => (
+                    <div key={i} className="text-[10px] text-gray-400 text-center">
+                      {i * 2}h
+                    </div>
+                  ))}
+                  {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
+                    <React.Fragment key={day}>
+                      <div className="text-[11px] font-medium text-gray-400">{day}</div>
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <div
+                          key={i}
+                          className="w-full h-6 rounded-sm bg-gray-100"
+                        />
+                      ))}
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Center lock icon */}
+            <div className="absolute inset-0 flex items-center justify-center z-15 pointer-events-none">
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: `${PREMIUM_COLORS.gold}20` }}
+              >
+                <Lock size={28} style={{ color: PREMIUM_COLORS.gold }} />
+              </div>
+            </div>
+          </div>
+        </button>
+      </Card>
+    );
+  }
 
   if (!hasData) {
     return (

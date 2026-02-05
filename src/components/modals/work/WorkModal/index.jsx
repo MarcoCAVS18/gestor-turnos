@@ -9,7 +9,7 @@ import WorkForm from '../../../forms/work/WorkForm';
 import WorkTypeSelector from '../../base/WorkTypeSelector';
 import DeliveryWorkModal from '../DeliveryWorkModal';
 
-const WorkModal = ({ isOpen, onClose, work }) => {
+const WorkModal = ({ isOpen, onClose, work, defaultWorkType = null }) => {
   const { addJob, editJob, deliveryEnabled } = useApp();
   const isMobile = useIsMobile();
   const [showSelector, setShowSelector] = useState(false);
@@ -19,16 +19,24 @@ const WorkModal = ({ isOpen, onClose, work }) => {
 
   // Determine if showing selector
   useEffect(() => {
-    if (isOpen && !work && deliveryEnabled) {
-      setShowSelector(true);
-      setSelectedType(null);
-    } else {
-      setShowSelector(false);
-      if (isOpen && !work && !deliveryEnabled) {
+    if (isOpen && !work) {
+      // If a default type is provided, skip the selector
+      if (defaultWorkType) {
+        setShowSelector(false);
+        setSelectedType(defaultWorkType);
+      } else if (deliveryEnabled) {
+        // No default type, show selector if delivery is enabled
+        setShowSelector(true);
+        setSelectedType(null);
+      } else {
+        // Delivery not enabled, default to traditional
+        setShowSelector(false);
         setSelectedType('traditional');
       }
+    } else {
+      setShowSelector(false);
     }
-  }, [isOpen, work, deliveryEnabled]);
+  }, [isOpen, work, deliveryEnabled, defaultWorkType]);
 
   const handleSelectType = (type) => {
     setSelectedType(type);

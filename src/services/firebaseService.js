@@ -79,6 +79,7 @@ export const ensureUserDocument = async (user) => {
     deliveryEnabled: false,
     smokoEnabled: false,
     smokoMinutes: 30,
+    themeMode: 'light', // 'light' or 'dark' (dark is premium only)
     shiftRanges: {
       dayStart: 6,
       dayEnd: 14,
@@ -225,9 +226,18 @@ export const addJob = async (userUid, newJob, isDelivery = false) => {
       avatarColor: newJob.avatarColor || '#10B981',
     };
   } else {
-    // For regular jobs, add rates if provided
+    // For regular jobs, add all fields
     if (newJob.rates) {
       jobData.rates = newJob.rates;
+    }
+    if (newJob.baseRate !== undefined) {
+      jobData.baseRate = newJob.baseRate;
+    }
+    if (newJob.color) {
+      jobData.color = newJob.color;
+    }
+    if (newJob.description) {
+      jobData.description = newJob.description;
     }
   }
 
@@ -550,7 +560,7 @@ export const clearUserData = async (userUid) => {
   await Promise.all(workDeletePromises);
 
   // Update user document to mark data as cleared
-  // Also reset Google Calendar connection and other integration settings
+  // Also reset Google Calendar connection, Live Mode usage, and other integration settings
   // Using setDoc with merge to handle cases where user doc doesn't exist
   const userDocRef = getUserDocRef(userUid);
   await setDoc(userDocRef, {
@@ -560,6 +570,22 @@ export const clearUserData = async (userUid) => {
     // Reset integrations
     googleCalendarConnected: false,
     googleCalendarTokens: null,
+    // Reset Live Mode usage (give back free uses)
+    liveModeUsage: {
+      monthlyCount: 0,
+      lastResetDate: new Date(),
+    },
+    // Reset subscription if user wants fresh start
+    subscription: {
+      isPremium: false,
+      plan: 'free',
+      status: 'inactive',
+      startDate: null,
+      expiryDate: null,
+      paymentMethod: null,
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
+    },
   }, { merge: true });
 
   return {

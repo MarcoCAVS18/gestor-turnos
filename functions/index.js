@@ -532,12 +532,19 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         });
       }
 
+      // Check if STRIPE_PRICE_ID is configured
+      const priceId = process.env.STRIPE_PRICE_ID;
+      if (!priceId || priceId === 'price_XXXXX') {
+        console.error('STRIPE_PRICE_ID is not configured!');
+        return res.status(500).json({
+          error: 'Payment system not configured. Please contact support.',
+        });
+      }
+
       // Create subscription with automatic invoicing
-      // IMPORTANT: Replace 'price_XXXXX' with your actual Stripe Price ID
-      // Create this in Stripe Dashboard: Products > Add product > $1.99/month recurring
       const subscription = await stripe.subscriptions.create({
         customer: customerId,
-        items: [{ price: process.env.STRIPE_PRICE_ID || 'price_XXXXX' }],
+        items: [{ price: priceId }],
         payment_behavior: 'default_incomplete',
         payment_settings: {
           payment_method_types: ['card'],
@@ -550,7 +557,35 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
       });
 
       const invoice = subscription.latest_invoice;
-      const paymentIntent = invoice.payment_intent;
+      const paymentIntent = invoice?.payment_intent;
+
+      // Check if paymentIntent exists
+      if (!paymentIntent) {
+        console.error('No payment intent found for subscription:', subscription.id);
+        // Subscription was created but no payment needed (could be trial, etc.)
+        // Still update Firestore as premium
+        const now = admin.firestore.Timestamp.now();
+        const expiryDate = admin.firestore.Timestamp.fromMillis(subscription.current_period_end * 1000);
+
+        await db.collection('users').doc(userId).update({
+          subscription: {
+            isPremium: true,
+            plan: 'premium',
+            status: 'active',
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscription.id,
+            startDate: now,
+            expiryDate: expiryDate,
+            paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
+          },
+        });
+
+        return res.json({
+          status: 'success',
+          subscriptionId: subscription.id,
+          message: 'Subscription created successfully!',
+        });
+      }
 
       // If payment requires action (3D Secure, etc.)
       if (paymentIntent.status === 'requires_action') {
@@ -563,8 +598,8 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
 
       // Payment successful - update Firestore
       if (paymentIntent.status === 'succeeded') {
-        const now = new Date();
-        const expiryDate = new Date(subscription.current_period_end * 1000);
+        const now = admin.firestore.Timestamp.now();
+        const expiryDate = admin.firestore.Timestamp.fromMillis(subscription.current_period_end * 1000);
 
         await db.collection('users').doc(userId).update({
           subscription: {
@@ -588,7 +623,7 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
 
       // Payment pending or failed
       res.json({
-        status: paymentIntent.status,
+        status: paymentIntent.status || 'unknown',
         subscriptionId: subscription.id,
       });
     } catch (error) {
@@ -690,7 +725,7 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
         await userDoc.ref.update({
           'subscription.isPremium': true,
           'subscription.status': 'active',
-          'subscription.expiryDate': new Date(subscription.current_period_end * 1000),
+          'subscription.expiryDate': admin.firestore.Timestamp.fromMillis(subscription.current_period_end * 1000),
         });
 
         console.log(`Invoice paid for user ${userDoc.id}`);

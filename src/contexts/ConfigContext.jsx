@@ -26,6 +26,7 @@ export const ConfigProvider = ({ children }) => {
   const [deliveryEnabled, setDeliveryEnabled] = useState(false);
   const [smokoEnabled, setSmokoEnabled] = useState(false);
   const [smokoMinutes, setSmokoMinutes] = useState(30);
+  const [themeMode, setThemeMode] = useState('light'); // 'light' or 'dark'
   const [deliveryPlatforms, setDeliveryPlatforms] = useState(DELIVERY_PLATFORMS_AUSTRALIA);
   const [defaultDeliveryPlatform, setDefaultDeliveryPlatform] = useState(null);
   const [shiftRanges, setShiftRanges] = useState({
@@ -54,6 +55,7 @@ export const ConfigProvider = ({ children }) => {
             setSmokoMinutes(settings.smokoMinutes || 30);
             setDeliveryPlatforms(settings.deliveryPlatforms?.length > 0 ? settings.deliveryPlatforms : DELIVERY_PLATFORMS_AUSTRALIA);
             setDefaultDeliveryPlatform(settings.defaultDeliveryPlatform || null);
+            setThemeMode(settings.themeMode || 'light');
             setShiftRanges(settings.shiftRanges);
           }
         } catch (err) {
@@ -68,6 +70,15 @@ export const ConfigProvider = ({ children }) => {
     };
     loadConfig();
   }, [currentUser]);
+
+  // Apply theme mode to document body
+  useEffect(() => {
+    if (themeMode === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [themeMode]);
 
   // Generates color variations based on the primary color
   const thematicColors = useMemo(() => {
@@ -88,6 +99,7 @@ export const ConfigProvider = ({ children }) => {
       if (preferences.weeklyHoursGoal !== undefined) setWeeklyHoursGoal(preferences.weeklyHoursGoal);
       if (preferences.smokoEnabled !== undefined) setSmokoEnabled(preferences.smokoEnabled);
       if (preferences.smokoMinutes !== undefined) setSmokoMinutes(preferences.smokoMinutes);
+      if (preferences.themeMode !== undefined) setThemeMode(preferences.themeMode);
       if (preferences.deliveryPlatforms !== undefined) setDeliveryPlatforms(preferences.deliveryPlatforms);
       if (preferences.defaultDeliveryPlatform !== undefined) setDefaultDeliveryPlatform(preferences.defaultDeliveryPlatform);
 
@@ -111,6 +123,7 @@ export const ConfigProvider = ({ children }) => {
     deliveryEnabled,
     smokoEnabled,
     smokoMinutes,
+    themeMode,
     deliveryPlatforms,
     defaultDeliveryPlatform,
     shiftRanges,
