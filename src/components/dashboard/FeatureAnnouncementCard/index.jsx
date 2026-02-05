@@ -13,7 +13,8 @@ import {
   Square,
   CircleDotDashed,
   Plus,
-  Truck
+  Truck,
+  Crown
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -25,6 +26,7 @@ import { useLiveMode } from '../../../hooks/useLiveMode';
 import { useDataContext } from '../../../contexts/DataContext';
 import LiveModeFinishConfirmModal from '../../modals/liveMode/LiveModeFinishConfirmModal';
 import { useConfigContext } from '../../../contexts/ConfigContext';
+import { PREMIUM_COLORS } from '../../../contexts/PremiumContext';
 
 const FeatureAnnouncementCard = ({ onClick, onShowActive, className }) => {
   const colors = useThemeColors();
@@ -42,7 +44,9 @@ const FeatureAnnouncementCard = ({ onClick, onShowActive, className }) => {
     pauseSession,
     resumeSession,
     finishSession,
-    loading
+    loading,
+    liveModeUsage,
+    liveModeLimit
   } = useLiveMode();
 
   // Modal state for finish confirmation
@@ -327,6 +331,66 @@ const FeatureAnnouncementCard = ({ onClick, onShowActive, className }) => {
               Full control of your shifts in real time. Clock in, pause, and monitor your earnings instantly.
             </p>
           </div>
+
+          {/* Usage counter section */}
+          {liveModeUsage?.isPremium ? (
+            // Premium user badge
+            <div
+              className="flex items-center gap-2 rounded-lg px-3 py-2 w-fit"
+              style={{
+                backgroundColor: `${PREMIUM_COLORS.gold}30`,
+                border: `1px solid ${PREMIUM_COLORS.gold}50`
+              }}
+            >
+              <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
+              <span className="text-sm text-white font-semibold">
+                Unlimited Sessions
+              </span>
+            </div>
+          ) : (
+            // Free user - usage counter with progress
+            <div className="space-y-2">
+              <div
+                className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-lg px-3 py-2 w-fit"
+                style={(liveModeUsage?.remaining ?? liveModeLimit) <= 2 ? {
+                  backgroundColor: 'rgba(251, 191, 36, 0.2)',
+                  border: '1px solid rgba(251, 191, 36, 0.4)'
+                } : {}}
+              >
+                <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
+                <span className="text-sm text-white">
+                  <span className="font-semibold">{liveModeUsage?.remaining ?? liveModeLimit}</span>
+                  <span className="opacity-80">/{liveModeLimit} sessions this month</span>
+                </span>
+              </div>
+
+              {/* Progress bar */}
+              <div className="w-32 h-1.5 bg-white/20 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{
+                    width: `${((liveModeUsage?.remaining ?? liveModeLimit) / liveModeLimit) * 100}%`,
+                    backgroundColor: (liveModeUsage?.remaining ?? liveModeLimit) <= 2
+                      ? PREMIUM_COLORS.gold
+                      : 'white'
+                  }}
+                />
+              </div>
+
+              {/* Upgrade hint when running low */}
+              {(liveModeUsage?.remaining ?? liveModeLimit) <= 2 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate('/premium');
+                  }}
+                  className="text-xs text-white/80 hover:text-white underline underline-offset-2 transition-colors"
+                >
+                  Upgrade to Premium for unlimited →
+                </button>
+              )}
+            </div>
+          )}
 
           <div className="pt-2">
             <Button

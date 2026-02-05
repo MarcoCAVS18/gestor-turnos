@@ -34,6 +34,7 @@ import CalendarView from './pages/CalendarView';
 import Settings from './pages/Settings';
 import Integrations from './pages/Integrations';
 import SharedWork from './pages/SharedWork';
+import Premium from './pages/Premium';
 
 // Modals
 import WorkModal from './components/modals/work/WorkModal';
@@ -150,6 +151,7 @@ function App() {
           <Route path="/calendar" element={<CalendarView />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/integrations" element={<Integrations />} />
+          <Route path="/premium" element={<Premium />} />
           {/* Legal Pages */}
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />

@@ -1,7 +1,7 @@
 // src/components/dashboard/RecentActivityCard/index.jsx
 
 import React, { useMemo } from 'react';
-import { Activity, Briefcase, ChevronRight } from 'lucide-react'; 
+import { Activity, ChevronRight } from 'lucide-react'; 
 import { useNavigate } from 'react-router-dom';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../hooks/useIsMobile'; 
@@ -55,7 +55,7 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
         day: 'numeric',
         month: 'short'
       });
-    } catch (error) {
+    } catch {
       return dateStr;
     }
   };
@@ -74,8 +74,8 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
       try {
         const result = calculatePayment(shift);
         return result.totalWithDiscount || 0;
-      } catch (error) {
-        console.error('Error calculating shift earnings:', error);
+      } catch {
+        // Fallback to simple calculation
       }
     }
 
@@ -88,35 +88,22 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
     return hours * (work.baseRate || 0);
   };
 
-  // Empty state
+  // Empty state (like FavoriteWorksCard)
   if (recentShifts.length === 0) {
     return (
-      <Card className="h-full">
-        <Flex variant="between" className="mb-4">
-          <h3 className="text-base font-semibold flex items-center text-gray-800">
-            <Activity size={20} style={{ color: colors.primary }} className="mr-2" />
-            Recent
+      <Card className="flex flex-col h-full">
+        <Flex variant="between" className="mb-4 flex-nowrap gap-3">
+          <h3 className="text-base font-semibold flex items-center text-gray-800 truncate">
+            <Activity size={20} style={{ color: colors.primary }} className="mr-2 flex-shrink-0" />
+            <span className="truncate">Recent</span>
           </h3>
         </Flex>
-        
-        <div className="text-center py-6">
-          <Flex
-            variant="center"
-            className="p-3 rounded-full w-12 h-12 mx-auto mb-3"
-            style={{ backgroundColor: colors.transparent10 }}
-          >
-            <Briefcase size={20} style={{ color: colors.primary }} />
-          </Flex>
-          <p className="text-sm text-gray-600 mb-3">No recent shifts</p>
-          <Button
-            onClick={() => navigate('/shifts')}
-            size="sm"
-            variant="primary"
-            themeColor={colors.primary}
-          >
-            Add shift
-          </Button>
-        </div>
+        <Flex variant="center" className="flex-grow py-6">
+          <div className="text-center text-gray-400">
+            <Activity size={32} className="mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No data yet</p>
+          </div>
+        </Flex>
       </Card>
     );
   }

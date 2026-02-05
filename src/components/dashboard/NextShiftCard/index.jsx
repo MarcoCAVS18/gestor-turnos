@@ -42,9 +42,11 @@ const NextShiftCard = ({ nextShift, formatDate }) => {
           </Button>
         </Flex>
       ) : (
-        <Flex variant="center" className="text-center text-gray-500 py-4">
-          <CalendarX size={24} className="mr-2" />
-          <p>You have no upcoming shifts.</p>
+        <Flex variant="center" className="py-4">
+          <div className="text-center text-gray-400">
+            <CalendarX size={32} className="mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No data yet</p>
+          </div>
         </Flex>
       )}
     </Card>

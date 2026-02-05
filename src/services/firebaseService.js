@@ -235,9 +235,7 @@ export const addJob = async (userUid, newJob, isDelivery = false) => {
     throw new Error('Work name is required');
   }
 
-  console.log('💾 Creating job in Firestore:', { isDelivery, jobData });
   const docRef = await addDoc(worksRef, jobData);
-  console.log('✅ Job created successfully with ID:', docRef.id);
   return { ...jobData, id: docRef.id };
 };
 
@@ -261,9 +259,7 @@ export const editJob = async (userUid, id, updatedData, isDelivery = false) => {
     }
   }
 
-  console.log('💾 Updating job in Firestore:', { id, isDelivery, dataWithMetadata });
   await updateDoc(jobRef, dataWithMetadata);
-  console.log('✅ Job updated successfully');
 };
 
 export const deleteJob = async (userUid, id, isDelivery = false) => {
@@ -272,20 +268,15 @@ export const deleteJob = async (userUid, id, isDelivery = false) => {
   }
 
   const { worksRef, shiftsRef } = getCollections();
-
-  console.log('🗑️ Deleting job from Firestore:', { id, userUid, isDelivery });
-
   const jobRef = doc(worksRef, id);
 
   // Delete all shifts associated with this job
   const shiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('workId', '==', id));
   const shiftsSnapshot = await getDocs(shiftsQuery);
-  console.log(`Found ${shiftsSnapshot.size} shifts to delete`);
   const deletePromises = shiftsSnapshot.docs.map(d => deleteDoc(d.ref));
   await Promise.all(deletePromises);
 
   await deleteDoc(jobRef);
-  console.log('✅ Job and associated shifts deleted successfully');
 };
 
 // ============================================================================
@@ -348,9 +339,7 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
     };
   }
 
-  console.log('💾 Creating shift in Firestore:', { isDelivery, shiftData });
   const docRef = await addDoc(shiftsRef, shiftData);
-  console.log('✅ Shift created successfully with ID:', docRef.id);
   return { ...shiftData, id: docRef.id };
 };
 
@@ -393,9 +382,7 @@ export const editShift = async (userUid, id, updatedData, isDelivery = false) =>
     };
   }
 
-  console.log('💾 Updating shift in Firestore:', { id, isDelivery, dataWithMetadata });
   await updateDoc(shiftRef, dataWithMetadata);
-  console.log('✅ Shift updated successfully');
 };
 
 export const deleteShift = async (userUid, id, isDelivery = false) => {
@@ -548,35 +535,32 @@ export const clearUserData = async (userUid) => {
 
   const { worksRef, shiftsRef } = getCollections();
 
-  console.log('🧹 Clearing all user data (works and shifts)...');
-
   // Delete all shifts for this user
   const shiftsQuery = query(shiftsRef, where('userId', '==', userUid));
   const shiftsSnapshot = await getDocs(shiftsQuery);
-  console.log(`Found ${shiftsSnapshot.size} shifts to delete`);
 
   const shiftDeletePromises = shiftsSnapshot.docs.map(d => deleteDoc(d.ref));
   await Promise.all(shiftDeletePromises);
-  console.log('✅ All shifts deleted');
 
   // Delete all works for this user
   const worksQuery = query(worksRef, where('userId', '==', userUid));
   const worksSnapshot = await getDocs(worksQuery);
-  console.log(`Found ${worksSnapshot.size} works to delete`);
 
   const workDeletePromises = worksSnapshot.docs.map(d => deleteDoc(d.ref));
   await Promise.all(workDeletePromises);
-  console.log('✅ All works deleted');
 
-  // Update user document to mark data as cleared (preserving settings)
+  // Update user document to mark data as cleared
+  // Also reset Google Calendar connection and other integration settings
+  // Using setDoc with merge to handle cases where user doc doesn't exist
   const userDocRef = getUserDocRef(userUid);
-  await updateDoc(userDocRef, {
+  await setDoc(userDocRef, {
     dataCleared: true,
     dataClearedAt: new Date(),
     updatedAt: new Date(),
-  });
-
-  console.log('✅ User data cleared successfully. Preferences preserved.');
+    // Reset integrations
+    googleCalendarConnected: false,
+    googleCalendarTokens: null,
+  }, { merge: true });
 
   return {
     shiftsDeleted: shiftsSnapshot.size,

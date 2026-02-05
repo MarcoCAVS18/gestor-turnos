@@ -1,27 +1,55 @@
 // src/components/dashboard/ProjectionCard/index.jsx
 
-import { BarChart3, PlusCircle } from 'lucide-react';
+import { BarChart3, Briefcase, Timer, ArrowRight } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
   const colors = useThemeColors();
   const { calculateMonthlyStats } = useApp();
+  const navigate = useNavigate();
 
   const renderContent = () => {
     if (!monthlyProjection || monthlyProjection <= 0) {
       return (
-        <Link to="/turnos" className="block w-full hover:bg-gray-50 rounded-lg p-4 transition-colors">
-          <Flex variant="center" className="flex-col">
-            <PlusCircle size={32} className="mb-2" style={{ color: colors.primary }} />
-            <p className="font-semibold text-gray-700">Start viewing your monthly projection</p>
-            <p className="text-sm text-gray-500">Add new shifts this month to calculate it.</p>
-          </Flex>
-        </Link>
+        <div className="w-full">
+          <div className="grid grid-cols-2 gap-4">
+            {/* Step 1: Add works */}
+            <button
+              onClick={() => navigate('/works')}
+              className="text-left p-3 rounded-xl border-2 border-dashed border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all group"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                  style={{ backgroundColor: colors.primary }}
+                >
+                  1
+                </div>
+                <Briefcase size={16} className="text-gray-400 group-hover:text-gray-600" />
+              </div>
+              <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Add your works</p>
+              <p className="text-xs text-gray-500 mt-1">This unlocks Shifts page</p>
+              <ArrowRight size={14} className="text-gray-300 mt-2 group-hover:text-gray-500 group-hover:translate-x-1 transition-all" />
+            </button>
+
+            {/* Step 2: Add shifts or use Live Mode */}
+            <div className="p-3 rounded-xl border-2 border-dashed border-gray-200 bg-gray-50/50">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-300 text-white">
+                  2
+                </div>
+                <Timer size={16} className="text-gray-400" />
+              </div>
+              <p className="text-sm font-medium text-gray-500">Track your shifts</p>
+              <p className="text-xs text-gray-400 mt-1">Add manually or use Live Mode</p>
+            </div>
+          </div>
+        </div>
       );
     }
 

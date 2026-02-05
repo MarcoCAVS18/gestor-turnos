@@ -33,7 +33,25 @@ const FavoriteWorksCard = ({ favoriteWorks }) => {
     return work.avatarColor || '#9CA3AF';
   };
 
-  if (favoriteWorks.length === 0) return null;
+  // Empty state
+  if (favoriteWorks.length === 0) {
+    return (
+      <Card className="flex flex-col h-full">
+        <Flex variant="between" className="mb-4 flex-nowrap gap-3">
+          <h3 className="text-base font-semibold flex items-center text-gray-800 truncate">
+            <BarChart3 size={20} style={{ color: colors.primary }} className="mr-2 flex-shrink-0" />
+            <span className="truncate">Favorite works</span>
+          </h3>
+        </Flex>
+        <Flex variant="center" className="flex-grow py-6">
+          <div className="text-center text-gray-400">
+            <BarChart3 size={32} className="mx-auto mb-2 opacity-50" />
+            <p className="text-sm">No data yet</p>
+          </div>
+        </Flex>
+      </Card>
+    );
+  }
 
   // Calculate max earnings for progress bars
   const maxEarnings = Math.max(...favoriteWorks.map(w => w.earnings));
