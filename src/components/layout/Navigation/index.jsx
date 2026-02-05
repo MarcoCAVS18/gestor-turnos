@@ -161,7 +161,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
   return (
     <>
       {/* MOBILE NAVIGATION */}
-      <nav className="navbar-container fixed bottom-0 left-0 right-0 bg-white px-4 py-6 md:hidden">
+      <nav className="navbar-container fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 px-4 py-6 md:hidden">
         <div className="grid grid-cols-5 items-center max-w-md mx-auto">
           <button
             onClick={() => navigateToView('dashboard')}
@@ -217,10 +217,10 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
       </nav>
 
       {/* DESKTOP SIDEBAR */}
-      <aside className="hidden md:flex md:flex-col w-72 bg-white border-r border-gray-200 shadow-sm h-screen fixed left-0 top-0 z-30">
+      <aside className="hidden md:flex md:flex-col w-72 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 shadow-sm h-screen fixed left-0 top-0 z-30">
         
         {/* SIDEBAR HEADER - WITH PROFILE PHOTO */}
-        <div className="p-6 border-b border-gray-100">
+        <div className="p-6 border-b border-gray-100 dark:border-slate-800">
           {/* Hidden input for photo upload */}
           <input
             ref={fileInputRef}
@@ -272,10 +272,10 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
 
             {/* Title and subtitle */}
             <div>
-              <h1 className="text-xl font-bold text-gray-900">
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">
                 GestAPP.
               </h1>
-              <p className="text-xs text-gray-500 font-light">
+              <p className="text-xs text-gray-500 dark:text-slate-400 font-light">
                 Your work and shift manager
               </p>
             </div>
@@ -284,7 +284,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
 
         {/* QUICK ACTIONS */}
         {(openNewShiftModal || openNewWorkModal) && (
-          <div className="p-4 border-b border-gray-100">
+          <div className="p-4 border-b border-gray-100 dark:border-slate-800">
             <div className="space-y-2">
               {openNewShiftModal && hasWorks && (
                 <button
@@ -307,8 +307,8 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
               {openNewWorkModal && (
                 <button
                   onClick={openNewWorkModal}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md bg-white"
-                  style={{ 
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md bg-white dark:bg-slate-800"
+                  style={{
                     borderWidth: '2px',
                     borderStyle: 'solid',
                     borderColor: colors.primary,
@@ -318,7 +318,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
                     e.target.style.backgroundColor = colors.transparent10;
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = '#ffffff';
+                    e.target.style.backgroundColor = '';
                   }}
                 >
                   <Briefcase size={20} />
@@ -498,10 +498,10 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
         </div>
 
         {/* SIDEBAR FOOTER */}
-        <div className="p-4 border-t border-gray-100">
+        <div className="p-4 border-t border-gray-100 dark:border-slate-800">
           <motion.button
             onClick={() => navigateToView('settings')}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:bg-gray-50 text-gray-600"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800 text-gray-600 dark:text-slate-400"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >

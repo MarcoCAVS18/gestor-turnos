@@ -1,14 +1,17 @@
 // src/components/dashboard/ExportReportCard/index.jsx
 
 import React, { useState } from 'react';
-import { Download, FileText, Image, FileSpreadsheet } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Download, FileText, Image, FileSpreadsheet, Lock, Crown } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import { usePremium, PREMIUM_COLORS } from '../../../contexts/PremiumContext';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
-// import './index.css'; // <--- Descomenta esta línea cuando hayas creado el archivo CSS correctamente
 
 const ExportReportCard = ({ onExport }) => {
   const colors = useThemeColors();
+  const navigate = useNavigate();
+  const { isPremium } = usePremium();
   const [selectedFormat, setSelectedFormat] = useState('pdf');
   const [isExporting, setIsExporting] = useState(false);
 
@@ -28,6 +31,56 @@ const ExportReportCard = ({ onExport }) => {
       setIsExporting(false);
     }
   };
+
+  // Premium locked state for non-premium users
+  if (!isPremium) {
+    return (
+      <Card variant="transparent" className="relative overflow-hidden">
+        <button
+          onClick={() => navigate('/premium')}
+          className="w-full text-left"
+        >
+          {/* Blur overlay */}
+          <div className="absolute inset-0 backdrop-blur-[2px] bg-white/60 z-10 rounded-xl" />
+
+          {/* Lock badge */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full"
+            style={{ backgroundColor: `${PREMIUM_COLORS.gold}20` }}
+          >
+            <Crown size={14} style={{ color: PREMIUM_COLORS.gold }} />
+            <span className="text-sm font-medium" style={{ color: PREMIUM_COLORS.primary }}>Premium</span>
+          </div>
+
+          {/* Blurred content preview */}
+          <Flex variant="between" className="opacity-50">
+            <div className="flex-1 pr-4">
+              <Flex variant="start" className="gap-2 mb-2">
+                <h3 className="text-lg font-semibold text-gray-800">Export Report</h3>
+              </Flex>
+              <p className="text-sm text-gray-700 mb-4">
+                Download a complete summary of your statistics, shifts, and activity
+              </p>
+              <div className="flex gap-2">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-500">
+                  <FileText size={16} />
+                  <span className="text-sm font-medium">PDF</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-500">
+                  <Image size={16} />
+                  <span className="text-sm font-medium">PNG</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-gray-300 text-gray-400">
+                <Lock size={24} />
+              </div>
+            </div>
+          </Flex>
+        </button>
+      </Card>
+    );
+  }
 
   return (
     <Card variant="transparent" className="relative overflow-hidden">

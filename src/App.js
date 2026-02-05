@@ -71,7 +71,7 @@ function AppLayout() {
   } = useModalManager();
 
   return (
-    <div className="min-h-screen bg-gray-100 font-poppins">
+    <div className="min-h-screen bg-gray-100 dark:bg-slate-950 font-poppins transition-colors duration-300">
       {/* Header only on mobile */}
       <div className="md:hidden">
         <Header />
@@ -132,7 +132,7 @@ function App() {
           element={
             <PublicRoute>
               <AppProvider>
-                <div className="min-h-screen bg-gray-100 font-poppins">
+                <div className="min-h-screen bg-gray-100 dark:bg-slate-950 font-poppins transition-colors duration-300">
                   <main className="max-w-md mx-auto">
                     <SharedWork />
                   </main>

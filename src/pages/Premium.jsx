@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { Crown, Check, Clock, BarChart3, Zap, Shield, CreditCard, Mail, Receipt } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Elements, CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useAuth } from '../contexts/AuthContext';
 import { usePremium, PREMIUM_COLORS } from '../contexts/PremiumContext';
 import { createSubscription } from '../services/stripeService';
@@ -39,8 +39,8 @@ const PREMIUM_BENEFITS = [
   },
 ];
 
-// Card Element styles
-const CARD_ELEMENT_OPTIONS = {
+// Card Element styles (shared for all card elements)
+const CARD_ELEMENT_STYLE = {
   style: {
     base: {
       fontSize: '16px',
@@ -55,7 +55,22 @@ const CARD_ELEMENT_OPTIONS = {
       iconColor: '#ef4444',
     },
   },
-  hidePostalCode: true,
+};
+
+const CARD_NUMBER_OPTIONS = {
+  ...CARD_ELEMENT_STYLE,
+  showIcon: true,
+  placeholder: '1234 1234 1234 1234',
+};
+
+const CARD_EXPIRY_OPTIONS = {
+  ...CARD_ELEMENT_STYLE,
+  placeholder: 'MM / YY',
+};
+
+const CARD_CVC_OPTIONS = {
+  ...CARD_ELEMENT_STYLE,
+  placeholder: 'CVC',
 };
 
 // Payment Form Component
@@ -70,6 +85,7 @@ const PaymentForm = ({ onSuccess }) => {
     e.preventDefault();
 
     if (!stripe || !elements) {
+      setError('Payment system not ready. Please refresh and try again.');
       return;
     }
 
@@ -77,11 +93,17 @@ const PaymentForm = ({ onSuccess }) => {
     setError(null);
 
     try {
-      // Create payment method from card element
-      const cardElement = elements.getElement(CardElement);
+      // Create payment method from card number element
+      const cardNumberElement = elements.getElement(CardNumberElement);
+
+      if (!cardNumberElement) {
+        throw new Error('Card input not found. Please refresh and try again.');
+      }
+
+      console.log('[Premium] Creating payment method...');
       const { error: pmError, paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
-        card: cardElement,
+        card: cardNumberElement,
         billing_details: {
           email: currentUser?.email,
           name: currentUser?.displayName,
@@ -89,8 +111,11 @@ const PaymentForm = ({ onSuccess }) => {
       });
 
       if (pmError) {
+        console.error('[Premium] Payment method error:', pmError);
         throw new Error(pmError.message);
       }
+
+      console.log('[Premium] Payment method created:', paymentMethod.id);
 
       // Create subscription
       const result = await createSubscription(
@@ -99,17 +124,32 @@ const PaymentForm = ({ onSuccess }) => {
         currentUser?.displayName
       );
 
-      if (result.status === 'success') {
+      console.log('[Premium] Subscription result:', result);
+
+      // Check if result exists and has expected properties
+      if (!result) {
+        throw new Error('No response from payment server. Please try again.');
+      }
+
+      // Handle various success statuses
+      const successStatuses = ['success', 'active', 'succeeded', 'processing'];
+      if (successStatuses.includes(result.status)) {
         onSuccess();
       } else if (result.status === 'requires_action') {
-        // 3D Secure handled in stripeService
+        // This shouldn't happen as stripeService handles 3D Secure internally
+        // But if it does, treat it as pending and let user know
+        console.warn('[Premium] Unexpected requires_action status after stripeService');
         onSuccess();
+      } else if (result.error) {
+        throw new Error(result.error);
       } else {
-        throw new Error('Payment processing failed. Please try again.');
+        // Log for debugging
+        console.error('[Premium] Unexpected result status:', result.status, result);
+        throw new Error(`Payment processing failed (${result.status || 'unknown'}). Please try again.`);
       }
     } catch (err) {
-      console.error('Payment error:', err);
-      setError(err.message);
+      console.error('[Premium] Payment error:', err);
+      setError(err.message || 'An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -117,16 +157,45 @@ const PaymentForm = ({ onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      {/* Card Input */}
+      {/* Card Number */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Card Details
+          Card Number
         </label>
         <div
           className="p-4 border rounded-xl transition-colors focus-within:border-gray-400"
           style={{ borderColor: '#e5e7eb' }}
         >
-          <CardElement options={CARD_ELEMENT_OPTIONS} />
+          <CardNumberElement options={CARD_NUMBER_OPTIONS} />
+        </div>
+      </div>
+
+      {/* Expiry and CVC Row */}
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        {/* Expiry Date */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Expiry Date
+          </label>
+          <div
+            className="p-4 border rounded-xl transition-colors focus-within:border-gray-400"
+            style={{ borderColor: '#e5e7eb' }}
+          >
+            <CardExpiryElement options={CARD_EXPIRY_OPTIONS} />
+          </div>
+        </div>
+
+        {/* CVC */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            CVC
+          </label>
+          <div
+            className="p-4 border rounded-xl transition-colors focus-within:border-gray-400"
+            style={{ borderColor: '#e5e7eb' }}
+          >
+            <CardCvcElement options={CARD_CVC_OPTIONS} />
+          </div>
         </div>
       </div>
 
