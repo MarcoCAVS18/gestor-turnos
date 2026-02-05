@@ -565,7 +565,10 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         // Subscription was created but no payment needed (could be trial, etc.)
         // Still update Firestore as premium
         const now = admin.firestore.Timestamp.now();
-        const expiryDate = admin.firestore.Timestamp.fromMillis(subscription.current_period_end * 1000);
+        // Safely calculate expiry date - default to 30 days from now if not available
+        const periodEnd = subscription.current_period_end;
+        const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
+        const expiryDate = admin.firestore.Timestamp.fromMillis(expiryMillis);
 
         await db.collection('users').doc(userId).update({
           subscription: {
@@ -599,7 +602,10 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
       // Payment successful - update Firestore
       if (paymentIntent.status === 'succeeded') {
         const now = admin.firestore.Timestamp.now();
-        const expiryDate = admin.firestore.Timestamp.fromMillis(subscription.current_period_end * 1000);
+        // Safely calculate expiry date - default to 30 days from now if not available
+        const periodEnd = subscription.current_period_end;
+        const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
+        const expiryDate = admin.firestore.Timestamp.fromMillis(expiryMillis);
 
         await db.collection('users').doc(userId).update({
           subscription: {
@@ -722,10 +728,14 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
         const userDoc = usersSnapshot.docs[0];
         const subscription = await stripe.subscriptions.retrieve(invoice.subscription);
 
+        // Safely calculate expiry date
+        const periodEnd = subscription.current_period_end;
+        const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
+
         await userDoc.ref.update({
           'subscription.isPremium': true,
           'subscription.status': 'active',
-          'subscription.expiryDate': admin.firestore.Timestamp.fromMillis(subscription.current_period_end * 1000),
+          'subscription.expiryDate': admin.firestore.Timestamp.fromMillis(expiryMillis),
         });
 
         console.log(`Invoice paid for user ${userDoc.id}`);
