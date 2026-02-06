@@ -281,16 +281,19 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
                   variant="solid"
                   onClick={handleFinish}
                   disabled={loading || actionLoading !== null}
-                  className="flex-1 bg-white/20 hover:bg-white/30 text-white border-none py-3"
+                  className="flex-1 border-none py-3"
+                  bgColor={colors.transparent20}
+                  textColor={colors.textContrast}
                   icon={Square}
                 >
                   Finish
                 </Button>
                 <Button
-                  variant="solid"
+                  variant="ghost"
                   onClick={handleHide}
                   disabled={loading || actionLoading !== null}
-                  className="flex-1 bg-white/20 hover:bg-white/30 text-white border-none py-3"
+                  className="flex-1 py-3"
+                  themeColor={colors.textContrast}
                   icon={EyeOff}
                 >
                   Hide

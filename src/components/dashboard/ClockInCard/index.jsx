@@ -7,10 +7,10 @@ import Flex from '../../ui/Flex';
 import Badge from '../../ui/Badge';
 import { formatCurrency } from '../../../utils/currency';
 
-const ClockInCard = ({ 
-  onClockIn, 
-  onClockOut, 
-  onViewDetails, 
+const ClockInCard = ({
+  onClockIn,
+  onClockOut,
+  onViewDetails,
   activeShift = null // If null, no active shift
 }) => {
   const colors = useThemeColors();
@@ -37,25 +37,25 @@ const ClockInCard = ({
     return (
       <div className="relative overflow-hidden rounded-2xl shadow-lg border border-gray-100 bg-white group cursor-pointer transition-all hover:shadow-xl" onClick={onClockIn}>
         {/* Subtle decorative background */}
-        <div 
+        <div
           className="absolute top-0 right-0 w-32 h-32 transform translate-x-8 -translate-y-8 rounded-full opacity-10 transition-transform group-hover:scale-110"
           style={{ backgroundColor: colors.primary }}
         />
-        
+
         <div className="p-5 relative z-10">
           <Flex variant="between" className="mb-4">
             <div>
               <h3 className="text-lg font-bold text-gray-800">Start Shift</h3>
               <p className="text-sm text-gray-500">Ready to work?</p>
             </div>
-            <div 
+            <div
               className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md transition-transform group-hover:scale-110"
               style={{ backgroundColor: colors.primary }}
             >
               <Play fill="currentColor" size={20} className="ml-1" />
             </div>
           </Flex>
-          
+
           <div className="flex items-center gap-2 text-xs text-gray-400 bg-gray-50 p-2 rounded-lg w-fit">
             <Clock size={14} />
             <span>Quick clock-in available</span>
@@ -69,13 +69,13 @@ const ClockInCard = ({
   return (
     <div className="relative overflow-hidden rounded-2xl shadow-lg text-white transition-all">
       {/* Animated Gradient Background */}
-      <div 
+      <div
         className="absolute inset-0 z-0"
-        style={{ 
-          background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary || '#4F46E5'} 100%)` 
+        style={{
+          background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.secondary || '#4F46E5'} 100%)`
         }}
       />
-      
+
       {/* Animated decorative circles (Pulse effect) */}
       <div className="absolute top-4 right-4 w-2 h-2 bg-red-400 rounded-full animate-ping z-20" />
       <div className="absolute top-4 right-4 w-2 h-2 bg-red-500 rounded-full z-20" />
@@ -93,9 +93,9 @@ const ClockInCard = ({
               {activeShift.workName} • {formatCurrency(activeShift.currentEarnings || 0)} earned
             </p>
           </div>
-          
+
           {/* Floating Details Button */}
-          <button 
+          <button
             onClick={(e) => { e.stopPropagation(); onViewDetails?.(); }}
             className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors backdrop-blur-sm"
           >
@@ -104,17 +104,19 @@ const ClockInCard = ({
         </Flex>
 
         <div className="grid grid-cols-2 gap-3 mt-4">
-          <button 
+          <button
             onClick={(e) => { e.stopPropagation(); /* Pause */ }}
-            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm font-medium text-sm"
+            className="flex items-center justify-center gap-2 py-3 rounded-xl transition-colors backdrop-blur-sm font-medium text-sm"
+            style={{ backgroundColor: colors.transparent20 }}
           >
             <PauseCircle size={18} />
             <span>Pause</span>
           </button>
-          
-          <button 
+
+          <button
             onClick={(e) => { e.stopPropagation(); onClockOut?.(); }}
-            className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white text-red-600 hover:bg-gray-50 transition-colors font-bold text-sm shadow-sm"
+            className="flex items-center justify-center gap-2 py-3 rounded-xl transition-colors font-bold text-sm shadow-sm"
+            style={{ backgroundColor: colors.transparent10, color: colors.textContrast }}
           >
             <Square fill="currentColor" size={16} />
             <span>Finish</span>

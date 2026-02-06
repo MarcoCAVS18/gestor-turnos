@@ -182,7 +182,7 @@ const LiveModeFinishConfirmModal = ({
           {/* Actions */}
           <div className="p-6 pt-2 flex gap-3">
             <Button
-              variant="solid"
+              variant="cancel"
               onClick={onClose}
               disabled={loading}
               className="flex-1 bg-white/20 hover:bg-white/30 text-white border-none"

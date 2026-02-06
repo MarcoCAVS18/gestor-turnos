@@ -327,7 +327,7 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
             {/* Action buttons */}
             <div className="flex gap-3 pt-2">
               <Button
-                variant="solid"
+                variant="cancel"
                 onClick={handleClose}
                 className="flex-1 bg-white/20 hover:bg-white/30 text-white border-none"
               >

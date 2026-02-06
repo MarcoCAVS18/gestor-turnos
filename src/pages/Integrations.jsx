@@ -508,7 +508,7 @@ const Integrations = () => {
                 disabled={googleCalendar.loading}
                 className={`w-full justify-center ${googleCalendar.loading ? 'animate-pulse' : ''}`}
               >
-                {googleCalendar.loading ? 'Connecting...' : 'Connect Google Calendar'}
+                {googleCalendar.loading ? 'Connecting...' : 'Connect Calendar'}
               </Button>
             )}
 
