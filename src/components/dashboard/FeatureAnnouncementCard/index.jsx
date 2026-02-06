@@ -179,7 +179,9 @@ const FeatureAnnouncementCard = ({ onClick, onShowActive, className }) => {
                   variant='solid'
                   loading={actionLoading === 'pause'}
                   disabled={loading || actionLoading !== null}
-                  className="bg-white/20 hover:bg-white/30 text-white border-none font-semibold shadow-md active:scale-95 transition-transform"
+                  bgColor={colors.transparent20}
+                  textColor={colors.textContrast}
+                  className="border-none font-semibold shadow-md active:scale-95 transition-transform"
                   icon={isPaused ? Play : Pause}
                 >
                   {isPaused ? 'Resume' : 'Pause'}
@@ -188,7 +190,9 @@ const FeatureAnnouncementCard = ({ onClick, onShowActive, className }) => {
                   onClick={handleFinish}
                   variant='solid'
                   disabled={loading || actionLoading !== null}
-                  className="bg-white/20 hover:bg-white/30 text-white border-none font-semibold shadow-md active:scale-95 transition-transform"
+                  bgColor={colors.transparent20}
+                  textColor={colors.textContrast}
+                  className="border-none font-semibold shadow-md active:scale-95 transition-transform"
                   icon={Square}
                 >
                   Finish

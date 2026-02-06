@@ -142,7 +142,7 @@ const WelcomeCard = ({ totalEarned, isFeatureVisible = false, className }) => {
             animate="animate"
             exit="exit"
             transition={{ duration: 0.25 }}
-            className="flex flex-col h-full bg-gradient-to-br from-gray-50 to-white"
+            className="flex flex-col h-full"
           >
             {/* Back indicator */}
             <div className="flex items-center gap-1 mb-2 text-gray-400">
