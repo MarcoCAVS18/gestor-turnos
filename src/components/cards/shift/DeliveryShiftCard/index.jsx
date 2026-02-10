@@ -2,6 +2,7 @@
 import React from 'react';
 import { Package, Navigation, Fuel, DollarSign } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
+import HolidayBadge from '../../../shifts/HolidayBadge';
 import Flex from '../../../ui/Flex';
 import { getShiftGrossEarnings } from '../../../../utils/shiftUtils';
 import { formatCurrency } from '../../../../utils/currency';
