@@ -6,7 +6,6 @@ import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
-import Switch from '../../ui/Switch';
 import {
   getAvailableCountries,
   getAvailableRegions,
@@ -25,7 +24,6 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   const colors = useThemeColors();
 
   // Data states
-  const [autoDetect, setAutoDetect] = useState(useAutoHolidays || false);
   const [selectedCountry, setSelectedCountry] = useState(holidayCountry || '');
   const [selectedRegion, setSelectedRegion] = useState(holidayRegion || '');
 
@@ -44,24 +42,22 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
 
   // Initialize local state when context changes
   useEffect(() => {
-    setAutoDetect(useAutoHolidays || false);
     setSelectedCountry(holidayCountry || '');
     setSelectedRegion(holidayRegion || '');
-  }, [useAutoHolidays, holidayCountry, holidayRegion]);
+  }, [holidayCountry, holidayRegion]);
 
   // Detect changes
   useEffect(() => {
-    const autoDetectChanged = autoDetect !== (useAutoHolidays || false);
     const countryChanged = selectedCountry !== (holidayCountry || '');
     const regionChanged = selectedRegion !== (holidayRegion || '');
 
-    const isDirty = autoDetectChanged || countryChanged || regionChanged;
+    const isDirty = countryChanged || regionChanged;
     setHasChanges(isDirty);
 
     if (isDirty && showSuccess) {
       setShowSuccess(false);
     }
-  }, [autoDetect, selectedCountry, selectedRegion, useAutoHolidays, holidayCountry, holidayRegion, showSuccess]);
+  }, [selectedCountry, selectedRegion, holidayCountry, holidayRegion, showSuccess]);
 
   // When country changes, reset region if it's not valid for the new country
   useEffect(() => {
@@ -74,15 +70,6 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
     }
   }, [selectedCountry, selectedRegion]);
 
-  const handleAutoDetectChange = (value) => {
-    setAutoDetect(value);
-    // If turning off auto-detect, clear country and region
-    if (!value) {
-      setSelectedCountry('');
-      setSelectedRegion('');
-    }
-  };
-
   const handleUseLocation = async () => {
     try {
       setDetectingLocation(true);
@@ -90,7 +77,6 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
 
       if (location.country && isCountrySupported(location.country)) {
         setSelectedCountry(location.country);
-        setAutoDetect(true);
         onSuccess?.(`Location detected: ${location.country}`);
       } else {
         onError?.('Could not detect a supported country from your location');
@@ -104,18 +90,16 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   };
 
   const handleSave = async () => {
-    // Validate that if auto-detect is enabled, a country is selected
-    if (autoDetect && !selectedCountry) {
-      onError?.('Please select a country to enable automatic holiday detection');
-      return;
-    }
-
     try {
       setLoading(true);
+
+      // Auto-detect is enabled if a country is selected
+      const autoDetectEnabled = !!selectedCountry;
+
       await savePreferences({
-        useAutoHolidays: autoDetect,
-        holidayCountry: autoDetect ? selectedCountry : null,
-        holidayRegion: autoDetect && selectedRegion ? selectedRegion : null,
+        useAutoHolidays: autoDetectEnabled,
+        holidayCountry: selectedCountry || null,
+        holidayRegion: selectedRegion || null,
       });
 
       setShowSuccess(true);
@@ -138,109 +122,68 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
     <SettingsSection icon={Calendar} title="Holiday Detection" className={className}>
       <div className="space-y-4">
 
-        {/* Enable/Disable Toggle */}
-        <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-[rgba(255,255,255,0.05)] rounded-lg">
-          <div className="flex-1 pr-4">
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-              Automatic Holiday Detection
+        {/* Location Button */}
+        <Button
+          onClick={handleUseLocation}
+          disabled={detectingLocation || loading}
+          loading={detectingLocation}
+          variant="outline"
+          className="w-full"
+          icon={detectingLocation ? Loader : MapPin}
+          themeColor={colors.primary}
+        >
+          {detectingLocation ? 'Detecting location...' : 'Use my location'}
+        </Button>
+
+        {/* Country and Region Selectors - Same line */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Country Selector */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              Country
             </label>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Automatically apply holiday rates on public holidays
-            </p>
-          </div>
-          <Switch
-            checked={autoDetect}
-            onChange={handleAutoDetectChange}
-            disabled={loading}
-          />
-        </div>
-
-        {autoDetect && (
-          <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
-
-            {/* Location Button */}
-            <Button
-              onClick={handleUseLocation}
-              disabled={detectingLocation || loading}
-              loading={detectingLocation}
-              variant="outline"
-              className="w-full"
-              icon={detectingLocation ? Loader : MapPin}
-              themeColor={colors.primary}
+            <select
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+              className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
+              style={{ '--tw-ring-color': colors.primary }}
+              disabled={loading}
             >
-              {detectingLocation ? 'Detecting location...' : 'Use my location'}
-            </Button>
-
-            {/* Country Selector */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                Country *
-              </label>
-              <select
-                value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.target.value)}
-                className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
-                style={{ '--tw-ring-color': colors.primary }}
-                disabled={loading}
-              >
-                <option value="">Select a country</option>
-                {countries.map((country) => (
-                  <option key={country.code} value={country.code}>
-                    {country.name}
-                  </option>
-                ))}
-              </select>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Select your country to detect public holidays
-              </p>
-            </div>
-
-            {/* Region Selector (only if country has regions) */}
-            {selectedCountry && regions.length > 0 && (
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                  State / Province (Optional)
-                </label>
-                <select
-                  value={selectedRegion}
-                  onChange={(e) => setSelectedRegion(e.target.value)}
-                  className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
-                  style={{ '--tw-ring-color': colors.primary }}
-                  disabled={loading}
-                >
-                  <option value="">No specific region</option>
-                  {regions.map((region) => (
-                    <option key={region.code} value={region.code}>
-                      {region.name}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Some regions have specific holidays
-                </p>
-              </div>
-            )}
-
-            {/* Info message */}
-            {selectedCountry && (
-              <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <p className="text-xs text-blue-700 dark:text-blue-300">
-                  Holiday rates will be automatically applied when you work on public holidays in{' '}
-                  <strong>{countries.find(c => c.code === selectedCountry)?.name}</strong>
-                  {selectedRegion && regions.find(r => r.code === selectedRegion) && (
-                    <>, {regions.find(r => r.code === selectedRegion)?.name}</>
-                  )}
-                  .
-                </p>
-              </div>
-            )}
+              <option value="">Select a country</option>
+              {countries.map((country) => (
+                <option key={country.code} value={country.code}>
+                  {country.name}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
+
+          {/* Region Selector */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              State / Province
+            </label>
+            <select
+              value={selectedRegion}
+              onChange={(e) => setSelectedRegion(e.target.value)}
+              className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
+              style={{ '--tw-ring-color': colors.primary }}
+              disabled={loading || !selectedCountry || regions.length === 0}
+            >
+              <option value="">No specific region</option>
+              {regions.map((region) => (
+                <option key={region.code} value={region.code}>
+                  {region.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         {/* Save Button */}
         <Button
           onClick={handleSave}
-          disabled={loading || !hasChanges || (autoDetect && !selectedCountry)}
+          disabled={loading || !hasChanges}
           loading={loading}
           className="w-full mt-4"
           themeColor={colors.primary}

@@ -54,12 +54,15 @@ const Settings = () => {
 
             {/* FIRST ROW: 3 columns with vertical containers */}
             <div className="grid grid-cols-3 gap-6">
-              {/* CONTAINER 1: Profile Photo + Profile + Goals + Work Configuration */}
+              {/* CONTAINER 1: Profile Photo + Profile + Holiday + Goals + Work Configuration */}
               <div className="flex flex-col gap-6 h-full">
                 <ProfilePhotoSection
                   className="flex-grow"
                 />
                 <ProfileSection
+                  className="flex-grow"
+                />
+                <HolidaySettingsSection
                   className="flex-grow"
                 />
                 <GoalsSection className="flex-grow" />
@@ -97,9 +100,6 @@ const Settings = () => {
                 <TurnRangeSection
                   className="flex-grow"
                 />
-                <HolidaySettingsSection
-                  className="flex-grow"
-                />
               </div>
             </div>
 
@@ -113,6 +113,8 @@ const Settings = () => {
 
             <ProfileSection
             />
+
+            <HolidaySettingsSection />
 
             <CustomizationSection />
 
@@ -133,8 +135,6 @@ const Settings = () => {
 
             <TurnRangeSection
             />
-
-            <HolidaySettingsSection />
 
             <PreferencesSection
             />
