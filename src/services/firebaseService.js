@@ -87,6 +87,9 @@ export const ensureUserDocument = async (user) => {
       afternoonEnd: 20,
       nightStart: 20,
     },
+    holidayCountry: null,
+    holidayRegion: null,
+    useAutoHolidays: false,
   };
 
   if (userDocSnapshot.exists()) {
@@ -117,6 +120,9 @@ export const savePreferences = async (userUid, preferences) => {
     weeklyHoursGoal: 'settings.weeklyHoursGoal',
     smokoEnabled: 'settings.smokoEnabled',
     smokoMinutes: 'settings.smokoMinutes',
+    holidayCountry: 'settings.holidayCountry',
+    holidayRegion: 'settings.holidayRegion',
+    useAutoHolidays: 'settings.useAutoHolidays',
   };
 
   for (const key in preferences) {

@@ -5,6 +5,7 @@ import { determineShiftType } from '../utils/shiftDetailsUtils';
 import { createSafeDate } from '../utils/time';
 import { getMonthRange } from '../utils/time';
 import { DELIVERY_PLATFORMS_AUSTRALIA } from '../constants/delivery';
+import { isHoliday } from './holidayService';
 
 
 
@@ -38,9 +39,10 @@ export const calculateHours = (start, end) => {
  * @param {number} defaultDiscount - Default discount.
  * @param {boolean} smokoEnabled - Whether break (smoko) is enabled.
  * @param {number} smokoMinutes - Break duration in minutes.
+ * @param {object} holidayConfig - Holiday configuration {country, region, useAutoHolidays}.
  * @returns {object} - Object with payment details.
  */
-export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes) => {
+export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes, holidayConfig = {}) => {
   const work = allJobs.find(j => j.id === shift.workId);
 
   if (!work) return {
@@ -100,11 +102,21 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
   const date = createSafeDate(startDate);
   const dayOfWeek = date.getDay();
 
+  // Check if the date is a holiday (if auto-detection is enabled)
+  const { country, region, useAutoHolidays } = holidayConfig;
+  const isHolidayDate = useAutoHolidays && country && isHoliday(date, country, region);
+
   let total = 0;
-  let breakdown = { day: 0, afternoon: 0, night: 0, saturday: 0, sunday: 0 };
+  let breakdown = { day: 0, afternoon: 0, night: 0, saturday: 0, sunday: 0, holiday: 0 };
   let appliedRates = {};
 
-  if (dayOfWeek === 0) { // Sunday
+  // Priority: Holiday > Sunday > Saturday > Weekday
+  if (isHolidayDate && work.rates.holidays) {
+    // Holiday has highest priority
+    total = hours * work.rates.holidays;
+    breakdown.holiday = total;
+    appliedRates['holiday'] = work.rates.holidays;
+  } else if (dayOfWeek === 0) { // Sunday
     total = hours * work.rates.sunday;
     breakdown.sunday = total;
     appliedRates['sunday'] = work.rates.sunday;
@@ -170,6 +182,7 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     hoursBreakdown,
     appliedRates,
     isNightShift: crossesMidnight || false,
+    isHoliday: isHolidayDate || false,
     smokoApplied: smokoEnabled && hadBreak && totalMinutes > finalSmokoMinutes,
     smokoMinutes: smokoEnabled && hadBreak ? finalSmokoMinutes : 0,
     totalMinutesWorked: workingMinutes,

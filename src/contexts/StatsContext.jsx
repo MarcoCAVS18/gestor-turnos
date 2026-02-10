@@ -17,7 +17,19 @@ export const StatsProvider = ({ children }) => {
   // Hooks from data and configuration contexts
   const { works, shifts, loading: dataLoading } = useDataContext();
   const { deliveryWork, deliveryShifts, loading: deliveryLoading } = useDeliveryContext();
-  const { shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes, deliveryEnabled, weeklyHoursGoal, thematicColors, loading: configLoading } = useConfigContext();
+  const {
+    shiftRanges,
+    defaultDiscount,
+    smokoEnabled,
+    smokoMinutes,
+    deliveryEnabled,
+    weeklyHoursGoal,
+    thematicColors,
+    holidayCountry,
+    holidayRegion,
+    useAutoHolidays,
+    loading: configLoading
+  } = useConfigContext();
 
   // State for week control
   const [weekOffset, setWeekOffset] = useState(0);
@@ -37,9 +49,14 @@ export const StatsProvider = ({ children }) => {
       shiftRanges,
       defaultDiscount,
       smokoEnabled,
-      smokoMinutes
+      smokoMinutes,
+      {
+        country: holidayCountry,
+        region: holidayRegion,
+        useAutoHolidays
+      }
     );
-  }, [allWork, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes]);
+  }, [allWork, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes, holidayCountry, holidayRegion, useAutoHolidays]);
 
   // Calculate weekly statistics for the current and previous week
   const currentData = useMemo(() => {

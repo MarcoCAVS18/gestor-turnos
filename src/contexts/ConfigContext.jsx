@@ -36,6 +36,9 @@ export const ConfigProvider = ({ children }) => {
     afternoonEnd: 20,
     nightStart: 20
   });
+  const [holidayCountry, setHolidayCountry] = useState(null);
+  const [holidayRegion, setHolidayRegion] = useState(null);
+  const [useAutoHolidays, setUseAutoHolidays] = useState(false);
 
   // Load initial user configuration from Firebase
   useEffect(() => {
@@ -57,6 +60,9 @@ export const ConfigProvider = ({ children }) => {
             setDefaultDeliveryPlatform(settings.defaultDeliveryPlatform || null);
             setThemeMode(settings.themeMode || 'light');
             setShiftRanges(settings.shiftRanges);
+            setHolidayCountry(settings.holidayCountry || null);
+            setHolidayRegion(settings.holidayRegion || null);
+            setUseAutoHolidays(settings.useAutoHolidays || false);
           }
         } catch (err) {
           console.error("Error loading user configuration:", err);
@@ -102,6 +108,9 @@ export const ConfigProvider = ({ children }) => {
       if (preferences.themeMode !== undefined) setThemeMode(preferences.themeMode);
       if (preferences.deliveryPlatforms !== undefined) setDeliveryPlatforms(preferences.deliveryPlatforms);
       if (preferences.defaultDeliveryPlatform !== undefined) setDefaultDeliveryPlatform(preferences.defaultDeliveryPlatform);
+      if (preferences.holidayCountry !== undefined) setHolidayCountry(preferences.holidayCountry);
+      if (preferences.holidayRegion !== undefined) setHolidayRegion(preferences.holidayRegion);
+      if (preferences.useAutoHolidays !== undefined) setUseAutoHolidays(preferences.useAutoHolidays);
 
       await firebaseService.savePreferences(currentUser.uid, preferences);
     } catch (err) {
@@ -127,6 +136,9 @@ export const ConfigProvider = ({ children }) => {
     deliveryPlatforms,
     defaultDeliveryPlatform,
     shiftRanges,
+    holidayCountry,
+    holidayRegion,
+    useAutoHolidays,
     thematicColors,
     savePreferences,
     // Note: updateWeeklyHoursGoal can be merged into savePreferences
