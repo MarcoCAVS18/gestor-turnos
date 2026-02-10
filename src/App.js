@@ -23,6 +23,10 @@ import TermsOfService from './pages/legal/TermsOfService';
 import DeleteAccount from './pages/legal/DeleteAccount';
 import ClearEverything from './pages/legal/ClearEverything';
 
+// Error Pages
+import NotFound from './pages/NotFound';
+import ServerError from './pages/ServerError';
+
 // Main Components
 import Header from './components/layout/Header';
 import Navigation from './components/layout/Navigation';
@@ -159,9 +163,12 @@ function App() {
           <Route path="/clear-everything" element={<ClearEverything />} />
         </Route>
 
+        {/* Error Pages */}
+        <Route path="/error" element={<ServerError />} />
+
         {/* Redirections */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
