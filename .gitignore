@@ -34,3 +34,6 @@ firebase-debug.log*
 
 service-account.json
 *.json
+# Firebase rules backup and secure files
+*.rules.BACKUP
+*.rules.SECURE
