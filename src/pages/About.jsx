@@ -1,168 +1,62 @@
 // src/pages/About.jsx
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Info } from 'lucide-react';
 import { useThemeColors } from '../hooks/useThemeColors';
-import Card from '../components/ui/Card';
-import PageHeader from '../components/layout/PageHeader';
+import BackLink from '../components/ui/BackLink';
+import HeroSection from '../components/about/HeroSection';
+import StorySection from '../components/about/StorySection';
+import CreatorSection from '../components/about/CreatorSection';
+import TechCarousel from '../components/about/TechCarousel';
+import ClaudeSection from '../components/about/ClaudeSection';
+import FeedbackSection from '../components/about/FeedbackSection';
+import AboutFooter from '../components/about/AboutFooter';
 
 const About = () => {
   const colors = useThemeColors();
 
-  // Technologies used in the project
-  const technologies = [
-    { name: 'React', icon: '⚛️' },
-    { name: 'JavaScript', icon: '🟨' },
-    { name: 'Firebase', icon: '🔥' },
-    { name: 'Tailwind CSS', icon: '💨' },
-    { name: 'Framer Motion', icon: '🎬' },
-    { name: 'Recharts', icon: '📊' },
-    { name: 'Claude AI', icon: '🤖' },
-    { name: 'Stripe', icon: '💳' },
-    { name: 'jsPDF', icon: '📄' },
-    { name: 'XLSX', icon: '📑' },
-    { name: 'Lucide Icons', icon: '🎨' },
-    { name: 'React Router', icon: '🛣️' },
-  ];
-
-  // Duplicate array for infinite scroll effect
-  const duplicatedTechnologies = [...technologies, ...technologies];
-
   return (
     <div className="px-4 py-6 space-y-6">
-      <PageHeader
-        title="About"
-        subtitle="Learn more about this application"
-        icon={Info}
-      />
+      <BackLink to="/settings">Settings</BackLink>
 
-      <div className="space-y-6">
-        {/* Logo Section */}
-        <Card variant="surface" className="text-center py-8">
-          <div className="flex justify-center mb-4">
-            <img
-              src="/assets/SVG/logo.svg"
-              alt="GestAPPLogo"
-              className="w-24 h-24"
-            />
+      {/* Hero - full width always */}
+      <HeroSection colors={colors} />
+
+      {/* DESKTOP: Asymmetric grid layout */}
+      <div className="hidden lg:block space-y-8">
+        {/* Row 1: Story (wide) + Creator (narrow) */}
+        <div className="grid grid-cols-5 gap-6 items-start">
+          <div className="col-span-3">
+            <StorySection colors={colors} />
           </div>
-          <h2 className="text-2xl font-bold mb-2" style={{ color: colors.text }}>
-            GestAPP
-          </h2>
-          <p className="text-sm" style={{ color: colors.textSecondary }}>
-            Professional shift tracking and management
-          </p>
-        </Card>
-
-        {/* Description */}
-        <Card variant="surface" className="p-6">
-          <h3 className="text-lg font-semibold mb-3" style={{ color: colors.text }}>
-            What is GestAPP?
-          </h3>
-          <div className="space-y-3 text-sm" style={{ color: colors.textSecondary }}>
-            <p>
-              GestAPP is a comprehensive application designed to help you track and manage your work shifts efficiently.
-              Whether you work traditional hourly jobs or delivery-based gigs, this app provides all the tools you need to
-              monitor your earnings, schedule, and performance.
-            </p>
-            <p>
-              With features like live shift tracking, bulk shift creation, detailed statistics, calendar views, and professional
-              export capabilities, GestAPP makes it easy to stay organized and understand your work patterns.
-            </p>
-            <p>
-              The app supports multiple rate types (day, afternoon, night, weekend rates), automatic holiday detection,
-              break management, and comprehensive reporting with Excel and PDF exports.
-            </p>
+          <div className="col-span-2">
+            <CreatorSection colors={colors} />
           </div>
-        </Card>
+        </div>
 
-        {/* Technologies Section */}
-        <Card variant="surface" className="p-6">
-          <h3 className="text-lg font-semibold mb-4" style={{ color: colors.text }}>
-            Built With
-          </h3>
-          <p className="text-sm mb-6" style={{ color: colors.textSecondary }}>
-            This application is powered by modern technologies and tools
-          </p>
+        {/* Row 2: Tech Carousel - FULL WIDTH break */}
+        <TechCarousel />
 
-          {/* Infinite Carousel */}
-          <div className="relative overflow-hidden py-4">
-            <div className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
-              style={{
-                background: `linear-gradient(to right, ${colors.surface} 0%, transparent 100%)`
-              }}
-            />
-            <div className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
-              style={{
-                background: `linear-gradient(to left, ${colors.surface} 0%, transparent 100%)`
-              }}
-            />
-
-            <motion.div
-              className="flex gap-6"
-              animate={{
-                x: [0, -50 * technologies.length],
-              }}
-              transition={{
-                x: {
-                  repeat: Infinity,
-                  repeatType: "loop",
-                  duration: 30,
-                  ease: "linear",
-                },
-              }}
-            >
-              {duplicatedTechnologies.map((tech, index) => (
-                <div
-                  key={`${tech.name}-${index}`}
-                  className="flex flex-col items-center justify-center min-w-[100px] gap-2"
-                >
-                  <div
-                    className="w-12 h-12 rounded-lg flex items-center justify-center text-2xl grayscale hover:grayscale-0 transition-all duration-300"
-                    style={{ backgroundColor: colors.surface2 }}
-                  >
-                    {tech.icon}
-                  </div>
-                  <span className="text-xs font-medium whitespace-nowrap" style={{ color: colors.textSecondary }}>
-                    {tech.name}
-                  </span>
-                </div>
-              ))}
-            </motion.div>
+        {/* Row 3: Claude (1/3) + Feedback (2/3) */}
+        <div className="grid grid-cols-3 gap-6 items-stretch">
+          <div className="col-span-1">
+            <ClaudeSection colors={colors} />
           </div>
-        </Card>
-
-        {/* AI Assistant Section */}
-        <Card variant="surface" className="p-6">
-          <div className="flex items-start gap-4">
-            <div className="text-4xl">🤖</div>
-            <div className="flex-1">
-              <h3 className="text-lg font-semibold mb-2" style={{ color: colors.text }}>
-                Developed with Claude AI
-              </h3>
-              <p className="text-sm" style={{ color: colors.textSecondary }}>
-                This application was developed with the assistance of Claude, an AI assistant by Anthropic.
-                Claude helped design and implement features, optimize code, and ensure best practices throughout
-                the development process.
-              </p>
-            </div>
+          <div className="col-span-2">
+            <FeedbackSection colors={colors} />
           </div>
-        </Card>
-
-        {/* Version & Credits */}
-        <Card variant="surface" className="p-6 text-center">
-          <p className="text-sm mb-2" style={{ color: colors.textSecondary }}>
-            Version 2.0.0
-          </p>
-          <p className="text-xs" style={{ color: colors.textSecondary }}>
-            Developed by Marqui
-          </p>
-          <p className="text-xs mt-2" style={{ color: colors.textSecondary }}>
-            © 2026 GestAPP. All rights reserved.
-          </p>
-        </Card>
+        </div>
       </div>
+
+      {/* MOBILE: Vertical stack */}
+      <div className="block lg:hidden space-y-2">
+        <StorySection colors={colors} />
+        <CreatorSection colors={colors} />
+        <TechCarousel />
+        <ClaudeSection colors={colors} />
+        <FeedbackSection colors={colors} />
+      </div>
+
+      <AboutFooter colors={colors} />
     </div>
   );
 };

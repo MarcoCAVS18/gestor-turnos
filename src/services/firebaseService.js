@@ -15,6 +15,7 @@ import {
   getDocs,
   where,
   writeBatch,
+  serverTimestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { createSafeDate } from '../utils/time';
@@ -29,6 +30,7 @@ const getCollections = () => {
     worksRef: collection(db, 'works'),
     shiftsRef: collection(db, 'shifts'),
     statsRef: collection(db, 'stats'),
+    feedbackRef: collection(db, 'feedback'),
   };
 };
 
@@ -514,4 +516,66 @@ export const clearUserData = async (userUid) => {
     shiftsDeleted: shiftsSnapshot.size,
     worksDeleted: worksSnapshot.size,
   };
+};
+
+// ============================================================================
+// FEEDBACK / REVIEWS
+// ============================================================================
+
+export const submitFeedback = async (feedbackData) => {
+  console.log('[Feedback] submitFeedback called with:', feedbackData);
+  const feedbackDocRef = doc(db, 'feedback', feedbackData.userId);
+  console.log('[Feedback] Writing to doc:', feedbackData.userId);
+
+  await setDoc(feedbackDocRef, {
+    userId: feedbackData.userId,
+    displayName: feedbackData.displayName || '',
+    rating: feedbackData.rating,
+    comment: feedbackData.comment || '',
+    isAnonymous: feedbackData.isAnonymous || false,
+    createdAt: serverTimestamp(),
+  });
+
+  console.log('[Feedback] submitFeedback SUCCESS');
+  return { id: feedbackData.userId };
+};
+
+export const getUserFeedback = async (userId) => {
+  console.log('[Feedback] getUserFeedback for:', userId);
+  const feedbackDocRef = doc(db, 'feedback', userId);
+  const snap = await getDoc(feedbackDocRef);
+  console.log('[Feedback] getUserFeedback exists?', snap.exists());
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...snap.data() };
+};
+
+export const getFeedbackReviews = async () => {
+  console.log('[Feedback] getFeedbackReviews called');
+  const { feedbackRef } = getCollections();
+
+  const q = query(feedbackRef, orderBy('createdAt', 'desc'));
+  const snapshot = await getDocs(q);
+  console.log('[Feedback] getFeedbackReviews found:', snapshot.docs.length, 'reviews');
+
+  const allReviews = snapshot.docs.map((d) => ({
+    id: d.id,
+    ...d.data(),
+    createdAt: d.data().createdAt?.toDate() || new Date(),
+  }));
+
+  // Deterministic daily shuffle - show 10 random reviews per day
+  const today = new Date();
+  const daySeed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+  const seededShuffle = (arr, seed) => {
+    const shuffled = [...arr];
+    let s = seed;
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      s = (s * 16807) % 2147483647;
+      const j = s % (i + 1);
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  return seededShuffle(allReviews, daySeed).slice(0, 10);
 };
