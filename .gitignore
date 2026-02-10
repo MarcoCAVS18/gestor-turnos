@@ -32,8 +32,11 @@ firebase-debug.log*
 *.swp
 *.swo
 
+# Firebase
 service-account.json
-*.json
+.firebase/
+..bfg-report/
+
 # Firebase rules backup and secure files
 *.rules.BACKUP
 *.rules.SECURE
