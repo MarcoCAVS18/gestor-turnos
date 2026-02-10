@@ -307,204 +307,109 @@ const ShiftForm = ({
         </FormField>
       </FormGrid>
 
-{/* NEW SECTION: BREAK (SMOKO) - OPTIMIZED FOR MOBILE */}
+{/* BREAK (SMOKO) SECTION - SIMPLIFIED */}
 {smokoEnabled && duration && duration.totalMinutes > 0 && (
   <div className="w-full">
-    <div 
-      className={`
-        rounded-lg border
-        ${isMobile ? 'p-4 space-y-4' : 'p-4 space-y-3'}
-      `}
-      style={{ 
-        backgroundColor: colors.transparent5,
-        borderColor: colors.transparent20 
+    <div
+      className="rounded-lg border p-3"
+      style={{
+        backgroundColor: colors.surface,
+        borderColor: colors.border
       }}
     >
-      {/* Header with title and custom toggle */}
-      <Flex variant="between" className={`
-        ${isMobile ? 'pb-2 border-b border-gray-200' : ''}
-      `}>
-        <div className="flex items-center flex-1">
-          <Coffee 
-            size={isMobile ? 18 : 16} 
-            style={{ color: colors.primary }} 
-            className="mr-2 flex-shrink-0" 
+      {/* Header with toggle */}
+      <Flex variant="between" className="mb-3">
+        <div className="flex items-center gap-2">
+          <Coffee
+            size={16}
+            style={{ color: colors.primary }}
           />
-          <span className={`font-medium text-gray-700 ${isMobile ? 'text-base' : 'text-sm'}`}>
-            Did you have a break?
+          <span className="text-sm font-medium" style={{ color: colors.text }}>
+            Break
           </span>
         </div>
 
-        {/* Custom Toggle Switch */}
+        {/* Toggle Switch */}
         <label className="relative inline-flex items-center cursor-pointer">
-          {/* Hidden input */}
           <input
             type="checkbox"
             checked={formData.hadBreak}
             onChange={(e) => handleInputChange('hadBreak', e.target.checked)}
             className="sr-only peer"
           />
-          
-          {/* Custom switch */}
-          <div className={`
-            relative bg-gray-200 rounded-full peer 
-            peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2
-            peer-checked:after:translate-x-full peer-checked:after:border-white 
-            after:content-[''] after:absolute after:bg-white after:border-gray-300 
-            after:border after:rounded-full after:transition-all
-            ${isMobile 
-              ? 'w-12 h-6 after:top-[2px] after:left-[2px] after:h-5 after:w-5' 
-              : 'w-10 h-5 after:top-[1px] after:left-[1px] after:h-4 after:w-4'
-            }
-          `}
-          style={{
-            '--tw-ring-color': colors.primary,
-            backgroundColor: formData.hadBreak ? colors.primary : undefined
-          }}
+          <div
+            className="relative w-10 h-5 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border after:rounded-full after:h-4 after:w-4 after:transition-all"
+            style={{
+              '--tw-ring-color': colors.primary,
+              backgroundColor: formData.hadBreak ? colors.primary : colors.border,
+              borderColor: colors.border
+            }}
           />
-          
-          {/* Toggle text */}
-          <span className={`
-            ml-3 font-medium
-            ${isMobile ? 'text-sm' : 'text-xs'}
-            ${formData.hadBreak ? 'text-green-700' : 'text-gray-600'}
-          `}>
-            {formData.hadBreak ? 'Yes' : 'No'}
-          </span>
         </label>
       </Flex>
 
-      {/* Calculation information - RESPONSIVE LAYOUT */}
-      <div className={`
-        ${isMobile ? 'space-y-3' : 'space-y-2'}
-        ${isMobile ? 'text-sm' : 'text-xs'}
-        text-gray-600
-      `}>
-        {/* Scheduled time */}
-        <Flex variant="between" className={`
-          p-2 rounded
-          ${isMobile ? 'bg-blue-50' : 'bg-gray-50'}
-        `}>
-          <div className="flex items-center">
-            <Flex variant="center" className={`
-              rounded-full mr-2
-              ${isMobile ? 'w-6 h-6 text-xs' : 'w-5 h-5 text-xs'}
-            `}
-            style={{ backgroundColor: colors.transparent20, color: colors.primary }}>
-              <Clock size={isMobile ? 12 : 10} />
-            </Flex>
-            <span className={isMobile ? 'text-sm' : 'text-xs'}>Scheduled time:</span>
-          </div>
-          <span className={`font-semibold ${isMobile ? 'text-sm' : 'text-xs'}`}>
-            {Math.floor(duration.totalMinutes / 60)}h {duration.totalMinutes % 60}min
-          </span>
-        </Flex>
-
-        {formData.hadBreak ? (
-          <>
-            {/* Configured break (NOW EDITABLE WITH CLICK) */}
-            <Flex variant="between" className={`p-2 rounded items-center ${isMobile ? 'bg-orange-50' : 'bg-gray-50'}`}>
-              <div className="flex items-center">
-                <Flex variant="center" className={`
-                  rounded-full mr-2
-                  ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
-                `}
-                style={{ backgroundColor: '#FED7AA', color: '#EA580C' }}>
-                  <Coffee size={isMobile ? 10 : 8} />
-                </Flex>
-                <span className={isMobile ? 'text-sm' : 'text-xs'}>Break:</span>
+      {/* Break configuration - Only show if enabled */}
+      {formData.hadBreak && (
+        <div className="space-y-2">
+          {/* Break minutes editor */}
+          <div className="flex items-center justify-between p-2 rounded" style={{ backgroundColor: colors.surface2 }}>
+            <span className="text-xs" style={{ color: colors.textSecondary }}>
+              Break duration:
+            </span>
+            {isEditingBreak ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  value={formData.breakMinutes}
+                  onChange={(e) => handleInputChange('breakMinutes', e.target.value === '' ? 0 : parseInt(e.target.value, 10))}
+                  className="py-1 px-2 w-16 text-center text-xs font-semibold rounded border"
+                  style={{
+                    backgroundColor: colors.surface,
+                    color: colors.text,
+                    borderColor: colors.border
+                  }}
+                  autoFocus
+                  onBlur={() => setIsEditingBreak(false)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsEditingBreak(false)}
+                  style={{ color: colors.primary }}
+                >
+                  <Check size={16} />
+                </button>
               </div>
-
-              {isEditingBreak ? (
-                <div className="flex items-center">
-                  <input
-                    type="number"
-                    value={formData.breakMinutes}
-                    onChange={(e) => handleInputChange('breakMinutes', e.target.value === '' ? 0 : parseInt(e.target.value, 10))}
-                    className={`${getInputClasses(isMobile)} py-1 px-2 w-20 text-center font-semibold`}
-                    style={{ '--tw-ring-color': colors.primary }}
-                    autoFocus
-                    onBlur={() => setIsEditingBreak(false)}
-                  />
-                  <button type="button" onClick={() => setIsEditingBreak(false)} className="ml-2 text-green-600">
-                    <Check size={18} />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center">
-                  <span className={`font-semibold ${isMobile ? 'text-sm' : 'text-xs'}`}>
-                    {formData.breakMinutes} minutes
-                  </span>
-                  <button type="button" onClick={() => setIsEditingBreak(true)} className="ml-2 text-gray-500 hover:text-gray-700">
-                    <Pencil size={14} />
-                  </button>
-                </div>
-              )}
-            </Flex>
-
-            {/* Paid time */}
-            <Flex variant="between" className={`
-              p-2 rounded border
-              ${isMobile ? 'bg-green-50 border-green-200' : 'bg-gray-50'}
-            `}
-            style={{ 
-              backgroundColor: isMobile ? colors.transparent10 : undefined,
-              borderColor: isMobile ? colors.transparent30 : undefined
-            }}>
-              <Flex variant="center">
-                <Flex variant="center" className={`
-                  rounded-full mr-2
-                  ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
-                `}
-                style={{ backgroundColor: colors.primary, color: 'white' }}>
-                  <span className={`font-bold ${isMobile ? 'text-xs' : 'text-[10px]'}`}>$</span>
-                </Flex>
-                <span className={`font-medium ${isMobile ? 'text-sm' : 'text-xs'}`}
-                      style={{ color: colors.primary }}>
-                  Paid time:
+            ) : (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold" style={{ color: colors.text }}>
+                  {formData.breakMinutes} min
                 </span>
-              </Flex>
-              <span className={`font-bold ${isMobile ? 'text-sm' : 'text-xs'}`}
-                    style={{ color: colors.primary }}>
-                {duration.hours}h {duration.minutes}min
-              </span>
-            </Flex>
-          </>
-        ) : (
-          /* No discount applied */
-          <Flex variant="between" className={`
-            p-2 rounded border
-            ${isMobile ? 'bg-blue-50 border-blue-200' : 'bg-gray-50'}
-          `}
-          style={{ 
-            backgroundColor: isMobile ? colors.transparent10 : undefined,
-            borderColor: isMobile ? colors.transparent30 : undefined
+                <button
+                  type="button"
+                  onClick={() => setIsEditingBreak(true)}
+                  style={{ color: colors.textSecondary }}
+                  className="hover:opacity-70"
+                >
+                  <Pencil size={12} />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Paid time result */}
+          <div className="flex items-center justify-between p-2 rounded border" style={{
+            backgroundColor: colors.surface2,
+            borderColor: colors.primary + '20'
           }}>
-            <Flex variant="center">
-              <Flex variant="center" className={`
-                rounded-full mr-2
-                ${isMobile ? 'w-6 h-6' : 'w-5 h-5'}
-              `}
-              style={{ backgroundColor: colors.primary, color: 'white' }}>
-                <span className={`font-bold ${isMobile ? 'text-xs' : 'text-[10px]'}`}>$</span>
-              </Flex>
-              <span className={`font-medium ${isMobile ? 'text-sm' : 'text-xs'}`}
-                    style={{ color: colors.primary }}>
-                Paid time:
-              </span>
-            </Flex>
-            <div className="text-right">
-              <div className={`font-bold ${isMobile ? 'text-sm' : 'text-xs'}`}
-                   style={{ color: colors.primary }}>
-                {Math.floor(duration.totalMinutes / 60)}h {duration.totalMinutes % 60}min
-              </div>
-              <div className={`${isMobile ? 'text-xs' : 'text-[10px]'} text-gray-500`}>
-                (no discount)
-              </div>
-            </div>
-          </Flex>
-        )}
-      </div>
+            <span className="text-xs font-medium" style={{ color: colors.primary }}>
+              Paid time:
+            </span>
+            <span className="text-xs font-bold" style={{ color: colors.primary }}>
+              {duration.hours}h {duration.minutes}min
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   </div>
 )}
