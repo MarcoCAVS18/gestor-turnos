@@ -77,33 +77,33 @@ const DeliveryShiftCard = (props) => {
           <div className="space-y-2 text-xs">
             {/* Orders & Kilometers */}
             <Flex variant="between">
-              <Flex variant="center" className="text-gray-600">
+              <Flex variant="center" className="text-gray-600 dark:text-gray-400">
                 <Package size={12} className="mr-1.5 text-blue-500" />
                 <span>Orders</span>
               </Flex>
-              <span className="font-semibold">{shiftData.numberOfOrders || 0}</span>
+              <span className="font-semibold dark:text-white">{shiftData.numberOfOrders || 0}</span>
             </Flex>
 
             {shiftData.kilometers > 0 && (
               <Flex variant="between">
-                <Flex variant="center" className="text-gray-600">
+                <Flex variant="center" className="text-gray-600 dark:text-gray-400">
                   <Navigation size={12} className="mr-1.5 text-purple-500" />
                   <span>Distance</span>
                 </Flex>
-                <span className="font-semibold">{shiftData.kilometers} km</span>
+                <span className="font-semibold dark:text-white">{shiftData.kilometers} km</span>
               </Flex>
             )}
 
             {/* Earnings breakdown */}
-            <div className="pt-2 border-t border-gray-100 space-y-1.5">
+            <div className="pt-2 border-t border-gray-100 dark:border-[rgba(255,255,255,0.08)] space-y-1.5">
               <Flex variant="between">
-                <span className="text-gray-500">Base earnings</span>
-                <span className="font-medium">{formatCurrency(shiftData.baseEarning, currencySymbol)}</span>
+                <span className="text-gray-500 dark:text-gray-400">Base earnings</span>
+                <span className="font-medium dark:text-white">{formatCurrency(shiftData.baseEarning, currencySymbol)}</span>
               </Flex>
 
               {shiftData.tips > 0 && (
                 <Flex variant="between">
-                  <Flex variant="center" className="text-gray-500">
+                  <Flex variant="center" className="text-gray-500 dark:text-gray-400">
                     <DollarSign size={10} className="mr-1 text-green-500" />
                     <span>Tips</span>
                   </Flex>
@@ -113,17 +113,17 @@ const DeliveryShiftCard = (props) => {
 
               {shiftData.expenses > 0 && (
                 <Flex variant="between">
-                  <Flex variant="center" className="text-gray-500">
+                  <Flex variant="center" className="text-gray-500 dark:text-gray-400">
                     <Fuel size={10} className="mr-1 text-orange-500" />
                     <span>Fuel expense</span>
                   </Flex>
-                  <span className="font-medium text-red-600">-{formatCurrency(shiftData.expenses, currencySymbol)}</span>
+                  <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(shiftData.expenses, currencySymbol)}</span>
                 </Flex>
               )}
 
               {shiftData.averagePerOrder > 0 && (
-                <Flex variant="between" className="pt-1.5 border-t border-gray-50">
-                  <span className="text-gray-500">Avg per order</span>
+                <Flex variant="between" className="pt-1.5 border-t border-gray-50 dark:border-[rgba(255,255,255,0.05)]">
+                  <span className="text-gray-500 dark:text-gray-400">Avg per order</span>
                   <span className="font-semibold text-blue-600">{formatCurrency(shiftData.averagePerOrder, currencySymbol)}</span>
                 </Flex>
               )}
