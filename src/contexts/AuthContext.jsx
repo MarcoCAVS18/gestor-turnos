@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [profilePhotoURL, setProfilePhotoURL] = useState(getDefaultProfilePhoto());
+  const [resetAttempts, setResetAttempts] = useState({});
 
   // Register user
   const signup = async (email, password, displayName) => {
@@ -139,8 +140,23 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Reset password
+  // Reset password with rate limiting
   const resetPassword = async (email) => {
+    const now = Date.now();
+    const lastAttempt = resetAttempts[email] || 0;
+    const COOLDOWN_MS = 60000; // 1 minute
+
+    // Check if user is in cooldown period
+    if (now - lastAttempt < COOLDOWN_MS) {
+      const remainingSeconds = Math.ceil((COOLDOWN_MS - (now - lastAttempt)) / 1000);
+      const errorMsg = `Please wait ${remainingSeconds} seconds before requesting another password reset`;
+      setError(errorMsg);
+      throw new Error(errorMsg);
+    }
+
+    // Update last attempt time
+    setResetAttempts(prev => ({ ...prev, [email]: now }));
+
     try {
       setError('');
       await sendPasswordResetEmail(auth, email);

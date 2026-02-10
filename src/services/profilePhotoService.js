@@ -11,9 +11,17 @@ import { ref, getDownloadURL, deleteObject, uploadBytesResumable } from 'firebas
  */
 export const uploadProfilePhoto = async (userId, file) => {
   try {
-    // Validate that the file is an image
-    if (!file.type.startsWith('image/')) {
-      throw new Error('The file must be an image');
+    // Validate file type - only allow specific image formats
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      throw new Error('Only image files (JPG, PNG, GIF, WEBP) are allowed');
+    }
+
+    // Validate file extension
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    const validExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+    if (!validExtensions.includes(fileExtension)) {
+      throw new Error('Invalid file extension. Use JPG, PNG, GIF, or WEBP');
     }
 
     // Validate max size (5MB)
