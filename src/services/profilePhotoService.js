@@ -32,7 +32,6 @@ export const uploadProfilePhoto = async (userId, file) => {
 
     // Create reference in Storage
     const timestamp = Date.now();
-    const fileExtension = file.name.split('.').pop();
     const fileName = `profile_${timestamp}.${fileExtension}`;
     const storagePath = `profile-photos/${userId}/${fileName}`;
     const storageRef = ref(storage, storagePath);
