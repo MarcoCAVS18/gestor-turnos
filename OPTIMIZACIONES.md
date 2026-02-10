@@ -154,7 +154,7 @@ Ejemplo:
 
 ---
 
-## 6. Integrar feriados automáticos por país + estado/provincia
+## 6. Integrar feriados automáticos por país + estado/provincia ✅
 
 ### Problema
 Actualmente el usuario debe configurar manualmente el valor de hora Holiday.
@@ -164,18 +164,38 @@ Pero la app no detecta automáticamente qué días son feriados.
 Implementar un sistema automático que detecte feriados según país y región.
 
 ### Requerimientos
-- Usar una API o librería completamente gratuita que permita obtener feriados globales.
+- Usar una API o librería completamente gratuita que permita obtener feriados globales. ✅
 - Permitir que el usuario configure:
-  - país
-  - estado/provincia/región (cuando aplique)
-- Guardar estas preferencias en el perfil del usuario.
-- Al calcular shifts, detectar si el día es Holiday y aplicar el rate correspondiente.
-- Podemos utilizar la solicitud del usuario de saber su ubicacion para realizar proceso rapidamente.
-- Crear un componente UI para selección de país y región.
+  - país ✅
+  - estado/provincia/región (cuando aplique) ✅
+- Guardar estas preferencias en el perfil del usuario. ✅
+- Al calcular shifts, detectar si el día es Holiday y aplicar el rate correspondiente. ✅
+- Podemos utilizar la solicitud del usuario de saber su ubicacion para realizar proceso rapidamente. ✅
+- Crear un componente UI para selección de país y región. ✅
 
 Notas importantes:
 - Algunos feriados dependen de regiones específicas.
 - Debe existir fallback si no hay región disponible.
+
+### ✅ Implementación Completada
+
+**Librería utilizada:** `date-holidays` (completamente gratuita, offline, 100+ países)
+
+**Backend:**
+- holidayService.js con detección automática y geolocalización
+- Integración en calculationService para aplicar rates automáticamente
+- Campos en perfil de usuario: holidayCountry, holidayRegion, useAutoHolidays
+- Actualización de ConfigContext, CalculationsContext, StatsContext
+
+**UI:**
+- HolidaySettingsSection en Settings con selector de país/región
+- Botón de geolocalización para autodetección
+- HolidayBadge para mostrar en shift cards
+- Integración completa en ShiftCard y DeliveryShiftCard
+
+**Commits:**
+- `4ac1150` - implement automatic holiday detection backend
+- `e7e93b2` - add holiday settings UI and holiday badges
 
 ---
 
