@@ -82,7 +82,7 @@ const BulkShiftConfirmModal = ({
       title="Create Multiple Shifts"
       subtitle={`Configure pattern for: ${workName}`}
       icon={Calendar}
-      maxWidth="max-w-2xl"
+      maxWidth="md"
     >
       <div className="space-y-6">
         {/* Base Shift Summary */}
@@ -95,12 +95,6 @@ const BulkShiftConfirmModal = ({
               <span style={{ color: colors.textSecondary }}>Time:</span>
               <span className="font-medium" style={{ color: colors.text }}>
                 {baseShift?.startTime} - {baseShift?.endTime}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span style={{ color: colors.textSecondary }}>Break:</span>
-              <span className="font-medium" style={{ color: colors.text }}>
-                {baseShift?.hadBreak ? `${baseShift?.breakMinutes || 0} min` : 'No'}
               </span>
             </div>
             {baseShift?.notes && (
