@@ -1,7 +1,7 @@
 // src/components/cards/base/BaseShiftCard/index.jsx
 
-import React, { useRef } from 'react';
-import { Edit, Edit2, Trash2, Clock, Calendar, Briefcase, Bike, ChevronDown, DollarSign, CircleDotDashed } from 'lucide-react';
+import React, { useRef, useState } from 'react';
+import { Edit, Edit2, Trash2, Clock, Calendar, Briefcase, Bike, ChevronDown, DollarSign, CircleDotDashed, Repeat } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Card from '../../../ui/Card';
 import ShiftTypeBadge from '../../../shifts/ShiftTypeBadge';
@@ -32,6 +32,7 @@ const BaseShiftCard = ({
   const colors = useThemeColors();
   const cardWrapperRef = useRef(null);
   const [showDetails, setShowDetails] = React.useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   if (!shift) {
     return (
@@ -119,8 +120,30 @@ const BaseShiftCard = ({
     exit: { opacity: 0, scale: 1.05, filter: 'blur(4px)' }
   };
 
-  // Check if shift was created with Live Mode
+  // Check creation method
   const isLiveShift = shift.isLive === true;
+  const isBulkShift = shift.createdWith === 'bulk';
+  const hasCreationBadge = isLiveShift || isBulkShift;
+
+  const getCreationBadgeConfig = () => {
+    if (isLiveShift) {
+      return {
+        icon: CircleDotDashed,
+        color: 'bg-red-500',
+        label: 'Created with Live Mode'
+      };
+    }
+    if (isBulkShift) {
+      return {
+        icon: Repeat,
+        color: 'bg-blue-500',
+        label: 'Created with Bulk Creation'
+      };
+    }
+    return null;
+  };
+
+  const badgeConfig = getCreationBadgeConfig();
 
   const cardContent = (
     <Card
@@ -129,12 +152,39 @@ const BaseShiftCard = ({
       style={{ borderBottomColor: showDetails ? 'transparent' : avatarColor }}
       onClick={() => setShowDetails(!showDetails)}
     >
-      {/* Live Mode indicator - absolute positioned */}
-      {isLiveShift && (
-        <div className="absolute top-2 right-2 z-[5]">
-          <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shadow-md border-2 border-white">
-            <CircleDotDashed size={12} className="text-white" />
+      {/* Creation method indicator - absolute positioned */}
+      {hasCreationBadge && badgeConfig && (
+        <div
+          className="absolute top-2 right-2 z-[5] group/badge"
+          onMouseEnter={() => setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className={`w-6 h-6 ${badgeConfig.color} rounded-full flex items-center justify-center shadow-md border-2 border-white cursor-help transition-transform hover:scale-110`}>
+            <badgeConfig.icon size={12} className="text-white" />
           </div>
+
+          {/* Tooltip */}
+          {showTooltip && (
+            <div
+              className="absolute top-full right-0 mt-2 px-3 py-1.5 rounded-lg shadow-lg whitespace-nowrap text-xs font-medium pointer-events-none z-50"
+              style={{
+                backgroundColor: colors.surface,
+                color: colors.text,
+                border: `1px solid ${colors.border}`
+              }}
+            >
+              {badgeConfig.label}
+              <div
+                className="absolute bottom-full right-3 w-0 h-0"
+                style={{
+                  borderLeft: '4px solid transparent',
+                  borderRight: '4px solid transparent',
+                  borderBottom: `4px solid ${colors.border}`
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
 

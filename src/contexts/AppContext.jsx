@@ -62,6 +62,7 @@ export const useApp = () => {
 
     // Re-create combined properties that existed in the old context
     allWorks: allWorks,
+    allJobs: allWorks, // Alias for backward compatibility
     deleteShift: data.deleteShift,
 
     // Live Mode
