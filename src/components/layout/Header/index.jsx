@@ -5,11 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { Settings } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useAuth } from '../../../contexts/AuthContext';
+import { usePremium } from '../../../contexts/PremiumContext';
 import Flex from '../../ui/Flex';
 
 const Header = () => {
   const { thematicColors } = useApp();
   const { profilePhotoURL } = useAuth();
+  const { isPremium } = usePremium();
   const navigate = useNavigate();
   const [showSettingsIcon, setShowSettingsIcon] = useState(false);
 
@@ -49,11 +51,11 @@ const Header = () => {
           onClick={handleLogoClick}
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
         >
-          {/* Logo SVG */}
+          {/* Logo SVG - Premium or Regular */}
           <Flex variant="center" className="w-14 h-14">
             <img
-              src="/assets/SVG/logo.svg"
-              alt="Logo"
+              src={isPremium ? "/assets/SVG/premium.svg" : "/assets/SVG/logo.svg"}
+              alt={isPremium ? "Premium Logo" : "Logo"}
               className="w-full h-full filter brightness-0 invert"
               style={{ filter: 'brightness(0) invert(1)' }}
             />
