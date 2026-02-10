@@ -39,6 +39,11 @@ const ShiftTypeBadge = ({ shiftType, shift, size = 'sm' }) => {
         label: 'Sunday',
         bgColor: TURN_TYPE_COLORS.Sunday + '20'
       },
+      holiday: {
+        color: '#DC2626',
+        label: 'Holiday',
+        bgColor: '#DC262620'
+      },
       delivery: {
         color: '#e8a7f8ff',
         label: 'Delivery',

@@ -15,6 +15,7 @@ import FooterSection from '../components/settings/FooterSection';
 import DeliverySection from '../components/settings/DeliverySection';
 import DeliveryPlatformsSection from '../components/settings/DeliveryPlatformsSection';
 import SmokoSection from '../components/settings/SmokoSection';
+import HolidaySettingsSection from '../components/settings/HolidaySettingsSection';
 import IntegrationsBanner from '../components/settings/IntegrationsBanner';
 import UnusedDeliverySection from '../components/stats/UnusedDeliverySection';
 import { useApp } from '../contexts/AppContext';
@@ -96,6 +97,9 @@ const Settings = () => {
                 <TurnRangeSection
                   className="flex-grow"
                 />
+                <HolidaySettingsSection
+                  className="flex-grow"
+                />
               </div>
             </div>
 
@@ -129,6 +133,8 @@ const Settings = () => {
 
             <TurnRangeSection
             />
+
+            <HolidaySettingsSection />
 
             <PreferencesSection
             />
