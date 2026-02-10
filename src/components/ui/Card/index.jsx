@@ -73,7 +73,11 @@ const Card = ({
       outlined: 'bg-white dark:bg-slate-800 border-2 border-gray-300 dark:border-slate-600',
       ghost: 'bg-transparent',
       gradient: 'bg-gradient-to-br from-white to-gray-50 dark:from-slate-800 dark:to-slate-900 border-gray-200 dark:border-slate-700',
-      transparent: 'bg-transparent border-none shadow-none'
+      transparent: 'bg-transparent border-none shadow-none',
+      // New surface variants for better contrast in Dark Mode
+      surface: 'bg-gray-50 dark:bg-[rgba(255,255,255,0.05)] border-gray-200 dark:border-[rgba(255,255,255,0.08)]',
+      surface2: 'bg-gray-100 dark:bg-[rgba(255,255,255,0.08)] border-gray-200 dark:border-[rgba(255,255,255,0.12)]',
+      surface3: 'bg-gray-150 dark:bg-[rgba(255,255,255,0.12)] border-gray-200 dark:border-[rgba(255,255,255,0.15)]',
     };
     return variants[variant] || variants.default;
   };

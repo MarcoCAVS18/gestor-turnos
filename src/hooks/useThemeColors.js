@@ -20,17 +20,23 @@ export const useThemeColors = () => {
     // Main colors
     primary,
     primaryDark,
-    
+
     // Transparencies
     transparent5: thematicColors?.transparent5 || `${primary}0D`, // 5% opacity
     transparent10: thematicColors?.transparent10 || `${primary}1A`, // 10% opacity
     transparent20: thematicColors?.transparent20 || `${primary}33`, // 20% opacity
     transparent30: thematicColors?.transparent30 || `${primary}4D`, // 30% opacity
     transparent50: thematicColors?.transparent50 || `${primary}80`, // 50% opacity
-    
+
+    // Surface colors for Dark Mode (better contrast on dark backgrounds)
+    surface: thematicColors?.surface || 'rgba(255, 255, 255, 0.05)',
+    surface2: thematicColors?.surface2 || 'rgba(255, 255, 255, 0.08)',
+    surface3: thematicColors?.surface3 || 'rgba(255, 255, 255, 0.12)',
+    surfaceHover: thematicColors?.surfaceHover || 'rgba(255, 255, 255, 0.15)',
+
     // Text colors
     textContrast: thematicColors?.textContrast || '#ffffff',
-    
+
     // Utilities
     getRingColor: () => primary,
     getHoverColor: () => primaryDark,
