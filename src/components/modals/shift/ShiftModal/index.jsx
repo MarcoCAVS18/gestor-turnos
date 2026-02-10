@@ -8,6 +8,7 @@ import { createSafeDate } from '../../../../utils/time';
 import BaseModal from '../../base/BaseModal';
 import ShiftForm from '../../../forms/shift/ShiftForm';
 import DeliveryShiftForm from '../../../forms/shift/DeliveryShiftForm';
+import BulkShiftConfirmModal from '../BulkShiftConfirmModal';
 
 const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
   const {
@@ -15,6 +16,7 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
     editShift,
     addDeliveryShift,
     editDeliveryShift,
+    addBulkShifts,
     works,
     deliveryWork
   } = useApp();
@@ -23,6 +25,9 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
   const [formType, setFormType] = useState('traditional');
   const [loading, setLoading] = useState(false);
   const [isFormDirty, setIsFormDirty] = useState(false);
+  const [isBulkEnabled, setIsBulkEnabled] = useState(false);
+  const [showBulkConfirm, setShowBulkConfirm] = useState(false);
+  const [pendingShiftData, setPendingShiftData] = useState(null);
   const isMobile = useIsMobile();
   const formId = useId();
 
@@ -60,6 +65,8 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
       setFormType('traditional');
       setLoading(false);
       setIsFormDirty(false);
+      setIsBulkEnabled(false);
+      setPendingShiftData(null);
     } else if (shift) {
       setSelectedWorkId(shift.workId || '');
     } else if (workId) {
@@ -69,8 +76,6 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
 
   const handleSave = async (shiftData) => {
     try {
-      setLoading(true);
-
       let finalData = { ...shiftData };
 
       if (initialDate && !shift) {
@@ -89,12 +94,22 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
         }
       }
 
+      // If bulk is enabled and this is a new shift, show confirmation modal
+      if (isBulkEnabled && !shift && formType === 'traditional') {
+        setPendingShiftData(finalData);
+        setShowBulkConfirm(true);
+        return;
+      }
+
+      // Normal single shift creation/edit
+      setLoading(true);
+
       if (formType === 'delivery') {
         if (shift) {
           await editDeliveryShift(shift.id, finalData);
         } else {
           await addDeliveryShift(finalData);
-        } 
+        }
       } else {
         if (shift) {
           await editShift(shift.id, finalData);
@@ -111,16 +126,36 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
     }
   };
 
+  const handleBulkConfirm = async (shifts) => {
+    try {
+      await addBulkShifts(shifts);
+      setShowBulkConfirm(false);
+      setPendingShiftData(null);
+      onClose();
+    } catch (error) {
+      console.error('Error creating bulk shifts:', error);
+      throw error;
+    }
+  };
+
+  const handleBulkToggle = (enabled) => {
+    setIsBulkEnabled(enabled);
+  };
+
   const handleWorkChange = (newWorkId) => {
     setSelectedWorkId(newWorkId);
   };
 
   const handleClose = () => {
-    setSelectedWorkId('');
-    setFormType('traditional');
-    setLoading(false);
-    setIsFormDirty(false);
-    onClose();
+    if (!showBulkConfirm) {
+      setSelectedWorkId('');
+      setFormType('traditional');
+      setLoading(false);
+      setIsFormDirty(false);
+      setIsBulkEnabled(false);
+      setPendingShiftData(null);
+      onClose();
+    }
   };
 
   if (!isOpen) return null;
@@ -181,10 +216,21 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
           onSubmit={handleSave}
           onWorkChange={handleWorkChange}
           onDirtyChange={setIsFormDirty}
+          onBulkToggle={handleBulkToggle}
+          isBulkEnabled={isBulkEnabled}
           isMobile={isMobile}
           initialDate={initialDate}
         />
       )}
+
+      {/* Bulk Shift Confirmation Modal */}
+      <BulkShiftConfirmModal
+        isOpen={showBulkConfirm}
+        onClose={() => setShowBulkConfirm(false)}
+        baseShift={pendingShiftData}
+        workName={allWorks.find(w => w.id === pendingShiftData?.workId)?.name || ''}
+        onConfirm={handleBulkConfirm}
+      />
     </BaseModal>
   );
 };

@@ -87,6 +87,26 @@ export const DataProvider = ({ children }) => {
     }
   }, [currentUser]);
 
+  const addBulkShifts = useCallback(async (shifts) => {
+    if (!currentUser) throw new Error("User not authenticated");
+    if (!shifts || shifts.length === 0) {
+      throw new Error("No shifts to create");
+    }
+
+    try {
+      // Create all shifts in parallel for better performance
+      const promises = shifts.map(shift =>
+        firebaseService.addShift(currentUser.uid, shift)
+      );
+
+      const results = await Promise.all(promises);
+      return results;
+    } catch (err) {
+      setError('Error creating bulk shifts: ' + err.message);
+      throw err;
+    }
+  }, [currentUser]);
+
   const editShift = useCallback(async (id, updatedData) => {
     if (!currentUser) throw new Error("User not authenticated");
     try {
@@ -116,6 +136,7 @@ export const DataProvider = ({ children }) => {
     editJob,
     deleteJob,
     addShift,
+    addBulkShifts,
     editShift,
     deleteShift,
   };
