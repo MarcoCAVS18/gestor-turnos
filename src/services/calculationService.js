@@ -481,7 +481,7 @@ export const calculateDeliveryStats = ({ deliveryWork, deliveryShifts, period = 
   periodShifts.forEach(shift => {
     const work = validDeliveryWork.find(w => w.id === shift.workId);
     if (!work) {
-      console.warn('⚠️ Delivery work not found for shift:', shift.id);
+      console.warn('Delivery work not found for shift:', shift.id);
       return;
     }
 

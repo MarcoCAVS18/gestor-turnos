@@ -391,7 +391,7 @@ export const LiveModeProvider = ({ children }) => {
       return new Date(timestamp);
     }
 
-    console.warn('⚠️ Unknown timestamp format:', timestamp);
+    console.warn('Unknown timestamp format:', timestamp);
     return new Date();
   };
 

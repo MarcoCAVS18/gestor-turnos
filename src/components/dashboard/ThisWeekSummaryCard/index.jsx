@@ -14,7 +14,7 @@ import Button from '../../ui/Button';
 
 // Frases motivacionales cortas
 const MOTIVATIONAL_PHRASES = [
-  { good: 'Keep going!', excellent: 'On fire! 🔥' },
+  { good: 'Keep going!', excellent: 'On fire!' },
   { good: 'Nice work!', excellent: 'Crushing it!' },
   { good: 'Good pace!', excellent: 'Unstoppable!' },
   { good: 'Stay strong!', excellent: 'Amazing!' },
