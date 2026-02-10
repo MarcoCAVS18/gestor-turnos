@@ -388,7 +388,7 @@ export const ComparisonWidget = ({ current, previous, label, format = 'currency'
   );
 };
 
-export default {
+const ExportChartsModule = {
   WeeklyEvolutionChart,
   WorkDistributionChart,
   DailyEarningsChart,
@@ -401,3 +401,5 @@ export default {
   CHART_COLORS,
   DEFAULT_COLORS
 };
+
+export default ExportChartsModule;

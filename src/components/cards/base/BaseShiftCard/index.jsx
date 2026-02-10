@@ -124,6 +124,7 @@ const BaseShiftCard = ({
 
   const cardContent = (
     <Card
+      variant="surface2"
       className="h-full min-h-[220px] relative overflow-hidden cursor-pointer group hover:shadow-lg transition-all duration-300 border-b-4 select-none"
       style={{ borderBottomColor: showDetails ? 'transparent' : avatarColor }}
       onClick={() => setShowDetails(!showDetails)}
@@ -218,7 +219,7 @@ const BaseShiftCard = ({
             animate="animate"
             exit="exit"
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-gray-50 flex flex-col p-3"
+            className="absolute inset-0 bg-gray-50 dark:bg-slate-900 flex flex-col p-3"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-2 pb-2 border-b border-gray-200/50 shrink-0">
@@ -243,28 +244,28 @@ const BaseShiftCard = ({
             {/* Content - scrollable */}
             <div className="flex-grow overflow-y-auto space-y-2 pr-1">
               {/* Time & Schedule */}
-              <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100 space-y-1.5">
-                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Schedule</div>
+              <div className="bg-white dark:bg-[rgba(255,255,255,0.05)] p-2 rounded-lg shadow-sm border border-gray-100 dark:border-[rgba(255,255,255,0.08)] space-y-1.5">
+                <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Schedule</div>
                 <Flex variant="between" className="text-xs">
-                  <Flex variant="center" className="text-gray-600">
+                  <Flex variant="center" className="text-gray-600 dark:text-gray-400">
                     <Clock size={12} className="mr-1.5" style={{ color: avatarColor }} />
                     <span>Time</span>
                   </Flex>
-                  <span className="font-semibold">{shift.startTime} - {shift.endTime}</span>
+                  <span className="font-semibold dark:text-white">{shift.startTime} - {shift.endTime}</span>
                 </Flex>
                 <Flex variant="between" className="text-xs">
-                  <span className="text-gray-600">Duration</span>
+                  <span className="text-gray-600 dark:text-gray-400">Duration</span>
                   <span className="font-bold" style={{ color: avatarColor }}>
                     {shiftData?.hours?.toFixed(1) || '0.0'}h
                   </span>
                 </Flex>
                 {date && (
                   <Flex variant="between" className="text-xs">
-                    <Flex variant="center" className="text-gray-600">
+                    <Flex variant="center" className="text-gray-600 dark:text-gray-400">
                       <Calendar size={12} className="mr-1.5" />
                       <span>Date</span>
                     </Flex>
-                    <span className="font-medium">{formatRelativeDate(date)}</span>
+                    <span className="font-medium dark:text-white">{formatRelativeDate(date)}</span>
                   </Flex>
                 )}
                 {/* Shift type & badges */}
@@ -278,12 +279,12 @@ const BaseShiftCard = ({
 
               {/* Earnings Breakdown */}
               {earningValue !== undefined && (
-                <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100">
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Earnings</div>
+                <div className="bg-white dark:bg-[rgba(255,255,255,0.05)] p-2 rounded-lg shadow-sm border border-gray-100 dark:border-[rgba(255,255,255,0.08)]">
+                  <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Earnings</div>
                   <Flex variant="between" className="items-center mb-2">
                     <Flex variant="center">
                       <DollarSign size={14} className="text-green-500 mr-1" />
-                      <span className="text-xs text-gray-600">{earningLabel || 'Total'}</span>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">{earningLabel || 'Total'}</span>
                     </Flex>
                     <span className="text-lg font-bold text-green-600">
                       {formatCurrency(earningValue, currencySymbol)}
@@ -292,35 +293,35 @@ const BaseShiftCard = ({
 
                   {/* Calculation breakdown - if available in shiftData */}
                   {shiftData && (
-                    <div className="space-y-1 pt-2 border-t border-gray-100 text-xs">
+                    <div className="space-y-1 pt-2 border-t border-gray-100 dark:border-[rgba(255,255,255,0.08)] text-xs">
                       {shiftData.baseAmount !== undefined && (
                         <Flex variant="between">
-                          <span className="text-gray-500">Base pay</span>
-                          <span className="font-medium">{formatCurrency(shiftData.baseAmount, currencySymbol)}</span>
+                          <span className="text-gray-500 dark:text-gray-400">Base pay</span>
+                          <span className="font-medium dark:text-white">{formatCurrency(shiftData.baseAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.nightAmount !== undefined && shiftData.nightAmount > 0 && (
                         <Flex variant="between">
-                          <span className="text-gray-500">Night bonus</span>
-                          <span className="font-medium">{formatCurrency(shiftData.nightAmount, currencySymbol)}</span>
+                          <span className="text-gray-500 dark:text-gray-400">Night bonus</span>
+                          <span className="font-medium dark:text-white">{formatCurrency(shiftData.nightAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.saturdayAmount !== undefined && shiftData.saturdayAmount > 0 && (
                         <Flex variant="between">
-                          <span className="text-gray-500">Saturday bonus</span>
-                          <span className="font-medium">{formatCurrency(shiftData.saturdayAmount, currencySymbol)}</span>
+                          <span className="text-gray-500 dark:text-gray-400">Saturday bonus</span>
+                          <span className="font-medium dark:text-white">{formatCurrency(shiftData.saturdayAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.sundayAmount !== undefined && shiftData.sundayAmount > 0 && (
                         <Flex variant="between">
-                          <span className="text-gray-500">Sunday bonus</span>
-                          <span className="font-medium">{formatCurrency(shiftData.sundayAmount, currencySymbol)}</span>
+                          <span className="text-gray-500 dark:text-gray-400">Sunday bonus</span>
+                          <span className="font-medium dark:text-white">{formatCurrency(shiftData.sundayAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.holidayAmount !== undefined && shiftData.holidayAmount > 0 && (
                         <Flex variant="between">
-                          <span className="text-gray-500">Holiday bonus</span>
-                          <span className="font-medium">{formatCurrency(shiftData.holidayAmount, currencySymbol)}</span>
+                          <span className="text-gray-500 dark:text-gray-400">Holiday bonus</span>
+                          <span className="font-medium dark:text-white">{formatCurrency(shiftData.holidayAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                     </div>
@@ -330,8 +331,8 @@ const BaseShiftCard = ({
 
               {/* Additional Info - Children stats (delivery: km, orders, fuel) */}
               {children?.desktopStats && (
-                <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100">
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
+                <div className="bg-white dark:bg-[rgba(255,255,255,0.05)] p-2 rounded-lg shadow-sm border border-gray-100 dark:border-[rgba(255,255,255,0.08)]">
+                  <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">
                     {type === 'delivery' ? 'Delivery Info' : 'Additional Info'}
                   </div>
                   {children.desktopStats}

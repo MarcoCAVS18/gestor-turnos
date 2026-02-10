@@ -235,8 +235,6 @@ const calculateMonthlySummary = (traditionalShifts, deliveryShifts) => {
  * @returns {Array} Array of monthly data objects
  */
 export const processMonthlyData = ({ shifts, deliveryShifts, works, deliveryWorks, calculatePayment }) => {
-  const allWorks = [...(works || []), ...(deliveryWorks || [])];
-
   // Group shifts by month
   const groupedTraditional = groupShiftsByMonth(shifts || []);
   const groupedDelivery = groupShiftsByMonth(deliveryShifts || []);
@@ -298,8 +296,10 @@ export const getRecentMonths = (monthlyData, count = 3) => {
   return monthlyData.slice(-count);
 };
 
-export default {
+const MonthlyDataProcessor = {
   processMonthlyData,
   getMonthData,
   getRecentMonths
 };
+
+export default MonthlyDataProcessor;

@@ -1,13 +1,13 @@
 // src/pages/Dashboard.jsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { LayoutDashboard } from 'lucide-react';
 
 import PageHeader from '../components/layout/PageHeader';
 import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useApp } from '../contexts/AppContext';
-import { generatePDFReport, generatePNGReport, generateXLSXReport } from '../services/exportService';
+import { exportReport, preloadExportResources } from '../services/export';
 import Loader from '../components/other/Loader';
 import WelcomeCard from '../components/dashboard/WelcomeCard';
 import QuickStatsGrid from '../components/dashboard/QuickStatsGrid';
@@ -29,7 +29,7 @@ import Flex from '../components/ui/Flex';
 import { useLiveMode } from '../hooks/useLiveMode';
 
 const Dashboard = () => {
-  const { loading, calculatePayment } = useApp();
+  const { loading, calculatePayment, shiftRanges, settings } = useApp();
   const stats = useDashboardStats();
   const { isActive } = useLiveMode();
 
@@ -39,6 +39,13 @@ const Dashboard = () => {
   // Live Mode modal states
   const [isLiveStartModalOpen, setIsLiveStartModalOpen] = useState(false);
   const [isLiveActiveModalOpen, setIsLiveActiveModalOpen] = useState(false);
+
+  // Preload export resources when component mounts
+  useEffect(() => {
+    preloadExportResources().catch(err => {
+      console.warn('Could not preload export resources:', err);
+    });
+  }, []);
 
   const handleOpenLiveMode = () => {
     if (isActive) {
@@ -54,15 +61,26 @@ const Dashboard = () => {
 
   const handleExport = async (format) => {
     try {
-      if (format === 'pdf') {
-        await generatePDFReport(stats, stats.allShifts, stats.allWorks);
-      } else if (format === 'png') {
-        await generatePNGReport(stats, stats.allShifts, stats.allWorks);
-      } else if (format === 'xlsx') {
-        await generateXLSXReport(stats, stats.allShifts, stats.allWorks, calculatePayment);
-      }
-    } catch {
-      // Export error - silently handled
+      // Prepare export options
+      const exportOptions = {
+        shiftRanges,
+        userSettings: settings,
+        deliveryShifts: stats.allShifts?.filter(s => s.type === 'delivery') || [],
+        deliveryWorks: stats.allWorks?.filter(w => w.type === 'delivery') || []
+      };
+
+      // Export using new professional system
+      await exportReport(
+        format,
+        stats,
+        stats.allShifts || [],
+        stats.allWorks || [],
+        calculatePayment,
+        exportOptions
+      );
+    } catch (error) {
+      console.error('Export error:', error);
+      // Export error - silently handled in UI
     }
   };
 
