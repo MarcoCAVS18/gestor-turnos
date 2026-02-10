@@ -30,7 +30,7 @@ const TechCarousel = () => {
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.8 }}
-      className="py-10"
+      className="py-10 overflow-hidden"
     >
       {/* Carousel Container */}
       <div className="relative overflow-hidden py-6">

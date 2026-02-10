@@ -15,7 +15,7 @@ const About = () => {
   const colors = useThemeColors();
 
   return (
-    <div className="px-4 py-6 space-y-6">
+    <div className="px-4 py-6 space-y-6 overflow-x-hidden">
       <BackLink to="/settings">Settings</BackLink>
 
       {/* Hero - full width always */}
