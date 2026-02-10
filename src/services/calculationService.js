@@ -32,7 +32,51 @@ export const calculateHours = (start, end) => {
 };
 
 /**
+ * Splits a shift into daily segments when it crosses midnight.
+ * Each segment represents work done on a specific calendar day.
+ * @param {Date} startDate - The start date of the shift
+ * @param {number} startMinutes - Minutes from midnight for shift start (0-1439)
+ * @param {number} endMinutes - Minutes from midnight for shift end (can be >1440 if crosses midnight)
+ * @returns {Array} Array of segments with {date, startMinutes, endMinutes, durationMinutes}
+ */
+const splitShiftIntoSegments = (startDate, startMinutes, endMinutes) => {
+  const segments = [];
+  const MINUTES_IN_DAY = 24 * 60;
+
+  let currentDate = new Date(startDate);
+  let currentStartMinutes = startMinutes;
+  let remainingMinutes = endMinutes - startMinutes;
+
+  while (remainingMinutes > 0) {
+    // Calculate how many minutes until midnight from current start
+    const minutesUntilMidnight = MINUTES_IN_DAY - (currentStartMinutes % MINUTES_IN_DAY);
+
+    // This segment ends either at midnight or at the shift end, whichever comes first
+    const segmentDuration = Math.min(minutesUntilMidnight, remainingMinutes);
+    const segmentEndMinutes = currentStartMinutes + segmentDuration;
+
+    segments.push({
+      date: new Date(currentDate),
+      startMinutes: currentStartMinutes % MINUTES_IN_DAY,
+      endMinutes: segmentEndMinutes % MINUTES_IN_DAY || MINUTES_IN_DAY,
+      durationMinutes: segmentDuration
+    });
+
+    // Move to next day if there's remaining time
+    remainingMinutes -= segmentDuration;
+    if (remainingMinutes > 0) {
+      currentDate = new Date(currentDate);
+      currentDate.setDate(currentDate.getDate() + 1);
+      currentStartMinutes = 0; // Next segment starts at midnight
+    }
+  }
+
+  return segments;
+};
+
+/**
  * Calculates payment for a shift, considering time ranges, rates, and breaks.
+ * NOW SUPPORTS SHIFTS THAT CROSS MIDNIGHT WITH DIFFERENT DAY TYPES.
  * @param {object} shift - The shift object.
  * @param {Array} allJobs - Array of all jobs (normal and delivery).
  * @param {object} shiftRanges - Configuration of time ranges.
@@ -51,7 +95,7 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     hours: 0,
     tips: 0,
     isDelivery: false,
-    breakdown: { day: 0, afternoon: 0, night: 0, saturday: 0, sunday: 0 },
+    breakdown: { day: 0, afternoon: 0, night: 0, saturday: 0, sunday: 0, holiday: 0 },
     appliedRates: {}
   };
 
@@ -85,9 +129,9 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
   let startMinutes = startHour * 60 + startMin;
   let endMinutes = endHour * 60 + endMin;
 
-  if (crossesMidnight) {
-    endMinutes += 24 * 60;
-  } else if (endMinutes <= startMinutes) {
+  // Detect if shift crosses midnight
+  const doesCrossMidnight = crossesMidnight || endMinutes <= startMinutes;
+  if (doesCrossMidnight) {
     endMinutes += 24 * 60;
   }
 
@@ -98,70 +142,89 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
   }
 
   const hours = workingMinutes / 60;
-
-  const date = createSafeDate(startDate);
-  const dayOfWeek = date.getDay();
-
-  // Check if the date is a holiday (if auto-detection is enabled)
   const { country, region, useAutoHolidays } = holidayConfig;
-  const isHolidayDate = useAutoHolidays && country && isHoliday(date, country, region);
+
+  // Split shift into daily segments if it crosses midnight
+  const baseDate = createSafeDate(startDate);
+  const segments = splitShiftIntoSegments(baseDate, startMinutes, endMinutes);
 
   let total = 0;
   let breakdown = { day: 0, afternoon: 0, night: 0, saturday: 0, sunday: 0, holiday: 0 };
   let appliedRates = {};
+  let hasAnyHoliday = false;
 
-  // Priority: Holiday > Sunday > Saturday > Weekday
-  if (isHolidayDate && work.rates.holidays) {
-    // Holiday has highest priority
-    total = hours * work.rates.holidays;
-    breakdown.holiday = total;
-    appliedRates['holiday'] = work.rates.holidays;
-  } else if (dayOfWeek === 0) { // Sunday
-    total = hours * work.rates.sunday;
-    breakdown.sunday = total;
-    appliedRates['sunday'] = work.rates.sunday;
-  } else if (dayOfWeek === 6) { // Saturday
-    total = hours * work.rates.saturday;
-    breakdown.saturday = total;
-    appliedRates['saturday'] = work.rates.saturday;
-  } else {
-    const ranges = shiftRanges || {
-      dayStart: 6, dayEnd: 14,
-      afternoonStart: 14, afternoonEnd: 20,
-      nightStart: 20
-    };
+  const ranges = shiftRanges || {
+    dayStart: 6, dayEnd: 14,
+    afternoonStart: 14, afternoonEnd: 20,
+    nightStart: 20
+  };
 
-    const dayStartMin = ranges.dayStart * 60;
-    const dayEndMin = ranges.dayEnd * 60;
-    const afternoonStartMin = ranges.afternoonStart * 60;
-    const afternoonEndMin = ranges.afternoonEnd * 60;
+  const dayStartMin = ranges.dayStart * 60;
+  const dayEndMin = ranges.dayEnd * 60;
+  const afternoonStartMin = ranges.afternoonStart * 60;
+  const afternoonEndMin = ranges.afternoonEnd * 60;
 
-    const minutesToProcess = Math.min(workingMinutes, totalMinutes);
+  // Process each segment (could be on different calendar days)
+  segments.forEach(segment => {
+    const segmentDate = segment.date;
+    const dayOfWeek = segmentDate.getDay();
+    const isHolidayDate = useAutoHolidays && country && isHoliday(segmentDate, country, region);
 
-    for (let minute = 0; minute < minutesToProcess; minute++) {
-      const actualMinute = startMinutes + (minute * totalMinutes / workingMinutes);
-      const currentMinuteInDay = Math.floor(actualMinute) % (24 * 60);
-      let rate = work.baseRate;
-      let rateType = 'night';
+    if (isHolidayDate) hasAnyHoliday = true;
 
-      if (currentMinuteInDay >= dayStartMin && currentMinuteInDay < dayEndMin) {
-        rate = work.rates.day;
-        rateType = 'day';
-      } else if (currentMinuteInDay >= afternoonStartMin && currentMinuteInDay < afternoonEndMin) {
-        rate = work.rates.afternoon;
-        rateType = 'afternoon';
-      } else {
-        rate = work.rates.night;
-        rateType = 'night';
+    // Calculate the proportion of working minutes in this segment
+    const segmentWorkingMinutes = (segment.durationMinutes / totalMinutes) * workingMinutes;
+
+    // Priority: Holiday > Sunday > Saturday > Weekday
+    if (isHolidayDate && work.rates.holidays) {
+      // Holiday has highest priority
+      const segmentRate = work.rates.holidays;
+      const segmentEarnings = (segmentWorkingMinutes / 60) * segmentRate;
+      total += segmentEarnings;
+      breakdown.holiday += segmentEarnings;
+      appliedRates['holiday'] = segmentRate;
+    } else if (dayOfWeek === 0) { // Sunday
+      const segmentRate = work.rates.sunday;
+      const segmentEarnings = (segmentWorkingMinutes / 60) * segmentRate;
+      total += segmentEarnings;
+      breakdown.sunday += segmentEarnings;
+      appliedRates['sunday'] = segmentRate;
+    } else if (dayOfWeek === 6) { // Saturday
+      const segmentRate = work.rates.saturday;
+      const segmentEarnings = (segmentWorkingMinutes / 60) * segmentRate;
+      total += segmentEarnings;
+      breakdown.saturday += segmentEarnings;
+      appliedRates['saturday'] = segmentRate;
+    } else {
+      // Weekday: Apply day/afternoon/night rates based on time of day
+      for (let minute = 0; minute < segmentWorkingMinutes; minute++) {
+        // Calculate the actual minute in the day for this working minute
+        const progressRatio = minute / segmentWorkingMinutes;
+        const actualMinute = segment.startMinutes + (progressRatio * segment.durationMinutes);
+        const currentMinuteInDay = Math.floor(actualMinute) % (24 * 60);
+
+        let rate = work.baseRate;
+        let rateType = 'night';
+
+        if (currentMinuteInDay >= dayStartMin && currentMinuteInDay < dayEndMin) {
+          rate = work.rates.day;
+          rateType = 'day';
+        } else if (currentMinuteInDay >= afternoonStartMin && currentMinuteInDay < afternoonEndMin) {
+          rate = work.rates.afternoon;
+          rateType = 'afternoon';
+        } else {
+          rate = work.rates.night;
+          rateType = 'night';
+        }
+
+        if (rate > 0) appliedRates[rateType] = rate;
+
+        const ratePerMinute = rate / 60;
+        total += ratePerMinute;
+        breakdown[rateType] += ratePerMinute;
       }
-
-      if (rate > 0) appliedRates[rateType] = rate;
-
-      const ratePerMinute = rate / 60;
-      total += ratePerMinute;
-      breakdown[rateType] += ratePerMinute;
     }
-  }
+  });
 
   const hoursBreakdown = {};
   Object.keys(breakdown).forEach(rateType => {
@@ -181,8 +244,8 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     breakdown,
     hoursBreakdown,
     appliedRates,
-    isNightShift: crossesMidnight || false,
-    isHoliday: isHolidayDate || false,
+    isNightShift: doesCrossMidnight,
+    isHoliday: hasAnyHoliday,
     smokoApplied: smokoEnabled && hadBreak && totalMinutes > finalSmokoMinutes,
     smokoMinutes: smokoEnabled && hadBreak ? finalSmokoMinutes : 0,
     totalMinutesWorked: workingMinutes,
