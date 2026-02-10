@@ -238,10 +238,12 @@ export const generateChartsWithProgress = async (chartData, colors = {}, onProgr
   return charts;
 };
 
-export default {
+const ChartRendererModule = {
   renderComponentToImage,
   generateAllCharts,
   generateKPIRow,
   generateChart,
   generateChartsWithProgress
 };
+
+export default ChartRendererModule;

@@ -49,7 +49,7 @@ export const loadLogoWithColor = async (color = '#EC4899') => {
  * @param {string} color - Fill color for the logo
  * @returns {Promise<string>} - Base64 encoded PNG
  */
-const svgToBase64PNG = (svgText, color) => {
+const svgToBase64PNG = (svgText) => {
   return new Promise((resolve) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -214,10 +214,12 @@ export const clearLogoCache = () => {
   logoCache.clear();
 };
 
-export default {
+const LogoLoaderModule = {
   loadLogoWithColor,
   loadLogoForPDF,
   loadLogoForExcel,
   preloadLogos,
   clearLogoCache
 };
+
+export default LogoLoaderModule;

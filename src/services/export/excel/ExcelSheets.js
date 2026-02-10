@@ -1,7 +1,6 @@
 // src/services/export/excel/ExcelSheets.js
 
-import * as XLSX from 'xlsx-js-style';
-import { styles, columnWidths, applyStyle, setColumnWidths, mergeCells, getRowStyle, COLORS } from './ExcelStyles';
+import { styles, setColumnWidths, mergeCells, getRowStyle } from './ExcelStyles';
 
 /**
  * Creates a cell with value and style
@@ -22,7 +21,7 @@ const createCell = (value, style, type = 's') => ({
  * @param {Object} logo - Logo data (optional)
  * @returns {Object} Worksheet
  */
-export const createOverviewSheet = (reportData, logo = null) => {
+export const createOverviewSheet = (reportData) => {
   const ws = {};
   let row = 1;
 
@@ -482,9 +481,11 @@ export const createAllSheets = (reportData, options = {}) => {
   return sheets;
 };
 
-export default {
+const ExcelSheetsModule = {
   createOverviewSheet,
   createDeliverySheet,
   createMonthlySheet,
   createAllSheets
 };
+
+export default ExcelSheetsModule;

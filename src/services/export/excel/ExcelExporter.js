@@ -198,9 +198,11 @@ export const quickExcelExport = async (stats, shifts, works, calculatePayment, o
   return generateExcelReport(reportData, options);
 };
 
-export default {
+const ExcelExporterModule = {
   ExcelExporter,
   generateExcelReport,
   generateExcelBlob,
   quickExcelExport
 };
+
+export default ExcelExporterModule;

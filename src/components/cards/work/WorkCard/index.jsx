@@ -5,6 +5,7 @@ import BaseWorkCard from '../../base/BaseWorkCard';
 import { formatCurrency } from '../../../../utils/currency';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import Flex from '../../../ui/Flex';
+import Card from '../../../ui/Card';
 
 const WorkCard = (props) => {
   const { work } = props;
@@ -28,32 +29,34 @@ const WorkCard = (props) => {
 
         {/* Additional rates grid */}
         {hasRates && (
-          <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-gray-100">
-            {work.rates.night && work.rates.night !== baseRate && (
-              <div className="text-center">
-                <p className="text-gray-500">Night</p>
-                <p className="font-medium">{formatCurrency(work.rates.night)}/h</p>
-              </div>
-            )}
-            {work.rates.saturday && work.rates.saturday !== baseRate && (
-              <div className="text-center">
-                <p className="text-gray-500">Saturday</p>
-                <p className="font-medium">{formatCurrency(work.rates.saturday)}/h</p>
-              </div>
-            )}
-            {work.rates.sunday && work.rates.sunday !== baseRate && (
-              <div className="text-center">
-                <p className="text-gray-500">Sunday</p>
-                <p className="font-medium">{formatCurrency(work.rates.sunday)}/h</p>
-              </div>
-            )}
-            {work.rates.holidays && work.rates.holidays !== baseRate && (
-              <div className="text-center">
-                <p className="text-gray-500">Holiday</p>
-                <p className="font-medium">{formatCurrency(work.rates.holidays)}/h</p>
-              </div>
-            )}
-          </div>
+          <Card variant="surface" padding="sm" className="mt-2">
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              {work.rates.night && work.rates.night !== baseRate && (
+                <div className="text-center">
+                  <p className="text-gray-500 dark:text-gray-400">Night</p>
+                  <p className="font-medium dark:text-white">{formatCurrency(work.rates.night)}/h</p>
+                </div>
+              )}
+              {work.rates.saturday && work.rates.saturday !== baseRate && (
+                <div className="text-center">
+                  <p className="text-gray-500 dark:text-gray-400">Saturday</p>
+                  <p className="font-medium dark:text-white">{formatCurrency(work.rates.saturday)}/h</p>
+                </div>
+              )}
+              {work.rates.sunday && work.rates.sunday !== baseRate && (
+                <div className="text-center">
+                  <p className="text-gray-500 dark:text-gray-400">Sunday</p>
+                  <p className="font-medium dark:text-white">{formatCurrency(work.rates.sunday)}/h</p>
+                </div>
+              )}
+              {work.rates.holidays && work.rates.holidays !== baseRate && (
+                <div className="text-center">
+                  <p className="text-gray-500 dark:text-gray-400">Holiday</p>
+                  <p className="font-medium dark:text-white">{formatCurrency(work.rates.holidays)}/h</p>
+                </div>
+              )}
+            </div>
+          </Card>
         )}
       </div>
     </BaseWorkCard>

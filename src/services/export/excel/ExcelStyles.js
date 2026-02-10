@@ -399,6 +399,12 @@ export const styles = {
   // Empty cell
   empty: {
     border: borders.thin
+  },
+
+  // Small text
+  small: {
+    font: fonts.small,
+    alignment: { horizontal: 'left', vertical: 'center' }
   }
 };
 
@@ -502,7 +508,7 @@ export const mergeCells = (worksheet, range) => {
   });
 };
 
-export default {
+const ExcelStylesModule = {
   COLORS,
   styles,
   columnWidths,
@@ -512,3 +518,5 @@ export default {
   setColumnWidths,
   mergeCells
 };
+
+export default ExcelStylesModule;
