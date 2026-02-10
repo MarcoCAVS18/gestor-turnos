@@ -69,27 +69,58 @@ Agregar una variante adicional de color (ej: `surface2`, `cardSecondary`, etc.) 
 
 ---
 
-## 3. Revisar Live Mode + guardado de turnos (shift saving)
+## 3. Revisar Live Mode + guardado de turnos (shift saving) ✅
 
 ### Problema
 El comportamiento del Live Mode y el guardado de turnos necesita ser revisado.
 
 Se sospecha que:
 - Lunes a viernes (day / afternoon / night) funciona correctamente.
-- Sábado, domingo y feriados NO funciona correctamente.
+- Sábado, domingo calculamos que no funciona correctamente.
+- Revisar holidays
+
+**Problema crítico identificado:**
+Un turno que cruza medianoche (ej: Viernes 9pm - Sábado 3am) NO dividía el cálculo por tipo de día.
+- Antes: TODO el turno se calculaba con el rate del día de inicio (viernes weekday)
+- Ahora: Se divide en segmentos y cada uno usa su rate correcto (viernes night + sábado saturday)
 
 ### Objetivo
 Analizar y corregir toda la lógica de guardado y cálculo para shifts según el día.
 
 ### Requerimientos
-- Validar cálculos en:
-  - Weekdays
-  - Saturday
-  - Sunday
-  - Holidays
-- Confirmar que el modo Live Mode calcula correctamente horas y rate.
-- Revisar lógica de detección de tipo de día.
-- Revisar que los shifts se persistan correctamente en Firestore.
+- Validar cálculos en: ✅
+  - Weekdays ✅
+  - Saturday ✅
+  - Sunday ✅
+  - Holidays ✅
+- Confirmar que el modo Live Mode calcula correctamente horas y rate. ✅
+- Revisar lógica de detección de tipo de día. ✅
+- Revisar que los shifts se persistan correctamente en Firestore. ✅
+
+### ✅ Implementación Completada
+
+**Cambios realizados en calculationService.js:**
+
+1. **Nueva función `splitShiftIntoSegments`:**
+   - Divide turnos que cruzan medianoche en segmentos por día
+   - Cada segmento tiene su propia fecha para detectar el tipo de día correcto
+   - Maneja turnos de 24+ horas (múltiples días)
+
+2. **Refactorización de `calculatePayment`:**
+   - Procesa cada segmento con su propio tipo de día
+   - Prioridad correcta: Holiday > Sunday > Saturday > Weekday
+   - Weekdays aplican day/afternoon/night rates según hora del día
+   - Smoko se aplica al turno completo, no a cada segmento
+
+**Ejemplos de casos cubiertos:**
+- Viernes 9pm - Sábado 3am: 3hrs night (viernes) + 3hrs saturday = correcto ✅
+- Sábado 11pm - Domingo 2am: 1hr saturday + 2hrs sunday = correcto ✅
+- Viernes 11pm - Sábado 1am (holiday): 1hr night + 1hr holiday = correcto ✅
+
+**Archivos modificados:**
+- [calculationService.js](src/services/calculationService.js) - lógica completa de segmentación
+
+**Commit:** [pendiente]
 
 ---
 

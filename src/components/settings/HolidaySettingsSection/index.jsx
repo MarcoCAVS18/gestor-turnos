@@ -1,7 +1,7 @@
 // src/components/settings/HolidaySettingsSection/index.jsx
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Calendar, Check, MapPin, Loader } from 'lucide-react';
+import { Calendar, Check, MapPin, Loader, ChevronDown } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
@@ -17,7 +17,6 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   const {
     holidayCountry,
     holidayRegion,
-    useAutoHolidays,
     savePreferences
   } = useApp();
 
@@ -32,6 +31,7 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
+  const [showManualInputs, setShowManualInputs] = useState(false);
 
   // Get available countries and regions
   const countries = useMemo(() => getAvailableCountries(), []);
@@ -44,6 +44,10 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   useEffect(() => {
     setSelectedCountry(holidayCountry || '');
     setSelectedRegion(holidayRegion || '');
+    // Auto-expand if country is already selected
+    if (holidayCountry) {
+      setShowManualInputs(true);
+    }
   }, [holidayCountry, holidayRegion]);
 
   // Detect changes
@@ -70,6 +74,47 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
     }
   }, [selectedCountry, selectedRegion]);
 
+  // Auto-save when country or region changes
+  useEffect(() => {
+    const autoSave = async () => {
+      // Only save if there are actual changes
+      if (!hasChanges) return;
+
+      try {
+        setLoading(true);
+
+        // Auto-detect is enabled if a country is selected
+        const autoDetectEnabled = !!selectedCountry;
+
+        await savePreferences({
+          useAutoHolidays: autoDetectEnabled,
+          holidayCountry: selectedCountry || null,
+          holidayRegion: selectedRegion || null,
+        });
+
+        setShowSuccess(true);
+        setHasChanges(false);
+
+        setTimeout(() => {
+          setShowSuccess(false);
+        }, 2000);
+
+      } catch (error) {
+        console.error('Error saving holiday settings:', error);
+        onError?.('Error saving settings: ' + error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Debounce auto-save to avoid too many writes
+    const timeoutId = setTimeout(() => {
+      autoSave();
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [selectedCountry, selectedRegion, hasChanges, savePreferences, onError]);
+
   const handleUseLocation = async () => {
     try {
       setDetectingLocation(true);
@@ -86,35 +131,6 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
       onError?.('Error accessing location. Please check browser permissions.');
     } finally {
       setDetectingLocation(false);
-    }
-  };
-
-  const handleSave = async () => {
-    try {
-      setLoading(true);
-
-      // Auto-detect is enabled if a country is selected
-      const autoDetectEnabled = !!selectedCountry;
-
-      await savePreferences({
-        useAutoHolidays: autoDetectEnabled,
-        holidayCountry: selectedCountry || null,
-        holidayRegion: selectedRegion || null,
-      });
-
-      setShowSuccess(true);
-      setHasChanges(false);
-      onSuccess?.('Holiday settings saved successfully');
-
-      setTimeout(() => {
-        setShowSuccess(false);
-      }, 3000);
-
-    } catch (error) {
-      console.error('Error saving holiday settings:', error);
-      onError?.('Error saving settings: ' + error.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -135,8 +151,29 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
           {detectingLocation ? 'Detecting location...' : 'Use my location'}
         </Button>
 
-        {/* Country and Region Selectors - Same line */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Explanatory Text */}
+        <p className="text-sm text-gray-400 dark:text-gray-400 text-center">
+          We will use your location to determine holiday days and perform calculations correctly.
+        </p>
+
+        {/* Enter Manually Collapsible Button */}
+        <button
+          onClick={() => setShowManualInputs(!showManualInputs)}
+          className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 pt-2 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+        >
+          <span>Enter manually</span>
+          <ChevronDown
+            size={16}
+            className={`text-gray-400 transition-transform duration-200 ${showManualInputs ? 'rotate-180' : ''}`}
+          />
+        </button>
+
+        {/* Country and Region Selectors - Collapsible */}
+        <div
+          className={`grid grid-cols-1 md:grid-cols-2 gap-4 overflow-hidden transition-all duration-300 ${
+            showManualInputs ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
           {/* Country Selector */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
@@ -180,19 +217,13 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
           </div>
         </div>
 
-        {/* Save Button */}
-        <Button
-          onClick={handleSave}
-          disabled={loading || !hasChanges}
-          loading={loading}
-          className="w-full mt-4"
-          themeColor={colors.primary}
-          icon={showSuccess ? Check : undefined}
-        >
-          {loading ? 'Saving...' :
-           showSuccess ? 'Saved correctly' :
-           hasChanges ? 'Save holiday settings' : 'No changes'}
-        </Button>
+        {/* Success Indicator */}
+        {showSuccess && (
+          <div className="flex items-center justify-center text-sm text-green-600 dark:text-green-400">
+            <Check size={16} className="mr-1" />
+            <span>Settings saved</span>
+          </div>
+        )}
       </div>
     </SettingsSection>
   );
