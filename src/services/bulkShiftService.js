@@ -120,7 +120,7 @@ const createShiftForDate = (baseShift, date) => {
     endDate = formatDateForShift(nextDay);
   }
 
-  return {
+  const shiftData = {
     workId: baseShift.workId,
     startDate: dateStr,
     startTime: baseShift.startTime,
@@ -129,8 +129,11 @@ const createShiftForDate = (baseShift, date) => {
     endDate: baseShift.crossesMidnight ? endDate : '',
     hadBreak: baseShift.hadBreak !== undefined ? baseShift.hadBreak : true,
     breakMinutes: baseShift.breakMinutes || 0,
-    notes: baseShift.notes || ''
+    notes: baseShift.notes || '',
+    createdWith: 'bulk'
   };
+
+  return shiftData;
 };
 
 /**

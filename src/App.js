@@ -39,6 +39,7 @@ import Settings from './pages/Settings';
 import Integrations from './pages/Integrations';
 import SharedWork from './pages/SharedWork';
 import Premium from './pages/Premium';
+import About from './pages/About';
 
 // Modals
 import WorkModal from './components/modals/work/WorkModal';
@@ -156,6 +157,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/integrations" element={<Integrations />} />
           <Route path="/premium" element={<Premium />} />
+          <Route path="/about" element={<About />} />
           {/* Legal Pages */}
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
@@ -168,7 +170,14 @@ function App() {
 
         {/* Redirections */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<NotFound />} />
+        <Route
+          path="*"
+          element={
+            <AppProvider>
+              <NotFound />
+            </AppProvider>
+          }
+        />
       </Routes>
     </Router>
   );

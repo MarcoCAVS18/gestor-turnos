@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Info, ArrowLeft } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -144,11 +144,6 @@ const WelcomeCard = ({ totalEarned, isFeatureVisible = false, className }) => {
             transition={{ duration: 0.25 }}
             className="flex flex-col h-full"
           >
-            {/* Back indicator */}
-            <div className="flex items-center gap-1 mb-2 text-gray-400">
-              <ArrowLeft size={12} />
-              <span className="text-[10px] font-medium uppercase tracking-wider">Back</span>
-            </div>
 
             {/* Disclaimer content */}
             <div className="flex-1 flex flex-col justify-center text-center px-2">

@@ -332,10 +332,20 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
     shiftData.liveSessionId = newShift.liveSessionId || null;
   }
 
+  // Add creation method if present
+  if (newShift.createdWith) {
+    shiftData.createdWith = newShift.createdWith;
+  }
+
   // Add break/smoko fields if present
   if (newShift.hadBreak !== undefined) {
     shiftData.hadBreak = newShift.hadBreak;
     shiftData.breakMinutes = newShift.breakMinutes || 0;
+  }
+
+  // Add notes if present
+  if (newShift.notes) {
+    shiftData.notes = newShift.notes;
   }
 
   if (isDelivery) {

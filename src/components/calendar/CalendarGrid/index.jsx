@@ -25,25 +25,27 @@ const CalendarGrid = ({
 
     dayShifts.forEach(shift => {
       const job = allJobs.find(t => t.id === shift.workId);
+
       if (job) {
-        // For delivery jobs, use specific color
-        if (job.type === 'delivery' || shift.type === 'delivery') {
-          uniqueColors.add(job.avatarColor || job.color || '#10B981');
+        // Use job color (prefer avatarColor, then color)
+        const jobColor = job.avatarColor || job.color;
+
+        if (jobColor) {
+          uniqueColors.add(jobColor);
         } else {
-          // For traditional jobs
-          uniqueColors.add(job.color || '#EC4899');
+          // Fallback to default only if job has no color defined
+          const fallbackColor = (job.type === 'delivery' || shift.type === 'delivery') ? '#10B981' : '#EC4899';
+          uniqueColors.add(fallbackColor);
         }
       } else {
         // If job is not found, use default color based on type
-        if (shift.type === 'delivery') {
-          uniqueColors.add('#10B981'); // Green for delivery
-        } else {
-          uniqueColors.add('#EC4899'); // Pink for traditional
-        }
+        const fallbackColor = shift.type === 'delivery' ? '#10B981' : '#EC4899';
+        uniqueColors.add(fallbackColor);
       }
     });
 
-    return Array.from(uniqueColors).slice(0, 3); // Maximum 3 colors
+    const colors = Array.from(uniqueColors).slice(0, 3);
+    return colors;
   };
 
   return (

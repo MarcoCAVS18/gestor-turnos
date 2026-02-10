@@ -77,7 +77,7 @@ const NotFound = () => {
 
           <Button
             onClick={handleGoBack}
-            variant="ghost"
+            variant="cancel"
             size="lg"
             icon={ArrowLeft}
             iconPosition="left"

@@ -18,7 +18,8 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
     editDeliveryShift,
     addBulkShifts,
     works,
-    deliveryWork
+    deliveryWork,
+    shifts
   } = useApp();
 
   const [selectedWorkId, setSelectedWorkId] = useState(workId || '');
@@ -180,6 +181,13 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
 
   const finalSubtitle = [subtitle, dateSubtitle].filter(Boolean).join(' ');
 
+  // Determine save button text
+  const getSaveText = () => {
+    if (shift) return 'Save Changes';
+    if (isBulkEnabled && formType === 'traditional') return 'Continue';
+    return 'Create Shift';
+  };
+
   return (
     <BaseModal
       isOpen={isOpen}
@@ -192,7 +200,7 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
       showActions={true}
       onCancel={handleClose}
       formId={formId}
-      saveText={shift ? 'Save Changes' : 'Create Shift'}
+      saveText={getSaveText()}
       isSaveDisabled={shift ? !isFormDirty : false}
     >
       {formType === 'delivery' ? (
@@ -229,6 +237,7 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
         onClose={() => setShowBulkConfirm(false)}
         baseShift={pendingShiftData}
         workName={allWorks.find(w => w.id === pendingShiftData?.workId)?.name || ''}
+        existingShifts={shifts}
         onConfirm={handleBulkConfirm}
       />
     </BaseModal>

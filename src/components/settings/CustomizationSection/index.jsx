@@ -17,7 +17,7 @@ const COLORS = [
   { name: 'Blue', value: '#3B82F6' }
 ];
 
-const COMMON_EMOJIS = ['😊', '😎', '🚀', '💼', '⭐', '🔥', '💻', '📊'];
+const COMMON_EMOJIS = ['😊', '😎', '🚀', '⭐', '🔥', '💻', '📊'];
 
 const CustomizationSection = () => {
   const {
