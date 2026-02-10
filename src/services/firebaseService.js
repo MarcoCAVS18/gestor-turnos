@@ -1,5 +1,5 @@
 // src/services/firebaseService.js
-// RESTRUCTURED FOR OPTIMIZED KPI ANALYTICS
+// Firebase Service - Core database operations
 
 import {
   doc,
@@ -14,6 +14,7 @@ import {
   onSnapshot,
   getDocs,
   where,
+  writeBatch,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { createSafeDate } from '../utils/time';
@@ -286,13 +287,15 @@ export const deleteJob = async (userUid, id, isDelivery = false) => {
   const { worksRef, shiftsRef } = getCollections();
   const jobRef = doc(worksRef, id);
 
-  // Delete all shifts associated with this job
+  // Delete all shifts associated with this job using batch
   const shiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('workId', '==', id));
   const shiftsSnapshot = await getDocs(shiftsQuery);
-  const deletePromises = shiftsSnapshot.docs.map(d => deleteDoc(d.ref));
-  await Promise.all(deletePromises);
 
-  await deleteDoc(jobRef);
+  const batch = writeBatch(db);
+  shiftsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+  batch.delete(jobRef);
+
+  await batch.commit();
 };
 
 // ============================================================================
@@ -408,139 +411,6 @@ export const deleteShift = async (userUid, id, isDelivery = false) => {
 };
 
 // ============================================================================
-// KPI ANALYTICS (NEW FUNCTIONALITY)
-// ============================================================================
-
-export const getKPIOverview = async (userUid = null) => {
-  const { shiftsRef } = getCollections();
-
-  let shiftsQuery;
-
-  if (userUid) {
-    shiftsQuery = query(shiftsRef, where('userId', '==', userUid));
-  } else {
-    shiftsQuery = query(shiftsRef);
-  }
-
-  const shiftsSnapshot = await getDocs(shiftsQuery);
-
-  const stats = {
-    totalShifts: shiftsSnapshot.size,
-    regularShifts: 0,
-    deliveryShifts: 0,
-    totalEarnings: 0,
-    totalNetEarnings: 0,
-    totalFuelExpense: 0,
-    byDate: {},
-    byUser: {},
-  };
-
-  shiftsSnapshot.forEach((doc) => {
-    const shift = doc.data();
-
-    if (shift.type === 'regular') {
-      stats.regularShifts++;
-    } else if (shift.type === 'delivery') {
-      stats.deliveryShifts++;
-      stats.totalEarnings += shift.totalEarnings || 0;
-      stats.totalNetEarnings += shift.netEarnings || 0;
-      stats.totalFuelExpense += shift.fuelExpense || 0;
-    }
-
-    const date = shift.date || shift.startDate;
-    if (date) {
-      if (!stats.byDate[date]) {
-        stats.byDate[date] = { count: 0, earnings: 0 };
-      }
-      stats.byDate[date].count++;
-      stats.byDate[date].earnings += shift.totalEarnings || 0;
-    }
-
-    if (shift.userId) {
-      if (!stats.byUser[shift.userId]) {
-        stats.byUser[shift.userId] = { count: 0, earnings: 0 };
-      }
-      stats.byUser[shift.userId].count++;
-      stats.byUser[shift.userId].earnings += shift.totalEarnings || 0;
-    }
-  });
-
-  return stats;
-};
-
-export const getShiftsByDateRange = async (startDate, endDate, userUid = null) => {
-  const { shiftsRef } = getCollections();
-
-  let shiftsQuery;
-
-  if (userUid) {
-    shiftsQuery = query(
-      shiftsRef,
-      where('userId', '==', userUid),
-      where('date', '>=', startDate),
-      where('date', '<=', endDate),
-      orderBy('date', 'desc')
-    );
-  } else {
-    shiftsQuery = query(
-      shiftsRef,
-      where('date', '>=', startDate),
-      where('date', '<=', endDate),
-      orderBy('date', 'desc')
-    );
-  }
-
-  const shiftsSnapshot = await getDocs(shiftsQuery);
-
-  const shifts = [];
-  shiftsSnapshot.forEach((doc) => {
-    shifts.push({ id: doc.id, ...doc.data() });
-  });
-
-  return shifts;
-};
-
-export const getWorksStatistics = async (userUid = null) => {
-  const { worksRef, shiftsRef } = getCollections();
-
-  let worksQuery;
-
-  if (userUid) {
-    worksQuery = query(worksRef, where('userId', '==', userUid));
-  } else {
-    worksQuery = query(worksRef);
-  }
-
-  const worksSnapshot = await getDocs(worksQuery);
-
-  const workStats = [];
-
-  for (const workDoc of worksSnapshot.docs) {
-    const work = workDoc.data();
-    const workId = workDoc.id;
-
-    const shiftsQuery = query(shiftsRef, where('workId', '==', workId));
-    const shiftsSnapshot = await getDocs(shiftsQuery);
-
-    const workShifts = [];
-    shiftsSnapshot.forEach((doc) => {
-      workShifts.push(doc.data());
-    });
-
-    workStats.push({
-      id: workId,
-      name: work.name,
-      type: work.type,
-      totalShifts: workShifts.length,
-      totalEarnings: workShifts.reduce((sum, s) => sum + (s.totalEarnings || 0), 0),
-      totalNetEarnings: workShifts.reduce((sum, s) => sum + (s.netEarnings || 0), 0),
-    });
-  }
-
-  return workStats;
-};
-
-// ============================================================================
 // ACCOUNT MANAGEMENT
 // ============================================================================
 
@@ -551,19 +421,55 @@ export const clearUserData = async (userUid) => {
 
   const { worksRef, shiftsRef } = getCollections();
 
-  // Delete all shifts for this user
+  // Get all shifts and works for this user
   const shiftsQuery = query(shiftsRef, where('userId', '==', userUid));
   const shiftsSnapshot = await getDocs(shiftsQuery);
 
-  const shiftDeletePromises = shiftsSnapshot.docs.map(d => deleteDoc(d.ref));
-  await Promise.all(shiftDeletePromises);
-
-  // Delete all works for this user
   const worksQuery = query(worksRef, where('userId', '==', userUid));
   const worksSnapshot = await getDocs(worksQuery);
 
-  const workDeletePromises = worksSnapshot.docs.map(d => deleteDoc(d.ref));
-  await Promise.all(workDeletePromises);
+  // Delete all shifts and works using batch (max 500 operations per batch)
+  const totalDocs = shiftsSnapshot.size + worksSnapshot.size;
+  const MAX_BATCH_SIZE = 500;
+
+  if (totalDocs <= MAX_BATCH_SIZE) {
+    // Single batch if under limit
+    const batch = writeBatch(db);
+    shiftsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+    worksSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
+  } else {
+    // Multiple batches if over limit
+    let batch = writeBatch(db);
+    let operationCount = 0;
+
+    for (const doc of shiftsSnapshot.docs) {
+      batch.delete(doc.ref);
+      operationCount++;
+
+      if (operationCount === MAX_BATCH_SIZE) {
+        await batch.commit();
+        batch = writeBatch(db);
+        operationCount = 0;
+      }
+    }
+
+    for (const doc of worksSnapshot.docs) {
+      batch.delete(doc.ref);
+      operationCount++;
+
+      if (operationCount === MAX_BATCH_SIZE) {
+        await batch.commit();
+        batch = writeBatch(db);
+        operationCount = 0;
+      }
+    }
+
+    // Commit remaining operations
+    if (operationCount > 0) {
+      await batch.commit();
+    }
+  }
 
   // Update user document to mark data as cleared
   // Also reset Google Calendar connection, Live Mode usage, and other integration settings

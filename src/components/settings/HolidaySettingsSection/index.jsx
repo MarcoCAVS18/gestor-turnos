@@ -1,7 +1,7 @@
 // src/components/settings/HolidaySettingsSection/index.jsx
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Calendar, Check, MapPin, Loader, ChevronDown } from 'lucide-react';
+import { Calendar, MapPin, Loader } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
@@ -31,7 +31,6 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
-  const [showManualInputs, setShowManualInputs] = useState(false);
 
   // Get available countries and regions
   const countries = useMemo(() => getAvailableCountries(), []);
@@ -44,10 +43,6 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   useEffect(() => {
     setSelectedCountry(holidayCountry || '');
     setSelectedRegion(holidayRegion || '');
-    // Auto-expand if country is already selected
-    if (holidayCountry) {
-      setShowManualInputs(true);
-    }
   }, [holidayCountry, holidayRegion]);
 
   // Detect changes
@@ -136,7 +131,7 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
 
   return (
     <SettingsSection icon={Calendar} title="Holiday Detection" className={className}>
-      <div className="space-y-4">
+      <div className="space-y-3">
 
         {/* Location Button */}
         <Button
@@ -151,79 +146,40 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
           {detectingLocation ? 'Detecting location...' : 'Use my location'}
         </Button>
 
-        {/* Explanatory Text */}
-        <p className="text-sm text-gray-400 dark:text-gray-400 text-center">
-          We will use your location to determine holiday days and perform calculations correctly.
-        </p>
-
-        {/* Enter Manually Collapsible Button */}
-        <button
-          onClick={() => setShowManualInputs(!showManualInputs)}
-          className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 pt-2 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
-        >
-          <span>Enter manually</span>
-          <ChevronDown
-            size={16}
-            className={`text-gray-400 transition-transform duration-200 ${showManualInputs ? 'rotate-180' : ''}`}
-          />
-        </button>
-
-        {/* Country and Region Selectors - Collapsible */}
-        <div
-          className={`grid grid-cols-1 md:grid-cols-2 gap-4 overflow-hidden transition-all duration-300 ${
-            showManualInputs ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-          }`}
-        >
+        {/* Country and Region Selectors */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {/* Country Selector */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Country
-            </label>
-            <select
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
-              className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
-              style={{ '--tw-ring-color': colors.primary }}
-              disabled={loading}
-            >
-              <option value="">Select a country</option>
-              {countries.map((country) => (
-                <option key={country.code} value={country.code}>
-                  {country.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            value={selectedCountry}
+            onChange={(e) => setSelectedCountry(e.target.value)}
+            className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-slate-700 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
+            style={{ '--tw-ring-color': colors.primary }}
+            disabled={loading}
+          >
+            <option value="">Country</option>
+            {countries.map((country) => (
+              <option key={country.code} value={country.code}>
+                {country.name}
+              </option>
+            ))}
+          </select>
 
           {/* Region Selector */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              State / Province
-            </label>
-            <select
-              value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.target.value)}
-              className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
-              style={{ '--tw-ring-color': colors.primary }}
-              disabled={loading || !selectedCountry || regions.length === 0}
-            >
-              <option value="">No specific region</option>
-              {regions.map((region) => (
-                <option key={region.code} value={region.code}>
-                  {region.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            value={selectedRegion}
+            onChange={(e) => setSelectedRegion(e.target.value)}
+            className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-slate-700 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-opacity-50 transition-all"
+            style={{ '--tw-ring-color': colors.primary }}
+            disabled={loading || !selectedCountry || regions.length === 0}
+          >
+            <option value="">State / Province</option>
+            {regions.map((region) => (
+              <option key={region.code} value={region.code}>
+                {region.name}
+              </option>
+            ))}
+          </select>
         </div>
-
-        {/* Success Indicator */}
-        {showSuccess && (
-          <div className="flex items-center justify-center text-sm text-green-600 dark:text-green-400">
-            <Check size={16} className="mr-1" />
-            <span>Settings saved</span>
-          </div>
-        )}
       </div>
     </SettingsSection>
   );
