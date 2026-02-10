@@ -1,10 +1,9 @@
 // src/components/cards/shift/ShiftCard/index.jsx 
 
 import React from 'react';
-import {  Coffee, DollarSign } from 'lucide-react';
+import {  Coffee, DollarSign, PartyPopper } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Badge from '../../../ui/Badge';
-import HolidayBadge from '../../../shifts/HolidayBadge';
 import { useApp } from '../../../../contexts/AppContext';
 import { formatCurrency } from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
@@ -34,10 +33,14 @@ const ShiftCard = (props) => {
       currencySymbol={currencySymbol}
     >
       {{
-        // Smoko Badge - Only show if applied
+        // Holiday and Smoko Badges
         mobileBadge: (
           <>
-            {shiftData.isHoliday && <HolidayBadge size="xs" />}
+            {shiftData.isHoliday && (
+              <Badge variant="danger" size="xs" icon={PartyPopper}>
+                Holiday
+              </Badge>
+            )}
             {smokoEnabled && shiftData.smokoApplied && (
               <Badge variant="warning" size="xs" icon={Coffee}>
                 -{shiftData.smokoMinutes}min
@@ -48,7 +51,11 @@ const ShiftCard = (props) => {
 
         desktopBadge: (
           <>
-            {shiftData.isHoliday && <HolidayBadge size="xs" rounded />}
+            {shiftData.isHoliday && (
+              <Badge variant="danger" size="xs" icon={PartyPopper} rounded>
+                Holiday
+              </Badge>
+            )}
             {smokoEnabled && shiftData.smokoApplied && (
               <Badge variant="warning" size="xs" icon={Coffee} rounded>
                 -{shiftData.smokoMinutes}min

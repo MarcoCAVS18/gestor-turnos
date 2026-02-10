@@ -6,7 +6,7 @@ import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
-import Toggle from '../../ui/Toggle';
+import Switch from '../../ui/Switch';
 import {
   getAvailableCountries,
   getAvailableRegions,
@@ -148,7 +148,7 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
               Automatically apply holiday rates on public holidays
             </p>
           </div>
-          <Toggle
+          <Switch
             checked={autoDetect}
             onChange={handleAutoDetectChange}
             disabled={loading}

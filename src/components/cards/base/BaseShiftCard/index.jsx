@@ -238,7 +238,6 @@ const BaseShiftCard = ({
                   </Badge>
                 </div>
               </Flex>
-              <ChevronDown size={14} className="text-gray-400 rotate-180" />
             </div>
 
             {/* Content - scrollable */}
