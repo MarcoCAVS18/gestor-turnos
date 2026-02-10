@@ -7,6 +7,7 @@ import { useApp } from '../../../../contexts/AppContext';
 import { createSafeDate, calculateShiftHours } from '../../../../utils/time';
 import BaseForm, { FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses } from '../../base/BaseForm';
 import Flex from '../../../ui/Flex';
+import BulkShiftOptions from '../BulkShiftOptions';
 
 const ShiftForm = ({
   id,
@@ -15,7 +16,9 @@ const ShiftForm = ({
   works = [],
   onSubmit,
   onWorkChange,
-  onDirtyChange, 
+  onDirtyChange,
+  onBulkToggle,
+  isBulkEnabled = false,
   isMobile = false,
   initialDate
 }) => {
@@ -518,6 +521,14 @@ const ShiftForm = ({
           rows={3}
         />
       </FormSection>
+
+      {/* Bulk Shift Options - Only show for new shifts (not editing) */}
+      {!shift && onBulkToggle && (
+        <BulkShiftOptions
+          isEnabled={isBulkEnabled}
+          onToggle={onBulkToggle}
+        />
+      )}
     </BaseForm>
   );
 };
