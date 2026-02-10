@@ -10,19 +10,26 @@ const WeekNavigator = ({
   onWeekChange,
   startDate,
   endDate,
+  weekStart,
+  weekEnd,
   variant = 'default', // 'default' or 'transparent'
 }) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile(); // Use hook
 
   const changeWeek = typeof onWeekChange === 'function' ? onWeekChange : () => {};
-  const validStartDate = startDate instanceof Date ? startDate : new Date();
-  const validEndDate = endDate instanceof Date ? endDate : new Date();
+
+  // Support both naming conventions (startDate/endDate and weekStart/weekEnd)
+  const start = startDate || weekStart;
+  const end = endDate || weekEnd;
+
+  // Convert to Date objects if they're strings
+  const validStartDate = start instanceof Date ? start : (start ? new Date(start) : new Date());
+  const validEndDate = end instanceof Date ? end : (end ? new Date(end) : new Date());
 
   const getWeekTitle = () => {
     if (weekOffset === 0) return 'This week';
     if (weekOffset === -1) return 'Last week';
-    // ... (rest of the logic)
     if (weekOffset === 1) return 'Next week';
     if (weekOffset > 1) return `In ${weekOffset} weeks`;
     return `${Math.abs(weekOffset)} weeks ago`;
