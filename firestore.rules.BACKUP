@@ -1,13 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Users collection - SECURED
-    // Each user can only read/write their own profile
+    
+    // Users collection
+    // CORREGIDO: Separamos lectura y escritura
     match /users/{userId} {
-      // Only allow reading your own full profile
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null; // Cualquiera logueado puede ver perfiles (necesario para la foto)
+      allow write: if request.auth != null && request.auth.uid == userId; // Solo el dueño puede editar
 
       // Private subcollection for sensitive data (OAuth tokens, etc.)
       // Only accessible by Cloud Functions (server-side)
@@ -15,14 +14,14 @@ service cloud.firestore {
         allow read, write: if false; // Client cannot access, only Cloud Functions
       }
     }
-
+    
     // Works collection
     match /works/{workId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
       allow read: if request.auth != null && resource.data.userId == request.auth.uid;
       allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
-
+    
     // Shifts collection
     match /shifts/{shiftId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
@@ -36,19 +35,19 @@ service cloud.firestore {
       allow read: if request.auth != null && resource.data.userId == request.auth.uid;
       allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
-
-    // Shared works collection - SECURED
-    // Only publicly accessible if explicitly marked as public
+    
+    // Shared works collection
     match /shared_works/{sharedWorkId} {
-      allow read: if resource.data.isPublic == true; // Only if marked public
-      allow create: if request.auth != null
-                    && request.resource.data.sharedBy == request.auth.uid
-                    && request.resource.data.isPublic is bool; // Require isPublic field
+      allow read: if true; // Public read for anyone with the link
+      allow create: if request.auth != null && request.resource.data.sharedBy == request.auth.uid;
       allow update: if request.auth != null && resource.data.sharedBy == request.auth.uid;
       allow delete: if request.auth != null && resource.data.sharedBy == request.auth.uid;
     }
-
-    // Stats collection - REMOVED (not used in codebase)
-    // If you need stats in the future, re-add with proper rules
+    
+    // Stats collection
+    match /stats/{statId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only server-side
+    }
   }
 }

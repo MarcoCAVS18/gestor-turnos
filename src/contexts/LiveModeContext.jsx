@@ -268,10 +268,10 @@ export const LiveModeProvider = ({ children }) => {
     setError(null);
 
     try {
-      // Check Live Mode limit for free users
-      const usageResult = await premiumService.canUseLiveMode(currentUser.uid);
+      // Use cached liveModeUsage instead of fetching again
+      const canUse = liveModeUsage.isPremium || liveModeUsage.remaining > 0;
 
-      if (!usageResult.canUse) {
+      if (!canUse) {
         const errorMsg = `You have reached the limit of ${premiumService.LIVE_MODE_FREE_LIMIT} Live Mode sessions this month. Upgrade to Premium for unlimited sessions.`;
         setError(errorMsg);
         throw new Error(errorMsg);
@@ -282,11 +282,11 @@ export const LiveModeProvider = ({ children }) => {
       setLiveSession(session);
 
       // Increment usage for free users
-      if (!usageResult.isPremium) {
+      if (!liveModeUsage.isPremium) {
         await premiumService.incrementLiveModeUsage(currentUser.uid);
         setLiveModeUsage({
-          monthlyCount: (usageResult.monthlyCount || 0) + 1,
-          remaining: Math.max(0, usageResult.remaining - 1),
+          monthlyCount: liveModeUsage.monthlyCount + 1,
+          remaining: Math.max(0, liveModeUsage.remaining - 1),
           isPremium: false,
         });
       }
@@ -298,7 +298,7 @@ export const LiveModeProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [currentUser?.uid, requestNotificationPermission]);
+  }, [currentUser?.uid, requestNotificationPermission, liveModeUsage]);
 
   // Pause the current session
   const pauseSession = useCallback(async () => {
