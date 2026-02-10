@@ -223,7 +223,7 @@ export function generateShiftDetails(shift, allJobs, shiftRanges) {
   if (shift.type === 'delivery') {
     details.push(`${shift.orderCount || 0} orders`);
     if (shift.totalEarnings) {
-      details.push(`💰 $${shift.totalEarnings.toFixed(2)}`);
+      details.push(`$${shift.totalEarnings.toFixed(2)}`);
     }
   }
 

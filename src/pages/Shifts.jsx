@@ -8,7 +8,7 @@ import { useShiftFilters } from '../hooks/useFilterTurnos';
 import { createSafeDate } from '../utils/time';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import PageHeader from '../components/layout/PageHeader'; 
-import { List, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { List, Plus, ChevronDown, ChevronUp, Search } from 'lucide-react';
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
 import ShiftFilters from '../components/filters/ShiftFilters';
 import ShiftModal from '../components/modals/shift/ShiftModal';
@@ -188,12 +188,12 @@ const Shifts = () => {
         ) : !hasShifts && hasActiveFilters ? (
           // State when there are filters but no results
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
-            <Flex 
-              variant="center" 
+            <Flex
+              variant="center"
               className="p-4 rounded-full w-20 h-20 mx-auto mb-4"
               style={{ backgroundColor: thematicColors?.transparent10 }}
             >
-              <span className="text-2xl">🔍</span>
+              <Search size={32} style={{ color: thematicColors?.base }} />
             </Flex>
             <h3 className="text-lg font-semibold text-gray-900 mb-2">
               No shifts matching filters

@@ -155,7 +155,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
             {/* PLATFORM */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                🚗 Platform *
+                Platform *
               </label>
               <select
                 value={formData.platform}
@@ -175,7 +175,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
             {/* VEHICLE */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                🚴 Vehicle *
+                Vehicle *
               </label>
               <select
                 value={formData.vehicle}
@@ -219,7 +219,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
 
             {/* Earnings */}
             <div>
-              <label className="block text-sm font-medium mb-1">💰 Earnings *</label>
+              <label className="block text-sm font-medium mb-1">Earnings *</label>
               <input
                 type="number"
                 min="0"
