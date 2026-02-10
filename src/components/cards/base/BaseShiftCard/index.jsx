@@ -244,7 +244,7 @@ const BaseShiftCard = ({
             {/* Content - scrollable */}
             <div className="flex-grow overflow-y-auto space-y-2 pr-1">
               {/* Time & Schedule */}
-              <div className="bg-white dark:bg-[rgba(255,255,255,0.05)] p-2 rounded-lg shadow-sm border border-gray-100 dark:border-[rgba(255,255,255,0.08)] space-y-1.5">
+              <Card variant="surface" padding="sm" className="space-y-1.5">
                 <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Schedule</div>
                 <Flex variant="between" className="text-xs">
                   <Flex variant="center" className="text-gray-600 dark:text-gray-400">
@@ -269,17 +269,17 @@ const BaseShiftCard = ({
                   </Flex>
                 )}
                 {/* Shift type & badges */}
-                <div className="pt-1.5 border-t border-gray-100">
+                <div className="pt-1.5 border-t border-gray-100 dark:border-[rgba(255,255,255,0.08)]">
                   <Flex variant="start" className="gap-2 flex-wrap">
                     <ShiftTypeBadge shift={shift} size="xs" />
                     {children?.desktopBadge}
                   </Flex>
                 </div>
-              </div>
+              </Card>
 
               {/* Earnings Breakdown */}
               {earningValue !== undefined && (
-                <div className="bg-white dark:bg-[rgba(255,255,255,0.05)] p-2 rounded-lg shadow-sm border border-gray-100 dark:border-[rgba(255,255,255,0.08)]">
+                <Card variant="surface" padding="sm">
                   <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Earnings</div>
                   <Flex variant="between" className="items-center mb-2">
                     <Flex variant="center">
@@ -326,25 +326,25 @@ const BaseShiftCard = ({
                       )}
                     </div>
                   )}
-                </div>
+                </Card>
               )}
 
               {/* Additional Info - Children stats (delivery: km, orders, fuel) */}
               {children?.desktopStats && (
-                <div className="bg-white dark:bg-[rgba(255,255,255,0.05)] p-2 rounded-lg shadow-sm border border-gray-100 dark:border-[rgba(255,255,255,0.08)]">
+                <Card variant="surface" padding="sm">
                   <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">
                     {type === 'delivery' ? 'Delivery Info' : 'Additional Info'}
                   </div>
                   {children.desktopStats}
-                </div>
+                </Card>
               )}
 
               {/* Notes */}
               {shift.notes && (
-                <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100">
-                  <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Notes</div>
-                  <p className="text-xs text-gray-700 italic leading-relaxed">{shift.notes}</p>
-                </div>
+                <Card variant="surface" padding="sm">
+                  <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Notes</div>
+                  <p className="text-xs text-gray-700 dark:text-gray-300 italic leading-relaxed">{shift.notes}</p>
+                </Card>
               )}
 
               {/* Actions */}
@@ -355,7 +355,7 @@ const BaseShiftCard = ({
                       e.stopPropagation();
                       onEdit?.(shift);
                     }}
-                    className="flex-1 flex items-center justify-center gap-1.5 p-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-xs font-medium text-gray-700"
+                    className="flex-1 flex items-center justify-center gap-1.5 p-2 bg-gray-50 dark:bg-[rgba(255,255,255,0.05)] border border-gray-200 dark:border-[rgba(255,255,255,0.08)] rounded-lg hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors text-xs font-medium text-gray-700 dark:text-gray-300"
                   >
                     <Edit size={12} />
                     Edit
@@ -365,7 +365,7 @@ const BaseShiftCard = ({
                       e.stopPropagation();
                       onDelete?.(shift);
                     }}
-                    className="flex-1 flex items-center justify-center gap-1.5 p-2 bg-white border border-red-200 rounded-lg hover:bg-red-50 transition-colors text-xs font-medium text-red-600"
+                    className="flex-1 flex items-center justify-center gap-1.5 p-2 bg-gray-50 dark:bg-[rgba(255,255,255,0.05)] border border-red-200 dark:border-red-500/30 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors text-xs font-medium text-red-600 dark:text-red-400"
                   >
                     <Trash2 size={12} />
                     Delete
