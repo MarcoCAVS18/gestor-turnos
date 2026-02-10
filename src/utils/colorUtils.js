@@ -70,26 +70,34 @@ export const hexToRgb = (hex) => {
       ),
       
       // Variaciones con opacidad
+      transparent5: `rgba(${r}, ${g}, ${b}, 0.05)`,
       transparent10: `rgba(${r}, ${g}, ${b}, 0.1)`,
       transparent20: `rgba(${r}, ${g}, ${b}, 0.2)`,
+      transparent30: `rgba(${r}, ${g}, ${b}, 0.3)`,
       transparent50: `rgba(${r}, ${g}, ${b}, 0.5)`,
-      
+
       // Color de texto contrastante
       textContrast: getContrastText(r, g, b),
-      
+
       // Variación hover
       hover: rgbToHex(
         Math.max(0, r - 20),
         Math.max(0, g - 20),
         Math.max(0, b - 20)
       ),
-      
+
       // Variación active
       active: rgbToHex(
         Math.max(0, r - 60),
         Math.max(0, g - 60),
         Math.max(0, b - 60)
-      )
+      ),
+
+      // Surface colors for better contrast in Dark Mode
+      surface: 'rgba(255, 255, 255, 0.05)',      // Light overlay on dark backgrounds
+      surface2: 'rgba(255, 255, 255, 0.08)',     // Slightly more prominent
+      surface3: 'rgba(255, 255, 255, 0.12)',     // Even more prominent
+      surfaceHover: 'rgba(255, 255, 255, 0.15)', // For hover states
     };
   };
   
