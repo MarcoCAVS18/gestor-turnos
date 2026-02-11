@@ -690,6 +690,61 @@ exports.cancelSubscription = functions.https.onRequest((req, res) => {
 });
 
 /**
+ * Create Stripe Billing Portal session
+ * Allows users to manage payment methods, view invoices, etc.
+ */
+exports.createBillingPortalSession = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const idToken = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const userId = decodedToken.uid;
+
+      const userDoc = await db.collection('users').doc(userId).get();
+      const userData = userDoc.data();
+      const customerId = userData?.subscription?.stripeCustomerId;
+
+      if (!customerId) {
+        return res.status(400).json({ error: 'No Stripe customer found' });
+      }
+
+      // Verify the customer exists in the current Stripe account
+      try {
+        await stripe.customers.retrieve(customerId);
+      } catch (custError) {
+        console.error('Customer not found in Stripe:', customerId, custError.message);
+        return res.status(400).json({
+          error: 'Your payment profile needs to be re-created. Please cancel and re-subscribe.',
+          code: 'CUSTOMER_NOT_FOUND'
+        });
+      }
+
+      const session = await stripe.billingPortal.sessions.create({
+        customer: customerId,
+        return_url: process.env.APP_URL + '/premium',
+      });
+
+      res.json({ url: session.url });
+    } catch (error) {
+      console.error('Error creating billing portal session:', error.message, error.type);
+      res.status(500).json({
+        error: error.message || 'Failed to create billing portal session',
+        type: error.type
+      });
+    }
+  });
+});
+
+/**
  * Stripe Webhook - Handle subscription events
  * Set this URL in Stripe Dashboard: Webhooks > Add endpoint
  */

@@ -118,7 +118,7 @@ const PrivacyPolicy = () => {
 
         <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">2.4 Subscription Management</h3>
         <ul className="list-disc pl-5 space-y-2">
-          <li><strong>Billing:</strong> Subscription fees ($1.99/month) are charged automatically through Stripe on your billing date.</li>
+          <li><strong>Billing:</strong> Subscription fees ($2.99 AUD/month) are charged automatically through Stripe on your billing date.</li>
           <li><strong>Cancellation:</strong> You can cancel your subscription at any time from the app. Cancellation takes effect at the end of your current billing period.</li>
           <li><strong>Refunds:</strong> We do not provide refunds for partial billing periods. For billing disputes, please contact support.</li>
           <li><strong>Data After Cancellation:</strong> Your work and shift data remains intact after cancellation. Only Premium features become unavailable.</li>

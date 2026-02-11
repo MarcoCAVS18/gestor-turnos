@@ -82,7 +82,7 @@ const TermsOfService = () => {
           GestAPP offers a Premium subscription with additional features. By subscribing:
         </p>
         <ul className="list-disc pl-5 space-y-2 mt-2">
-          <li>You agree to pay the recurring subscription fee ($1.99/month).</li>
+          <li>You agree to pay the recurring subscription fee ($2.99 AUD/month).</li>
           <li>Payments are processed securely through Stripe.</li>
           <li>You can cancel your subscription at any time from the app settings.</li>
           <li>Cancellation takes effect at the end of your current billing period.</li>
