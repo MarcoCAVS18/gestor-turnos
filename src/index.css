@@ -402,3 +402,10 @@ input[type="date"]:focus {
 .dark ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
+
+/* Desktop zoom - slightly compact layout for large screens */
+@media (min-width: 1024px) {
+  body {
+    zoom: 0.9;
+  }
+}
