@@ -35,8 +35,9 @@ const getAuthToken = async () => {
  * @param {string} paymentMethodId - Stripe PaymentMethod ID from Elements
  * @param {string} email - User's email for invoice
  * @param {string} name - User's name (optional)
+ * @param {Object} address - Billing address (optional) { country, postal_code, city, line1 }
  */
-export const createSubscription = async (paymentMethodId, email, name) => {
+export const createSubscription = async (paymentMethodId, email, name, address) => {
   try {
     const token = await getAuthToken();
 
@@ -50,6 +51,7 @@ export const createSubscription = async (paymentMethodId, email, name) => {
         paymentMethodId,
         email,
         name,
+        address,
       }),
     });
 
@@ -166,11 +168,39 @@ export const openBillingPortal = async () => {
   }
 };
 
+/**
+ * Get recent invoices for the current user
+ */
+export const getInvoices = async () => {
+  try {
+    const token = await getAuthToken();
+
+    const response = await fetch(`${FUNCTIONS_BASE_URL}/getInvoices`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch invoices');
+    }
+
+    return data.invoices || [];
+  } catch (error) {
+    console.error('Error fetching invoices:', error);
+    return [];
+  }
+};
+
 const stripeService = {
   getStripe,
   createSubscription,
   cancelSubscription,
   openBillingPortal,
+  getInvoices,
 };
 
 export default stripeService;

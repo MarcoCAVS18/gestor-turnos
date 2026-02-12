@@ -19,11 +19,19 @@ const PageHeader = ({
   const isMobile = useIsMobile();
   const [isExpanded, setIsExpanded] = useState(true);
 
+  // Dynamic page title for SEO
+  useEffect(() => {
+    if (title) {
+      document.title = `${title} - GestApp`;
+    }
+    return () => { document.title = 'GestApp - Shift Management & Earnings Tracker'; };
+  }, [title]);
+
   useEffect(() => {
     // On mount (after loader), if mobile and has action:
     if (isMobile && action) {
       setIsExpanded(true); // Ensure it starts expanded
-      
+
       const timer = setTimeout(() => {
         setIsExpanded(false); // Collapse after 2 seconds
       }, 2000);
@@ -33,7 +41,7 @@ const PageHeader = ({
       setIsExpanded(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); 
+  }, []);
 
   // Variants for the full Header entry
   const headerVariants = {

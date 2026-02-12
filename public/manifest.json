@@ -1,6 +1,7 @@
 {
-  "short_name": "Gestor trabajos",
-  "name": "Usalo para no renegar (tanto)",
+  "short_name": "GestApp",
+  "name": "GestApp - Shift Management & Earnings Tracker",
+  "description": "Track your work shifts, calculate earnings automatically, and analyze your income with detailed statistics.",
   "icons": [
     {
       "src": "logo1.ico",
@@ -20,6 +21,7 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#EC4899",
+  "background_color": "#ffffff",
+  "categories": ["productivity", "utilities"]
 }

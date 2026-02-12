@@ -1,6 +1,7 @@
 // src/pages/About.jsx
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useThemeColors } from '../hooks/useThemeColors';
 import BackLink from '../components/ui/BackLink';
 import HeroSection from '../components/about/HeroSection';
@@ -13,6 +14,22 @@ import AboutFooter from '../components/about/AboutFooter';
 
 const About = () => {
   const colors = useThemeColors();
+  const location = useLocation();
+
+  // Scroll to hash anchor (e.g. /about#feedback)
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      // Retry scroll with delays to handle render timing
+      const attempts = [100, 500, 1000];
+      attempts.forEach(delay => {
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, delay);
+      });
+    }
+  }, [location.hash]);
 
   return (
     <div className="px-4 py-6 space-y-6 overflow-x-hidden">

@@ -35,7 +35,8 @@ export const renderComponentToImage = async (Component, props, options = {}) => 
     container.style.left = '-9999px';
     container.style.top = '-9999px';
     container.style.width = `${width}px`;
-    container.style.height = `${height}px`;
+    container.style.minHeight = `${height}px`;
+    container.style.height = 'auto';
     container.style.backgroundColor = backgroundColor;
     container.style.fontFamily = "'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
     document.body.appendChild(container);
@@ -76,7 +77,7 @@ export const renderComponentToImage = async (Component, props, options = {}) => 
         }
         reject(error);
       }
-    }, 500); // Wait for charts to render
+    }, 1500); // Wait for charts to render
   });
 };
 

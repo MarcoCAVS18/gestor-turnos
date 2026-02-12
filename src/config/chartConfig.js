@@ -74,9 +74,10 @@ export const getRechartsConfig = (thematicColors) => {
       fill: colors.primary || '#EC4899',
     },
     pie: {
-      innerRadius: '60%',
-      outerRadius: '100%',
-      paddingAngle: 2,
+      innerRadius: '55%',
+      outerRadius: '90%',
+      paddingAngle: 3,
+      cornerRadius: 3,
     },
     tooltip: {
       cursor: { fill: 'rgba(200, 200, 200, 0.1)' },
@@ -91,8 +92,8 @@ export const getRechartsConfig = (thematicColors) => {
     },
     legend: {
       verticalAlign: 'bottom',
-      height: 36,
-      wrapperStyle: { fontSize: '11px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+      height: 48,
+      wrapperStyle: { fontSize: '11px', paddingTop: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
     },
     customTooltip: ({ active, payload, label }) => {
       if (active && payload && payload.length) {

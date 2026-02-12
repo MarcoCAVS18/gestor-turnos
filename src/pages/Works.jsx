@@ -14,11 +14,11 @@ import DeleteAlert from '../components/alerts/DeleteAlert';
 import { generateWorkDetails } from '../utils/workUtils';
 import { usePremium, PREMIUM_COLORS } from '../contexts/PremiumContext';
 
-// Empty state card component (like Calendar's empty state)
+// Empty state card component - matches BaseWorkCard height
 const EmptyWorkCard = ({ onClick, icon: Icon, title, subtitle, themeColor }) => (
   <button
     onClick={onClick}
-    className="w-full aspect-[4/3] border-2 border-dashed border-gray-300 rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all flex flex-col items-center justify-center gap-3 group"
+    className="w-full min-h-[280px] h-full border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl hover:border-gray-400 dark:hover:border-slate-500 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-all flex flex-col items-center justify-center gap-3 group"
   >
     <div
       className="w-14 h-14 rounded-full flex items-center justify-center transition-colors"
@@ -27,25 +27,25 @@ const EmptyWorkCard = ({ onClick, icon: Icon, title, subtitle, themeColor }) => 
       <Icon size={28} style={{ color: themeColor }} className="group-hover:scale-110 transition-transform" />
     </div>
     <div className="text-center">
-      <p className="font-medium text-gray-700 group-hover:text-gray-900">{title}</p>
-      <p className="text-sm text-gray-500">{subtitle}</p>
+      <p className="font-medium text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">{title}</p>
+      <p className="text-sm text-gray-500 dark:text-gray-400">{subtitle}</p>
     </div>
-    <Plus size={16} className="text-gray-400" />
+    <Plus size={16} className="text-gray-400 dark:text-gray-500" />
   </button>
 );
 
-// Premium locked card component
+// Premium locked card component - matches BaseWorkCard height
 const PremiumLockedCard = ({ onClick }) => (
   <button
     onClick={onClick}
-    className="w-full aspect-[4/3] border-2 border-dashed rounded-xl transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden"
+    className="w-full min-h-[280px] h-full border-2 border-dashed rounded-xl transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden"
     style={{
       borderColor: `${PREMIUM_COLORS.gold}50`,
       backgroundColor: `${PREMIUM_COLORS.gold}05`
     }}
   >
     {/* Blur overlay */}
-    <div className="absolute inset-0 backdrop-blur-[2px] bg-white/40" />
+    <div className="absolute inset-0 backdrop-blur-[2px] bg-white/40 dark:bg-slate-900/40" />
 
     {/* Content */}
     <div className="relative z-10 flex flex-col items-center gap-3">
@@ -58,9 +58,9 @@ const PremiumLockedCard = ({ onClick }) => (
       <div className="text-center">
         <div className="flex items-center gap-1.5 justify-center mb-1">
           <Crown size={14} style={{ color: PREMIUM_COLORS.gold }} />
-          <p className="font-medium text-gray-700">Premium Only</p>
+          <p className="font-medium text-gray-700 dark:text-gray-200">Premium Only</p>
         </div>
-        <p className="text-sm text-gray-500">Upgrade to add more works</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Upgrade to add more works</p>
       </div>
     </div>
   </button>

@@ -1,4 +1,4 @@
-// src/components/dashboard/FeatureAnnouncementCard/index.jsx
+// src/components/dashboard/LiveModeCard/index.jsx
 
 import React, { useMemo, useState } from 'react';
 import {
@@ -28,7 +28,7 @@ import LiveModeFinishConfirmModal from '../../modals/liveMode/LiveModeFinishConf
 import { useConfigContext } from '../../../contexts/ConfigContext';
 import { PREMIUM_COLORS } from '../../../contexts/PremiumContext';
 
-const FeatureAnnouncementCard = ({ onClick, onShowActive, className }) => {
+const LiveModeCard = ({ onClick, onShowActive, className }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
   const { works } = useDataContext();
@@ -426,4 +426,4 @@ const FeatureAnnouncementCard = ({ onClick, onShowActive, className }) => {
   );
 };
 
-export default FeatureAnnouncementCard;
+export default LiveModeCard;

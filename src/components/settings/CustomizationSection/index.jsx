@@ -98,7 +98,7 @@ const CustomizationSection = () => {
     <Card className="flex flex-col">
       <div className="flex items-center mb-4">
         <Palette className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" />
-        <h2 className="text-lg font-semibold dark:text-white">Primary color / Customization</h2>
+        <h2 className="text-lg font-semibold dark:text-white">Customization</h2>
       </div>
       <div className="flex-1">
         <div className="space-y-4">
@@ -212,16 +212,18 @@ const CustomizationSection = () => {
                 <Smile className="inline h-4 w-4 mb-1 mr-1" />
                 Type or paste your favorite emoji
               </p>
-              <div className="flex flex-wrap gap-2 md:ml-auto">
-                {COMMON_EMOJIS.map(emoji => (
-                  <button
-                    key={emoji}
-                    onClick={() => changeEmoji(emoji)}
-                    className="w-8 h-8 rounded-md flex items-center justify-center text-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
-                  >
-                    {emoji}
-                  </button>
-                ))}
+              <div className="overflow-x-auto md:ml-auto -mx-1 px-1">
+                <div className="flex gap-2" style={{ minWidth: 'min-content' }}>
+                  {COMMON_EMOJIS.map(emoji => (
+                    <button
+                      key={emoji}
+                      onClick={() => changeEmoji(emoji)}
+                      className="w-8 h-8 rounded-md flex items-center justify-center text-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors flex-shrink-0"
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

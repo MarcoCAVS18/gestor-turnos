@@ -88,6 +88,78 @@ export const initializeSubscription = async (userId) => {
 };
 
 /**
+ * Load subscription + live mode usage in a single Firestore read
+ * Combines initializeSubscription + getSubscription + getLiveModeUsage into 1 read
+ */
+export const loadSubscriptionAndUsage = async (userId) => {
+  try {
+    const userDocRef = doc(db, 'users', userId);
+    const userDoc = await getDoc(userDocRef);
+
+    if (!userDoc.exists()) {
+      return {
+        subscription: DEFAULT_SUBSCRIPTION,
+        liveModeUsage: DEFAULT_LIVE_MODE_USAGE,
+      };
+    }
+
+    const data = userDoc.data();
+
+    // Check for test premium flag
+    if (data.isPremiumTest === true) {
+      return {
+        subscription: {
+          isPremium: true,
+          plan: 'premium',
+          status: 'active',
+          isTest: true,
+          startDate: new Date(),
+          expiryDate: null,
+        },
+        liveModeUsage: data.liveModeUsage || DEFAULT_LIVE_MODE_USAGE,
+      };
+    }
+
+    // Initialize subscription if missing (single write, no extra read)
+    if (!data.subscription) {
+      const initData = {
+        subscription: DEFAULT_SUBSCRIPTION,
+        liveModeUsage: {
+          ...DEFAULT_LIVE_MODE_USAGE,
+          lastResetDate: new Date(),
+        },
+      };
+      await updateDoc(userDocRef, initData);
+      return {
+        subscription: DEFAULT_SUBSCRIPTION,
+        liveModeUsage: initData.liveModeUsage,
+      };
+    }
+
+    // Check live mode usage reset
+    let liveModeUsage = data.liveModeUsage || DEFAULT_LIVE_MODE_USAGE;
+    if (liveModeUsage.lastResetDate) {
+      const lastReset = liveModeUsage.lastResetDate.toDate
+        ? liveModeUsage.lastResetDate.toDate()
+        : new Date(liveModeUsage.lastResetDate);
+      const now = new Date();
+      if (lastReset.getMonth() !== now.getMonth() || lastReset.getFullYear() !== now.getFullYear()) {
+        liveModeUsage = { monthlyCount: 0, lastResetDate: now };
+        await updateDoc(userDocRef, { liveModeUsage });
+      }
+    }
+
+    return {
+      subscription: data.subscription || DEFAULT_SUBSCRIPTION,
+      liveModeUsage,
+    };
+  } catch (error) {
+    console.error('Error loading subscription and usage:', error);
+    throw error;
+  }
+};
+
+/**
  * Update subscription to premium
  */
 export const upgradeToPremium = async (userId, paymentData) => {
@@ -249,29 +321,38 @@ export const incrementLiveModeUsage = async (userId) => {
 
 /**
  * Check if user can use Live Mode (based on premium status and usage limit)
+ * Optimized: single Firestore read instead of 2 separate reads
  */
 export const canUseLiveMode = async (userId) => {
   try {
-    // Check if user is premium
-    const isPremium = await checkSubscriptionValidity(userId);
+    // Single read for both subscription and usage
+    const { subscription, liveModeUsage } = await loadSubscriptionAndUsage(userId);
 
-    if (isPremium) {
+    // Check premium validity
+    const isValid = subscription.isTest === true ||
+      (subscription.isPremium && subscription.status === 'active' &&
+        (!subscription.expiryDate || (() => {
+          const exp = subscription.expiryDate?.toDate
+            ? subscription.expiryDate.toDate()
+            : new Date(subscription.expiryDate);
+          return exp >= new Date();
+        })()));
+
+    if (isValid) {
       return { canUse: true, remaining: Infinity, isPremium: true };
     }
 
     // For free users, check usage limit
-    const usage = await getLiveModeUsage(userId);
-    const remaining = LIVE_MODE_FREE_LIMIT - (usage.monthlyCount || 0);
+    const remaining = LIVE_MODE_FREE_LIMIT - (liveModeUsage.monthlyCount || 0);
 
     return {
       canUse: remaining > 0,
       remaining: Math.max(0, remaining),
       isPremium: false,
-      monthlyCount: usage.monthlyCount || 0,
+      monthlyCount: liveModeUsage.monthlyCount || 0,
     };
   } catch (error) {
     console.error('Error checking Live Mode availability:', error);
-    // Default to allowing usage in case of error
     return { canUse: true, remaining: LIVE_MODE_FREE_LIMIT, isPremium: false };
   }
 };
@@ -279,6 +360,7 @@ export const canUseLiveMode = async (userId) => {
 const premiumService = {
   getSubscription,
   initializeSubscription,
+  loadSubscriptionAndUsage,
   upgradeToPremium,
   cancelSubscription,
   checkSubscriptionValidity,

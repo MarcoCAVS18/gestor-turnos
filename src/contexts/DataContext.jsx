@@ -94,12 +94,8 @@ export const DataProvider = ({ children }) => {
     }
 
     try {
-      // Create all shifts in parallel for better performance
-      const promises = shifts.map(shift =>
-        firebaseService.addShift(currentUser.uid, shift)
-      );
-
-      const results = await Promise.all(promises);
+      // Use batch writes for efficiency (single network round-trip per 500 docs)
+      const results = await firebaseService.addBulkShiftsService(currentUser.uid, shifts);
       return results;
     } catch (err) {
       setError('Error creating bulk shifts: ' + err.message);

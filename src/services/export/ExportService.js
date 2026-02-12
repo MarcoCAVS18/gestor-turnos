@@ -156,7 +156,7 @@ export class ExportService {
         filename: options.filename || `dashboard-${this.formatDate(new Date())}.png`,
         logoColor: options.logoColor || '#EC4899',
         width: options.width || 1200,
-        height: options.height || 1600,
+        userInfo: options.userInfo || null,
         ...options
       });
       return true;

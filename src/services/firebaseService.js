@@ -16,6 +16,7 @@ import {
   where,
   writeBatch,
   serverTimestamp,
+  limit,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { createSafeDate } from '../utils/time';
@@ -374,6 +375,64 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
   return { ...shiftData, id: docRef.id };
 };
 
+/**
+ * Add multiple shifts using Firestore writeBatch (max 500 per batch)
+ * More efficient than individual addDoc calls for bulk operations
+ */
+export const addBulkShiftsService = async (userUid, shifts) => {
+  const { shiftsRef } = getCollections();
+  const MAX_BATCH_SIZE = 500;
+  const results = [];
+
+  // Process shifts in batches of 500
+  for (let i = 0; i < shifts.length; i += MAX_BATCH_SIZE) {
+    const chunk = shifts.slice(i, i + MAX_BATCH_SIZE);
+    const batch = writeBatch(db);
+
+    chunk.forEach(newShift => {
+      const crossesMidnight = newShift.crossesMidnight || (newShift.startTime && newShift.endTime && newShift.startTime.split(':')[0] > newShift.endTime.split(':')[0]);
+      let endDate = newShift.endDate;
+      if (!endDate && crossesMidnight) {
+        const startDate = createSafeDate(newShift.startDate || newShift.date);
+        endDate = new Date(startDate.setDate(startDate.getDate() + 1)).toISOString().split('T')[0];
+      }
+
+      let shiftData = {
+        userId: userUid,
+        workId: newShift.workId || null,
+        type: 'regular',
+        date: newShift.startDate || newShift.date,
+        startDate: newShift.startDate || newShift.date,
+        endDate: endDate || newShift.startDate || newShift.date,
+        startTime: newShift.startTime || null,
+        endTime: newShift.endTime || null,
+        crossesMidnight,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      if (newShift.createdWith) {
+        shiftData.createdWith = newShift.createdWith;
+      }
+      if (newShift.hadBreak !== undefined) {
+        shiftData.hadBreak = newShift.hadBreak;
+        shiftData.breakMinutes = newShift.breakMinutes || 0;
+      }
+      if (newShift.notes) {
+        shiftData.notes = newShift.notes;
+      }
+
+      const newDocRef = doc(shiftsRef);
+      batch.set(newDocRef, shiftData);
+      results.push({ ...shiftData, id: newDocRef.id });
+    });
+
+    await batch.commit();
+  }
+
+  return results;
+};
+
 export const editShift = async (userUid, id, updatedData, isDelivery = false) => {
   const { shiftsRef } = getCollections();
   const shiftRef = doc(shiftsRef, id);
@@ -553,7 +612,8 @@ export const getFeedbackReviews = async () => {
   console.log('[Feedback] getFeedbackReviews called');
   const { feedbackRef } = getCollections();
 
-  const q = query(feedbackRef, orderBy('createdAt', 'desc'));
+  // Limit to 50 reviews max to reduce Firestore reads (we only display 10)
+  const q = query(feedbackRef, orderBy('createdAt', 'desc'), limit(50));
   const snapshot = await getDocs(q);
   console.log('[Feedback] getFeedbackReviews found:', snapshot.docs.length, 'reviews');
 

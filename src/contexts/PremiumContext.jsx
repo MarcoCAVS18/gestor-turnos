@@ -4,13 +4,11 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import {
-  getSubscription,
-  initializeSubscription,
+  loadSubscriptionAndUsage,
   upgradeToPremium as upgradeToPremiumService,
   cancelSubscription as cancelSubscriptionService,
   canUseLiveMode,
   incrementLiveModeUsage,
-  getLiveModeUsage,
   LIVE_MODE_FREE_LIMIT,
 } from '../services/premiumService';
 
@@ -67,16 +65,13 @@ export const PremiumProvider = ({ children }) => {
         setLoading(true);
         setError(null);
 
-        // Initialize subscription fields if they don't exist
-        await initializeSubscription(currentUser.uid);
+        // Single read: load subscription + live mode usage together
+        const { subscription: subscriptionData, liveModeUsage: usageData } =
+          await loadSubscriptionAndUsage(currentUser.uid);
 
-        // Get subscription data
-        const subscriptionData = await getSubscription(currentUser.uid);
         setSubscription(subscriptionData);
         setIsPremium(subscriptionData?.isPremium && subscriptionData?.status === 'active');
 
-        // Get Live Mode usage
-        const usageData = await getLiveModeUsage(currentUser.uid);
         setLiveModeUsage({
           monthlyCount: usageData.monthlyCount || 0,
           remaining: Math.max(0, LIVE_MODE_FREE_LIMIT - (usageData.monthlyCount || 0)),

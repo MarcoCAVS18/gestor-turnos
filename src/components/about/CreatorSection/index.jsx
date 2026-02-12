@@ -42,13 +42,13 @@ const CreatorSection = ({ colors }) => {
 
           <div className="space-y-3 text-sm md:text-base leading-relaxed" style={{ color: colors.textSecondary }}>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt
-              ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-              ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              I'm a developer from Argentina, currently living in Australia. I built GestAPP
+              because I needed it myself, and I figured if it helped me, it could help others too.
             </p>
             <p>
-              Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident.
+              When I'm not coding, you'll find me exploring new places, playing football, or thinking
+              about the next feature to add. If you have any questions, ideas, or just want to say hi,
+              feel free to reach out.
             </p>
           </div>
 
