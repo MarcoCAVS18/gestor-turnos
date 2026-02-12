@@ -3,7 +3,21 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const { google } = require('googleapis');
-const cors = require('cors')({ origin: true });
+const allowedOrigins = [
+  'https://gestionturnos-7ec99.web.app',
+  'https://gestionturnos-7ec99.firebaseapp.com',
+  'https://gestapp.com.au',
+  'http://localhost:3000',
+];
+const cors = require('cors')({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+});
 require('dotenv').config();
 
 // Initialize Stripe
@@ -495,10 +509,19 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
-      const { paymentMethodId, email, name } = req.body;
+      const { paymentMethodId, email, name, address } = req.body;
 
       if (!paymentMethodId || !email) {
         return res.status(400).json({ error: 'Missing required fields' });
+      }
+
+      // Build address object for Stripe (only include non-empty fields)
+      const billingAddress = {};
+      if (address) {
+        if (address.country) billingAddress.country = address.country;
+        if (address.postal_code) billingAddress.postal_code = address.postal_code;
+        if (address.city) billingAddress.city = address.city;
+        if (address.line1) billingAddress.line1 = address.line1;
       }
 
       // Check if user already has a Stripe customer ID
@@ -515,6 +538,7 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
           invoice_settings: {
             default_payment_method: paymentMethodId,
           },
+          address: Object.keys(billingAddress).length > 0 ? billingAddress : undefined,
           metadata: {
             firebaseUserId: userId,
           },
@@ -525,11 +549,15 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         await stripe.paymentMethods.attach(paymentMethodId, {
           customer: customerId,
         });
-        await stripe.customers.update(customerId, {
+        const updateData = {
           invoice_settings: {
             default_payment_method: paymentMethodId,
           },
-        });
+        };
+        if (Object.keys(billingAddress).length > 0) {
+          updateData.address = billingAddress;
+        }
+        await stripe.customers.update(customerId, updateData);
       }
 
       // Check if STRIPE_PRICE_ID is configured
@@ -735,11 +763,62 @@ exports.createBillingPortalSession = functions.https.onRequest((req, res) => {
 
       res.json({ url: session.url });
     } catch (error) {
-      console.error('Error creating billing portal session:', error.message, error.type);
+      console.error('Error creating billing portal session:', error.message);
       res.status(500).json({
-        error: error.message || 'Failed to create billing portal session',
-        type: error.type
+        error: 'Failed to create billing portal session',
       });
+    }
+  });
+});
+
+/**
+ * Get recent invoices for the current user
+ * Returns the last 5 invoices from Stripe
+ */
+exports.getInvoices = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'GET') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const idToken = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const userId = decodedToken.uid;
+
+      const userDoc = await db.collection('users').doc(userId).get();
+      const userData = userDoc.data();
+      const customerId = userData?.subscription?.stripeCustomerId;
+
+      if (!customerId) {
+        return res.json({ invoices: [] });
+      }
+
+      const invoices = await stripe.invoices.list({
+        customer: customerId,
+        limit: 5,
+        status: 'paid',
+      });
+
+      const formattedInvoices = invoices.data.map(inv => ({
+        id: inv.id,
+        number: inv.number,
+        amount: inv.amount_paid / 100,
+        currency: (inv.currency || 'aud').toUpperCase(),
+        date: inv.created * 1000,
+        pdfUrl: inv.invoice_pdf,
+        hostedUrl: inv.hosted_invoice_url,
+      }));
+
+      res.json({ invoices: formattedInvoices });
+    } catch (error) {
+      console.error('Error fetching invoices:', error.message);
+      res.status(500).json({ error: 'Failed to fetch invoices' });
     }
   });
 });
@@ -755,16 +834,18 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
   let event;
 
   try {
-    // Verify webhook signature
-    if (endpointSecret) {
-      event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
-    } else {
-      // For testing without webhook signature verification
-      event = req.body;
+    if (!endpointSecret) {
+      console.error('STRIPE_WEBHOOK_SECRET is not configured');
+      return res.status(500).send('Webhook not configured');
     }
+    if (!sig) {
+      console.error('Missing stripe-signature header');
+      return res.status(400).send('Missing signature');
+    }
+    event = stripe.webhooks.constructEvent(req.rawBody, sig, endpointSecret);
   } catch (err) {
-    console.error('Webhook signature verification failed:', err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    console.error('Webhook signature verification failed');
+    return res.status(400).send('Webhook signature verification failed');
   }
 
   // Handle the event

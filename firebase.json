@@ -52,6 +52,14 @@
           {
             "key": "Permissions-Policy",
             "value": "geolocation=(self), microphone=(), camera=()"
+          },
+          {
+            "key": "Strict-Transport-Security",
+            "value": "max-age=31536000; includeSubDomains; preload"
+          },
+          {
+            "key": "Content-Security-Policy",
+            "value": "default-src 'self'; script-src 'self' https://js.stripe.com https://*.firebaseapp.com https://*.googleapis.com 'unsafe-inline' 'unsafe-eval'; frame-src 'self' https://js.stripe.com https://*.firebaseapp.com https://*.stripe.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net https://api.stripe.com https://firestore.googleapis.com wss://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com; img-src 'self' data: blob: https://*.googleusercontent.com https://*.googleapis.com https://*.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; object-src 'none'; base-uri 'self'"
           }
         ]
       }

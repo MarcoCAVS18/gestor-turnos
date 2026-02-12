@@ -76,14 +76,14 @@ function AppLayout() {
   } = useModalManager();
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-slate-950 font-poppins transition-colors duration-300">
+    <div className="min-h-screen h-screen bg-gray-100 dark:bg-slate-950 font-poppins transition-colors duration-300 md:flex">
       {/* Header only on mobile */}
       <div className="md:hidden">
         <Header />
       </div>
 
       {/* Main content */}
-      <main className="max-w-md mx-auto px-4 pb-20 md:max-w-none md:ml-72 md:px-6 md:pb-6">
+      <main className="max-w-md mx-auto px-4 pb-20 md:max-w-none md:ml-72 md:px-6 md:pb-6 md:flex-1 md:overflow-y-auto md:h-screen">
         <Outlet context={{ openEditWorkModal, openEditShiftModal }} />
       </main>
 

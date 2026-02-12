@@ -14,11 +14,13 @@ export const PREDEFINED_COLORS = [
 ];
 
 export const TURN_TYPE_COLORS = {
-  'Day': '#10B981',
-  'Afternoon': '#F59E0B',
-  'Night': '#6366F1',
-  'Saturday': '#8B5CF6',
-  'Sunday': '#EF4444'
+  'day': '#F59E0B',
+  'afternoon': '#F97316',
+  'night': '#6366F1',
+  'saturday': '#8B5CF6',
+  'sunday': '#EF4444',
+  'delivery': '#10B981',
+  'mixed': '#6B7280',
 };
 
 export const DEFAULT_THEME_COLOR = '#EC4899';

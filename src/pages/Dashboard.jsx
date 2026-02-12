@@ -7,6 +7,7 @@ import { LayoutDashboard } from 'lucide-react';
 import PageHeader from '../components/layout/PageHeader';
 import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useApp } from '../contexts/AppContext';
+import { useAuth } from '../contexts/AuthContext';
 import { exportReport, preloadExportResources } from '../services/export';
 import Loader from '../components/other/Loader';
 import WelcomeCard from '../components/dashboard/WelcomeCard';
@@ -21,7 +22,8 @@ import QuickActionsCard from '../components/dashboard/QuickActionsCard';
 import ExportReportCard from '../components/dashboard/ExportReportCard';
 import FooterSection from '../components/settings/FooterSection';
 
-import FeatureAnnouncementCard from '../components/dashboard/FeatureAnnouncementCard';
+import LiveModeCard from '../components/dashboard/LiveModeCard';
+import SuggestedActionCard from '../components/dashboard/SuggestedActionCard';
 import LiveModeStartModal from '../components/modals/liveMode/LiveModeStartModal';
 import LiveModeActiveModal from '../components/modals/liveMode/LiveModeActiveModal';
 
@@ -29,12 +31,12 @@ import Flex from '../components/ui/Flex';
 import { useLiveMode } from '../hooks/useLiveMode';
 
 const Dashboard = () => {
-  const { loading, calculatePayment, shiftRanges, settings } = useApp();
+  const { loading, calculatePayment, shiftRanges, settings, isPremium, premium } = useApp();
+  const { currentUser } = useAuth();
   const stats = useDashboardStats();
   const { isActive } = useLiveMode();
 
-  // eslint-disable-next-line no-unused-vars
-  const [showFeatureAnnouncement, setShowFeatureAnnouncement] = useState(true);
+  const [showSuggestion, setShowSuggestion] = useState(true);
 
   // Live Mode modal states
   const [isLiveStartModalOpen, setIsLiveStartModalOpen] = useState(false);
@@ -66,7 +68,12 @@ const Dashboard = () => {
         shiftRanges,
         userSettings: settings,
         deliveryShifts: stats.allShifts?.filter(s => s.type === 'delivery') || [],
-        deliveryWorks: stats.allWorks?.filter(w => w.type === 'delivery') || []
+        deliveryWorks: stats.allWorks?.filter(w => w.type === 'delivery') || [],
+        userInfo: {
+          name: currentUser?.displayName || currentUser?.email || 'User',
+          isPremium,
+          premiumSince: premium?.subscription?.startDate || null
+        }
       };
 
       // Export using new professional system
@@ -108,57 +115,31 @@ const Dashboard = () => {
       <div className="space-y-6">
         {/* --- DESKTOP TOP SECTION --- */}
         <div className="hidden lg:grid lg:grid-cols-5 lg:auto-rows-max lg:gap-6">
-          {showFeatureAnnouncement ? (
-            <>
-              {/* --- WITH FEATURE --- */}
-              <motion.div className="lg:col-span-4 h-full" variants={headerVariants} initial="hidden" animate="visible">
-                <FeatureAnnouncementCard onClick={handleOpenLiveMode} onShowActive={handleShowActiveLiveMode} className="h-full" />
-              </motion.div>
-              <motion.div className="lg:col-span-1 h-full" variants={headerVariants} initial="hidden" animate="visible">
-                <WelcomeCard totalEarned={stats.totalEarned} isFeatureVisible={true} className="h-full" />
-              </motion.div>
-              
-              <div className="lg:col-span-4 h-full">
-                <QuickStatsGrid 
-                  stats={stats} 
-                  allShifts={stats.allShifts}
-                  allWorks={stats.allWorks}
-                  className="h-full" 
-                />
-              </div>
-              <div className="lg:col-span-1 h-full">
-                <ThisWeekSummaryCard stats={stats} className="h-full" />
-              </div>
-            </>
-          ) : (
-            <>
-              {/* --- WITHOUT FEATURE --- */}
-              <motion.div className="lg:col-span-4" variants={headerVariants} initial="hidden" animate="visible">
-                <WelcomeCard totalEarned={stats.totalEarned} />
-              </motion.div>
-      
-              <div className="lg:col-span-4 lg:row-start-2">
-                <QuickStatsGrid 
-                  stats={stats} 
-                  allShifts={stats.allShifts}
-                  allWorks={stats.allWorks}
-                />
-              </div>
+          <motion.div className="lg:col-span-4 h-full" variants={headerVariants} initial="hidden" animate="visible">
+            <LiveModeCard onClick={handleOpenLiveMode} onShowActive={handleShowActiveLiveMode} className="h-full" />
+          </motion.div>
+          <motion.div className="lg:col-span-1 h-full" variants={headerVariants} initial="hidden" animate="visible">
+            <WelcomeCard totalEarned={stats.totalEarned} isFeatureVisible={true} className="h-full" />
+          </motion.div>
 
-              <div className="lg:col-span-1 lg:col-start-5 lg:row-start-1 lg:row-span-2 h-full">
-                <ThisWeekSummaryCard stats={stats} className="h-full"/>
-              </div>
-            </>
-          )}
+          <div className="lg:col-span-4 h-full">
+            <QuickStatsGrid
+              stats={stats}
+              allShifts={stats.allShifts}
+              allWorks={stats.allWorks}
+              className="h-full"
+            />
+          </div>
+          <div className="lg:col-span-1 h-full">
+            <ThisWeekSummaryCard stats={stats} className="h-full" />
+          </div>
         </div>
 
         {/* --- MOBILE SECTION --- */}
         <div className="block lg:hidden space-y-4">
-          {showFeatureAnnouncement && (
-            <motion.div variants={headerVariants} initial="hidden" animate="visible">
-              <FeatureAnnouncementCard onClick={handleOpenLiveMode} onShowActive={handleShowActiveLiveMode} />
-            </motion.div>
-          )}
+          <motion.div variants={headerVariants} initial="hidden" animate="visible">
+            <LiveModeCard onClick={handleOpenLiveMode} onShowActive={handleShowActiveLiveMode} />
+          </motion.div>
           <motion.div variants={headerVariants} initial="hidden" animate="visible">
             <WelcomeCard totalEarned={stats.totalEarned} />
           </motion.div>
@@ -189,11 +170,26 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-6 flex flex-col">
                 <FavoriteWorksCard favoriteWorks={stats.favoriteWorks} />
-                <TopWorkCard mostProfitableWork={stats.mostProfitableWork} />
-                <NextShiftCard
-                  nextShift={stats.nextShift}
-                  formatDate={stats.formatDate}
-                />
+                {showSuggestion ? (
+                  <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-6">
+                      <TopWorkCard mostProfitableWork={stats.mostProfitableWork} />
+                      <NextShiftCard
+                        nextShift={stats.nextShift}
+                        formatDate={stats.formatDate}
+                      />
+                    </div>
+                    <SuggestedActionCard onClose={() => setShowSuggestion(false)} />
+                  </div>
+                ) : (
+                  <>
+                    <TopWorkCard mostProfitableWork={stats.mostProfitableWork} />
+                    <NextShiftCard
+                      nextShift={stats.nextShift}
+                      formatDate={stats.formatDate}
+                    />
+                  </>
+                )}
               </div>
               <div className="space-y-6 flex flex-col">
                   <ProjectionCard

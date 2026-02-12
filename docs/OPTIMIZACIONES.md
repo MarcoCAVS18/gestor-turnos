@@ -1,462 +1,314 @@
 # OPTIMIZACIONES.md
 
-Este documento define las tareas pendientes de optimización y mejoras del proyecto.
-Todas las tareas listadas aquí deben ser tratadas como requerimientos activos.
+Este documento contiene el backlog activo de mejoras, auditorías y refactors pendientes del proyecto.
+Todas las tareas listadas aquí deben considerarse requerimientos activos.
 
-📌 IMPORTANTE:
-- Estas tareas NO están hechas.
-- Deben ejecutarse en orden lógico.
-- Mantener consistencia de UI/UX y evitar breaking changes.
-- Si se requiere refactor, hacerlo con código limpio y reutilizable.
-- No dejar TODOs sin resolver.
+📌 IMPORTANTE
+- Todas las tareas anteriores ya fueron completadas.
+- Este archivo representa las tareas actuales pendientes.
+- Mantener consistencia visual, evitar duplicación y respetar la arquitectura del proyecto.
+- Priorizar reutilización de componentes UI existentes.
+- Evitar queries innecesarias y reducir costos operativos.
+- No introducir breaking changes sin migración clara.
 
 ---
 
-## 1. Fix WeekNavigator: rango de fechas incorrecto ✅
+## 1. ✅ Auditoría completa de costos (Firebase + APIs + Stripe)
+
+### Implementado
+
+**PremiumContext: 3 reads → 1 read por sesión** — `loadSubscriptionAndUsage()` combina init + subscription + liveModeUsage en 1 lectura.
+
+**canUseLiveMode: 2 reads → 1 read** — Usa `loadSubscriptionAndUsage()` en vez de 2 llamadas separadas.
+
+**Feedback query limitado** — `limit(50)` en vez de leer toda la colección (solo se muestran 10).
+
+**Bulk shifts con writeBatch** — `addBulkShiftsService()` usa batch writes (1 round-trip por 500 docs vs N individuales).
+
+**Stripe:** 3 endpoints limpios, sin redundancia.
+
+**6 listeners activos:** Todos con cleanup correcto en useEffect return.
+
+**Archivos:** premiumService.js, PremiumContext.jsx, firebaseService.js, DataContext.jsx
+
+---
+
+## 2. Reestructurar FeatureAnnouncementCard (mantener Live Mode)
+
+### Contexto
+El componente `FeatureAnnouncementCard` seguirá existiendo exactamente igual para Live Mode y jamás será reemplazado.
 
 ### Problema
-En `WeekNavigator` las fechas NO se procesan correctamente.
-El título cambia correctamente (ej: "Last week", "2 weeks ago"), pero el rango de fechas mostrado queda fijo:
-
-Ejemplo incorrecto:
-`February 9 - February 9`
-
-Este rango se repite para todas las semanas cuando debería actualizarse según el rango real.
+Debe revisarse la estructura del proyecto para que este componente no quede ubicado de manera desordenada o inconsistente.
 
 ### Objetivo
-- Corregir el cálculo del rango de fechas mostrado.
-- El rango debe reflejar el inicio y fin real de la semana seleccionada.
+Asegurar que su ubicación y organización sea coherente con la arquitectura general del proyecto.
 
 ### Requerimientos
-- Debe actualizarse correctamente al navegar semanas hacia atrás y hacia adelante.
-- Validar el comportamiento en semanas que cruzan meses (ej: Jan 29 - Feb 4).
-- Validar que el formato sea consistente y legible.
-
-**Commit:** `33ebceb` - fix week navigator date range display
+- El componente dejará de llamarse `FeatureAnnouncementCard` (renombrar).
+- Mantener funcionalidad intacta (Live Mode).
+- Reubicarlo correctamente dentro de una estructura limpia.
+- Reutilizar componentes UI claves (Card, Button, etc).
 
 ---
 
-## 2. Mejoras UI Dark Mode: agregar una variante de background adicional ✅
+## 3. About: agregar ID (#) al componente Feedback para navegación directa
+
+### Objetivo
+Agregar un identificador (`id`) al componente principal de Feedback dentro de la página About, para permitir navegación directa mediante anchor.
+
+### Contexto
+El nuevo componente de Recomendaciones del Dashboard debe redirigir al usuario hacia About y automáticamente hacer scroll hasta la sección de Feedback.
+
+### Requerimientos
+- Agregar un `id` fijo al contenedor principal del componente Feedback (ej: `id="feedback"`).
+- Al clickear la RecomendacionesCard del Dashboard:
+  - navegar hacia `/about`
+  - realizar scroll automático hacia el componente Feedback usando el ID.
+- El scroll debe ser suave (smooth).
+- Debe funcionar correctamente en Desktop y Mobile.
+- Validar que funcione incluso si la página tarda en renderizar (evitar que el scroll falle por timing).
+
+### Resultado esperado
+El usuario hace click en la RecomendacionesCard y automáticamente termina en About, posicionado directamente en la sección de Feedback.
+
+---
+
+## 4. Crear componente interactivo de Recomendaciones en Dashboard
+
+### Objetivo
+Crear una nueva Card interactiva de SuggestedActionCard dentro del Dashboard.
+
+### Ubicación requerida
+- Debe colocarse en la segunda columna del Dashboard.
+- Debe ubicarse exactamente en el contenedor donde actualmente están:
+  - `TopWorkCard`
+  - `NextShiftCard`
+- El nuevo componente debe ser cuadrado.
+- No es necesario dividir en dos columnas perfectas: lo importante es que sea cuadrado.
+
+### Comportamiento
+- Debe poder cerrarse (tener una cruz en una esquina).
+- Si el usuario lo cierra:
+  - `TopWorkCard` y `NextShiftCard` deben volver a ocupar el ancho completo del contenedor compartido con `FavoriteWorksCard`.
+
+### Diseño
+- Similar a `FeatureAnnouncementCard` respecto al background (ver variantes en `Card.jsx`).
+- Contenido centrado.
+- Texto blanco.
+- Ícono grande estilo "Like", ligeramente rotado, ubicado en la parte superior.
+- No usar la prop `title`.
+- Toda la Card debe ser clickeable.
+
+### Acción
+Al hacer click, debe redirigir al usuario hacia la sección de Feedback (About).
+
+### Nota
+Este componente será reutilizable para futuras recomendaciones.
+
+---
+
+## 5. Fix Layout Desktop: navegación no ocupa el alto total
 
 ### Problema
-En Dark Mode hay backgrounds que se confunden entre sí.
-Algunos componentes renderizan contenedores con el mismo color que el fondo general, lo que genera poca separación visual.
-
-Esto ocurre principalmente en:
-- `ShiftCard` (detalles internos)
-- Contenedores secundarios dentro de cards
-- Secciones con background nested
+En la última modificación se perdió el comportamiento donde la navegación en Desktop (Nav) ocupa el alto completo de la pantalla.
 
 ### Objetivo
-Agregar una variante adicional de color (ej: `surface2`, `cardSecondary`, etc.) para mejorar contraste.
+Restaurar comportamiento correcto del layout.
 
 ### Requerimientos
-- Definir un nuevo color reutilizable (en theme/config global).
-- Aplicarlo en contenedores secundarios donde actualmente se pierde contraste.
-- Mantener consistencia visual y no romper Light Mode.
-- Revisar UI general en:
-  - ShiftCard
-  - Cards de estadísticas
-  - Modales
-  - Contenedores internos
-
-**Implementación:**
-- Agregados colores `surface`, `surface2`, `surface3`, `surfaceHover` en `colorUtils.js` y `useThemeColors.js`
-- Nuevas variantes de Card: `variant="surface"`, `variant="surface2"`, `variant="surface3"`
-- Estos colores proporcionan mejor contraste en Dark Mode sin afectar Light Mode
-
-**Commit:** `e284b9c` - add surface color variants for better dark mode contrast
+- El Nav debe alcanzar el 100% del viewport height.
+- Verificar comportamiento con scroll.
+- No romper responsive.
 
 ---
 
-## 3. Revisar Live Mode + guardado de turnos (shift saving) ✅
+## 6. Normalizar tamaños de Cards de trabajos
 
 ### Problema
-El comportamiento del Live Mode y el guardado de turnos necesita ser revisado.
-
-Se sospecha que:
-- Lunes a viernes (day / afternoon / night) funciona correctamente.
-- Sábado, domingo calculamos que no funciona correctamente.
-- Revisar holidays
-
-**Problema crítico identificado:**
-Un turno que cruza medianoche (ej: Viernes 9pm - Sábado 3am) NO dividía el cálculo por tipo de día.
-- Antes: TODO el turno se calculaba con el rate del día de inicio (viernes weekday)
-- Ahora: Se divide en segmentos y cada uno usa su rate correcto (viernes night + sábado saturday)
+Las Cards de trabajos no son consistentes en tamaño comparadas con:
+- la tarjeta premium blureada
+- tarjetas de delivery
+- dot de delivery cuando no existen trabajos creados
 
 ### Objetivo
-Analizar y corregir toda la lógica de guardado y cálculo para shifts según el día.
+Unificar tamaños para consistencia visual.
 
 ### Requerimientos
-- Validar cálculos en: ✅
-  - Weekdays ✅
-  - Saturday ✅
-  - Sunday ✅
-  - Holidays ✅
-- Confirmar que el modo Live Mode calcula correctamente horas y rate. ✅
-- Revisar lógica de detección de tipo de día. ✅
-- Revisar que los shifts se persistan correctamente en Firestore. ✅
-
-### ✅ Implementación Completada
-
-**Cambios realizados en calculationService.js:**
-
-1. **Nueva función `splitShiftIntoSegments`:**
-   - Divide turnos que cruzan medianoche en segmentos por día
-   - Cada segmento tiene su propia fecha para detectar el tipo de día correcto
-   - Maneja turnos de 24+ horas (múltiples días)
-
-2. **Refactorización de `calculatePayment`:**
-   - Procesa cada segmento con su propio tipo de día
-   - Prioridad correcta: Holiday > Sunday > Saturday > Weekday
-   - Weekdays aplican day/afternoon/night rates según hora del día
-   - Smoko se aplica al turno completo, no a cada segmento
-
-**Ejemplos de casos cubiertos:**
-- Viernes 9pm - Sábado 3am: 3hrs night (viernes) + 3hrs saturday = correcto ✅
-- Sábado 11pm - Domingo 2am: 1hr saturday + 2hrs sunday = correcto ✅
-- Viernes 11pm - Sábado 1am (holiday): 1hr night + 1hr holiday = correcto ✅
-
-**Archivos modificados:**
-- [calculationService.js](src/services/calculationService.js) - lógica completa de segmentación
-
-**Commit:** [pendiente]
+- Ajustar tamaños y spacing de las cards.
+- Mantener consistencia entre:
+  - normal jobs
+  - delivery jobs
+  - premium locked state (blurred)
+  - placeholders (dots)
+- Verificar responsive.
 
 ---
 
-## 4. Analizar el uso del campo Base Price al guardar trabajos ✅
+## 7. Fix CustomizationSection: emojis en una sola línea con scroll horizontal
 
 ### Problema
-Existe un campo "Base Price" al guardar un trabajo.
-Se debe verificar si realmente se utiliza en cálculos o lógica de negocio.
+En `CustomizationSection`, los emojis son muchos y en responsive generan problemas de layout.
 
 ### Objetivo
-Determinar si el campo se usa o es redundante.
+Mostrar los emojis en una sola línea con scroll horizontal.
 
 ### Requerimientos
-- Buscar en todo el proyecto dónde se utiliza "Base Price".
-- Si no se utiliza:
-  - evaluar eliminarlo del modelo
-  - eliminarlo de formularios y validaciones
-  - limpiar Firestore si corresponde
-- Si se utiliza:
-  - documentar claramente su función
-  - asegurar que esté bien integrado en cálculos
-
-### ✅ Hallazgos y Conclusión
-
-**Aclaración:** El campo real es `baseRate`, NO `basePrice`.
-
-**Resultado:** El campo `baseRate` **SÍ SE UTILIZA ACTIVAMENTE** y **NO DEBE ELIMINARSE**.
-
-**Usos encontrados (38 referencias):**
-- ✅ Lógica de cálculos de pago (fallback rate)
-- ✅ Persistencia en Firestore
-- ✅ Validación requerida en formularios
-- ✅ Visualización en múltiples componentes UI
-- ✅ Exports y reportes
-
-**Reporte completo:** Ver `REPORT_BASE_RATE_ANALYSIS.md`
-
-**Campo candidato para investigación futura:** `baseRatePerOrder` en delivery works (parece no usarse).
+- Implementar scroll X similar a `DeliveryPlatformsSection`.
+- Mantener UX limpia.
+- Debe funcionar correctamente en mobile y desktop.
+- Evitar overflow visual feo o saltos de layout.
 
 ---
 
-## 5. Implementar creación masiva de turnos (Bulk Shift Creation)
+## 8. ✅ Verificación de cuentas y seguridad en formularios de pago (Stripe)
+
+### Implementado
+
+**Diagnóstico del tooltip "autocompletado inhabilitado":** Es un comportamiento esperado de localhost (HTTP). En producción, Firebase Hosting sirve HTTPS automáticamente — el tooltip NO aparece en producción.
+
+**Content-Security-Policy agregado** en firebase.json — Whitelist para Stripe (js.stripe.com, api.stripe.com), Firebase (googleapis, firebaseio, cloudfunctions), Google Auth (identitytoolkit, securetoken). `object-src 'none'` y `base-uri 'self'` para prevenir inyección.
+
+**HSTS reforzado** — Agregado `preload` a Strict-Transport-Security para elegibilidad en HSTS preload list.
+
+**Source maps deshabilitados** — `GENERATE_SOURCEMAP=false` en .env para no exponer código fuente en producción.
+
+**Autocomplete attributes** — Agregados `autoComplete` semánticos al formulario de pago (cc-name, billing country, billing postal-code, billing address-level2, billing street-address) + `autoComplete="on"` en el `<form>`.
+
+**Console.log limpiados** — Removidos 3 console.log que exponían payment method IDs y subscription results en producción.
+
+**Archivos:** firebase.json, .env, Premium.jsx
+
+---
+
+## 9. ✅ Refactor de Premium Page: modularizar código
+
+### Implementado
+
+**Premium.jsx: 1135 líneas → 44 líneas** — Ahora es solo un orquestador que decide qué vista mostrar.
+
+**Carpeta `components/premium/` creada** con 12 archivos:
+- `constants.js` — PREMIUM_BENEFITS, COUNTRIES, CARD_ELEMENT_STYLE, STATUS_CONFIG, formatDate
+- `PaymentForm.jsx` — Formulario Stripe con CardElements y billing details
+- `SuccessCelebration.jsx` — Modal de confetti post-pago
+- `SubscriptionStatusCard.jsx` — Estado de suscripción (premium users)
+- `AccountCard.jsx` — Cuenta del usuario (variante premium/free)
+- `BenefitsRow.jsx` — Grid de beneficios (variante premium/free)
+- `PaymentMethodCard.jsx` — Método de pago + total invertido
+- `ManageSubscriptionCard.jsx` — Gestión y cancelación
+- `HeroCard.jsx` — Hero card con precio (free users)
+- `SecurityCard.jsx` — Garantías
+- `PremiumUserView.jsx` — Layout completo para usuarios premium
+- `FreeUserView.jsx` — Layout completo para usuarios free
+
+**RecentInvoices component** — Nuevo componente que muestra las últimas 5 facturas del usuario con:
+- Loading skeleton
+- Empty state si no hay facturas
+- Links para descargar PDF y ver online
+- Hover actions (Download/View)
+
+**Cloud Function `getInvoices`** — Nuevo endpoint GET que consulta `stripe.invoices.list()` con autenticación.
+
+**`stripeService.getInvoices()`** — Nueva función frontend para consultar el endpoint.
+
+**Archivos:** Premium.jsx, components/premium/*, functions/index.js, stripeService.js
+
+---
+
+## 10. ✅ Mejorar GoalsSection (más interactivo)
+
+### Implementado
+
+**StatsProgressBar mejorado:**
+- Milestone badges animados: "Almost there!" (75%), "Goal reached!" (100%), "Overachiever!" (150%)
+- Celebración visual con Trophy icon animado (rotate + scale spring animation)
+- Mensajes dinámicos según exceso (exceeded goal, incredible work)
+- Sparkle dots animados
+- Gradiente emerald/teal de fondo en celebration card
+- Porcentaje visible bajo la barra
+
+**GoalsSection Settings mejorado:**
+- Circular progress ring con animación SVG (framer motion)
+- Quick preset buttons: Part-time (20h), Standard (38h), Full-time (40h), Extended (50h)
+- Weekday average display (~8h on weekdays)
+- Empty state con dashed border y CTA centrado
+- AnimatePresence para transiciones suaves entre estados
+- Dark mode support completo
+
+**Archivos:** StatsProgressBar/index.jsx, GoalsSection/index.jsx
+
+---
+
+## 11. InteractiveCharts: mejorar PieCharts
+
+### Problemas
+- El PieChart debería tener animación de armado hasta completarse.
+- El bloque donde aparece título del trabajo con su color está demasiado cerca del gráfico.
 
 ### Objetivo
-Crear funcionalidad para que el usuario pueda crear un turno y replicarlo en múltiples días sin hacerlo manualmente uno por uno.
+Mejorar animación y layout.
 
-### UX/UI esperado
-Cuando el usuario crea un shift, debe poder elegir:
-- múltiples días de la semana
-- múltiples fechas específicas (opcional)
-- rango de fechas (opcional)
+### ✅ Implementado
 
-Ejemplo:
-"Crear este turno todos los lunes, martes y miércoles por 4 semanas".
+**Animación PieChart habilitada** — `isAnimationActive` cambiado de `false` a `true` con `animationDuration: 1000ms`, `animationEasing: ease-out`.
 
-### Requerimientos técnicos
-- Diseñar una UI intuitiva dentro del flujo actual de creación de shift.
-- Mantener compatibilidad con la estructura actual de shifts.
-- Validar que el guardado masivo no genere duplicados involuntarios.
-- Agregar confirmación final antes de crear múltiples shifts.
-- Asegurar que el usuario pueda cancelar o editar antes de confirmar.
+**Legend spacing mejorado** — `height: 36 → 48`, `paddingTop: 12px` para separar leyenda del gráfico.
+
+**Pie chart refinado** — `innerRadius: 55%`, `outerRadius: 90%` (donut más grueso), `paddingAngle: 3`, `cornerRadius: 3` para bordes redondeados.
+
+**Archivos:** BaseChart/index.jsx, chartConfig.js
 
 ---
 
-## 6. Integrar feriados automáticos por país + estado/provincia ✅
+## 12. ✅ DailyDistribution: rediseño UI/UX
+
+### Implementado
+
+**Rediseño completo:**
+- Barras de progreso animadas (framer motion) proporcionales al día con más earnings
+- Click en cada día expande detalles (hours, earnings, shifts, $/h rate)
+- Busiest day destacado con TrendingUp icon y color primario
+- Summary footer con "X active days" y total
+- Day abbreviations responsivas (Mon, Tue, etc.)
+- Dark mode completo, sin scroll horizontal
+
+**Archivo:** DailyDistribution/index.jsx
+
+---
+
+## 13. ShiftTypeStats: verificar colores de los shift types
 
 ### Problema
-Actualmente el usuario debe configurar manualmente el valor de hora Holiday.
-Pero la app no detecta automáticamente qué días son feriados.
+Se debe confirmar que los colores asociados a tipos de turnos se obtienen correctamente.
 
 ### Objetivo
-Implementar un sistema automático que detecte feriados según país y región.
+Asegurar consistencia de color y que siempre haya un fallback válido.
 
 ### Requerimientos
-- Usar una API o librería completamente gratuita que permita obtener feriados globales. ✅
-- Permitir que el usuario configure:
-  - país ✅
-  - estado/provincia/región (cuando aplique) ✅
-- Guardar estas preferencias en el perfil del usuario. ✅
-- Al calcular shifts, detectar si el día es Holiday y aplicar el rate correspondiente. ✅
-- Podemos utilizar la solicitud del usuario de saber su ubicacion para realizar proceso rapidamente. ✅
-- Crear un componente UI para selección de país y región. ✅
-
-Notas importantes:
-- Algunos feriados dependen de regiones específicas.
-- Debe existir fallback si no hay región disponible.
-
-### ✅ Implementación Completada
-
-**Librería utilizada:** `date-holidays` (completamente gratuita, offline, 100+ países)
-
-**Backend:**
-- holidayService.js con detección automática y geolocalización
-- Integración en calculationService para aplicar rates automáticamente
-- Campos en perfil de usuario: holidayCountry, holidayRegion, useAutoHolidays
-- Actualización de ConfigContext, CalculationsContext, StatsContext
-
-**UI:**
-- HolidaySettingsSection en Settings con selector de país/región
-- Botón de geolocalización para autodetección
-- HolidayBadge para mostrar en shift cards
-- Integración completa en ShiftCard y DeliveryShiftCard
-
-**Commits:**
-- `4ac1150` - implement automatic holiday detection backend
-- `e7e93b2` - add holiday settings UI and holiday badges
+- Validar mapeo de colores.
+- Confirmar que no existan undefined.
+- Asegurar coherencia entre gráficos y UI.
 
 ---
 
-## 7. Crear páginas de error (404 y Server Error) ✅
+## 14. Analizar opciones de hosting (Australia y Nueva Zelanda)
 
 ### Objetivo
-Crear páginas dedicadas para:
-- 404 Not Found
-- Error de servidor / app no disponible
-
-### Assets disponibles
-Existen SVGs grandes ya creados en:
-`assets/SVG/`
-
-Nombres:
-- `404.svg`
-- `error.svg`
+Analizar las mejores opciones de hosting según el proyecto, priorizando rendimiento y costos de renovación.
 
 ### Requerimientos
-- Crear pages accesibles desde routing.
-- Aplicar estilo consistente con la app.
-- Asegurar que funcionen en Dark y Light mode.
-- Agregar botón para volver al Home.
+- Foco en países:
+  - Australia
+  - Nueva Zelanda
+- Considerar costo de renovación como factor clave.
+- Evitar proveedores tipo GoDaddy (descartado).
+- Buscar alternativas similares a NIC.AR pero para AU/NZ.
+- Evaluar:
+  - hosting web
+  - dominios
+  - CDN
+  - soporte SSL
+  - integración con Firebase si aplica
 
-**Commit:** `bc0e694` - add 404 and server error pages
-
----
-
-## 8. Eliminar todos los emojis del proyecto ✅
-
-### Objetivo
-Eliminar absolutamente todos los emojis visibles en el proyecto.
-
-### Requerimientos
-- Buscar emojis en:
-  - textos UI
-  - botones
-  - mensajes de error
-  - labels
-  - placeholders
-  - componentes premium
-- Reemplazar por texto limpio o iconografía consistente (lucide-react con color si aplica).
-- No romper traducciones o estilos.
-
-**Commit:** `80a2307` - remove all visible emojis from UI
-
----
-
-## 9. Logo Premium en Header ✅
-
-### Objetivo
-Existe un nuevo SVG premium (logo premium).
-Cuando el usuario sea Premium, debe reemplazarse el logo normal por el premium.
-
-### Requerimientos
-- Detectar correctamente el estado Premium del usuario.
-- En el header principal:
-  - si user es premium => mostrar `premium.svg`
-  - si no => mostrar logo normal
-- Asegurar que el SVG se adapte responsive.
-- Mantener compatibilidad con Dark/Light.
-
-**Commit:** `19f5eab` - show premium logo in header for premium users
-
----
-
-## 10. Stripe: solicitar datos de facturación (Billing Details)
-
-### Objetivo
-Definir si el sistema debe solicitar datos de facturación completos mediante Stripe.
-
-### Requerimientos
-- Evaluar implementación actual del formulario de tarjeta.
-- Si corresponde solicitar billing details:
-  - agregar campos de dirección
-  - ciudad, postal code, país, etc.
-- Determinar dónde se guardan esos datos.
-- Ajustar UI del checkout para que sea clara y profesional.
-
----
-
-## 11. Mejorar página Premium para usuarios Premium
-
-### Problema
-La página Premium actual no es completa para usuarios que ya son premium.
-
-### Objetivo
-Crear una sección completa de gestión de cuenta premium.
-
-### Requerimientos
-La página debe permitir:
-- visualizar estado de suscripción
-- ver factura / invoice
-- cancelar suscripción
-- mostrar fecha de expiración (si cancela, sigue activa hasta fin de ciclo)
-- acceso a historial de pagos (si está disponible en Stripe)
-
-Debe ser clara, limpia y tipo "Account management".
-
----
-
-## 12. Auditoría total de seguridad + limpieza de footer + nueva página humana
-
-### Objetivo
-Realizar un análisis general de seguridad del proyecto y mejorar credibilidad.
-
-### Requerimientos
-- Revisar seguridad general:
-  - Firestore rules
-  - auth flows
-  - protección de endpoints
-  - validaciones en frontend
-  - evitar fugas de datos sensibles
-- Eliminar eventualmente botones de Github y Twitter del footer.
-- Crear nueva página estilo "About / Who am I":
-  - texto humano y sincero
-  - explicar qué es el proyecto
-  - explicar objetivos
-  - motivación real
-  - contacto para soporte o sugerencias
-  - tono amigable y transparente
-
----
-
-## 13. Auditoría SEO completa
-
-### Objetivo
-Optimizar el sitio para posicionamiento en buscadores.
-
-### Requerimientos
-- Revisar estructura SEO:
-  - meta tags
-  - title dinámico por página
-  - description
-  - open graph
-  - sitemap
-  - robots.txt
-- Buscar palabras clave recomendadas según el propósito del sitio.
-- Preparar contenido mínimo para posicionamiento real.
-- Asegurar performance (Core Web Vitals).
-- Optimizar indexabilidad de páginas públicas.
-
-## 14. Mejorar exportación en PNG (Report Export)
-
-### Problema
-Actualmente los exports en PNG presentan múltiples problemas de contenido y diseño:
-
-- No existe una separación correcta en el título (layout inconsistente).
-- Falta información del usuario en el export.
-- Los gráficos **Weekly Evolution** y **Hours by Shift Type** se renderizan vacíos.
-- Los datos del bloque **Summary** están incompletos.
-- La tabla **TopWorks** también está incompleta o no refleja correctamente la data real.
-- El diseño general se ve como una hoja A4 exportada a imagen, lo cual no es necesario ni ideal.
-
-### Objetivo
-Mejorar completamente el export en PNG para que sea:
-- visualmente atractivo
-- consistente con el diseño de la app (estilo cards)
-- dinámico según el contenido
-- correcto en datos y gráficos
-
-### Requerimientos
-- Corregir el layout del título (padding/margin/separación correcta).
-- Agregar información del usuario en el export:
-  - nombre del usuario
-  - desde cuándo es premium (si aplica)
-  - estado premium / free
-  - NO utilizar fotografía ni avatar.
-- Corregir render de gráficos:
-  - Weekly Evolution debe mostrar data real
-  - Hours by Shift Type debe mostrar data real
-  - validar que el export capture correctamente charts canvas/SVG.
-- Completar datos del Summary:
-  - validar cálculo de totales
-  - validar horas y earnings
-  - validar breakdown por tipo de shift
-- Completar correctamente TopWorks:
-  - validar que muestre trabajos reales
-  - validar orden, horas y total generado
-- Mejorar estilos generales:
-  - aplicar look similar a cards reales de la app
-  - spacing limpio y moderno
-  - jerarquía visual clara (títulos, subtítulos, bloques)
-- El export NO debe forzarse a formato A4.
-  - el PNG puede adaptarse al contenido
-  - la distribución de elementos puede variar para que no parezca un PDF convertido en imagen
-- Validar export en Dark y Light mode.
-
----
-
-## 15. Auditoría de costos Firebase (Storage + Firestore + Services)
-
-### Problema
-Se necesita analizar el comportamiento de Firebase y todos sus servicios utilizados para evitar llamadas innecesarias que puedan generar costos elevados en producción.
-
-Existe riesgo de:
-- lecturas repetidas en Firestore
-- suscripciones activas sin cleanup
-- re-renders que disparan queries innecesarias
-- uso incorrecto de Storage
-- duplicación de requests por usuario
-
-### Objetivo
-Realizar auditoría completa del consumo de Firebase y optimizar para minimizar costos sin afectar UX.
-
-### Requerimientos
-- Analizar uso de:
-  - Firestore reads/writes
-  - listeners en tiempo real (onSnapshot)
-  - Firebase Storage (uploads/downloads)
-  - Firebase Auth
-  - cualquier otro servicio activo
-- Detectar llamadas repetidas o innecesarias.
-- Verificar que todas las suscripciones tengan cleanup correcto.
-- Reducir lecturas redundantes:
-  - caching local cuando aplique
-  - evitar re-fetch por renders
-  - usar paginación donde sea necesario
-- Confirmar que queries estén bien indexadas y optimizadas.
-- Identificar potenciales puntos donde se generan costos por uso indebido.
-- Documentar recomendaciones y cambios aplicados.
-- Asegurar que la app sea escalable sin costos inesperados.
-
-
----
-
-📌 FINAL CHECKLIST GLOBAL
-Antes de cerrar estas tareas:
-- Verificar que no existan errores en consola
-- Revisar funcionamiento en mobile y desktop
-- Revisar Light/Dark mode
-- Confirmar que Firestore no tenga writes duplicados
-- Confirmar que los cálculos de shifts son correctos en todos los escenarios
+### Resultado esperado
+Documento comparativo con opciones recomendadas.

@@ -99,7 +99,10 @@ const BaseChart = ({
               cy="50%"
               outerRadius={pieOuterRadius}
               innerRadius={pieInnerRadius}
-              isAnimationActive={false}
+              isAnimationActive={true}
+              animationBegin={0}
+              animationDuration={1000}
+              animationEasing="ease-out"
               {...chartConfig.pie}
             >
               {data.map((entry, index) => (

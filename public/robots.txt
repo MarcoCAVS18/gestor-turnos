@@ -1,3 +1,14 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /dashboard
+Disallow: /works
+Disallow: /shifts
+Disallow: /statistics
+Disallow: /calendar
+Disallow: /settings
+Disallow: /integrations
+Disallow: /delete-account
+Disallow: /clear-everything
+
+Sitemap: https://gestapp.com.au/sitemap.xml
