@@ -68,7 +68,7 @@ const StepLiveMode = ({ isMobile }) => {
       variants={container}
       initial="hidden"
       animate="show"
-      className={`flex flex-col items-center h-full px-6 md:px-10 ${isMobile ? 'py-6' : 'py-8'}`}
+      className={`flex flex-col items-center px-6 md:px-10 ${isMobile ? 'py-6 pb-8' : 'h-full py-8'}`}
     >
       {/* Header */}
       <motion.div variants={fadeUp} className="text-center mb-6">

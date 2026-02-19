@@ -29,7 +29,7 @@ const StepWelcome = ({ isMobile }) => {
       variants={container}
       initial="hidden"
       animate="show"
-      className={`flex flex-col items-center justify-center h-full px-8 ${isMobile ? 'py-8' : 'py-10'}`}
+      className={`flex flex-col items-center justify-center px-8 ${isMobile ? 'py-8 pb-10' : 'h-full py-10'}`}
     >
       {/* Logo with glow ring */}
       <motion.div variants={fadeUp} className="relative mb-8">

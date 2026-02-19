@@ -111,7 +111,7 @@ const DemoModal = ({ onComplete }) => {
         exit={{ opacity: 0, y: 20, scale: 0.96 }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         className={`
-          relative z-10 bg-white overflow-hidden
+          relative z-10 bg-white overflow-hidden flex flex-col
           ${isMobile
             ? 'w-full h-full rounded-none'
             : 'w-full max-w-2xl max-h-[85vh] rounded-2xl shadow-2xl'
@@ -136,7 +136,7 @@ const DemoModal = ({ onComplete }) => {
         </div>
 
         {/* Step content area */}
-        <div className={`relative ${isMobile ? 'h-[calc(100%-80px)] mt-10' : 'min-h-[460px] mt-8'} overflow-hidden`}>
+        <div className={`relative ${isMobile ? 'flex-1 min-h-0 mt-10' : 'min-h-[460px] mt-8'} overflow-hidden`}>
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={currentStep}
@@ -149,7 +149,7 @@ const DemoModal = ({ onComplete }) => {
                 duration: 0.45,
                 ease: [0.25, 0.46, 0.45, 0.94],
               }}
-              className="absolute inset-0"
+              className={isMobile ? 'h-full overflow-y-auto overscroll-contain' : 'absolute inset-0'}
               style={{ transformStyle: 'preserve-3d' }}
             >
               <StepComponent isMobile={isMobile} />
@@ -158,10 +158,7 @@ const DemoModal = ({ onComplete }) => {
         </div>
 
         {/* Bottom navigation */}
-        <div className={`
-          ${isMobile ? 'absolute bottom-0 left-0 right-0' : 'relative'}
-          bg-white border-t border-gray-100 px-6 py-4
-        `}>
+        <div className="flex-shrink-0 bg-white border-t border-gray-100 px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Back button */}
             <button

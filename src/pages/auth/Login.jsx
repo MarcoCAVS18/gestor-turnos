@@ -7,7 +7,6 @@ import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
 import Flex from '../../components/ui/Flex';
-import Logo from '../../components/icons/Logo';
 import DemoModal from '../../components/demos/DemoModal';
 
 import GoogleIcon from '../../components/icons/GoogleIcon';
@@ -105,13 +104,17 @@ const Login = () => {
       </div>
       
       {/* Login content */}
-      <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-12 overflow-y-auto">
-        <Logo />
-        <div className="text-center text-white mb-4">
-          <h1 className="text-4xl font-bold mb-2">Orary</h1>
-          <p className="text-lg">Manage your work shifts easily.</p>
+      <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-6 md:py-12 overflow-y-auto">
+        <div className="flex justify-center mb-3 md:mb-6">
+          <div className="bg-white rounded-full p-3 md:p-4 shadow-md">
+            <img src="/assets/SVG/logo.svg" alt="Logo" className="h-10 w-10 md:h-16 md:w-16" />
+          </div>
         </div>
-        <Card className="w-full max-w-md shadow-2xl" padding="lg">
+        <div className="text-center text-white mb-3 md:mb-4">
+          <h1 className="text-2xl md:text-4xl font-bold mb-1">Orary</h1>
+          <p className="text-sm md:text-lg">Manage your work shifts easily.</p>
+        </div>
+        <Card className="w-full max-w-md shadow-2xl" padding="md">
           
           {error && (
             <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md text-sm">
@@ -126,7 +129,7 @@ const Login = () => {
           )}
           
           <form onSubmit={handleLogin}>
-            <div className="mb-4">
+            <div className="mb-3">
               <Input
                 type="email"
                 label="Email"
@@ -137,8 +140,8 @@ const Login = () => {
                 required
               />
             </div>
-            
-            <div className="mb-2">
+
+            <div className="mb-1.5">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 <Lock size={16} className="inline mr-2" />
                 Password
@@ -152,7 +155,7 @@ const Login = () => {
                   placeholder="Password"
                   required
                 />
-                <button 
+                <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
@@ -161,10 +164,10 @@ const Login = () => {
                 </button>
               </div>
             </div>
-            
+
             {/* Password recovery link */}
-            <div className="mb-4 text-right">
-              <button 
+            <div className="mb-3 text-right">
+              <button
                 type="button"
                 onClick={handleForgotPassword}
                 className="text-sm text-pink-600 hover:text-pink-800"
@@ -172,17 +175,17 @@ const Login = () => {
                 Forgot your password?
               </button>
             </div>
-            
+
             <Button
               type="submit"
               loading={loading}
-              className="w-full mb-4"
+              className="w-full mb-3"
             >
               Continue
             </Button>
           </form>
-          
-          <div className="relative my-6">
+
+          <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-300"></div>
             </div>
@@ -190,12 +193,12 @@ const Login = () => {
               <span className="bg-white px-3 text-gray-500 text-sm">or</span>
             </div>
           </div>
-          
+
           <Button
             onClick={handleGoogleLogin}
             loading={googleLoading}
             variant="secondary"
-            className="w-full mb-4"
+            className="w-full mb-3"
             icon={GoogleIcon}
             iconPosition="left"
             bgColor="#121212"
@@ -203,12 +206,12 @@ const Login = () => {
           >
             Continue with Google
           </Button>
-          
+
           <div className="text-center">
-            <p className="text-gray-600 mb-2">Don't have an account?</p>
-            <button 
+            <p className="text-gray-600 text-sm mb-1">Don't have an account?</p>
+            <button
               onClick={handleRegister}
-              className="text-pink-600 hover:text-pink-800 font-bold"
+              className="text-pink-600 hover:text-pink-800 font-bold text-sm"
             >
               Register here!
             </button>
