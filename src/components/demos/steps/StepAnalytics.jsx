@@ -47,7 +47,7 @@ const StepAnalytics = ({ isMobile }) => {
       variants={container}
       initial="hidden"
       animate="show"
-      className={`flex flex-col h-full px-6 md:px-10 ${isMobile ? 'py-6' : 'py-6'}`}
+      className={`flex flex-col px-6 md:px-10 ${isMobile ? 'py-6 pb-8' : 'h-full py-6'}`}
     >
       {/* Header */}
       <motion.div variants={fadeUp} className="text-center mb-5">
