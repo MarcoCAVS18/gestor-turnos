@@ -42,7 +42,7 @@ const CreatorSection = ({ colors }) => {
 
           <div className="space-y-3 text-sm md:text-base leading-relaxed" style={{ color: colors.textSecondary }}>
             <p>
-              I'm a developer from Argentina, currently living in Australia. I built GestAPP
+              I'm a developer from Argentina, currently living in Australia. I built Orary
               because I needed it myself, and I figured if it helped me, it could help others too.
             </p>
             <p>

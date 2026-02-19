@@ -2,11 +2,12 @@
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const { Timestamp, FieldValue } = require('firebase-admin/firestore');
 const { google } = require('googleapis');
 const allowedOrigins = [
   'https://gestionturnos-7ec99.web.app',
   'https://gestionturnos-7ec99.firebaseapp.com',
-  'https://gestapp.com.au',
+  'https://orary.app',
   'http://localhost:3000',
 ];
 const cors = require('cors')({
@@ -100,7 +101,7 @@ exports.googleAuthCallback = functions.https.onRequest(async (req, res) => {
       refreshToken: tokens.refresh_token,
       expiryDate: tokens.expiry_date,
       connected: true,
-      connectedAt: admin.firestore.FieldValue.serverTimestamp()
+      connectedAt: FieldValue.serverTimestamp()
     });
 
     // Update user's public profile to show calendar is connected
@@ -592,11 +593,11 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         console.error('No payment intent found for subscription:', subscription.id);
         // Subscription was created but no payment needed (could be trial, etc.)
         // Still update Firestore as premium
-        const now = admin.firestore.Timestamp.now();
+        const now = Timestamp.now();
         // Safely calculate expiry date - default to 30 days from now if not available
         const periodEnd = subscription.current_period_end;
         const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-        const expiryDate = admin.firestore.Timestamp.fromMillis(expiryMillis);
+        const expiryDate = Timestamp.fromMillis(expiryMillis);
 
         await db.collection('users').doc(userId).update({
           subscription: {
@@ -629,11 +630,11 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
 
       // Payment successful - update Firestore
       if (paymentIntent.status === 'succeeded') {
-        const now = admin.firestore.Timestamp.now();
+        const now = Timestamp.now();
         // Safely calculate expiry date - default to 30 days from now if not available
         const periodEnd = subscription.current_period_end;
         const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-        const expiryDate = admin.firestore.Timestamp.fromMillis(expiryMillis);
+        const expiryDate = Timestamp.fromMillis(expiryMillis);
 
         await db.collection('users').doc(userId).update({
           subscription: {
@@ -871,7 +872,7 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
         await userDoc.ref.update({
           'subscription.isPremium': true,
           'subscription.status': 'active',
-          'subscription.expiryDate': admin.firestore.Timestamp.fromMillis(expiryMillis),
+          'subscription.expiryDate': Timestamp.fromMillis(expiryMillis),
         });
 
         console.log(`Invoice paid for user ${userDoc.id}`);

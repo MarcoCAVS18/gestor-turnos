@@ -56,7 +56,7 @@ const ClaudeSection = ({ colors }) => {
                 by Anthropic
               </p>
               <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
-                Some of the more complex features in GestAPP were built with the help of Claude AI,
+                Some of the more complex features in Orary were built with the help of Claude AI,
                 an assistant that made it possible to tackle challenges that would have taken much
                 longer to solve alone.
               </p>

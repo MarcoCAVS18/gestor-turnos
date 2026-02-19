@@ -124,7 +124,7 @@ const DeleteAccount = () => {
         </div>
         <img
           src="/assets/SVG/logo.svg"
-          alt="GestAPP"
+          alt="Orary"
           className="w-40 h-40 sm:w-48 sm:h-48 opacity-10"
           style={{ filter: 'grayscale(100%)' }}
         />
@@ -139,7 +139,7 @@ const DeleteAccount = () => {
           <div className="w-20 h-20 mx-auto mb-4">
             <img
               src="/assets/SVG/logo.svg"
-              alt="GestAPP"
+              alt="Orary"
               className="w-full h-full"
             />
           </div>
@@ -148,14 +148,14 @@ const DeleteAccount = () => {
             Your account has been permanently deleted.
           </p>
           <p className="text-sm text-green-600">
-            Thank you for using GestAPP. We hope to see you again!
+            Thank you for using Orary. We hope to see you again!
           </p>
         </motion.div>
       ) : (
         <>
           <div className="prose prose-lg text-gray-700">
             <p className="text-lg leading-relaxed">
-              If you wish to permanently delete your <strong>GestAPP</strong> account and all associated data, you can do so below. Please be aware that this action is <strong className="text-red-600">irreversible</strong>.
+              If you wish to permanently delete your <strong>Orary</strong> account and all associated data, you can do so below. Please be aware that this action is <strong className="text-red-600">irreversible</strong>.
             </p>
 
             <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">What Will Be Deleted</h2>
@@ -210,7 +210,7 @@ const DeleteAccount = () => {
                 If you prefer, you can also request account deletion by sending an email to:
               </p>
               <div className="bg-white p-3 rounded-lg border border-gray-200">
-                <p className="font-mono text-pink-700 font-bold">support@gestapp.com</p>
+                <p className="font-mono text-pink-700 font-bold">support@orary.app</p>
               </div>
               <p className="text-xs text-gray-500 mt-2">
                 Include your registered email and display name for verification. Deletion will be processed within 30 days.

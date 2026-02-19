@@ -4,12 +4,16 @@
 import { loadStripe } from '@stripe/stripe-js';
 import { auth } from './firebase';
 
+// Detect Stripe mode from publishable key
+const STRIPE_KEY = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
+export const isStripeTestMode = STRIPE_KEY?.startsWith('pk_test_');
+
 // Initialize Stripe with publishable key
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
+const stripePromise = loadStripe(STRIPE_KEY);
 
 // Cloud Functions base URL
-// Always use production URL since functions are deployed
-// To use local emulator, set REACT_APP_USE_EMULATOR=true and run: firebase emulators:start --only functions
+// In development: uses local emulator with test keys
+// In production: uses deployed functions with live keys
 const FUNCTIONS_BASE_URL = process.env.REACT_APP_USE_EMULATOR === 'true'
   ? 'http://localhost:5001/gestionturnos-7ec99/us-central1'
   : 'https://us-central1-gestionturnos-7ec99.cloudfunctions.net';

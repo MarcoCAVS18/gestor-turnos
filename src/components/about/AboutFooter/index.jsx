@@ -50,7 +50,7 @@ const AboutFooter = ({ colors }) => {
           Developed with <Heart size={12} className="text-red-400 fill-red-400" /> by Marqui
         </p>
         <p className="text-xs" style={{ color: colors.textSecondary, opacity: 0.5 }}>
-          &copy; 2026 GestAPP. All rights reserved.
+          &copy; 2026 Orary. All rights reserved.
         </p>
       </div>
     </motion.footer>

@@ -15,16 +15,8 @@ const ShiftTypeStats = ({ currentData, loading, className = '' }) => {
   const isEmpty = Object.keys(validTypes).length === 0;
 
   const getColorForType = (type) => {
-    const colorMap = {
-      'diurno': TURN_TYPE_COLORS.Diurno,
-      'tarde': TURN_TYPE_COLORS.Tarde,
-      'noche': TURN_TYPE_COLORS.Noche,
-      'nocturno': TURN_TYPE_COLORS.Nocturno,
-      'sabado': TURN_TYPE_COLORS.Sábado,
-      'domingo': TURN_TYPE_COLORS.Domingo,
-      'mixto': '#6B7280'
-    };
-    return colorMap[type.toLowerCase()] || '#6B7280';
+    const key = type === 'undefined' ? 'mixed' : type.toLowerCase();
+    return TURN_TYPE_COLORS[key] || '#6B7280';
   };
 
   return (

@@ -582,9 +582,7 @@ export const clearUserData = async (userUid) => {
 // ============================================================================
 
 export const submitFeedback = async (feedbackData) => {
-  console.log('[Feedback] submitFeedback called with:', feedbackData);
   const feedbackDocRef = doc(db, 'feedback', feedbackData.userId);
-  console.log('[Feedback] Writing to doc:', feedbackData.userId);
 
   await setDoc(feedbackDocRef, {
     userId: feedbackData.userId,
@@ -592,30 +590,26 @@ export const submitFeedback = async (feedbackData) => {
     rating: feedbackData.rating,
     comment: feedbackData.comment || '',
     isAnonymous: feedbackData.isAnonymous || false,
+    status: 'pending',
     createdAt: serverTimestamp(),
   });
 
-  console.log('[Feedback] submitFeedback SUCCESS');
   return { id: feedbackData.userId };
 };
 
 export const getUserFeedback = async (userId) => {
-  console.log('[Feedback] getUserFeedback for:', userId);
   const feedbackDocRef = doc(db, 'feedback', userId);
   const snap = await getDoc(feedbackDocRef);
-  console.log('[Feedback] getUserFeedback exists?', snap.exists());
   if (!snap.exists()) return null;
   return { id: snap.id, ...snap.data() };
 };
 
 export const getFeedbackReviews = async () => {
-  console.log('[Feedback] getFeedbackReviews called');
   const { feedbackRef } = getCollections();
 
-  // Limit to 50 reviews max to reduce Firestore reads (we only display 10)
-  const q = query(feedbackRef, orderBy('createdAt', 'desc'), limit(50));
+  // Only show approved reviews, limit to 50 max (we display 10)
+  const q = query(feedbackRef, where('status', '==', 'approved'), orderBy('createdAt', 'desc'), limit(50));
   const snapshot = await getDocs(q);
-  console.log('[Feedback] getFeedbackReviews found:', snapshot.docs.length, 'reviews');
 
   const allReviews = snapshot.docs.map((d) => ({
     id: d.id,

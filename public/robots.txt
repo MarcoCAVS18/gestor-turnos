@@ -11,4 +11,4 @@ Disallow: /integrations
 Disallow: /delete-account
 Disallow: /clear-everything
 
-Sitemap: https://gestapp.com.au/sitemap.xml
+Sitemap: https://orary.app/sitemap.xml

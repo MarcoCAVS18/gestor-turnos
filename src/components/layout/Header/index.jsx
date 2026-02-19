@@ -64,7 +64,7 @@ const Header = () => {
           {/* Title and subtitle */}
           <div className="text-left">
             <h1 className="text-2xl font-bold tracking-tight">
-              GestAPP.
+              Orary.
             </h1>
             <p className="text-xs opacity-90 font-light">
               Your work and shift manager

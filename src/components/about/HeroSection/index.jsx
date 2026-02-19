@@ -51,7 +51,7 @@ const HeroSection = ({ colors }) => {
     >
       <motion.img
         src="/assets/SVG/logo.svg"
-        alt="GestAPP Logo"
+        alt="Orary Logo"
         className="w-20 h-20 mx-auto mb-6"
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
