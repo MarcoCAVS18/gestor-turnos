@@ -22,9 +22,9 @@ const PageHeader = ({
   // Dynamic page title for SEO
   useEffect(() => {
     if (title) {
-      document.title = `${title} - GestApp`;
+      document.title = `${title} - Orary`;
     }
-    return () => { document.title = 'GestApp - Shift Management & Earnings Tracker'; };
+    return () => { document.title = 'Orary - Shift Management & Earnings Tracker'; };
   }, [title]);
 
   useEffect(() => {

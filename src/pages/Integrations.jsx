@@ -542,12 +542,12 @@ const Integrations = () => {
         <div className="flex items-center gap-3 mb-6">
           <img
             src="/assets/SVG/logo.svg"
-            alt="GestAPP Logo"
+            alt="Orary Logo"
             className="w-10 h-10"
             style={{ filter: `brightness(0) saturate(100%) invert(45%) sepia(98%) saturate(1653%) hue-rotate(305deg) brightness(93%) contrast(101%)` }}
           />
           <div>
-            <h2 className="text-lg font-semibold text-gray-700">Install GestAPP</h2>
+            <h2 className="text-lg font-semibold text-gray-700">Install Orary</h2>
             <p className="text-sm text-gray-500">Get the best experience by adding this app to your home screen</p>
           </div>
         </div>

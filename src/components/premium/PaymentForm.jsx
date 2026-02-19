@@ -5,7 +5,7 @@ import { MapPin, Shield, Receipt } from 'lucide-react';
 import { CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useAuth } from '../../contexts/AuthContext';
 import { PREMIUM_COLORS } from '../../contexts/PremiumContext';
-import { createSubscription } from '../../services/stripeService';
+import { createSubscription, isStripeTestMode } from '../../services/stripeService';
 import { AUD_PRICE } from '../../services/currencyService';
 import Button from '../ui/Button';
 import { CARD_NUMBER_OPTIONS, CARD_EXPIRY_OPTIONS, CARD_CVC_OPTIONS, COUNTRIES } from './constants';
@@ -111,6 +111,16 @@ const PaymentForm = ({ onSuccess }) => {
 
   return (
     <form onSubmit={handleSubmit} autoComplete="on">
+      {/* Test Mode Banner */}
+      {isStripeTestMode && (
+        <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+          <p className="text-orange-700 text-sm font-semibold">STRIPE TEST MODE</p>
+          <p className="text-orange-600 text-xs mt-1">
+            Use card <code className="bg-orange-100 px-1 rounded">4242 4242 4242 4242</code> with any future date and CVC.
+          </p>
+        </div>
+      )}
+
       {/* Billing Details Section */}
       <div className="mb-5">
         <div className="flex items-center gap-2 mb-3">

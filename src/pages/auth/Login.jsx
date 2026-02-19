@@ -8,6 +8,7 @@ import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
 import Flex from '../../components/ui/Flex';
 import Logo from '../../components/icons/Logo';
+import DemoModal from '../../components/demos/DemoModal';
 
 import GoogleIcon from '../../components/icons/GoogleIcon';
 
@@ -107,7 +108,7 @@ const Login = () => {
       <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-12 overflow-y-auto">
         <Logo />
         <div className="text-center text-white mb-4">
-          <h1 className="text-4xl font-bold mb-2">GestAPP</h1>
+          <h1 className="text-4xl font-bold mb-2">Orary</h1>
           <p className="text-lg">Manage your work shifts easily.</p>
         </div>
         <Card className="w-full max-w-md shadow-2xl" padding="lg">
@@ -214,6 +215,9 @@ const Login = () => {
           </div>
         </Card>
       </Flex>
+
+      {/* Onboarding demo overlay */}
+      <DemoModal />
     </div>
   );
 };

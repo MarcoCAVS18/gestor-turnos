@@ -51,7 +51,7 @@ const SuggestedActionCard = ({ onClose, className }) => {
         <X size={14} className="text-white" />
       </button>
 
-      <div className="relative z-10 p-6 flex flex-col items-center justify-center text-center aspect-square">
+      <div className="relative z-10 p-6 flex flex-col items-center justify-center text-center h-full min-h-[180px]">
         {/* Rotated icon */}
         <motion.div
           initial={{ rotate: -12 }}
@@ -64,7 +64,7 @@ const SuggestedActionCard = ({ onClose, className }) => {
 
         {/* Text */}
         <h3 className="text-white font-bold text-lg leading-tight mb-2">
-          Enjoying GestApp?
+          Enjoying Orary?
         </h3>
         <p className="text-white/80 text-sm leading-relaxed max-w-[200px]">
           Share your experience and help us improve

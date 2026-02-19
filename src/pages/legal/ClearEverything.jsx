@@ -65,7 +65,7 @@ const ClearEverything = () => {
         </div>
         <img
           src="/assets/SVG/logo.svg"
-          alt="GestAPP"
+          alt="Orary"
           className="w-40 h-40 sm:w-48 sm:h-48 opacity-10"
           style={{ filter: 'grayscale(100%)' }}
         />
@@ -80,7 +80,7 @@ const ClearEverything = () => {
           <div className="w-20 h-20 mx-auto mb-4">
             <img
               src="/assets/SVG/logo.svg"
-              alt="GestAPP"
+              alt="Orary"
               className="w-full h-full"
             />
           </div>
@@ -96,7 +96,7 @@ const ClearEverything = () => {
         <>
           <div className="prose prose-lg text-gray-700">
             <p className="text-lg leading-relaxed">
-              If you want to start fresh with <strong>GestAPP</strong> without deleting your account, you can clear all your work and shift data while keeping your login credentials.
+              If you want to start fresh with <strong>Orary</strong> without deleting your account, you can clear all your work and shift data while keeping your login credentials.
             </p>
 
             <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">What Will Be Deleted</h2>

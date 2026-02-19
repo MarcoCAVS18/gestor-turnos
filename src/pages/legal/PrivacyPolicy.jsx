@@ -15,7 +15,7 @@ const PrivacyPolicy = () => {
         </div>
         <img
           src="/assets/SVG/logo.svg"
-          alt="GestAPP"
+          alt="Orary"
           className="w-40 h-40 sm:w-48 sm:h-48 opacity-10"
           style={{ filter: 'grayscale(100%)' }}
         />
@@ -28,7 +28,7 @@ const PrivacyPolicy = () => {
           <div>
             <p className="font-semibold text-blue-800">Application Under Development</p>
             <p className="text-blue-700 text-sm mt-1">
-              GestAPP is currently in active development. This privacy policy may be updated as we add new features and services. We recommend reviewing this page periodically for any changes.
+              Orary is currently in active development. This privacy policy may be updated as we add new features and services. We recommend reviewing this page periodically for any changes.
             </p>
           </div>
         </div>
@@ -36,7 +36,7 @@ const PrivacyPolicy = () => {
 
       <div className="prose prose-lg text-gray-700">
         <p>
-          At <strong>GestAPP</strong>, we take your privacy seriously. This Privacy Policy explains how we collect, use, store, and protect your information when you use our shift management application. By using GestAPP, you consent to the data practices described in this policy.
+          At <strong>Orary</strong>, we take your privacy seriously. This Privacy Policy explains how we collect, use, store, and protect your information when you use our shift management application. By using Orary, you consent to the data practices described in this policy.
         </p>
 
         {/* Section 1: Information Collection */}
@@ -86,14 +86,14 @@ const PrivacyPolicy = () => {
             <div>
               <p className="font-semibold text-purple-800">2. Payment Processing & Stripe</p>
               <p className="text-purple-700 text-sm mt-2">
-                GestAPP uses Stripe as our payment processor for Premium subscriptions. This section explains how payment data is handled.
+                Orary uses Stripe as our payment processor for Premium subscriptions. This section explains how payment data is handled.
               </p>
             </div>
           </div>
         </div>
 
         <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">2.1 Payment Data Collection</h3>
-        <p>When you subscribe to GestAPP Premium, you will be redirected to Stripe's secure payment portal. We <strong>do not</strong> collect, store, or have access to:</p>
+        <p>When you subscribe to Orary Premium, you will be redirected to Stripe's secure payment portal. We <strong>do not</strong> collect, store, or have access to:</p>
         <ul className="list-disc pl-5 space-y-2 mt-2">
           <li>Your credit card number or CVV</li>
           <li>Your full bank account details</li>
@@ -103,7 +103,7 @@ const PrivacyPolicy = () => {
         <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">2.2 Information We Receive from Stripe</h3>
         <p>To manage your subscription, we receive and store only:</p>
         <ul className="list-disc pl-5 space-y-2 mt-2">
-          <li><strong>Stripe Customer ID:</strong> A unique identifier that links your GestAPP account to your Stripe customer profile.</li>
+          <li><strong>Stripe Customer ID:</strong> A unique identifier that links your Orary account to your Stripe customer profile.</li>
           <li><strong>Subscription Status:</strong> Whether your subscription is active, cancelled, or past due.</li>
           <li><strong>Billing Period:</strong> Current subscription period start and end dates.</li>
           <li><strong>Payment Status:</strong> Whether payments are successful or require action.</li>
@@ -151,7 +151,7 @@ const PrivacyPolicy = () => {
 
         <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">4.1 Where Your Data is Stored</h3>
         <p>
-          GestAPP uses Firebase (Google Cloud Platform) for data storage and authentication. Your data is stored in secure data centers with the following protections:
+          Orary uses Firebase (Google Cloud Platform) for data storage and authentication. Your data is stored in secure data centers with the following protections:
         </p>
         <ul className="list-disc pl-5 space-y-2 mt-2">
           <li>Encryption in transit (TLS/SSL) and at rest (AES-256)</li>
@@ -175,7 +175,7 @@ const PrivacyPolicy = () => {
             <div>
               <p className="font-semibold text-orange-800">5. Data Sharing & Third Parties</p>
               <p className="text-orange-700 text-sm mt-2">
-                We do not sell your personal data. We only share data with trusted service providers essential to operating GestAPP.
+                We do not sell your personal data. We only share data with trusted service providers essential to operating Orary.
               </p>
             </div>
           </div>
@@ -202,7 +202,7 @@ const PrivacyPolicy = () => {
 
         <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">5.3 Legal Disclosure</h3>
         <p>
-          We may disclose your information if required by law, court order, or governmental regulation, or to protect the rights, property, or safety of GestAPP, our users, or others.
+          We may disclose your information if required by law, court order, or governmental regulation, or to protect the rights, property, or safety of Orary, our users, or others.
         </p>
 
         {/* Section 6: Cookies and Local Storage */}
@@ -212,7 +212,7 @@ const PrivacyPolicy = () => {
             <div>
               <p className="font-semibold text-yellow-800">6. Cookies & Local Storage</p>
               <p className="text-yellow-700 text-sm mt-2">
-                GestAPP uses essential cookies and local storage for application functionality.
+                Orary uses essential cookies and local storage for application functionality.
               </p>
             </div>
           </div>
@@ -262,7 +262,7 @@ const PrivacyPolicy = () => {
         </ul>
         <p className="mt-4">
           You can also contact us at{' '}
-          <a href="mailto:privacy@gestapp.com" className="text-pink-600 hover:underline">privacy@gestapp.com</a>{' '}
+          <a href="mailto:privacy@orary.app" className="text-pink-600 hover:underline">privacy@orary.app</a>{' '}
           for any privacy-related requests.
         </p>
 
@@ -278,7 +278,7 @@ const PrivacyPolicy = () => {
         {/* Section 9: Children's Privacy */}
         <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">9. Children's Privacy</h2>
         <p>
-          GestAPP is not intended for use by individuals under the age of 16. We do not knowingly collect personal information from children. If we become aware that a child under 16 has provided us with personal information, we will take steps to delete such information.
+          Orary is not intended for use by individuals under the age of 16. We do not knowingly collect personal information from children. If we become aware that a child under 16 has provided us with personal information, we will take steps to delete such information.
         </p>
 
         {/* Section 10: International Data Transfers */}
@@ -307,10 +307,10 @@ const PrivacyPolicy = () => {
         </p>
         <ul className="list-disc pl-5 space-y-2 mt-4">
           <li><strong>Email:</strong>{' '}
-            <a href="mailto:privacy@gestapp.com" className="text-pink-600 hover:underline">privacy@gestapp.com</a>
+            <a href="mailto:privacy@orary.app" className="text-pink-600 hover:underline">privacy@orary.app</a>
           </li>
           <li><strong>Support:</strong>{' '}
-            <a href="mailto:support@gestapp.com" className="text-pink-600 hover:underline">support@gestapp.com</a>
+            <a href="mailto:support@orary.app" className="text-pink-600 hover:underline">support@orary.app</a>
           </li>
         </ul>
         <p className="mt-4 text-sm text-gray-500">

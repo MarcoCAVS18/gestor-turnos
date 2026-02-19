@@ -51,7 +51,7 @@ const StorySection = ({ colors }) => {
           </span>
         </p>
         <p>
-          And just like that, GestAPP was born. What started as a personal itch to scratch turned into a
+          And just like that, Orary was born. What started as a personal itch to scratch turned into a
           full-blown application that handles multiple rate types, automatic holiday detection, live tracking,
           bulk creation, exports, and way more than I ever imagined.
         </p>

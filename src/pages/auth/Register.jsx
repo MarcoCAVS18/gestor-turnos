@@ -170,7 +170,7 @@ const Register = () => {
       <Flex variant="center" className="flex-col fixed inset-0 z-20 bg-transparent p-4 py-12 overflow-y-auto">
         <Logo />
         <div className="text-center text-white mb-4">
-          <h1 className="text-4xl font-bold mb-2">GestAPP</h1>
+          <h1 className="text-4xl font-bold mb-2">Orary</h1>
           <p className="text-lg">Manage your work shifts easily.</p>
         </div>
         <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-2xl">

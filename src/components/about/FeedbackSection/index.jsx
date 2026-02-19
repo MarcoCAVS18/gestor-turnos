@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, UserX, Send, Heart, User, EyeOff, MessageSquare, PenLine, Clock } from 'lucide-react';
+import { Star, UserX, Send, Heart, User, EyeOff, MessageSquare, PenLine, Clock, ShieldAlert, Clock3 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { submitFeedback, getFeedbackReviews, getUserFeedback } from '../../../services/firebaseService';
+import { hasProfanity } from '../../../utils/profanityFilter';
 import Button from '../../ui/Button';
 import Card from '../../ui/Card';
 
@@ -37,6 +38,8 @@ const FeedbackSection = ({ colors }) => {
   const [reviews, setReviews] = useState([]);
   const [currentReview, setCurrentReview] = useState(0);
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [profanityError, setProfanityError] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   const firstName = currentUser?.displayName?.split(' ')[0] || 'User';
 
@@ -44,23 +47,23 @@ const FeedbackSection = ({ colors }) => {
   useEffect(() => {
     let cancelled = false;
     const init = async () => {
-      console.log('[FeedbackSection] init, currentUser:', currentUser?.uid);
       try {
         const [fetchedReviews, existingFeedback] = await Promise.all([
           getFeedbackReviews(),
           currentUser ? getUserFeedback(currentUser.uid) : null,
         ]);
-        console.log('[FeedbackSection] reviews:', fetchedReviews.length, 'existingFeedback:', existingFeedback);
         if (cancelled) return;
         setReviews(fetchedReviews);
         if (existingFeedback) {
           setHasSubmitted(true);
+          if (existingFeedback.status === 'pending') {
+            setIsPending(true);
+          }
           setView('reviews');
         } else {
           setView('form');
         }
-      } catch (err) {
-        console.error('[FeedbackSection] init ERROR:', err);
+      } catch {
         if (!cancelled) {
           setReviews([]);
           setView('form');
@@ -96,8 +99,15 @@ const FeedbackSection = ({ colors }) => {
   }, [view]);
 
   const handleSubmit = useCallback(async () => {
-    console.log('[FeedbackSection] handleSubmit, rating:', rating, 'user:', currentUser?.uid);
     if (rating === 0 || !currentUser) return;
+
+    // Check for profanity
+    if (comment.trim() && hasProfanity(comment)) {
+      setProfanityError(true);
+      return;
+    }
+
+    setProfanityError(false);
     setLoading(true);
     try {
       await submitFeedback({
@@ -107,9 +117,9 @@ const FeedbackSection = ({ colors }) => {
         comment: comment.trim(),
         isAnonymous,
       });
-      console.log('[FeedbackSection] submit SUCCESS');
-    } catch (err) {
-      console.error('[FeedbackSection] submit ERROR:', err);
+      setIsPending(true);
+    } catch {
+      // silently handled
     } finally {
       setHasSubmitted(true);
       setView('thankyou');
@@ -203,7 +213,7 @@ const FeedbackSection = ({ colors }) => {
                 <p className="text-xs leading-relaxed mb-5" style={{ color: colors.textSecondary }}>
                   {hasSubmitted
                     ? 'Changed your mind? No worries, update your review anytime.'
-                    : 'Every comment helps me keep improving GestAPP. Who knows, maybe one day all of this will have been truly worth it!'
+                    : 'Every comment helps me keep improving Orary. Who knows, maybe one day all of this will have been truly worth it!'
                   }
                 </p>
 
@@ -218,15 +228,37 @@ const FeedbackSection = ({ colors }) => {
                 {/* Comment */}
                 <textarea
                   value={comment}
-                  onChange={(e) => setComment(e.target.value)}
+                  onChange={(e) => {
+                    setComment(e.target.value);
+                    if (profanityError) setProfanityError(false);
+                  }}
                   placeholder="Tell us what you think... (optional)"
                   rows={3}
-                  className="w-full rounded-xl border px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 mb-5 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 placeholder-gray-400 dark:placeholder-gray-500"
+                  className={`w-full rounded-xl border px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 placeholder-gray-400 dark:placeholder-gray-500 ${
+                    profanityError ? 'border-red-400 dark:border-red-500' : 'border-gray-200 dark:border-slate-700'
+                  }`}
                   style={{
                     color: colors.text,
-                    '--tw-ring-color': colors.primary,
+                    '--tw-ring-color': profanityError ? '#f87171' : colors.primary,
                   }}
                 />
+
+                {/* Profanity warning */}
+                <AnimatePresence>
+                  {profanityError && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="flex items-center gap-2 text-red-500 dark:text-red-400 mt-1.5 mb-3"
+                    >
+                      <ShieldAlert size={14} />
+                      <span className="text-xs">Please remove inappropriate language before submitting.</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {!profanityError && <div className="mb-5" />}
 
                 {/* Publish as + Submit */}
                 <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-auto">
@@ -300,11 +332,12 @@ const FeedbackSection = ({ colors }) => {
                     Thank you so much!
                   </h3>
                   <p className="text-sm" style={{ color: colors.textSecondary }}>
-                    Your feedback truly helps shape the future of GestAPP.
+                    Your feedback truly helps shape the future of the app.
                   </p>
-                  <p className="text-xs mt-1" style={{ color: colors.textSecondary, opacity: 0.7 }}>
-                    Every bit of support counts more than you think.
-                  </p>
+                  <div className="flex items-center gap-1.5 mt-2 text-xs" style={{ color: colors.textSecondary, opacity: 0.7 }}>
+                    <Clock3 size={12} />
+                    <span>Your review will be visible after approval.</span>
+                  </div>
                 </div>
               </motion.div>
             )}
@@ -320,12 +353,22 @@ const FeedbackSection = ({ colors }) => {
                 transition={{ duration: 0.25 }}
                 className="flex flex-col flex-1"
               >
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center gap-2 mb-2">
                   <MessageSquare size={14} style={{ color: colors.primary }} />
                   <h3 className="text-sm font-semibold" style={{ color: colors.textSecondary }}>
                     What people are saying
                   </h3>
                 </div>
+
+                {/* Pending review notice */}
+                {isPending && (
+                  <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                    <Clock3 size={13} className="text-amber-500 flex-shrink-0" />
+                    <span className="text-xs text-amber-700 dark:text-amber-400">
+                      Your review is pending approval and will be visible soon.
+                    </span>
+                  </div>
+                )}
 
                 {reviews.length > 0 ? (
                   <div className="flex-1 flex flex-col relative">

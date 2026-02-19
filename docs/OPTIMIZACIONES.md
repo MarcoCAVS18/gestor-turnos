@@ -276,18 +276,23 @@ Mejorar animación y layout.
 
 ---
 
-## 13. ShiftTypeStats: verificar colores de los shift types
+## 13. ✅ ShiftTypeStats: verificar colores de los shift types
 
-### Problema
-Se debe confirmar que los colores asociados a tipos de turnos se obtienen correctamente.
+### Problema encontrado
 
-### Objetivo
-Asegurar consistencia de color y que siempre haya un fallback válido.
+**Bug crítico:** `TURN_TYPE_COLORS` usaba claves capitalizadas en inglés ('Day', 'Afternoon') pero `getColorForType` en ShiftTypeStats accedía con claves españolas ('diurno', 'tarde', 'noche', 'nocturno', 'sabado', 'domingo') que **nunca matcheaban** → todos los colores caían al fallback gris `#6B7280`.
 
-### Requerimientos
-- Validar mapeo de colores.
-- Confirmar que no existan undefined.
-- Asegurar coherencia entre gráficos y UI.
+Además los colores estaban desalineados con `shiftTypesConfig.js` (la fuente de verdad). Por ejemplo, 'Day' era `#10B981` (verde) en colors.js pero `#F59E0B` (amarillo) en shiftTypesConfig.
+
+### Implementado
+
+**`TURN_TYPE_COLORS` corregido** — Claves lowercase (`day`, `afternoon`, `night`, `saturday`, `sunday`, `delivery`, `mixed`) alineadas con los shift type IDs reales. Colores sincronizados con `shiftTypesConfig.js`.
+
+**`ShiftTypeStats.getColorForType` simplificado** — Ahora usa `TURN_TYPE_COLORS[key]` directamente con fallback `#6B7280`. Maneja `'undefined' → 'mixed'`.
+
+**`ShiftTypeBadge.getColorAndConfig` corregido** — Ya no accede a `TURN_TYPE_COLORS.Day` (undefined con las nuevas claves). Ahora usa `TURN_TYPE_COLORS[shiftType]` dinámicamente.
+
+**Archivos:** colors.js, ShiftTypeStats/index.jsx, ShiftTypeBadge/index.jsx
 
 ---
 

@@ -13,50 +13,30 @@ const ShiftTypeBadge = ({ shiftType, shift, size = 'sm' }) => {
   
   // Direct mapping to color constants
   const getColorAndConfig = (shiftType) => {
-    const configs = {
-      day: {
-        color: TURN_TYPE_COLORS.Day,
-        label: 'Day',
-        bgColor: TURN_TYPE_COLORS.Day + '20'
-      },
-      afternoon: {
-        color: TURN_TYPE_COLORS.Afternoon,
-        label: 'Afternoon', 
-        bgColor: TURN_TYPE_COLORS.Afternoon + '20'
-      },
-      night: {
-        color: TURN_TYPE_COLORS.Night,
-        label: 'Night',
-        bgColor: TURN_TYPE_COLORS.Night + '20'
-      },
-      saturday: {
-        color: TURN_TYPE_COLORS.Saturday,
-        label: 'Saturday',
-        bgColor: TURN_TYPE_COLORS.Saturday + '20'
-      },
-      sunday: {
-        color: TURN_TYPE_COLORS.Sunday,
-        label: 'Sunday',
-        bgColor: TURN_TYPE_COLORS.Sunday + '20'
-      },
-      holiday: {
-        color: '#DC2626',
-        label: 'Holiday',
-        bgColor: '#DC262620'
-      },
-      delivery: {
-        color: '#e8a7f8ff',
-        label: 'Delivery',
-        bgColor: '#6329a5b1'
-      },
-      mixed: {
-        color: '#6B7280',
-        label: 'Mixed',
-        bgColor: '#6B728020'
-      }
+    const labels = {
+      day: 'Day',
+      afternoon: 'Afternoon',
+      night: 'Night',
+      saturday: 'Saturday',
+      sunday: 'Sunday',
+      holiday: 'Holiday',
+      delivery: 'Delivery',
+      mixed: 'Mixed',
     };
-    
-    return configs[shiftType] || configs.mixed;
+
+    const specialColors = {
+      holiday: '#DC2626',
+      delivery: '#e8a7f8ff',
+    };
+    const specialBg = {
+      delivery: '#6329a5b1',
+    };
+
+    const color = specialColors[shiftType] || TURN_TYPE_COLORS[shiftType] || '#6B7280';
+    const bgColor = specialBg[shiftType] || color + '20';
+    const label = labels[shiftType] || 'Mixed';
+
+    return { color, bgColor, label };
   };
   
   const typeConfig = getColorAndConfig(type);

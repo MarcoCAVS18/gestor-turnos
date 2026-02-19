@@ -127,7 +127,7 @@ const DailyDistribution = ({ currentData, loading, thematicColors }) => {
                     >
                       <div className="flex items-center gap-4 text-xs">
                         <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300">
-                          <Clock size={12} className="text-blue-500" />
+                          <Clock size={12} style={{ color: primaryColor }} />
                           <span>{formatHoursDecimal(data.hours)}</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300">

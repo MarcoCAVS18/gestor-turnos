@@ -1,6 +1,6 @@
 # Premium System Roadmap
 
-Este documento contiene el plan de implementación pendiente para el sistema Premium de GestAPP.
+Este documento contiene el plan de implementación pendiente para el sistema Premium de Orary.
 
 ---
 
@@ -95,7 +95,7 @@ const gradientAnimation = {
 
 ### 2.2 Reemplazar Crown por Logo de la App
 
-**Tarea:** Cambiar el icono Crown decorativo por el logo de GestAPP.
+**Tarea:** Cambiar el icono Crown decorativo por el logo de Orary.
 
 **Ubicación actual (línea 66-74):**
 ```jsx
@@ -414,8 +414,8 @@ STRIPE_SECRET_KEY=sk_test_xxxxx
 ```
 
 **3. Crear producto en Stripe Dashboard:**
-- Nombre: "GestAPP Premium"
-- Precio: $1.99/mes (recurrente) - Precio de apertura
+- Nombre: "Orary Premium"
+- Precio: $2.99/mes (recurrente) - Precio de apertura
 - Guardar `price_id` para usar en checkout
 
 ### Arquitectura de Pagos
@@ -494,8 +494,8 @@ export const checkPremiumStatus = async (userId) => {
 ### Opción B: Email whitelist
 ```javascript
 const TEST_PREMIUM_EMAILS = [
-  'marco@gestapp.com',
-  'test@gestapp.com',
+  'marco@orary.app',
+  'test@orary.app',
 ];
 
 // En checkPremiumStatus:

@@ -273,7 +273,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
             {/* Title and subtitle */}
             <div>
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-                GestAPP.
+                Orary.
               </h1>
               <p className="text-xs text-gray-500 dark:text-slate-400 font-light">
                 Your work and shift manager

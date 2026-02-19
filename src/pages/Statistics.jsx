@@ -156,9 +156,9 @@ const Statistics = () => {
         </div>
 
         {/* CHARTS */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="h-96">
-            <InteractiveCharts currentData={currentData} earningsByWork={currentData.earningsByWork || []} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:items-stretch">
+          <div className="min-h-[24rem]">
+            <InteractiveCharts />
           </div>
           <DailyDistribution currentData={currentData} thematicColors={thematicColors} loading={loading} />
         </div>

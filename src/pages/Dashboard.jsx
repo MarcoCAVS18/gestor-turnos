@@ -1,7 +1,7 @@
 // src/pages/Dashboard.jsx
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { LayoutDashboard } from 'lucide-react';
 
 import PageHeader from '../components/layout/PageHeader';
@@ -170,26 +170,55 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-6 flex flex-col">
                 <FavoriteWorksCard favoriteWorks={stats.favoriteWorks} />
-                {showSuggestion ? (
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-6">
-                      <TopWorkCard mostProfitableWork={stats.mostProfitableWork} />
-                      <NextShiftCard
-                        nextShift={stats.nextShift}
-                        formatDate={stats.formatDate}
-                      />
-                    </div>
-                    <SuggestedActionCard onClose={() => setShowSuggestion(false)} />
+                {/* Desktop: animated layout */}
+                <LayoutGroup>
+                  <div className={`hidden md:grid gap-6 ${showSuggestion ? 'grid-cols-2' : 'grid-cols-1'}`}>
+                    <motion.div layout transition={{ duration: 0.4, ease: 'easeInOut' }} className="flex flex-col gap-6">
+                      <motion.div layout transition={{ duration: 0.4, ease: 'easeInOut' }}>
+                        <TopWorkCard mostProfitableWork={stats.mostProfitableWork} />
+                      </motion.div>
+                      <motion.div layout transition={{ duration: 0.4, ease: 'easeInOut' }}>
+                        <NextShiftCard
+                          nextShift={stats.nextShift}
+                          formatDate={stats.formatDate}
+                        />
+                      </motion.div>
+                    </motion.div>
+                    <AnimatePresence>
+                      {showSuggestion && (
+                        <motion.div
+                          layout
+                          initial={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        >
+                          <SuggestedActionCard onClose={() => setShowSuggestion(false)} className="h-full" />
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
-                ) : (
-                  <>
-                    <TopWorkCard mostProfitableWork={stats.mostProfitableWork} />
-                    <NextShiftCard
-                      nextShift={stats.nextShift}
-                      formatDate={stats.formatDate}
-                    />
-                  </>
-                )}
+                </LayoutGroup>
+
+                {/* Mobile: stacked */}
+                <div className="md:hidden space-y-6">
+                  <TopWorkCard mostProfitableWork={stats.mostProfitableWork} />
+                  <NextShiftCard
+                    nextShift={stats.nextShift}
+                    formatDate={stats.formatDate}
+                  />
+                  <AnimatePresence>
+                    {showSuggestion && (
+                      <motion.div
+                        initial={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <SuggestedActionCard onClose={() => setShowSuggestion(false)} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
               <div className="space-y-6 flex flex-col">
                   <ProjectionCard
