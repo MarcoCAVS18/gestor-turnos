@@ -103,33 +103,35 @@ const GoalsSection = ({ className }) => {
             >
               {weeklyHoursGoal ? (
                 <div className="p-4 rounded-xl bg-gray-50 dark:bg-slate-800">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     {/* Progress ring */}
                     <div className="relative flex-shrink-0">
                       <ProgressRing
                         percentage={100}
                         color={colors.primary}
-                        size={64}
+                        size={56}
                         strokeWidth={5}
                       />
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <Target size={20} style={{ color: colors.primary }} />
+                        <Target size={18} style={{ color: colors.primary }} />
                       </div>
                     </div>
 
                     {/* Goal info */}
-                    <div className="flex-1">
-                      <span className="text-2xl font-bold dark:text-white" style={{ color: colors.primary }}>
-                        {weeklyHoursGoal}h
-                      </span>
-                      <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">/ week</span>
-                      <div className="flex gap-3 mt-1">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-bold dark:text-white" style={{ color: colors.primary }}>
+                          {weeklyHoursGoal}h
+                        </span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">/ week</span>
+                      </div>
+                      <div className="flex flex-wrap gap-x-2 gap-y-0 mt-0.5">
                         <span className="text-xs text-gray-500 dark:text-gray-400">
                           ~{dailyAvg}h/day
                         </span>
-                        <span className="text-xs text-gray-400 dark:text-gray-500">|</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline">|</span>
                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                          ~{weekdayAvg}h on weekdays
+                          ~{weekdayAvg}h weekdays
                         </span>
                       </div>
                     </div>
@@ -137,7 +139,7 @@ const GoalsSection = ({ className }) => {
                     {/* Edit button */}
                     <button
                       onClick={() => setEditing(true)}
-                      className="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                      className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex-shrink-0"
                       style={{
                         backgroundColor: colors.transparent10,
                         color: colors.primary

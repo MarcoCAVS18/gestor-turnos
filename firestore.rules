@@ -4,10 +4,27 @@ service cloud.firestore {
 
     // Users collection - SECURED
     // Each user can only read/write their own profile
+    // CRITICAL: subscription field is protected from client-side manipulation
+    // Only Cloud Functions (admin SDK) can set isPremium: true
     match /users/{userId} {
-      // Only allow reading your own full profile
       allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth != null && request.auth.uid == userId;
+
+      // Create: allow but subscription must NOT be premium
+      allow create: if request.auth != null
+                    && request.auth.uid == userId
+                    && (!('subscription' in request.resource.data)
+                        || request.resource.data.subscription.isPremium == false);
+
+      // Update: block subscription changes unless setting isPremium to false
+      allow update: if request.auth != null
+                    && request.auth.uid == userId
+                    && (
+                      !request.resource.data.diff(resource.data).affectedKeys().hasAny(['subscription'])
+                      || request.resource.data.subscription.isPremium == false
+                    );
+
+      // Delete: only own account
+      allow delete: if request.auth != null && request.auth.uid == userId;
 
       // Private subcollection for sensitive data (OAuth tokens, etc.)
       // Only accessible by Cloud Functions (server-side)
@@ -62,6 +79,16 @@ service cloud.firestore {
 
     // Processed webhook events - server-managed (Cloud Functions only)
     match /processed_webhooks/{eventId} {
+      allow read, write: if false;
+    }
+
+    // Rate limiting documents - server-managed (Cloud Functions only)
+    match /rate_limits/{limitId} {
+      allow read, write: if false;
+    }
+
+    // Subscription lock documents - server-managed (Cloud Functions only)
+    match /subscription_locks/{lockId} {
       allow read, write: if false;
     }
   }

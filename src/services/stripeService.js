@@ -15,9 +15,10 @@ const stripePromise = loadStripe(STRIPE_KEY);
 // Cloud Functions base URL
 // In development: uses local emulator with test keys
 // In production: uses deployed functions with live keys
+const PROJECT_ID = process.env.REACT_APP_FIREBASE_PROJECT_ID || 'gestionturnos-7ec99';
 const FUNCTIONS_BASE_URL = process.env.REACT_APP_USE_EMULATOR === 'true'
-  ? 'http://localhost:5001/gestionturnos-7ec99/us-central1'
-  : 'https://us-central1-gestionturnos-7ec99.cloudfunctions.net';
+  ? `http://localhost:5001/${PROJECT_ID}/us-central1`
+  : `https://us-central1-${PROJECT_ID}.cloudfunctions.net`;
 
 /**
  * Get the Stripe instance
