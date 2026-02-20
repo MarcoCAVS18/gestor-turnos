@@ -7,6 +7,7 @@ import { useThemeColors } from '../../hooks/useThemeColors';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import { formatDate } from './constants';
+import logger from '../../utils/logger';
 
 const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoading, onCancelSubscription }) => {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
@@ -20,7 +21,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
       await onCancelSubscription();
       setShowCancelConfirm(false);
     } catch (error) {
-      console.error('Cancel failed:', error);
+      logger.error('Cancel failed:', error);
     } finally {
       setCancelLoading(false);
     }

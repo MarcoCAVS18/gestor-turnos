@@ -12,6 +12,7 @@ import {
   addDeliveryPage,
   addMonthlyDetailPages
 } from './PDFSections';
+import logger from '../../../utils/logger';
 
 /**
  * PDF Exporter - Generates professional PDF reports
@@ -56,7 +57,7 @@ export class PDFExporter {
       loadLogoForPDF(this.options.logoColor)
         .then(logo => { this.logo = logo; })
         .catch(err => {
-          console.warn('Could not load logo:', err);
+          logger.warn('Could not load logo:', err);
           this.logo = null;
         })
     );
@@ -67,7 +68,7 @@ export class PDFExporter {
         generateAllCharts(this.reportData.chartData, this.options.chartColors)
           .then(charts => { this.charts = charts; })
           .catch(err => {
-            console.warn('Could not generate charts:', err);
+            logger.warn('Could not generate charts:', err);
             this.charts = {};
           })
       );
@@ -159,7 +160,7 @@ export class PDFExporter {
       doc.save(this.options.filename);
       return true;
     } catch (error) {
-      console.error('Error generating PDF:', error);
+      logger.error('Error generating PDF:', error);
       throw error;
     }
   }
@@ -194,7 +195,7 @@ export class PDFExporter {
       window.open(url, '_blank');
       return true;
     } catch (error) {
-      console.error('Error generating PDF preview:', error);
+      logger.error('Error generating PDF preview:', error);
       throw error;
     }
   }

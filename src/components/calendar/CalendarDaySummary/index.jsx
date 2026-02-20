@@ -13,6 +13,7 @@ import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 import { getShiftGrossEarnings } from '../../../utils/shiftUtils';
+import logger from '../../../utils/logger';
 
 const CalendarDaySummary = ({
   selectedDate,
@@ -44,7 +45,7 @@ const CalendarDaySummary = ({
           return total + (result.totalWithDiscount || 0);
         }
       } catch (error) {
-        console.warn('Error calculating payment for shift:', shift.id, error);
+        logger.warn('Error calculating payment for shift:', shift.id, error);
         return total;
       }
     }, 0);

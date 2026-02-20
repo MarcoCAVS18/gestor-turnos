@@ -3,6 +3,7 @@
 
 import { loadStripe } from '@stripe/stripe-js';
 import { auth } from './firebase';
+import logger from '../utils/logger';
 
 // Detect Stripe mode from publishable key
 const STRIPE_KEY = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
@@ -69,7 +70,7 @@ export const createSubscription = async (paymentMethodId, email, name, address) 
     try {
       data = JSON.parse(text);
     } catch (parseError) {
-      console.error('[Stripe] JSON parse error:', parseError);
+      logger.error('[Stripe] JSON parse error:', parseError);
       throw new Error('Invalid response from payment server');
     }
 
@@ -110,7 +111,7 @@ export const createSubscription = async (paymentMethodId, email, name, address) 
 
     return data;
   } catch (error) {
-    console.error('[Stripe] Error creating subscription:', error);
+    logger.error('[Stripe] Error creating subscription:', error);
     throw error;
   }
 };
@@ -138,7 +139,7 @@ export const cancelSubscription = async () => {
 
     return data;
   } catch (error) {
-    console.error('Error cancelling subscription:', error);
+    logger.error('Error cancelling subscription:', error);
     throw error;
   }
 };
@@ -167,7 +168,7 @@ export const openBillingPortal = async () => {
     window.open(data.url, '_blank');
     return data;
   } catch (error) {
-    console.error('Error opening billing portal:', error);
+    logger.error('Error opening billing portal:', error);
     throw error;
   }
 };
@@ -194,7 +195,7 @@ export const getInvoices = async () => {
 
     return data.invoices || [];
   } catch (error) {
-    console.error('Error fetching invoices:', error);
+    logger.error('Error fetching invoices:', error);
     return [];
   }
 };

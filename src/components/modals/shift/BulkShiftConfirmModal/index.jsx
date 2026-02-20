@@ -12,6 +12,7 @@ import SpecificDates from '../../../forms/shift/BulkShiftOptions/SpecificDates';
 import DateRange from '../../../forms/shift/BulkShiftOptions/DateRange';
 import BulkPreview from '../../../forms/shift/BulkShiftOptions/BulkPreview';
 import DuplicateWarningModal from '../DuplicateWarningModal';
+import logger from '../../../../utils/logger';
 
 const BulkShiftConfirmModal = ({
   isOpen,
@@ -122,7 +123,7 @@ const BulkShiftConfirmModal = ({
       await onConfirm(generatedShifts);
       handleClose();
     } catch (error) {
-      console.error('Error creating bulk shifts:', error);
+      logger.error('Error creating bulk shifts:', error);
     } finally {
       setIsCreating(false);
     }
@@ -137,7 +138,7 @@ const BulkShiftConfirmModal = ({
       await onConfirm(duplicateData.unique);
       handleClose();
     } catch (error) {
-      console.error('Error creating bulk shifts:', error);
+      logger.error('Error creating bulk shifts:', error);
     } finally {
       setIsCreating(false);
     }

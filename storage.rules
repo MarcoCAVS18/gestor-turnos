@@ -10,7 +10,7 @@ service firebase.storage {
                    && request.auth.uid == userId
                    && request.resource.size < 5 * 1024 * 1024 // Max 5MB
                    && request.resource.contentType.matches('image/.*') // Only images
-                   && fileName.matches('.*\\.(jpg|jpeg|png|gif|webp)$'); // Valid extensions
+                   && fileName.matches('^[a-zA-Z0-9._-]{1,100}\\.(jpg|jpeg|png|gif|webp)$'); // Valid extensions, no path traversal
       allow delete: if request.auth != null && request.auth.uid == userId;
     }
 

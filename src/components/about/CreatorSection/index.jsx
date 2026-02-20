@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Linkedin, Instagram, User } from 'lucide-react';
+import { Linkedin, Instagram } from 'lucide-react';
 
 const CreatorSection = ({ colors }) => {
   return (
@@ -18,13 +18,16 @@ const CreatorSection = ({ colors }) => {
         {/* Photo */}
         <div className="flex justify-center md:justify-end shrink-0">
           <div
-            className="w-28 h-28 md:w-40 md:h-40 rounded-2xl flex items-center justify-center overflow-hidden"
+            className="w-28 h-28 md:w-40 md:h-40 rounded-2xl overflow-hidden"
             style={{
               background: `linear-gradient(135deg, ${colors.primary}, ${colors.primaryDark || colors.primary}80)`,
             }}
           >
-            <User size={48} className="text-white/80 md:hidden" />
-            <User size={64} className="text-white/80 hidden md:block" />
+            <img
+              src="/assets/images/yop.png"
+              alt="Marqui"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
 
@@ -42,13 +45,16 @@ const CreatorSection = ({ colors }) => {
 
           <div className="space-y-3 text-sm md:text-base leading-relaxed" style={{ color: colors.textSecondary }}>
             <p>
-              I'm a developer from Argentina, currently living in Australia. I built Orary
+              I'm a developer from Argentina, currently based in New Zealand. I built Orary
               because I needed it myself, and I figured if it helped me, it could help others too.
             </p>
             <p>
-              When I'm not coding, you'll find me exploring new places, playing football, or thinking
-              about the next feature to add. If you have any questions, ideas, or just want to say hi,
-              feel free to reach out.
+              I'm always working on different things, but I never stop pushing to grow in this world.
+              I'll keep moving from place to place, and I hope the same happens with Orary — always
+              evolving, always reaching new people.
+            </p>
+            <p>
+              If you have any questions, ideas, or just want to say hi, feel free to reach out.
             </p>
           </div>
 

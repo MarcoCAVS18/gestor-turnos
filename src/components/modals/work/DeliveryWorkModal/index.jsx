@@ -10,6 +10,7 @@ import PlatformSelector from '../../../delivery/PlatformSelector';
 import VehicleSelector from '../../../delivery/VehicleSelector';
 import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
 import Flex from '../../../ui/Flex';
+import logger from '../../../../utils/logger';
 
 const DeliveryWorkModal = ({ isOpen, onClose, work }) => {
   const { addDeliveryJob, editDeliveryJob } = useApp();
@@ -28,7 +29,7 @@ const DeliveryWorkModal = ({ isOpen, onClose, work }) => {
       setLoading(false);
       onClose();
     } catch (error) {
-      console.error('Error saving delivery work:', error);
+      logger.error('Error saving delivery work:', error);
       setLoading(false);
     }
   };
@@ -152,7 +153,7 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
     try {
       await onSubmit(formData);
     } catch (error) {
-      console.error('Error:', error);
+      logger.error('Error:', error);
       setSaving(false);
     }
   };

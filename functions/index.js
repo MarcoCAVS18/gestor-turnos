@@ -24,8 +24,17 @@ require('dotenv').config();
 // Initialize Stripe
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+const crypto = require('crypto');
+
 admin.initializeApp();
 const db = admin.firestore();
+
+// Validated redirect URL
+const getAppUrl = () => {
+  const url = process.env.APP_URL || 'https://orary.app';
+  const allowed = ['https://orary.app', 'https://gestionturnos-7ec99.web.app', 'https://gestionturnos-7ec99.firebaseapp.com', 'http://localhost:3000'];
+  return allowed.includes(url) ? url : 'https://orary.app';
+};
 
 // Google OAuth2 Configuration
 // These values come from .env file
@@ -66,11 +75,21 @@ exports.getGoogleAuthUrl = functions.https.onRequest((req, res) => {
 
       const oauth2Client = getOAuth2Client();
 
+      // Generate a secure random state token for CSRF protection
+      const stateToken = crypto.randomBytes(32).toString('hex');
+
+      // Store state → userId mapping in Firestore (expires in 10 minutes)
+      await db.collection('oauth_states').doc(stateToken).set({
+        userId,
+        createdAt: FieldValue.serverTimestamp(),
+        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      });
+
       const authUrl = oauth2Client.generateAuthUrl({
         access_type: 'offline',
         scope: SCOPES,
         prompt: 'consent',
-        state: userId // Pass userId to callback
+        state: stateToken
       });
 
       res.json({ url: authUrl });
@@ -86,11 +105,29 @@ exports.getGoogleAuthUrl = functions.https.onRequest((req, res) => {
  */
 exports.googleAuthCallback = functions.https.onRequest(async (req, res) => {
   try {
-    const { code, state: userId } = req.query;
+    const { code, state: stateToken } = req.query;
 
-    if (!code || !userId) {
+    if (!code || !stateToken) {
       return res.status(400).send('Missing code or state parameter');
     }
+
+    // Validate state token against stored value (CSRF protection)
+    const stateDoc = await db.collection('oauth_states').doc(stateToken).get();
+    if (!stateDoc.exists()) {
+      return res.status(403).send('Invalid or expired state token');
+    }
+
+    const stateData = stateDoc.data();
+    const userId = stateData.userId;
+
+    // Check expiration
+    if (stateData.expiresAt && stateData.expiresAt.toDate() < new Date()) {
+      await db.collection('oauth_states').doc(stateToken).delete();
+      return res.status(403).send('State token expired');
+    }
+
+    // Delete used state token (single-use)
+    await db.collection('oauth_states').doc(stateToken).delete();
 
     const oauth2Client = getOAuth2Client();
     const { tokens } = await oauth2Client.getToken(code);
@@ -109,12 +146,11 @@ exports.googleAuthCallback = functions.https.onRequest(async (req, res) => {
       googleCalendarConnected: true
     });
 
-    // Redirect back to the app
-    const appUrl = process.env.APP_URL || 'https://gestionturnos-7ec99.web.app';
+    const appUrl = getAppUrl();
     res.redirect(`${appUrl}/integrations?calendar=connected`);
   } catch (error) {
     console.error('OAuth callback error:', error);
-    const appUrl = process.env.APP_URL || 'https://gestionturnos-7ec99.web.app';
+    const appUrl = getAppUrl();
     res.redirect(`${appUrl}/integrations?calendar=error`);
   }
 });
@@ -849,6 +885,14 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
     return res.status(400).send('Webhook signature verification failed');
   }
 
+  // Idempotency check — skip already-processed events
+  const eventRef = db.collection('processed_webhooks').doc(event.id);
+  const existingEvent = await eventRef.get();
+  if (existingEvent.exists) {
+    console.log(`Webhook event ${event.id} already processed, skipping`);
+    return res.json({ received: true, duplicate: true });
+  }
+
   // Handle the event
   switch (event.type) {
     case 'invoice.paid': {
@@ -923,6 +967,12 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
     default:
       console.log(`Unhandled event type: ${event.type}`);
   }
+
+  // Mark event as processed for idempotency
+  await eventRef.set({
+    type: event.type,
+    processedAt: FieldValue.serverTimestamp(),
+  });
 
   res.json({ received: true });
 });

@@ -13,8 +13,10 @@ import {
   getDocs,
   serverTimestamp,
   Timestamp,
+  runTransaction,
 } from 'firebase/firestore';
 import { db } from './firebase';
+import logger from '../utils/logger';
 
 // ============================================================================
 // COLLECTION REFERENCE
@@ -30,34 +32,50 @@ export const createLiveSession = async (userId, workId) => {
   if (!userId) throw new Error('User ID is required');
   if (!workId) throw new Error('Work ID is required');
 
-  // Check if there's already an active session
-  const existingSession = await getActiveLiveSession(userId);
-  if (existingSession) {
-    throw new Error('There is already an active live session. Please finish it first.');
-  }
+  // Use a deterministic lock document to prevent race conditions
+  const lockRef = doc(db, 'liveSessions', `lock_${userId}`);
 
-  const liveSessionsRef = getLiveSessionsRef();
+  return await runTransaction(db, async (transaction) => {
+    const lockDoc = await transaction.get(lockRef);
 
-  const sessionData = {
-    userId,
-    workId,
-    startedAt: Timestamp.now(),
-    pausedAt: null,
-    totalPauseDuration: 0, // in milliseconds
-    status: 'active', // 'active' | 'paused' | 'completed'
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  };
+    // Check if there's already an active session via the lock
+    if (lockDoc.exists() && lockDoc.data().status !== 'completed') {
+      throw new Error('There is already an active live session. Please finish it first.');
+    }
 
-  const docRef = await addDoc(liveSessionsRef, sessionData);
+    // Also check with query as fallback
+    const existingSession = await getActiveLiveSession(userId);
+    if (existingSession) {
+      throw new Error('There is already an active live session. Please finish it first.');
+    }
 
-  return {
-    id: docRef.id,
-    ...sessionData,
-    startedAt: sessionData.startedAt.toDate(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+    const liveSessionsRef = getLiveSessionsRef();
+    const now = Timestamp.now();
+
+    const sessionData = {
+      userId,
+      workId,
+      startedAt: now,
+      pausedAt: null,
+      totalPauseDuration: 0,
+      status: 'active',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+
+    const docRef = await addDoc(liveSessionsRef, sessionData);
+
+    // Write lock document
+    transaction.set(lockRef, { sessionId: docRef.id, userId, status: 'active', updatedAt: serverTimestamp() });
+
+    return {
+      id: docRef.id,
+      ...sessionData,
+      startedAt: now.toDate(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  });
 };
 
 // ============================================================================
@@ -134,7 +152,7 @@ export const resumeLiveSession = async (sessionId, currentPauseDuration) => {
 // COMPLETE LIVE SESSION
 // ============================================================================
 
-export const completeLiveSession = async (sessionId, finalPauseDuration) => {
+export const completeLiveSession = async (sessionId, finalPauseDuration, userId) => {
   if (!sessionId) throw new Error('Session ID is required');
 
   const liveSessionsRef = getLiveSessionsRef();
@@ -148,6 +166,12 @@ export const completeLiveSession = async (sessionId, finalPauseDuration) => {
   };
 
   await updateDoc(sessionRef, updateData);
+
+  // Clear the lock document
+  if (userId) {
+    const lockRef = doc(db, 'liveSessions', `lock_${userId}`);
+    await updateDoc(lockRef, { status: 'completed', updatedAt: serverTimestamp() }).catch(() => {});
+  }
 };
 
 // ============================================================================
@@ -198,7 +222,7 @@ export const subscribeToLiveSession = (userId, callback) => {
       updatedAt: data.updatedAt?.toDate() || new Date(),
     });
   }, (error) => {
-    console.error('Error subscribing to live session:', error);
+    logger.error('Error subscribing to live session:', error);
     callback(null);
   });
 };

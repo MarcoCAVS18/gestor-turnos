@@ -159,7 +159,7 @@ export const subscribeToNormalData = (userUid, { setWorks, setShifts, setError }
 
   const unsubscribes = [];
 
-  const worksQuery = query(worksRef, where('userId', '==', userUid), where('type', '==', 'regular'), orderBy('name', 'asc'));
+  const worksQuery = query(worksRef, where('userId', '==', userUid), where('type', '==', 'regular'), orderBy('name', 'asc'), limit(100));
   unsubscribes.push(
     createIncrementalSubscription(
       worksQuery,
@@ -169,7 +169,7 @@ export const subscribeToNormalData = (userUid, { setWorks, setShifts, setError }
     )
   );
 
-  const shiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('type', '==', 'regular'), orderBy('date', 'desc'));
+  const shiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('type', '==', 'regular'), orderBy('date', 'desc'), limit(500));
   unsubscribes.push(
     createIncrementalSubscription(
       shiftsQuery,
@@ -189,7 +189,7 @@ export const subscribeToDeliveryData = (userUid, { setDeliveryWork, setDeliveryS
 
   const unsubscribes = [];
 
-  const deliveryWorksQuery = query(worksRef, where('userId', '==', userUid), where('type', '==', 'delivery'), orderBy('createdAt', 'desc'));
+  const deliveryWorksQuery = query(worksRef, where('userId', '==', userUid), where('type', '==', 'delivery'), orderBy('createdAt', 'desc'), limit(100));
   unsubscribes.push(
     createIncrementalSubscription(
       deliveryWorksQuery,
@@ -199,7 +199,7 @@ export const subscribeToDeliveryData = (userUid, { setDeliveryWork, setDeliveryS
     )
   );
 
-  const deliveryShiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('type', '==', 'delivery'), orderBy('date', 'desc'));
+  const deliveryShiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('type', '==', 'delivery'), orderBy('date', 'desc'), limit(500));
   unsubscribes.push(
     createIncrementalSubscription(
       deliveryShiftsQuery,

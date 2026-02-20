@@ -186,7 +186,7 @@ const PrivacyPolicy = () => {
           <li><strong>Firebase (Google):</strong> Authentication, database storage, and hosting.</li>
           <li><strong>Stripe:</strong> Payment processing for Premium subscriptions.</li>
           <li><strong>Google Calendar API:</strong> Optional calendar synchronization (only with your explicit permission).</li>
-          <li><strong>Netlify:</strong> Web application hosting and deployment.</li>
+          <li><strong>Firebase Hosting:</strong> Web application hosting and deployment.</li>
         </ul>
 
         <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-3">5.2 Work Sharing Feature</h3>

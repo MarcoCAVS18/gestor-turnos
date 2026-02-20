@@ -3,6 +3,7 @@
 import * as XLSX from 'xlsx-js-style';
 import { createAllSheets } from './ExcelSheets';
 import { loadLogoForExcel } from '../utils/LogoLoader';
+import logger from '../../../utils/logger';
 
 /**
  * Excel Exporter - Generates professional Excel reports
@@ -35,7 +36,7 @@ export class ExcelExporter {
     try {
       this.logo = await loadLogoForExcel(this.options.logoColor);
     } catch (error) {
-      console.warn('Could not load logo for Excel:', error);
+      logger.warn('Could not load logo for Excel:', error);
       this.logo = null;
     }
   }
@@ -104,7 +105,7 @@ export class ExcelExporter {
 
       return true;
     } catch (error) {
-      console.error('Error generating Excel:', error);
+      logger.error('Error generating Excel:', error);
       throw error;
     }
   }

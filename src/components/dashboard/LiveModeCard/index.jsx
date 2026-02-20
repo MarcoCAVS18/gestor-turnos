@@ -27,6 +27,7 @@ import { useDataContext } from '../../../contexts/DataContext';
 import LiveModeFinishConfirmModal from '../../modals/liveMode/LiveModeFinishConfirmModal';
 import { useConfigContext } from '../../../contexts/ConfigContext';
 import { PREMIUM_COLORS } from '../../../contexts/PremiumContext';
+import logger from '../../../utils/logger';
 
 const LiveModeCard = ({ onClick, onShowActive, className }) => {
   const colors = useThemeColors();
@@ -83,7 +84,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
         await pauseSession();
       }
     } catch (err) {
-      console.error('Error toggling pause:', err);
+      logger.error('Error toggling pause:', err);
     } finally {
       setActionLoading(null);
     }
@@ -115,7 +116,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
       setShowFinishConfirm(false);
       setFrozenSessionData(null);
     } catch (err) {
-      console.error('Error finishing session:', err);
+      logger.error('Error finishing session:', err);
     } finally {
       setActionLoading(null);
     }

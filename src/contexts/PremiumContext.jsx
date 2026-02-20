@@ -11,6 +11,7 @@ import {
   incrementLiveModeUsage,
   LIVE_MODE_FREE_LIMIT,
 } from '../services/premiumService';
+import logger from '../utils/logger';
 
 // Create context
 const PremiumContext = createContext();
@@ -78,7 +79,7 @@ export const PremiumProvider = ({ children }) => {
         });
 
       } catch (err) {
-        console.error('Error loading subscription data:', err);
+        logger.error('Error loading subscription data:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -101,7 +102,7 @@ export const PremiumProvider = ({ children }) => {
       setIsPremium(true);
       return newSubscription;
     } catch (err) {
-      console.error('Error upgrading to premium:', err);
+      logger.error('Error upgrading to premium:', err);
       setError(err.message);
       throw err;
     }
@@ -120,7 +121,7 @@ export const PremiumProvider = ({ children }) => {
       setIsPremium(false);
       return cancelledSubscription;
     } catch (err) {
-      console.error('Error cancelling subscription:', err);
+      logger.error('Error cancelling subscription:', err);
       setError(err.message);
       throw err;
     }
@@ -145,7 +146,7 @@ export const PremiumProvider = ({ children }) => {
 
       return result;
     } catch (err) {
-      console.error('Error checking Live Mode limit:', err);
+      logger.error('Error checking Live Mode limit:', err);
       return { canUse: true, remaining: LIVE_MODE_FREE_LIMIT, isPremium: false };
     }
   }, [currentUser?.uid]);
@@ -163,7 +164,7 @@ export const PremiumProvider = ({ children }) => {
         remaining: Math.max(0, LIVE_MODE_FREE_LIMIT - updatedUsage.monthlyCount),
       });
     } catch (err) {
-      console.error('Error recording Live Mode usage:', err);
+      logger.error('Error recording Live Mode usage:', err);
     }
   }, [currentUser?.uid, isPremium]);
 

@@ -1,3 +1,4 @@
+import logger from '../logger';
 // src/utils/time/dateFormatters.js
 
 /**
@@ -14,7 +15,7 @@ export const createSafeDate = (dateString) => {
   if (!dateString) return new Date();
   const date = new Date(dateString + 'T00:00:00');
   if (isNaN(date.getTime())) {
-    console.warn("createSafeDate received an unparseable dateString:", dateString);
+    logger.warn("createSafeDate received an unparseable dateString:", dateString);
     return new Date(); 
   }
   return date;

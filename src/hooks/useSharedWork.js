@@ -50,16 +50,16 @@ export const useSharedWork = () => {
       setAdding(true);
       setError('');
             
-      // Use the shareService function to add the work
-      await acceptSharedWork(currentUser.uid, token);
+      // Use pre-fetched data to avoid duplicate Firestore read
+      await acceptSharedWork(currentUser.uid, token, sharedWork?._rawData);
             
-      // Reload jobs in the context
-      if (reloadJobs) {
-        await reloadJobs();
-      }
-      
-      // Navigate to the work list
+      // Navigate immediately, reload jobs in background
       navigate('/works');
+
+      // Reload jobs in the context (don't block navigation)
+      if (reloadJobs) {
+        reloadJobs();
+      }
       
     } catch (err) {
       setError('Error adding work: ' + err.message);

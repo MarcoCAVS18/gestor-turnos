@@ -3,6 +3,7 @@
 import { loadLogoForPDF } from '../utils/LogoLoader';
 import { renderComponentToImage } from '../utils/ChartRenderer';
 import { PNGDashboard } from './PNGDashboard';
+import logger from '../../../utils/logger';
 
 /**
  * PNG Exporter - Generates a beautiful, summarized dashboard image
@@ -29,7 +30,7 @@ export class PNGExporter {
     try {
       this.logo = await loadLogoForPDF(this.options.logoColor);
     } catch (error) {
-      console.warn('Could not load logo:', error);
+      logger.warn('Could not load logo:', error);
       this.logo = null;
     }
   }
@@ -171,7 +172,7 @@ export class PNGExporter {
       document.body.removeChild(link);
       return true;
     } catch (error) {
-      console.error('Error generating PNG:', error);
+      logger.error('Error generating PNG:', error);
       throw error;
     }
   }
@@ -189,7 +190,7 @@ export class PNGExporter {
       win.document.write(`<img src="${base64}" style="max-width: 100%; height: auto;" />`);
       return true;
     } catch (error) {
-      console.error('Error generating PNG preview:', error);
+      logger.error('Error generating PNG preview:', error);
       throw error;
     }
   }

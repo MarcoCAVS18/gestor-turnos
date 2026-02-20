@@ -1,6 +1,7 @@
 // src/hooks/useDeleteManager.js
 
 import { useState } from 'react';
+import logger from '../utils/logger';
 
 export const useDeleteManager = (deleteFunction) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -26,7 +27,7 @@ export const useDeleteManager = (deleteFunction) => {
       setShowDeleteModal(false);
       setItemToDelete(null);
     } catch (error) {
-      console.error('Error in deleteManager:', error);
+      logger.error('Error in deleteManager:', error);
       throw error; // Re-throw to allow parent to handle
     } finally {
       setDeleting(false);

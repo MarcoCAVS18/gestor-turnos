@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
+import logger from '../../../utils/logger';
 
 const PRESETS = [
   { label: 'Part-time', hours: 20 },
@@ -62,7 +63,7 @@ const GoalsSection = ({ className }) => {
         setEditing(false);
       }
     } catch (error) {
-      console.error('Error saving goal:', error);
+      logger.error('Error saving goal:', error);
     }
   };
 
@@ -77,7 +78,7 @@ const GoalsSection = ({ className }) => {
       setNewGoal('');
       setEditing(false);
     } catch (error) {
-      console.error('Error deleting goal:', error);
+      logger.error('Error deleting goal:', error);
     }
   };
 

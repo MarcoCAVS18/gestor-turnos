@@ -9,6 +9,7 @@ import BaseModal from '../../base/BaseModal';
 import ShiftForm from '../../../forms/shift/ShiftForm';
 import DeliveryShiftForm from '../../../forms/shift/DeliveryShiftForm';
 import BulkShiftConfirmModal from '../BulkShiftConfirmModal';
+import logger from '../../../../utils/logger';
 
 const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
   const {
@@ -122,7 +123,7 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
       setLoading(false);
       onClose();
     } catch (error) {
-      console.error('Error saving shift:', error);
+      logger.error('Error saving shift:', error);
       setLoading(false);
     }
   };
@@ -134,7 +135,7 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
       setPendingShiftData(null);
       onClose();
     } catch (error) {
-      console.error('Error creating bulk shifts:', error);
+      logger.error('Error creating bulk shifts:', error);
       throw error;
     }
   };

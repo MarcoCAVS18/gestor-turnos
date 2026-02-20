@@ -15,6 +15,7 @@ import PremiumModal from '../../modals/premium/PremiumModal';
 import Flex from '../../ui/Flex';
 
 import './index.css';
+import logger from '../../../utils/logger';
 
 
 const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
@@ -144,7 +145,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
     try {
       await updateProfilePhoto(file);
     } catch (error) {
-      console.error('Error updating photo:', error);
+      logger.error('Error updating photo:', error);
     } finally {
       window.dispatchEvent(new CustomEvent('profile-photo-loading-end'));
       if (fileInputRef.current) {

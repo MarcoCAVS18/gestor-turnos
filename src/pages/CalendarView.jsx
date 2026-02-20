@@ -17,6 +17,7 @@ import { useDeleteManager } from '../hooks/useDeleteManager';
 import DeleteAlert from '../components/alerts/DeleteAlert';
 import Loader from '../components/other/Loader';
 import Flex from '../components/ui/Flex';
+import logger from '../utils/logger';
 
 const CalendarView = () => {
   const { shiftsByDate, allWorks, thematicColors, loading, deleteShift } = useApp();
@@ -54,7 +55,7 @@ const CalendarView = () => {
     
     // Explicitly check for invalid date object
     if (isNaN(date.getTime())) {
-      console.error('Invalid Date object created by createSafeDate for input:', dateStr);
+      logger.error('Invalid Date object created by createSafeDate for input:', dateStr);
       return 'Invalid date'; 
     }
     

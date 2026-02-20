@@ -6,6 +6,7 @@ import { createSafeDate } from '../utils/time';
 import { getMonthRange } from '../utils/time';
 import { DELIVERY_PLATFORMS_AUSTRALIA } from '../constants/delivery';
 import { isHoliday } from './holidayService';
+import logger from '../utils/logger';
 
 
 
@@ -557,7 +558,7 @@ export const calculateDeliveryStats = ({ deliveryWork, deliveryShifts, period = 
   periodShifts.forEach(shift => {
     const work = validDeliveryWork.find(w => w.id === shift.workId);
     if (!work) {
-      console.warn('Delivery work not found for shift:', shift.id);
+      logger.warn('Delivery work not found for shift:', shift.id);
       return;
     }
 
@@ -800,7 +801,7 @@ export const calculateDeliveryHourlyStats = (shifts = []) => {
 
     // Fallback if endDateTime is still <= startDateTime (e.g., malformed data)
     if (endDateTime.getTime() <= startDateTime.getTime()) {
-      console.warn("Shift end time is not after start time, skipping duration calculation for shift:", shift);
+      logger.warn("Shift end time is not after start time, skipping duration calculation for shift:", shift);
       return; // Skip this shift as duration would be 0 or negative
     }
 

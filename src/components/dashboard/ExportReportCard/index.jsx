@@ -19,6 +19,7 @@ import { usePremium, PREMIUM_COLORS } from '../../../contexts/PremiumContext';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 import Button from '../../ui/Button';
+import logger from '../../../utils/logger';
 
 const ExportReportCard = ({ onExport }) => {
   const colors = useThemeColors();
@@ -36,7 +37,7 @@ const ExportReportCard = ({ onExport }) => {
     try {
       await onExport(selectedFormat);
     } catch (error) {
-      console.error('Error exporting:', error);
+      logger.error('Error exporting:', error);
     } finally {
       setTimeout(() => {
         setIsExporting(false);

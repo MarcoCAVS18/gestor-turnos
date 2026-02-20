@@ -8,6 +8,7 @@ import SettingsSection from '../SettingsSection';
 import Switch from '../../ui/Switch';
 import Popover from '../../ui/Popover';
 import Flex from '../../ui/Flex';
+import logger from '../../../utils/logger';
 
 const DeliverySection = ({ onError, onSuccess, className }) => {
   const { deliveryEnabled, savePreferences } = useApp();
@@ -18,7 +19,7 @@ const DeliverySection = ({ onError, onSuccess, className }) => {
       await savePreferences({ deliveryEnabled: newValue });
       onSuccess?.(`Delivery mode ${newValue ? 'enabled' : 'disabled'}`);
     } catch (error) {
-      console.error('Error changing delivery setting:', error);
+      logger.error('Error changing delivery setting:', error);
       onError?.('Error changing delivery setting');
     }
   };

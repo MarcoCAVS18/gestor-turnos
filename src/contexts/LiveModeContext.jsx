@@ -8,6 +8,7 @@ import { useConfigContext } from './ConfigContext';
 import * as liveSessionService from '../services/liveSessionService';
 import * as firebaseService from '../services/firebaseService';
 import * as premiumService from '../services/premiumService';
+import logger from '../utils/logger';
 
 const LiveModeContext = createContext();
 
@@ -141,7 +142,7 @@ export const LiveModeProvider = ({ children }) => {
         'Your live shift was automatically ended after 24 hours.'
       );
     } catch (err) {
-      console.error('Error auto-finishing session:', err);
+      logger.error('Error auto-finishing session:', err);
       autoCloseTriggeredRef.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -252,7 +253,7 @@ export const LiveModeProvider = ({ children }) => {
           isPremium: result.isPremium,
         });
       } catch (err) {
-        console.error('Error loading Live Mode usage:', err);
+        logger.error('Error loading Live Mode usage:', err);
       }
     };
 
@@ -391,7 +392,7 @@ export const LiveModeProvider = ({ children }) => {
       return new Date(timestamp);
     }
 
-    console.warn('Unknown timestamp format:', timestamp);
+    logger.warn('Unknown timestamp format:', timestamp);
     return new Date();
   };
 
@@ -452,7 +453,7 @@ export const LiveModeProvider = ({ children }) => {
       await firebaseService.addShift(currentUser.uid, shiftData, false);
 
       // Complete the live session
-      await liveSessionService.completeLiveSession(liveSession.id, finalPauseDuration);
+      await liveSessionService.completeLiveSession(liveSession.id, finalPauseDuration, currentUser.uid);
 
       // Reset state
       setLiveSession(null);

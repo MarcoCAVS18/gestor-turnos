@@ -2,6 +2,7 @@
 
 import { storage } from './firebase';
 import { ref, getDownloadURL, deleteObject, uploadBytesResumable } from 'firebase/storage';
+import logger from '../utils/logger';
 
 /**
  * Uploads a profile photo to Firebase Storage
@@ -69,7 +70,7 @@ export const uploadProfilePhoto = async (userId, file) => {
 
     return downloadURL;
   } catch (error) {
-    console.error('Error uploading profile photo:', error);
+    logger.error('Error uploading profile photo:', error);
     throw error;
   }
 };
@@ -91,9 +92,9 @@ export const deleteProfilePhoto = async (photoURL) => {
   } catch (error) {
     // If the file is not found, it may have already been deleted.
     if (error.code === 'storage/object-not-found') {
-      console.warn('Profile photo not found in Storage, possibly already deleted:', photoURL);
+      logger.warn('Profile photo not found in Storage, possibly already deleted:', photoURL);
     } else {
-      console.error('Error deleting profile photo:', error);
+      logger.error('Error deleting profile photo:', error);
       throw error;
     }
   }
