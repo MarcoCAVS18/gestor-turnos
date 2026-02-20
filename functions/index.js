@@ -29,6 +29,67 @@ const crypto = require('crypto');
 admin.initializeApp();
 const db = admin.firestore();
 
+// ============================================
+// SECURITY HELPERS - Rate Limiting & Validation
+// ============================================
+
+/**
+ * Rate limiter using Firestore
+ * Tracks request counts per user per function with sliding window
+ * @param {string} userId - User ID
+ * @param {string} functionName - Cloud Function name
+ * @param {number} maxRequests - Max requests allowed in window
+ * @param {number} windowMs - Time window in milliseconds (default: 60s)
+ * @returns {boolean} true if request is allowed
+ */
+async function checkRateLimit(userId, functionName, maxRequests = 10, windowMs = 60000) {
+  const key = `${userId}_${functionName}`;
+  const ref = db.collection('rate_limits').doc(key);
+
+  const result = await db.runTransaction(async (transaction) => {
+    const doc = await transaction.get(ref);
+    const now = Date.now();
+
+    if (!doc.exists) {
+      transaction.set(ref, { count: 1, windowStart: now });
+      return true;
+    }
+
+    const data = doc.data();
+    const elapsed = now - data.windowStart;
+
+    if (elapsed > windowMs) {
+      // Window expired, reset
+      transaction.update(ref, { count: 1, windowStart: now });
+      return true;
+    }
+
+    if (data.count >= maxRequests) {
+      return false; // Rate limit exceeded
+    }
+
+    transaction.update(ref, { count: data.count + 1 });
+    return true;
+  });
+
+  return result;
+}
+
+/**
+ * Validate that a Stripe customer belongs to the authenticated user
+ * @param {string} customerId - Stripe customer ID
+ * @param {string} userId - Firebase user ID
+ * @returns {boolean} true if customer belongs to user
+ */
+async function validateCustomerOwnership(customerId, userId) {
+  try {
+    const customer = await stripe.customers.retrieve(customerId);
+    return customer.metadata?.firebaseUserId === userId;
+  } catch {
+    return false;
+  }
+}
+
 // Validated redirect URL
 const getAppUrl = () => {
   const url = process.env.APP_URL || 'https://orary.app';
@@ -546,7 +607,16 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
-      const { paymentMethodId, email, name, address } = req.body;
+      // Rate limiting: max 5 subscription attempts per minute
+      const allowed = await checkRateLimit(userId, 'createSubscription', 5, 60000);
+      if (!allowed) {
+        return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+      }
+
+      const { paymentMethodId, name, address } = req.body;
+
+      // Use verified email from Firebase Auth token instead of client-provided email
+      const email = decodedToken.email;
 
       if (!paymentMethodId || !email) {
         return res.status(400).json({ error: 'Missing required fields' });
@@ -561,10 +631,33 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         if (address.line1) billingAddress.line1 = address.line1;
       }
 
+      // Race condition protection: use Firestore transaction with lock
+      const lockRef = db.collection('subscription_locks').doc(userId);
+      const lockDoc = await lockRef.get();
+      if (lockDoc.exists) {
+        const lockData = lockDoc.data();
+        const lockAge = Date.now() - (lockData.createdAt?.toMillis() || 0);
+        // If lock is less than 30 seconds old, reject (concurrent request)
+        if (lockAge < 30000) {
+          return res.status(409).json({ error: 'Subscription creation already in progress' });
+        }
+      }
+      // Set lock
+      await lockRef.set({ createdAt: FieldValue.serverTimestamp(), userId });
+
+      try {
       // Check if user already has a Stripe customer ID
       const userDoc = await db.collection('users').doc(userId).get();
       const userData = userDoc.data() || {};
       let customerId = userData.subscription?.stripeCustomerId;
+
+      // Validate customer ownership if customerId exists
+      if (customerId) {
+        const isOwner = await validateCustomerOwnership(customerId, userId);
+        if (!isOwner) {
+          customerId = null; // Force creation of new customer
+        }
+      }
 
       // Create or retrieve Stripe customer
       if (!customerId) {
@@ -697,7 +790,13 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         status: paymentIntent.status || 'unknown',
         subscriptionId: subscription.id,
       });
+      } finally {
+        // Release lock
+        await lockRef.delete();
+      }
     } catch (error) {
+      // Ensure lock is released on error
+      try { await db.collection('subscription_locks').doc(userId).delete(); } catch {}
       console.error('Error creating subscription:', error);
       res.status(500).json({
         error: error.message || 'Failed to create subscription',
@@ -725,12 +824,27 @@ exports.cancelSubscription = functions.https.onRequest((req, res) => {
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
+      // Rate limiting: max 5 cancel attempts per minute
+      const cancelAllowed = await checkRateLimit(userId, 'cancelSubscription', 5, 60000);
+      if (!cancelAllowed) {
+        return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+      }
+
       const userDoc = await db.collection('users').doc(userId).get();
       const userData = userDoc.data();
       const subscriptionId = userData?.subscription?.stripeSubscriptionId;
+      const customerId = userData?.subscription?.stripeCustomerId;
 
       if (!subscriptionId) {
         return res.status(400).json({ error: 'No active subscription found' });
+      }
+
+      // Validate customer ownership
+      if (customerId) {
+        const isOwner = await validateCustomerOwnership(customerId, userId);
+        if (!isOwner) {
+          return res.status(403).json({ error: 'Customer verification failed' });
+        }
       }
 
       // Cancel at period end (user keeps access until paid period ends)
@@ -774,6 +888,12 @@ exports.createBillingPortalSession = functions.https.onRequest((req, res) => {
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
+      // Rate limiting: max 10 portal requests per minute
+      const portalAllowed = await checkRateLimit(userId, 'billingPortal', 10, 60000);
+      if (!portalAllowed) {
+        return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+      }
+
       const userDoc = await db.collection('users').doc(userId).get();
       const userData = userDoc.data();
       const customerId = userData?.subscription?.stripeCustomerId;
@@ -782,14 +902,13 @@ exports.createBillingPortalSession = functions.https.onRequest((req, res) => {
         return res.status(400).json({ error: 'No Stripe customer found' });
       }
 
-      // Verify the customer exists in the current Stripe account
-      try {
-        await stripe.customers.retrieve(customerId);
-      } catch (custError) {
-        console.error('Customer not found in Stripe:', customerId, custError.message);
-        return res.status(400).json({
-          error: 'Your payment profile needs to be re-created. Please cancel and re-subscribe.',
-          code: 'CUSTOMER_NOT_FOUND'
+      // Validate customer ownership - verify the customer belongs to this user
+      const isOwner = await validateCustomerOwnership(customerId, userId);
+      if (!isOwner) {
+        console.error('Customer ownership validation failed:', customerId, userId);
+        return res.status(403).json({
+          error: 'Customer verification failed. Please contact support.',
+          code: 'CUSTOMER_MISMATCH'
         });
       }
 
@@ -827,6 +946,12 @@ exports.getInvoices = functions.https.onRequest((req, res) => {
       const idToken = authHeader.split('Bearer ')[1];
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
+
+      // Rate limiting: 10 requests per minute
+      const allowed = await checkRateLimit(userId, 'getInvoices', 10, 60000);
+      if (!allowed) {
+        return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+      }
 
       const userDoc = await db.collection('users').doc(userId).get();
       const userData = userDoc.data();
@@ -976,3 +1101,40 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
 
   res.json({ received: true });
 });
+
+// ============================================
+// SCHEDULED CLEANUP - Expired Share Documents
+// ============================================
+
+/**
+ * Runs daily at 3:00 AM UTC to delete expired shared_works documents.
+ * Shared works have a 48-hour expiration (expiresAt field).
+ */
+exports.cleanupExpiredShares = functions.pubsub
+  .schedule('every day 03:00')
+  .timeZone('UTC')
+  .onRun(async () => {
+    const now = admin.firestore.Timestamp.now();
+    const expiredQuery = db.collection('shared_works')
+      .where('expiresAt', '<', now)
+      .limit(500);
+
+    let totalDeleted = 0;
+    let snapshot = await expiredQuery.get();
+
+    while (!snapshot.empty) {
+      const batch = db.batch();
+      snapshot.docs.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      await batch.commit();
+      totalDeleted += snapshot.size;
+
+      // Check for more expired documents
+      if (snapshot.size < 500) break;
+      snapshot = await expiredQuery.get();
+    }
+
+    console.log(`Cleanup: deleted ${totalDeleted} expired shared works`);
+    return null;
+  });

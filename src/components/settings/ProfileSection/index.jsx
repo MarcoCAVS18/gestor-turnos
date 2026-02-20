@@ -31,13 +31,13 @@ const ProfileSection = ({ onError, onSuccess, className }) => {
     <SettingsSection icon={User} title="Profile" className={className}>
       <div className="space-y-4">
         {/* Email and Name on the same line on desktop */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="min-w-0">
             <label className="block text-sm font-medium text-gray-700">Email</label>
-            <div className="mt-1 text-gray-900">{currentUser?.email}</div>
+            <div className="mt-1 text-gray-900 truncate">{currentUser?.email}</div>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
             {editingName ? (
               <div className="flex items-center gap-2">

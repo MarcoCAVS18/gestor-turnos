@@ -37,18 +37,6 @@ export const getSubscription = async (userId) => {
     if (userDoc.exists()) {
       const data = userDoc.data();
 
-      // Test premium flag only works in development
-      if (process.env.NODE_ENV === 'development' && data.isPremiumTest === true) {
-        return {
-          isPremium: true,
-          plan: 'premium',
-          status: 'active',
-          isTest: true,
-          startDate: new Date(),
-          expiryDate: null,
-        };
-      }
-
       return data.subscription || DEFAULT_SUBSCRIPTION;
     }
 
@@ -104,21 +92,6 @@ export const loadSubscriptionAndUsage = async (userId) => {
     }
 
     const data = userDoc.data();
-
-    // Test premium flag only works in development
-    if (process.env.NODE_ENV === 'development' && data.isPremiumTest === true) {
-      return {
-        subscription: {
-          isPremium: true,
-          plan: 'premium',
-          status: 'active',
-          isTest: true,
-          startDate: new Date(),
-          expiryDate: null,
-        },
-        liveModeUsage: data.liveModeUsage || DEFAULT_LIVE_MODE_USAGE,
-      };
-    }
 
     // Initialize subscription if missing (single write, no extra read)
     if (!data.subscription) {
@@ -222,11 +195,6 @@ export const checkSubscriptionValidity = async (userId) => {
   try {
     const subscription = await getSubscription(userId);
 
-    // Test accounts are always valid (only reachable in development)
-    if (subscription.isTest === true) {
-      return true;
-    }
-
     if (!subscription.isPremium || subscription.status !== 'active') {
       return false;
     }
@@ -328,14 +296,13 @@ export const canUseLiveMode = async (userId) => {
     const { subscription, liveModeUsage } = await loadSubscriptionAndUsage(userId);
 
     // Check premium validity
-    const isValid = subscription.isTest === true ||
-      (subscription.isPremium && subscription.status === 'active' &&
-        (!subscription.expiryDate || (() => {
-          const exp = subscription.expiryDate?.toDate
-            ? subscription.expiryDate.toDate()
-            : new Date(subscription.expiryDate);
-          return exp >= new Date();
-        })()));
+    const isValid = subscription.isPremium && subscription.status === 'active' &&
+      (!subscription.expiryDate || (() => {
+        const exp = subscription.expiryDate?.toDate
+          ? subscription.expiryDate.toDate()
+          : new Date(subscription.expiryDate);
+        return exp >= new Date();
+      })());
 
     if (isValid) {
       return { canUse: true, remaining: Infinity, isPremium: true };
