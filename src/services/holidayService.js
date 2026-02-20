@@ -1,6 +1,7 @@
 // src/services/holidayService.js
 
 import Holidays from 'date-holidays';
+import logger from '../utils/logger';
 
 /**
  * Holiday Service
@@ -44,7 +45,7 @@ export function isHoliday(date, country, region = null) {
 
     return holidays ? holidays.length > 0 : false;
   } catch (error) {
-    console.error('Error checking holiday:', error);
+    logger.error('Error checking holiday:', error);
     return false;
   }
 }
@@ -66,7 +67,7 @@ export function getHolidayInfo(date, country, region = null) {
 
     return holidays || null;
   } catch (error) {
-    console.error('Error getting holiday info:', error);
+    logger.error('Error getting holiday info:', error);
     return null;
   }
 }
@@ -87,7 +88,7 @@ export function getHolidaysForYear(year, country, region = null) {
 
     return holidays || [];
   } catch (error) {
-    console.error('Error getting holidays for year:', error);
+    logger.error('Error getting holidays for year:', error);
     return [];
   }
 }
@@ -125,7 +126,7 @@ export function getAvailableRegions(country) {
       .map(([code, name]) => ({ code, name }))
       .sort((a, b) => a.name.localeCompare(b.name));
   } catch (error) {
-    console.error('Error getting regions:', error);
+    logger.error('Error getting regions:', error);
     return [];
   }
 }

@@ -14,6 +14,7 @@ import BenefitsRow from './BenefitsRow';
 import PaymentMethodCard from './PaymentMethodCard';
 import ManageSubscriptionCard from './ManageSubscriptionCard';
 import RecentInvoices from './RecentInvoices';
+import logger from '../../utils/logger';
 
 const PremiumUserView = () => {
   const { currentUser, profilePhotoURL } = useAuth();
@@ -42,7 +43,7 @@ const PremiumUserView = () => {
     try {
       await openBillingPortal();
     } catch (error) {
-      console.error('Billing portal error:', error);
+      logger.error('Billing portal error:', error);
       alert(`Billing portal error: ${error.message}`);
     } finally {
       setPortalLoading(false);

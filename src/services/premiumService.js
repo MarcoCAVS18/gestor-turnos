@@ -3,6 +3,7 @@
 
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from './firebase';
+import logger from '../utils/logger';
 
 // Default subscription structure
 const DEFAULT_SUBSCRIPTION = {
@@ -27,7 +28,6 @@ export const LIVE_MODE_FREE_LIMIT = 5;
 
 /**
  * Get user's subscription data
- * Also checks for isPremiumTest flag for testing purposes
  */
 export const getSubscription = async (userId) => {
   try {
@@ -37,15 +37,15 @@ export const getSubscription = async (userId) => {
     if (userDoc.exists()) {
       const data = userDoc.data();
 
-      // Check for test premium flag (for development/testing)
-      if (data.isPremiumTest === true) {
+      // Test premium flag only works in development
+      if (process.env.NODE_ENV === 'development' && data.isPremiumTest === true) {
         return {
           isPremium: true,
           plan: 'premium',
           status: 'active',
-          isTest: true, // Flag to identify test subscriptions
+          isTest: true,
           startDate: new Date(),
-          expiryDate: null, // No expiry for test accounts
+          expiryDate: null,
         };
       }
 
@@ -54,7 +54,7 @@ export const getSubscription = async (userId) => {
 
     return DEFAULT_SUBSCRIPTION;
   } catch (error) {
-    console.error('Error getting subscription:', error);
+    logger.error('Error getting subscription:', error);
     throw error;
   }
 };
@@ -82,7 +82,7 @@ export const initializeSubscription = async (userId) => {
       }
     }
   } catch (error) {
-    console.error('Error initializing subscription:', error);
+    logger.error('Error initializing subscription:', error);
     throw error;
   }
 };
@@ -105,8 +105,8 @@ export const loadSubscriptionAndUsage = async (userId) => {
 
     const data = userDoc.data();
 
-    // Check for test premium flag
-    if (data.isPremiumTest === true) {
+    // Test premium flag only works in development
+    if (process.env.NODE_ENV === 'development' && data.isPremiumTest === true) {
       return {
         subscription: {
           isPremium: true,
@@ -154,7 +154,7 @@ export const loadSubscriptionAndUsage = async (userId) => {
       liveModeUsage,
     };
   } catch (error) {
-    console.error('Error loading subscription and usage:', error);
+    logger.error('Error loading subscription and usage:', error);
     throw error;
   }
 };
@@ -186,7 +186,7 @@ export const upgradeToPremium = async (userId, paymentData) => {
 
     return subscription;
   } catch (error) {
-    console.error('Error upgrading to premium:', error);
+    logger.error('Error upgrading to premium:', error);
     throw error;
   }
 };
@@ -210,20 +210,19 @@ export const cancelSubscription = async (userId) => {
 
     return subscription;
   } catch (error) {
-    console.error('Error cancelling subscription:', error);
+    logger.error('Error cancelling subscription:', error);
     throw error;
   }
 };
 
 /**
  * Check if premium subscription is still valid
- * Test accounts (isPremiumTest flag) are always valid
  */
 export const checkSubscriptionValidity = async (userId) => {
   try {
     const subscription = await getSubscription(userId);
 
-    // Test accounts are always valid
+    // Test accounts are always valid (only reachable in development)
     if (subscription.isTest === true) {
       return true;
     }
@@ -247,7 +246,7 @@ export const checkSubscriptionValidity = async (userId) => {
 
     return true;
   } catch (error) {
-    console.error('Error checking subscription validity:', error);
+    logger.error('Error checking subscription validity:', error);
     return false;
   }
 };
@@ -292,7 +291,7 @@ export const getLiveModeUsage = async (userId) => {
 
     return DEFAULT_LIVE_MODE_USAGE;
   } catch (error) {
-    console.error('Error getting Live Mode usage:', error);
+    logger.error('Error getting Live Mode usage:', error);
     throw error;
   }
 };
@@ -314,7 +313,7 @@ export const incrementLiveModeUsage = async (userId) => {
 
     return updatedUsage;
   } catch (error) {
-    console.error('Error incrementing Live Mode usage:', error);
+    logger.error('Error incrementing Live Mode usage:', error);
     throw error;
   }
 };
@@ -352,7 +351,7 @@ export const canUseLiveMode = async (userId) => {
       monthlyCount: liveModeUsage.monthlyCount || 0,
     };
   } catch (error) {
-    console.error('Error checking Live Mode availability:', error);
+    logger.error('Error checking Live Mode availability:', error);
     return { canUse: true, remaining: LIVE_MODE_FREE_LIMIT, isPremium: false };
   }
 };

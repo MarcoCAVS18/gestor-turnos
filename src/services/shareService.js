@@ -11,13 +11,13 @@ import {
 import { db } from './firebase';
 
 /**
- * Generates a unique token to share a work
+ * Generates a cryptographically secure token to share a work
  * @returns {string}
  */
 const generateShareToken = () => {
-  return Math.random().toString(36).substring(2, 15) + 
-         Math.random().toString(36).substring(2, 15) + 
-         Date.now().toString(36);
+  const array = new Uint8Array(24);
+  crypto.getRandomValues(array);
+  return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
 };
 
 /**
@@ -114,12 +114,11 @@ export const createShareLink = async (userId, work) => {
     const shareDocRef = doc(db, 'shared_works', token);
 
     const shareData = {
-      // Clean work data (no undefined values)
       workData: cleanWork,
-      // Share metadata
       sharedBy: userId,
+      isPublic: true,
       createdAt: serverTimestamp(),
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48 hours
       active: true,
       usesCount: 0,
       usageLimit: 10
@@ -128,7 +127,7 @@ export const createShareLink = async (userId, work) => {
     await setDoc(shareDocRef, shareData);
 
     // Generate full URL
-    const baseUrl = window.location.origin || 'https://gestorwork.netlify.app';
+    const baseUrl = window.location.origin || 'https://orary.app';
     const shareLink = `${baseUrl}/share/${token}`;
 
     return shareLink;
@@ -221,14 +220,13 @@ export const getSharedWork = async (token) => {
     const expiresDate = data.expiresAt.toDate();
     
     if (now > expiresDate) {
-      // Mark as inactive
-      await setDoc(shareDocRef, { ...data, active: false }, { merge: true });
+      await setDoc(shareDocRef, { active: false, isPublic: false }, { merge: true });
       throw new Error('This share link has expired');
     }
-    
+
     // Check usage limit
     if (data.usesCount >= data.usageLimit) {
-      await setDoc(shareDocRef, { ...data, active: false }, { merge: true });
+      await setDoc(shareDocRef, { active: false, isPublic: false }, { merge: true });
       throw new Error('This share link has reached its usage limit');
     }
     
@@ -237,7 +235,8 @@ export const getSharedWork = async (token) => {
       workData: data.workData,
       token: token,
       sharedBy: data.sharedBy,
-      usesCount: data.usesCount
+      usesCount: data.usesCount,
+      _rawData: data // Preserved for acceptSharedWork to avoid duplicate read
     };
     
   } catch (error) {
@@ -249,30 +248,35 @@ export const getSharedWork = async (token) => {
  * Accepts a shared work and adds it to the user profile
  * @param {string} userId - ID of the user accepting
  * @param {string} token - Token of the shared link
+ * @param {Object} [prefetchedData] - Pre-fetched shared work data to avoid duplicate Firestore read
  * @returns {Promise<Object>} - Data of the added work
  */
-export const acceptSharedWork = async (userId, token) => {
+export const acceptSharedWork = async (userId, token, prefetchedData = null) => {
   try {
-    
     const shareDocRef = doc(db, 'shared_works', token);
-    const shareDoc = await getDoc(shareDocRef);
-    
-    if (!shareDoc.exists()) {
-      throw new Error('The share link does not exist');
+
+    // Use pre-fetched data if available, otherwise fetch from Firestore
+    let data;
+    if (prefetchedData) {
+      data = prefetchedData;
+    } else {
+      const shareDoc = await getDoc(shareDocRef);
+      if (!shareDoc.exists()) {
+        throw new Error('The share link does not exist');
+      }
+      data = shareDoc.data();
     }
-    
-    const data = shareDoc.data();
-    
+
     // Check that the user is not the same who shared it
     if (data.sharedBy === userId) {
       throw new Error('You cannot add your own shared work');
     }
-    
+
     // Determine correct collection based on type
     const isDelivery = data.workData.type === 'delivery';
     const collectionName = isDelivery ? 'works-delivery' : 'works';
     const userWorksRef = collection(db, 'users', userId, collectionName);
-    
+
     const newWork = {
       ...data.workData,
       createdAt: serverTimestamp(),
@@ -280,21 +284,18 @@ export const acceptSharedWork = async (userId, token) => {
       origin: 'shared',
       sourceToken: token
     };
-        
-    const docRef = await addDoc(userWorksRef, newWork);
-    
-    // Increment usage counter
-    await setDoc(shareDocRef, {
-      ...data,
-      usesCount: data.usesCount + 1
-    }, { merge: true });
-    
-    
+
+    // Run add work and increment counter in parallel
+    const [docRef] = await Promise.all([
+      addDoc(userWorksRef, newWork),
+      setDoc(shareDocRef, { usesCount: (data.usesCount || 0) + 1 }, { merge: true })
+    ]);
+
     return {
       id: docRef.id,
       ...newWork
     };
-    
+
   } catch (error) {
     throw error;
   }

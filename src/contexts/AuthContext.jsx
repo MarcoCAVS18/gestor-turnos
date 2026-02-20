@@ -14,6 +14,8 @@ import {
 import { auth, db } from '../services/firebase';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { uploadProfilePhoto, deleteProfilePhoto, getDefaultProfilePhoto } from '../services/profilePhotoService';
+import { hasProfanity } from '../utils/profanityFilter';
+import logger from '../utils/logger';
 
 // Create context
 const AuthContext = createContext();
@@ -54,7 +56,8 @@ export const AuthProvider = ({ children }) => {
       
       return userCredential.user;
     } catch (error) {
-      setError('Error registering user: ' + error.message);
+      logger.error('Signup error:', error);
+      setError('Error creating account. Please try again.');
       throw error;
     }
   };
@@ -66,7 +69,8 @@ export const AuthProvider = ({ children }) => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return userCredential.user;
     } catch (error) {
-      setError('Error signing in: ' + error.message);
+      logger.error('Login error:', error);
+      setError('Incorrect email or password.');
       throw error;
     }
   };
@@ -123,7 +127,7 @@ export const AuthProvider = ({ children }) => {
         // Handle Cross-Origin-Opener-Policy error
         setError('Browser blocked => Google sign-in window. Please check your popup blocker settings and try again.');
       } else {
-        setError('Error signing in with Google: ' + (error.message || 'Unknown error'));
+        setError('Could not sign in with Google. Please try again.');
       }
       throw error;
     }
@@ -135,7 +139,8 @@ export const AuthProvider = ({ children }) => {
       setError('');
       await signOut(auth);
     } catch (error) {
-      setError('Error signing out: ' + error.message);
+      logger.error('Logout error:', error);
+      setError('Error signing out. Please try again.');
       throw error;
     }
   };
@@ -161,7 +166,8 @@ export const AuthProvider = ({ children }) => {
       setError('');
       await sendPasswordResetEmail(auth, email);
     } catch (error) {
-      setError('Error resetting password: ' + error.message);
+      logger.error('Password reset error:', error);
+      setError('Error sending reset email. Please try again.');
       throw error;
     }
   };
@@ -176,7 +182,8 @@ export const AuthProvider = ({ children }) => {
         return null;
       }
     } catch (error) {
-      setError('Error getting user data: ' + error.message);
+      logger.error('Get user data error:', error);
+      setError('Error loading user data. Please try again.');
       throw error;
     }
   };
@@ -189,6 +196,7 @@ export const AuthProvider = ({ children }) => {
       // Validate there is a user and a valid displayName
       if (!currentUser) throw new Error('No logged in user');
       if (!displayName.trim()) throw new Error('Name cannot be empty');
+      if (hasProfanity(displayName)) throw new Error('Please choose an appropriate name');
 
       // Update displayName in Firebase Auth
       await updateProfile(currentUser, { displayName });
@@ -204,7 +212,8 @@ export const AuthProvider = ({ children }) => {
 
       return true;
     } catch (error) {
-      setError('Error updating name: ' + error.message);
+      logger.error('Update name error:', error);
+      setError('Error updating name. Please try again.');
       throw error;
     }
   };
@@ -235,7 +244,8 @@ export const AuthProvider = ({ children }) => {
 
       return photoURL;
     } catch (error) {
-      setError('Error updating profile photo: ' + error.message);
+      logger.error('Update photo error:', error);
+      setError('Error updating profile photo. Please try again.');
       throw error;
     }
   };
@@ -279,7 +289,8 @@ export const AuthProvider = ({ children }) => {
   
       return true;
     } catch (error) {
-      setError('Error removing profile photo: ' + error.message);
+      logger.error('Remove photo error:', error);
+      setError('Error removing profile photo. Please try again.');
       throw error;
     }
   };
@@ -311,7 +322,7 @@ export const AuthProvider = ({ children }) => {
             setProfilePhotoURL(photoURL);
           } else {
             // It might be an old Storage URL that no longer exists, use default
-            console.warn('Profile photo URL appears to be invalid, using default logo');
+            logger.warn('Profile photo URL appears to be invalid, using default logo');
             setProfilePhotoURL(getDefaultProfilePhoto());
           }
         } else {
@@ -319,20 +330,20 @@ export const AuthProvider = ({ children }) => {
         }
       } catch (firestoreError) {
         // If there's any Firestore error, use default photo
-        console.warn('Error accessing Firestore for profile photo, using default:', firestoreError);
+        logger.warn('Error accessing Firestore for profile photo, using default:', firestoreError);
         setProfilePhotoURL(getDefaultProfilePhoto());
       }
     } catch (error) {
       // If there's any Storage-related error, use default photo
-      console.error('Error loading profile photo, using default logo:', error);
+      logger.error('Error loading profile photo, using default logo:', error);
 
       // Log => specific error for debugging
       if (error.code === 'storage/unauthorized') {
-        console.error('Storage access unauthorized. Check Storage rules.');
+        logger.error('Storage access unauthorized. Check Storage rules.');
       } else if (error.code === 'storage/object-not-found') {
-        console.warn('Profile photo file not found in Storage, using default logo.');
+        logger.warn('Profile photo file not found in Storage, using default logo.');
       } else if (error.message && error.message.includes('Missing or insufficient permissions')) {
-        console.warn('Storage permissions issue. Using default profile photo.');
+        logger.warn('Storage permissions issue. Using default profile photo.');
       }
 
       // Always set to default photo on error to prevent blocking => app

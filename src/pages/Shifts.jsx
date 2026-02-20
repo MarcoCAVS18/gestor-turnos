@@ -18,6 +18,7 @@ import { generateShiftDetails } from '../utils/shiftDetailsUtils';
 import Flex from '../components/ui/Flex';
 
 import LoadingSpinner from '../components/ui/LoadingSpinner/LoadingSpinner';
+import logger from '../utils/logger';
 
 const WEEKS_PER_PAGE = 4;
 
@@ -56,7 +57,7 @@ const Shifts = () => {
         await deleteShift(shift.id);
       }
     } catch (error) {
-      console.error('Error deleting shift:', error);
+      logger.error('Error deleting shift:', error);
     }
   };
 

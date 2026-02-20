@@ -6,6 +6,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import ConfirmDeleteProfilePhotoModal from '../../modals/ConfirmDeleteProfilePhotoModal';
+import logger from '../../../utils/logger';
 
 const ProfilePhotoSection = ({ className }) => {
   const { profilePhotoURL, updateProfilePhoto, removeProfilePhoto } = useAuth();
@@ -35,7 +36,7 @@ const ProfilePhotoSection = ({ className }) => {
 
       await updateProfilePhoto(file);
     } catch (error) {
-      console.error('Error al subir la foto: ' + error.message);
+      logger.error('Error al subir la foto: ' + error.message);
     } finally {
       setUploading(false);
       window.dispatchEvent(new CustomEvent('profile-photo-loading-end'));
@@ -59,7 +60,7 @@ const ProfilePhotoSection = ({ className }) => {
       await removeProfilePhoto();
       setShowConfirmModal(false); // Close modal on success
     } catch (error) {
-      console.error('Error al eliminar la foto: ' + error.message);
+      logger.error('Error al eliminar la foto: ' + error.message);
     } finally {
       setLoading(false);
       window.dispatchEvent(new CustomEvent('profile-photo-loading-end'));

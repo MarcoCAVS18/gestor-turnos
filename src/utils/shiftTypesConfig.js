@@ -1,6 +1,7 @@
 // src/utils/shiftTypesConfig.js
 
 import { Sun, Sunset, Moon, Calendar, Truck, Clock } from 'lucide-react';
+import logger from './logger';
 
 export const getShiftTypesConfig = (thematicColors) => ({
   day: {
@@ -79,7 +80,7 @@ export const getAvailableShiftTypes = (shiftsByDate, shiftRanges, thematicColors
     });
   } catch (error) {
     // If cannot import, return basic types
-    console.warn('Could not determine shift types dynamically:', error);
+    logger.warn('Could not determine shift types dynamically:', error);
     return [
       { id: 'all', label: 'All types', icon: Clock, color: '#6B7280' },
       ...Object.values(allShiftTypes)

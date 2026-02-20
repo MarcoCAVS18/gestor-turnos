@@ -29,6 +29,7 @@ import LiveModeActiveModal from '../components/modals/liveMode/LiveModeActiveMod
 
 import Flex from '../components/ui/Flex';
 import { useLiveMode } from '../hooks/useLiveMode';
+import logger from '../utils/logger';
 
 const Dashboard = () => {
   const { loading, calculatePayment, shiftRanges, settings, isPremium, premium } = useApp();
@@ -45,7 +46,7 @@ const Dashboard = () => {
   // Preload export resources when component mounts
   useEffect(() => {
     preloadExportResources().catch(err => {
-      console.warn('Could not preload export resources:', err);
+      logger.warn('Could not preload export resources:', err);
     });
   }, []);
 
@@ -86,7 +87,7 @@ const Dashboard = () => {
         exportOptions
       );
     } catch (error) {
-      console.error('Export error:', error);
+      logger.error('Export error:', error);
       // Export error - silently handled in UI
     }
   };

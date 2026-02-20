@@ -360,17 +360,31 @@ const FeedbackSection = ({ colors }) => {
                   </h3>
                 </div>
 
-                {/* Pending review notice */}
-                {isPending && (
-                  <div className="flex items-center gap-2 mb-3 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-                    <Clock3 size={13} className="text-amber-500 flex-shrink-0" />
-                    <span className="text-xs text-amber-700 dark:text-amber-400">
-                      Your review is pending approval and will be visible soon.
-                    </span>
+                {/* Pending review - centered view with clock icon */}
+                {isPending ? (
+                  <div className="flex-1 flex flex-col items-center justify-center text-center gap-4">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
+                      className="w-16 h-16 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: `${colors.primary}15` }}
+                    >
+                      <Clock3 size={32} style={{ color: colors.primary }} />
+                    </motion.div>
+                    <div className="space-y-1.5">
+                      <h4 className="text-base font-semibold" style={{ color: colors.text }}>
+                        Your feedback is under review
+                      </h4>
+                      <p className="text-sm leading-relaxed max-w-xs mx-auto" style={{ color: colors.textSecondary }}>
+                        It will be published within approximately 24 hours.
+                      </p>
+                    </div>
+                    <p className="text-xs leading-relaxed max-w-xs mx-auto" style={{ color: colors.textSecondary, opacity: 0.7 }}>
+                      Thank you so much for helping me improve the app!
+                    </p>
                   </div>
-                )}
-
-                {reviews.length > 0 ? (
+                ) : reviews.length > 0 ? (
                   <div className="flex-1 flex flex-col relative">
                     {/* Time ago - top right, outside carousel */}
                     {reviews[currentReview] && (

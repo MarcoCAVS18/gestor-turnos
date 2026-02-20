@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { useShare } from './useShare';
 import { useDeleteManager } from './useDeleteManager';
+import logger from '../utils/logger';
 
 export const useWorks = () => {
   const {
@@ -34,7 +35,7 @@ export const useWorks = () => {
         await deleteJob(work.id);
       }
     } catch (error) {
-      console.error('Error deleting work:', error);
+      logger.error('Error deleting work:', error);
     }
   };
 
@@ -45,7 +46,7 @@ export const useWorks = () => {
     try {
       await shareWork(work);
     } catch (error) {
-      console.error('Error sharing work:', error);
+      logger.error('Error sharing work:', error);
     }
   };
 

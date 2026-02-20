@@ -16,6 +16,8 @@
 .env
 .env.example
 .env.local
+.env.development
+.env.production
 functions/.env*
 .env.development.local
 .env.test.local

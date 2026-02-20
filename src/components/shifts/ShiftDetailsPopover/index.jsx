@@ -3,6 +3,7 @@
 import React from 'react';
 import Popover from '../../ui/Popover';
 import { formatCurrency } from '../../../utils/currency';
+import logger from '../../../utils/logger';
 
 const ShiftDetailsPopover = ({ 
   shift, 
@@ -24,7 +25,7 @@ const ShiftDetailsPopover = ({
       const minutes = String(date.getMinutes()).padStart(2, '0');
       return `${day}/${month}/${year} ${hours}:${minutes}`;
     } catch (e) {
-      console.error("Error formatting creation date:", e);
+      logger.error("Error formatting creation date:", e);
       return '';
     }
   };

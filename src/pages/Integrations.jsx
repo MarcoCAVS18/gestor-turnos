@@ -23,6 +23,7 @@ import { useConfigContext } from '../contexts/ConfigContext';
 import { useAuth } from '../contexts/AuthContext';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
+import logger from '../utils/logger';
 
 // Cloud Functions base URL - always use production URL
 // Local emulator would be: http://localhost:5001/gestionturnos-7ec99/us-central1
@@ -119,7 +120,7 @@ const Integrations = () => {
       },
       (error) => {
         clearTimeout(timeout);
-        console.error('Error listening to user:', error);
+        logger.error('Error listening to user:', error);
         setGoogleCalendar(prev => ({ ...prev, loading: false, initialLoading: false }));
       }
     );
@@ -209,7 +210,7 @@ const Integrations = () => {
       // Redirect to Google OAuth
       window.location.href = url;
     } catch (error) {
-      console.error('Error connecting Google Calendar:', error);
+      logger.error('Error connecting Google Calendar:', error);
       setGoogleCalendar(prev => ({
         ...prev,
         loading: false,
@@ -245,7 +246,7 @@ const Integrations = () => {
         loading: false
       }));
     } catch (error) {
-      console.error('Error disconnecting Google Calendar:', error);
+      logger.error('Error disconnecting Google Calendar:', error);
       setGoogleCalendar(prev => ({
         ...prev,
         loading: false,
@@ -300,7 +301,7 @@ const Integrations = () => {
         setGoogleCalendar(prev => ({ ...prev, syncMessage: null }));
       }, 3000);
     } catch (error) {
-      console.error('Error syncing shifts:', error);
+      logger.error('Error syncing shifts:', error);
       setGoogleCalendar(prev => ({
         ...prev,
         syncing: false,

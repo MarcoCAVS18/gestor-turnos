@@ -9,6 +9,7 @@ import { createSubscription, isStripeTestMode } from '../../services/stripeServi
 import { AUD_PRICE } from '../../services/currencyService';
 import Button from '../ui/Button';
 import { CARD_NUMBER_OPTIONS, CARD_EXPIRY_OPTIONS, CARD_CVC_OPTIONS, COUNTRIES } from './constants';
+import logger from '../../utils/logger';
 
 const PaymentForm = ({ onSuccess }) => {
   const stripe = useStripe();
@@ -69,7 +70,7 @@ const PaymentForm = ({ onSuccess }) => {
       });
 
       if (pmError) {
-        console.error('[Premium] Payment method error:', pmError);
+        logger.error('[Premium] Payment method error:', pmError);
         throw new Error(pmError.message);
       }
 
@@ -93,16 +94,16 @@ const PaymentForm = ({ onSuccess }) => {
       if (successStatuses.includes(result.status)) {
         onSuccess();
       } else if (result.status === 'requires_action') {
-        console.warn('[Premium] Unexpected requires_action status after stripeService');
+        logger.warn('[Premium] Unexpected requires_action status after stripeService');
         onSuccess();
       } else if (result.error) {
         throw new Error(result.error);
       } else {
-        console.error('[Premium] Unexpected result status:', result.status, result);
+        logger.error('[Premium] Unexpected result status:', result.status, result);
         throw new Error(`Payment processing failed (${result.status || 'unknown'}). Please try again.`);
       }
     } catch (err) {
-      console.error('[Premium] Payment error:', err);
+      logger.error('[Premium] Payment error:', err);
       setError(err.message || 'An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);

@@ -5,6 +5,7 @@ import { generateExcelReport } from './excel/ExcelExporter';
 import { generatePDFReport } from './pdf/PDFExporter';
 import { generatePNGReport } from './png/PNGExporter';
 import { preloadLogos } from './utils/LogoLoader';
+import logger from '../../utils/logger';
 
 /**
  * Main Export Service
@@ -25,7 +26,7 @@ export class ExportService {
       await preloadLogos();
       this.isInitialized = true;
     } catch (error) {
-      console.warn('Could not preload logos:', error);
+      logger.warn('Could not preload logos:', error);
       // Continue anyway
       this.isInitialized = true;
     }
@@ -116,7 +117,7 @@ export class ExportService {
       });
       return true;
     } catch (error) {
-      console.error('Error exporting Excel:', error);
+      logger.error('Error exporting Excel:', error);
       throw error;
     }
   }
@@ -139,7 +140,7 @@ export class ExportService {
       });
       return true;
     } catch (error) {
-      console.error('Error exporting PDF:', error);
+      logger.error('Error exporting PDF:', error);
       throw error;
     }
   }
@@ -161,7 +162,7 @@ export class ExportService {
       });
       return true;
     } catch (error) {
-      console.error('Error exporting PNG:', error);
+      logger.error('Error exporting PNG:', error);
       throw error;
     }
   }

@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { formatRelativeDate } from '../utils/time';
 import { calculateShiftHours } from '../utils/time/timeCalculations';
+import logger from '../utils/logger';
 
 export const useDashboardStats = () => {
   const { works, deliveryWork, shifts, deliveryShifts, calculatePayment } = useApp();
@@ -176,7 +177,7 @@ export const useDashboardStats = () => {
       };
 
     } catch (error) {
-      console.error('Error calculating statistics:', error);
+      logger.error('Error calculating statistics:', error);
       return defaultStats;
     }
   }, [works, deliveryWork, shifts, deliveryShifts, calculatePayment, timeRanges]);

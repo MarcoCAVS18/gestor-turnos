@@ -26,6 +26,7 @@ import { useLiveMode } from '../../../../hooks/useLiveMode';
 import { useConfigContext } from '../../../../contexts/ConfigContext';
 import { generateColorVariations } from '../../../../utils/colorUtils';
 import LiveModeFinishConfirmModal from '../LiveModeFinishConfirmModal';
+import logger from '../../../../utils/logger';
 
 const RATE_TYPE_CONFIG = {
   day: { icon: Sun, label: 'Day', color: '#10B981' },
@@ -83,7 +84,7 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
         await pauseSession();
       }
     } catch (err) {
-      console.error('Error toggling pause:', err);
+      logger.error('Error toggling pause:', err);
     } finally {
       setActionLoading(null);
     }
@@ -117,7 +118,7 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
       setFrozenSessionData(null);
       onClose();
     } catch (err) {
-      console.error('Error finishing session:', err);
+      logger.error('Error finishing session:', err);
     } finally {
       setActionLoading(null);
     }

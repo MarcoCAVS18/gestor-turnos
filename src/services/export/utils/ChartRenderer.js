@@ -12,6 +12,7 @@ import {
   MonthlyTrendChart,
   KPIRow
 } from './ExportCharts';
+import logger from '../../../utils/logger';
 
 /**
  * Renders a React component to an image (base64 PNG)
@@ -148,7 +149,7 @@ export const generateAllCharts = async (chartData, colors = {}) => {
       );
     }
   } catch (error) {
-    console.error('Error generating charts:', error);
+    logger.error('Error generating charts:', error);
   }
 
   return charts;
@@ -232,7 +233,7 @@ export const generateChartsWithProgress = async (chartData, colors = {}, onProgr
         { width: config.width, height: config.height }
       );
     } catch (error) {
-      console.warn(`Failed to generate ${config.key} chart:`, error);
+      logger.warn(`Failed to generate ${config.key} chart:`, error);
     }
   }
 

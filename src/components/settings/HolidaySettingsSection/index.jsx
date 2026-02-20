@@ -12,6 +12,7 @@ import {
   detectUserLocation,
   isCountrySupported
 } from '../../../services/holidayService';
+import logger from '../../../utils/logger';
 
 const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   const {
@@ -95,7 +96,7 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
         }, 2000);
 
       } catch (error) {
-        console.error('Error saving holiday settings:', error);
+        logger.error('Error saving holiday settings:', error);
         onError?.('Error saving settings: ' + error.message);
       } finally {
         setLoading(false);
@@ -122,7 +123,7 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
         onError?.('Could not detect a supported country from your location');
       }
     } catch (error) {
-      console.error('Error detecting location:', error);
+      logger.error('Error detecting location:', error);
       onError?.('Error accessing location. Please check browser permissions.');
     } finally {
       setDetectingLocation(false);

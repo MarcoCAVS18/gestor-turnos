@@ -6,9 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#EC4899" />
     <meta name="description" content="Track your work shifts, calculate earnings automatically, and analyze your income with detailed statistics. Free shift management app for workers in Australia and worldwide." />
-    <meta name="keywords" content="shift management, work scheduler, earnings tracker, shift planner, time tracking, payroll calculator, work hours" />
+    <meta name="keywords" content="shift management, work scheduler, earnings tracker, shift planner, time tracking, payroll calculator, work hours, roster app, shift calculator, delivery earnings, work schedule app, pay tracker" />
     <meta name="author" content="Orary" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website" />
@@ -18,8 +18,11 @@
     <meta property="og:url" content="https://orary.app" />
     <meta property="og:site_name" content="Orary" />
 
+    <!-- Open Graph locale -->
+    <meta property="og:locale" content="en_US" />
+
     <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Orary - Shift Management & Earnings Tracker" />
     <meta name="twitter:description" content="Track your work shifts, calculate earnings automatically, and analyze your income." />
     <meta name="twitter:image" content="%PUBLIC_URL%/assets/images/logo2.png" />
@@ -28,21 +31,49 @@
     <link rel="canonical" href="https://orary.app" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
-    <!-- Structured Data -->
+    <!-- Structured Data - WebApplication -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
+      "@type": "WebApplication",
       "name": "Orary",
-      "description": "Shift management and earnings tracking application for workers",
+      "alternateName": "Orary Shift Tracker",
+      "description": "Track your work shifts, calculate earnings automatically, and analyze your income with detailed statistics. Free shift management app for workers worldwide.",
       "url": "https://orary.app",
-      "applicationCategory": "ProductivityApplication",
-      "operatingSystem": "Web",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "softwareVersion": "2.0",
       "offers": {
-        "@type": "Offer",
-        "price": "0",
+        "@type": "AggregateOffer",
+        "lowPrice": "0",
+        "highPrice": "2.99",
         "priceCurrency": "AUD",
-        "description": "Free with optional premium tier at $2.99 AUD/month"
+        "offerCount": "2",
+        "offers": [
+          {
+            "@type": "Offer",
+            "name": "Free Plan",
+            "price": "0",
+            "priceCurrency": "AUD",
+            "description": "Core shift tracking and earnings calculation features"
+          },
+          {
+            "@type": "Offer",
+            "name": "Premium Plan",
+            "price": "2.99",
+            "priceCurrency": "AUD",
+            "description": "Advanced analytics, exports, and premium features"
+          }
+        ]
+      },
+      "featureList": "Shift scheduling, Earnings calculation, Delivery tracking, Statistics dashboard, PDF/Excel export, Live mode timer",
+      "screenshot": "https://orary.app/assets/images/logo2.png",
+      "image": "https://orary.app/assets/images/logo2.png",
+      "author": {
+        "@type": "Organization",
+        "name": "Orary",
+        "url": "https://orary.app"
       }
     }
     </script>

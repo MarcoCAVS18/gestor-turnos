@@ -4,8 +4,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
+import { useConfigContext } from './contexts/ConfigContext';
 import ProtectedLayout from './components/layout/ProtectedLayout/ProtectedLayout';
 import LoadingSpinner from './components/ui/LoadingSpinner/LoadingSpinner';
+import Loader from './components/other/Loader';
 import Flex from './components/ui/Flex';
 import useModalManager from './hooks/useModalManager';
 import './styles/animation.css';
@@ -62,6 +64,7 @@ const PublicRoute = ({ children }) => {
 
 // General app layout
 function AppLayout() {
+  const { loading: configLoading } = useConfigContext();
   const {
     isWorkModalOpen,
     isShiftModalOpen,
@@ -74,6 +77,15 @@ function AppLayout() {
     closeWorkModal,
     closeShiftModal,
   } = useModalManager();
+
+  // Show loader until user config (color, theme) is fully loaded
+  if (configLoading) {
+    return (
+      <div className="min-h-screen h-screen bg-gray-100 dark:bg-slate-950 flex items-center justify-center">
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen h-screen bg-gray-100 dark:bg-slate-950 font-poppins transition-colors duration-300 md:flex">

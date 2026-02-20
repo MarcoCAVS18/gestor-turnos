@@ -48,14 +48,21 @@ service cloud.firestore {
       allow delete: if request.auth != null && resource.data.sharedBy == request.auth.uid;
     }
 
-    // Feedback collection - public read, authenticated write (own doc only)
+    // Feedback collection - own read/write only
     match /feedback/{feedbackId} {
-      allow read: if request.auth != null;
+      allow read: if request.auth != null && feedbackId == request.auth.uid;
       allow create, update: if request.auth != null && feedbackId == request.auth.uid;
       allow delete: if false;
     }
 
-    // Stats collection - REMOVED (not used in codebase)
-    // If you need stats in the future, re-add with proper rules
+    // OAuth state tokens - server-managed (Cloud Functions only)
+    match /oauth_states/{stateId} {
+      allow read, write: if false;
+    }
+
+    // Processed webhook events - server-managed (Cloud Functions only)
+    match /processed_webhooks/{eventId} {
+      allow read, write: if false;
+    }
   }
 }

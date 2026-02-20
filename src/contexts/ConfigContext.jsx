@@ -5,11 +5,22 @@ import { useAuth } from './AuthContext';
 import * as firebaseService from '../services/firebaseService';
 import { generateColorVariations } from '../utils/colorUtils';
 import { DELIVERY_PLATFORMS_AUSTRALIA } from '../constants/delivery';
+import logger from '../utils/logger';
 
 const ConfigContext = createContext();
 
 export const useConfigContext = () => {
   return useContext(ConfigContext);
+};
+
+// Read cached value from localStorage (sync, no flash)
+const getCachedValue = (key, fallback) => {
+  try {
+    const cached = localStorage.getItem(key);
+    return cached ? JSON.parse(cached) : fallback;
+  } catch {
+    return fallback;
+  }
 };
 
 export const ConfigProvider = ({ children }) => {
@@ -18,7 +29,7 @@ export const ConfigProvider = ({ children }) => {
   // Personalization preference and configuration states
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [primaryColor, setPrimaryColor] = useState('#EC4899');
+  const [primaryColor, setPrimaryColor] = useState(() => getCachedValue('orary_primaryColor', '#EC4899'));
   const [userEmoji, setUserEmoji] = useState('😊');
   const [defaultDiscount, setDefaultDiscount] = useState(15);
   const [taxesPerWork, setTaxesPerWork] = useState({});
@@ -26,7 +37,7 @@ export const ConfigProvider = ({ children }) => {
   const [deliveryEnabled, setDeliveryEnabled] = useState(false);
   const [smokoEnabled, setSmokoEnabled] = useState(false);
   const [smokoMinutes, setSmokoMinutes] = useState(30);
-  const [themeMode, setThemeMode] = useState('light'); // 'light' or 'dark'
+  const [themeMode, setThemeMode] = useState(() => getCachedValue('orary_themeMode', 'light'));
   const [deliveryPlatforms, setDeliveryPlatforms] = useState(DELIVERY_PLATFORMS_AUSTRALIA);
   const [defaultDeliveryPlatform, setDefaultDeliveryPlatform] = useState(null);
   const [shiftRanges, setShiftRanges] = useState({
@@ -65,7 +76,7 @@ export const ConfigProvider = ({ children }) => {
             setUseAutoHolidays(settings.useAutoHolidays || false);
           }
         } catch (err) {
-          console.error("Error loading user configuration:", err);
+          logger.error("Error loading user configuration:", err);
           setError("Error loading configuration: " + err.message);
         } finally {
           setLoading(false);
@@ -76,6 +87,15 @@ export const ConfigProvider = ({ children }) => {
     };
     loadConfig();
   }, [currentUser]);
+
+  // Cache primaryColor and themeMode in localStorage to prevent flash on reload
+  useEffect(() => {
+    try { localStorage.setItem('orary_primaryColor', JSON.stringify(primaryColor)); } catch {}
+  }, [primaryColor]);
+
+  useEffect(() => {
+    try { localStorage.setItem('orary_themeMode', JSON.stringify(themeMode)); } catch {}
+  }, [themeMode]);
 
   // Apply theme mode to document body
   useEffect(() => {
@@ -114,7 +134,7 @@ export const ConfigProvider = ({ children }) => {
 
       await firebaseService.savePreferences(currentUser.uid, preferences);
     } catch (err) {
-      console.error("Error saving preferences:", err);
+      logger.error("Error saving preferences:", err);
       setError("Error saving preferences: " + err.message);
       // TODO: Implement rollback logic for optimistic update
       throw err;

@@ -1,14 +1,22 @@
-# https://www.robotstxt.org/robotstxt.html
+# Orary - Shift Management & Earnings Tracker
+# https://orary.app
+
+# Allow all crawlers to access all app pages
 User-agent: *
 Allow: /
-Disallow: /dashboard
-Disallow: /works
-Disallow: /shifts
-Disallow: /statistics
-Disallow: /calendar
-Disallow: /settings
-Disallow: /integrations
-Disallow: /delete-account
-Disallow: /clear-everything
 
+# Block only internal/utility routes
+Disallow: /error
+Disallow: /static/js/
+Disallow: /static/css/
+
+# Crawl-delay for non-Google bots
+Crawl-delay: 2
+
+# Googlebot-specific (Google ignores Crawl-delay)
+User-agent: Googlebot
+Allow: /
+Disallow: /error
+
+# Sitemap location
 Sitemap: https://orary.app/sitemap.xml

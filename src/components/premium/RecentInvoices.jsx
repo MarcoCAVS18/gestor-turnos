@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { PREMIUM_COLORS } from '../../contexts/PremiumContext';
 import { getInvoices } from '../../services/stripeService';
 import Card from '../ui/Card';
+import logger from '../../utils/logger';
 
 const RecentInvoices = () => {
   const [invoices, setInvoices] = useState([]);
@@ -17,7 +18,7 @@ const RecentInvoices = () => {
         const data = await getInvoices();
         setInvoices(data);
       } catch (err) {
-        console.error('Failed to load invoices:', err);
+        logger.error('Failed to load invoices:', err);
       } finally {
         setLoading(false);
       }

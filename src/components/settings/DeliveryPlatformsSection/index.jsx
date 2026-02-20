@@ -6,6 +6,7 @@ import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Flex from '../../ui/Flex';
+import logger from '../../../utils/logger';
 
 const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
   const { deliveryPlatforms, defaultDeliveryPlatform, savePreferences } = useApp();
@@ -21,7 +22,7 @@ const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
       await savePreferences({ defaultDeliveryPlatform: newDefault });
       onSuccess?.(newDefault ? 'Default platform set' : 'Default platform cleared');
     } catch (error) {
-      console.error('Error setting default platform:', error);
+      logger.error('Error setting default platform:', error);
       onError?.('Error setting default platform');
     }
   };
@@ -43,7 +44,7 @@ const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
       setIsAddingNew(false);
       onSuccess?.('Platform added');
     } catch (error) {
-      console.error('Error adding platform:', error);
+      logger.error('Error adding platform:', error);
       onError?.('Error adding platform');
     }
   };
@@ -61,7 +62,7 @@ const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
       await savePreferences(updates);
       onSuccess?.('Platform removed');
     } catch (error) {
-      console.error('Error removing platform:', error);
+      logger.error('Error removing platform:', error);
       onError?.('Error removing platform');
     }
   };

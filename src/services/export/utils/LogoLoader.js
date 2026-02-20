@@ -5,6 +5,8 @@
  * Loads SVG logo and converts to base64 with customizable colors
  */
 
+import logger from '../../../utils/logger';
+
 // Cache for loaded logos
 const logoCache = new Map();
 
@@ -38,7 +40,7 @@ export const loadLogoWithColor = async (color = '#EC4899') => {
     logoCache.set(cacheKey, base64);
     return base64;
   } catch (error) {
-    console.warn('Could not load logo:', error);
+    logger.warn('Could not load logo:', error);
     return null;
   }
 };
@@ -110,7 +112,7 @@ export const loadLogoForPDF = async (color = '#EC4899') => {
     logoCache.set(cacheKey, result);
     return result;
   } catch (error) {
-    console.warn('Could not load logo for PDF:', error);
+    logger.warn('Could not load logo for PDF:', error);
     return null;
   }
 };
@@ -138,7 +140,7 @@ export const loadLogoForExcel = async (color = '#4472C4') => {
     logoCache.set(cacheKey, result);
     return result;
   } catch (error) {
-    console.warn('Could not load logo for Excel:', error);
+    logger.warn('Could not load logo for Excel:', error);
     return null;
   }
 };

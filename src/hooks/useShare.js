@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react';
 import { shareWorkNative } from '../services/shareService';
 import { useAuth } from '../contexts/AuthContext';
+import logger from '../utils/logger';
 
 export const useShare = () => {
   const { currentUser } = useAuth();
@@ -11,7 +12,7 @@ export const useShare = () => {
 
   const shareWork = useCallback(async (work) => {
     if (!currentUser || !work) {
-      console.error('Cannot share: missing currentUser or work', { currentUser: !!currentUser, work: !!work });
+      logger.error('Cannot share: missing currentUser or work', { currentUser: !!currentUser, work: !!work });
       return;
     }
 
@@ -22,7 +23,7 @@ export const useShare = () => {
       await shareWorkNative(currentUser.uid, work);
 
     } catch (error) {
-      console.error('Error sharing work:', error);
+      logger.error('Error sharing work:', error);
       setMessages(prev => ({
         ...prev,
         [work.id]: `Error sharing work: ${error.message}`
