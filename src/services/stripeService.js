@@ -79,38 +79,47 @@ export const createSubscription = async (paymentMethodId, email, name, address) 
       throw new Error(data.error || 'Failed to create subscription');
     }
 
-    // If payment requires 3D Secure authentication
-    if (data.status === 'requires_action') {
-      const stripe = await stripePromise;
-      const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret);
+    const stripe = await stripePromise;
+
+    // Trial with pending setup intent — save card for when trial converts to paid
+    if (data.setupClientSecret) {
+      const { error } = await stripe.confirmCardSetup(data.setupClientSecret, {
+        payment_method: paymentMethodId,
+      });
+      if (error) {
+        logger.error('[Stripe] Card setup error:', error);
+        throw new Error(error.message);
+      }
+      return { status: 'trial', trialEnd: data.trialEnd, subscriptionId: data.subscriptionId };
+    }
+
+    // Trial without setup intent (card already attached to customer)
+    if (data.status === 'trial') {
+      return { status: 'trial', trialEnd: data.trialEnd, subscriptionId: data.subscriptionId };
+    }
+
+    // Normal payment — ALWAYS confirm explicitly so:
+    // 1. The first invoice is actually charged
+    // 2. The card is authorized for future off-session renewals
+    if (data.clientSecret) {
+      const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
+        payment_method: paymentMethodId,
+      });
 
       if (error) {
+        logger.error('[Stripe] Payment confirmation error:', error);
         throw new Error(error.message);
       }
 
-      // Payment confirmed - handle various success states
       if (paymentIntent.status === 'succeeded' || paymentIntent.status === 'processing') {
-        return {
-          status: 'success',
-          subscriptionId: data.subscriptionId,
-          message: 'Subscription created successfully!',
-        };
+        return { status: 'success', subscriptionId: data.subscriptionId };
       }
 
-      // If still requires action or other status, return with appropriate status
-      return {
-        status: paymentIntent.status === 'succeeded' ? 'success' : paymentIntent.status,
-        subscriptionId: data.subscriptionId,
-      };
+      throw new Error(`Payment failed: ${paymentIntent.status}`);
     }
 
-    if (!data.status) {
-      if (data.subscriptionId) {
-        return { ...data, status: 'success' };
-      }
-    }
-
-    return data;
+    // Fallback for edge cases (e.g., status: 'success' with no clientSecret)
+    return { status: data.status || 'success', subscriptionId: data.subscriptionId };
   } catch (error) {
     logger.error('[Stripe] Error creating subscription:', error);
     throw error;

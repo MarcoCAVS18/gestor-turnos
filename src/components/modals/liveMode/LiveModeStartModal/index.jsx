@@ -275,12 +275,25 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20"
+                className="space-y-2"
               >
-                <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
-                <span className="text-sm text-white/80">
-                  <span className="font-semibold text-white">{remaining}</span> session{remaining !== 1 ? 's' : ''} remaining this month
-                </span>
+                <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
+                  <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
+                  <span className="text-sm text-white/80">
+                    <span className="font-semibold text-white">{remaining}</span> session{remaining !== 1 ? 's' : ''} remaining this month
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    onClose();
+                    navigate('/premium');
+                  }}
+                  className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-xl text-xs font-semibold transition-colors hover:opacity-90"
+                  style={{ backgroundColor: `${PREMIUM_COLORS.gold}25`, border: `1px solid ${PREMIUM_COLORS.gold}40`, color: 'white' }}
+                >
+                  <Crown size={11} style={{ color: PREMIUM_COLORS.gold }} />
+                  15-day free trial — Start unlimited sessions
+                </button>
               </motion.div>
             )}
 
@@ -305,7 +318,7 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
                   <div>
                     <p className="font-semibold text-white">Monthly limit reached</p>
                     <p className="text-sm text-white/80 mt-0.5">
-                      Upgrade to Premium for unlimited Live Mode sessions
+                      Start your <strong>15-day free trial</strong> for unlimited Live Mode sessions
                     </p>
                   </div>
                 </div>
@@ -319,7 +332,7 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
                   icon={ArrowRight}
                   iconPosition="right"
                 >
-                  Upgrade to Premium
+                  Start Free Trial
                 </Button>
               </motion.div>
             )}

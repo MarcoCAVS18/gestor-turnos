@@ -150,7 +150,7 @@ const PremiumModal = ({ isOpen, onClose }) => {
                     className="text-sm"
                     style={{ color: `${PREMIUM_COLORS.text}cc` }}
                   >
-                    Upgrade to Premium and get access to all features without limits
+                    Start your <strong>15-day free trial</strong> — no charge until trial ends.
                   </p>
                 </div>
 
@@ -231,7 +231,7 @@ const PremiumModal = ({ isOpen, onClose }) => {
                   icon={ArrowRight}
                   iconPosition="right"
                 >
-                  Let's Go!
+                  Start Free Trial
                 </Button>
               </div>
             </div>

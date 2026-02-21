@@ -25,6 +25,9 @@ const HeroCard = ({ localPrice }) => (
       >
         <Crown size={28} style={{ color: PREMIUM_COLORS.gold }} />
       </div>
+      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-2 text-xs font-semibold" style={{ backgroundColor: 'rgba(255,255,255,0.25)', color: PREMIUM_COLORS.text }}>
+        15-day free trial
+      </div>
       <h1 className="text-2xl font-bold mb-1" style={{ color: PREMIUM_COLORS.text }}>
         Unlock Premium
       </h1>
@@ -53,7 +56,7 @@ const HeroCard = ({ localPrice }) => (
         )}
       </div>
       <p className="text-sm" style={{ color: `${PREMIUM_COLORS.text}cc` }}>
-        Get unlimited access to all features
+        Try free for 15 days, then ${AUD_PRICE} AUD/month
       </p>
     </div>
   </div>

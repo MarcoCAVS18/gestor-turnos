@@ -16,7 +16,7 @@ import BenefitsRow from './BenefitsRow';
 import PaymentForm from './PaymentForm';
 import SecurityCard from './SecurityCard';
 
-const FreeUserView = ({ onPaymentSuccess }) => {
+const FreeUserView = ({ onPaymentSuccess, onProcessingStart }) => {
   const { currentUser, profilePhotoURL } = useAuth();
   const { holidayCountry } = useApp();
   const isMobile = useIsMobile();
@@ -34,7 +34,7 @@ const FreeUserView = ({ onPaymentSuccess }) => {
         <CreditCard size={24} style={{ color: PREMIUM_COLORS.primary }} />
         <h2 className="text-lg font-semibold text-gray-900">Payment Details</h2>
       </div>
-      <PaymentForm onSuccess={onPaymentSuccess} />
+      <PaymentForm onSuccess={onPaymentSuccess} onProcessingStart={onProcessingStart} />
     </Card>
   );
 

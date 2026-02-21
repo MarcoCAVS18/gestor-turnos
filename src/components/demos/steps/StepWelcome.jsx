@@ -57,7 +57,7 @@ const StepWelcome = ({ isMobile }) => {
 
         <div className="relative bg-white rounded-full p-5 shadow-xl shadow-pink-500/10 border border-pink-100/50">
           <img
-            src="/assets/images/logo2.png"
+            src="/assets/images/logo3.png"
             alt="Orary"
             className="w-20 h-20 object-contain"
           />

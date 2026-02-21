@@ -11,7 +11,7 @@ import Button from '../ui/Button';
 import { CARD_NUMBER_OPTIONS, CARD_EXPIRY_OPTIONS, CARD_CVC_OPTIONS, COUNTRIES } from './constants';
 import logger from '../../utils/logger';
 
-const PaymentForm = ({ onSuccess }) => {
+const PaymentForm = ({ onSuccess, onProcessingStart }) => {
   const stripe = useStripe();
   const elements = useElements();
   const { currentUser } = useAuth();
@@ -46,6 +46,7 @@ const PaymentForm = ({ onSuccess }) => {
 
     setLoading(true);
     setError(null);
+    onProcessingStart?.();
 
     try {
       const cardNumberElement = elements.getElement(CardNumberElement);
@@ -90,12 +91,9 @@ const PaymentForm = ({ onSuccess }) => {
         throw new Error('No response from payment server. Please try again.');
       }
 
-      const successStatuses = ['success', 'active', 'succeeded', 'processing'];
+      const successStatuses = ['success', 'active', 'succeeded', 'processing', 'trial'];
       if (successStatuses.includes(result.status)) {
-        onSuccess();
-      } else if (result.status === 'requires_action') {
-        logger.warn('[Premium] Unexpected requires_action status after stripeService');
-        onSuccess();
+        onSuccess(result);
       } else if (result.error) {
         throw new Error(result.error);
       } else {
@@ -264,14 +262,14 @@ const PaymentForm = ({ onSuccess }) => {
         </div>
       )}
 
-      {/* Invoice Notice */}
+      {/* Trial Notice */}
       <div
         className="flex items-start gap-3 p-3 rounded-lg mb-4"
         style={{ backgroundColor: `${PREMIUM_COLORS.lighter}50` }}
       >
         <Receipt size={18} style={{ color: PREMIUM_COLORS.primary }} className="flex-shrink-0 mt-0.5" />
         <p className="text-sm text-gray-600">
-          We'll send you an invoice receipt to <strong>{currentUser?.email}</strong> after each payment.
+          Your card won't be charged for 15 days. After your trial, ${AUD_PRICE} AUD/month is billed to <strong>{currentUser?.email}</strong>. Cancel anytime.
         </p>
       </div>
 
@@ -282,10 +280,10 @@ const PaymentForm = ({ onSuccess }) => {
         className="w-full"
         size="lg"
         loading={loading}
-        loadingText="Processing..."
+        loadingText="Setting up trial..."
         disabled={!stripe || loading}
       >
-        Subscribe - ${AUD_PRICE} AUD/month
+        Start 15-Day Free Trial
       </Button>
 
       {/* Security Note */}

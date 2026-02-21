@@ -188,6 +188,9 @@ export const cancelSubscription = async (userId) => {
   }
 };
 
+// Statuses that allow premium access (user keeps access until their period ends)
+const PREMIUM_VALID_STATUSES = ['active', 'cancelling', 'trialing'];
+
 /**
  * Check if premium subscription is still valid
  */
@@ -195,19 +198,28 @@ export const checkSubscriptionValidity = async (userId) => {
   try {
     const subscription = await getSubscription(userId);
 
-    if (!subscription.isPremium || subscription.status !== 'active') {
+    if (!subscription.isPremium || !PREMIUM_VALID_STATUSES.includes(subscription.status)) {
       return false;
     }
 
-    // Check expiry date
+    // For trialing: check trialEnd date
+    if (subscription.status === 'trialing') {
+      if (subscription.trialEnd) {
+        const trialEnd = subscription.trialEnd.toDate
+          ? subscription.trialEnd.toDate()
+          : new Date(subscription.trialEnd);
+        if (trialEnd < new Date()) return false;
+      }
+      return true;
+    }
+
+    // For active/cancelling: check expiryDate
     if (subscription.expiryDate) {
       const expiryDate = subscription.expiryDate.toDate
         ? subscription.expiryDate.toDate()
         : new Date(subscription.expiryDate);
 
       if (expiryDate < new Date()) {
-        // Subscription expired, update status
-        await cancelSubscription(userId);
         return false;
       }
     }
@@ -295,14 +307,22 @@ export const canUseLiveMode = async (userId) => {
     // Single read for both subscription and usage
     const { subscription, liveModeUsage } = await loadSubscriptionAndUsage(userId);
 
-    // Check premium validity
-    const isValid = subscription.isPremium && subscription.status === 'active' &&
-      (!subscription.expiryDate || (() => {
-        const exp = subscription.expiryDate?.toDate
-          ? subscription.expiryDate.toDate()
-          : new Date(subscription.expiryDate);
-        return exp >= new Date();
-      })());
+    // Check premium validity: active, cancelling (access until period end), or trialing
+    const now = new Date();
+    const isValid = subscription.isPremium && PREMIUM_VALID_STATUSES.includes(subscription.status) && (() => {
+      if (subscription.status === 'trialing') {
+        if (!subscription.trialEnd) return true;
+        const trialEnd = subscription.trialEnd?.toDate
+          ? subscription.trialEnd.toDate()
+          : new Date(subscription.trialEnd);
+        return trialEnd >= now;
+      }
+      if (!subscription.expiryDate) return true;
+      const exp = subscription.expiryDate?.toDate
+        ? subscription.expiryDate.toDate()
+        : new Date(subscription.expiryDate);
+      return exp >= now;
+    })();
 
     if (isValid) {
       return { canUse: true, remaining: Infinity, isPremium: true };
