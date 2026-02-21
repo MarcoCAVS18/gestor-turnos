@@ -320,7 +320,19 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
       className={className}
       decorativeIcon={Timer}
     >
-      <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between gap-6 h-full">
+      <div className="relative z-10 p-6 sm:p-8 h-full">
+        {/* Trial badge — top-right corner, free users only */}
+        {!liveModeUsage?.isPremium && (
+          <button
+            onClick={(e) => { e.stopPropagation(); navigate('/premium'); }}
+            className="absolute top-4 right-4 px-2.5 py-1 rounded-full text-xs font-semibold hover:opacity-80 transition-opacity"
+            style={{ backgroundColor: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.35)', color: 'white' }}
+          >
+            15-day free trial
+          </button>
+        )}
+
+        <div className="flex items-center justify-between gap-6 h-full">
         {/* Left Side: Text Content */}
         <div className="flex-1 space-y-4">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 border border-white/20 backdrop-blur-md text-white text-xs font-bold tracking-wide uppercase shadow-sm">
@@ -422,6 +434,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
             <Clock size={24} className="text-white" />
           </div>
         </div>
+      </div>
       </div>
     </BaseAnnouncementCard>
   );
