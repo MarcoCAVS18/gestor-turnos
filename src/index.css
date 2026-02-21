@@ -13,6 +13,8 @@
 
 body {
   font-family: 'Poppins', sans-serif;
+  /* Prevent white flash when scrolling past content on mobile */
+  background-color: #f3f4f6; /* Tailwind gray-100 — matches the app background */
 }
 
 @layer base {
