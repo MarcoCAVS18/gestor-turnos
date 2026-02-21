@@ -95,22 +95,26 @@ const generateShareToken = () => {
 };
 ```
 
-### 4. CSP allows `unsafe-inline` and `unsafe-eval`
+### 4. CSP allows `unsafe-inline` and `unsafe-eval` — FULLY FIXED
 
-**File:** `firebase.json:62`
+**File:** `firebase.json:62`, `.env`
 
+~~These directives significantly weaken Content Security Policy and allow XSS attack vectors.~~
+
+**Fix applied:**
+1. **`unsafe-eval` removed** — React production builds don't need it
+2. **`unsafe-inline` removed from `script-src`** — Set `INLINE_RUNTIME_CHUNK=false` in `.env` to prevent CRA from inlining the webpack runtime chunk. Build output verified: zero inline JavaScript.
+3. **`unsafe-inline` kept in `style-src` only** — Required by Framer Motion (animation inline styles) and React `style` props. Not an XSS vector since CSS injection cannot execute JavaScript.
+4. **Added `form-action 'self' https://js.stripe.com`** — Restricts form submissions
+5. **Added `upgrade-insecure-requests`** — Forces HTTPS for all subresources
+
+**Current CSP (clean):**
 ```
-script-src 'self' ... 'unsafe-inline' 'unsafe-eval';
+script-src 'self' https://js.stripe.com https://*.firebaseapp.com https://*.googleapis.com https://apis.google.com;
+style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
 ```
 
-These directives significantly weaken Content Security Policy and allow XSS attack vectors.
-
-**Why they're there:** React's build system injects inline scripts, and some dependencies may use eval-like patterns.
-
-**Fix (post-launch, requires testing):**
-- Replace `'unsafe-inline'` with nonce-based CSP or `'strict-dynamic'`
-- Remove `'unsafe-eval'` — test thoroughly; React production builds generally don't need it
-- This requires a CRA eject or CRACO config to inject CSP nonces at build time
+**Note:** `<script type="application/ld+json">` (structured data) is NOT affected by CSP `script-src` — it's data, not executable JavaScript.
 
 ### 5. Console statements in production (89+ occurrences)
 
@@ -290,7 +294,7 @@ Stripe webhooks don't track processed event IDs, so a retried webhook could proc
 | No XSS (dangerouslySetInnerHTML) | PASS | Not used in any component |
 | robots.txt | PASS | All protected routes disallowed |
 | `functions/.env` files | PASS | Properly gitignored, not tracked |
-| isPremiumTest flag | PASS | Gated behind `NODE_ENV === 'development'` |
+| isPremiumTest flag | PASS | Fully removed from codebase — premium only via Cloud Functions |
 | Firebase config | PASS | Environment variables only, no hardcoded fallbacks |
 
 ---
@@ -302,7 +306,7 @@ Stripe webhooks don't track processed event IDs, so a retried webhook could proc
 | 1 | `.env.development` tracked in git | Removed from tracking (`git rm --cached`), added to `.gitignore` |
 | 2 | Share feature broken (missing `isPublic`) | Added `isPublic: true` to `shareService.js` share data |
 | 3 | Share tokens not cryptographically secure | Replaced `Math.random()` with `crypto.getRandomValues()` (48-char hex) |
-| 4 | CSP allows `unsafe-eval` | Removed `unsafe-eval` from CSP in `firebase.json` |
+| 4 | CSP allows `unsafe-inline` + `unsafe-eval` | Removed both from `script-src`. Set `INLINE_RUNTIME_CHUNK=false`, added `form-action`, `upgrade-insecure-requests` |
 | 5 | 89+ console.* statements in production | Created `src/utils/logger.js`, replaced all 46 files with environment-aware logger |
 | 6 | Feedback collection readable by all users | Restricted reads to own document in `firestore.rules` |
 | 7 | displayName not sanitized | Added `hasProfanity()` check in Register.jsx and AuthContext.jsx |

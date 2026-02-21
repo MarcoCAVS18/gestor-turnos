@@ -699,34 +699,68 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         });
       }
 
-      // Create subscription with automatic invoicing
+      // Check if this user has already used a free trial (survives "Clear Everything")
+      const trialRecord = await db.collection('trial_records').doc(userId).get();
+      const trialAlreadyUsed = trialRecord.exists;
+
+      // Create subscription — only offer trial to first-time users
       const subscription = await stripe.subscriptions.create({
         customer: customerId,
         items: [{ price: priceId }],
+        ...(trialAlreadyUsed ? {} : { trial_period_days: 15 }),
         payment_behavior: 'default_incomplete',
         payment_settings: {
           payment_method_types: ['card'],
           save_default_payment_method: 'on_subscription',
         },
-        expand: ['latest_invoice.payment_intent'],
+        expand: ['latest_invoice.payment_intent', 'pending_setup_intent'],
         metadata: {
           firebaseUserId: userId,
         },
       });
 
+      const now = Timestamp.now();
+
+      // Handle trial subscriptions — no payment needed yet, card saved for later
+      if (subscription.status === 'trialing') {
+        const trialEnd = subscription.trial_end;
+        const trialEndMillis = trialEnd ? trialEnd * 1000 : Date.now() + (15 * 24 * 60 * 60 * 1000);
+
+        // Record trial usage so it persists across "Clear Everything"
+        await db.collection('trial_records').doc(userId).set({
+          usedAt: FieldValue.serverTimestamp(),
+          stripeSubscriptionId: subscription.id,
+        });
+
+        await db.collection('users').doc(userId).update({
+          subscription: {
+            isPremium: true,
+            plan: 'premium',
+            status: 'trialing',
+            stripeCustomerId: customerId,
+            stripeSubscriptionId: subscription.id,
+            startDate: now,
+            trialEnd: Timestamp.fromMillis(trialEndMillis),
+            paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
+          },
+        });
+
+        return res.json({
+          status: 'trial',
+          trialEnd: trialEnd,
+          setupClientSecret: subscription.pending_setup_intent?.client_secret || null,
+          subscriptionId: subscription.id,
+        });
+      }
+
       const invoice = subscription.latest_invoice;
       const paymentIntent = invoice?.payment_intent;
 
-      // Check if paymentIntent exists
+      // Edge case: no payment intent for a non-trial subscription
       if (!paymentIntent) {
-        console.error('No payment intent found for subscription:', subscription.id);
-        // Subscription was created but no payment needed (could be trial, etc.)
-        // Still update Firestore as premium
-        const now = Timestamp.now();
-        // Safely calculate expiry date - default to 30 days from now if not available
+        console.error('No payment intent found for non-trial subscription:', subscription.id);
         const periodEnd = subscription.current_period_end;
         const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-        const expiryDate = Timestamp.fromMillis(expiryMillis);
 
         await db.collection('users').doc(userId).update({
           subscription: {
@@ -736,7 +770,7 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
             stripeCustomerId: customerId,
             stripeSubscriptionId: subscription.id,
             startDate: now,
-            expiryDate: expiryDate,
+            expiryDate: Timestamp.fromMillis(expiryMillis),
             paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
           },
         });
@@ -748,22 +782,11 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         });
       }
 
-      // If payment requires action (3D Secure, etc.)
-      if (paymentIntent.status === 'requires_action') {
-        return res.json({
-          status: 'requires_action',
-          clientSecret: paymentIntent.client_secret,
-          subscriptionId: subscription.id,
-        });
-      }
-
-      // Payment successful - update Firestore
+      // Fast path: update Firestore immediately if already succeeded
+      // The webhook (invoice.paid) will also update but may have a delay
       if (paymentIntent.status === 'succeeded') {
-        const now = Timestamp.now();
-        // Safely calculate expiry date - default to 30 days from now if not available
         const periodEnd = subscription.current_period_end;
         const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-        const expiryDate = Timestamp.fromMillis(expiryMillis);
 
         await db.collection('users').doc(userId).update({
           subscription: {
@@ -773,21 +796,16 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
             stripeCustomerId: customerId,
             stripeSubscriptionId: subscription.id,
             startDate: now,
-            expiryDate: expiryDate,
+            expiryDate: Timestamp.fromMillis(expiryMillis),
             paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
           },
         });
-
-        return res.json({
-          status: 'success',
-          subscriptionId: subscription.id,
-          message: 'Subscription created successfully! Invoice sent to your email.',
-        });
       }
 
-      // Payment pending or failed
-      res.json({
-        status: paymentIntent.status || 'unknown',
+      // ALWAYS return clientSecret so the frontend explicitly confirms the payment.
+      // This ensures the card is properly authorized for future off-session renewals.
+      return res.json({
+        clientSecret: paymentIntent.client_secret,
         subscriptionId: subscription.id,
       });
       } finally {
@@ -1089,6 +1107,54 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
       break;
     }
 
+    case 'customer.subscription.trial_will_end': {
+      // Fired 3 days before trial ends — flag user so UI can show a notice
+      const trialSub = event.data.object;
+      const trialCustomerId = trialSub.customer;
+
+      const trialUsersSnapshot = await db.collection('users')
+        .where('subscription.stripeCustomerId', '==', trialCustomerId)
+        .limit(1)
+        .get();
+
+      if (!trialUsersSnapshot.empty) {
+        const userDoc = trialUsersSnapshot.docs[0];
+        await userDoc.ref.update({
+          'subscription.trialEndingSoon': true,
+        });
+        console.log(`Trial ending soon for user ${userDoc.id}`);
+      }
+      break;
+    }
+
+    case 'customer.subscription.updated': {
+      // Handle trial → active transition (belt-and-suspenders; invoice.paid also covers this)
+      const updatedSub = event.data.object;
+      const prevStatus = event.data.previous_attributes?.status;
+
+      if (updatedSub.status === 'active' && prevStatus === 'trialing') {
+        const updatedCustomerId = updatedSub.customer;
+        const updatedUsersSnapshot = await db.collection('users')
+          .where('subscription.stripeCustomerId', '==', updatedCustomerId)
+          .limit(1)
+          .get();
+
+        if (!updatedUsersSnapshot.empty) {
+          const userDoc = updatedUsersSnapshot.docs[0];
+          const periodEnd = updatedSub.current_period_end;
+          const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
+          await userDoc.ref.update({
+            'subscription.status': 'active',
+            'subscription.expiryDate': Timestamp.fromMillis(expiryMillis),
+            'subscription.trialEnd': null,
+            'subscription.trialEndingSoon': null,
+          });
+          console.log(`Trial converted to active for user ${userDoc.id}`);
+        }
+      }
+      break;
+    }
+
     default:
       console.log(`Unhandled event type: ${event.type}`);
   }
@@ -1103,17 +1169,28 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
 });
 
 // ============================================
-// SCHEDULED CLEANUP - Expired Share Documents
+// CLEANUP - Expired Share Documents
 // ============================================
 
 /**
- * Runs daily at 3:00 AM UTC to delete expired shared_works documents.
+ * HTTP-triggered cleanup function for expired shared_works documents.
  * Shared works have a 48-hour expiration (expiresAt field).
+ *
+ * Secured with CRON_SECRET env variable — call from external cron service
+ * or Cloud Scheduler with header: Authorization: Bearer <CRON_SECRET>
+ *
+ * Example: curl -H "Authorization: Bearer YOUR_SECRET" https://...cloudfunctions.net/cleanExpiredShares
  */
-exports.cleanupExpiredShares = functions.pubsub
-  .schedule('every day 03:00')
-  .timeZone('UTC')
-  .onRun(async () => {
+exports.cleanExpiredShares = functions.https.onRequest(async (req, res) => {
+  // Verify cron secret
+  const cronSecret = process.env.CRON_SECRET;
+  const authHeader = req.headers.authorization;
+
+  if (!cronSecret || !authHeader || authHeader !== `Bearer ${cronSecret}`) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  try {
     const now = admin.firestore.Timestamp.now();
     const expiredQuery = db.collection('shared_works')
       .where('expiresAt', '<', now)
@@ -1130,11 +1207,14 @@ exports.cleanupExpiredShares = functions.pubsub
       await batch.commit();
       totalDeleted += snapshot.size;
 
-      // Check for more expired documents
       if (snapshot.size < 500) break;
       snapshot = await expiredQuery.get();
     }
 
     console.log(`Cleanup: deleted ${totalDeleted} expired shared works`);
-    return null;
-  });
+    res.json({ success: true, deleted: totalDeleted });
+  } catch (error) {
+    console.error('Cleanup error:', error.message);
+    res.status(500).json({ error: 'Cleanup failed' });
+  }
+});

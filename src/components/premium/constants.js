@@ -107,6 +107,7 @@ export const CONFETTI_COLORS = ['#FFD700', '#FFA500', '#FF6347', '#7B68EE', '#00
 // Status badge config
 export const STATUS_CONFIG = {
   active: { label: 'Active', color: 'bg-emerald-100 text-emerald-700' },
+  trialing: { label: 'Free Trial', color: 'bg-blue-100 text-blue-700' },
   cancelling: { label: 'Cancelling', color: 'bg-amber-100 text-amber-700' },
   past_due: { label: 'Past Due', color: 'bg-red-100 text-red-700' },
 };

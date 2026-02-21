@@ -91,5 +91,12 @@ service cloud.firestore {
     match /subscription_locks/{lockId} {
       allow read, write: if false;
     }
+
+    // Trial usage records - server-managed (Cloud Functions only)
+    // Persists across "Clear Everything" to prevent trial abuse.
+    // Client can NEVER read or write this collection.
+    match /trial_records/{userId} {
+      allow read, write: if false;
+    }
   }
 }

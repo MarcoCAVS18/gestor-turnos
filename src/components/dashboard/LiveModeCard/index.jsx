@@ -382,18 +382,18 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                 />
               </div>
 
-              {/* Upgrade hint when running low */}
-              {(liveModeUsage?.remaining ?? liveModeLimit) <= 2 && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate('/premium');
-                  }}
-                  className="text-xs text-white/80 hover:text-white underline underline-offset-2 transition-colors"
-                >
-                  Upgrade to Premium for unlimited →
-                </button>
-              )}
+              {/* Trial badge / upgrade hint */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate('/premium');
+                }}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-colors hover:opacity-90"
+                style={{ backgroundColor: `${PREMIUM_COLORS.gold}30`, border: `1px solid ${PREMIUM_COLORS.gold}50`, color: 'white' }}
+              >
+                <Crown size={11} style={{ color: PREMIUM_COLORS.gold }} />
+                15-day free trial available →
+              </button>
             </div>
           )}
 

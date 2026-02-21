@@ -71,7 +71,12 @@ export const PremiumProvider = ({ children }) => {
           await loadSubscriptionAndUsage(currentUser.uid);
 
         setSubscription(subscriptionData);
-        setIsPremium(subscriptionData?.isPremium && subscriptionData?.status === 'active');
+        // Grant premium access for active, cancelling (until period ends), and trialing statuses
+        const VALID_PREMIUM_STATUSES = ['active', 'cancelling', 'trialing'];
+        setIsPremium(
+          subscriptionData?.isPremium === true &&
+          VALID_PREMIUM_STATUSES.includes(subscriptionData?.status)
+        );
 
         setLiveModeUsage({
           monthlyCount: usageData.monthlyCount || 0,
