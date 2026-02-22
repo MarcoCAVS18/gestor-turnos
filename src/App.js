@@ -1,7 +1,7 @@
 // src/App.js
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
 import { useConfigContext } from './contexts/ConfigContext';

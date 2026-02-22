@@ -6,7 +6,6 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import AuthLayout from '../../components/layout/AuthLayout';
-import DemoModal from '../../components/demos/DemoModal';
 import GoogleIcon from '../../components/icons/GoogleIcon';
 import logger from '../../utils/logger';
 
@@ -172,8 +171,6 @@ const Login = () => {
           </button>
         </div>
       </AuthLayout>
-
-      <DemoModal />
     </>
   );
 };

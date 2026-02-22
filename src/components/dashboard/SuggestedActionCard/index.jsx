@@ -1,8 +1,8 @@
 // src/components/dashboard/SuggestedActionCard/index.jsx
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { ThumbsUp, X } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { generateColorVariations } from '../../../utils/colorUtils';
@@ -20,9 +20,13 @@ const SuggestedActionCard = ({ onClose, className }) => {
 
   const gradient = `linear-gradient(135deg, ${palette.lighter} 0%, ${colors.primary} 50%, ${palette.darker} 100%)`;
 
+  // Scroll-triggered like animation
+  const thumbRef = useRef(null);
+  const isInView = useInView(thumbRef, { once: true, amount: 0.5 });
+  const [hasPlayed, setHasPlayed] = useState(false);
+
   const handleClick = () => {
     navigate('/about#feedback');
-    // Scroll to feedback after navigation with delay for page render
     setTimeout(() => {
       const el = document.getElementById('feedback');
       if (el) {
@@ -34,6 +38,29 @@ const SuggestedActionCard = ({ onClose, className }) => {
   const handleClose = (e) => {
     e.stopPropagation();
     onClose?.();
+  };
+
+  // Animation phases:
+  // 1. Not in view yet → static tilted pose
+  // 2. Enters view → "like" bounce: tilt back, spring up, settle
+  // 3. After bounce completes → gentle continuous rocking
+  const getAnimate = () => {
+    if (!isInView && !hasPlayed) return { rotate: -12, scale: 1 };
+    if (isInView && !hasPlayed) return {
+      rotate: [-12, -40, 20, -28, 5, -12],
+      scale:  [1,   1.45, 1.2, 1.35, 1.05, 1],
+    };
+    return { rotate: [-12, -8, -12] };
+  };
+
+  const getTransition = () => {
+    if (!isInView && !hasPlayed) return {};
+    if (isInView && !hasPlayed) return {
+      duration: 0.85,
+      ease: 'easeOut',
+      onComplete: () => setHasPlayed(true),
+    };
+    return { duration: 3, repeat: Infinity, ease: 'easeInOut' };
   };
 
   return (
@@ -52,11 +79,12 @@ const SuggestedActionCard = ({ onClose, className }) => {
       </button>
 
       <div className="relative z-10 p-6 flex flex-col items-center justify-center text-center h-full min-h-[180px]">
-        {/* Rotated icon */}
+        {/* Like icon with scroll-triggered bounce */}
         <motion.div
-          initial={{ rotate: -12 }}
-          animate={{ rotate: [-12, -8, -12] }}
-          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+          ref={thumbRef}
+          initial={{ rotate: -12, scale: 1 }}
+          animate={getAnimate()}
+          transition={getTransition()}
           className="mb-4"
         >
           <ThumbsUp size={48} className="text-white" strokeWidth={1.5} />
