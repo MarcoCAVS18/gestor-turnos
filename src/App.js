@@ -19,6 +19,9 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import ScrollToTop from './components/layout/ScrollToTop/index.jsx';
 
+// Landing page
+import Landing from './pages/Landing';
+
 // Legal Pages
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import TermsOfService from './pages/legal/TermsOfService';
@@ -182,8 +185,8 @@ function App() {
         {/* Error Pages */}
         <Route path="/error" element={<ServerError />} />
 
-        {/* Redirections */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        {/* Landing page — public, replaces old redirect */}
+        <Route path="/" element={<Landing />} />
         <Route
           path="*"
           element={
