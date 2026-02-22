@@ -159,6 +159,10 @@ function App() {
           }
         />
 
+        {/* Public legal pages — no auth required (accessible to Google/crawlers) */}
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
+
         {/* Protected routes */}
         <Route element={<ProtectedLayout><AppLayout /></ProtectedLayout>}>
           <Route path="/dashboard" element={<Dashboard />} />
@@ -170,9 +174,7 @@ function App() {
           <Route path="/integrations" element={<Integrations />} />
           <Route path="/premium" element={<Premium />} />
           <Route path="/about" element={<About />} />
-          {/* Legal Pages */}
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsOfService />} />
+          {/* Legal Pages (also in settings) */}
           <Route path="/delete-account" element={<DeleteAccount />} />
           <Route path="/clear-everything" element={<ClearEverything />} />
         </Route>
