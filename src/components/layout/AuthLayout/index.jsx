@@ -2,6 +2,7 @@
 // Shared layout for all auth pages (Login, Register, ForgotPassword, ResetPassword)
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const AuthLayout = ({ children, title, subtitle }) => {
   return (
@@ -42,6 +43,16 @@ const AuthLayout = ({ children, title, subtitle }) => {
         {/* Form container */}
         <div className="bg-white rounded-xl p-5 md:p-6 w-full max-w-md shadow-2xl flex-shrink-0">
           {children}
+        </div>
+
+        {/* Legal footer */}
+        <div className="mt-4 flex-shrink-0 text-center">
+          <p className="text-white/60 text-xs">
+            By using Orary you agree to our{' '}
+            <Link to="/privacy" state={{ from: 'Login' }} className="text-white/90 underline hover:text-white">Privacy Policy</Link>
+            {' '}and{' '}
+            <Link to="/terms" state={{ from: 'Login' }} className="text-white/90 underline hover:text-white">Terms of Service</Link>
+          </p>
         </div>
       </div>
     </div>

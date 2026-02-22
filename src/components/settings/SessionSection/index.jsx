@@ -37,6 +37,7 @@ const SessionSection = ({ onError, className = '' }) => {
   const LinkItem = ({ to, icon: Icon, label }) => (
     <Link
       to={to}
+      state={{ from: 'Settings' }}
       className="flex items-center justify-between p-2 rounded-lg transition-colors text-gray-600 hover:bg-gray-50"
     >
       <div className="flex items-center gap-2">
@@ -84,6 +85,7 @@ const SessionSection = ({ onError, className = '' }) => {
           <div className="pt-1">
             <Link
               to="/delete-account"
+              state={{ from: 'Settings' }}
               className="flex items-center justify-center gap-2 p-2 rounded-lg transition-colors text-red-500 hover:bg-red-50"
             >
               <Trash2 size={16} />

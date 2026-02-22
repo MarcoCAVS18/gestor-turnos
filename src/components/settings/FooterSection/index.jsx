@@ -23,7 +23,7 @@ const FooterSection = () => {
           <span className="text-gray-300">•</span>
 
           <button
-            onClick={() => navigate('/terms')}
+            onClick={() => navigate('/terms', { state: { from: 'Settings' } })}
             className="hover:text-gray-800 transition-colors cursor-pointer whitespace-nowrap"
           >
             Terms
@@ -32,7 +32,7 @@ const FooterSection = () => {
           <span className="text-gray-300">•</span>
 
           <button
-            onClick={() => navigate('/privacy')}
+            onClick={() => navigate('/privacy', { state: { from: 'Settings' } })}
             className="hover:text-gray-800 transition-colors cursor-pointer whitespace-nowrap"
           >
             Privacy

@@ -1,12 +1,12 @@
 // src/pages/legal/PrivacyPolicy.jsx
 
 import BackLink from '../../components/ui/BackLink';
-import { Shield, CreditCard, Database, Lock, Globe, Cookie, Bell, Construction } from 'lucide-react';
+import { Shield, CreditCard, Database, Lock, Globe, Cookie, Bell } from 'lucide-react';
 
 const PrivacyPolicy = () => {
   return (
     <div className="px-4 py-6 space-y-6">
-      <BackLink to="/settings">Back to Settings</BackLink>
+      <BackLink back />
 
       <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b pb-4 gap-4">
         <div>
@@ -19,19 +19,6 @@ const PrivacyPolicy = () => {
           className="w-40 h-40 sm:w-48 sm:h-48 opacity-10"
           style={{ filter: 'grayscale(100%)' }}
         />
-      </div>
-
-      {/* Development Notice */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-        <div className="flex items-start gap-3">
-          <Construction className="text-blue-600 flex-shrink-0 mt-1" size={20} />
-          <div>
-            <p className="font-semibold text-blue-800">Application Under Development</p>
-            <p className="text-blue-700 text-sm mt-1">
-              Orary is currently in active development. This privacy policy may be updated as we add new features and services. We recommend reviewing this page periodically for any changes.
-            </p>
-          </div>
-        </div>
       </div>
 
       <div className="prose prose-lg text-gray-700">

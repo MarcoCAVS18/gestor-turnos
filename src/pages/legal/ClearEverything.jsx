@@ -56,7 +56,7 @@ const ClearEverything = () => {
 
   return (
     <div className="px-4 py-6 space-y-6">
-      <BackLink to="/settings">Back to Settings</BackLink>
+      <BackLink back />
 
       <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b pb-4 gap-4">
         <div>
