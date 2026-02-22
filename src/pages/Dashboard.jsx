@@ -26,6 +26,7 @@ import LiveModeCard from '../components/dashboard/LiveModeCard';
 import SuggestedActionCard from '../components/dashboard/SuggestedActionCard';
 import LiveModeStartModal from '../components/modals/liveMode/LiveModeStartModal';
 import LiveModeActiveModal from '../components/modals/liveMode/LiveModeActiveModal';
+import DemoModal from '../components/demos/DemoModal';
 
 import Flex from '../components/ui/Flex';
 import { useLiveMode } from '../hooks/useLiveMode';
@@ -238,6 +239,9 @@ const Dashboard = () => {
       <Flex variant="end">
         <FooterSection />
       </Flex>
+
+      {/* Welcome Demo — shown once after first login */}
+      <DemoModal />
 
       {/* Live Mode Modals */}
       <LiveModeStartModal
