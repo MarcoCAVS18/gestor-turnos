@@ -27,7 +27,7 @@ const SecurityCard = () => (
         </div>
       </div>
     </div>
-    <div className="mt-4 p-3 rounded-xl" style={{ backgroundColor: `${PREMIUM_COLORS.lighter}50` }}>
+    <div className="premium-bg-light mt-4 p-3 rounded-xl" style={{ backgroundColor: `${PREMIUM_COLORS.lighter}50` }}>
       <div className="flex items-center gap-2">
         <Receipt size={14} style={{ color: PREMIUM_COLORS.primary }} />
         <p className="text-xs text-gray-500">Invoice sent to your email after each payment</p>

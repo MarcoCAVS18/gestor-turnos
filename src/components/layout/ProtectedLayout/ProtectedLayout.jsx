@@ -10,7 +10,7 @@ import Flex from '../../ui/Flex';
 // NOTE: This component was copied from App.js.
 // For a future refactor, it could be moved to its own file inside /components/auth.
 const PrivateRoute = ({ children }) => {
-  const { currentUser, loading } = useAuth();
+  const { currentUser, loading, isLocked } = useAuth();
 
   if (loading) {
     return (
@@ -20,6 +20,7 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
+  if (currentUser && isLocked) return <Navigate to="/login" replace />;
   return currentUser ? children : <Navigate to="/login" replace />;
 };
 

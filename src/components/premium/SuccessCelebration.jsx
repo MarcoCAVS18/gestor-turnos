@@ -1,6 +1,6 @@
 // src/components/premium/SuccessCelebration.jsx
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Crown, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { PREMIUM_COLORS } from '../../contexts/PremiumContext';
@@ -34,8 +34,14 @@ const formatTrialEnd = (trialEnd) => {
   return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 };
 
-const SuccessCelebration = ({ isTrial = false, trialEnd = null }) => (
-  <>
+const SuccessCelebration = ({ isTrial = false, trialEnd = null }) => {
+  // Lock body scroll while celebration overlay is visible
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
+  }, []);
+
+  return (<>
     <div className="px-4 py-6 space-y-6 blur-sm pointer-events-none">
       <PageHeader title="Premium" subtitle="Unlock unlimited access to all features" icon={Crown} />
     </div>
@@ -124,7 +130,7 @@ const SuccessCelebration = ({ isTrial = false, trialEnd = null }) => (
         </div>
       </motion.div>
     </div>
-  </>
-);
+  </>);
+};
 
 export default SuccessCelebration;

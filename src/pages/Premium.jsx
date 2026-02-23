@@ -29,8 +29,11 @@ const PremiumContent = () => {
     setTimeout(() => window.location.reload(), 6000);
   };
 
+  // Called when payment errors AFTER the overlay is shown — return to form
+  const handlePaymentError = () => setPaymentState('idle');
+
   if (paymentState === 'processing') {
-    return <ProcessingPaymentOverlay />;
+    return <ProcessingPaymentOverlay onRetry={handlePaymentError} />;
   }
 
   if (paymentState === 'success') {
@@ -45,6 +48,7 @@ const PremiumContent = () => {
     <FreeUserView
       onPaymentSuccess={handlePaymentSuccess}
       onProcessingStart={handleProcessingStart}
+      onPaymentError={handlePaymentError}
     />
   );
 };

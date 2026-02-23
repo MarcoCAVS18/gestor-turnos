@@ -22,7 +22,7 @@ const SubscriptionStatusCard = ({ subscription }) => {
       </div>
 
       <div className="space-y-3">
-        <div className="flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: PREMIUM_COLORS.lighter }}>
+        <div className="premium-bg-light flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: PREMIUM_COLORS.lighter }}>
           <Crown size={20} style={{ color: PREMIUM_COLORS.gold }} />
           <div>
             <p className="font-medium text-gray-900">Premium Plan</p>

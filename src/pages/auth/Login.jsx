@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Fingerprint } from 'lucide-react';
+import { isBiometricAvailable, getStoredBiometricUid, verifyBiometric } from '../../services/biometricService';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import AuthLayout from '../../components/layout/AuthLayout';
@@ -10,7 +11,7 @@ import GoogleIcon from '../../components/icons/GoogleIcon';
 import logger from '../../utils/logger';
 
 const Login = () => {
-  const { login, loginWithGoogle } = useAuth();
+  const { login, loginWithGoogle, currentUser, unlockApp } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -21,6 +22,11 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [biometricLoading, setBiometricLoading] = useState(false);
+
+  // Check once at mount — requires active Firebase session so biometric can unlock the app
+  const [showBiometric] = useState(() => !!(currentUser && isBiometricAvailable()));
+  const [biometricUid] = useState(() => getStoredBiometricUid());
 
   const redirectTo = location.state?.redirectTo || '/dashboard';
 
@@ -51,6 +57,19 @@ const Login = () => {
     } catch (err) {
       setError('Incorrect email or password');
       setLoading(false);
+    }
+  };
+
+  const handleBiometricLogin = async () => {
+    setBiometricLoading(true);
+    setError('');
+    try {
+      await verifyBiometric(biometricUid);
+      unlockApp();
+      navigate('/dashboard');
+    } catch {
+      setError('Biometric verification failed. Try your password instead.');
+      setBiometricLoading(false);
     }
   };
 
@@ -160,6 +179,19 @@ const Login = () => {
         >
           Continue with Google
         </Button>
+
+        {showBiometric && (
+          <Button
+            onClick={handleBiometricLogin}
+            loading={biometricLoading}
+            variant="secondary"
+            className="w-full mb-3"
+            icon={Fingerprint}
+            iconPosition="left"
+          >
+            Continue with biometric
+          </Button>
+        )}
 
         <div className="text-center">
           <p className="text-gray-600 text-sm mb-1">Don't have an account?</p>

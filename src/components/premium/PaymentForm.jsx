@@ -11,7 +11,7 @@ import Button from '../ui/Button';
 import { CARD_NUMBER_OPTIONS, CARD_EXPIRY_OPTIONS, CARD_CVC_OPTIONS, COUNTRIES } from './constants';
 import logger from '../../utils/logger';
 
-const PaymentForm = ({ onSuccess, onProcessingStart }) => {
+const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
   const stripe = useStripe();
   const elements = useElements();
   const { currentUser } = useAuth();
@@ -46,7 +46,8 @@ const PaymentForm = ({ onSuccess, onProcessingStart }) => {
 
     setLoading(true);
     setError(null);
-    onProcessingStart?.();
+    // NOTE: do NOT call onProcessingStart here — it unmounts the Stripe Elements
+    // before createPaymentMethod can read the card data.
 
     try {
       const cardNumberElement = elements.getElement(CardNumberElement);
@@ -55,6 +56,7 @@ const PaymentForm = ({ onSuccess, onProcessingStart }) => {
         throw new Error('Card input not found. Please refresh and try again.');
       }
 
+      // Step 1: tokenize card while Elements are still mounted
       const { error: pmError, paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
         card: cardNumberElement,
@@ -74,6 +76,9 @@ const PaymentForm = ({ onSuccess, onProcessingStart }) => {
         logger.error('[Premium] Payment method error:', pmError);
         throw new Error(pmError.message);
       }
+
+      // Step 2: card tokenized — safe to switch to processing overlay now
+      onProcessingStart?.();
 
       const result = await createSubscription(
         paymentMethod.id,
@@ -103,6 +108,8 @@ const PaymentForm = ({ onSuccess, onProcessingStart }) => {
     } catch (err) {
       logger.error('[Premium] Payment error:', err);
       setError(err.message || 'An unexpected error occurred. Please try again.');
+      // Return to the form — overlay would stay visible forever without this
+      onPaymentError?.();
     } finally {
       setLoading(false);
     }

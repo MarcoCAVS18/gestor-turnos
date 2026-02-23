@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.jsx
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
@@ -16,6 +16,7 @@ import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { uploadProfilePhoto, deleteProfilePhoto, getDefaultProfilePhoto } from '../services/profilePhotoService';
 import { hasProfanity } from '../utils/profanityFilter';
 import logger from '../utils/logger';
+import { isBiometricEnabledOnDevice } from '../services/biometricService';
 
 // Create context
 const AuthContext = createContext();
@@ -32,6 +33,8 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState('');
   const [profilePhotoURL, setProfilePhotoURL] = useState(getDefaultProfilePhoto());
   const [resetAttempts, setResetAttempts] = useState({});
+  const [isLocked, setIsLocked] = useState(false);
+  const currentUserRef = useRef(null);
 
   // Register user
   const signup = async (email, password, displayName) => {
@@ -351,6 +354,23 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Keep ref in sync so the visibility handler can access the latest user
+  useEffect(() => { currentUserRef.current = currentUser; }, [currentUser]);
+
+  // Lock app when tab becomes visible again (if biometric is enabled on device)
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        const user = currentUserRef.current;
+        if (user && isBiometricEnabledOnDevice(user.uid)) {
+          setIsLocked(true);
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
+
   // Monitor authentication state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -367,6 +387,8 @@ export const AuthProvider = ({ children }) => {
     loading,
     error,
     profilePhotoURL,
+    isLocked,
+    unlockApp: () => setIsLocked(false),
     signup,
     login,
     loginWithGoogle,

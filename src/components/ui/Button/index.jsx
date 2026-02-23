@@ -39,7 +39,7 @@ const Button = ({
 
   const shouldAnimateIcon = animatedChevron || variant === 'ghost-animated';
 
-  const heightMap = { sm: '32px', md: '44px', lg: '52px' };
+  const heightMap = { sm: '2rem', md: '2.75rem', lg: '3.25rem' };
   const fontSizeClasses = { sm: 'text-xs', md: 'text-sm', lg: 'text-base' };
 
   const currentHeight = heightMap[size] || heightMap.md;
@@ -82,7 +82,7 @@ const Button = ({
     border: currentBorder,
     minWidth: collapsed ? currentHeight : 'auto',
     padding: collapsed ? 0 : (size === 'sm' ? '0 0.75rem' : '0 1rem'),
-    borderRadius: collapsed ? '9999px' : '12px',
+    borderRadius: collapsed ? '9999px' : '0.75rem',
     // Premium gradient styles (no animation - solid gradient)
     ...(isPremiumGradient && {
       background: `linear-gradient(
