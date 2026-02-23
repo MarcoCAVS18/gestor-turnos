@@ -68,7 +68,7 @@ const RecentInvoices = () => {
         </div>
         <div className="flex flex-col items-center py-6 text-center">
           <div
-            className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
+            className="premium-bg-light w-12 h-12 rounded-full flex items-center justify-center mb-3"
             style={{ backgroundColor: `${PREMIUM_COLORS.lighter}` }}
           >
             <FileText size={20} style={{ color: PREMIUM_COLORS.primary }} />
@@ -96,7 +96,7 @@ const RecentInvoices = () => {
             className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors group"
           >
             <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+              className="premium-bg-light w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
               style={{ backgroundColor: PREMIUM_COLORS.lighter }}
             >
               <Receipt size={18} style={{ color: PREMIUM_COLORS.primary }} />

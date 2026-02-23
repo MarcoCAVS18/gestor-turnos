@@ -28,8 +28,8 @@ const PaymentMethodCard = ({ subscription, totalInvested, onOpenBillingPortal, p
 
         {/* Total invested */}
         {totalInvested && (
-          <div className="flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: `${PREMIUM_COLORS.lighter}50` }}>
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: PREMIUM_COLORS.lighter }}>
+          <div className="premium-bg-light flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: `${PREMIUM_COLORS.lighter}50` }}>
+            <div className="premium-bg-light w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: PREMIUM_COLORS.lighter }}>
               <DollarSign size={20} style={{ color: PREMIUM_COLORS.gold }} />
             </div>
             <div>

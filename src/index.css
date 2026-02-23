@@ -17,6 +17,14 @@ body {
   background-color: #f3f4f6; /* Tailwind gray-100 — matches the app background */
 }
 
+/* Desktop-only scaling: 12px base makes everything ~75% of normal size.
+   Mobile keeps the browser default (16px) so responsive layout is unaffected. */
+@media (min-width: 1024px) {
+  html {
+    font-size: 12px;
+  }
+}
+
 @layer base {
   html {
     @apply font-poppins;
@@ -277,6 +285,10 @@ input[type="date"]:focus {
   background-color: var(--bg-tertiary) !important;
 }
 
+.dark .bg-gray-200 {
+  background-color: var(--border-secondary) !important;
+}
+
 /* Text Colors */
 .dark .text-gray-900,
 .dark .text-gray-800 {
@@ -304,6 +316,12 @@ input[type="date"]:focus {
 
 .dark .border-gray-300 {
   border-color: var(--border-secondary) !important;
+}
+
+/* Premium light backgrounds - replace cream (#FFF3CD) with dark gold tint in dark mode.
+   Uses !important to override inline styles. */
+.dark .premium-bg-light {
+  background-color: rgba(212, 160, 0, 0.15) !important;
 }
 
 /* Inputs in dark mode */

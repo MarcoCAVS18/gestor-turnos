@@ -21,7 +21,7 @@ const BenefitsRow = ({ isPremium = true }) => {
           className="flex items-center gap-2 p-3 bg-gray-50 rounded-xl"
         >
           <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+            className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0${isPremium ? ' premium-bg-light' : ''}`}
             style={{
               backgroundColor: isPremium
                 ? PREMIUM_COLORS.lighter

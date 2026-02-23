@@ -101,9 +101,10 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
             variant="outline"
             size="sm"
             className="w-full justify-center mt-1"
-            style={{ borderColor: `${colors.primary}30`, color: colors.primary }}
+            themeColor={colors.primary}
+            icon={ExternalLink}
+            iconPosition="left"
           >
-            <ExternalLink size={14} className="mr-1.5" />
             Open Billing Portal
           </Button>
         </motion.div>
