@@ -94,23 +94,21 @@ const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
       );
     }
 
-    // Obtener datos del mes anterior usando la nueva función centralizada
     const now = new Date();
     const previousMonthStats = calculateMonthlyStats(now.getFullYear(), now.getMonth() - 1);
 
-    // Calcular diferencias
-    const obtenerTextoComparacion = () => {
+    const getComparisonText = () => {
       if (previousMonthStats.shiftsCount === 0) {
-        return 'Tu primer mes registrado';
+        return 'Your first recorded month';
       }
 
-      const diferencia = monthlyProjection - previousMonthStats.totalEarnings;
-      const porcentaje = ((diferencia / previousMonthStats.totalEarnings) * 100).toFixed(1);
+      const diff = monthlyProjection - previousMonthStats.totalEarnings;
+      const percent = ((diff / previousMonthStats.totalEarnings) * 100).toFixed(1);
 
-      if (diferencia > 0) {
-        return `${formatCurrency(Math.abs(diferencia))} more than last month (+${porcentaje}%)`;
-      } else if (diferencia < 0) {
-        return `${formatCurrency(Math.abs(diferencia))} less than last month (-${Math.abs(porcentaje)}%)`;
+      if (diff > 0) {
+        return `${formatCurrency(Math.abs(diff))} more than last month (+${percent}%)`;
+      } else if (diff < 0) {
+        return `${formatCurrency(Math.abs(diff))} less than last month (-${Math.abs(percent)}%)`;
       } else {
         return 'Same as last month';
       }
@@ -124,7 +122,7 @@ const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
             If you keep this pace throughout the month
           </p>
           <p className="text-xs text-gray-500">
-            {obtenerTextoComparacion()}
+            {getComparisonText()}
           </p>
         </div>
 

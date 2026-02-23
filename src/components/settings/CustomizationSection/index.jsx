@@ -103,9 +103,12 @@ const CustomizationSection = () => {
       <div className="flex-1">
         <div className="space-y-4">
           {/* Light Mode Option */}
-          <button
+          <div
+            role="button"
+            tabIndex={0}
             onClick={() => changeTheme('light')}
-            className={`w-full p-4 rounded-xl border-2 transition-all text-left relative ${
+            onKeyDown={(e) => e.key === 'Enter' && changeTheme('light')}
+            className={`w-full p-4 rounded-xl border-2 transition-all text-left relative cursor-pointer ${
               themeMode === 'light'
                 ? 'border-current shadow-md'
                 : 'border-gray-200 dark:border-slate-600 hover:border-gray-300 dark:hover:border-slate-500'
@@ -133,13 +136,16 @@ const CustomizationSection = () => {
               )}
             </div>
             {themeMode === 'light' && <ColorRow />}
-          </button>
+          </div>
 
           {/* Dark Mode Option */}
           <div className="relative">
-            <button
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => changeTheme('dark')}
-              className={`w-full p-4 rounded-xl border-2 transition-all text-left relative overflow-hidden ${
+              onKeyDown={(e) => e.key === 'Enter' && changeTheme('dark')}
+              className={`w-full p-4 rounded-xl border-2 transition-all text-left relative overflow-hidden cursor-pointer ${
                 themeMode === 'dark'
                   ? 'border-current shadow-md bg-slate-800'
                   : 'border-gray-200 dark:border-slate-600 hover:border-gray-300 dark:hover:border-slate-500'
@@ -191,7 +197,7 @@ const CustomizationSection = () => {
                 )}
               </div>
               {themeMode === 'dark' && isPremium && <ColorRow />}
-            </button>
+            </div>
           </div>
 
           {/* Emoji selection */}

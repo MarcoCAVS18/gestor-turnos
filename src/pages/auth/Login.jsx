@@ -1,5 +1,5 @@
 // src/pages/auth/Login.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, Eye, EyeOff, Fingerprint } from 'lucide-react';
@@ -11,7 +11,7 @@ import GoogleIcon from '../../components/icons/GoogleIcon';
 import logger from '../../utils/logger';
 
 const Login = () => {
-  const { login, loginWithGoogle, currentUser, unlockApp } = useAuth();
+  const { login, loginWithGoogle, currentUser, unlockApp, isLocked } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,11 +24,26 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [biometricLoading, setBiometricLoading] = useState(false);
 
-  // Check once at mount — requires active Firebase session so biometric can unlock the app
-  const [showBiometric] = useState(() => !!(currentUser && isBiometricAvailable()));
+  // Show biometric button whenever credentials exist on this device.
+  // Normal flow: "Log out" with biometric enabled locks the app (session preserved),
+  // so currentUser is still set here and unlockApp() works correctly.
+  // Edge case: if the session truly expired, handleBiometricLogin shows a clear error.
+  const [showBiometric] = useState(() => isBiometricAvailable());
   const [biometricUid] = useState(() => getStoredBiometricUid());
 
   const redirectTo = location.state?.redirectTo || '/dashboard';
+
+  // Capture whether the user was already logged in when Login mounted.
+  // This distinguishes a Google redirect return (currentUser is null on mount,
+  // then becomes set) from a logout (currentUser is still set on mount briefly).
+  const wasAlreadyLoggedIn = useRef(currentUser != null);
+
+  // Auto-redirect after Google signInWithRedirect completes and Firebase restores the session
+  useEffect(() => {
+    if (!wasAlreadyLoggedIn.current && currentUser && !isLocked) {
+      navigate(redirectTo, { replace: true });
+    }
+  }, [currentUser, isLocked, navigate, redirectTo]);
 
   useEffect(() => {
     if (location.state && location.state.emailSent) {
@@ -65,6 +80,14 @@ const Login = () => {
     setError('');
     try {
       await verifyBiometric(biometricUid);
+      if (!currentUser) {
+        // The biometric credential is valid but the Firebase session is gone
+        // (only possible if the user force-signed-out or cleared browser data).
+        // Biometric cannot recreate a Firebase session — email/password needed.
+        setError('Please log in with your email or Google to continue.');
+        setBiometricLoading(false);
+        return;
+      }
       unlockApp();
       navigate('/dashboard');
     } catch {

@@ -65,7 +65,7 @@ const FavoriteWorksCard = ({ favoriteWorks }) => {
         </h3>
 
         <Button
-          onClick={() => navigate('/estadisticas')}
+          onClick={() => navigate('/statistics')}
           size="sm"
           variant="ghost"
           animatedChevron

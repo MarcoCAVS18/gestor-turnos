@@ -34,9 +34,9 @@ export const PIE_CHART_COLORS = [
 ];
 
 /**
- * Genera la configuración dinámica para los componentes de Recharts.
- * @param {object} thematicColors - Objeto de colores del tema (e.g., { primary, success, ... })
- * @returns {object} - Objeto de configuración para Recharts
+ * Generates dynamic configuration for Recharts components.
+ * @param {object} thematicColors - Theme colors object (e.g., { primary, success, ... })
+ * @returns {object} - Recharts configuration object
  */
 export const getRechartsConfig = (thematicColors) => {
   const colors = thematicColors || {};

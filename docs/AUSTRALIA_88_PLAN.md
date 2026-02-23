@@ -1,5 +1,25 @@
 # Australia 88 Days — Working Holiday Visa Tracker
 
+## Estado de Implementacion
+
+| Componente | Estado |
+|------------|--------|
+| `src/services/australia88Service.js` | ✅ Implementado |
+| `src/hooks/useAustralia88.js` | ✅ Implementado |
+| `src/index.css` — keyframe `au88-ticker` | ✅ Implementado |
+| `src/components/australia88/Australia88Ticker/index.jsx` | ✅ Implementado (reemplaza Australia88Bar) |
+| `src/pages/Dashboard.jsx` — ticker arriba de PageHeader | ✅ Implementado |
+| `src/services/firebaseService.js` — persistir `australia88Eligible` en `addJob` | ⏳ Pendiente |
+| `src/components/forms/work/WorkForm/index.jsx` — toggle checkbox | ⏳ Pendiente |
+| `src/contexts/ConfigContext.jsx` — `requestAustraliaGeodetection` | ⏳ Pendiente |
+| `src/components/stats/Australia88WeekCard/index.jsx` | ⏳ Pendiente |
+| `src/pages/Statistics.jsx` — agregar WeekCard | ⏳ Pendiente |
+| `src/components/settings/HolidaySettingsSection/index.jsx` — subtitulo | ⏳ Pendiente |
+
+> **Nota de diseno:** El `Australia88Bar` (banner fijo en Dashboard) fue reemplazado por el `Australia88Ticker`, un banner deslizante de texto que va encima del titulo de la pagina. El ticker muestra info de progreso de forma mas sutil. El `Australia88WeekCard` (flip card en Statistics) sigue pendiente.
+
+---
+
 ## Que es esta feature?
 
 Los usuarios con Working Holiday Visa en Australia necesitan acumular **88 dias** de trabajo calificado para extender el primer ano, y **176 dias** para el segundo. La app ya registra shifts (horas) y works (empleos). Esta feature agrega el tracking automatico de dias de visa basado en horas semanales trabajadas en empleos elegibles.
@@ -60,34 +80,35 @@ Usuario existente con holidayCountry = 'AU'
 ```
 src/
 ├── services/
-│   └── australia88Service.js          # Logica pura de calculo (sin React)
+│   └── australia88Service.js          ✅ Hecho — Logica pura de calculo (sin React)
 ├── hooks/
-│   └── useAustralia88.js              # Hook que conecta servicio + contextos
+│   └── useAustralia88.js              ✅ Hecho — Hook que conecta servicio + contextos
 └── components/
-    ├── dashboard/
-    │   └── Australia88Bar/
-    │       └── index.jsx              # Banner de progreso en Dashboard
+    ├── australia88/
+    │   └── Australia88Ticker/
+    │       └── index.jsx              ✅ Hecho — Ticker deslizante sobre Dashboard header
     └── stats/
         └── Australia88WeekCard/
-            └── index.jsx              # Flip card en Statistics
+            └── index.jsx              ⏳ Pendiente — Flip card en Statistics
 ```
 
 ### Archivos existentes a modificar
 
-| Archivo | Cambio |
-|---------|--------|
-| `src/services/firebaseService.js` | +3 lineas en `addJob` para persistir `australia88Eligible` |
-| `src/components/forms/work/WorkForm/index.jsx` | Toggle condicional + campo en formData |
-| `src/contexts/ConfigContext.jsx` | Nueva funcion `requestAustraliaGeodetection` |
-| `src/pages/Dashboard.jsx` | Agregar `Australia88Bar` + conectar `DemoModal.onComplete` |
-| `src/pages/Statistics.jsx` | Agregar `Australia88WeekCard` en columna derecha |
-| `src/components/settings/HolidaySettingsSection/index.jsx` | Subtitulo explicativo |
+| Archivo | Cambio | Estado |
+|---------|--------|--------|
+| `src/services/firebaseService.js` | +3 lineas en `addJob` para persistir `australia88Eligible` | ⏳ Pendiente |
+| `src/components/forms/work/WorkForm/index.jsx` | Toggle condicional + campo en formData | ⏳ Pendiente |
+| `src/contexts/ConfigContext.jsx` | Nueva funcion `requestAustraliaGeodetection` | ⏳ Pendiente |
+| `src/pages/Dashboard.jsx` | Ticker ya integrado; conectar `DemoModal.onComplete` a geolocalización | ⏳ Parcial (ticker ✅, DemoModal ⏳) |
+| `src/pages/Statistics.jsx` | Agregar `Australia88WeekCard` en columna derecha | ⏳ Pendiente |
+| `src/index.css` | Keyframe `au88-ticker` para la animacion del ticker | ✅ Hecho |
+| `src/components/settings/HolidaySettingsSection/index.jsx` | Subtitulo explicativo | ⏳ Pendiente |
 
 ---
 
 ## Detalle de Cada Componente
 
-### 1. `australia88Service.js` — Servicio Puro
+### 1. `australia88Service.js` — Servicio Puro ✅ IMPLEMENTADO
 
 ```javascript
 // Funciones exportadas:
@@ -102,7 +123,7 @@ calculateTotalVisaDays(shifts, works)   // → { totalDays, weeklyBreakdown, cur
 - `currentMilestone` es `88`, `176`, o `'complete'`
 - Usa `createSafeDate()` del utils existente para parsear fechas de Firebase
 
-### 2. `useAustralia88.js` — Hook React
+### 2. `useAustralia88.js` — Hook React ✅ IMPLEMENTADO
 
 ```javascript
 const {
@@ -120,36 +141,25 @@ const {
 - Si `!isAustraliaMode` retorna ceros inmediatamente (sin calculo)
 - `progressPercent` para el segundo hito (176) es relativo a los 88 dias adicionales (no 176 totales)
 
-### 3. `Australia88Bar` — Banner en Dashboard
+### 3. `Australia88Ticker` — Ticker deslizante en Dashboard ✅ IMPLEMENTADO
 
-Tres estados:
-
-**Estado A — holidayCountry no configurado:**
-```
-🦘  Activa Australia 88 → Settings > Ubicacion                    [X]
-```
-- Click en la barra navega a `/settings`
-
-**Estado B — Australia mode activo:**
-```
-🦘  Working Holiday Visa                             X / 88 dias  [X]
-████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░  (barra animada)
-Solo 8 dias para completar el Ano 1
-```
-
-**Estado C — holidayCountry seteado pero no es 'AU':**
-- No se renderiza
+> **Cambio de diseno:** Se implemento como ticker deslizante (`Australia88Ticker`) en lugar del banner fijo (`Australia88Bar`) del plan original. El ticker va **encima** del `<PageHeader />`.
 
 **Comportamiento:**
-- Dismissible por sesion via `sessionStorage` (key: `au88_bar_dismissed`)
+- Solo se renderiza cuando `isAustraliaMode === true`
+- Texto deslizante seamless (loop continuo sin saltos)
+- Muestra: total de dias acumulados, dias esta semana, proximo hito
+- Iconos de lucide-react (no emojis), en ingles
 - Colores: gradiente azul-verde (`#005A9C → #0073CF → #00843D`)
-- Animacion de entrada: `opacity + y: -8 → 0` via Framer Motion
-- Barra de progreso animada con `motion.div` de width 0 → X%
+- Animacion CSS pura via `@keyframes au88-ticker` en `src/index.css`
+- `width: max-content` en el div animado para `translateX(-50%)` correcto
+- Estructura plana con `React.Fragment` (sin wrapper divs) para loop uniforme
 
-**Ubicacion en Dashboard.jsx:**
-- Importar y colocar justo debajo de `<PageHeader />`, antes de los grids
+**Ubicacion:** `src/components/australia88/Australia88Ticker/index.jsx`
 
-### 4. `Australia88WeekCard` — Flip Card en Statistics
+**Archivo CSS:** `src/index.css` — keyframe `au88-ticker` (28s linear infinite)
+
+### 4. `Australia88WeekCard` — Flip Card en Statistics ⏳ PENDIENTE
 
 Usa el **mismo patron exacto de animacion que `WelcomeCard`**:
 - `AnimatePresence mode="wait"` con dos `motion.div`
@@ -183,7 +193,7 @@ Usa el **mismo patron exacto de animacion que `WelcomeCard`**:
 - Desktop: en la columna derecha (1/3), despues de `SmokoStatusCard`
 - Mobile: en el stack vertical, despues de los charts de la semana
 
-### 5. Toggle en WorkForm
+### 5. Toggle en WorkForm ⏳ PENDIENTE
 
 Solo visible cuando `isAustraliaMode === true`, despues del campo Description:
 
@@ -195,7 +205,7 @@ Solo visible cuando `isAustraliaMode === true`, despues del campo Description:
 - Checkbox nativo con `accentColor` del theme del usuario
 - Campo `australia88Eligible: boolean` en el formData (default: `false`)
 
-### 6. Geolocalizacion en ConfigContext
+### 6. Geolocalizacion en ConfigContext ⏳ PENDIENTE
 
 ```javascript
 const requestAustraliaGeodetection = async () => {
@@ -210,7 +220,7 @@ const requestAustraliaGeodetection = async () => {
 - `DemoModal` ya acepta el prop `onComplete` (actualmente no conectado)
 - API de bigdatacloud.net no requiere API key para nivel pais
 
-### 7. Subtitulo en HolidaySettingsSection
+### 7. Subtitulo en HolidaySettingsSection ⏳ PENDIENTE
 
 Agregar arriba del selector de pais:
 ```
@@ -267,39 +277,56 @@ ConfigContext.requestAustraliaGeodetection()
 
 ```
 Fase 1 — Base (sin dependencias entre si):
-  1. src/services/australia88Service.js
-  2. src/hooks/useAustralia88.js
+  1. src/services/australia88Service.js       ✅ HECHO
+  2. src/hooks/useAustralia88.js              ✅ HECHO
 
-Fase 2 — Data layer:
-  3. src/services/firebaseService.js (addJob)
-  4. src/components/forms/work/WorkForm/index.jsx
+Fase 2 — UI del ticker:
+  3. src/index.css (keyframe au88-ticker)     ✅ HECHO
+  4. src/components/australia88/
+       Australia88Ticker/index.jsx            ✅ HECHO
+  5. src/pages/Dashboard.jsx (ticker arriba
+       de PageHeader)                         ✅ HECHO
 
-Fase 3 — ConfigContext:
-  5. src/contexts/ConfigContext.jsx (requestAustraliaGeodetection)
+Fase 3 — Data layer (SIGUIENTE):
+  6. src/services/firebaseService.js (addJob) ⏳ PENDIENTE
+  7. src/components/forms/work/
+       WorkForm/index.jsx (toggle)            ⏳ PENDIENTE
 
-Fase 4 — UI (paralelo una vez que fase 1-3 este lista):
-  6. src/components/dashboard/Australia88Bar/index.jsx
-  7. src/pages/Dashboard.jsx (agregar bar + conectar DemoModal)
-  8. src/components/stats/Australia88WeekCard/index.jsx
-  9. src/pages/Statistics.jsx (agregar card)
- 10. src/components/settings/HolidaySettingsSection/index.jsx (subtitulo)
+Fase 4 — ConfigContext:
+  8. src/contexts/ConfigContext.jsx
+       (requestAustraliaGeodetection)         ⏳ PENDIENTE
+  9. src/pages/Dashboard.jsx
+       (conectar DemoModal.onComplete)        ⏳ PENDIENTE
+
+Fase 5 — Statistics card:
+ 10. src/components/stats/
+       Australia88WeekCard/index.jsx          ⏳ PENDIENTE
+ 11. src/pages/Statistics.jsx (agregar card) ⏳ PENDIENTE
+
+Fase 6 — Settings:
+ 12. src/components/settings/
+       HolidaySettingsSection/index.jsx      ⏳ PENDIENTE
 ```
 
 ---
 
 ## Checklist de Verificacion
 
-- [ ] `getVisaDaysFromWeeklyHours(35.25)` → 7
-- [ ] `getVisaDaysFromWeeklyHours(4)` → 1
-- [ ] `getVisaDaysFromWeeklyHours(3.9)` → 0
+### Servicio y Hook (ya implementados)
+- [x] `getVisaDaysFromWeeklyHours(35.25)` → 7
+- [x] `getVisaDaysFromWeeklyHours(4)` → 1
+- [x] `getVisaDaysFromWeeklyHours(3.9)` → 0
+- [x] Ticker visible cuando `holidayCountry === 'AU'`
+- [x] Ticker no visible cuando `holidayCountry !== 'AU'`
+- [x] Ticker animacion seamless sin saltos ni gaps
+
+### Pendientes (una vez implementados los modulos restantes)
 - [ ] Crear work con toggle activado → `australia88Eligible: true` en Firestore
 - [ ] Editar work → toggle refleja el valor guardado
-- [ ] Con `holidayCountry !== 'AU'`: toggle, bar y card NO se muestran
-- [ ] Con shifts de prueba en multiples semanas → suma correcta en bar y card
-- [ ] Dismiss la bar → navegar y volver → sigue dismissida
-- [ ] Nueva pestana → bar reaparece (sessionStorage limpia)
+- [ ] Con `holidayCountry !== 'AU'`: toggle y WeekCard NO se muestran
+- [ ] Con shifts de prueba en multiples semanas → suma correcta en ticker y WeekCard
 - [ ] Emular geolocalizacion Sydney en DevTools → `holidayCountry = 'AU'` se persiste en Firestore
-- [ ] Geolocalizacion denegada → bar muestra fallback CTA
+- [ ] Geolocalizacion denegada → sin crash, holidayCountry queda null
 - [ ] Con 88 dias exactos → milestone cambia a 176, progress vuelve a 0%
 - [ ] Con 176 dias → mensaje de felicitacion, progress 100%
 

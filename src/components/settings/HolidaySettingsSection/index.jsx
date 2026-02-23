@@ -1,7 +1,7 @@
 // src/components/settings/HolidaySettingsSection/index.jsx
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Calendar, MapPin, Loader } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { MapPin, Loader } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
@@ -96,7 +96,7 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
         }, 2000);
 
       } catch (error) {
-        logger.error('Error saving holiday settings:', error);
+        logger.error('Error saving location settings:', error);
         onError?.('Error saving settings: ' + error.message);
       } finally {
         setLoading(false);
@@ -118,7 +118,10 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
 
       if (location.country && isCountrySupported(location.country)) {
         setSelectedCountry(location.country);
-        onSuccess?.(`Location detected: ${location.country}`);
+        if (location.region) {
+          setSelectedRegion(location.region);
+        }
+        onSuccess?.(`Location detected: ${location.country}${location.region ? ` · ${location.region}` : ''}`);
       } else {
         onError?.('Could not detect a supported country from your location');
       }
@@ -131,8 +134,13 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   };
 
   return (
-    <SettingsSection icon={Calendar} title="Holiday Detection" className={className}>
+    <SettingsSection icon={MapPin} title="Location" className={className}>
       <div className="space-y-3">
+
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          Select your location to automatically detect public holidays and activate
+          Working Holiday Visa day tracking (Australia).
+        </p>
 
         {/* Location Button */}
         <Button

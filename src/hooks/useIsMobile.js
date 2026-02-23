@@ -3,14 +3,14 @@
 import { useState, useEffect } from 'react';
 
 /**
- * Hook personalizado para detectar si el dispositivo es móvil
+ * Custom hook to detect if the viewport is mobile-sized
  *
- * @param {number} breakpoint - Punto de corte en píxeles (default: 768)
- * @returns {boolean} - true si el ancho de la ventana es menor al breakpoint
+ * @param {number} breakpoint - Width breakpoint in pixels (default: 768)
+ * @returns {boolean} - true if window width is below the breakpoint
  *
  * @example
- * const isMobile = useIsMobile(); // usa 768px por defecto
- * const isSmallScreen = useIsMobile(640); // usa 640px como breakpoint
+ * const isMobile = useIsMobile(); // uses 768px by default
+ * const isSmallScreen = useIsMobile(640); // uses 640px as breakpoint
  */
 export const useIsMobile = (breakpoint = 768) => {
   const [isMobile, setIsMobile] = useState(false);

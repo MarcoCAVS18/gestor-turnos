@@ -1,5 +1,5 @@
 // src/components/modals/ConfirmActionModal/index.jsx
-// Modal reutilizable para acciones de confirmación
+// Reusable confirmation action modal
 
 import React, { useState, useEffect } from 'react';
 import BaseModal from '../base/BaseModal';

@@ -8,8 +8,6 @@ import { DELIVERY_PLATFORMS_AUSTRALIA } from '../constants/delivery';
 import { isHoliday } from './holidayService';
 import logger from '../utils/logger';
 
-
-
 /**
  * Calculates hours worked between a start and end time.
  * @param {string} start - Start time (e.g., "08:00")

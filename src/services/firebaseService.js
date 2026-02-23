@@ -124,6 +124,7 @@ export const savePreferences = async (userUid, preferences) => {
     weeklyHoursGoal: 'settings.weeklyHoursGoal',
     smokoEnabled: 'settings.smokoEnabled',
     smokoMinutes: 'settings.smokoMinutes',
+    themeMode: 'settings.themeMode',
     holidayCountry: 'settings.holidayCountry',
     holidayRegion: 'settings.holidayRegion',
     useAutoHolidays: 'settings.useAutoHolidays',
@@ -248,6 +249,9 @@ export const addJob = async (userUid, newJob, isDelivery = false) => {
     }
     if (newJob.description) {
       jobData.description = newJob.description;
+    }
+    if (newJob.australia88Eligible !== undefined) {
+      jobData.australia88Eligible = newJob.australia88Eligible;
     }
   }
 

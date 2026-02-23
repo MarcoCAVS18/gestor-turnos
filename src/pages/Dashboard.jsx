@@ -31,9 +31,10 @@ import DemoModal from '../components/demos/DemoModal';
 import Flex from '../components/ui/Flex';
 import { useLiveMode } from '../hooks/useLiveMode';
 import logger from '../utils/logger';
+import Australia88Ticker from '../components/australia88/Australia88Ticker';
 
 const Dashboard = () => {
-  const { loading, calculatePayment, shiftRanges, settings, isPremium, premium } = useApp();
+  const { loading, calculatePayment, shiftRanges, settings, isPremium, premium, requestAustraliaGeodetection } = useApp();
   const { currentUser } = useAuth();
   const stats = useDashboardStats();
   const { isActive } = useLiveMode();
@@ -108,6 +109,9 @@ const Dashboard = () => {
 
   return (
     <div className="px-4 py-6 space-y-6">
+      {/* Australia 88 — scrolling ticker, only visible when AU mode is active */}
+      <Australia88Ticker />
+
       <PageHeader
         title="Dashboard"
         subtitle="An overview of your activity and progress."
@@ -241,7 +245,7 @@ const Dashboard = () => {
       </Flex>
 
       {/* Welcome Demo — shown once after first login */}
-      <DemoModal />
+      <DemoModal onComplete={requestAustraliaGeodetection} />
 
       {/* Live Mode Modals */}
       <LiveModeStartModal

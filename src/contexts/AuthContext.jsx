@@ -1,15 +1,17 @@
 // src/contexts/AuthContext.jsx
 
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword, 
-  signOut, 
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
   sendPasswordResetEmail,
   onAuthStateChanged,
   updateProfile,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult
 } from 'firebase/auth';
 import { auth, db } from '../services/firebase';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
@@ -78,30 +80,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
-  // Function to sign in with Google
+  // Builds a configured Google provider (shared between popup and redirect flows)
+  const buildGoogleProvider = () => {
+    const provider = new GoogleAuthProvider();
+    provider.addScope('profile');
+    provider.addScope('email');
+    provider.setCustomParameters({ prompt: 'select_account' });
+    return provider;
+  };
+
+  // Sign in with Google.
+  // Tries signInWithPopup first. If the browser blocks sessionStorage
+  // (Safari ITP, incognito strict mode, etc.), falls back to signInWithRedirect.
+  // The redirect result is handled by the getRedirectResult useEffect above.
   const loginWithGoogle = async () => {
+    setError('');
+    const provider = buildGoogleProvider();
+
     try {
-      setError('');
-      // Create a new provider instance each time
-      const provider = new GoogleAuthProvider();
-      
-      // Ensure we request basic profile permissions
-      provider.addScope('profile');
-      provider.addScope('email');
-      
-      // Additional configuration
-      provider.setCustomParameters({
-        'prompt': 'select_account'
-      });
-      
-      // Use signInWithPopup - Firebase handles => popup window correctly
       const result = await signInWithPopup(auth, provider);
-      
-      // Check if it's first time user signs in with Google
+
+      // Create Firestore document on first Google sign-in
       const userDoc = await getDoc(doc(db, 'users', result.user.uid));
-      
       if (!userDoc.exists()) {
-        // If first time, create user document in Firestore
         await setDoc(doc(db, 'users', result.user.uid), {
           email: result.user.email,
           displayName: result.user.displayName || 'User',
@@ -114,21 +115,32 @@ export const AuthProvider = ({ children }) => {
           }
         });
       }
-      
+
       return result.user;
     } catch (error) {
-      // Handle specific Google Auth errors
-      if (error.code === 'auth/popup-closed-by-user') {
+      // Browsers that block sessionStorage (Safari ITP, strict incognito) throw
+      // "Unable to save initial state" or auth/web-storage-unsupported.
+      // Fall back to full-page redirect — result is handled by getRedirectResult.
+      const isStorageError =
+        error.code === 'auth/web-storage-unsupported' ||
+        error.message?.includes('Unable to save initial state') ||
+        error.message?.includes('sessionStorage is inaccessible');
+
+      if (isStorageError) {
+        logger.warn('sessionStorage blocked — falling back to signInWithRedirect');
+        await signInWithRedirect(auth, provider);
+        return; // Page will redirect; execution stops here
+      }
+
+      // All other errors
+      if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
         setError('Sign in was cancelled. Please try again.');
       } else if (error.code === 'auth/popup-blocked') {
         setError('Popup was blocked by the browser. Please allow popups for this site and try again.');
       } else if (error.code === 'auth/unauthorized-domain') {
         setError('This domain is not authorized for Google Sign-In. Please contact support.');
-      } else if (error.code === 'auth/cancelled-popup-request') {
-        setError('Sign in was cancelled. Please try again.');
-      } else if (error.message && error.message.includes('Cross-Origin-Opener')) {
-        // Handle Cross-Origin-Opener-Policy error
-        setError('Browser blocked => Google sign-in window. Please check your popup blocker settings and try again.');
+      } else if (error.message?.includes('Cross-Origin-Opener')) {
+        setError('Browser blocked the Google sign-in window. Please check your popup blocker settings and try again.');
       } else {
         setError('Could not sign in with Google. Please try again.');
       }
@@ -371,6 +383,32 @@ export const AuthProvider = ({ children }) => {
     return () => document.removeEventListener('visibilitychange', handleVisibility);
   }, []);
 
+  // Handle the result when Google redirects back after signInWithRedirect.
+  // Creates the Firestore user document on first sign-in (mirrors popup flow).
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (!result?.user) return;
+        const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+        if (!userDoc.exists()) {
+          await setDoc(doc(db, 'users', result.user.uid), {
+            email: result.user.email,
+            displayName: result.user.displayName || 'User',
+            createdAt: new Date(),
+            signupMethod: 'google',
+            settings: {
+              defaultDiscount: 15,
+              currency: '$',
+              primaryColor: '#EC4899'
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        logger.error('Google redirect result error:', err);
+      });
+  }, []);
+
   // Monitor authentication state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -388,6 +426,7 @@ export const AuthProvider = ({ children }) => {
     error,
     profilePhotoURL,
     isLocked,
+    lockApp: () => setIsLocked(true),
     unlockApp: () => setIsLocked(false),
     signup,
     login,

@@ -4,24 +4,28 @@ import React, { useState, useEffect } from 'react';
 import { Briefcase, DollarSign, Palette, FileText, Clock } from 'lucide-react';
 import { useFormValidation } from '../../../../hooks/useFormValidation';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
+import { useConfigContext } from '../../../../contexts/ConfigContext';
 import { VALIDATION_RULES } from '../../../../constants/validation';
 import { PREDEFINED_COLORS } from '../../../../constants/colors';
 import ThemeInput from '../../../ui/ThemeInput';
 import BaseForm, { FormSection, FormGrid, FormLabel, FormError } from '../../base/BaseForm';
 
-const WorkForm = ({ 
+const WorkForm = ({
   id,
-  work, 
-  onSubmit, 
-  isMobile 
+  work,
+  onSubmit,
+  isMobile
 }) => {
   const colors = useThemeColors();
-  
+  const { holidayCountry } = useConfigContext();
+  const isAustraliaMode = holidayCountry === 'AU';
+
   const [formData, setFormData] = useState({
     name: '',
     description: '',
     color: colors.primary,
     baseRate: '',
+    australia88Eligible: false,
     rates: {
       day: '',
       afternoon: '',
@@ -52,6 +56,7 @@ const WorkForm = ({
         description: work.description || '',
         color: work.color || colors.primary,
         baseRate: work.baseRate?.toString() || '',
+        australia88Eligible: work.australia88Eligible || false,
         rates: {
           day: work.rates?.day?.toString() || '',
           afternoon: work.rates?.afternoon?.toString() || '',
@@ -256,6 +261,30 @@ const WorkForm = ({
           }}
         />
       </FormSection>
+
+      {/* Working Holiday Visa toggle — only visible in Australia mode */}
+      {isAustraliaMode && (
+        <FormSection>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              id="australia88Eligible"
+              checked={formData.australia88Eligible}
+              onChange={(e) => handleInputChange('australia88Eligible', e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-gray-300 cursor-pointer"
+              style={{ accentColor: colors.primary }}
+            />
+            <div>
+              <span className={`font-medium text-gray-700 dark:text-gray-200 ${isMobile ? 'text-base' : 'text-sm'}`}>
+                Qualifies for Working Holiday Visa extension
+              </span>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Only for work in regional or critical areas of Australia
+              </p>
+            </div>
+          </label>
+        </FormSection>
+      )}
     </BaseForm>
   );
 };

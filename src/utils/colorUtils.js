@@ -1,7 +1,7 @@
 // src/utils/colorUtils.js
 
 /**
- * Convierte un color hex a valores RGB
+ * Converts a hex color to RGB values
  * @param {string} hex
  * @returns {Object}
  */
@@ -15,10 +15,10 @@ export const hexToRgb = (hex) => {
   };
   
   /**
-   * Convierte valores RGB a hex
-   * @param {number} r 
-   * @param {number} g 
-   * @param {number} b 
+   * Converts RGB values to hex
+   * @param {number} r
+   * @param {number} g
+   * @param {number} b
    * @returns {string}
    */
   export const rgbToHex = (r, g, b) => {
@@ -30,8 +30,8 @@ export const hexToRgb = (hex) => {
   };
   
   /**
-   * Genera variaciones de un color base
-   * @param {string} baseColor 
+   * Generates variations of a base color
+   * @param {string} baseColor
    * @returns {Object}
    */
   export const generateColorVariations = (baseColor) => {
@@ -43,7 +43,7 @@ export const hexToRgb = (hex) => {
     return {
       base: baseColor,
       
-      // Variaciones más claras
+      // Lighter variations
       light: rgbToHex(
         Math.min(255, r + 30),
         Math.min(255, g + 30),
@@ -56,7 +56,7 @@ export const hexToRgb = (hex) => {
         Math.min(255, b + 60)
       ),
       
-      // Variaciones más oscuras
+      // Darker variations
       dark: rgbToHex(
         Math.max(0, r - 40),
         Math.max(0, g - 40),
@@ -69,24 +69,24 @@ export const hexToRgb = (hex) => {
         Math.max(0, b - 80)
       ),
       
-      // Variaciones con opacidad
+      // Opacity variations
       transparent5: `rgba(${r}, ${g}, ${b}, 0.05)`,
       transparent10: `rgba(${r}, ${g}, ${b}, 0.1)`,
       transparent20: `rgba(${r}, ${g}, ${b}, 0.2)`,
       transparent30: `rgba(${r}, ${g}, ${b}, 0.3)`,
       transparent50: `rgba(${r}, ${g}, ${b}, 0.5)`,
 
-      // Color de texto contrastante
+      // Contrasting text color
       textContrast: getContrastText(r, g, b),
 
-      // Variación hover
+      // Hover variation
       hover: rgbToHex(
         Math.max(0, r - 20),
         Math.max(0, g - 20),
         Math.max(0, b - 20)
       ),
 
-      // Variación active
+      // Active variation
       active: rgbToHex(
         Math.max(0, r - 60),
         Math.max(0, g - 60),
@@ -102,11 +102,11 @@ export const hexToRgb = (hex) => {
   };
   
   /**
-   * Determina si usar texto blanco o negro basado en el color de fondo
+   * Determines whether to use white or black text based on background luminance
    * @param {number} r
    * @param {number} g
    * @param {number} b
-   * @returns {string} 
+   * @returns {string}
    */
   const getContrastText = (r, g, b) => {
     const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
@@ -114,8 +114,8 @@ export const hexToRgb = (hex) => {
   };
   
   /**
-   * Hook personalizado para usar colores temáticos
-   * @param {string} colorPrincipal 
+   * Custom hook for theme color variations
+   * @param {string} primaryColor
    * @returns {Object}
    */
   export const useThemeColors = (colorPrincipal) => {

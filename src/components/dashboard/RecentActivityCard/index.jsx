@@ -117,7 +117,7 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
         </h3>
         
         <Button
-          onClick={() => navigate('/estadisticas')}
+          onClick={() => navigate('/shifts')}
           size="sm"
           variant="ghost" 
           animatedChevron 
