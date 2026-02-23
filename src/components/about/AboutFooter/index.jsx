@@ -44,7 +44,7 @@ const AboutFooter = ({ colors }) => {
       {/* Version & Credits */}
       <div className="text-center space-y-2">
         <p className="text-sm font-medium" style={{ color: colors.textSecondary }}>
-          Version 2.0.0
+          Version 3.0.1
         </p>
         <p className="text-xs flex items-center justify-center gap-1" style={{ color: colors.textSecondary, opacity: 0.7 }}>
           Developed with <Heart size={12} className="text-red-400 fill-red-400" /> by Marqui

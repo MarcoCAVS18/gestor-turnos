@@ -6,12 +6,13 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { usePremium, PREMIUM_COLORS } from '../../../contexts/PremiumContext';
+import { isBiometricAvailable } from '../../../services/biometricService';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 import PremiumModal from '../../modals/premium/PremiumModal';
 
 const SessionSection = ({ onError, className = '' }) => {
-  const { logout } = useAuth();
+  const { logout, lockApp } = useAuth();
   const colors = useThemeColors();
   const navigate = useNavigate();
   const { isPremium } = usePremium();
@@ -19,6 +20,15 @@ const SessionSection = ({ onError, className = '' }) => {
 
   const handleLogout = async () => {
     try {
+      // If biometric credentials exist on this device, lock the app instead of
+      // signing out completely. This keeps the Firebase session alive so the
+      // biometric button on the Login page can unlock it.
+      // To fully sign out, the user must disable biometric in Integrations first.
+      if (isBiometricAvailable()) {
+        lockApp();
+        navigate('/login');
+        return;
+      }
       await logout();
       navigate('/login');
     } catch (error) {

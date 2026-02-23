@@ -187,8 +187,10 @@ export function getCountryFromCoordinates(latitude, longitude) {
 }
 
 /**
- * Get user's location and detect country
- * @returns {Promise<{country: string, region: string|null, latitude: number, longitude: number}>}
+ * Get user's location and detect country + region via reverse geocoding.
+ * Uses bigdatacloud.net (no API key required).
+ * Falls back to coordinate-range detection if the API call fails.
+ * @returns {Promise<{country: string|null, region: string|null, latitude: number, longitude: number}>}
  */
 export async function detectUserLocation() {
   return new Promise((resolve, reject) => {
@@ -198,16 +200,33 @@ export async function detectUserLocation() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const { latitude, longitude } = position.coords;
-        const country = getCountryFromCoordinates(latitude, longitude);
 
-        resolve({
-          country,
-          region: null, // Region detection would require more sophisticated geocoding
-          latitude,
-          longitude
-        });
+        try {
+          const res = await fetch(
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+          );
+          const data = await res.json();
+
+          const country = data.countryCode || null;
+
+          // principalSubdivisionCode comes as "AU-VIC", "US-CA", etc.
+          // date-holidays expects just the subdivision part: "VIC", "CA", etc.
+          let region = null;
+          if (data.principalSubdivisionCode && country) {
+            const prefix = `${country}-`;
+            region = data.principalSubdivisionCode.startsWith(prefix)
+              ? data.principalSubdivisionCode.slice(prefix.length)
+              : data.principalSubdivisionCode;
+          }
+
+          resolve({ country, region, latitude, longitude });
+        } catch {
+          // API unavailable — fall back to coordinate-range country detection
+          const country = getCountryFromCoordinates(latitude, longitude);
+          resolve({ country, region: null, latitude, longitude });
+        }
       },
       (error) => {
         reject(error);

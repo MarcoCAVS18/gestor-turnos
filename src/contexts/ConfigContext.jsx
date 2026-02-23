@@ -50,6 +50,7 @@ export const ConfigProvider = ({ children }) => {
   const [holidayCountry, setHolidayCountry] = useState(null);
   const [holidayRegion, setHolidayRegion] = useState(null);
   const [useAutoHolidays, setUseAutoHolidays] = useState(false);
+  const [geoDetectionDone, setGeoDetectionDone] = useState(false);
 
   // Load initial user configuration from Firebase
   useEffect(() => {
@@ -69,7 +70,10 @@ export const ConfigProvider = ({ children }) => {
             setSmokoMinutes(settings.smokoMinutes || 30);
             setDeliveryPlatforms(settings.deliveryPlatforms?.length > 0 ? settings.deliveryPlatforms : DELIVERY_PLATFORMS_AUSTRALIA);
             setDefaultDeliveryPlatform(settings.defaultDeliveryPlatform || null);
-            setThemeMode(settings.themeMode || 'light');
+            // Prefer localStorage cache as fallback for users whose themeMode
+            // was not yet persisted to Firebase (migration safety net).
+            const cachedTheme = getCachedValue('orary_themeMode', null);
+            setThemeMode(cachedTheme ?? settings.themeMode ?? 'light');
             setShiftRanges(settings.shiftRanges);
             setHolidayCountry(settings.holidayCountry || null);
             setHolidayRegion(settings.holidayRegion || null);
@@ -97,13 +101,18 @@ export const ConfigProvider = ({ children }) => {
     try { localStorage.setItem('orary_themeMode', JSON.stringify(themeMode)); } catch {}
   }, [themeMode]);
 
-  // Apply theme mode to document body
+  // Apply theme mode to document body.
+  // Cleanup removes the dark class when ConfigProvider unmounts (user logs out),
+  // so the login page is always shown in light mode.
   useEffect(() => {
     if (themeMode === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
+    return () => {
+      document.documentElement.classList.remove('dark');
+    };
   }, [themeMode]);
 
   // Generates color variations based on the primary color
@@ -141,6 +150,29 @@ export const ConfigProvider = ({ children }) => {
     }
   }, [currentUser]);
 
+  // Detects if user is in Australia via geolocation and sets holidayCountry = 'AU'.
+  // Called once after the welcome demo is dismissed. Silently skipped if already set
+  // or if the user denies geolocation permission.
+  const requestAustraliaGeodetection = useCallback(async () => {
+    if (holidayCountry || geoDetectionDone) return;
+    setGeoDetectionDone(true);
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 8000 });
+      });
+      const { latitude, longitude } = position.coords;
+      const res = await fetch(
+        `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+      );
+      const data = await res.json();
+      if (data.countryCode === 'AU') {
+        await savePreferences({ holidayCountry: 'AU' });
+      }
+    } catch {
+      // User denied geolocation or network error — silently ignore
+    }
+  }, [holidayCountry, geoDetectionDone, savePreferences]);
+
   const value = {
     loading,
     error,
@@ -161,6 +193,7 @@ export const ConfigProvider = ({ children }) => {
     useAutoHolidays,
     thematicColors,
     savePreferences,
+    requestAustraliaGeodetection,
     // Note: updateWeeklyHoursGoal can be merged into savePreferences
     updateWeeklyHoursGoal: (goal) => savePreferences({ weeklyHoursGoal: goal }),
   };

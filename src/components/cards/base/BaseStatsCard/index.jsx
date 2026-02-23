@@ -10,8 +10,8 @@ const BaseStatsCard = ({
   icon: IconComponent,
   loading = false,
   empty = false,
-  emptyMessage = 'No hay datos para mostrar',
-  emptyDescription = 'Los datos aparecerán aquí una vez que se registren',
+  emptyMessage = 'No data to display',
+  emptyDescription = 'Data will appear here once recorded',
   children,
   className = ''
 }) => {

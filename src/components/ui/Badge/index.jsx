@@ -31,7 +31,7 @@ const Badge = ({
     default: 'bg-gray-100 text-gray-700',
     primary: 'bg-blue-50 text-blue-700',
     success: 'bg-green-50 text-green-700',
-    win: 'bg-purple-50 text-purple-700', // Cambié 'pink' por 'win' para consistencia con estilos comunes (opcional, si prefieres mantener 'pink', déjalo como 'pink')
+    win: 'bg-purple-50 text-purple-700',
     warning: 'bg-orange-50 text-orange-700',
     danger: 'bg-red-50 text-red-700',
     info: 'bg-cyan-50 text-cyan-700',

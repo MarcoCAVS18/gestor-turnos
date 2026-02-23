@@ -1,10 +1,10 @@
 // src/utils/currency.js
 
 /**
- * Formatea un número como moneda australiana
- * @param {number} amount - Cantidad a formatear
- * @param {object} options - Opciones adicionales de formateo
- * @returns {string} - Cantidad formateada como moneda
+ * Formats a number as Australian currency
+ * @param {number} amount
+ * @param {object} options - Additional formatting options
+ * @returns {string}
  */
 export const formatCurrency = (amount, options = {}) => {
   if (amount === null || amount === undefined || isNaN(amount)) {
@@ -25,9 +25,9 @@ export const formatCurrency = (amount, options = {}) => {
 };
 
 /**
- * Formatea una cantidad con decimales para mostrar precisión
- * @param {number} amount - Cantidad a formatear
- * @returns {string} - Cantidad formateada con 2 decimales
+ * Formats an amount with 2 decimal places for precision display
+ * @param {number} amount
+ * @returns {string}
  */
 export const formatCurrencyPrecise = (amount) => {
   return formatCurrency(amount, {
@@ -37,10 +37,10 @@ export const formatCurrencyPrecise = (amount) => {
 };
 
 /**
- * Formatea una cantidad con símbolo personalizado (retrocompatibilidad)
- * @param {number} amount - Cantidad a formatear
- * @param {string} symbol - Símbolo de moneda (default: '$')
- * @returns {string} - Cantidad formateada
+ * Formats an amount with a custom symbol (backward compatibility)
+ * @param {number} amount
+ * @param {string} symbol - Currency symbol (default: '$')
+ * @returns {string}
  */
 export const formatCurrencyWithSymbol = (amount, symbol = '$') => {
   if (amount === null || amount === undefined || isNaN(amount)) {

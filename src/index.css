@@ -423,3 +423,12 @@ input[type="date"]:focus {
   background: var(--text-muted);
 }
 
+/* ─── Australia 88 Ticker ─────────────────────────────────────────────────── */
+/* Infinite scroll animation for the AU88 announcement bar.
+   Two identical copies of the text sit side by side. Translating -50%
+   of the container moves exactly one copy off-screen, creating a seamless loop. */
+@keyframes au88-ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+

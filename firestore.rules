@@ -48,9 +48,10 @@ service cloud.firestore {
     }
 
     // Live Sessions collection (for Live Mode feature)
+    // read allows null resource so that transactions can check the lock doc before it exists
     match /liveSessions/{sessionId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && (resource == null || resource.data.userId == request.auth.uid);
       allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
 
