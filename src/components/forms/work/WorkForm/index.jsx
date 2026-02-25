@@ -1,7 +1,7 @@
 // src/components/forms/work/WorkForm/index.jsx
 
 import React, { useState, useEffect } from 'react';
-import { Briefcase, DollarSign, Palette, FileText, Clock } from 'lucide-react';
+import { Briefcase, DollarSign, Palette, FileText, Clock, Check, ExternalLink, Calendar } from 'lucide-react';
 import { useFormValidation } from '../../../../hooks/useFormValidation';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useConfigContext } from '../../../../contexts/ConfigContext';
@@ -262,27 +262,72 @@ const WorkForm = ({
         />
       </FormSection>
 
-      {/* Working Holiday Visa toggle — only visible in Australia mode */}
+      {/* Working Holiday Visa — only visible in Australia mode */}
       {isAustraliaMode && (
         <FormSection>
-          <label className="flex items-start gap-3 cursor-pointer">
-            <input
-              type="checkbox"
-              id="australia88Eligible"
-              checked={formData.australia88Eligible}
-              onChange={(e) => handleInputChange('australia88Eligible', e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-gray-300 cursor-pointer"
-              style={{ accentColor: colors.primary }}
-            />
-            <div>
-              <span className={`font-medium text-gray-700 dark:text-gray-200 ${isMobile ? 'text-base' : 'text-sm'}`}>
-                Qualifies for Working Holiday Visa extension
+          <FormLabel icon={Calendar}>Working Holiday Visa (88 days)</FormLabel>
+
+          {/* Selectable card */}
+          <button
+            type="button"
+            onClick={() => handleInputChange('australia88Eligible', !formData.australia88Eligible)}
+            className={`
+              w-full text-left rounded-xl border-2 transition-all duration-200
+              ${isMobile ? 'p-4' : 'p-3'}
+              ${formData.australia88Eligible
+                ? 'border-current bg-opacity-5'
+                : 'border-gray-200 dark:border-gray-700 bg-transparent hover:border-gray-300 dark:hover:border-gray-600'
+              }
+            `}
+            style={formData.australia88Eligible ? {
+              borderColor: colors.primary,
+              backgroundColor: colors.transparent5
+            } : {}}
+          >
+            <div className="flex items-center gap-3">
+              {/* Custom checkbox indicator */}
+              <div
+                className="w-5 h-5 rounded flex-shrink-0 flex items-center justify-center border-2 transition-all duration-200"
+                style={formData.australia88Eligible
+                  ? { borderColor: colors.primary, backgroundColor: colors.primary }
+                  : { borderColor: '#d1d5db' }
+                }
+              >
+                {formData.australia88Eligible && <Check size={12} className="text-white" strokeWidth={3} />}
+              </div>
+
+              {/* Text */}
+              <div className="flex-1 min-w-0">
+                <p className={`font-medium text-gray-800 dark:text-gray-100 ${isMobile ? 'text-base' : 'text-sm'}`}>
+                  Qualifies for Working Holiday Visa extension
+                </p>
+                <p className={`text-gray-500 dark:text-gray-400 mt-0.5 ${isMobile ? 'text-sm' : 'text-xs'}`}>
+                  Work in regional or critical areas of Australia
+                </p>
+              </div>
+
+              {/* AU flag pill */}
+              <span className="flex-shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                🇦🇺 88 days
               </span>
-              <p className="text-xs text-gray-400 mt-0.5">
-                Only for work in regional or critical areas of Australia
-              </p>
             </div>
-          </label>
+          </button>
+
+          {/* Home Affairs link */}
+          <p className={`mt-2 text-gray-500 dark:text-gray-400 ${isMobile ? 'text-sm' : 'text-xs'}`}>
+            Not sure if your work qualifies?{' '}
+            <a
+              href="https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/work-holiday-417/specified-work"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 font-medium hover:underline"
+              style={{ color: colors.primary }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              Check on Home Affairs
+              <ExternalLink size={11} />
+            </a>
+          </p>
         </FormSection>
       )}
     </BaseForm>

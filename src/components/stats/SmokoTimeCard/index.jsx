@@ -10,7 +10,7 @@ const SmokoTimeCard = ({ smokoMinutes, smokoEnabled, loading, thematicColors, cl
   const colors = useThemeColors();
 
   const handleClick = () => {
-    navigate('/settings');
+    navigate('/settings#smoko-section');
   };
 
   const formatTime = (minutes) => {

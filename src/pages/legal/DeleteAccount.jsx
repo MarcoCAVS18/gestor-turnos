@@ -117,10 +117,10 @@ const DeleteAccount = () => {
     <div className="px-4 py-6 space-y-6">
       <BackLink back />
 
-      <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b pb-4 gap-4">
+      <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Account Deletion</h1>
-          <p className="text-sm text-gray-600">We are sorry to see you go.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">Account Deletion</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">We are sorry to see you go.</p>
         </div>
         <img
           src="/assets/SVG/logo.svg"
@@ -134,7 +134,7 @@ const DeleteAccount = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-green-50 border border-green-200 rounded-xl p-6 text-center"
+          className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6 text-center"
         >
           <div className="w-20 h-20 mx-auto mb-4">
             <img
@@ -143,22 +143,22 @@ const DeleteAccount = () => {
               className="w-full h-full"
             />
           </div>
-          <h3 className="text-xl font-semibold text-green-800 mb-2">Account Deleted</h3>
-          <p className="text-green-700 mb-4">
+          <h3 className="text-xl font-semibold text-green-800 dark:text-green-300 mb-2">Account Deleted</h3>
+          <p className="text-green-700 dark:text-green-400 mb-4">
             Your account has been permanently deleted.
           </p>
-          <p className="text-sm text-green-600">
+          <p className="text-sm text-green-600 dark:text-green-500">
             Thank you for using Orary. We hope to see you again!
           </p>
         </motion.div>
       ) : (
         <>
-          <div className="prose prose-lg text-gray-700">
+          <div className="prose prose-lg text-gray-700 dark:text-gray-300 dark:prose-invert max-w-none">
             <p className="text-lg leading-relaxed">
-              If you wish to permanently delete your <strong>Orary</strong> account and all associated data, you can do so below. Please be aware that this action is <strong className="text-red-600">irreversible</strong>.
+              If you wish to permanently delete your <strong>Orary</strong> account and all associated data, you can do so below. Please be aware that this action is <strong className="text-red-600 dark:text-red-400">irreversible</strong>.
             </p>
 
-            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">What Will Be Deleted</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">What Will Be Deleted</h2>
             <ul className="list-disc pl-5 space-y-2 mt-2">
               <li>Your <strong>account</strong> and login credentials</li>
               <li>All your registered <strong>works</strong> (jobs and delivery platforms)</li>
@@ -170,24 +170,24 @@ const DeleteAccount = () => {
               )}
             </ul>
 
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-6">
-              <p className="text-red-800 font-semibold flex items-center gap-2">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mt-6">
+              <p className="text-red-800 dark:text-red-300 font-semibold flex items-center gap-2">
                 <AlertTriangle size={18} />
                 Permanent Deletion Warning
               </p>
-              <p className="text-red-700 mt-1">
+              <p className="text-red-700 dark:text-red-400 mt-1">
                 This action <strong>cannot be undone</strong>. Once you delete your account, all your data will be permanently erased from our servers and cannot be recovered under any circumstances.
               </p>
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
-                <p className="text-red-700">{error}</p>
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mt-4">
+                <p className="text-red-700 dark:text-red-400">{error}</p>
               </div>
             )}
           </div>
 
-          <div className="pt-6 border-t border-gray-200 space-y-4">
+          <div className="pt-6 border-t border-gray-200 dark:border-gray-700 space-y-4">
             <Button
               onClick={() => setShowConfirmModal(true)}
               variant="solid"
@@ -201,19 +201,19 @@ const DeleteAccount = () => {
             </Button>
 
             {/* Alternative: Email deletion */}
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-              <p className="text-gray-700 font-medium flex items-center gap-2 mb-2">
+            <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+              <p className="text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2 mb-2">
                 <Mail size={18} />
                 Prefer to request deletion by email?
               </p>
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                 If you prefer, you can also request account deletion by sending an email to:
               </p>
-              <div className="bg-white p-3 rounded-lg border border-gray-200">
-                <p className="font-mono text-pink-700 font-bold">support@orary.app</p>
+              <div className="bg-white dark:bg-gray-900 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                <p className="font-mono text-pink-700 dark:text-pink-400 font-bold">support@orary.app</p>
               </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Include your registered email and display name for verification. Deletion will be processed within 30 days.
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                Send the email from your registered Orary account address — the same email you use to log in. Include your display name for verification. Deletion will be processed within 30 days.
               </p>
             </div>
           </div>

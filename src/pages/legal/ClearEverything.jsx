@@ -58,10 +58,10 @@ const ClearEverything = () => {
     <div className="px-4 py-6 space-y-6">
       <BackLink back />
 
-      <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b pb-4 gap-4">
+      <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Clear Everything</h1>
-          <p className="text-sm text-gray-600">Start fresh while keeping your account.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">Clear Everything</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Start fresh while keeping your account.</p>
         </div>
         <img
           src="/assets/SVG/logo.svg"
@@ -75,7 +75,7 @@ const ClearEverything = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-green-50 border border-green-200 rounded-xl p-6 text-center"
+          className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6 text-center"
         >
           <div className="w-20 h-20 mx-auto mb-4">
             <img
@@ -84,22 +84,22 @@ const ClearEverything = () => {
               className="w-full h-full"
             />
           </div>
-          <h3 className="text-xl font-semibold text-green-800 mb-2">Data Cleared Successfully</h3>
-          <p className="text-green-700 mb-4">
+          <h3 className="text-xl font-semibold text-green-800 dark:text-green-300 mb-2">Data Cleared Successfully</h3>
+          <p className="text-green-700 dark:text-green-400 mb-4">
             Your session is being closed...
           </p>
-          <p className="text-sm text-green-600">
+          <p className="text-sm text-green-600 dark:text-green-500">
             You will be redirected to the login page. Use your credentials to log in again.
           </p>
         </motion.div>
       ) : (
         <>
-          <div className="prose prose-lg text-gray-700">
+          <div className="prose prose-lg text-gray-700 dark:text-gray-300 dark:prose-invert max-w-none">
             <p className="text-lg leading-relaxed">
               If you want to start fresh with <strong>Orary</strong> without deleting your account, you can clear all your work and shift data while keeping your login credentials.
             </p>
 
-            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">What Will Be Deleted</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">What Will Be Deleted</h2>
             <ul className="list-disc pl-5 space-y-2 mt-2">
               <li>All your registered <strong>works</strong> (jobs and delivery platforms)</li>
               <li>All your recorded <strong>shifts</strong> and their associated data</li>
@@ -110,20 +110,20 @@ const ClearEverything = () => {
               )}
             </ul>
 
-            <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">What Will Be Preserved</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">What Will Be Preserved</h2>
             <ul className="list-disc pl-5 space-y-2 mt-2">
               <li>Your <strong>account</strong> and login credentials</li>
               <li>Your <strong>email</strong> and <strong>display name</strong></li>
             </ul>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mt-4">
-                <p className="text-red-700">{error}</p>
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mt-4">
+                <p className="text-red-700 dark:text-red-400">{error}</p>
               </div>
             )}
           </div>
 
-          <div className="pt-6 border-t border-gray-200">
+          <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
             <Button
               onClick={() => setShowConfirmModal(true)}
               variant="solid"

@@ -107,6 +107,13 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
       setLoading(true);
 
       if (formType === 'delivery') {
+        // Enrich delivery shift with platform & vehicle from the associated work
+        const deliveryWork = allWorks.find(w => w.id === finalData.workId);
+        if (deliveryWork) {
+          if (!finalData.platform) finalData.platform = deliveryWork.platform || '';
+          if (!finalData.vehicle) finalData.vehicle = deliveryWork.vehicle || '';
+        }
+
         if (shift) {
           await editDeliveryShift(shift.id, finalData);
         } else {

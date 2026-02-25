@@ -9,7 +9,6 @@ import {
   ExternalLink,
   Smartphone,
   RefreshCw,
-  Loader2,
   CheckCircle,
   XCircle,
   Fingerprint
@@ -18,6 +17,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import BackLink from '../components/ui/BackLink';
 import PageHeader from '../components/layout/PageHeader';
 import Card from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
 import Switch from '../components/ui/Switch';
 import Button from '../components/ui/Button';
 import { useConfigContext } from '../contexts/ConfigContext';
@@ -382,14 +382,19 @@ const Integrations = () => {
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-lg font-semibold text-gray-800">
+          <div className="flex items-center gap-2 mb-1 flex-nowrap">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 truncate min-w-0">
               {title}
             </h3>
             {status && (
-              <span className={`text-xs px-2 py-0.5 rounded-full bg-${statusColor}-100 text-${statusColor}-600`}>
+              <Badge
+                variant={statusColor}
+                size="xs"
+                rounded
+                className="whitespace-nowrap flex-shrink-0"
+              >
                 {status}
-              </span>
+              </Badge>
             )}
           </div>
           <p className="text-sm text-gray-500 mb-4">
@@ -420,7 +425,7 @@ const Integrations = () => {
           title="Browser Notifications"
           description="Receive notifications directly in your browser when important events occur."
           status={notifications.enabled ? 'Active' : 'Inactive'}
-          statusColor={notifications.enabled ? 'green' : 'gray'}
+          statusColor={notifications.enabled ? 'success' : 'default'}
         >
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">
@@ -447,7 +452,7 @@ const Integrations = () => {
           title="Shift Reminders"
           description="Get notified before your shifts start so you never miss one."
           status={shiftReminders.enabled ? 'Active' : 'Inactive'}
-          statusColor={shiftReminders.enabled ? 'green' : 'gray'}
+          statusColor={shiftReminders.enabled ? 'success' : 'default'}
         >
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -509,8 +514,8 @@ const Integrations = () => {
           icon={Smartphone}
           title="Mobile App"
           description="Get push notifications and manage your shifts on the go with our mobile app."
-          status="Coming Soon"
-          statusColor="blue"
+          status="Soon"
+          statusColor="primary"
         >
           <div className="flex items-center gap-3">
             <div className="flex-1 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -526,12 +531,12 @@ const Integrations = () => {
           description="Sync your shifts automatically with Google Calendar for easy access across devices."
           status={
             googleCalendar.initialLoading
-              ? 'Loading...'
+              ? 'Loading'
               : googleCalendar.connected
                 ? 'Connected'
-                : 'Not connected'
+                : 'Offline'
           }
-          statusColor={googleCalendar.connected ? 'green' : 'gray'}
+          statusColor={googleCalendar.connected ? 'success' : 'default'}
         >
           <div className="space-y-3">
             {googleCalendar.error && (
@@ -547,39 +552,49 @@ const Integrations = () => {
               </div>
             )}
             {googleCalendar.initialLoading ? (
-              <Button variant="secondary" icon={Loader2} disabled className="w-full justify-center animate-pulse">
-                Loading...
-              </Button>
+              <Button
+                themeColor={thematicColors?.base}
+                loading
+                loadingText="Loading..."
+                disabled
+                className="w-full justify-center"
+              />
             ) : googleCalendar.connected ? (
               <div className="flex gap-2">
                 <Button
-                  variant="secondary"
-                  icon={googleCalendar.syncing ? Loader2 : RefreshCw}
+                  themeColor={thematicColors?.base}
+                  icon={RefreshCw}
+                  iconPosition="left"
                   onClick={handleSyncAllShifts}
-                  disabled={googleCalendar.syncing}
-                  className={`flex-1 justify-center ${googleCalendar.syncing ? 'animate-pulse' : ''}`}
+                  loading={googleCalendar.syncing}
+                  loadingText="Syncing..."
+                  className="flex-1 justify-center"
                 >
-                  {googleCalendar.syncing ? 'Syncing...' : 'Sync All'}
+                  Sync All
                 </Button>
                 <Button
                   variant="ghost"
+                  themeColor="#EF4444"
                   icon={ExternalLink}
                   onClick={handleGoogleCalendarDisconnect}
-                  disabled={googleCalendar.loading}
-                  className="flex-1 justify-center text-gray-500 hover:text-red-500"
+                  loading={googleCalendar.loading}
+                  loadingText="Disconnecting..."
+                  className="flex-1 justify-center"
                 >
                   Disconnect
                 </Button>
               </div>
             ) : (
               <Button
-                variant="primary"
-                icon={googleCalendar.loading ? Loader2 : Calendar}
+                themeColor={thematicColors?.base}
+                icon={Calendar}
+                iconPosition="left"
                 onClick={handleGoogleCalendarConnect}
-                disabled={googleCalendar.loading}
-                className={`w-full justify-center ${googleCalendar.loading ? 'animate-pulse' : ''}`}
+                loading={googleCalendar.loading}
+                loadingText="Connecting..."
+                className="w-full justify-center"
               >
-                {googleCalendar.loading ? 'Connecting...' : 'Connect Calendar'}
+                Connect Calendar
               </Button>
             )}
             <p className="text-xs text-gray-400 text-center">
