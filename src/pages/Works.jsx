@@ -1,12 +1,13 @@
 // src/pages/Works.jsx
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorks } from '../hooks/useWorks';
+import { useLiveModeContext } from '../contexts/LiveModeContext';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
 import ShareMessages from '../components/work/ShareMessages';
 import PageHeader from '../components/layout/PageHeader';
-import { Briefcase, Plus, Truck, Lock, Crown } from 'lucide-react';
+import { Briefcase, Plus, Truck, Lock, Crown, Radio } from 'lucide-react';
 import WorkCard from '../components/cards/work/WorkCard';
 import DeliveryWorkCard from '../components/cards/work/DeliveryWorkCard';
 import WorkModal from '../components/modals/work/WorkModal';
@@ -69,6 +70,7 @@ const PremiumLockedCard = ({ onClick }) => (
 const Works = () => {
   const navigate = useNavigate();
   const { isPremium } = usePremium();
+  const { isActive: isLiveModeActive, selectedWork: liveWork } = useLiveModeContext();
   const {
     loading,
     allWorks,
@@ -84,6 +86,24 @@ const Works = () => {
     handleShareWork,
     deleteManager
   } = useWorks();
+
+  const [liveModeError, setLiveModeError] = useState('');
+
+  // Auto-clear live mode error after 4 seconds
+  useEffect(() => {
+    if (!liveModeError) return;
+    const timer = setTimeout(() => setLiveModeError(''), 4000);
+    return () => clearTimeout(timer);
+  }, [liveModeError]);
+
+  // Guarded edit: block if the work is in use by Live Mode
+  const handleEditWork = (work) => {
+    if (isLiveModeActive && liveWork?.id === work.id) {
+      setLiveModeError(`"${work.name}" is currently active in Live Mode. Stop the session to edit it.`);
+      return;
+    }
+    openEditModal(work);
+  };
 
   // Separate traditional and delivery works
   const traditionalWorks = allWorks.filter(work => work.type !== 'delivery');
@@ -103,6 +123,14 @@ const Works = () => {
       <div className="px-4 py-6 pb-32 space-y-6">
         {/* Share messages */}
         <ShareMessages messages={messages} />
+
+        {/* Live Mode edit-blocked banner */}
+        {liveModeError && (
+          <div className="flex items-start gap-3 p-3 rounded-xl bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-300">
+            <Radio size={16} className="flex-shrink-0 mt-0.5 animate-pulse" />
+            <p className="text-sm font-medium">{liveModeError}</p>
+          </div>
+        )}
 
         {/* Header */}
         <PageHeader
@@ -138,7 +166,7 @@ const Works = () => {
                   <WorkCard
                     key={work.id}
                     work={work}
-                    onEdit={openEditModal}
+                    onEdit={handleEditWork}
                     onDelete={deleteManager.startDeletion}
                     onShare={handleShareWork}
                     showActions={true}
@@ -203,7 +231,7 @@ const Works = () => {
                   <DeliveryWorkCard
                     key={work.id}
                     work={work}
-                    onEdit={openEditModal}
+                    onEdit={handleEditWork}
                     onDelete={deleteManager.startDeletion}
                     onShare={handleShareWork}
                     showActions={true}

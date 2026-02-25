@@ -24,16 +24,24 @@ const Settings = () => {
   const { deliveryEnabled } = useApp();
   const location = useLocation();
 
-  // Scroll to section based on URL hash
+  // Scroll to section based on URL hash (with retry for late renders)
   useEffect(() => {
-    if (location.hash) {
-      const elementId = location.hash.replace('#', '');
+    if (!location.hash) return;
+    const elementId = location.hash.replace('#', '');
+
+    const scrollToElement = () => {
       const element = document.getElementById(elementId);
       if (element) {
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return true;
       }
+      return false;
+    };
+
+    // Try immediately, then retry once after the page has rendered
+    if (!scrollToElement()) {
+      const timer = setTimeout(scrollToElement, 350);
+      return () => clearTimeout(timer);
     }
   }, [location.hash]);
   return (

@@ -69,36 +69,57 @@ const ConfirmActionModal = ({
   }, [isOpen]);
 
   const renderDeletePhotoContent = () => (
-    <>
-      <Flex variant="center" className="flex-col sm:flex-row my-4 sm:my-6 gap-3 sm:gap-0">
-        {/* Current Profile Photo */}
-        <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
-          <img
-            src={profilePhotoURL}
-            alt="Current Profile"
-            className="w-full h-full object-cover"
-          />
+    <div className="py-2">
+      {/* Photo comparison — stacks vertically on mobile, row on sm+ */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 my-4 sm:my-6">
+        {/* Current photo */}
+        <div className="flex flex-col items-center gap-2">
+          <div className="relative">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-gray-300 flex items-center justify-center">
+              <img
+                src={profilePhotoURL}
+                alt="Current Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            {/* Trash badge */}
+            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center">
+              <Trash2 size={12} className="text-white" />
+            </div>
+          </div>
+          <span className="text-xs text-gray-500 font-medium">Current photo</span>
         </div>
 
-        <ArrowRight size={20} className="mx-2 sm:mx-4 text-gray-500 rotate-90 sm:rotate-0 flex-shrink-0" />
+        {/* Arrow — points down on mobile, right on sm+ */}
+        <ArrowRight
+          size={22}
+          className="text-gray-400 rotate-90 sm:rotate-0 flex-shrink-0"
+        />
 
-        {/* Default Logo */}
-        <div
-          className="w-16 h-16 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-gray-300 flex items-center justify-center flex-shrink-0"
-          style={{ backgroundColor: colors.primary }}
-        >
-          <img
-            src={defaultPhoto}
-            alt="Default Logo"
-            className="w-full h-full object-contain p-3 sm:p-4 filter brightness-0 invert opacity-90"
-          />
+        {/* Default logo */}
+        <div className="flex flex-col items-center gap-2">
+          <div
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-transparent flex items-center justify-center"
+            style={{ backgroundColor: colors.primary }}
+          >
+            <img
+              src={defaultPhoto}
+              alt="Default Logo"
+              className="w-full h-full object-contain p-3 sm:p-4 filter brightness-0 invert opacity-90"
+            />
+          </div>
+          <span className="text-xs text-gray-500 font-medium">Default logo</span>
         </div>
-      </Flex>
+      </div>
 
-      <p className="text-center text-xs sm:text-sm text-gray-600 mb-4 px-2">
-        Are you sure you want to delete your profile photo? It will be replaced by the default logo.
-      </p>
-    </>
+      {/* Warning message */}
+      <div className="flex items-start gap-3 p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 mb-2">
+        <AlertTriangle size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
+        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+          Your profile photo will be permanently deleted and replaced by the default logo. This cannot be undone.
+        </p>
+      </div>
+    </div>
   );
 
   const renderClearDataContent = () => (

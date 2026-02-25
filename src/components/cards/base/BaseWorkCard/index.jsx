@@ -9,6 +9,7 @@ import ActionsMenu from '../../../ui/ActionsMenu';
 import Badge from '../../../ui/Badge';
 import Flex from '../../../ui/Flex';
 import { DELIVERY_VEHICLES, DELIVERY_PLATFORMS_AUSTRALIA } from '../../../../constants/delivery';
+import { useConfigContext } from '../../../../contexts/ConfigContext';
 
 const BaseWorkCard = ({
   work,
@@ -21,6 +22,9 @@ const BaseWorkCard = ({
   isSharing = false,
   children // For custom content
 }) => {
+  const { holidayCountry } = useConfigContext();
+  const isAustraliaMode = holidayCountry === 'AU';
+
   // Defensive validation
   if (!work) {
     return (
@@ -151,8 +155,8 @@ const BaseWorkCard = ({
               {workName}
             </h3>
 
-            {/* Type badge */}
-            <div className="mt-2">
+            {/* Type badge(s) */}
+            <div className="mt-2 flex items-center gap-1.5 flex-wrap justify-center">
               <Badge
                 variant={currentConfig.badge.variant}
                 size="sm"
@@ -162,6 +166,17 @@ const BaseWorkCard = ({
                 <BadgeIcon size={12} />
                 {currentConfig.badge.label}
               </Badge>
+
+              {type === 'traditional' && work.australia88Eligible && isAustraliaMode && (
+                <Badge
+                  variant="info"
+                  size="sm"
+                  rounded
+                  className="flex items-center gap-1"
+                >
+                  🇦🇺 88 days
+                </Badge>
+              )}
             </div>
           </Flex>
         </div>

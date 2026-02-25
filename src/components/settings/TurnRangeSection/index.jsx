@@ -1,9 +1,10 @@
 // src/components/settings/TurnRangeSection/index.jsx
 
 import React, { useState, useEffect } from 'react';
-import { Clock, Sun, Sunset, Moon, Check } from 'lucide-react';
+import { Clock, Sun, Sunset, Moon, Check, Radio } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import { useLiveModeContext } from '../../../contexts/LiveModeContext';
 import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
@@ -46,12 +47,13 @@ const TurnRange = ({ title, icon: Icon, iconColor, children, colors }) => {
 };
 
 const ShiftRangeSection = ({ onError, onSuccess, className }) => {
-  const { 
+  const {
     shiftRanges,
     savePreferences
   } = useApp();
-  
+
   const colors = useThemeColors();
+  const { isActive: isLiveModeActive } = useLiveModeContext();
   const [shiftRangesState, setShiftRangesState] = useState(shiftRanges || {
     dayStart: 6,
     dayEnd: 14,
@@ -105,9 +107,14 @@ const ShiftRangeSection = ({ onError, onSuccess, className }) => {
   };
 
   const handleSave = async () => {
+    if (isLiveModeActive) {
+      onError?.('Live Mode is active. Stop the session before changing shift ranges.');
+      return;
+    }
+
     try {
       setLoading(true);
-      
+
       const validationError = validateRanges(shiftRangesState);
       if (validationError) {
         onError?.(validationError);
@@ -146,6 +153,13 @@ const ShiftRangeSection = ({ onError, onSuccess, className }) => {
         Configure the time ranges for automatic shift type detection.
         Existing shift tags will be updated automatically.
       </p>
+
+      {isLiveModeActive && (
+        <div className="flex items-center gap-2 p-3 mb-4 rounded-lg bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-300">
+          <Radio size={15} className="flex-shrink-0 animate-pulse" />
+          <p className="text-xs font-medium">Live Mode is active — changes cannot be saved during an active session.</p>
+        </div>
+      )}
       
       <div className="space-y-4 mb-6">
         {/* Day Shift */}
@@ -200,13 +214,14 @@ const ShiftRangeSection = ({ onError, onSuccess, className }) => {
 
       <Button
         onClick={handleSave}
-        disabled={loading || !hasChanges}
+        disabled={loading || !hasChanges || isLiveModeActive}
         loading={loading}
         className="w-full relative"
         themeColor={colors.primary}
-        icon={showSuccess ? Check : undefined}
+        icon={showSuccess ? Check : isLiveModeActive ? Radio : undefined}
       >
-        {loading ? 'Saving...' : 
+        {loading ? 'Saving...' :
+         isLiveModeActive ? 'Blocked by Live Mode' :
          showSuccess ? 'Saved correctly' :
          hasChanges ? 'Save shift ranges' : 'No changes'}
       </Button>

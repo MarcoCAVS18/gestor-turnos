@@ -5,38 +5,39 @@ import { Award } from 'lucide-react';
 import { formatCurrency } from '../../../utils/currency';
 import { formatHoursDecimal } from '../../../utils/time';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
-import Flex from '../../ui/Flex';
 
 const MostProductiveDay = ({ currentData, loading, thematicColors, className = '' }) => {
   const mostProductiveDay = currentData?.mostProductiveDay;
-  
+
   const isEmpty = !mostProductiveDay || mostProductiveDay.day === 'None' || !mostProductiveDay.earnings || mostProductiveDay.earnings <= 0;
 
   return (
     <BaseStatsCard
-      icon={Award} // Pass component directly
+      icon={Award}
       title="Most Productive Day"
       loading={loading}
       empty={isEmpty}
       emptyMessage="Not enough data this week."
       className={className}
     >
-      <div className="w-full">
-        <Flex variant="between">
-          <div>
-            <p className="font-bold text-lg" style={{ color: thematicColors?.primary }}>
-              {mostProductiveDay.day}
-            </p>
-            <p className="text-xs text-gray-600">
-              {mostProductiveDay.shifts || 0} shifts • {formatHoursDecimal(mostProductiveDay.hours || 0)}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-lg font-bold text-green-600">
-              {formatCurrency(mostProductiveDay.earnings)}
-            </p>
-          </div>
-        </Flex>
+      <div className="w-full flex flex-col items-center text-center gap-1">
+        {/* Earnings — prominently large */}
+        <p
+          className="text-4xl font-extrabold tracking-tight leading-none"
+          style={{ color: thematicColors?.base || '#10B981' }}
+        >
+          {formatCurrency(mostProductiveDay.earnings)}
+        </p>
+
+        {/* Day name */}
+        <p className="text-base font-semibold text-gray-700 dark:text-gray-200 mt-1">
+          {mostProductiveDay.day}
+        </p>
+
+        {/* Meta */}
+        <p className="text-xs text-gray-400 dark:text-gray-500">
+          {mostProductiveDay.shifts || 0} shifts · {formatHoursDecimal(mostProductiveDay.hours || 0)}
+        </p>
       </div>
     </BaseStatsCard>
   );

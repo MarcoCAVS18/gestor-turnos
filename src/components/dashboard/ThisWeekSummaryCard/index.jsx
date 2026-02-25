@@ -75,7 +75,7 @@ const ThisWeekSummaryCard = ({ stats, className }) => {
 
   // Function to navigate to settings
   const goToSettings = () => {
-    navigate('/ajustes');
+    navigate('/settings#smoko-section');
   };
 
   const getProgressBarColor = (progress) => {
