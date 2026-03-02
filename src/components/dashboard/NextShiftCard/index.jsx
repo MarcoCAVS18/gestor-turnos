@@ -32,7 +32,7 @@ const NextShiftCard = ({ nextShift, formatDate }) => {
             </p>
           </div>
           <Button
-            onClick={() => navigate('/calendario')}
+            onClick={() => navigate('/shifts')}
             size="sm"
             className="flex items-center gap-1"
             icon={ChevronRight}

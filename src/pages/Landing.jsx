@@ -2,7 +2,7 @@
 // Public landing page at orary.app/
 // Matches AuthLayout visually for a seamless landing → login transition
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
@@ -19,6 +19,7 @@ const FEATURES = [
 const Landing = () => {
   const { currentUser, loading } = useAuth();
   const navigate = useNavigate();
+  const [videoReady, setVideoReady] = useState(false);
 
   useEffect(() => {
     if (!loading && currentUser) {
@@ -40,11 +41,13 @@ const Landing = () => {
   return (
     <div className="fixed inset-0">
       {/* Background video — identical to AuthLayout */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 bg-slate-900">
         <div className="absolute inset-0 bg-black opacity-50 z-10" />
         <video
           autoPlay loop muted playsInline
-          className="absolute object-cover w-full h-full"
+          poster="/assets/images/logo2.png"
+          onCanPlay={() => setVideoReady(true)}
+          className={`absolute object-cover w-full h-full transition-opacity duration-700 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
         >
           <source src="/assets/videos/sample_0.mp4" type="video/mp4" />
         </video>

@@ -88,10 +88,12 @@ const VehicleSelector = ({
         ))}
       </div>
       
-      {/* Optional help text */}
-      <p className="text-xs text-gray-500 text-center mt-2">
-        Select the vehicle you will use for your deliveries
-      </p>
+      {/* Help text — only shown when no vehicle is selected yet */}
+      {!selectedVehicle && (
+        <p className="text-xs text-gray-500 text-center mt-2">
+          Select the vehicle you will use for your deliveries
+        </p>
+      )}
     </div>
   );
 };

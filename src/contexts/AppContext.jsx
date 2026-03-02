@@ -10,6 +10,7 @@ import { DeliveryProvider, useDeliveryContext } from './DeliveryContext';
 import { CalculationsProvider, useCalculations } from './CalculationsContext';
 import { StatsProvider, useStats } from './StatsContext';
 import { LiveModeProvider, useLiveModeContext } from './LiveModeContext';
+import { OnboardingProvider, useOnboarding } from './OnboardingContext';
 
 // 1. Create a new "Master" context
 const AppContext = createContext(null);
@@ -22,6 +23,7 @@ export const AppProvider = ({ children }) => {
         <ConfigProvider>
           <DataProvider>
             <DeliveryProvider>
+              <OnboardingProvider>
               <CalculationsProvider>
                 <StatsProvider>
                   <LiveModeProvider>
@@ -29,6 +31,7 @@ export const AppProvider = ({ children }) => {
                   </LiveModeProvider>
                 </StatsProvider>
               </CalculationsProvider>
+              </OnboardingProvider>
             </DeliveryProvider>
           </DataProvider>
         </ConfigProvider>
@@ -48,6 +51,7 @@ export const useApp = () => {
   const stats = useStats();
   const liveMode = useLiveModeContext();
   const premium = usePremium();
+  const onboarding = useOnboarding();
 
   const allWorks = useMemo(() => {
     return [...(data.works || []), ...(delivery.deliveryWork || [])];
@@ -72,6 +76,9 @@ export const useApp = () => {
     // Premium
     premium,
     isPremium: premium?.isPremium || false,
+
+    // Onboarding
+    startOnboarding: onboarding?.startOnboarding,
 
     // For backward compatibility, some components might still be using old names.
     // We can provide aliases here if needed. For example:

@@ -8,7 +8,7 @@ import SettingsSection from '../SettingsSection';
 import Flex from '../../ui/Flex';
 import Switch from '../../ui/Switch';
 
-const SmokoSection = ({ onError, onSuccess, className }) => {
+const SmokoSection = ({ id, onError, onSuccess, className }) => {
   const { 
     smokoEnabled = false, 
     smokoMinutes = 30,
@@ -57,7 +57,7 @@ const SmokoSection = ({ onError, onSuccess, className }) => {
 
   return (
     <SettingsSection
-      id="smoko-section"
+      id={id}
       icon={Coffee}
       title="Smoko (Breaks)"
       className={className}

@@ -1,14 +1,14 @@
 // src/pages/Shifts.jsx
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { useTurnManager } from '../hooks/useTurnManager';
 import { useDeleteManager } from '../hooks/useDeleteManager';
 import { useShiftFilters } from '../hooks/useFilterTurnos';
 import { createSafeDate } from '../utils/time';
 import LoadingWrapper from '../components/layout/LoadingWrapper';
-import PageHeader from '../components/layout/PageHeader'; 
-import { List, Plus, ChevronDown, ChevronUp, Search } from 'lucide-react';
+import PageHeader from '../components/layout/PageHeader';
+import { List, Plus, Search } from 'lucide-react';
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
 import ShiftFilters from '../components/filters/ShiftFilters';
 import ShiftModal from '../components/modals/shift/ShiftModal';
@@ -16,38 +16,30 @@ import DeleteAlert from '../components/alerts/DeleteAlert';
 import WeeklyShiftsSection from '../components/shifts/WeeklyShiftsSection';
 import { generateShiftDetails } from '../utils/shiftDetailsUtils';
 import Flex from '../components/ui/Flex';
-
-import LoadingSpinner from '../components/ui/LoadingSpinner/LoadingSpinner';
 import logger from '../utils/logger';
 
-const WEEKS_PER_PAGE = 4;
-
 const Shifts = () => {
-  const { 
-    loading, 
-    deleteShift, 
-    deleteDeliveryShift, 
-    thematicColors, 
+  const {
+    loading,
+    deleteShift,
+    deleteDeliveryShift,
+    thematicColors,
     shiftsByDate,
     works,
     deliveryWork
   } = useApp();
-  
-  const [weeksShown, setWeeksShown] = useState(WEEKS_PER_PAGE);
-  const [expanding, setExpanding] = useState(false);
 
   // Hook for filter management
   const {
     filters,
     updateFilters,
     filteredShifts,
-    filterStats,
     hasActiveFilters
   } = useShiftFilters(shiftsByDate);
 
   // Specialized hooks for modal management
   const { isModalOpen, selectedShift, openNewModal, openEditModal, closeModal } = useTurnManager();
-  
+
   // Delete function
   const handleDeleteShift = async (shift) => {
     try {
@@ -63,87 +55,111 @@ const Shifts = () => {
 
   const deleteManager = useDeleteManager(handleDeleteShift);
 
-  // Process shift data (use filtered if active filters)
   const shiftsToDisplay = hasActiveFilters ? filteredShifts : shiftsByDate;
   const allJobs = useMemo(() => [...works, ...deliveryWork], [works, deliveryWork]);
 
-  // Function to get Monday of a date
+  // Get Monday of a given date string.
+  // Uses local date parts (not toISOString/UTC) to avoid timezone off-by-one.
   const getMondayOfWeek = (dateStr) => {
     const date = createSafeDate(dateStr);
     const weekDay = date.getDay();
-    const daysUntilMonday = weekDay === 0 ? -6 : -(weekDay - 1);
+    const daysUntilMonday = weekDay === 0 ? -6 : 1 - weekDay;
     const monday = new Date(date);
     monday.setDate(date.getDate() + daysUntilMonday);
-    return monday.toISOString().split('T')[0];
+    const y = monday.getFullYear();
+    const m = String(monday.getMonth() + 1).padStart(2, '0');
+    const d = String(monday.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
   };
 
-  // Function to format week range
+  // Today's Monday (week key for the current week).
+  // Build date string from local parts to avoid UTC timezone shift.
+  const todayMonday = useMemo(() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    return getMondayOfWeek(`${y}-${m}-${d}`);
+  }, []);
+
+  // Format "Mon 3 Mar – Sun 9 Mar 2026"
   const formatWeekRange = (mondayDate) => {
     const monday = createSafeDate(mondayDate);
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
-
-    const mondayOptions = { day: 'numeric', month: 'short' };
-    const sundayOptions = { day: 'numeric', month: 'short', year: 'numeric' };
-
-    const mondayStr = monday.toLocaleDateString('en-US', mondayOptions);
-    const sundayStr = sunday.toLocaleDateString('en-US', sundayOptions);
-
-    return `${mondayStr} - ${sundayStr}`;
+    const mondayStr = monday.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
+    const sundayStr = sunday.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    return `${mondayStr} – ${sundayStr}`;
   };
 
-  // Group shifts by weeks
+  // Group shifts by week, compute totals
   const shiftsByWeek = useMemo(() => {
     const weeks = {};
-    
     Object.entries(shiftsToDisplay || {}).forEach(([date, shifts]) => {
       const mondayDate = getMondayOfWeek(date);
-      
-      if (!weeks[mondayDate]) {
-        weeks[mondayDate] = {};
-      }
-      
+      if (!weeks[mondayDate]) weeks[mondayDate] = {};
       weeks[mondayDate][date] = shifts;
     });
 
-    // Sort weeks by date (most recent first)
-    const sortedWeeks = Object.keys(weeks)
-      .sort((a, b) => new Date(b) - new Date(a))
-      .map(mondayDate => ({
+    return Object.keys(weeks).map(mondayDate => {
+      const weekShifts = weeks[mondayDate];
+      const allShifts = Object.values(weekShifts).flat();
+      const totalHours = allShifts.reduce((sum, s) => {
+        if (!s.startTime || !s.endTime) return sum;
+        const [sh, sm] = s.startTime.split(':').map(Number);
+        const [eh, em] = s.endTime.split(':').map(Number);
+        let h = (eh + em / 60) - (sh + sm / 60);
+        if (h < 0) h += 24;
+        return sum + h;
+      }, 0);
+
+      return {
         mondayDate,
         weekRange: formatWeekRange(mondayDate),
-        shifts: weeks[mondayDate],
-        totalShifts: Object.values(weeks[mondayDate]).flat().length
-      }));
-
-    return sortedWeeks;
+        shifts: weekShifts,
+        totalShifts: allShifts.length,
+        totalHours,
+      };
+    });
   }, [shiftsToDisplay]);
 
-  const weeksToDisplay = shiftsByWeek.slice(0, weeksShown);
-  const hasMoreWeeks = shiftsByWeek.length > weeksShown;
+  // Split into future / current / past
+  const { futureWeeks, currentWeekData, pastWeeks } = useMemo(() => ({
+    // Closest future week at top → sort ascending and then reverse so closest is last
+    // We want: furthest future first, closest future just above current week
+    futureWeeks: shiftsByWeek
+      .filter(w => w.mondayDate > todayMonday)
+      .sort((a, b) => a.mondayDate.localeCompare(b.mondayDate)), // closest last → renders just above current
+    currentWeekData: shiftsByWeek.find(w => w.mondayDate === todayMonday),
+    pastWeeks: shiftsByWeek
+      .filter(w => w.mondayDate < todayMonday)
+      .sort((a, b) => b.mondayDate.localeCompare(a.mondayDate)), // most recent first
+  }), [shiftsByWeek, todayMonday]);
+
+  // Current week is open by default; others are closed
+  const [openWeeks, setOpenWeeks] = useState(() => new Set([todayMonday]));
+
+  const toggleWeek = useCallback((mondayDate) => {
+    setOpenWeeks(prev => {
+      const next = new Set(prev);
+      if (next.has(mondayDate)) next.delete(mondayDate);
+      else next.add(mondayDate);
+      return next;
+    });
+  }, []);
+
   const hasShifts = shiftsByWeek.length > 0;
 
-  const handleShowMoreWeeks = () => {
-    setExpanding(true);
-    setTimeout(() => {
-      setWeeksShown(prev => Math.min(prev + WEEKS_PER_PAGE, shiftsByWeek.length));
-      setExpanding(false);
-    }, 300);
-  };
-
-  const handleShowLessWeeks = () => {
-    setWeeksShown(WEEKS_PER_PAGE);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const testDelete = (shift) => {
-    deleteManager.startDeletion(shift);
-  };
+  // Ordered flat list: future (furthest→closest) → current → past (recent→oldest)
+  const orderedWeeks = useMemo(() => [
+    ...futureWeeks,
+    ...(currentWeekData ? [{ ...currentWeekData, isCurrentWeek: true }] : []),
+    ...pastWeeks,
+  ], [futureWeeks, currentWeekData, pastWeeks]);
 
   return (
     <LoadingWrapper loading={loading}>
-      {/* Main container with improved spacing */}
-      <div className="px-4 py-6 space-y-6">
+      <div className="px-4 py-6 pb-32 space-y-4">
         <PageHeader
           title="Shifts"
           subtitle="Manage and visualize your registered shifts."
@@ -159,36 +175,15 @@ const Shifts = () => {
           />
         )}
 
-        {/* Filtering statistics */}
-        {hasActiveFilters && (
-          <div 
-            className="p-3 rounded-lg border-l-4 text-sm"
-            style={{ 
-              backgroundColor: thematicColors?.transparent5,
-              borderLeftColor: thematicColors?.base 
-            }}
-          >
-            <Flex variant="between">
-              <span style={{ color: thematicColors?.base }} className="font-medium">
-                Showing {filterStats.filteredShiftsCount} of {filterStats.totalShifts} shifts
-              </span>
-              <span className="text-gray-600">
-                {shiftsByWeek.length} weeks with shifts
-              </span>
-            </Flex>
-          </div>
-        )}
-
         {/* Main content */}
         {!hasShifts && !hasActiveFilters ? (
-          <ShiftsEmptyState 
+          <ShiftsEmptyState
             allJobs={allJobs}
             onNewShift={openNewModal}
             thematicColors={thematicColors}
           />
         ) : !hasShifts && hasActiveFilters ? (
-          // State when there are filters but no results
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-12 text-center">
             <Flex
               variant="center"
               className="p-4 rounded-full w-20 h-20 mx-auto mb-4"
@@ -196,10 +191,10 @@ const Shifts = () => {
             >
               <Search size={32} style={{ color: thematicColors?.base }} />
             </Flex>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               No shifts matching filters
             </h3>
-            <p className="text-gray-500 mb-6 max-w-md mx-auto">
+            <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
               Try adjusting the filters to see more results.
             </p>
             <button
@@ -211,87 +206,46 @@ const Shifts = () => {
             </button>
           </div>
         ) : (
-          <>
-            {/* List of shifts organized by weeks */}
-            <div className="space-y-8">
-              {weeksToDisplay.map(({ mondayDate, weekRange, shifts, totalShifts }) => (
-                <WeeklyShiftsSection
-                  key={mondayDate}
-                  weekRange={weekRange}
-                  shifts={shifts}
-                  totalShifts={totalShifts}
-                  allJobs={allJobs}
-                  onEditShift={openEditModal}
-                  onDeleteShift={testDelete}
-                  thematicColors={thematicColors}
-                />
-              ))}
-            </div>
-
-            {/* Navigation (show more/less weeks) */}
-            {hasMoreWeeks && (
-              <div className="relative flex flex-col items-center pt-8 pb-12">
-                <div
-                  className="absolute top-0 left-0 right-0 h-16 rounded-lg opacity-30"
-                  style={{ backgroundColor: thematicColors?.transparent5 }}
-                />
-                <button
-                  onClick={handleShowMoreWeeks}
-                  disabled={expanding}
-                  className="relative z-10 flex items-center space-x-2 px-6 py-3 rounded-full font-medium text-white transition-all hover:shadow-lg disabled:opacity-50"
-                  style={{ 
-                    backgroundColor: thematicColors?.base
-                  }}
-                >
-                  {expanding ? (
-                    <>
-                      <LoadingSpinner 
-                        size="h-5 w-5"
-                        style={{ borderColor: 'white' }}
-                        color="border-transparent"
-                      />
-                      <span>Loading...</span>
-                    </>
-                  ) : (
-                    <>
-                      <ChevronDown size={20} />
-                      <span>Show more weeks</span>
-                    </>
-                  )}
-                </button>
-              </div>
+          <div className="space-y-2">
+            {/* Future weeks label */}
+            {futureWeeks.length > 0 && (
+              <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1 pt-1">
+                Upcoming
+              </p>
             )}
 
-            {!hasMoreWeeks && weeksShown > WEEKS_PER_PAGE && (
-              <div className="flex justify-center py-4">
-                <button
-                  onClick={handleShowLessWeeks}
-                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-800 rounded-full hover:bg-gray-100 transition-colors"
-                >
-                  <ChevronUp size={18} />
-                  <span>Show less</span>
-                </button>
-              </div>
-            )}
-          </>
+            {orderedWeeks.map((week) => (
+              <WeeklyShiftsSection
+                key={week.mondayDate}
+                weekRange={week.weekRange}
+                shifts={week.shifts}
+                totalShifts={week.totalShifts}
+                totalHours={week.totalHours}
+                isCurrentWeek={!!week.isCurrentWeek}
+                isFuture={week.mondayDate > todayMonday}
+                isOpen={openWeeks.has(week.mondayDate)}
+                onToggle={() => toggleWeek(week.mondayDate)}
+                allJobs={allJobs}
+                onEditShift={openEditModal}
+                onDeleteShift={(shift) => deleteManager.startDeletion(shift)}
+                thematicColors={thematicColors}
+              />
+            ))}
+          </div>
         )}
       </div>
 
       {/* Modals */}
-      <ShiftModal 
-        isOpen={isModalOpen} 
-        onClose={closeModal} 
-        shift={selectedShift} 
+      <ShiftModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        shift={selectedShift}
       />
 
       <DeleteAlert
         visible={deleteManager.showDeleteModal}
-        onCancel={() => {
-          deleteManager.cancelDeletion();
-        }}
-        onConfirm={() => {
-          deleteManager.confirmDeletion();
-        }}
+        onCancel={() => deleteManager.cancelDeletion()}
+        onConfirm={() => deleteManager.confirmDeletion()}
         deleting={deleteManager.deleting}
         type="shift"
         details={generateShiftDetails(deleteManager.itemToDelete, allJobs)}

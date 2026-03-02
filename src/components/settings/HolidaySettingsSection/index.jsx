@@ -14,7 +14,7 @@ import {
 } from '../../../services/holidayService';
 import logger from '../../../utils/logger';
 
-const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
+const HolidaySettingsSection = ({ id, onError, onSuccess, className }) => {
   const {
     holidayCountry,
     holidayRegion,
@@ -32,6 +32,7 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [detectingLocation, setDetectingLocation] = useState(false);
+  const [locationError, setLocationError] = useState(null);
 
   // Get available countries and regions
   const countries = useMemo(() => getAvailableCountries(), []);
@@ -112,21 +113,34 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   }, [selectedCountry, selectedRegion, hasChanges, savePreferences, onError]);
 
   const handleUseLocation = async () => {
+    setLocationError(null);
     try {
       setDetectingLocation(true);
       const location = await detectUserLocation();
+      const supported = isCountrySupported(location.country);
 
-      if (location.country && isCountrySupported(location.country)) {
+      if (location.country && supported) {
         setSelectedCountry(location.country);
         if (location.region) {
           setSelectedRegion(location.region);
         }
         onSuccess?.(`Location detected: ${location.country}${location.region ? ` · ${location.region}` : ''}`);
       } else {
+        setLocationError('Your location could not be matched to a supported country. Please select manually.');
         onError?.('Could not detect a supported country from your location');
       }
     } catch (error) {
       logger.error('Error detecting location:', error);
+      // Show specific message based on geolocation error code
+      if (error.code === 1) {
+        setLocationError('Location access denied. Please allow location in your browser settings and try again.');
+      } else if (error.code === 2) {
+        setLocationError('Location unavailable. Please select your country manually.');
+      } else if (error.code === 3) {
+        setLocationError('Location request timed out. Please try again or select manually.');
+      } else {
+        setLocationError('Could not access location. Please select your country manually.');
+      }
       onError?.('Error accessing location. Please check browser permissions.');
     } finally {
       setDetectingLocation(false);
@@ -134,7 +148,7 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   };
 
   return (
-    <SettingsSection icon={MapPin} title="Location" className={className}>
+    <SettingsSection id={id} icon={MapPin} title="Location" className={className}>
       <div className="space-y-3">
 
         <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -154,6 +168,13 @@ const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
         >
           {detectingLocation ? 'Detecting location...' : 'Use my location'}
         </Button>
+
+        {/* Inline location error */}
+        {locationError && (
+          <p className="text-xs text-red-500 dark:text-red-400 px-1">
+            {locationError}
+          </p>
+        )}
 
         {/* Country and Region Selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

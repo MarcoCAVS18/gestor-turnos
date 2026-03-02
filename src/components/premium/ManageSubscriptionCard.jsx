@@ -125,7 +125,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
               <div>
                 <p className="text-xs font-semibold text-amber-700 mb-0.5">Cancellation scheduled</p>
                 <p className="text-xs text-amber-600">
-                  Access continues until {formatDate(subscription?.expiryDate)}
+                  Access continues until {formatDate(subscription?.trialEnd || subscription?.expiryDate)}
                 </p>
               </div>
             </motion.div>
@@ -140,7 +140,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
               <div className="flex items-start gap-2.5 p-3 rounded-xl bg-red-50 border border-red-200">
                 <AlertTriangle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
                 <p className="text-xs text-red-700">
-                  You'll keep access until <strong>{formatDate(subscription?.expiryDate)}</strong>. After that, your plan reverts to Free.
+                  You'll keep access until <strong>{formatDate(subscription?.trialEnd || subscription?.expiryDate)}</strong>. After that, your plan reverts to Free.
                 </p>
               </div>
               <div className="flex gap-2">
@@ -149,6 +149,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
                   variant="outline"
                   size="sm"
                   className="flex-1 justify-center"
+                  themeColor={colors.primary}
                 >
                   Keep Plan
                 </Button>
@@ -157,9 +158,9 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
                   loading={cancelLoading}
                   loadingText="..."
                   size="sm"
+                  icon={XCircle}
                   className="flex-1 justify-center bg-red-500 hover:bg-red-600 text-white"
                 >
-                  <XCircle size={14} className="mr-1" />
                   Confirm
                 </Button>
               </div>

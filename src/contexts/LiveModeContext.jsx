@@ -1,13 +1,19 @@
 // src/contexts/LiveModeContext.jsx
 // Context for managing Live Mode state
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useAuth } from './AuthContext';
 import { useDataContext } from './DataContext';
 import { useConfigContext } from './ConfigContext';
 import * as liveSessionService from '../services/liveSessionService';
 import * as firebaseService from '../services/firebaseService';
 import * as premiumService from '../services/premiumService';
+import { requestNotificationPermission, sendLocalNotification } from '../services/native/nativeNotifications';
+import {
+  startLiveActivity,
+  updateLiveActivity,
+  endLiveActivity,
+} from '../services/native/liveActivityService';
 import logger from '../utils/logger';
 
 const LiveModeContext = createContext();
@@ -47,11 +53,24 @@ export const LiveModeProvider = ({ children }) => {
   const timerRef = useRef(null);
   const notificationSentRef = useRef(false);
   const autoCloseTriggeredRef = useRef(false);
+  const lastLAUpdateRef = useRef(0); // timestamp of last Live Activity earnings push
 
   // Derived state
   const isActive = liveSession?.status === 'active';
   const isPaused = liveSession?.status === 'paused';
-  const selectedWork = works?.find(w => w.id === liveSession?.workId) || null;
+
+  // Memoize selectedWork so it only changes when works data or workId actually changes.
+  // Without useMemo, works.find() returns a new object reference on every render,
+  // causing calculateEarnings to get a new ref → timer useEffect re-runs → interval resets.
+  const selectedWork = useMemo(
+    () => works?.find(w => w.id === liveSession?.workId) || null,
+    [works, liveSession?.workId]
+  );
+
+  // Ref for works — lets startSession always read the latest works without adding
+  // works to its useCallback deps (which would create a new fn ref on every works update).
+  const worksRef = useRef(works);
+  worksRef.current = works;
 
   // Calculate current rate based on time
   const calculateCurrentRate = useCallback(() => {
@@ -92,41 +111,81 @@ export const LiveModeProvider = ({ children }) => {
     return { rate, type };
   }, [selectedWork, shiftRanges]);
 
-  // Calculate earnings based on elapsed time and current rate
-  const calculateEarnings = useCallback((elapsedMs) => {
-    if (!selectedWork?.rates) return 0;
+  // Calculate earnings by walking from startedAt → now, applying the correct
+  // rate for each time segment (day / afternoon / night / saturday / sunday).
+  // Pauses are handled by scaling with (elapsedActive / totalSpan).
+  const calculateEarnings = useCallback(() => {
+    if (!selectedWork?.rates || !liveSession?.startedAt) return 0;
 
-    const hours = elapsedMs / (1000 * 60 * 60);
-    const { rate } = calculateCurrentRate();
+    const startTime = liveSession.startedAt instanceof Date
+      ? liveSession.startedAt
+      : new Date(liveSession.startedAt);
 
-    return hours * rate;
-  }, [selectedWork, calculateCurrentRate]);
+    const now = new Date();
+    if (startTime >= now) return 0;
 
-  // Request notification permission
-  const requestNotificationPermission = useCallback(async () => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      await Notification.requestPermission();
+    const ranges = shiftRanges || {
+      dayStart: 6, dayEnd: 14,
+      afternoonStart: 14, afternoonEnd: 20,
+    };
+
+    // Rate boundary hours within a weekday
+    const rateHours = [ranges.dayStart, ranges.dayEnd, ranges.afternoonStart, ranges.afternoonEnd];
+
+    // Walk through the clock from startedAt to now, segment by segment
+    let grossEarnings = 0;
+    let current = new Date(startTime);
+
+    while (current < now) {
+      const dayOfWeek = current.getDay();
+      const h = current.getHours();
+
+      // Next rate boundary
+      let nextBoundary = new Date(current);
+      if (dayOfWeek === 0 || dayOfWeek === 6) {
+        // Weekend: flat rate all day, boundary is midnight
+        nextBoundary.setHours(24, 0, 0, 0);
+      } else {
+        const nextHour = rateHours.find(rh => rh > h);
+        if (nextHour !== undefined) {
+          nextBoundary.setHours(nextHour, 0, 0, 0);
+        } else {
+          nextBoundary.setHours(24, 0, 0, 0);
+        }
+      }
+
+      const segmentEnd = nextBoundary < now ? nextBoundary : now;
+      const segmentHours = (segmentEnd.getTime() - current.getTime()) / (1000 * 60 * 60);
+
+      let rate = 0;
+      if (dayOfWeek === 0) rate = selectedWork.rates.sunday || 0;
+      else if (dayOfWeek === 6) rate = selectedWork.rates.saturday || 0;
+      else if (h >= ranges.dayStart && h < ranges.dayEnd) rate = selectedWork.rates.day || 0;
+      else if (h >= ranges.afternoonStart && h < ranges.afternoonEnd) rate = selectedWork.rates.afternoon || 0;
+      else rate = selectedWork.rates.night || 0;
+
+      grossEarnings += segmentHours * rate;
+      current = new Date(segmentEnd.getTime());
     }
+
+    // Scale by active fraction to account for pauses (proportional approximation)
+    const totalSpanMs = now.getTime() - startTime.getTime();
+    const elapsedActiveMs = liveSessionService.calculateElapsedTime(liveSession);
+    if (totalSpanMs > 0 && elapsedActiveMs < totalSpanMs) {
+      grossEarnings *= elapsedActiveMs / totalSpanMs;
+    }
+
+    return Math.max(0, grossEarnings);
+  }, [selectedWork, liveSession, shiftRanges]);
+
+  // Request notification permission (native + web via nativeNotifications wrapper)
+  const requestNotificationPermissionFn = useCallback(async () => {
+    await requestNotificationPermission();
   }, []);
 
-  // Send notification
-  const sendNotification = useCallback((title, body) => {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      const notification = new Notification(title, {
-        body,
-        icon: '/logo192.png',
-        requireInteraction: true,
-        tag: 'live-mode-notification',
-      });
-
-      notification.onclick = () => {
-        window.focus();
-        notification.close();
-      };
-
-      return notification;
-    }
-    return null;
+  // Send notification (native + web via nativeNotifications wrapper)
+  const sendNotification = useCallback(async (title, body) => {
+    return await sendLocalNotification(title, body);
   }, []);
 
   // Auto-finish session
@@ -166,7 +225,7 @@ export const LiveModeProvider = ({ children }) => {
         setCurrentRate(rate);
         setRateType(type);
 
-        const earnings = calculateEarnings(elapsed);
+        const earnings = calculateEarnings();
         setCurrentEarnings(earnings);
       }
       return;
@@ -180,8 +239,20 @@ export const LiveModeProvider = ({ children }) => {
       setCurrentRate(rate);
       setRateType(type);
 
-      const earnings = calculateEarnings(elapsed);
+      const earnings = calculateEarnings();
       setCurrentEarnings(earnings);
+
+      // Push earnings to Live Activity every ~30 s (non-critical, fire-and-forget)
+      const nowTs = Date.now();
+      if (nowTs - lastLAUpdateRef.current >= 30_000) {
+        lastLAUpdateRef.current = nowTs;
+        updateLiveActivity({
+          totalPausedSeconds: Math.floor((liveSession.totalPauseDuration || 0) / 1000),
+          pausedSince: null,
+          earningsFormatted: `$${earnings.toFixed(2)}`,
+          isPaused: false,
+        }).catch(() => {});
+      }
 
       // Check for 12h notification
       if (elapsed >= NOTIFICATION_MS && !notificationSentRef.current) {
@@ -278,9 +349,22 @@ export const LiveModeProvider = ({ children }) => {
         throw new Error(errorMsg);
       }
 
-      await requestNotificationPermission();
+      await requestNotificationPermissionFn();
       const session = await liveSessionService.createLiveSession(currentUser.uid, workId);
       setLiveSession(session);
+
+      // Start Live Activity on iOS (non-critical, fire-and-forget)
+      const work = worksRef.current?.find(w => w.id === workId);
+      if (work) {
+        const sessionStart = session.startedAt instanceof Date
+          ? session.startedAt
+          : new Date(session.startedAt);
+        startLiveActivity({
+          workName: work.name,
+          workColor: work.color || '#EC4899',
+          sessionStart,
+        }).catch(() => {});
+      }
 
       // Increment usage for free users
       if (!liveModeUsage.isPremium) {
@@ -294,12 +378,16 @@ export const LiveModeProvider = ({ children }) => {
 
       return session;
     } catch (err) {
-      setError(err.message);
+      // Don't persist "already active" errors in global state — the modal
+      // handles them silently by closing; persisting would bleed into the UI.
+      if (!err.message?.includes('already an active live session')) {
+        setError(err.message);
+      }
       throw err;
     } finally {
       setLoading(false);
     }
-  }, [currentUser?.uid, requestNotificationPermission, liveModeUsage]);
+  }, [currentUser?.uid, requestNotificationPermissionFn, liveModeUsage]);
 
   // Pause the current session
   const pauseSession = useCallback(async () => {
@@ -318,6 +406,13 @@ export const LiveModeProvider = ({ children }) => {
 
     try {
       await liveSessionService.pauseLiveSession(liveSession.id);
+      // Notify Live Activity of pause immediately
+      updateLiveActivity({
+        totalPausedSeconds: Math.floor((liveSession.totalPauseDuration || 0) / 1000),
+        pausedSince: pausedAt,
+        earningsFormatted: `$${currentEarnings.toFixed(2)}`,
+        isPaused: true,
+      }).catch(() => {});
     } catch (err) {
       // Revert optimistic update on error
       setLiveSession(prev => ({
@@ -330,7 +425,7 @@ export const LiveModeProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [liveSession?.id]);
+  }, [liveSession?.id, liveSession?.totalPauseDuration, currentEarnings]);
 
   // Resume the current session
   const resumeSession = useCallback(async () => {
@@ -362,6 +457,13 @@ export const LiveModeProvider = ({ children }) => {
 
     try {
       await liveSessionService.resumeLiveSession(liveSession.id, totalPauseDuration);
+      // Notify Live Activity of resume immediately
+      updateLiveActivity({
+        totalPausedSeconds: Math.floor(totalPauseDuration / 1000),
+        pausedSince: null,
+        earningsFormatted: `$${currentEarnings.toFixed(2)}`,
+        isPaused: false,
+      }).catch(() => {});
     } catch (err) {
       // Revert optimistic update on error
       setLiveSession(prevSession);
@@ -370,7 +472,7 @@ export const LiveModeProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [liveSession]);
+  }, [liveSession, currentEarnings]);
 
   // Helper function to safely convert any timestamp format to Date
   const toLocalDate = (timestamp) => {
@@ -455,6 +557,9 @@ export const LiveModeProvider = ({ children }) => {
       // Complete the live session
       await liveSessionService.completeLiveSession(liveSession.id, finalPauseDuration, currentUser.uid);
 
+      // End Live Activity
+      endLiveActivity().catch(() => {});
+
       // Reset state
       setLiveSession(null);
       setElapsedTime(0);
@@ -476,6 +581,8 @@ export const LiveModeProvider = ({ children }) => {
 
     try {
       await liveSessionService.deleteLiveSession(liveSession.id);
+      // End Live Activity
+      endLiveActivity().catch(() => {});
       setLiveSession(null);
       setElapsedTime(0);
       setCurrentEarnings(0);
@@ -522,7 +629,7 @@ export const LiveModeProvider = ({ children }) => {
     cancelSession,
 
     // Utilities
-    requestNotificationPermission,
+    requestNotificationPermission: requestNotificationPermissionFn,
   };
 
   return (

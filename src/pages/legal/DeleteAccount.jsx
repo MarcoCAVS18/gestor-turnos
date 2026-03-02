@@ -14,6 +14,7 @@ import {
 import { doc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../../services/firebase';
 import { clearUserData } from '../../services/firebaseService';
+import { removeBiometricCredential } from '../../services/biometricService';
 import BackLink from '../../components/ui/BackLink';
 import Button from '../../components/ui/Button';
 import ConfirmActionModal from '../../components/modals/ConfirmActionModal';
@@ -71,6 +72,12 @@ const DeleteAccount = () => {
 
       // 3. Delete user from Firebase Auth
       await deleteUser(auth.currentUser);
+
+      // 4. Clear first-time experience flags so re-registration starts fresh
+      localStorage.removeItem('orary_demo_seen');
+      localStorage.removeItem('orary_onboarding_done');
+      // 5. Clear biometric credentials so the button doesn't appear on the login screen
+      removeBiometricCredential(currentUser.uid);
 
       setShowConfirmModal(false);
       setDeletionComplete(true);

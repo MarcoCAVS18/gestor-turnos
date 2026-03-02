@@ -1,7 +1,6 @@
 // src/components/settings/CustomizationSection/index.jsx
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Palette, Smile, Sun, Moon, Lock, Crown, Check } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -19,7 +18,7 @@ const COLORS = [
 
 const COMMON_EMOJIS = ['😊', '😎', '🚀', '⭐', '🔥', '💻', '📊'];
 
-const CustomizationSection = () => {
+const CustomizationSection = ({ id, className }) => {
   const {
     primaryColor: appColor,
     userEmoji: appEmoji,
@@ -28,8 +27,7 @@ const CustomizationSection = () => {
   } = useApp();
 
   const colors = useThemeColors();
-  const { isPremium } = usePremium();
-  const navigate = useNavigate();
+  const { isPremium, openPremiumModal } = usePremium();
   const [emojiInput, setEmojiInput] = useState(appEmoji);
 
   useEffect(() => {
@@ -42,7 +40,7 @@ const CustomizationSection = () => {
 
   const changeTheme = (mode) => {
     if (mode === 'dark' && !isPremium) {
-      navigate('/premium');
+      openPremiumModal();
       return;
     }
     savePreferences({ themeMode: mode });
@@ -95,7 +93,7 @@ const CustomizationSection = () => {
   );
 
   return (
-    <Card className="flex flex-col">
+    <Card id={id} className={`flex flex-col${className ? ` ${className}` : ''}`}>
       <div className="flex items-center mb-4">
         <Palette className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" />
         <h2 className="text-lg font-semibold dark:text-white">Customization</h2>

@@ -41,7 +41,7 @@ export { buildReportData, ReportDataBuilder } from './data/ReportDataBuilder';
 export { processMonthlyData, getMonthData, getRecentMonths } from './data/MonthlyDataProcessor';
 
 // Utilities
-export { loadLogoWithColor, loadLogoForPDF, loadLogoForExcel, preloadLogos } from './utils/LogoLoader';
+export { loadLogoWithColor, loadLogoForPDF, loadLogoForExcel, loadLogoWhite, preloadLogos } from './utils/LogoLoader';
 export { generateAllCharts, generateChart, generateChartsWithProgress } from './utils/ChartRenderer';
 
 // Chart components (for custom exports)
@@ -91,13 +91,13 @@ export const DEFAULT_OPTIONS = {
     includeCharts: true
   },
   pdf: {
-    logoColor: '#EC4899',
+    logoColor: '#1F4E79',  // Navy blue for page header logos
     includeCharts: true,
     includeCoverPage: true,
     includeMonthlyDetails: true
   },
   png: {
-    logoColor: '#EC4899',
+    logoColor: '#FFFFFF',  // White logo for dark gradient header
     width: 1200,
     height: 1600,
     quality: 1.0

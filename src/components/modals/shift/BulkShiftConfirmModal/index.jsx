@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Calendar, AlertCircle, LayoutGrid, CalendarDays, CalendarRange } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
-import { generateBulkShifts, getPatternSummary, detectDuplicates } from '../../../../services/bulkShiftService';
+import { generateBulkShifts, detectDuplicates } from '../../../../services/bulkShiftService';
 import BaseModal from '../../base/BaseModal';
 import Card from '../../../ui/Card';
 import Button from '../../../ui/Button';
@@ -88,21 +88,6 @@ const BulkShiftConfirmModal = ({
 
     return generateBulkShifts(baseShift, pattern);
   }, [baseShift, activeTab, selectedDays, weeks, selectedDatesList, fromDate, toDate, skipWeekends]);
-
-  const patternSummary = useMemo(() => {
-    if (generatedShifts.length === 0) return '';
-
-    switch (activeTab) {
-      case 'weekly':
-        return getPatternSummary({ type: 'weekly', selectedDays, weeks });
-      case 'dates':
-        return `${selectedDatesList.length} specific date${selectedDatesList.length > 1 ? 's' : ''}`;
-      case 'range':
-        return getPatternSummary({ type: 'range', fromDate, toDate, skipWeekends });
-      default:
-        return '';
-    }
-  }, [activeTab, generatedShifts.length, selectedDays, weeks, selectedDatesList.length, fromDate, toDate, skipWeekends]);
 
   const handleConfirm = async () => {
     if (generatedShifts.length === 0) return;
@@ -190,29 +175,6 @@ const BulkShiftConfirmModal = ({
       maxWidth="md"
     >
       <div className="space-y-6">
-        {/* Base Shift Summary */}
-        <Card variant="surface2">
-          <h4 className="text-sm font-semibold mb-3" style={{ color: colors.text }}>
-            Base Shift Template
-          </h4>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span style={{ color: colors.textSecondary }}>Time:</span>
-              <span className="font-medium" style={{ color: colors.text }}>
-                {baseShift?.startTime} - {baseShift?.endTime}
-              </span>
-            </div>
-            {baseShift?.notes && (
-              <div className="flex justify-between">
-                <span style={{ color: colors.textSecondary }}>Notes:</span>
-                <span className="font-medium" style={{ color: colors.text }}>
-                  {baseShift.notes}
-                </span>
-              </div>
-            )}
-          </div>
-        </Card>
-
         {/* Tab Navigation */}
         <div>
           <h4 className="text-sm font-semibold mb-3" style={{ color: colors.text }}>
@@ -313,12 +275,6 @@ const BulkShiftConfirmModal = ({
           </Button>
         </div>
 
-        {/* Summary text */}
-        {patternSummary && (
-          <p className="text-xs text-center" style={{ color: colors.textSecondary }}>
-            {patternSummary}
-          </p>
-        )}
       </div>
 
       {/* Duplicate Warning Modal */}

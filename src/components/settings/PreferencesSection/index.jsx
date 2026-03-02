@@ -10,7 +10,7 @@ import Button from '../../ui/Button';
 import Popover from '../../ui/Popover';
 import WorkAvatar from '../../work/WorkAvatar';
 
-const PreferencesSection = ({ onError, onSuccess, className }) => {
+const PreferencesSection = ({ id, onError, onSuccess, className }) => {
   const { 
     defaultDiscount,
     taxesPerWork, // comes from context
@@ -83,8 +83,8 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
   const handleSave = async () => {
     try {
       setLoading(true);
-      await savePreferences({ 
-        defaultTax: defaultTax,
+      await savePreferences({
+        defaultDiscount: defaultTax,
         taxesPerWork: localTaxes
       });
       
@@ -122,7 +122,7 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
   );
 
   return (
-    <SettingsSection icon={Receipt} title="Payment and Tax Settings" className={className}>
+    <SettingsSection id={id} icon={Receipt} title="Payment and Tax Settings" className={className}>
       <div className="space-y-4">
 
         <div>

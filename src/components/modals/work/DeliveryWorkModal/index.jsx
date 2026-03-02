@@ -10,6 +10,8 @@ import PlatformSelector from '../../../delivery/PlatformSelector';
 import VehicleSelector from '../../../delivery/VehicleSelector';
 import LoadingSpinner from '../../../ui/LoadingSpinner/LoadingSpinner';
 import Flex from '../../../ui/Flex';
+import Switch from '../../../ui/Switch';
+import Button from '../../../ui/Button';
 import logger from '../../../../utils/logger';
 
 const DeliveryWorkModal = ({ isOpen, onClose, work }) => {
@@ -86,7 +88,7 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
   // Function to determine if vehicle needs fuel
   const vehicleNeedsFuel = (vehicle) => {
     const vehicleLower = vehicle.toLowerCase();
-    return vehicleLower.includes('motorcycle') ||
+    return vehicleLower.includes('motorbike') ||
            vehicleLower.includes('car');
   };
 
@@ -235,29 +237,25 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
       >
         <h3 className="text-sm font-medium text-gray-700">Calculation settings</h3>
 
-        <label className="flex items-center space-x-3">
-          <input
-            type="checkbox"
-            checked={formData.configuration.includeTips}
-            onChange={(e) => handleConfigChange('includeTips', e.target.checked)}
-            className="rounded w-4 h-4"
-            style={{ accentColor: thematicColors.primary }}
-          />
+        <div className="flex items-center justify-between">
           <span className="text-sm">Include tips in record</span>
-        </label>
+          <Switch
+            checked={formData.configuration.includeTips}
+            onChange={(val) => handleConfigChange('includeTips', val)}
+            size="sm"
+          />
+        </div>
 
         {/* Only show fuel option if vehicle requires it */}
         {showFuelOption && (
-          <label className="flex items-center space-x-3">
-            <input
-              type="checkbox"
-              checked={formData.configuration.trackFuel}
-              onChange={(e) => handleConfigChange('trackFuel', e.target.checked)}
-              className="rounded w-4 h-4"
-              style={{ accentColor: thematicColors.primary }}
-            />
+          <div className="flex items-center justify-between">
             <span className="text-sm">Track fuel expenses</span>
-          </label>
+            <Switch
+              checked={formData.configuration.trackFuel}
+              onChange={(val) => handleConfigChange('trackFuel', val)}
+              size="sm"
+            />
+          </div>
         )}
 
         {/* Informational message for vehicles without fuel */}
@@ -288,18 +286,14 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
 
       {/* Buttons */}
       <div className={`flex pt-4 ${isMobile ? 'flex-col space-y-3' : 'space-x-3'}`}>
-        <button
-          type="button"
+        <Button
+          variant="cancel"
           onClick={onCancel}
-          className={`
-            border border-gray-300 bg-white text-gray-700 hover:bg-gray-50
-            text-sm font-medium rounded-lg transition-colors
-            ${isMobile ? 'py-3 px-4 w-full' : 'flex-1 py-3 px-4'}
-          `}
           disabled={saving}
+          className={isMobile ? 'w-full' : 'flex-1'}
         >
           Cancel
-        </button>
+        </Button>
         <button
           type="submit"
           disabled={saving}

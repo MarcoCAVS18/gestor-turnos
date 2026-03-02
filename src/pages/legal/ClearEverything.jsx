@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import BackLink from '../../components/ui/BackLink';
 import Button from '../../components/ui/Button';
 import ConfirmActionModal from '../../components/modals/ConfirmActionModal';
@@ -18,7 +17,6 @@ const ClearEverything = () => {
   const { isPremium, cancelSubscription } = usePremium();
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [error, setError] = useState(null);
-  const [clearingComplete, setClearingComplete] = useState(false);
 
   const handleClearProfile = async (e) => {
     e.preventDefault();
@@ -32,24 +30,20 @@ const ClearEverything = () => {
       }
 
       await clearProfile();
-      setShowConfirmModal(false);
-      setClearingComplete(true);
 
-      // Wait a moment to show success message, then logout
-      setTimeout(async () => {
-        try {
-          await logout();
-          navigate('/login', {
-            state: {
-              message: 'Your data has been cleared successfully. Please log in again to continue.'
-            }
-          });
-        } catch {
-          navigate('/login');
-        }
-      }, 2000);
+      try {
+        await logout();
+        navigate('/login', {
+          state: {
+            message: 'Your data has been cleared successfully. Please log in again to continue.'
+          }
+        });
+      } catch {
+        navigate('/login');
+      }
 
     } catch (err) {
+      setShowConfirmModal(false);
       setError(err.message || 'Failed to clear data');
     }
   };
@@ -71,73 +65,48 @@ const ClearEverything = () => {
         />
       </div>
 
-      {clearingComplete ? (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6 text-center"
-        >
-          <div className="w-20 h-20 mx-auto mb-4">
-            <img
-              src="/assets/SVG/logo.svg"
-              alt="Orary"
-              className="w-full h-full"
-            />
-          </div>
-          <h3 className="text-xl font-semibold text-green-800 dark:text-green-300 mb-2">Data Cleared Successfully</h3>
-          <p className="text-green-700 dark:text-green-400 mb-4">
-            Your session is being closed...
+      <div className="prose prose-lg text-gray-700 dark:text-gray-300 dark:prose-invert max-w-none">
+          <p className="text-lg leading-relaxed">
+            If you want to start fresh with <strong>Orary</strong> without deleting your account, you can clear all your work and shift data while keeping your login credentials.
           </p>
-          <p className="text-sm text-green-600 dark:text-green-500">
-            You will be redirected to the login page. Use your credentials to log in again.
-          </p>
-        </motion.div>
-      ) : (
-        <>
-          <div className="prose prose-lg text-gray-700 dark:text-gray-300 dark:prose-invert max-w-none">
-            <p className="text-lg leading-relaxed">
-              If you want to start fresh with <strong>Orary</strong> without deleting your account, you can clear all your work and shift data while keeping your login credentials.
-            </p>
 
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">What Will Be Deleted</h2>
-            <ul className="list-disc pl-5 space-y-2 mt-2">
-              <li>All your registered <strong>works</strong> (jobs and delivery platforms)</li>
-              <li>All your recorded <strong>shifts</strong> and their associated data</li>
-              <li>All your <strong>earnings history</strong> and statistics</li>
-              <li>Your <strong>preferences</strong> and settings</li>
-              {isPremium && (
-                <li>Your <strong>Premium subscription</strong> will be cancelled</li>
-              )}
-            </ul>
-
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">What Will Be Preserved</h2>
-            <ul className="list-disc pl-5 space-y-2 mt-2">
-              <li>Your <strong>account</strong> and login credentials</li>
-              <li>Your <strong>email</strong> and <strong>display name</strong></li>
-            </ul>
-
-            {error && (
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mt-4">
-                <p className="text-red-700 dark:text-red-400">{error}</p>
-              </div>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">What Will Be Deleted</h2>
+          <ul className="list-disc pl-5 space-y-2 mt-2">
+            <li>All your registered <strong>works</strong> (jobs and delivery platforms)</li>
+            <li>All your recorded <strong>shifts</strong> and their associated data</li>
+            <li>All your <strong>earnings history</strong> and statistics</li>
+            <li>Your <strong>preferences</strong> and settings</li>
+            {isPremium && (
+              <li>Your <strong>Premium subscription</strong> will be cancelled</li>
             )}
-          </div>
+          </ul>
 
-          <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
-            <Button
-              onClick={() => setShowConfirmModal(true)}
-              variant="solid"
-              icon={Trash2}
-              iconPosition="left"
-              className="w-full sm:w-auto"
-              bgColor="#EF4444"
-              textColor="white"
-            >
-              Clear All Data
-            </Button>
-          </div>
-        </>
-      )}
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">What Will Be Preserved</h2>
+          <ul className="list-disc pl-5 space-y-2 mt-2">
+            <li>Your <strong>account</strong> and login credentials</li>
+            <li>Your <strong>email</strong> and <strong>display name</strong></li>
+          </ul>
+
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mt-4">
+              <p className="text-red-700 dark:text-red-400">{error}</p>
+            </div>
+          )}
+        </div>
+
+        <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+          <Button
+            onClick={() => setShowConfirmModal(true)}
+            variant="solid"
+            icon={Trash2}
+            iconPosition="left"
+            className="w-full sm:w-auto"
+            bgColor="#EF4444"
+            textColor="white"
+          >
+            Clear All Data
+          </Button>
+        </div>
 
       {/* Confirmation Modal */}
       <ConfirmActionModal

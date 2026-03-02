@@ -30,7 +30,7 @@ const DailyDistribution = ({ currentData, loading, thematicColors }) => {
     return (data.earnings > (best?.earnings || 0)) ? { day, earnings: data.earnings } : best;
   }, null);
 
-  const primaryColor = thematicColors?.primary || '#EC4899';
+  const primaryColor = thematicColors?.base || '#EC4899';
 
   return (
     <BaseStatsCard

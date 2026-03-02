@@ -83,9 +83,18 @@ const FeedbackSection = ({ colors }) => {
     return () => clearInterval(interval);
   }, [view, reviews.length]);
 
-  // Thank you → reviews transition
+  // Thank you → pending_info transition
   useEffect(() => {
     if (view !== 'thankyou') return;
+    const timeout = setTimeout(() => {
+      setView('pending_info');
+    }, 2500);
+    return () => clearTimeout(timeout);
+  }, [view]);
+
+  // Pending info → reviews transition
+  useEffect(() => {
+    if (view !== 'pending_info') return;
     const timeout = setTimeout(async () => {
       try {
         const freshReviews = await getFeedbackReviews();
@@ -94,7 +103,7 @@ const FeedbackSection = ({ colors }) => {
         // keep existing reviews
       }
       setView('reviews');
-    }, 2500);
+    }, 3000);
     return () => clearTimeout(timeout);
   }, [view]);
 
@@ -146,6 +155,7 @@ const FeedbackSection = ({ colors }) => {
           onClick={() => interactive && setRating(star)}
           onMouseEnter={() => interactive && setHoveredStar(star)}
           onMouseLeave={() => interactive && setHoveredStar(0)}
+          style={{ touchAction: 'manipulation' }}
           className={interactive ? 'cursor-pointer transition-transform hover:scale-110' : 'cursor-default'}
         >
           <Star
@@ -240,6 +250,8 @@ const FeedbackSection = ({ colors }) => {
                   style={{
                     color: colors.text,
                     '--tw-ring-color': profanityError ? '#f87171' : colors.primary,
+                    // iOS zooms on inputs with font-size < 16px; override text-sm here
+                    fontSize: '16px',
                   }}
                 />
 
@@ -272,7 +284,7 @@ const FeedbackSection = ({ colors }) => {
                           ? 'text-white'
                           : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700'
                       }`}
-                      style={!isAnonymous ? { backgroundColor: colors.primary } : undefined}
+                      style={{ touchAction: 'manipulation', ...(!isAnonymous ? { backgroundColor: colors.primary } : {}) }}
                     >
                       <User size={13} />
                       Publish as {firstName}
@@ -285,7 +297,7 @@ const FeedbackSection = ({ colors }) => {
                           ? 'text-white'
                           : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-700'
                       }`}
-                      style={isAnonymous ? { backgroundColor: colors.primary } : undefined}
+                      style={{ touchAction: 'manipulation', ...(isAnonymous ? { backgroundColor: colors.primary } : {}) }}
                     >
                       <EyeOff size={13} />
                       Anonymous
@@ -334,10 +346,35 @@ const FeedbackSection = ({ colors }) => {
                   <p className="text-sm" style={{ color: colors.textSecondary }}>
                     Your feedback truly helps shape the future of the app.
                   </p>
-                  <div className="flex items-center gap-1.5 mt-2 text-xs" style={{ color: colors.textSecondary, opacity: 0.7 }}>
-                    <Clock3 size={12} />
-                    <span>Your review will be visible after approval.</span>
-                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ---- PENDING INFO ---- */}
+            {view === 'pending_info' && (
+              <motion.div
+                key="pending_info"
+                variants={blurVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                transition={{ duration: 0.25 }}
+                className="flex flex-col items-center justify-center flex-1 text-center gap-4"
+              >
+                <motion.div
+                  initial={{ scale: 0, rotate: -30 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
+                >
+                  <Clock size={44} style={{ color: colors.primary }} />
+                </motion.div>
+                <div>
+                  <h3 className="text-xl font-bold mb-1" style={{ color: colors.text }}>
+                    Under review
+                  </h3>
+                  <p className="text-sm leading-relaxed max-w-xs mx-auto" style={{ color: colors.textSecondary }}>
+                    Your feedback will be reviewed shortly. In the meantime, here's what others are saying...
+                  </p>
                 </div>
               </motion.div>
             )}
@@ -360,31 +397,20 @@ const FeedbackSection = ({ colors }) => {
                   </h3>
                 </div>
 
-                {/* Pending review - centered view with clock icon */}
-                {isPending ? (
-                  <div className="flex-1 flex flex-col items-center justify-center text-center gap-4">
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
-                      className="w-16 h-16 rounded-full flex items-center justify-center"
-                      style={{ backgroundColor: `${colors.primary}15` }}
-                    >
-                      <Clock3 size={32} style={{ color: colors.primary }} />
-                    </motion.div>
-                    <div className="space-y-1.5">
-                      <h4 className="text-base font-semibold" style={{ color: colors.text }}>
-                        Your feedback is under review
-                      </h4>
-                      <p className="text-sm leading-relaxed max-w-xs mx-auto" style={{ color: colors.textSecondary }}>
-                        It will be published within approximately 24 hours.
-                      </p>
-                    </div>
-                    <p className="text-xs leading-relaxed max-w-xs mx-auto" style={{ color: colors.textSecondary, opacity: 0.7 }}>
-                      Thank you so much for helping me improve the app!
-                    </p>
-                  </div>
-                ) : reviews.length > 0 ? (
+                {/* Pending review - small banner above carousel */}
+                {isPending && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg mb-3 text-xs"
+                    style={{ backgroundColor: `${colors.primary}12`, color: colors.primary }}
+                  >
+                    <Clock3 size={12} />
+                    <span>Your review is under review — it'll appear within 24 h.</span>
+                  </motion.div>
+                )}
+
+                {reviews.length > 0 ? (
                   <div className="flex-1 flex flex-col relative">
                     {/* Time ago - top right, outside carousel */}
                     {reviews[currentReview] && (
@@ -454,7 +480,7 @@ const FeedbackSection = ({ colors }) => {
                       <button
                         onClick={goToForm}
                         className="flex items-center gap-1.5 text-xs font-medium transition-opacity hover:opacity-80 cursor-pointer"
-                        style={{ color: colors.primary }}
+                        style={{ color: colors.primary, touchAction: 'manipulation' }}
                       >
                         <PenLine size={12} />
                         {hasSubmitted ? 'Change your review' : 'Leave a review'}
@@ -465,31 +491,41 @@ const FeedbackSection = ({ colors }) => {
                             <button
                               key={i}
                               onClick={() => setCurrentReview(i)}
-                              className="w-1.5 h-1.5 rounded-full transition-all duration-200 cursor-pointer"
-                              style={{
-                                backgroundColor: i === currentReview ? colors.primary : (colors.transparent20 || '#D1D5DB'),
-                                transform: i === currentReview ? 'scale(1.3)' : 'scale(1)',
-                              }}
-                            />
+                              className="w-4 h-4 flex items-center justify-center rounded-full transition-all duration-200 cursor-pointer"
+                              style={{ touchAction: 'manipulation' }}
+                              aria-label={`Review ${i + 1}`}
+                            >
+                              <span
+                                className="block rounded-full transition-all duration-200"
+                                style={{
+                                  width: i === currentReview ? '8px' : '6px',
+                                  height: i === currentReview ? '8px' : '6px',
+                                  backgroundColor: i === currentReview ? colors.primary : (colors.transparent20 || '#D1D5DB'),
+                                }}
+                              />
+                            </button>
                           ))}
                         </div>
                       )}
                     </div>
                   </div>
                 ) : (
-                  <div className="flex-1 flex flex-col items-center justify-center gap-4">
-                    <p className="text-sm" style={{ color: colors.textSecondary }}>
-                      Be the first to leave a review!
-                    </p>
-                    <Button
-                      onClick={goToForm}
-                      icon={PenLine}
-                      iconPosition="left"
-                      size="sm"
-                      themeColor={colors.primary}
+                  <div className="flex-1 flex flex-col items-center justify-center gap-3 text-center">
+                    <motion.div
+                      initial={{ scale: 0, rotate: -20 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
                     >
-                      Leave a review
-                    </Button>
+                      <Clock size={40} style={{ color: colors.primary, opacity: 0.7 }} />
+                    </motion.div>
+                    <div>
+                      <p className="text-sm font-medium mb-1" style={{ color: colors.text }}>
+                        No confirmed feedback yet
+                      </p>
+                      <p className="text-xs leading-relaxed max-w-[200px] mx-auto" style={{ color: colors.textSecondary }}>
+                        Reviews will appear here once approved. Check back soon!
+                      </p>
+                    </div>
                   </div>
                 )}
               </motion.div>

@@ -15,7 +15,9 @@ export const VALIDATION_RULES = {
     value && value.length > max ? `Maximum ${max} characters` : '',
   
   positiveNumber: (value) => {
-    const num = parseFloat(value);
+    // Normalize: accept both ',' and '.' as decimal separator
+    const normalized = value?.toString().replace(',', '.');
+    const num = parseFloat(normalized);
     return value && (isNaN(num) || num <= 0) ? 'Must be a number greater than 0' : '';
   },
   

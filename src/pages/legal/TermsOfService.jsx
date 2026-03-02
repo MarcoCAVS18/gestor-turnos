@@ -5,7 +5,7 @@ import { AlertTriangle } from 'lucide-react';
 
 const TermsOfService = () => {
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 px-4 py-6 space-y-6">
+    <div className="min-h-screen bg-white dark:bg-slate-950 px-4 pb-6 space-y-6" style={{ paddingTop: 'max(1.5rem, env(safe-area-inset-top))' }}>
       <BackLink back />
 
       <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">

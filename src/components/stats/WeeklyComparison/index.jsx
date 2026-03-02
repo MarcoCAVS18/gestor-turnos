@@ -1,24 +1,24 @@
 // src/components/stats/WeeklyComparison/index.jsx
 
 import React, { useState } from 'react';
-import { BarChart3, ChevronDown } from 'lucide-react';
+import { BarChart3, ChevronDown, DollarSign, Clock, TrendingUp, CalendarDays, CalendarCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const WeeklyComparison = ({ currentData, previousData, thematicColors, className = '' }) => {
-  const [expandedIndex, setExpandedIndex] = useState(null);
+  const [expandedIndex, setExpandedIndex] = useState(0); // Earnings open by default
 
   const hoursCurrent = currentData?.hoursWorked || 0;
   const hoursPrevious = previousData?.hoursWorked || 0;
   const shiftsCurrent = currentData?.totalShifts || 0;
   const shiftsPrevious = previousData?.totalShifts || 0;
-  const earningsCurrent = (currentData && typeof currentData.totalEarnings === 'number' && !isNaN(currentData.totalEarnings)) ? currentData.totalEarnings : 0;
-  const earningsPrevious = (previousData && typeof previousData.totalEarnings === 'number' && !isNaN(previousData.totalEarnings)) ? previousData.totalEarnings : 0;
+  const earningsCurrent = (currentData && typeof currentData.totalEarned === 'number' && !isNaN(currentData.totalEarned)) ? currentData.totalEarned : 0;
+  const earningsPrevious = (previousData && typeof previousData.totalEarned === 'number' && !isNaN(previousData.totalEarned)) ? previousData.totalEarned : 0;
   const daysCurrent = currentData?.daysWorked || 0;
   const daysPrevious = previousData?.daysWorked || 0;
-  const avgCurrent = currentData?.averageEarningsPerHour || 0;
-  const avgPrevious = previousData?.averageEarningsPerHour || 0;
+  const avgCurrent = currentData?.averagePerHour || 0;
+  const avgPrevious = previousData?.averagePerHour || 0;
 
   const calculateChange = (current, previous) => {
     if (previous === 0 && current === 0) return 0;
@@ -29,7 +29,7 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
   const comparisons = [
     {
       label: 'Earnings',
-      icon: '💰',
+      icon: DollarSign,
       change: calculateChange(earningsCurrent, earningsPrevious),
       current: formatCurrency(earningsCurrent),
       previous: formatCurrency(earningsPrevious),
@@ -39,7 +39,7 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
     },
     {
       label: 'Hours worked',
-      icon: '⏱',
+      icon: Clock,
       change: calculateChange(hoursCurrent, hoursPrevious),
       current: `${hoursCurrent.toFixed(1)}h`,
       previous: `${hoursPrevious.toFixed(1)}h`,
@@ -47,7 +47,7 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
     },
     {
       label: 'Avg per hour',
-      icon: '📈',
+      icon: TrendingUp,
       change: calculateChange(avgCurrent, avgPrevious),
       current: formatCurrency(avgCurrent),
       previous: formatCurrency(avgPrevious),
@@ -57,7 +57,7 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
     },
     {
       label: 'Shifts',
-      icon: '🗓',
+      icon: CalendarDays,
       change: calculateChange(shiftsCurrent, shiftsPrevious),
       current: `${shiftsCurrent} shifts`,
       previous: `${shiftsPrevious} shifts`,
@@ -65,7 +65,7 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
     },
     {
       label: 'Days worked',
-      icon: '📅',
+      icon: CalendarCheck,
       change: calculateChange(daysCurrent, daysPrevious),
       current: `${daysCurrent} days`,
       previous: `${daysPrevious} days`,
@@ -73,16 +73,40 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
     }
   ];
 
+  // For light theme colors, darken them enough to be readable on white backgrounds.
+  const ensureContrast = (hex) => {
+    if (!hex || !hex.startsWith('#') || hex.length < 7) return hex;
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    if (luminance > 0.65) {
+      const d = (v) => Math.max(0, Math.floor(v * 0.65)).toString(16).padStart(2, '0');
+      return `#${d(r)}${d(g)}${d(b)}`;
+    }
+    return hex;
+  };
+
+  // Positive → theme primary (contrast-safe). Negative → danger red. Neutral → gray.
   const getColor = (change) => {
-    if (change > 0) return thematicColors?.success || '#10B981';
+    if (change > 0) return ensureContrast(thematicColors?.base) || '#10B981';
     if (change < 0) return thematicColors?.danger || '#EF4444';
     return '#9CA3AF';
   };
 
-  const getBg = (change) => {
-    if (change > 0) return 'bg-green-50 dark:bg-green-900/20';
+  // Positive → faint theme tint (inline style). Negative/neutral → Tailwind class.
+  const getRowClass = (change) => {
     if (change < 0) return 'bg-red-50 dark:bg-red-900/20';
-    return 'bg-gray-50 dark:bg-gray-800/50';
+    if (change === 0) return 'bg-gray-50 dark:bg-gray-800/50';
+    return ''; // handled via inline style
+  };
+
+  const getRowStyle = (change) => {
+    if (change > 0) {
+      const c = thematicColors?.base || '#10B981';
+      return { backgroundColor: `${c}12` };
+    }
+    return {};
   };
 
   const handleToggle = (index) => {
@@ -118,9 +142,12 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
               onClick={() => handleToggle(index)}
             >
               {/* Main row */}
-              <div className={`flex items-center gap-3 p-3 ${getBg(comp.change)}`}>
-                {/* Emoji icon */}
-                <span className="text-base flex-shrink-0 w-6 text-center">{comp.icon}</span>
+              <div
+                className={`flex items-center gap-3 p-3 ${getRowClass(comp.change)}`}
+                style={getRowStyle(comp.change)}
+              >
+                {/* Icon */}
+                <comp.icon size={16} className="flex-shrink-0" style={{ color: getColor(comp.change) }} />
 
                 {/* Label */}
                 <div className="flex-1 min-w-0">

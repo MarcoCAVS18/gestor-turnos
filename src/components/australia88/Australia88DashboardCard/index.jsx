@@ -9,35 +9,60 @@
 //   Mobile  → stacked: day count → progress bar → stats row
 //   Desktop → split:   left = day count + progress bar | right = stats
 //
-// This component is intentionally minimal (Dashboard surface).
-// The full weekly breakdown lives in Australia88StatsCard (Statistics page).
-//
-// Props: all come from useAustralia88() — keep this component pure/dumb.
+// WHV logic: counts in 88-day blocks (Year 1 then Year 2).
+// Once Year 1 is complete the counter resets to 0 for Year 2 — no 176-day target shown.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Globe, ChevronRight, CalendarDays, Target, CheckCircle2 } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import { useAustralia88 } from '../../../hooks/useAustralia88';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 import ProgressBar from '../../ui/ProgressBar';
 
-const Australia88DashboardCard = ({
-  totalVisaDays,
-  currentWeekVisaDays,
-  milestone,
-  progressPercent,
-}) => {
+const Australia88DashboardCard = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const colors = useThemeColors();
+  const {
+    totalVisaDays,
+    currentWeekVisaDays,
+    year1Complete,
+    year2Active,
+    year2Complete,
+    year2Days,
+  } = useAustralia88();
 
-  const milestoneTarget = milestone === 'complete' ? 176 : milestone;
-  const daysRemaining = milestone === 'complete' ? 0 : milestoneTarget - totalVisaDays;
-  const isComplete = milestone === 'complete';
+  // Local toggle: only relevant when year2Active (user has earned beyond 88 days)
+  const [viewYear, setViewYear] = useState(year2Active ? 2 : 1);
+
+  // Sync viewYear when year2Active changes (e.g. first time user hits 88 days)
+  React.useEffect(() => {
+    setViewYear(year2Active ? 2 : 1);
+  }, [year2Active]);
+
+  const showYearToggle = year2Active;
+
+  // Derived display values based on which year is being viewed
+  const y1Days = Math.min(totalVisaDays, 88);
+  const displayDays = viewYear === 2 ? year2Days : y1Days;
+  const daysRemaining = 88 - displayDays;
+  const progressPercent = Math.min(100, Math.round((displayDays / 88) * 100));
+  const isCompleteForView = viewYear === 2 ? year2Complete : year1Complete;
+
+  // Sub-label beneath the big number
+  const goalLabel = isCompleteForView
+    ? `Year ${viewYear} complete!`
+    : `Year ${viewYear} · days · goal 88`;
+
+  // Show progress bar while the viewed year is still in progress
+  const showProgressBar = !isCompleteForView;
+
+  const isComplete = year2Complete;
 
   return (
     <Card className="flex flex-col h-full overflow-hidden">
@@ -49,19 +74,41 @@ const Australia88DashboardCard = ({
           <span className="truncate">Working Holiday Visa</span>
         </h3>
 
-        <Button
-          onClick={() => navigate('/statistics')}
-          size="sm"
-          variant="ghost"
-          animatedChevron
-          collapsed={isMobile}
-          className="flex-shrink-0 whitespace-nowrap text-gray-400 hover:text-gray-600"
-          themeColor={colors.primary}
-          icon={ChevronRight}
-          iconPosition="right"
-        >
-          Details
-        </Button>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {/* Year toggle — only shown when user has Year 2 data */}
+          {showYearToggle && (
+            <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: colors.border }}>
+              {[1, 2].map(y => (
+                <button
+                  key={y}
+                  type="button"
+                  onClick={() => setViewYear(y)}
+                  className="px-2 py-0.5 text-[10px] font-semibold transition-colors"
+                  style={viewYear === y
+                    ? { backgroundColor: colors.primary, color: '#fff' }
+                    : { backgroundColor: 'transparent', color: colors.textSecondary }
+                  }
+                >
+                  Y{y}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <Button
+            onClick={() => navigate('/statistics')}
+            size="sm"
+            variant="ghost"
+            animatedChevron
+            collapsed={isMobile}
+            className="whitespace-nowrap text-gray-400 hover:text-gray-600"
+            themeColor={colors.primary}
+            icon={ChevronRight}
+            iconPosition="right"
+          >
+            Details
+          </Button>
+        </div>
       </Flex>
 
       {/* ── Body: split on desktop, stacked on mobile ──────────────────────── */}
@@ -73,19 +120,31 @@ const Australia88DashboardCard = ({
             className="text-4xl font-extrabold tabular-nums leading-none"
             style={{ color: colors.primary }}
           >
-            {totalVisaDays}
+            {displayDays}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            {isComplete ? 'Both extensions complete!' : `days · goal ${milestoneTarget}`}
+            {goalLabel}
           </p>
 
-          <div className="mt-3">
-            <ProgressBar value={progressPercent} color={colors.primary} height="6px" />
-            <Flex variant="between" className="mt-1">
-              <span className="text-[10px] text-gray-400">0</span>
-              <span className="text-[10px] text-gray-400">{milestoneTarget}</span>
-            </Flex>
-          </div>
+          {showProgressBar && (
+            <div className="mt-3">
+              <ProgressBar value={progressPercent} color={colors.primary} height="6px" />
+              <Flex variant="between" className="mt-1">
+                <span className="text-[10px] text-gray-400">0</span>
+                <span className="text-[10px] text-gray-400">88</span>
+              </Flex>
+            </div>
+          )}
+
+          {/* Year complete badge */}
+          {isCompleteForView && (
+            <div className="mt-3 flex items-center justify-center gap-1.5">
+              <CheckCircle2 size={14} style={{ color: colors.primary }} />
+              <span className="text-xs font-semibold" style={{ color: colors.primary }}>
+                Year {viewYear} complete!
+              </span>
+            </div>
+          )}
         </div>
 
         {/* Divider — only on desktop */}
@@ -121,7 +180,7 @@ const Australia88DashboardCard = ({
             }`}
             style={isComplete ? { backgroundColor: `${colors.primary}15` } : {}}
           >
-            {isComplete ? (
+            {isCompleteForView ? (
               <>
                 <div className="flex items-center justify-center gap-1 mb-0.5">
                   <CheckCircle2 size={10} style={{ color: colors.primary }} />

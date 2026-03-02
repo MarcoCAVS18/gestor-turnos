@@ -38,16 +38,11 @@ const BulkShiftOptions = ({ isEnabled, onToggle }) => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Repeat size={18} style={{ color: colors.primary }} />
-          <label
-            htmlFor="bulk-shift-toggle"
-            className="text-sm font-medium cursor-pointer"
-            style={{ color: colors.text }}
-          >
+          <span className="text-sm font-medium" style={{ color: colors.text }}>
             Enable bulk creation
-          </label>
+          </span>
         </div>
         <Switch
-          id="bulk-shift-toggle"
           checked={isEnabled}
           onChange={onToggle}
         />

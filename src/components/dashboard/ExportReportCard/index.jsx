@@ -1,7 +1,6 @@
 // src/components/dashboard/ExportReportCard/index.jsx
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Download,
   FileText,
@@ -23,8 +22,7 @@ import logger from '../../../utils/logger';
 
 const ExportReportCard = ({ onExport }) => {
   const colors = useThemeColors();
-  const navigate = useNavigate();
-  const { isPremium } = usePremium();
+  const { isPremium, openPremiumModal } = usePremium();
 
   const [selectedFormat, setSelectedFormat] = useState('pdf');
   const [isExporting, setIsExporting] = useState(false);
@@ -49,7 +47,7 @@ const ExportReportCard = ({ onExport }) => {
   if (!isPremium) {
     return (
       <Card variant="transparent" className="relative overflow-hidden">
-        <button onClick={() => navigate('/premium')} className="w-full text-left">
+        <button onClick={openPremiumModal} className="w-full text-left">
           {/* Blur overlay */}
           <div className="absolute inset-0 backdrop-blur-[2px] bg-white/60 z-10 rounded-xl" />
 

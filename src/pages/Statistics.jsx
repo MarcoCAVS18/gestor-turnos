@@ -24,7 +24,6 @@ import VehicleEfficiency from '../components/stats/VehicleEfficiency';
 import FuelEfficiency from '../components/stats/FuelEfficiency';
 import PlatformComparison from '../components/stats/PlatformComparison';
 import DeliveryHourlyAnalysis from '../components/stats/DeliveryHourlyAnalysis';
-import UnusedDeliverySection from '../components/stats/UnusedDeliverySection';
 
 const Statistics = () => {
   const {
@@ -45,16 +44,10 @@ const Statistics = () => {
   const isMobile = useIsMobile();
   const hasDelivery = deliveryEnabled && deliveryStats.shiftsCompleted > 0;
 
-  // Check if vehicle/fuel components have actual data
-  const hasVehicleData = useMemo(() => {
-    if (!deliveryStats?.statsByVehicle) return false;
-    const vehicles = Object.values(deliveryStats.statsByVehicle);
-    return vehicles.some(v => v.totalExpenses > 0 || v.totalKilometers > 0);
-  }, [deliveryStats]);
-
-  const hasFuelData = useMemo(() => {
-    return (deliveryStats?.totalExpenses > 0 || deliveryStats?.totalKilometers > 0);
-  }, [deliveryStats]);
+  // All delivery shifts (for FuelEfficiency scatter chart)
+  const allDeliveryShifts = useMemo(() => {
+    return (allShifts || []).filter(s => s.type === 'delivery');
+  }, [allShifts]);
 
   // Filter actual shifts of the selected week ---
   const currentWeekShifts = useMemo(() => {
@@ -189,26 +182,10 @@ const Statistics = () => {
                 </div>
                 <div className="flex flex-col gap-6 h-full">
                   <PlatformComparison deliveryStats={deliveryStats} />
-
-                  {/* Show Vehicle and Fuel if they have data */}
-                  {hasVehicleData && (
-                    <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
-                  )}
-                  {hasFuelData && (
-                    <FuelEfficiency deliveryStats={deliveryStats} />
-                  )}
-
-                  {/* Collapsible section for unused components */}
-                  {(!hasVehicleData || !hasFuelData) && (
-                    <UnusedDeliverySection>
-                      {!hasVehicleData && (
-                        <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
-                      )}
-                      {!hasFuelData && (
-                        <FuelEfficiency deliveryStats={deliveryStats} />
-                      )}
-                    </UnusedDeliverySection>
-                  )}
+                  <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
+                  <div className="flex-grow flex flex-col">
+                    <FuelEfficiency deliveryStats={deliveryStats} shifts={allDeliveryShifts} className="h-full" />
+                  </div>
                 </div>
               </div>
 
@@ -217,26 +194,8 @@ const Statistics = () => {
                 <DeliverySummary deliveryStats={deliveryStats} />
                 <DeliveryHourlyAnalysis shifts={currentWeekShifts} />
                 <PlatformComparison deliveryStats={deliveryStats} />
-
-                {/* Show Vehicle and Fuel if they have data */}
-                {hasVehicleData && (
-                  <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
-                )}
-                {hasFuelData && (
-                  <FuelEfficiency deliveryStats={deliveryStats} />
-                )}
-
-                {/* Collapsible section for unused components */}
-                {(!hasVehicleData || !hasFuelData) && (
-                  <UnusedDeliverySection>
-                    {!hasVehicleData && (
-                      <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
-                    )}
-                    {!hasFuelData && (
-                      <FuelEfficiency deliveryStats={deliveryStats} />
-                    )}
-                  </UnusedDeliverySection>
-                )}
+                <VehicleEfficiency vehicleStats={deliveryStats.statsByVehicle} />
+                <FuelEfficiency deliveryStats={deliveryStats} shifts={allDeliveryShifts} />
               </div>
             </div>
           </>

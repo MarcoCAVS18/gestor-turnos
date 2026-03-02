@@ -4,42 +4,53 @@ import React from 'react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
 
 /**
- * PNG Dashboard Component - Card-style dashboard for PNG export
- * Dynamic height based on content, no forced A4 format
+ * PNG Dashboard Component - Professional card-style dashboard for PNG export
  */
 export const PNGDashboard = ({ data, logo, width = 1200 }) => {
   const { metadata, userInfo, kpis, weekComparison, weeklyData, topWorks, shiftTypes, delivery, projections } = data;
 
   const colors = {
-    primary: '#EC4899',
+    // Brand
+    brandDark: '#0F172A',
+    brandMid: '#1E3A5F',
+    brandAccent: '#EC4899',
+    // UI
+    primary: '#1E3A5F',
     secondary: '#3B82F6',
-    success: '#10B981',
-    warning: '#F59E0B',
+    success: '#059669',
+    warning: '#D97706',
+    error: '#DC2626',
+    // Neutrals
     gray: '#6B7280',
     lightGray: '#F3F4F6',
+    borderGray: '#E5E7EB',
     white: '#FFFFFF',
-    dark: '#1F2937',
+    dark: '#111827',
     cardBg: '#FFFFFF',
-    pageBg: '#F9FAFB'
+    pageBg: '#F1F5F9'
   };
 
   const shiftTypeColors = {
-    'Day': '#FBBF24',
-    'Afternoon': '#F97316',
-    'Night': '#6366F1',
-    'Saturday': '#10B981',
+    'Day': '#D97706',
+    'Afternoon': '#EA580C',
+    'Night': '#4F46E5',
+    'Saturday': '#059669',
     'Sunday': '#EC4899',
-    'Delivery': '#8B5CF6'
+    'Delivery': '#7C3AED'
   };
 
-  const formatCurrency = (value) => `$${(value || 0).toFixed(2)}`;
-  const formatHours = (value) => `${(value || 0).toFixed(1)}h`;
+  const r2 = (v) => Math.round((v || 0) * 100) / 100;
+  const r1 = (v) => Math.round((v || 0) * 10) / 10;
+
+  const formatCurrency = (value) => `$${r2(value).toFixed(2)}`;
+  const formatHours = (value) => `${r1(value).toFixed(1)}h`;
 
   const cardStyle = {
     backgroundColor: colors.cardBg,
-    borderRadius: '16px',
+    borderRadius: '12px',
     padding: '24px',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06)'
+    boxShadow: '0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05)',
+    border: `1px solid ${colors.borderGray}`
   };
 
   const chartWidth = Math.floor((width - 120) / 2) - 48;
@@ -54,128 +65,166 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
         boxSizing: 'border-box'
       }}
     >
-      {/* Header */}
+      {/* ─── Header ─── */}
       <div style={{
-        ...cardStyle,
-        background: 'linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%)',
-        color: colors.white,
+        backgroundColor: colors.brandDark,
+        borderRadius: '16px',
+        padding: '32px 36px',
         marginBottom: '24px',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
+        {/* Subtle decorative accent */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: '300px',
+          height: '100%',
+          background: 'linear-gradient(135deg, transparent 0%, rgba(236,72,153,0.08) 100%)',
+          pointerEvents: 'none'
+        }} />
+
+        {/* Left: Logo + App name + Report title */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           {logo && logo.base64 && (
             <img
               src={logo.base64}
-              alt="Logo"
-              style={{ width: '56px', height: '56px', borderRadius: '12px' }}
+              alt="Orary"
+              style={{ width: '52px', height: '52px', objectFit: 'contain', flexShrink: 0 }}
             />
           )}
           <div>
-            <h1 style={{ margin: 0, fontSize: '28px', fontWeight: '700', color: colors.white }}>
-              Activity Dashboard
+            <p style={{
+              margin: 0,
+              fontSize: '11px',
+              fontWeight: '700',
+              color: colors.brandAccent,
+              letterSpacing: '3px',
+              textTransform: 'uppercase'
+            }}>
+              Orary
+            </p>
+            <h1 style={{ margin: '5px 0 0 0', fontSize: '26px', fontWeight: '700', color: colors.white, lineHeight: 1.2 }}>
+              Activity Report
             </h1>
-            <p style={{ margin: '6px 0 0 0', fontSize: '15px', color: 'rgba(255,255,255,0.85)' }}>
+            <p style={{ margin: '6px 0 0 0', fontSize: '14px', color: 'rgba(255,255,255,0.55)' }}>
               {metadata.startDate} — {metadata.endDate}
             </p>
           </div>
         </div>
+
+        {/* Right: Generated date + shift count */}
         <div style={{ textAlign: 'right' }}>
-          <p style={{ margin: 0, fontSize: '13px', color: 'rgba(255,255,255,0.7)' }}>Generated</p>
+          <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.45)', letterSpacing: '1px', textTransform: 'uppercase' }}>
+            Generated
+          </p>
           <p style={{ margin: '4px 0 0 0', fontSize: '15px', fontWeight: '600', color: colors.white }}>
             {metadata.generatedDate}
+          </p>
+          <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>
+            {metadata.totalShifts} shifts · {metadata.totalWorks} works
           </p>
         </div>
       </div>
 
-      {/* User Info Card */}
+      {/* ─── User Info Card ─── */}
       {userInfo && (
         <div style={{
           ...cardStyle,
           marginBottom: '24px',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          padding: '20px 28px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            {/* User icon circle */}
+            {/* Avatar */}
             <div style={{
-              width: '48px',
-              height: '48px',
+              width: '46px',
+              height: '46px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%)',
+              backgroundColor: colors.brandDark,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: colors.white,
-              fontSize: '20px',
-              fontWeight: '700'
+              fontSize: '18px',
+              fontWeight: '700',
+              flexShrink: 0
             }}>
               {(userInfo.name || 'U').charAt(0).toUpperCase()}
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: '18px', fontWeight: '600', color: colors.dark }}>
+              <p style={{ margin: 0, fontSize: '16px', fontWeight: '600', color: colors.dark }}>
                 {userInfo.name}
               </p>
-              <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: colors.gray }}>
-                {metadata.totalShifts} shifts across {metadata.totalWorks} works
+              <p style={{ margin: '3px 0 0 0', fontSize: '12px', color: colors.gray }}>
+                {userInfo.email || 'Orary User'}
               </p>
             </div>
           </div>
-          <div style={{
-            padding: '6px 14px',
-            borderRadius: '20px',
-            backgroundColor: userInfo.isPremium ? '#FDF2F8' : colors.lightGray,
-            border: userInfo.isPremium ? '1px solid #FBCFE8' : '1px solid #E5E7EB'
-          }}>
-            <span style={{
-              fontSize: '13px',
-              fontWeight: '600',
-              color: userInfo.isPremium ? '#BE185D' : colors.gray
+          {/* Account type badge — centered in the card */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{
+              padding: '5px 14px',
+              borderRadius: '20px',
+              backgroundColor: userInfo.isPremium ? '#FDF2F8' : colors.lightGray,
+              border: `1px solid ${userInfo.isPremium ? '#FBCFE8' : '#E5E7EB'}`
             }}>
-              {userInfo.isPremium ? 'Premium' : 'Free'}
-            </span>
+              <span style={{
+                fontSize: '12px',
+                fontWeight: '700',
+                color: userInfo.isPremium ? '#BE185D' : colors.gray,
+                letterSpacing: '0.3px'
+              }}>
+                {userInfo.isPremium ? '★ Premium' : 'Free'}
+              </span>
+            </div>
           </div>
         </div>
       )}
 
-      {/* KPI Cards */}
+      {/* ─── KPI Cards ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
-        <KPICard label="Total Earned" value={formatCurrency(kpis.totalEarned)} icon="$" color={colors.primary} />
-        <KPICard label="Total Hours" value={formatHours(kpis.totalHours)} icon="⏱" color={colors.secondary} />
-        <KPICard label="Total Shifts" value={kpis.totalShifts.toString()} icon="📋" color={colors.success} />
-        <KPICard label="Avg/Hour" value={formatCurrency(kpis.averagePerHour)} icon="⚡" color={colors.warning} />
+        <KPICard label="Total Earned" value={formatCurrency(kpis.totalEarned)} accentColor={colors.brandAccent} />
+        <KPICard label="Total Hours" value={formatHours(kpis.totalHours)} accentColor={colors.secondary} />
+        <KPICard label="Total Shifts" value={String(kpis.totalShifts)} accentColor={colors.success} />
+        <KPICard label="Avg / Hour" value={formatCurrency(kpis.averagePerHour)} accentColor={colors.warning} />
       </div>
 
-      {/* Week Comparison */}
-      <div style={{ ...cardStyle, marginBottom: '24px' }}>
+      {/* ─── Week Comparison ─── */}
+      <div style={{ ...cardStyle, marginBottom: '24px', padding: '20px 28px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <p style={{ margin: 0, fontSize: '13px', fontWeight: '500', color: colors.gray, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <p style={{ margin: 0, fontSize: '11px', fontWeight: '600', color: colors.gray, textTransform: 'uppercase', letterSpacing: '1px' }}>
               This Week
             </p>
-            <p style={{ margin: '8px 0 0 0', fontSize: '32px', fontWeight: '700', color: colors.dark }}>
+            <p style={{ margin: '8px 0 0 0', fontSize: '30px', fontWeight: '700', color: colors.dark }}>
               {formatCurrency(weekComparison.current)}
             </p>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{
               padding: '8px 16px',
-              borderRadius: '12px',
-              backgroundColor: weekComparison.change >= 0 ? '#D1FAE5' : '#FEE2E2'
+              borderRadius: '10px',
+              backgroundColor: weekComparison.change >= 0 ? '#ECFDF5' : '#FEF2F2',
+              border: `1px solid ${weekComparison.change >= 0 ? '#A7F3D0' : '#FECACA'}`
             }}>
               <span style={{
-                fontSize: '16px',
+                fontSize: '15px',
                 fontWeight: '700',
                 color: weekComparison.change >= 0 ? '#065F46' : '#991B1B'
               }}>
-                {weekComparison.change >= 0 ? '↑' : '↓'} {Math.abs(weekComparison.change).toFixed(1)}%
+                {weekComparison.change >= 0 ? '↑' : '↓'} {Math.abs(r1(weekComparison.change)).toFixed(1)}%
               </span>
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: '12px', color: colors.gray }}>vs last week</p>
-              <p style={{ margin: '2px 0 0 0', fontSize: '14px', fontWeight: '500', color: colors.gray }}>
+              <p style={{ margin: 0, fontSize: '11px', color: colors.gray }}>vs last week</p>
+              <p style={{ margin: '3px 0 0 0', fontSize: '14px', fontWeight: '500', color: colors.dark }}>
                 {formatCurrency(weekComparison.previous)}
               </p>
             </div>
@@ -183,68 +232,77 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
         </div>
       </div>
 
-      {/* Charts Section - Fixed dimensions instead of ResponsiveContainer */}
+      {/* ─── Charts ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
-        {/* Weekly Evolution Chart */}
+        {/* Weekly Evolution */}
         <div style={cardStyle}>
-          <p style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '600', color: colors.dark }}>
-            Weekly Evolution
+          <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: '700', color: colors.dark }}>
+            Weekly Earnings
           </p>
+          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>Last 4 weeks</p>
           {weeklyData && weeklyData.length > 0 ? (
-            <LineChart width={chartWidth} height={220} data={weeklyData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis dataKey="week" stroke={colors.gray} style={{ fontSize: '11px' }} />
-              <YAxis stroke={colors.gray} style={{ fontSize: '11px' }} />
-              <Tooltip contentStyle={{ backgroundColor: colors.white, border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }} />
-              <Line type="monotone" dataKey="earnings" stroke={colors.primary} strokeWidth={3} dot={{ fill: colors.primary, r: 5 }} name="Earnings ($)" />
+            <LineChart width={chartWidth} height={200} data={weeklyData}>
+              <CartesianGrid strokeDasharray="3 3" stroke={colors.borderGray} />
+              <XAxis dataKey="week" stroke={colors.gray} tick={{ fontSize: 10 }} />
+              <YAxis stroke={colors.gray} tick={{ fontSize: 10 }} tickFormatter={(v) => `$${Math.round(v)}`} />
+              <Tooltip
+                contentStyle={{ backgroundColor: colors.white, border: `1px solid ${colors.borderGray}`, borderRadius: '8px', fontSize: '12px' }}
+                formatter={(v) => [`$${r2(v).toFixed(2)}`, 'Earnings']}
+              />
+              <Line type="monotone" dataKey="earnings" stroke={colors.brandAccent} strokeWidth={2.5} dot={{ fill: colors.brandAccent, r: 4, strokeWidth: 0 }} />
             </LineChart>
           ) : (
-            <div style={{ height: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.gray, fontSize: '14px' }}>
-              No weekly data available
+            <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.gray, fontSize: '13px' }}>
+              No weekly data
             </div>
           )}
         </div>
 
-        {/* Shift Types Chart */}
+        {/* Shift Types */}
         <div style={cardStyle}>
-          <p style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '600', color: colors.dark }}>
+          <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: '700', color: colors.dark }}>
             Hours by Shift Type
           </p>
+          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>Distribution overview</p>
           {shiftTypes && shiftTypes.length > 0 ? (
-            <BarChart width={chartWidth} height={220} data={shiftTypes} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-              <XAxis type="number" stroke={colors.gray} style={{ fontSize: '11px' }} />
-              <YAxis type="category" dataKey="type" stroke={colors.gray} style={{ fontSize: '11px' }} width={80} />
-              <Tooltip contentStyle={{ backgroundColor: colors.white, border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '12px' }} />
-              <Bar dataKey="hours" radius={[0, 6, 6, 0]} name="Hours">
+            <BarChart width={chartWidth} height={200} data={shiftTypes} layout="vertical">
+              <CartesianGrid strokeDasharray="3 3" stroke={colors.borderGray} />
+              <XAxis type="number" stroke={colors.gray} tick={{ fontSize: 10 }} tickFormatter={(v) => `${v}h`} />
+              <YAxis type="category" dataKey="type" stroke={colors.gray} tick={{ fontSize: 10 }} width={75} />
+              <Tooltip
+                contentStyle={{ backgroundColor: colors.white, border: `1px solid ${colors.borderGray}`, borderRadius: '8px', fontSize: '12px' }}
+                formatter={(v) => [`${r1(v).toFixed(1)}h`, 'Hours']}
+              />
+              <Bar dataKey="hours" radius={[0, 4, 4, 0]}>
                 {shiftTypes.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color || shiftTypeColors[entry.type] || colors.secondary} />
                 ))}
               </Bar>
             </BarChart>
           ) : (
-            <div style={{ height: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.gray, fontSize: '14px' }}>
-              No shift type data available
+            <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.gray, fontSize: '13px' }}>
+              No shift data
             </div>
           )}
         </div>
       </div>
 
-      {/* Bottom Section: Top Works + Summary */}
+      {/* ─── Bottom: Top Works + Summary ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
         {/* Top Works */}
         <div style={cardStyle}>
-          <p style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '600', color: colors.dark }}>
+          <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: '700', color: colors.dark }}>
             Top Works
           </p>
+          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>Ranked by earnings</p>
           {topWorks && topWorks.length > 0 ? (
             <div>
               {topWorks.map((work, index) => (
                 <div
                   key={index}
                   style={{
-                    padding: '14px 0',
-                    borderBottom: index < topWorks.length - 1 ? '1px solid #F3F4F6' : 'none',
+                    padding: '12px 0',
+                    borderBottom: index < topWorks.length - 1 ? `1px solid ${colors.borderGray}` : 'none',
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center'
@@ -252,65 +310,74 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{
-                      width: '10px',
-                      height: '10px',
-                      borderRadius: '50%',
-                      backgroundColor: work.color || colors.primary
-                    }} />
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '8px',
+                      backgroundColor: colors.lightGray,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      color: colors.gray
+                    }}>
+                      {index + 1}
+                    </div>
                     <div>
-                      <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: colors.dark }}>
+                      <p style={{ margin: 0, fontSize: '13px', fontWeight: '600', color: colors.dark }}>
                         {work.name}
                       </p>
-                      <p style={{ margin: '3px 0 0 0', fontSize: '12px', color: colors.gray }}>
+                      <p style={{ margin: '2px 0 0 0', fontSize: '11px', color: colors.gray }}>
                         {formatHours(work.hours)} · {work.shifts} shifts
                       </p>
                     </div>
                   </div>
-                  <p style={{ margin: 0, fontSize: '16px', fontWeight: '700', color: colors.primary }}>
+                  <p style={{ margin: 0, fontSize: '15px', fontWeight: '700', color: colors.dark }}>
                     {formatCurrency(work.earned)}
                   </p>
                 </div>
               ))}
             </div>
           ) : (
-            <p style={{ margin: 0, fontSize: '14px', color: colors.gray }}>No work data available</p>
+            <p style={{ margin: 0, fontSize: '13px', color: colors.gray }}>No work data</p>
           )}
         </div>
 
         {/* Summary */}
         <div style={cardStyle}>
-          <p style={{ margin: '0 0 16px 0', fontSize: '15px', fontWeight: '600', color: colors.dark }}>
+          <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: '700', color: colors.dark }}>
             Summary
           </p>
+          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>Key statistics</p>
 
           {/* Delivery Stats */}
           {delivery && (
-            <div style={{ marginBottom: '20px', paddingBottom: '16px', borderBottom: '1px solid #F3F4F6' }}>
-              <p style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: '600', color: colors.gray, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ marginBottom: '20px', paddingBottom: '16px', borderBottom: `1px solid ${colors.borderGray}` }}>
+              <p style={{ margin: '0 0 10px 0', fontSize: '10px', fontWeight: '700', color: colors.gray, textTransform: 'uppercase', letterSpacing: '1px' }}>
                 Delivery
               </p>
-              <SummaryRow label="Total Earned" value={formatCurrency(delivery.totalEarned)} color={colors.primary} />
-              <SummaryRow label="Orders" value={delivery.totalOrders.toString()} />
-              <SummaryRow label="Avg/Order" value={formatCurrency(delivery.averagePerOrder)} />
+              <SummaryRow label="Earned" value={formatCurrency(delivery.totalEarned)} highlight />
+              <SummaryRow label="Orders" value={String(delivery.totalOrders)} />
+              <SummaryRow label="Avg / Order" value={formatCurrency(delivery.averagePerOrder)} />
               {delivery.totalKilometers > 0 && (
-                <SummaryRow label="Kilometers" value={`${delivery.totalKilometers.toFixed(0)} km`} />
+                <SummaryRow label="Distance" value={`${Math.round(delivery.totalKilometers)} km`} />
               )}
             </div>
           )}
 
           {/* Projections */}
-          <div style={{ marginBottom: delivery ? '0' : '0' }}>
-            <p style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: '600', color: colors.gray, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: `1px solid ${colors.borderGray}` }}>
+            <p style={{ margin: '0 0 10px 0', fontSize: '10px', fontWeight: '700', color: colors.gray, textTransform: 'uppercase', letterSpacing: '1px' }}>
               Projections
             </p>
-            <SummaryRow label="Monthly" value={formatCurrency(projections.monthlyProjection)} color={colors.primary} bold />
+            <SummaryRow label="Monthly" value={formatCurrency(projections.monthlyProjection)} highlight bold />
             <SummaryRow label="Weekly Avg" value={formatCurrency(projections.weeklyAverage)} />
             <SummaryRow label="Hourly Rate" value={formatCurrency(projections.hourlyProjection)} />
           </div>
 
-          {/* Extra KPIs */}
-          <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #F3F4F6' }}>
-            <p style={{ margin: '0 0 12px 0', fontSize: '13px', fontWeight: '600', color: colors.gray, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+          {/* Averages */}
+          <div>
+            <p style={{ margin: '0 0 10px 0', fontSize: '10px', fontWeight: '700', color: colors.gray, textTransform: 'uppercase', letterSpacing: '1px' }}>
               Averages
             </p>
             <SummaryRow label="Per Shift" value={formatCurrency(kpis.averagePerShift)} />
@@ -319,14 +386,18 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
         </div>
       </div>
 
-      {/* Footer */}
+      {/* ─── Footer ─── */}
       <div style={{
-        marginTop: '24px',
-        textAlign: 'center',
-        padding: '16px 0'
+        marginTop: '32px',
+        paddingTop: '20px',
+        borderTop: `1px solid ${colors.borderGray}`,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px'
       }}>
-        <p style={{ margin: 0, fontSize: '12px', color: colors.gray }}>
-          Generated by Orary · orary.app
+        <p style={{ margin: 0, fontSize: '11px', color: colors.gray }}>
+          Generated by <strong style={{ color: colors.dark }}>Orary</strong> · orary.app
         </p>
       </div>
     </div>
@@ -334,62 +405,51 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
 };
 
 /**
- * KPI Card Component - Modern card style
+ * KPI Card Component - Professional card with subtle accent bar
  */
-const KPICard = ({ label, value, icon, color }) => {
-  return (
-    <div
-      style={{
-        backgroundColor: '#FFFFFF',
-        padding: '20px',
-        borderRadius: '16px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06)',
-        position: 'relative',
-        overflow: 'hidden'
-      }}
-    >
-      {/* Color accent bar */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '4px',
-        backgroundColor: color,
-        borderRadius: '16px 16px 0 0'
-      }} />
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-        <p style={{ margin: 0, fontSize: '12px', fontWeight: '500', color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-          {label}
-        </p>
-        <span style={{ fontSize: '18px' }}>{icon}</span>
-      </div>
-      <p style={{ margin: 0, fontSize: '26px', fontWeight: '700', color: '#1F2937' }}>
-        {value}
-      </p>
-    </div>
-  );
-};
+const KPICard = ({ label, value, accentColor }) => (
+  <div style={{
+    backgroundColor: '#FFFFFF',
+    padding: '20px 22px',
+    borderRadius: '12px',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.07)',
+    border: '1px solid #E5E7EB',
+    position: 'relative',
+    overflow: 'hidden'
+  }}>
+    {/* Accent bar */}
+    <div style={{
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '3px',
+      backgroundColor: accentColor
+    }} />
+    <p style={{ margin: '0 0 10px 0', fontSize: '11px', fontWeight: '600', color: '#6B7280', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+      {label}
+    </p>
+    <p style={{ margin: 0, fontSize: '24px', fontWeight: '700', color: '#111827' }}>
+      {value}
+    </p>
+  </div>
+);
 
 /**
  * Summary Row Component
  */
-const SummaryRow = ({ label, value, color, bold }) => (
-  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-    <span style={{ fontSize: '13px', color: '#6B7280' }}>{label}</span>
+const SummaryRow = ({ label, value, highlight, bold }) => (
+  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '7px' }}>
+    <span style={{ fontSize: '12px', color: '#6B7280' }}>{label}</span>
     <span style={{
-      fontSize: bold ? '15px' : '13px',
+      fontSize: bold ? '14px' : '12px',
       fontWeight: bold ? '700' : '600',
-      color: color || '#1F2937'
+      color: highlight ? '#111827' : '#374151'
     }}>
       {value}
     </span>
   </div>
 );
 
-const PNGDashboardModule = {
-  PNGDashboard,
-  KPICard
-};
-
+const PNGDashboardModule = { PNGDashboard, KPICard };
 export default PNGDashboardModule;

@@ -76,13 +76,20 @@ export const useAustralia88 = () => {
     return getVisaDaysFromWeeklyHours(thisWeekHours);
   }, [hasEligibleWorks, shifts, works]);
 
-  // Progress toward the current milestone (each milestone is 88 days)
+  // Year-based computed values — each visa extension requires 88 days.
+  // Year 1: first 88 days. Year 2: next 88 days (89–176). No automatic Year 2 assumption.
+  const year1Complete = visaData.totalDays >= 88;
+  const year2Active   = visaData.totalDays > 88;   // user has days beyond Year 1
+  const year2Complete = visaData.totalDays >= 176;
+  const year2Days     = Math.max(0, Math.min(88, visaData.totalDays - 88));
+
+  // Progress percent always relative to the current year's 88-day goal
   const progressPercent = useMemo(() => {
-    const { totalDays, currentMilestone } = visaData;
-    if (currentMilestone === 'complete') return 100;
-    const base = currentMilestone === 176 ? 88 : 0;
-    return Math.min(100, Math.round(((totalDays - base) / 88) * 100));
-  }, [visaData]);
+    const total = visaData.totalDays;
+    if (year2Complete) return 100;
+    if (year2Active)   return Math.min(100, Math.round((year2Days / 88) * 100));
+    return Math.min(100, Math.round((total / 88) * 100));
+  }, [visaData.totalDays, year2Active, year2Complete, year2Days]);
 
   return {
     isAustraliaMode,
@@ -92,5 +99,10 @@ export const useAustralia88 = () => {
     milestone: visaData.currentMilestone,
     progressPercent,
     weeklyBreakdown: visaData.weeklyBreakdown,
+    // Year-based helpers
+    year1Complete,
+    year2Active,
+    year2Complete,
+    year2Days,
   };
 };

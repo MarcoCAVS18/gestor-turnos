@@ -6,14 +6,12 @@ import {
   Bell,
   Calendar,
   Clock,
-  ExternalLink,
   Smartphone,
-  RefreshCw,
-  CheckCircle,
-  XCircle,
-  Fingerprint
+  Fingerprint,
+  Link2,
+  Check,
+  Copy,
 } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import BackLink from '../components/ui/BackLink';
 import PageHeader from '../components/layout/PageHeader';
 import Card from '../components/ui/Card';
@@ -22,7 +20,7 @@ import Switch from '../components/ui/Switch';
 import Button from '../components/ui/Button';
 import { useConfigContext } from '../contexts/ConfigContext';
 import { useAuth } from '../contexts/AuthContext';
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import {
   checkBiometricSupport,
   isBiometricEnabledOnDevice,
@@ -30,6 +28,14 @@ import {
   removeBiometricCredential,
 } from '../services/biometricService';
 import { db } from '../services/firebase';
+import {
+  isNotificationSupported,
+  checkNotificationPermission,
+  requestNotificationPermission,
+  sendLocalNotification,
+} from '../services/native/nativeNotifications';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import logger from '../utils/logger';
 
 // Cloud Functions base URL - always use production URL
@@ -39,9 +45,6 @@ const FUNCTIONS_URL = 'https://us-central1-gestionturnos-7ec99.cloudfunctions.ne
 const Integrations = () => {
   const { thematicColors } = useConfigContext();
   const { currentUser } = useAuth();
-  const location = useLocation();
-  const navigate = useNavigate();
-
   // Integration states
   const [notifications, setNotifications] = useState({
     enabled: false,
@@ -51,12 +54,11 @@ const Integrations = () => {
     enabled: false,
     minutesBefore: 15
   });
-  const [googleCalendar, setGoogleCalendar] = useState({
-    connected: false,
+  const [calendarFeed, setCalendarFeed] = useState({
     loading: false,
-    initialLoading: true,
-    syncing: false,
-    error: null
+    url: null,
+    copied: false,
+    error: null,
   });
   const [biometric, setBiometric] = useState({
     supported: null,
@@ -65,94 +67,16 @@ const Integrations = () => {
   });
   const [pwaTab, setPwaTab] = useState('ios');
 
-  // Check URL params for calendar connection status
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const calendarStatus = params.get('calendar');
-
-    if (calendarStatus === 'connected') {
-      setGoogleCalendar(prev => ({ ...prev, connected: true, loading: false, initialLoading: false }));
-      // Clean up URL
-      navigate('/integrations', { replace: true });
-    } else if (calendarStatus === 'error') {
-      setGoogleCalendar(prev => ({
-        ...prev,
-        error: 'Failed to connect. Please try again.',
-        loading: false,
-        initialLoading: false
-      }));
-      navigate('/integrations', { replace: true });
-    }
-  }, [location.search, navigate]);
-
-  // Subscribe to user's calendar connection status
-  useEffect(() => {
-    // Safety timeout - if no user after 3 seconds, stop loading
-    const timeout = setTimeout(() => {
-      setGoogleCalendar(prev => {
-        if (prev.initialLoading) {
-          return { ...prev, initialLoading: false };
-        }
-        return prev;
-      });
-    }, 3000);
-
-    if (!currentUser?.uid) {
-      return () => clearTimeout(timeout);
-    }
-
-    const unsubscribe = onSnapshot(
-      doc(db, 'users', currentUser.uid),
-      (docSnap) => {
-        clearTimeout(timeout);
-
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          const isConnected = data.googleCalendarConnected || false;
-
-          // Only update if the connection status actually changed
-          setGoogleCalendar(prev => {
-            if (prev.connected === isConnected && !prev.initialLoading) {
-              return prev; // No change, don't trigger re-render
-            }
-            return {
-              ...prev,
-              connected: isConnected,
-              loading: false,
-              initialLoading: false
-            };
-          });
-        } else {
-          setGoogleCalendar(prev => {
-            if (!prev.initialLoading && !prev.loading) {
-              return prev; // Already in final state
-            }
-            return { ...prev, loading: false, initialLoading: false };
-          });
-        }
-      },
-      (error) => {
-        clearTimeout(timeout);
-        logger.error('Error listening to user:', error);
-        setGoogleCalendar(prev => ({ ...prev, loading: false, initialLoading: false }));
-      }
-    );
-
-    return () => {
-      clearTimeout(timeout);
-      unsubscribe();
-    };
-  }, [currentUser?.uid]);
 
   // Check notification permission on mount
   useEffect(() => {
-    if ('Notification' in window) {
+    checkNotificationPermission().then(permission => {
       setNotifications(prev => ({
         ...prev,
-        permission: Notification.permission,
-        enabled: Notification.permission === 'granted'
+        permission,
+        enabled: permission === 'granted'
       }));
-    }
+    });
   }, []);
 
   // Check biometric support and load device state on mount
@@ -193,23 +117,13 @@ const Integrations = () => {
 
   // Handle notification toggle
   const handleNotificationToggle = async (value) => {
-    if (!('Notification' in window)) {
-      alert('This browser does not support notifications');
-      return;
-    }
+    if (!isNotificationSupported()) return;
 
     if (value) {
-      const permission = await Notification.requestPermission();
-      setNotifications({
-        enabled: permission === 'granted',
-        permission
-      });
-
+      const permission = await requestNotificationPermission();
+      setNotifications({ enabled: permission === 'granted', permission });
       if (permission === 'granted') {
-        new Notification('Notifications enabled!', {
-          body: 'You will now receive shift reminders.',
-          icon: '/favicon.ico'
-        });
+        await sendLocalNotification('Notifications enabled!', 'You will now receive shift reminders.');
       }
     } else {
       setNotifications(prev => ({ ...prev, enabled: false }));
@@ -227,130 +141,67 @@ const Integrations = () => {
     }
   };
 
-  // Handle Google Calendar connection
-  const handleGoogleCalendarConnect = async () => {
+  // Get or create calendar subscription URL and open in the appropriate calendar app
+  const handleSubscribeCalendar = async () => {
     try {
-      setGoogleCalendar(prev => ({ ...prev, loading: true, error: null }));
+      setCalendarFeed(prev => ({ ...prev, loading: true, error: null }));
 
       const token = await getAuthToken();
-      if (!token) {
-        throw new Error('Not authenticated');
-      }
+      if (!token) throw new Error('Not authenticated');
 
-      const response = await fetch(`${FUNCTIONS_URL}/getGoogleAuthUrl`, {
-        method: 'GET',
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+      const response = await fetch(`${FUNCTIONS_URL}/getCalendarToken`, {
+        method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ timezone }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get auth URL');
+        const errText = await response.text().catch(() => response.status);
+        throw new Error(`Server error: ${errText}`);
       }
 
       const { url } = await response.json();
+      setCalendarFeed(prev => ({ ...prev, loading: false, url }));
 
-      // Redirect to Google OAuth
-      window.location.href = url;
-    } catch (error) {
-      logger.error('Error connecting Google Calendar:', error);
-      setGoogleCalendar(prev => ({
-        ...prev,
-        loading: false,
-        error: 'Failed to start connection. Please try again.'
-      }));
-    }
-  };
+      const webcalUrl = url.replace('https://', 'webcal://');
+      const platform = Capacitor.getPlatform(); // 'ios' | 'android' | 'web'
 
-  // Handle Google Calendar disconnection
-  const handleGoogleCalendarDisconnect = async () => {
-    try {
-      setGoogleCalendar(prev => ({ ...prev, loading: true, error: null }));
-
-      const token = await getAuthToken();
-      if (!token) {
-        throw new Error('Not authenticated');
-      }
-
-      const response = await fetch(`${FUNCTIONS_URL}/disconnectGoogleCalendar`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to disconnect');
-      }
-
-      setGoogleCalendar(prev => ({
-        ...prev,
-        connected: false,
-        loading: false
-      }));
-    } catch (error) {
-      logger.error('Error disconnecting Google Calendar:', error);
-      setGoogleCalendar(prev => ({
-        ...prev,
-        loading: false,
-        error: 'Failed to disconnect. Please try again.'
-      }));
-    }
-  };
-
-  // Sync all existing shifts to calendar
-  const handleSyncAllShifts = async () => {
-    try {
-      setGoogleCalendar(prev => ({ ...prev, syncing: true, error: null }));
-
-      const token = await getAuthToken();
-      if (!token) {
-        throw new Error('Not authenticated');
-      }
-
-      const response = await fetch(`${FUNCTIONS_URL}/syncAllShiftsToCalendar`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to sync');
-      }
-
-      const result = await response.json();
-      const { synced = 0, total, message } = result;
-
-      // Build appropriate message based on response
-      let syncMessage;
-      if (message) {
-        // Use message from backend if provided (e.g., "All shifts already synced")
-        syncMessage = message;
-      } else if (total !== undefined) {
-        syncMessage = `Synced ${synced} of ${total} shifts`;
+      if (platform === 'ios') {
+        // Native iOS: navigate to webcal:// — WKWebView passes custom URL schemes to iOS,
+        // which opens the Calendar app. window.open('_system') is Cordova-only, broken in Capacitor.
+        window.location.href = webcalUrl;
+      } else if (platform === 'android') {
+        // Native Android: open Google Calendar subscription via in-app browser (Browser.open).
+        // window.open('_system') does NOT work in Capacitor — use @capacitor/browser instead.
+        const googleCalUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
+        await Browser.open({ url: googleCalUrl });
       } else {
-        syncMessage = synced > 0 ? `Synced ${synced} shifts` : 'All shifts are already synced';
+        // Web: detect iOS Safari by user agent (webcal:// works natively)
+        const isIOSSafari = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        if (isIOSSafari) {
+          window.location.href = webcalUrl;
+        } else {
+          const googleCalUrl = `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(webcalUrl)}`;
+          window.open(googleCalUrl, '_blank');
+        }
       }
-
-      setGoogleCalendar(prev => ({
-        ...prev,
-        syncing: false,
-        syncMessage
-      }));
-
-      // Clear message after 3 seconds
-      setTimeout(() => {
-        setGoogleCalendar(prev => ({ ...prev, syncMessage: null }));
-      }, 3000);
     } catch (error) {
-      logger.error('Error syncing shifts:', error);
-      setGoogleCalendar(prev => ({
-        ...prev,
-        syncing: false,
-        error: 'Failed to sync shifts. Please try again.'
-      }));
+      logger.error('Error subscribing to calendar:', error);
+      setCalendarFeed(prev => ({ ...prev, loading: false, error: error.message }));
     }
+  };
+
+  // Copy the webcal:// URL to clipboard (for other calendar apps)
+  const handleCopyLink = async () => {
+    if (!calendarFeed.url) return;
+    const webcalUrl = calendarFeed.url.replace('https://', 'webcal://');
+    await navigator.clipboard.writeText(webcalUrl);
+    setCalendarFeed(prev => ({ ...prev, copied: true }));
+    setTimeout(() => setCalendarFeed(prev => ({ ...prev, copied: false })), 2000);
   };
 
   const IntegrationCard = ({
@@ -498,7 +349,7 @@ const Integrations = () => {
           ) : (
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">
-                {biometric.enabled ? 'Biometric login is active on this device' : 'Enable for this device'}
+                {biometric.enabled ? 'Active on this device' : 'Enable for this device'}
               </span>
               <Switch
                 checked={biometric.enabled}
@@ -524,97 +375,62 @@ const Integrations = () => {
           </div>
         </IntegrationCard>
 
-        {/* Google Calendar */}
+        {/* Calendar Subscription */}
         <IntegrationCard
           icon={Calendar}
-          title="Google Calendar"
-          description="Sync your shifts automatically with Google Calendar for easy access across devices."
-          status={
-            googleCalendar.initialLoading
-              ? 'Loading'
-              : googleCalendar.connected
-                ? 'Connected'
-                : 'Offline'
-          }
-          statusColor={googleCalendar.connected ? 'success' : 'default'}
+          title="Calendar Subscription"
+          description="Subscribe to your shifts in any calendar app — Google Calendar, Apple Calendar, Outlook and more. Updates automatically every few hours."
         >
           <div className="space-y-3">
-            {googleCalendar.error && (
-              <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">
-                <XCircle size={16} />
-                {googleCalendar.error}
-              </div>
+            <Button
+              themeColor={thematicColors?.base}
+              icon={Calendar}
+              iconPosition="left"
+              onClick={handleSubscribeCalendar}
+              loading={calendarFeed.loading}
+              loadingText="Opening..."
+              className="w-full justify-center"
+            >
+              Subscribe to Calendar
+            </Button>
+
+            {calendarFeed.error && (
+              <p className="text-xs text-red-500 text-center">
+                Could not generate calendar link. Please try again.
+              </p>
             )}
-            {googleCalendar.syncMessage && (
-              <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 px-3 py-2 rounded-lg">
-                <CheckCircle size={16} />
-                {googleCalendar.syncMessage}
-              </div>
-            )}
-            {googleCalendar.initialLoading ? (
+
+            {calendarFeed.url && (
               <Button
+                variant="ghost"
                 themeColor={thematicColors?.base}
-                loading
-                loadingText="Loading..."
-                disabled
-                className="w-full justify-center"
-              />
-            ) : googleCalendar.connected ? (
-              <div className="flex gap-2">
-                <Button
-                  themeColor={thematicColors?.base}
-                  icon={RefreshCw}
-                  iconPosition="left"
-                  onClick={handleSyncAllShifts}
-                  loading={googleCalendar.syncing}
-                  loadingText="Syncing..."
-                  className="flex-1 justify-center"
-                >
-                  Sync All
-                </Button>
-                <Button
-                  variant="ghost"
-                  themeColor="#EF4444"
-                  icon={ExternalLink}
-                  onClick={handleGoogleCalendarDisconnect}
-                  loading={googleCalendar.loading}
-                  loadingText="Disconnecting..."
-                  className="flex-1 justify-center"
-                >
-                  Disconnect
-                </Button>
-              </div>
-            ) : (
-              <Button
-                themeColor={thematicColors?.base}
-                icon={Calendar}
+                icon={calendarFeed.copied ? Check : Copy}
                 iconPosition="left"
-                onClick={handleGoogleCalendarConnect}
-                loading={googleCalendar.loading}
-                loadingText="Connecting..."
+                onClick={handleCopyLink}
                 className="w-full justify-center"
               >
-                Connect Calendar
+                {calendarFeed.copied ? 'Copied!' : 'Copy link (other apps)'}
               </Button>
             )}
+
             <p className="text-xs text-gray-400 text-center">
-              New shifts will sync automatically once connected
+              No login required · Works with any calendar app
             </p>
           </div>
         </IntegrationCard>
 
-        {/* About Google Calendar Sync */}
+        {/* How it works */}
         <Card padding="lg" variant="ghost" className="bg-gray-50 border border-gray-200">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <Calendar size={16} className="text-blue-600" />
+              <Link2 size={16} className="text-blue-600" />
             </div>
             <div>
-              <h4 className="font-medium text-gray-800 mb-2">About Google Calendar Sync</h4>
+              <h4 className="font-medium text-gray-800 mb-2">How calendar subscription works</h4>
               <ul className="text-sm text-gray-600 space-y-1.5">
-                <li className="flex items-start gap-2"><CheckCircle size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> New shifts are automatically added when created</li>
-                <li className="flex items-start gap-2"><CheckCircle size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> Edits and deletions sync in real-time</li>
-                <li className="flex items-start gap-2"><CheckCircle size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> Use "Sync All" to import shifts created before connecting</li>
+                <li className="flex items-start gap-2"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> Generate your personal link and add it to any calendar app</li>
+                <li className="flex items-start gap-2"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> Your shifts appear automatically and refresh every few hours</li>
+                <li className="flex items-start gap-2"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> The link is permanent — add it once and it always stays in sync</li>
               </ul>
             </div>
           </div>
@@ -624,8 +440,8 @@ const Integrations = () => {
 
 
 
-      {/* Install Orary */}
-      <div className="mt-8">
+      {/* Install Orary - only show on web, not on native iOS/Android */}
+      {!Capacitor.isNativePlatform() && <div className="mt-8">
         <div className="flex items-center gap-3 mb-5">
           <img
             src="/assets/SVG/logo.svg"
@@ -775,7 +591,7 @@ const Integrations = () => {
             </div>
           </div>
         )}
-      </div>
+      </div>}
     </div>
   );
 };

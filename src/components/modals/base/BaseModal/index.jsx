@@ -63,36 +63,23 @@ const BaseModal = ({
     xl: 'max-w-xl'
   };
 
-  const modalConfig = {
-    mobileFullScreen: isMobile,
-    zIndex: 9999
-  };
-
   return (
     <Flex variant="center"
       className="fixed inset-0 bg-black bg-opacity-50 p-4"
-      style={{ zIndex: modalConfig.zIndex }}
+      style={{ zIndex: 9999 }}
     >
       <div
         className={`
           bg-white shadow-2xl w-full relative
-          ${isMobile
-            ? 'h-full max-w-none rounded-none'
-            : `${maxWidthClasses[maxWidth]} max-h-[90vh] rounded-xl`
-          }
-          ${isMobile ? 'overflow-hidden flex flex-col' : ''}
+          ${maxWidthClasses[maxWidth]} max-h-[90vh] rounded-2xl
+          overflow-hidden flex flex-col
         `}
       >
 
         {/* Header */}
         <Flex variant="between"
-          className={`
-            sticky top-0 bg-white border-b z-10
-            ${isMobile ? 'px-4 py-4 min-h-[60px]' : 'p-4'}
-          `}
-          style={{
-            borderBottomColor: colors.transparent20
-          }}
+          className="sticky top-0 bg-white border-b z-10 p-4 min-h-[60px]"
+          style={{ borderBottomColor: colors.transparent20 }}
         >
           <div className="flex-1 pr-4 min-w-0">
             {typeof title === 'string' ? (
@@ -137,34 +124,22 @@ const BaseModal = ({
         </Flex>
 
         {/* Content with optimized scroll */}
-        <div className={`
-          ${isMobile ? 'flex-1 overflow-y-auto px-4 py-6' : 'p-4 overflow-y-auto'}
-        `}>
+        <div className="flex-1 overflow-y-auto p-4">
           {children}
         </div>
-        
+
         {/* Actions Footer */}
         {showActions && (
           <div
-            className={`
-              border-t
-              ${isMobile
-                ? 'sticky bottom-0 bg-white p-4'
-                : 'p-4 mt-auto'
-              }
-            `}
+            className="border-t bg-white p-4"
             style={{ borderTopColor: colors.transparent20 }}
           >
-            <div className={`
-              w-full
-              ${isMobile ? 'flex flex-col-reverse gap-2' : 'flex justify-end gap-3'}
-            `}>
+            <div className="flex justify-end gap-3">
               <Button
                 variant="cancel"
                 onClick={onCancel}
                 disabled={loading}
-                isMobile={isMobile}
-                className={isMobile ? '' : 'flex-none'}
+                className="flex-none"
               >
                 {cancelText}
               </Button>
@@ -174,9 +149,8 @@ const BaseModal = ({
                 loading={loading}
                 loadingText={finalSaveLoadingText}
                 disabled={loading || isSaveDisabled}
-                isMobile={isMobile}
                 themeColor={colors.primary}
-                className={isMobile ? '' : 'flex-none'}
+                className="flex-none"
               >
                 {saveText}
               </Button>

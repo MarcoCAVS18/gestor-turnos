@@ -75,11 +75,20 @@ const WorkForm = ({
     }
   }, [work, colors.primary]);
 
+  // Normalize comma decimal separator to dot for parseFloat compatibility
+  const parseDecimal = (value) => parseFloat(value?.toString().replace(',', '.'));
+
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setFormData(prev => {
+      const updated = { ...prev, [field]: value };
+      // Auto-fill all empty rate fields when baseRate is typed
+      if (field === 'baseRate' && value) {
+        updated.rates = Object.fromEntries(
+          Object.entries(prev.rates).map(([k, v]) => [k, (v === '' || v === prev.baseRate) ? value : v])
+        );
+      }
+      return updated;
+    });
     handleFieldChange(field, value);
   };
 
@@ -111,14 +120,14 @@ const WorkForm = ({
 
     const completeData = {
       ...formData,
-      baseRate: parseFloat(formData.baseRate),
+      baseRate: parseDecimal(formData.baseRate),
       rates: {
-        day: parseFloat(formData.rates.day),
-        afternoon: parseFloat(formData.rates.afternoon),
-        night: parseFloat(formData.rates.night),
-        saturday: parseFloat(formData.rates.saturday),
-        sunday: parseFloat(formData.rates.sunday),
-        holidays: parseFloat(formData.rates.holidays)
+        day: parseDecimal(formData.rates.day),
+        afternoon: parseDecimal(formData.rates.afternoon),
+        night: parseDecimal(formData.rates.night),
+        saturday: parseDecimal(formData.rates.saturday),
+        sunday: parseDecimal(formData.rates.sunday),
+        holidays: parseDecimal(formData.rates.holidays)
       }
     };
 
@@ -188,7 +197,8 @@ const WorkForm = ({
       <FormSection>
         <FormLabel icon={DollarSign}>Base hourly rate *</FormLabel>
         <ThemeInput
-          type="number"
+          type="text"
+          inputMode="decimal"
           value={formData.baseRate}
           onChange={(e) => handleInputChange('baseRate', e.target.value)}
           className={`
@@ -197,8 +207,6 @@ const WorkForm = ({
             ${errors.baseRate ? 'border-red-500' : 'border-gray-300'}
           `}
           placeholder="15.00"
-          step="0.01"
-          min="0"
           required
         />
         <FormError error={errors.baseRate} size="sm" />
@@ -223,7 +231,8 @@ const WorkForm = ({
                 {label}
               </label>
               <ThemeInput
-                type="number"
+                type="text"
+                inputMode="decimal"
                 value={formData.rates[type]}
                 onChange={(e) => handleRateChange(type, e.target.value)}
                 className={`
@@ -232,8 +241,6 @@ const WorkForm = ({
                   ${errors[`rates.${type}`] ? 'border-red-500' : 'border-gray-300'}
                 `}
                 placeholder="0.00"
-                step="0.01"
-                min="0"
                 required
               />
               {errors[`rates.${type}`] && (

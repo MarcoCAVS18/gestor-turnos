@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "314406109434",
+    "project_id": "gestionturnos-7ec99",
+    "storage_bucket": "gestionturnos-7ec99.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314406109434:android:0b503f47c659960a5c0943",
+        "android_client_info": {
+          "package_name": "app.orary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "314406109434-9a62ltoo4i8ivcu712s5d3osjbf1ijpu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjmw-orccGU6jzbK2068Vj0oVMSUv1nQY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "314406109434-9a62ltoo4i8ivcu712s5d3osjbf1ijpu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

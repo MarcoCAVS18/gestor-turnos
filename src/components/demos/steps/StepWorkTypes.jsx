@@ -13,6 +13,7 @@ import {
   Fuel,
   MapPin,
   DollarSign,
+  Sparkles,
 } from 'lucide-react';
 
 const SHIFT_BADGES = [
@@ -21,6 +22,7 @@ const SHIFT_BADGES = [
   { label: 'Night', color: '#6366F1', icon: Moon },
   { label: 'Saturday', color: '#8B5CF6', icon: Calendar },
   { label: 'Sunday', color: '#EF4444', icon: CalendarHeart },
+  { label: 'Holiday', color: '#EC4899', icon: Sparkles },
 ];
 
 const StepWorkTypes = ({ isMobile }) => {
