@@ -190,6 +190,36 @@ const svgToBase64PNGWithSize = (svgText, size) => {
 };
 
 /**
+ * Loads the white version of the logo (for dark backgrounds like PNG dashboard header)
+ * Uses logo-white.svg which is pre-colored white
+ * @param {number} size - Target size in pixels
+ * @returns {Promise<{base64: string, width: number, height: number}>}
+ */
+export const loadLogoWhite = async (size = 300) => {
+  const cacheKey = `logo-white-${size}`;
+
+  if (logoCache.has(cacheKey)) {
+    return logoCache.get(cacheKey);
+  }
+
+  try {
+    const response = await fetch('/assets/SVG/logo-white.svg');
+    if (!response.ok) {
+      // Fallback: load regular logo with white color
+      return loadLogoForPDF('#FFFFFF');
+    }
+
+    const svgText = await response.text();
+    const result = await svgToBase64PNGWithSize(svgText, size);
+    logoCache.set(cacheKey, result);
+    return result;
+  } catch (error) {
+    logger.warn('Could not load white logo:', error);
+    return null;
+  }
+};
+
+/**
  * Preloads logos for both PDF and Excel with common colors
  * Call this early to have logos ready when needed
  */
@@ -205,7 +235,8 @@ export const preloadLogos = async () => {
     loadLogoForPDF(colors.pdf),
     loadLogoForExcel(colors.excel),
     loadLogoForPDF(colors.dark),
-    loadLogoForExcel(colors.light)
+    loadLogoForExcel(colors.light),
+    loadLogoWhite()
   ]);
 };
 
@@ -220,6 +251,7 @@ const LogoLoaderModule = {
   loadLogoWithColor,
   loadLogoForPDF,
   loadLogoForExcel,
+  loadLogoWhite,
   preloadLogos,
   clearLogoCache
 };

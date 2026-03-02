@@ -1,7 +1,7 @@
 // src/services/export/pdf/PDFExporter.js
 
 import jsPDF from 'jspdf';
-import { loadLogoForPDF } from '../utils/LogoLoader';
+import { loadLogoForPDF, loadLogoWhite } from '../utils/LogoLoader';
 import { generateAllCharts } from '../utils/ChartRenderer';
 import { setupDocument, addPageFooter, COLORS } from './PDFStyles';
 import {
@@ -32,7 +32,8 @@ export class PDFExporter {
       },
       ...options
     };
-    this.logo = null;
+    this.logo = null;       // Colored logo for page headers
+    this.logoWhite = null;  // White logo for dark cover page
     this.charts = {};
     this.doc = null;
   }
@@ -52,13 +53,23 @@ export class PDFExporter {
   async loadResources() {
     const promises = [];
 
-    // Load logo
+    // Load colored logo for page headers
     promises.push(
       loadLogoForPDF(this.options.logoColor)
         .then(logo => { this.logo = logo; })
         .catch(err => {
           logger.warn('Could not load logo:', err);
           this.logo = null;
+        })
+    );
+
+    // Load white logo for dark cover page background
+    promises.push(
+      loadLogoWhite(300)
+        .then(logo => { this.logoWhite = logo; })
+        .catch(err => {
+          logger.warn('Could not load white logo:', err);
+          this.logoWhite = null;
         })
     );
 
@@ -104,34 +115,39 @@ export class PDFExporter {
 
     let pageNumber = 1;
 
-    // Cover Page
+    // Short date string for footer
+    const generatedDate = new Date().toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric'
+    });
+
+    // Cover Page — uses white logo on dark background
     if (this.options.includeCoverPage) {
-      addCoverPage(this.doc, this.logo, this.reportData.metadata);
-      addPageFooter(this.doc, pageNumber++);
+      addCoverPage(this.doc, this.logoWhite || this.logo, this.reportData.metadata);
+      addPageFooter(this.doc, pageNumber++, generatedDate);
       this.doc.addPage();
     }
 
     // Executive Summary
     addExecutiveSummary(this.doc, this.logo, this.reportData);
-    addPageFooter(this.doc, pageNumber++);
+    addPageFooter(this.doc, pageNumber++, generatedDate);
 
     // Analytics Page (if charts available)
     if (this.options.includeCharts && Object.keys(this.charts).length > 0) {
       this.doc.addPage();
       addAnalyticsPage(this.doc, this.logo, this.charts);
-      addPageFooter(this.doc, pageNumber++);
+      addPageFooter(this.doc, pageNumber++, generatedDate);
     }
 
     // Work Details Page
     this.doc.addPage();
     addWorkDetailsPage(this.doc, this.logo, this.reportData);
-    addPageFooter(this.doc, pageNumber++);
+    addPageFooter(this.doc, pageNumber++, generatedDate);
 
     // Delivery Page (if applicable)
     if (this.reportData.delivery && this.reportData.delivery.enabled) {
       this.doc.addPage();
       addDeliveryPage(this.doc, this.logo, this.reportData, this.charts);
-      addPageFooter(this.doc, pageNumber++);
+      addPageFooter(this.doc, pageNumber++, generatedDate);
     }
 
     // Monthly Detail Pages
@@ -139,11 +155,11 @@ export class PDFExporter {
       this.doc.addPage();
       addMonthlyDetailPages(this.doc, this.logo, this.reportData.monthlyData);
 
-      // Add page numbers to monthly pages
+      // Add page numbers and date to monthly pages
       const totalPages = this.doc.getNumberOfPages();
       for (let i = pageNumber; i <= totalPages; i++) {
         this.doc.setPage(i);
-        addPageFooter(this.doc, i);
+        addPageFooter(this.doc, i, generatedDate);
       }
     }
 

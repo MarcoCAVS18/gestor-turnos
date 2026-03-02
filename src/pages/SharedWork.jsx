@@ -21,8 +21,8 @@ const SharedWork = () => {
       <div className="max-w-md mx-auto px-4 py-6">
         <Card className="text-center py-8">
           <AlertCircle size={48} className="mx-auto mb-4 text-yellow-500" />
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Sign In</h2>
-          <p className="text-gray-600 mb-6">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Sign In</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
             You need to sign in to add this work to your account
           </p>
           <div className="space-y-3">
@@ -62,8 +62,8 @@ const SharedWork = () => {
       <div className="max-w-md mx-auto px-4 py-6">
         <Card className="text-center py-8">
           <Share2 size={48} className="mx-auto mb-4 text-red-400" />
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Error</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Error</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
           <Button
             onClick={() => navigate('/works')}
             variant="outline"
@@ -110,7 +110,7 @@ const SharedWork = () => {
 
       {/* Help message */}
       <Card className="text-center py-4" padding="sm">
-        <p className="text-xs text-gray-500">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
           By adding this work, it will be copied to your account with all its configurations.
         </p>
       </Card>

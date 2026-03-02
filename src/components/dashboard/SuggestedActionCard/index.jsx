@@ -90,7 +90,7 @@ const SuggestedActionCard = ({ onClose, className }) => {
       <BaseAnnouncementCard
         onClick={handleClick}
         gradient={gradient}
-        className="cursor-pointer"
+        className="cursor-pointer h-full"
         decorativeIcon={ThumbsUp}
       >
         {/* Close button */}

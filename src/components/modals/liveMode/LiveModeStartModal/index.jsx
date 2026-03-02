@@ -62,6 +62,12 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
       await startSession(selectedWorkId);
       onClose();
     } catch (err) {
+      // If the session already exists, just close — the LiveModeCard will
+      // reflect the active state. No need to surface this to the user.
+      if (err.message?.includes('already an active live session')) {
+        onClose();
+        return;
+      }
       setLocalError(err.message);
     }
   };

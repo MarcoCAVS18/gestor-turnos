@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Briefcase, Calendar, Clock, FileText, Coffee, Pencil, Check } from 'lucide-react';
+import Switch from '../../../ui/Switch';
+import { hapticMedium, hapticError } from '../../../../services/native/haptics';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useApp } from '../../../../contexts/AppContext';
 import { createSafeDate, calculateShiftHours } from '../../../../utils/time';
@@ -138,7 +140,10 @@ const ShiftForm = ({
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
+      hapticMedium();
       onSubmit(formData);
+    } else {
+      hapticError();
     }
   };
 
@@ -330,22 +335,10 @@ const ShiftForm = ({
         </div>
 
         {/* Toggle Switch */}
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={formData.hadBreak}
-            onChange={(e) => handleInputChange('hadBreak', e.target.checked)}
-            className="sr-only peer"
-          />
-          <div
-            className="relative w-10 h-5 rounded-full peer peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-offset-2 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border after:rounded-full after:h-4 after:w-4 after:transition-all"
-            style={{
-              '--tw-ring-color': colors.primary,
-              backgroundColor: formData.hadBreak ? colors.primary : colors.border,
-              borderColor: colors.border
-            }}
-          />
-        </label>
+        <Switch
+          checked={formData.hadBreak}
+          onChange={(v) => handleInputChange('hadBreak', v)}
+        />
       </Flex>
 
       {/* Break configuration - Only show if enabled */}
@@ -427,13 +420,14 @@ const ShiftForm = ({
         />
       </FormSection>
 
-      {/* Bulk Shift Options - Only show for new shifts (not editing) */}
+      {/* Bulk Shift Options - Only show for new shifts (not editing), placed after Notes */}
       {!shift && onBulkToggle && (
         <BulkShiftOptions
           isEnabled={isBulkEnabled}
           onToggle={onBulkToggle}
         />
       )}
+
     </BaseForm>
   );
 };

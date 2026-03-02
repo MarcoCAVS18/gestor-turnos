@@ -2,8 +2,9 @@
 
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { getAuth, initializeAuth, indexedDBLocalPersistence } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
+import { Capacitor } from '@capacitor/core';
 
 // Firebase configuration from environment variables only
 const firebaseConfig = {
@@ -18,7 +19,15 @@ const firebaseConfig = {
 // Initialize Firebase, Firestore, Auth and Storage
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
+
+// On native (iOS/Android), use initializeAuth with indexedDBLocalPersistence to prevent
+// Firebase from loading the browser popup/redirect resolver (gapi.js), which is
+// incompatible with WKWebView and causes blank screen + CORS errors.
+// On web, getAuth() is used as-is — no change to web behavior.
+const auth = Capacitor.isNativePlatform()
+  ? initializeAuth(app, { persistence: indexedDBLocalPersistence })
+  : getAuth(app);
+
 const storage = getStorage(app);
 
 export { db, auth, storage };

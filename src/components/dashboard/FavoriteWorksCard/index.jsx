@@ -38,25 +38,11 @@ const FavoriteWorksCard = ({ favoriteWorks }) => {
   const isMobile = useIsMobile();
 
   // useAustralia88 returns safe defaults when AU mode is off — always safe to call.
-  const {
-    isAustraliaMode,
-    hasEligibleWorks,
-    totalVisaDays,
-    currentWeekVisaDays,
-    milestone,
-    progressPercent,
-  } = useAustralia88();
+  const { isAustraliaMode, hasEligibleWorks } = useAustralia88();
 
   // ── Variant: AU Working Holiday Visa tracker ───────────────────────────────
   if (isAustraliaMode && hasEligibleWorks) {
-    return (
-      <Australia88DashboardCard
-        totalVisaDays={totalVisaDays}
-        currentWeekVisaDays={currentWeekVisaDays}
-        milestone={milestone}
-        progressPercent={progressPercent}
-      />
-    );
+    return <Australia88DashboardCard />;
   }
   // ─────────────────────────────────────────────────────────────────────────
 

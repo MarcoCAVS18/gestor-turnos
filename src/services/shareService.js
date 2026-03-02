@@ -1,14 +1,16 @@
 // src/services/shareService.js
 
-import { 
-  doc, 
-  setDoc, 
-  getDoc, 
+import {
+  doc,
+  setDoc,
+  getDoc,
   serverTimestamp,
   addDoc,
-  collection 
+  collection
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { Share } from '@capacitor/share';
+import { Capacitor } from '@capacitor/core';
 
 /**
  * Generates a cryptographically secure token to share a work
@@ -126,9 +128,10 @@ export const createShareLink = async (userId, work) => {
 
     await setDoc(shareDocRef, shareData);
 
-    // Generate full URL
-    const baseUrl = window.location.origin || 'https://orary.app';
-    const shareLink = `${baseUrl}/share/${token}`;
+    // Share links must always use the public web URL — not capacitor://localhost or localhost:3000.
+    // window.location.origin returns 'capacitor://localhost' on native, which is not a valid web URL.
+    const APP_URL = process.env.REACT_APP_APP_URL || 'https://orary.app';
+    const shareLink = `${APP_URL}/share/${token}`;
 
     return shareLink;
 
@@ -166,9 +169,27 @@ export const shareWorkNative = async (userId, work) => {
     }
     
     const shareText = `${message}\n\nVisit this link for more info:\n${link}`;
-    
-    // Check if browser supports Web Share API
-    if (navigator.share) {
+
+    // On native (iOS/Android), use @capacitor/share — navigator.share is NOT available in Capacitor WebView.
+    // On web, fall back to Web Share API, then clipboard.
+    if (Capacitor.isNativePlatform()) {
+      try {
+        await Share.share({
+          title: `Work: ${work.name}`,
+          text: message,
+          url: link,
+          dialogTitle: 'Share work', // Android only
+        });
+        return true;
+      } catch (error) {
+        // User cancelled the share sheet — treat as non-error
+        const cancelled =
+          error?.message === 'Share canceled' ||
+          error?.message?.toLowerCase().includes('cancel') ||
+          error?.message?.toLowerCase().includes('dismiss');
+        return cancelled ? false : await copyToClipboard(shareText);
+      }
+    } else if (navigator.share) {
       try {
         await navigator.share({
           title: `Work: ${work.name}`,
@@ -177,15 +198,13 @@ export const shareWorkNative = async (userId, work) => {
         });
         return true;
       } catch (error) {
-        // If user cancels or there is an error, use fallback
         if (error.name !== 'AbortError') {
           return await copyToClipboard(shareText);
         }
-        // If user cancelled, do nothing more
         return false;
       }
     } else {
-      // Fallback for browsers that don't support Web Share API
+      // Fallback for browsers without Web Share API
       return await copyToClipboard(shareText);
     }
   } catch (error) {
@@ -272,24 +291,28 @@ export const acceptSharedWork = async (userId, token, prefetchedData = null) => 
       throw new Error('You cannot add your own shared work');
     }
 
-    // Determine correct collection based on type
-    const isDelivery = data.workData.type === 'delivery';
-    const collectionName = isDelivery ? 'works-delivery' : 'works';
-    const userWorksRef = collection(db, 'users', userId, collectionName);
+    const userWorksRef = collection(db, 'works');
 
     const newWork = {
       ...data.workData,
+      userId,
+      // Preserve type from shared data; fall back to 'regular' for traditional works.
+      // subscribeToNormalData filters where('type', '==', 'regular') so this field is
+      // mandatory — without it the accepted work never appears in the user's list.
+      type: data.workData?.type || 'regular',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
       origin: 'shared',
       sourceToken: token
     };
 
-    // Run add work and increment counter in parallel
-    const [docRef] = await Promise.all([
-      addDoc(userWorksRef, newWork),
-      setDoc(shareDocRef, { usesCount: (data.usesCount || 0) + 1 }, { merge: true })
-    ]);
+    // Add the work — this is the critical operation
+    const docRef = await addDoc(userWorksRef, newWork);
+
+    // Increment usage count (non-critical, fire-and-forget).
+    // Done separately so a Firestore permissions mismatch on shared_works
+    // does not block the user from receiving the work.
+    setDoc(shareDocRef, { usesCount: (data.usesCount || 0) + 1 }, { merge: true }).catch(() => {});
 
     return {
       id: docRef.id,

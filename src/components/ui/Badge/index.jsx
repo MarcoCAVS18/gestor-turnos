@@ -26,17 +26,19 @@ const Badge = ({
   // Base classes
   const baseClasses = 'inline-flex items-center font-medium';
 
-  // Color variants
+  // Color variants — each includes dark mode counterpart
   const variantClasses = {
-    default: 'bg-gray-100 text-gray-700',
-    primary: 'bg-blue-50 text-blue-700',
-    success: 'bg-green-50 text-green-700',
-    win: 'bg-purple-50 text-purple-700',
-    warning: 'bg-orange-50 text-orange-700',
-    danger: 'bg-red-50 text-red-700',
-    info: 'bg-cyan-50 text-cyan-700',
-    purple: 'bg-purple-50 text-purple-700',
-    pink: 'bg-pink-50 text-pink-700'
+    default: 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300',
+    primary: 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400',
+    success: 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400',
+    win:     'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400',
+    warning: 'bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400',
+    danger:  'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400',
+    info:    'bg-cyan-50 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-400',
+    purple:  'bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400',
+    pink:    'bg-pink-50 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400',
+    // No hardcoded colors — color is fully driven by the `style` prop (for theme colors)
+    theme:   '',
   };
 
   // Sizes
@@ -58,9 +60,12 @@ const Badge = ({
   // Rounded class
   const roundedClass = rounded ? 'rounded-full' : 'rounded';
 
+  // Use `in` so that the 'theme' variant (empty string, falsy) doesn't fall back to default
+  const variantClass = variant in variantClasses ? variantClasses[variant] : variantClasses.default;
+
   const combinedClasses = `
     ${baseClasses}
-    ${variantClasses[variant] || variantClasses.default}
+    ${variantClass}
     ${sizeClasses[size]}
     ${roundedClass}
     ${className}

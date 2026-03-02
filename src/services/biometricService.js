@@ -1,9 +1,23 @@
 // src/services/biometricService.js
+// On native iOS/Android: uses @capgo/capacitor-native-biometric (Face ID / Touch ID)
+// On web: uses WebAuthn (navigator.credentials) — web behavior is UNCHANGED.
 
+import { Capacitor } from '@capacitor/core';
+
+const isNative = () => Capacitor.isNativePlatform();
 const CRED_KEY = (uid) => `orary_biometric_cred_${uid}`;
 const UID_KEY = 'orary_biometric_uid';
 
 export const checkBiometricSupport = async () => {
+  if (isNative()) {
+    try {
+      const { NativeBiometric } = await import('@capgo/capacitor-native-biometric');
+      const result = await NativeBiometric.isAvailable();
+      return result.isAvailable;
+    } catch {
+      return false;
+    }
+  }
   if (!window.PublicKeyCredential) return false;
   return window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
 };
@@ -22,6 +36,17 @@ export const isBiometricAvailable = () => {
 export const getStoredBiometricUid = () => localStorage.getItem(UID_KEY);
 
 export const registerBiometric = async (userId, userEmail) => {
+  if (isNative()) {
+    // On native: trigger Face ID / Touch ID once to confirm it works, then store flag
+    const { NativeBiometric } = await import('@capgo/capacitor-native-biometric');
+    await NativeBiometric.verifyIdentity({
+      reason: 'Enable biometric login for Orary',
+      title: 'Set up Face ID / Touch ID',
+    });
+    localStorage.setItem(CRED_KEY(userId), 'native');
+    localStorage.setItem(UID_KEY, userId);
+    return;
+  }
   const challenge = crypto.getRandomValues(new Uint8Array(32));
   const credential = await navigator.credentials.create({
     publicKey: {
@@ -43,6 +68,14 @@ export const registerBiometric = async (userId, userEmail) => {
 };
 
 export const verifyBiometric = async (userId) => {
+  if (isNative()) {
+    const { NativeBiometric } = await import('@capgo/capacitor-native-biometric');
+    await NativeBiometric.verifyIdentity({
+      reason: 'Unlock Orary',
+      title: 'Face ID / Touch ID',
+    });
+    return; // Resolves = success, rejects = cancelled/failed
+  }
   const stored = localStorage.getItem(CRED_KEY(userId));
   if (!stored) throw new Error('No biometric credential');
   const credIdBytes = Uint8Array.from(atob(stored), (c) => c.charCodeAt(0));

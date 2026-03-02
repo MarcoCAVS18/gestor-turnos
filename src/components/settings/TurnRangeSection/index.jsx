@@ -46,7 +46,7 @@ const TurnRange = ({ title, icon: Icon, iconColor, children, colors }) => {
   );
 };
 
-const ShiftRangeSection = ({ onError, onSuccess, className }) => {
+const ShiftRangeSection = ({ id, onError, onSuccess, className }) => {
   const {
     shiftRanges,
     savePreferences
@@ -148,7 +148,7 @@ const ShiftRangeSection = ({ onError, onSuccess, className }) => {
   };
 
   return (
-    <SettingsSection icon={Clock} title="Shift Ranges" className={className}>
+    <SettingsSection id={id} icon={Clock} title="Shift Ranges" className={className}>
       <p className="text-sm text-gray-600 mb-4">
         Configure the time ranges for automatic shift type detection.
         Existing shift tags will be updated automatically.

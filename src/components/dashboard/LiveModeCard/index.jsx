@@ -128,6 +128,13 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
     navigate('/works');
   };
 
+  // Determine CTA button label
+  // Premium users always see "Start session" (no trial concept for them).
+  // Free users: "Try now" on first use, "Start session" once they've used it.
+  const hasUsedBefore = liveModeUsage?.remaining !== undefined &&
+    liveModeUsage.remaining < liveModeLimit;
+  const ctaText = (liveModeUsage?.isPremium || hasUsedBefore) ? 'Start session' : 'Try now';
+
   // Active state - Live Mode is running
   if (isActive) {
     return (
@@ -169,7 +176,9 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
                   <DollarSign size={18} className="text-white/80" />
-                  <span className="text-white font-semibold text-lg">{formattedEarnings}</span>
+                  <span className="text-white font-semibold text-lg">
+                    {selectedWork ? formattedEarnings : '—'}
+                  </span>
                 </div>
               </div>
 
@@ -403,11 +412,13 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                 onClick?.();
               }}
               variant='solid'
+              animatedChevron
+              iconSize={16}
               className="bg-white border-none font-semibold shadow-md active:scale-95 transition-transform hover:bg-gray-50"
               themeColor={colors.primary}
               icon={ArrowRight}
             >
-              Try now
+              {ctaText}
             </Button>
           </div>
         </div>

@@ -77,9 +77,16 @@ const WeeklyPattern = ({ selectedDays, weeks, onSelectedDaysChange, onWeeksChang
             id="weeks-input"
             type="number"
             min="1"
-            max="52"
             value={weeks}
-            onChange={(e) => onWeeksChange(parseInt(e.target.value) || 1)}
+            onChange={(e) => {
+              const val = parseInt(e.target.value);
+              if (!isNaN(val) && val >= 1) onWeeksChange(val);
+              else if (e.target.value === '') onWeeksChange('');
+            }}
+            onBlur={(e) => {
+              const val = parseInt(e.target.value);
+              if (isNaN(val) || val < 1) onWeeksChange(1);
+            }}
             className="px-3 py-2 rounded-lg border w-20 text-center font-medium"
             style={{
               backgroundColor: colors.surface,
@@ -91,9 +98,6 @@ const WeeklyPattern = ({ selectedDays, weeks, onSelectedDaysChange, onWeeksChang
             week{weeks > 1 ? 's' : ''}
           </span>
         </div>
-        <p className="text-sm mt-1" style={{ color: colors.textSecondary }}>
-          Maximum 52 weeks
-        </p>
       </div>
     </div>
   );

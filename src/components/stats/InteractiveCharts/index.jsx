@@ -93,22 +93,22 @@ const InteractiveCharts = () => {
     <Card className="h-full flex flex-col">
       <Flex variant="between" className="mb-4 flex-shrink-0">
         <Flex>
-          <CurrentIcon size={18} style={{ color: thematicColors.primary }} className="mr-2" />
+          <CurrentIcon size={18} style={{ color: thematicColors?.base }} className="mr-2" />
           <div>
             <h4 className="font-medium">{currentChartConfig.title}</h4>
             <p className="text-xs text-gray-500">{currentChartConfig.subtitle}</p>
           </div>
         </Flex>
         <Flex className="space-x-2">
-          <button onClick={prevChart} className="p-2 rounded transition-colors hover:bg-gray-100" style={{ color: thematicColors.primary }}>
+          <button onClick={prevChart} className="p-2 rounded transition-colors hover:bg-gray-100" style={{ color: thematicColors?.base }}>
             <ChevronLeft size={16} />
           </button>
           <div className="flex space-x-1">
             {staticChartConfigs.map((_, index) => (
-              <div key={index} className={`w-2 h-2 rounded-full transition-colors ${index === currentChartIndex ? 'opacity-100' : 'opacity-30'}`} style={{ backgroundColor: thematicColors.primary }}/>
+              <div key={index} className={`w-2 h-2 rounded-full transition-colors ${index === currentChartIndex ? 'opacity-100' : 'opacity-30'}`} style={{ backgroundColor: thematicColors?.base }}/>
             ))}
           </div>
-          <button onClick={nextChart} className="p-2 rounded transition-colors hover:bg-gray-100" style={{ color: thematicColors.primary }}>
+          <button onClick={nextChart} className="p-2 rounded transition-colors hover:bg-gray-100" style={{ color: thematicColors?.base }}>
             <ChevronRight size={16} />
           </button>
         </Flex>

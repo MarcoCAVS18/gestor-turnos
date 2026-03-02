@@ -1,167 +1,153 @@
 // src/components/filters/ShiftFilters/index.jsx
 
-import React, { useState } from 'react';
-import { X, SlidersHorizontal } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { X, Briefcase, Truck } from 'lucide-react';
+import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import WorkFilter from '../WorkFilter';
-import WeekDayFilter from '../WeekDayFilter';
-import ShiftTypeFilter from '../ShiftTypeFilter';
-import Flex from '../../ui/Flex';
+import { getAvailableShiftTypes } from '../../../utils/shiftTypesConfig';
 
-/** Removable chip for active filters */
-const ActiveChip = ({ label, onRemove, color }) => (
-  <span
-    className="inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border"
-    style={{ color, borderColor: `${color}40`, backgroundColor: `${color}10` }}
-  >
-    {label}
-    {onRemove && (
-      <button onClick={onRemove} className="hover:opacity-70 transition-opacity">
-        <X size={10} />
-      </button>
-    )}
-  </span>
-);
-
-/** Filter grid — shared between mobile collapsible and desktop always-visible panels */
-const FilterGrid = ({ activeFilters, handleFilterChange }) => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 2xl:gap-6">
-    {/* Work spans both sm columns so it sits above the other two */}
-    <div className="sm:col-span-2 lg:col-span-1">
-      <WorkFilter
-        value={activeFilters.work || 'all'}
-        onChange={(v) => handleFilterChange('work', v)}
-      />
-    </div>
-
-    <WeekDayFilter
-      value={activeFilters.weekDays || []}
-      onChange={(v) => handleFilterChange('weekDays', v)}
-    />
-
-    <ShiftTypeFilter
-      value={activeFilters.shiftType || 'all'}
-      onChange={(v) => handleFilterChange('shiftType', v)}
-    />
-  </div>
-);
+const DAYS = [
+  { id: 1, label: 'M' },
+  { id: 2, label: 'T' },
+  { id: 3, label: 'W' },
+  { id: 4, label: 'T' },
+  { id: 5, label: 'F' },
+  { id: 6, label: 'S' },
+  { id: 0, label: 'S' },
+];
 
 const ShiftFilters = ({ onFiltersChange, activeFilters = {} }) => {
   const colors = useThemeColors();
-  const [showFilters, setShowFilters] = useState(false);
+  const { works, deliveryWork, shiftsByDate, shiftRanges } = useApp();
 
-  const hasActiveFilters = Object.values(activeFilters).some(filter =>
-    Array.isArray(filter) ? filter.length > 0 : filter && filter !== 'all'
-  );
+  const allWorks = [
+    ...works.map(t => ({ ...t, type: t.type || 'traditional' })),
+    ...deliveryWork.map(t => ({ ...t, type: 'delivery' })),
+  ];
 
-  const activeCount = [
-    activeFilters.work && activeFilters.work !== 'all' ? 1 : 0,
-    activeFilters.weekDays?.length || 0,
-    activeFilters.shiftType && activeFilters.shiftType !== 'all' ? 1 : 0
-  ].reduce((a, b) => a + b, 0);
+  const shiftTypes = getAvailableShiftTypes(shiftsByDate, shiftRanges, { base: colors.primary });
+
+  const hasActiveFilters =
+    (activeFilters.work && activeFilters.work !== 'all') ||
+    (activeFilters.weekDays?.length > 0) ||
+    (activeFilters.shiftType && activeFilters.shiftType !== 'all');
 
   const handleFilterChange = (type, value) => {
     onFiltersChange({ ...activeFilters, [type]: value });
+  };
+
+  const toggleDay = (dayId) => {
+    const current = activeFilters.weekDays || [];
+    const next = current.includes(dayId)
+      ? current.filter(d => d !== dayId)
+      : [...current, dayId];
+    handleFilterChange('weekDays', next);
   };
 
   const clearAllFilters = () => {
     onFiltersChange({ work: 'all', weekDays: [], shiftType: 'all' });
   };
 
-  const clearFilter = (type) => {
-    onFiltersChange({ ...activeFilters, [type]: type === 'weekDays' ? [] : 'all' });
-  };
-
-  const panelStyle = {
-    backgroundColor: colors.transparent5,
-    borderColor: colors.transparent20
-  };
+  const selectedWork = allWorks.find(w => w.id === activeFilters.work);
+  const workActive = activeFilters.work && activeFilters.work !== 'all';
 
   return (
-    <div className="mb-6">
-      {/* ── Header row: toggle (mobile) + active chips ── */}
-      <Flex variant="between" className="gap-3 flex-wrap mb-1">
+    <div className="mb-5 flex flex-wrap items-center gap-x-3 gap-y-2">
 
-        {/* Toggle button — hidden on xl+ where panel is always shown */}
-        <button
-          onClick={() => setShowFilters(v => !v)}
-          className={`xl:hidden inline-flex items-center gap-2 px-3 py-2 rounded-lg border transition-all text-sm font-medium
-            ${showFilters
-              ? ''
-              : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 bg-white dark:bg-gray-800'
-            }`}
-          style={showFilters ? {
-            borderColor: colors.primary,
-            backgroundColor: colors.transparent10,
-            color: colors.primary
-          } : {}}
-        >
-          <SlidersHorizontal size={15} />
-          <span>Filters</span>
-          {activeCount > 0 && (
-            <span
-              className="flex items-center justify-center w-4 h-4 rounded-full text-[10px] font-bold text-white"
-              style={{ backgroundColor: colors.primary }}
-            >
-              {activeCount}
-            </span>
-          )}
-        </button>
-
-        {/* Active filter chips — always visible */}
-        {hasActiveFilters && (
-          <div className="flex items-center gap-2 flex-wrap flex-1 min-w-0">
-            {activeFilters.work && activeFilters.work !== 'all' && (
-              <ActiveChip label="Work" color={colors.primary} onRemove={() => clearFilter('work')} />
-            )}
-            {activeFilters.weekDays?.length > 0 && (
-              <ActiveChip
-                label={`${activeFilters.weekDays.length} day${activeFilters.weekDays.length > 1 ? 's' : ''}`}
-                color={colors.primary}
-                onRemove={() => clearFilter('weekDays')}
-              />
-            )}
-            {activeFilters.shiftType && activeFilters.shiftType !== 'all' && (
-              <ActiveChip
-                label={activeFilters.shiftType}
-                color={colors.primary}
-                onRemove={() => clearFilter('shiftType')}
-              />
-            )}
-            <button
-              onClick={clearAllFilters}
-              className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors inline-flex items-center gap-1"
-            >
-              <X size={11} />
-              Clear all
-            </button>
-          </div>
-        )}
-      </Flex>
-
-      {/* ── Mobile/tablet: animated collapsible panel ── */}
-      <AnimatePresence initial={false}>
-        {showFilters && (
-          <motion.div
-            key="filters-panel"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.22, ease: 'easeInOut' }}
-            className="overflow-hidden xl:hidden"
-          >
-            <div className="rounded-xl border p-4 mt-3" style={panelStyle}>
-              <FilterGrid activeFilters={activeFilters} handleFilterChange={handleFilterChange} />
+      {/* ── Work select ── */}
+      {allWorks.length > 0 && (
+        <>
+          <div className="relative flex-shrink-0">
+            <div className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+              {selectedWork?.type === 'delivery'
+                ? <Truck size={13} className="text-green-600" />
+                : <Briefcase size={13} style={{ color: workActive ? colors.primary : '#9CA3AF' }} />
+              }
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <select
+              value={activeFilters.work || 'all'}
+              onChange={(e) => handleFilterChange('work', e.target.value)}
+              className="pl-7 pr-6 py-1.5 text-xs rounded-lg bg-white dark:bg-slate-800 dark:text-gray-200 text-gray-700 appearance-none cursor-pointer focus:outline-none border"
+              style={{
+                borderColor: workActive ? colors.primary : undefined,
+              }}
+            >
+              <option value="all">All works</option>
+              {allWorks.map(work => (
+                <option key={work.id} value={work.id}>
+                  {work.name}{work.type === 'delivery' ? ' (Delivery)' : ''}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      {/* ── Desktop xl+: always visible ── */}
-      <div className="hidden xl:block rounded-xl border p-4 mt-3" style={panelStyle}>
-        <FilterGrid activeFilters={activeFilters} handleFilterChange={handleFilterChange} />
+          {/* Divider */}
+          <div className="h-5 w-px bg-gray-200 dark:bg-slate-700 flex-shrink-0" />
+        </>
+      )}
+
+      {/* ── Day-of-week circles ── */}
+      <div className="flex items-center gap-1 flex-shrink-0">
+        {DAYS.map((day, idx) => {
+          const isActive = (activeFilters.weekDays || []).includes(day.id);
+          return (
+            <button
+              key={idx}
+              onClick={() => toggleDay(day.id)}
+              className={`w-7 h-7 rounded-full text-[11px] font-semibold transition-all flex items-center justify-center border ${
+                isActive
+                  ? 'text-white'
+                  : 'text-gray-400 dark:text-gray-500 border-gray-200 dark:border-slate-600'
+              }`}
+              style={isActive ? {
+                backgroundColor: colors.primary,
+                borderColor: colors.primary,
+              } : undefined}
+            >
+              {day.label}
+            </button>
+          );
+        })}
       </div>
+
+      {/* Divider */}
+      <div className="h-5 w-px bg-gray-200 dark:bg-slate-700 flex-shrink-0" />
+
+      {/* ── Shift type chips ── */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        {shiftTypes.map(type => {
+          const Icon = type.icon;
+          const isSelected = (activeFilters.shiftType || 'all') === type.id;
+          return (
+            <button
+              key={type.id}
+              onClick={() => handleFilterChange('shiftType', type.id)}
+              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all border ${
+                isSelected ? '' : 'border-gray-200 dark:border-slate-600 text-gray-400 dark:text-gray-500'
+              }`}
+              style={isSelected ? {
+                backgroundColor: `${type.color}18`,
+                borderColor: type.color,
+                color: type.color,
+              } : undefined}
+            >
+              <Icon size={11} style={{ color: isSelected ? type.color : undefined }} />
+              {type.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── Clear button ── */}
+      {hasActiveFilters && (
+        <button
+          onClick={clearAllFilters}
+          className="inline-flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex-shrink-0"
+        >
+          <X size={12} />
+          Clear
+        </button>
+      )}
     </div>
   );
 };

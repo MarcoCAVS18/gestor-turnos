@@ -162,7 +162,9 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
   return (
     <>
       {/* MOBILE NAVIGATION */}
-      <nav className="navbar-container fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 px-4 py-6 md:hidden">
+      <nav className="navbar-container fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 px-4 pt-3 md:hidden"
+        style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }}
+      >
         <div className="grid grid-cols-5 items-center max-w-md mx-auto">
           <button
             onClick={() => navigateToView('dashboard')}

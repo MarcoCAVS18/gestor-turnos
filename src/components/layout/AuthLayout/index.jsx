@@ -1,28 +1,34 @@
 // src/components/layout/AuthLayout/index.jsx
 // Shared layout for all auth pages (Login, Register, ForgotPassword, ResetPassword)
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const AuthLayout = ({ children, title, subtitle }) => {
+  const [videoReady, setVideoReady] = useState(false);
+
   return (
     <div className="fixed inset-0">
-      {/* Background video */}
-      <div className="absolute inset-0 z-0">
+      {/* Background video — dark fallback while loading, fade in when ready */}
+      <div className="absolute inset-0 z-0 bg-slate-900">
         <div className="absolute inset-0 bg-black opacity-50 z-10" />
         <video
           autoPlay
           loop
           muted
           playsInline
-          className="absolute object-cover w-full h-full"
+          poster="/assets/images/logo2.png"
+          onCanPlay={() => setVideoReady(true)}
+          className={`absolute object-cover w-full h-full transition-opacity duration-700 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
         >
           <source src="/assets/videos/sample_0.mp4" type="video/mp4" />
         </video>
       </div>
 
       {/* Content */}
-      <div className="fixed inset-0 z-20 flex flex-col items-center justify-center p-4 py-6 md:py-10 overflow-y-auto">
+      <div className="fixed inset-0 z-20 flex flex-col items-center justify-center p-4 md:py-10 overflow-y-auto"
+        style={{ paddingTop: 'calc(1.5rem + env(safe-area-inset-top))', paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
+      >
         {/* Branding container */}
         <div className="flex flex-col items-center mb-4 md:mb-6 flex-shrink-0">
           <div className="bg-white rounded-full p-3 md:p-4 shadow-md mb-2 md:mb-3">

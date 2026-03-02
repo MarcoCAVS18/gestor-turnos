@@ -51,27 +51,27 @@ export const getRechartsConfig = (thematicColors) => {
       line: { stroke: '#d1d5db' },
     },
     line: {
-      stroke: colors.primary || '#EC4899',
+      stroke: colors.base || '#EC4899',
       strokeWidth: 2,
       dot: {
         r: 4,
-        fill: colors.primary || '#EC4899',
+        fill: colors.base || '#EC4899',
         stroke: 'white',
         strokeWidth: 2,
       },
       activeDot: {
         r: 6,
-        stroke: colors.primary || '#EC4899',
+        stroke: colors.base || '#EC4899',
         fill: 'white',
         strokeWidth: 2,
       },
     },
     area: {
-      stroke: colors.primary || '#EC4899',
+      stroke: colors.base || '#EC4899',
       fill: colors.transparent20 || 'rgba(236, 72, 153, 0.2)',
     },
     bar: {
-      fill: colors.primary || '#EC4899',
+      fill: colors.base || '#EC4899',
     },
     pie: {
       innerRadius: '55%',

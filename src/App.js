@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 import { useAuth } from './contexts/AuthContext';
 import { AppProvider } from './contexts/AppContext';
 import { useConfigContext } from './contexts/ConfigContext';
@@ -21,6 +22,9 @@ import ScrollToTop from './components/layout/ScrollToTop/index.jsx';
 
 // Landing page
 import Landing from './pages/Landing';
+
+// Native
+import NativeSplash from './components/native/NativeSplash';
 
 // Legal Pages
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
@@ -49,6 +53,8 @@ import About from './pages/About';
 // Modals
 import WorkModal from './components/modals/work/WorkModal';
 import ShiftModal from './components/modals/shift/ShiftModal';
+import PremiumModal from './components/modals/premium/PremiumModal';
+import { usePremium } from './contexts/PremiumContext';
 
 // Public route that allows access without authentication
 const PublicRoute = ({ children }) => {
@@ -68,6 +74,7 @@ const PublicRoute = ({ children }) => {
 // General app layout
 function AppLayout() {
   const { loading: configLoading } = useConfigContext();
+  const { isPremiumModalOpen, closePremiumModal } = usePremium();
   const {
     isWorkModalOpen,
     isShiftModalOpen,
@@ -81,8 +88,10 @@ function AppLayout() {
     closeShiftModal,
   } = useModalManager();
 
-  // Show loader until user config (color, theme) is fully loaded
+  // Show loader until user config (color, theme) is fully loaded.
+  // En nativo NativeSplash ya cubre este tiempo — no mostrar Loader duplicado.
   if (configLoading) {
+    if (Capacitor.isNativePlatform()) return null;
     return (
       <div className="min-h-screen h-screen bg-gray-100 dark:bg-slate-950 flex items-center justify-center">
         <Loader />
@@ -91,14 +100,17 @@ function AppLayout() {
   }
 
   return (
-    <div className="min-h-screen h-screen bg-gray-100 dark:bg-slate-950 font-poppins transition-colors duration-300 md:flex">
+    <div className="min-h-screen bg-gray-100 dark:bg-slate-950 font-poppins transition-colors duration-300 md:flex md:h-screen">
       {/* Header only on mobile */}
       <div className="md:hidden">
         <Header />
       </div>
 
       {/* Main content */}
-      <main className="max-w-md mx-auto px-4 pb-20 md:max-w-none md:ml-72 md:px-6 md:pb-6 md:flex-1 md:overflow-y-auto md:h-screen">
+      <main
+        className="max-w-md mx-auto px-4 md:max-w-none md:ml-72 md:px-6 md:pb-6 md:flex-1 md:overflow-y-auto md:h-screen"
+        style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
+      >
         <Outlet context={{ openEditWorkModal, openEditShiftModal }} />
       </main>
 
@@ -119,6 +131,12 @@ function AppLayout() {
         onClose={closeShiftModal}
         shift={selectedShift}
       />
+
+      {/* Global premium modal — triggered by LockedFeatureCard and other components */}
+      <PremiumModal
+        isOpen={isPremiumModalOpen}
+        onClose={closePremiumModal}
+      />
     </div>
   );
 }
@@ -127,16 +145,18 @@ function AppLayout() {
 function App() {
   const { loading } = useAuth();
 
-  if (loading) {
-    return (
-      <Flex variant="center" className="h-screen">
-        <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
-      </Flex>
-    );
-  }
-
+  // NativeSplash siempre monta primero (se descarta sola en web).
+  // En nativo cubre el spinner mientras auth/config cargan.
   return (
-    <Router>
+    <>
+      <NativeSplash />
+      {loading ? (
+        // Web: spinner visible. En nativo queda tapado bajo NativeSplash (z-9999).
+        <Flex variant="center" className="h-screen bg-slate-950">
+          <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
+        </Flex>
+      ) : (
+      <Router>
       <ScrollToTop />
       <Routes>
         {/* Authentication */}
@@ -197,6 +217,8 @@ function App() {
         />
       </Routes>
     </Router>
+      )}
+    </>
   );
 }
 

@@ -18,7 +18,7 @@ const QuickActionsCard = ({ className, onOpenLiveMode }) => {
       </h3>
       <div className="grid grid-cols-2 gap-2 flex-grow items-center">
         <Button
-          onClick={() => navigate('/turnos')}
+          onClick={() => navigate('/shifts')}
           variant="outline"
           className="flex items-center justify-center gap-2"
           icon={Plus}
@@ -27,7 +27,7 @@ const QuickActionsCard = ({ className, onOpenLiveMode }) => {
           New shift
         </Button>
         <Button
-          onClick={() => navigate('/trabajos')}
+          onClick={() => navigate('/works')}
           variant="outline"
           className="flex items-center justify-center gap-2"
           icon={Briefcase}

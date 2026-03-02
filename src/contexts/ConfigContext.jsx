@@ -5,6 +5,7 @@ import { useAuth } from './AuthContext';
 import * as firebaseService from '../services/firebaseService';
 import { generateColorVariations } from '../utils/colorUtils';
 import { DELIVERY_PLATFORMS_AUSTRALIA } from '../constants/delivery';
+import { isCountrySupported } from '../services/holidayService';
 import logger from '../utils/logger';
 
 const ConfigContext = createContext();
@@ -70,11 +71,11 @@ export const ConfigProvider = ({ children }) => {
             setSmokoMinutes(settings.smokoMinutes || 30);
             setDeliveryPlatforms(settings.deliveryPlatforms?.length > 0 ? settings.deliveryPlatforms : DELIVERY_PLATFORMS_AUSTRALIA);
             setDefaultDeliveryPlatform(settings.defaultDeliveryPlatform || null);
-            // Prefer localStorage cache as fallback for users whose themeMode
-            // was not yet persisted to Firebase (migration safety net).
+            // Firebase wins over localStorage so that theme syncs across devices.
+            // localStorage is kept as fallback for users whose themeMode was not yet persisted.
             const cachedTheme = getCachedValue('orary_themeMode', null);
-            setThemeMode(cachedTheme ?? settings.themeMode ?? 'light');
-            setShiftRanges(settings.shiftRanges);
+            setThemeMode(settings.themeMode ?? cachedTheme ?? 'light');
+            if (settings.shiftRanges) setShiftRanges(settings.shiftRanges);
             setHolidayCountry(settings.holidayCountry || null);
             setHolidayRegion(settings.holidayRegion || null);
             setUseAutoHolidays(settings.useAutoHolidays || false);
@@ -165,8 +166,19 @@ export const ConfigProvider = ({ children }) => {
         `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
       );
       const data = await res.json();
-      if (data.countryCode === 'AU') {
-        await savePreferences({ holidayCountry: 'AU' });
+      const detectedCountry = data.countryCode || null;
+      if (detectedCountry && isCountrySupported(detectedCountry)) {
+        let detectedRegion = null;
+        if (data.principalSubdivisionCode) {
+          const prefix = `${detectedCountry}-`;
+          detectedRegion = data.principalSubdivisionCode.startsWith(prefix)
+            ? data.principalSubdivisionCode.slice(prefix.length)
+            : data.principalSubdivisionCode;
+        }
+        await savePreferences({
+          holidayCountry: detectedCountry,
+          holidayRegion: detectedRegion || null,
+        });
       }
     } catch {
       // User denied geolocation or network error — silently ignore

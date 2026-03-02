@@ -9,6 +9,11 @@ const allowedOrigins = [
   'https://gestionturnos-7ec99.firebaseapp.com',
   'https://orary.app',
   'http://localhost:3000',
+  'http://localhost:3001',
+  // Capacitor native app origins
+  'capacitor://localhost', // iOS
+  'https://localhost',     // Android Capacitor 5+
+  'http://localhost',      // Android Capacitor older / fallback
 ];
 const cors = require('cors')({
   origin: (origin, callback) => {
@@ -1166,6 +1171,185 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
   });
 
   res.json({ received: true });
+});
+
+// ============================================
+// CALENDAR FEED - WebCal ICS Subscription
+// ============================================
+
+/**
+ * Format a date+time string pair into ICS local datetime format.
+ * @param {string} dateStr - "YYYY-MM-DD"
+ * @param {string} timeStr - "HH:mm"
+ * @returns {string} e.g. "20260227T090000"
+ */
+function formatDateForICS(dateStr, timeStr) {
+  const [year, month, day] = dateStr.split('-');
+  const [hour, minute] = timeStr.split(':');
+  return `${year}${month}${day}T${hour}${minute}00`;
+}
+
+/**
+ * Escape special characters for ICS text fields.
+ */
+function escapeICSText(text) {
+  if (!text) return '';
+  return String(text)
+    .replace(/\\/g, '\\\\')
+    .replace(/,/g, '\\,')
+    .replace(/;/g, '\\;')
+    .replace(/\n/g, '\\n');
+}
+
+/**
+ * Build a complete ICS calendar string from an array of shifts.
+ * @param {Array} shifts - shift objects with id, startDate, startTime, endDate, endTime, notes, workId
+ * @param {Object} worksMap - { [workId]: { name } }
+ * @param {string} timezone - IANA timezone string e.g. "Australia/Sydney"
+ * @returns {string}
+ */
+function generateICS(shifts, worksMap, timezone) {
+  const tz = timezone || 'UTC';
+
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Orary//Shift Manager//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:Orary - My Shifts',
+    `X-WR-TIMEZONE:${tz}`,
+    'REFRESH-INTERVAL;VALUE=DURATION:PT6H',
+    'X-PUBLISHED-TTL:PT6H',
+  ];
+
+  const dtstamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 15) + 'Z';
+
+  for (const shift of shifts) {
+    const work = worksMap[shift.workId];
+    const workName = work?.name || 'Shift';
+    const endDate = shift.endDate || shift.startDate;
+
+    lines.push('BEGIN:VEVENT');
+    lines.push(`UID:shift-${shift.id}@orary.app`);
+    // Use TZID so calendar apps render events in the user's local time, not UTC
+    lines.push(`DTSTART;TZID=${tz}:${formatDateForICS(shift.startDate, shift.startTime)}`);
+    lines.push(`DTEND;TZID=${tz}:${formatDateForICS(endDate, shift.endTime)}`);
+    lines.push(`SUMMARY:${escapeICSText(workName)}`);
+    if (shift.notes) lines.push(`DESCRIPTION:${escapeICSText(shift.notes)}`);
+    lines.push(`DTSTAMP:${dtstamp}`);
+    lines.push('END:VEVENT');
+  }
+
+  lines.push('END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
+/**
+ * Get or create a permanent calendar subscription token for the authenticated user.
+ * Returns the webcal feed URL. The token never changes so existing subscriptions
+ * continue to work after the user re-opens the app.
+ */
+exports.getCalendarToken = functions.https.onRequest(async (req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith('Bearer ')) return res.status(401).json({ error: 'Unauthorized' });
+
+    const idToken = authHeader.split('Bearer ')[1];
+    let uid;
+    try {
+      const decoded = await admin.auth().verifyIdToken(idToken);
+      uid = decoded.uid;
+    } catch {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+
+    // Accept timezone from request body
+    let timezone = 'UTC';
+    try {
+      const body = req.body || {};
+      if (body.timezone && typeof body.timezone === 'string') {
+        timezone = body.timezone;
+      }
+    } catch { /* ignore */ }
+
+    // Get or generate a permanent calendar token for this user
+    const userRef = db.collection('users').doc(uid);
+    const userDoc = await userRef.get();
+    let calendarToken = userDoc.data()?.calendarToken;
+
+    const updates = { calendarTimezone: timezone };
+    if (!calendarToken) {
+      calendarToken = crypto.randomBytes(32).toString('hex');
+      updates.calendarToken = calendarToken;
+    }
+    await userRef.set(updates, { merge: true });
+
+    const feedUrl = `https://orary.app/cal?uid=${uid}&token=${calendarToken}`;
+    res.json({ url: feedUrl });
+  });
+});
+
+/**
+ * Public ICS feed — called directly by calendar apps (no auth header).
+ * Secured with a per-user secret token stored in Firestore.
+ * Returns an ICS file with the user's shifts (last 90 days + next 365 days).
+ */
+exports.userCalendar = functions.https.onRequest(async (req, res) => {
+  if (req.method !== 'GET') return res.status(405).send('Method not allowed');
+
+  const { uid, token } = req.query;
+  if (!uid || !token) return res.status(400).send('Missing uid or token');
+
+  // Validate token
+  const userDoc = await db.collection('users').doc(uid).get();
+  if (!userDoc.exists || userDoc.data().calendarToken !== token) {
+    return res.status(403).send('Forbidden');
+  }
+
+  const timezone = userDoc.data().calendarTimezone || 'UTC';
+
+  // Date range for JS-side filtering: last 90 days → next 365 days
+  const now = new Date();
+  const pastDate = new Date(now);
+  pastDate.setDate(pastDate.getDate() - 90);
+  const futureDate = new Date(now);
+  futureDate.setDate(futureDate.getDate() + 365);
+  const pastDateStr = pastDate.toISOString().split('T')[0];
+  const futureDateStr = futureDate.toISOString().split('T')[0];
+
+  try {
+    // Query only by userId — no composite index required.
+    // Date filtering is done in JS to avoid Firestore index requirements.
+    const [shiftsSnapshot, worksSnapshot] = await Promise.all([
+      db.collection('shifts').where('userId', '==', uid).get(),
+      db.collection('works').where('userId', '==', uid).get(),
+    ]);
+
+    const worksMap = {};
+    worksSnapshot.forEach(doc => { worksMap[doc.id] = doc.data(); });
+
+    const shifts = [];
+    shiftsSnapshot.forEach(doc => {
+      const data = doc.data();
+      // Filter by date range in JS
+      if (data.startDate >= pastDateStr && data.startDate <= futureDateStr) {
+        shifts.push({ id: doc.id, ...data });
+      }
+    });
+
+    const ics = generateICS(shifts, worksMap, timezone);
+
+    res.set('Content-Type', 'text/calendar; charset=utf-8');
+    res.set('Content-Disposition', 'inline; filename="orary-shifts.ics"');
+    res.set('Cache-Control', 'no-cache, no-store');
+    res.send(ics);
+  } catch (error) {
+    console.error('userCalendar error:', error);
+    res.status(500).send('Internal server error');
+  }
 });
 
 // ============================================

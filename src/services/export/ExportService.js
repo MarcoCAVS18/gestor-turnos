@@ -1,10 +1,11 @@
 // src/services/export/ExportService.js
 
 import { buildReportData } from './data/ReportDataBuilder';
-import { generateExcelReport } from './excel/ExcelExporter';
-import { generatePDFReport } from './pdf/PDFExporter';
-import { generatePNGReport } from './png/PNGExporter';
+import { generateExcelReport, generateExcelBlob } from './excel/ExcelExporter';
+import { generatePDFReport, generatePDFBlob } from './pdf/PDFExporter';
+import { generatePNGReport, generatePNGBlob } from './png/PNGExporter';
 import { preloadLogos } from './utils/LogoLoader';
+import { nativeSave, isNativePlatform } from './utils/nativeSave';
 import logger from '../../utils/logger';
 
 /**
@@ -109,12 +110,19 @@ export class ExportService {
    */
   async exportExcel(reportData, options = {}) {
     try {
-      await generateExcelReport(reportData, {
+      const exportOptions = {
         filename: options.filename || `detailed-report-${this.formatDate(new Date())}.xlsx`,
         logoColor: options.logoColor || '#4472C4',
         includeCharts: options.includeCharts !== false,
         ...options
-      });
+      };
+
+      if (isNativePlatform()) {
+        const blob = await generateExcelBlob(reportData, exportOptions);
+        await nativeSave(blob, exportOptions.filename);
+      } else {
+        await generateExcelReport(reportData, exportOptions);
+      }
       return true;
     } catch (error) {
       logger.error('Error exporting Excel:', error);
@@ -130,14 +138,21 @@ export class ExportService {
    */
   async exportPDF(reportData, options = {}) {
     try {
-      await generatePDFReport(reportData, {
+      const exportOptions = {
         filename: options.filename || `report-${this.formatDate(new Date())}.pdf`,
         logoColor: options.logoColor || '#EC4899',
         includeCharts: options.includeCharts !== false,
         includeCoverPage: options.includeCoverPage !== false,
         includeMonthlyDetails: options.includeMonthlyDetails !== false,
         ...options
-      });
+      };
+
+      if (isNativePlatform()) {
+        const blob = await generatePDFBlob(reportData, exportOptions);
+        await nativeSave(blob, exportOptions.filename);
+      } else {
+        await generatePDFReport(reportData, exportOptions);
+      }
       return true;
     } catch (error) {
       logger.error('Error exporting PDF:', error);
@@ -153,13 +168,20 @@ export class ExportService {
    */
   async exportPNG(reportData, options = {}) {
     try {
-      await generatePNGReport(reportData, {
+      const exportOptions = {
         filename: options.filename || `dashboard-${this.formatDate(new Date())}.png`,
         logoColor: options.logoColor || '#EC4899',
         width: options.width || 1200,
         userInfo: options.userInfo || null,
         ...options
-      });
+      };
+
+      if (isNativePlatform()) {
+        const blob = await generatePNGBlob(reportData, exportOptions);
+        await nativeSave(blob, exportOptions.filename);
+      } else {
+        await generatePNGReport(reportData, exportOptions);
+      }
       return true;
     } catch (error) {
       logger.error('Error exporting PNG:', error);

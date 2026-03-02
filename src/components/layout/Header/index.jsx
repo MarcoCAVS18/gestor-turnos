@@ -42,8 +42,11 @@ const Header = () => {
 
   return (
     <header
-      className="flex justify-between items-center px-4 py-4 text-white shadow-md"
-      style={{ backgroundColor: thematicColors?.base || '#EC4899' }}
+      className="flex justify-between items-center px-4 pb-4 text-white shadow-md"
+      style={{
+        backgroundColor: thematicColors?.base || '#EC4899',
+        paddingTop: 'calc(1rem + env(safe-area-inset-top))',
+      }}
     >
       {/* Logo and title on the left - clickable */}
       <Flex className="flex-1">

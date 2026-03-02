@@ -2,6 +2,8 @@
 // Frontend service for Stripe payment integration
 
 import { loadStripe } from '@stripe/stripe-js';
+import { Capacitor } from '@capacitor/core';
+import { Browser } from '@capacitor/browser';
 import { auth } from './firebase';
 import logger from '../utils/logger';
 
@@ -175,7 +177,13 @@ export const openBillingPortal = async () => {
       throw new Error(data.error || 'Failed to open billing portal');
     }
 
-    window.open(data.url, '_blank');
+    // On Capacitor native, use Browser.open() (SFSafariViewController/Chrome Custom Tabs)
+    // which supports OAuth flows. window.open('_system') is a Cordova convention — it does NOT work in Capacitor.
+    if (Capacitor.isNativePlatform()) {
+      await Browser.open({ url: data.url });
+    } else {
+      window.open(data.url, '_blank');
+    }
     return data;
   } catch (error) {
     logger.error('Error opening billing portal:', error);

@@ -29,6 +29,7 @@ const Button = ({
   animatedChevron = false,
   bgColor,
   textColor,
+  iconSize,
   ...props
 }) => {
   const isGhost = variant === 'ghost' || variant === 'ghost-animated';
@@ -96,8 +97,7 @@ const Button = ({
   };
 
   const renderIcon = (isForLoading = false) => (
-    <motion.div 
-      layout 
+    <motion.div
       className="flex items-center justify-center"
       animate={shouldAnimateIcon && !loading ? { x: [0, 3, 0] } : {}}
       transition={shouldAnimateIcon && !loading ? { 
@@ -113,7 +113,7 @@ const Button = ({
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
         </svg>
       ) : (
-        Icon && <Icon size={size === 'sm' ? 16 : 20} strokeWidth={2.5} />
+        Icon && <Icon size={iconSize ?? (size === 'sm' ? 16 : 20)} strokeWidth={2.5} />
       )}
     </motion.div>
   );
@@ -124,7 +124,8 @@ const Button = ({
         onClick={onClick}
         disabled={disabled || loading}
         initial={false}
-        className={`relative flex items-center justify-center overflow-hidden transition-all
+        className={`relative flex items-center justify-center transition-all
+          ${!collapsed ? 'overflow-hidden' : ''}
           ${currentFontSize} font-medium
           ${(isGhost || isCancel) ? 'hover:bg-gray-500/10' : 'shadow-sm hover:shadow-md'}
           ${isPremium ? 'hover:scale-[1.02] hover:shadow-lg font-semibold' : ''}
@@ -134,8 +135,7 @@ const Button = ({
         transition={{ layout: { duration: 0.4, type: "spring", bounce: 0, stiffness: 300, damping: 30 } }}
         {...props}
       >
-      <motion.div 
-        layout 
+      <div
         className="flex items-center justify-center"
         style={{ gap: collapsed ? 0 : (size === 'sm' ? '0.25rem' : '0.5rem') }}
       >
@@ -167,7 +167,7 @@ const Button = ({
             )}
           </motion.div>
         </AnimatePresence>
-      </motion.div>
+      </div>
     </motion.button>
   );
 };

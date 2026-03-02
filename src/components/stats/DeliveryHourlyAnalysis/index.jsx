@@ -1,6 +1,6 @@
 // src/components/stats/DeliveryHourlyAnalysis/index.jsx
 
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, Sun, Moon, Sunset, Sunrise, BarChart2, PlusCircle, Lock, Crown } from 'lucide-react';
 import Card from '../../ui/Card';
@@ -12,30 +12,44 @@ import { usePremium, PREMIUM_COLORS } from '../../../contexts/PremiumContext';
 import { formatCurrency } from '../../../utils/currency';
 import { calculateWeeklyHourlyDeliveryStats } from '../../../services/calculationService';
 
+// Reactive dark mode detector — watches the `dark` class on <html>
+const useIsDark = () => {
+  const [isDark, setIsDark] = useState(
+    () => document.documentElement.classList.contains('dark')
+  );
+
+  useEffect(() => {
+    const el = document.documentElement;
+    const observer = new MutationObserver(() => {
+      setIsDark(el.classList.contains('dark'));
+    });
+    observer.observe(el, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  return isDark;
+};
+
 const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
   const { isPremium } = usePremium();
+  const isDark = useIsDark();
 
-  // 1. Calculate base statistics
   const weeklyHourlyStats = useMemo(() => {
     return calculateWeeklyHourlyDeliveryStats(shifts);
   }, [shifts]);
 
-  // 2. Determine the MAXIMUM value of TOTAL earnings (accumulated)
   const maxTotalProfit = useMemo(() => {
     let max = 0;
     weeklyHourlyStats.forEach(day => {
       day.hourlyData.forEach(hour => {
-        if (hour.totalProfit > max) {
-          max = hour.totalProfit;
-        }
+        if (hour.totalProfit > max) max = hour.totalProfit;
       });
     });
     return max;
   }, [weeklyHourlyStats]);
 
-  // 3. Calculate best moment
   const bestMoment = useMemo(() => {
     let bestDay = null;
     let bestHour = null;
@@ -53,11 +67,14 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
     return { day: bestDay, hour: bestHour, averageProfitPerHour: maxAvgProfit };
   }, [weeklyHourlyStats]);
 
-  // 4. COLOR FUNCTION
+  // Empty cell colour adapts to dark / light mode.
+  // Dark: slate-700 (#334155) — one shade lighter than the card's slate-800 bg, clearly visible.
+  // Light: slate-100 (#f1f5f9) — subtle against white card.
+  const emptyCell = isDark ? '#334155' : '#f1f5f9';
+
   const getHeatmapColor = useCallback((value) => {
-    if (!value || value <= 0 || maxTotalProfit === 0) {
-      return '#f1f5f9'; 
-    }
+    if (!value || value <= 0 || maxTotalProfit === 0) return emptyCell;
+
     const intensity = value / maxTotalProfit;
     const opacity = 0.15 + (intensity * 0.85);
 
@@ -76,12 +93,10 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
 
     const rgb = hexToRgb(baseColor);
     return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${opacity.toFixed(2)})`;
-
-  }, [maxTotalProfit, colors.primary]);
+  }, [maxTotalProfit, colors.primary, emptyCell]);
 
   const hasData = useMemo(() => weeklyHourlyStats.some(day => day.hourlyData.some(hour => hour.totalHours > 0)), [weeklyHourlyStats]);
 
-  // Premium locked state for non-premium users
   if (!isPremium) {
     return (
       <Card className={`flex flex-col ${className} relative overflow-hidden`}>
@@ -90,7 +105,7 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
           className="w-full text-left"
         >
           {/* Blur overlay */}
-          <div className="absolute inset-0 backdrop-blur-[2px] bg-white/60 z-10 rounded-xl" />
+          <div className="absolute inset-0 backdrop-blur-[2px] bg-white/60 dark:bg-slate-800/60 z-10 rounded-xl" />
 
           {/* Lock badge */}
           <div
@@ -103,33 +118,30 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
 
           {/* Blurred content preview */}
           <div className="opacity-50">
-            <h3 className="text-lg font-semibold flex items-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center mb-4">
               <Clock size={20} style={{ color: colors.primary }} className="mr-2" />
               Hourly Profitability
             </h3>
 
-            {/* Fake heatmap preview */}
             <div className="space-y-6">
-              {/* Fake best moment card */}
-              <div className="bg-gradient-to-r from-gray-50 to-white p-4 rounded-lg border border-gray-100">
+              <div className="bg-gradient-to-r from-gray-50 to-white dark:from-slate-700 dark:to-slate-800 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
                 <Flex variant="between">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-yellow-100 rounded-full text-yellow-600">
+                    <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full text-yellow-600">
                       <Sun size={24} />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Best moment</p>
-                      <p className="font-bold text-gray-400 text-lg">--- --:-- - --:--</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Best moment</p>
+                      <p className="font-bold text-gray-400 dark:text-gray-500 text-lg">--- --:-- - --:--</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-2xl font-bold text-gray-400">$--</span>
-                    <p className="text-xs text-gray-400">/hour</p>
+                    <span className="text-2xl font-bold text-gray-400 dark:text-gray-500">$--</span>
+                    <p className="text-xs text-gray-400 dark:text-gray-500">/hour</p>
                   </div>
                 </Flex>
               </div>
 
-              {/* Fake heatmap grid */}
               <div className="w-full">
                 <div
                   className="grid gap-x-[2px] gap-y-1"
@@ -147,7 +159,8 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
                       {Array.from({ length: 12 }).map((_, i) => (
                         <div
                           key={i}
-                          className="w-full h-6 rounded-sm bg-gray-100"
+                          className="w-full h-6 rounded-sm"
+                          style={{ backgroundColor: emptyCell }}
                         />
                       ))}
                     </React.Fragment>
@@ -156,7 +169,6 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
               </div>
             </div>
 
-            {/* Center lock icon */}
             <div className="absolute inset-0 flex items-center justify-center z-15 pointer-events-none">
               <div
                 className="w-16 h-16 rounded-full flex items-center justify-center"
@@ -174,15 +186,15 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
   if (!hasData) {
     return (
       <Card className={`flex flex-col ${className}`}>
-        <h3 className="text-lg font-semibold flex items-center mb-4">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center mb-4">
           <Clock size={20} style={{ color: colors.primary }} className="mr-2" />
           Hourly Profitability
         </h3>
         <div className="flex-grow flex flex-col items-center justify-center py-8 px-4">
-          <div className="bg-gray-50 p-4 rounded-full mb-4">
-            <BarChart2 size={32} className="text-gray-300" />
+          <div className="bg-gray-50 dark:bg-slate-700 p-4 rounded-full mb-4">
+            <BarChart2 size={32} className="text-gray-300 dark:text-gray-500" />
           </div>
-          <p className="text-gray-600 font-medium mb-1">No data this week</p>
+          <p className="text-gray-600 dark:text-gray-400 font-medium mb-1">No data this week</p>
           <Button
             onClick={() => navigate('/shifts')}
             variant="outline"
@@ -211,7 +223,7 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
   return (
     <Card className={`flex flex-col ${className}`}>
       <div className="flex-none">
-        <h3 className="text-lg font-semibold flex items-center mb-4">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center mb-4">
           <Clock size={20} style={{ color: colors.primary }} className="mr-2" />
           Hourly Profitability
         </h3>
@@ -220,15 +232,15 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
       <div className="flex-grow flex flex-col space-y-6">
         {/* Best Moment Card */}
         {bestMoment.day !== null && bestMoment.averageProfitPerHour > 0 && (
-          <div className="bg-gradient-to-r from-gray-50 to-white p-4 rounded-lg border border-gray-100 shadow-sm">
+          <div className="bg-gradient-to-r from-gray-50 to-white dark:from-slate-700 dark:to-slate-800 p-4 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
             <Flex variant="between">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-100 rounded-full text-yellow-600">
+                <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full text-yellow-600">
                   <BestMomentIcon size={24} />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 uppercase font-bold tracking-wider">Best moment</p>
-                  <p className="font-bold text-gray-800 text-lg">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Best moment</p>
+                  <p className="font-bold text-gray-800 dark:text-gray-100 text-lg">
                     {bestMoment.day} {bestMoment.hour}:00 - {bestMoment.hour + 1}:00
                   </p>
                 </div>
@@ -237,37 +249,32 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
                 <span className="text-2xl font-bold text-green-600">
                   {formatCurrency(bestMoment.averageProfitPerHour)}
                 </span>
-                <p className="text-xs text-gray-400">/hour</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">/hour</p>
               </div>
             </Flex>
           </div>
         )}
 
-        {/* CSS GRID HEATMAP */}
+        {/* Heatmap */}
         <div className="w-full overflow-x-auto pb-2 relative">
           <div className="w-full min-w-[600px]">
-            {/* Grid Container */}
             <div
-              className="grid gap-x-[2px] gap-y-1" 
+              className="grid gap-x-[2px] gap-y-1"
               style={{ gridTemplateColumns: '40px repeat(24, 1fr)' }}
             >
-              {/* Header Row (Hours) */}
-              <div className="text-[10px] text-gray-400 text-center self-end pb-1">#</div>
+              <div className="text-[10px] text-gray-400 dark:text-gray-500 text-center self-end pb-1">#</div>
               {Array.from({ length: 24 }).map((_, i) => (
-                <div key={i} className="text-[10px] text-gray-400 text-center pb-1">
+                <div key={i} className="text-[10px] text-gray-400 dark:text-gray-500 text-center pb-1">
                   {i % 3 === 0 ? `${i}h` : ''}
                 </div>
               ))}
 
-              {/* Body Rows */}
               {weeklyHourlyStats.map((dayStat) => (
                 <React.Fragment key={dayStat.day}>
-                  {/* Day Label */}
-                  <div className="text-[11px] font-medium text-gray-500 self-center capitalize">
+                  <div className="text-[11px] font-medium text-gray-500 dark:text-gray-400 self-center capitalize">
                     {getDayLabel(dayStat.day)}
                   </div>
 
-                  {/* Hour Cells */}
                   {dayStat.hourlyData.map((hourStat) => (
                     <Popover
                       key={`${dayStat.day}-${hourStat.hour}`}
@@ -299,28 +306,26 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
                     >
                       <div
                         className={`w-full h-10 rounded-sm transition-all duration-200 cursor-default ${hourStat.totalHours > 0 ? 'hover:scale-110 hover:shadow-md hover:z-10 relative' : ''}`}
-                        style={{
-                          backgroundColor: getHeatmapColor(hourStat.totalProfit)
-                        }}
-                      ></div>
+                        style={{ backgroundColor: getHeatmapColor(hourStat.totalProfit) }}
+                      />
                     </Popover>
                   ))}
                 </React.Fragment>
               ))}
             </div>
 
-            <div className="flex items-center justify-end gap-2 text-xs text-gray-400 mt-4 border-t border-gray-100 pt-3">
-                <span>Less $</span>
-                <div className="flex gap-0.5">
-                  <div className="w-3 h-3 rounded-sm bg-slate-100 border border-slate-200"></div>
-                  <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getHeatmapColor(maxTotalProfit * 0.2) }}></div>
-                  <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getHeatmapColor(maxTotalProfit * 0.4) }}></div>
-                  <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getHeatmapColor(maxTotalProfit * 0.6) }}></div>
-                  <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getHeatmapColor(maxTotalProfit * 0.8) }}></div>
-                  <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getHeatmapColor(maxTotalProfit) }}></div>
-                </div>
-                <span>More $</span>
+            <div className="flex items-center justify-end gap-2 text-xs text-gray-400 dark:text-gray-500 mt-4 border-t border-gray-100 dark:border-gray-700 pt-3">
+              <span>Less $</span>
+              <div className="flex gap-0.5">
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: emptyCell }} />
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getHeatmapColor(maxTotalProfit * 0.2) }} />
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getHeatmapColor(maxTotalProfit * 0.4) }} />
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getHeatmapColor(maxTotalProfit * 0.6) }} />
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getHeatmapColor(maxTotalProfit * 0.8) }} />
+                <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: getHeatmapColor(maxTotalProfit) }} />
               </div>
+              <span>More $</span>
+            </div>
           </div>
         </div>
       </div>

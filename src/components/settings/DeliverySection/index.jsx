@@ -10,7 +10,7 @@ import Popover from '../../ui/Popover';
 import Flex from '../../ui/Flex';
 import logger from '../../../utils/logger';
 
-const DeliverySection = ({ onError, onSuccess, className }) => {
+const DeliverySection = ({ id, onError, onSuccess, className }) => {
   const { deliveryEnabled, savePreferences } = useApp();
   const colors = useThemeColors();
   
@@ -56,7 +56,7 @@ const DeliverySection = ({ onError, onSuccess, className }) => {
   );
 
   return (
-    <SettingsSection icon={Truck} title="Delivery Jobs" className={className}>
+    <SettingsSection id={id} icon={Truck} title="Delivery Jobs" className={className}>
       <div className="space-y-4">
         <Flex variant="between" className="items-start">
           <div className="flex-1 pr-4">

@@ -3,9 +3,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Crown, Info } from 'lucide-react';
+import { usePremium } from '../../../contexts/PremiumContext';
 
 const FooterSection = () => {
   const navigate = useNavigate();
+  const { openPremiumModal } = usePremium();
 
   return (
     <footer className="w-full py-2 px-4 mt-auto border-t border-gray-100 select-none">
@@ -14,7 +16,7 @@ const FooterSection = () => {
 
           <button
             className="group flex items-center gap-1 font-bold text-amber-500 hover:text-amber-600 transition-colors cursor-pointer"
-            onClick={() => navigate('/premium')}
+            onClick={openPremiumModal}
           >
             <Crown size={12} className="group-hover:scale-110 transition-transform fill-current" />
             <span>Premium</span>

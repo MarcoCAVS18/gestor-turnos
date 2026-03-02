@@ -7,45 +7,42 @@
 
 // Color definitions
 export const COLORS = {
-  // Primary brand colors
-  primary: 'EC4899',      // Pink
-  primaryDark: 'DB2777',  // Darker pink
+  // Brand / primary palette
+  primary: 'EC4899',       // Pink (accent only)
+  primaryDark: 'DB2777',
 
-  // Secondary colors
-  secondary: '4472C4',    // Blue
-  secondaryDark: '2F5496', // Darker blue
+  // Professional navy palette (used for all headers)
+  navy: '1F4E79',          // Dark navy — main section headers
+  navyMid: '2E75B6',       // Mid navy — table headers
+  navyLight: 'BDD7EE',     // Light navy — subtle highlights
 
-  // Accent colors
-  accent: '10B981',       // Green
-  warning: 'F59E0B',      // Orange
-  error: 'EF4444',        // Red
-  purple: '8B5CF6',       // Purple
+  // Secondary (kept for compatibility)
+  secondary: '2E75B6',     // Same as navyMid
+  secondaryDark: '1F4E79',
+
+  // Accent (delivery only)
+  accent: '10B981',
+  warning: 'D97706',
+  error: 'DC2626',
 
   // Neutral colors
   white: 'FFFFFF',
   black: '000000',
-  darkGray: '1F2937',
+  darkGray: '111827',
   gray: '6B7280',
   lightGray: '9CA3AF',
   veryLightGray: 'F3F4F6',
-  backgroundGray: 'F9FAFB',
-
-  // Shift type colors
-  day: 'FBBF24',
-  afternoon: 'F97316',
-  night: '6366F1',
-  saturday: '10B981',
-  sunday: 'EC4899',
-  delivery: '8B5CF6'
+  backgroundGray: 'F8FAFC',
+  borderGray: 'E5E7EB'
 };
 
 // Border definitions
 const borders = {
   thin: {
-    top: { style: 'thin', color: { rgb: 'D1D5DB' } },
-    bottom: { style: 'thin', color: { rgb: 'D1D5DB' } },
-    left: { style: 'thin', color: { rgb: 'D1D5DB' } },
-    right: { style: 'thin', color: { rgb: 'D1D5DB' } }
+    top: { style: 'thin', color: { rgb: 'E5E7EB' } },
+    bottom: { style: 'thin', color: { rgb: 'E5E7EB' } },
+    left: { style: 'thin', color: { rgb: 'E5E7EB' } },
+    right: { style: 'thin', color: { rgb: 'E5E7EB' } }
   },
   medium: {
     top: { style: 'medium', color: { rgb: '9CA3AF' } },
@@ -54,7 +51,7 @@ const borders = {
     right: { style: 'medium', color: { rgb: '9CA3AF' } }
   },
   bottom: {
-    bottom: { style: 'thin', color: { rgb: 'D1D5DB' } }
+    bottom: { style: 'thin', color: { rgb: 'E5E7EB' } }
   },
   none: {}
 };
@@ -69,59 +66,58 @@ const fonts = {
   },
   subtitle: {
     name: 'Calibri',
-    sz: 14,
-    bold: true,
+    sz: 12,
     color: { rgb: COLORS.gray }
   },
   sectionHeader: {
     name: 'Calibri',
-    sz: 12,
+    sz: 11,
     bold: true,
     color: { rgb: COLORS.white }
   },
   tableHeader: {
     name: 'Calibri',
-    sz: 11,
+    sz: 10,
     bold: true,
     color: { rgb: COLORS.white }
   },
   label: {
     name: 'Calibri',
-    sz: 11,
+    sz: 10,
     bold: true,
     color: { rgb: COLORS.gray }
   },
   value: {
     name: 'Calibri',
-    sz: 11,
+    sz: 10,
     color: { rgb: COLORS.darkGray }
   },
   valueBold: {
     name: 'Calibri',
-    sz: 11,
+    sz: 10,
     bold: true,
     color: { rgb: COLORS.darkGray }
   },
   small: {
     name: 'Calibri',
-    sz: 10,
+    sz: 9,
     color: { rgb: COLORS.gray }
   },
   kpiValue: {
     name: 'Calibri',
-    sz: 16,
+    sz: 15,
     bold: true,
-    color: { rgb: COLORS.primary }
+    color: { rgb: COLORS.navy }     // Navy instead of pink
   },
   positive: {
     name: 'Calibri',
-    sz: 11,
+    sz: 10,
     bold: true,
     color: { rgb: COLORS.accent }
   },
   negative: {
     name: 'Calibri',
-    sz: 11,
+    sz: 10,
     bold: true,
     color: { rgb: COLORS.error }
   }
@@ -131,55 +127,55 @@ const fonts = {
 export const styles = {
   // Title and headers
   title: {
-    font: fonts.title,
+    font: { ...fonts.title },
     alignment: { horizontal: 'left', vertical: 'center' }
   },
 
   subtitle: {
-    font: fonts.subtitle,
+    font: { ...fonts.subtitle },
     alignment: { horizontal: 'left', vertical: 'center' }
   },
 
-  // Section headers (main headers with background)
+  // Section headers — unified dark navy
   sectionHeader: {
     font: fonts.sectionHeader,
-    fill: { fgColor: { rgb: COLORS.primary } },
-    alignment: { horizontal: 'center', vertical: 'center' },
+    fill: { fgColor: { rgb: COLORS.navy } },
+    alignment: { horizontal: 'left', vertical: 'center', indent: 1 },
     border: borders.thin
   },
 
   sectionHeaderBlue: {
     font: fonts.sectionHeader,
-    fill: { fgColor: { rgb: COLORS.secondary } },
-    alignment: { horizontal: 'center', vertical: 'center' },
+    fill: { fgColor: { rgb: COLORS.navy } },
+    alignment: { horizontal: 'left', vertical: 'center', indent: 1 },
     border: borders.thin
   },
 
   sectionHeaderGreen: {
     font: fonts.sectionHeader,
-    fill: { fgColor: { rgb: COLORS.accent } },
-    alignment: { horizontal: 'center', vertical: 'center' },
+    fill: { fgColor: { rgb: COLORS.navyMid } },
+    alignment: { horizontal: 'left', vertical: 'center', indent: 1 },
     border: borders.thin
   },
 
-  // Table headers
+  // Table headers — mid navy
   tableHeader: {
     font: fonts.tableHeader,
-    fill: { fgColor: { rgb: COLORS.secondary } },
+    fill: { fgColor: { rgb: COLORS.navyMid } },
     alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
     border: borders.thin
   },
 
   tableHeaderPink: {
     font: fonts.tableHeader,
-    fill: { fgColor: { rgb: COLORS.primary } },
+    fill: { fgColor: { rgb: COLORS.navyMid } },
     alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
     border: borders.thin
   },
 
   tableHeaderGreen: {
     font: fonts.tableHeader,
-    fill: { fgColor: { rgb: COLORS.accent } },
+    fill: { fgColor: { rgb: COLORS.navyMid } },
     alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
     border: borders.thin
   },
@@ -231,11 +227,11 @@ export const styles = {
   kpiLabel: {
     font: fonts.small,
     alignment: { horizontal: 'center', vertical: 'center' },
-    fill: { fgColor: { rgb: COLORS.veryLightGray } },
+    fill: { fgColor: { rgb: COLORS.backgroundGray } },
     border: borders.thin
   },
 
-  // Table cells - even row
+  // Table cells - even row (white)
   cellEven: {
     font: fonts.value,
     fill: { fgColor: { rgb: COLORS.white } },
@@ -257,7 +253,7 @@ export const styles = {
     border: borders.thin
   },
 
-  // Table cells - odd row
+  // Table cells - odd row (very light gray)
   cellOdd: {
     font: fonts.value,
     fill: { fgColor: { rgb: COLORS.backgroundGray } },
@@ -279,7 +275,7 @@ export const styles = {
     border: borders.thin
   },
 
-  // Currency cells
+  // Currency cells ($#,##0.00 — 2 decimal places)
   currencyEven: {
     font: fonts.value,
     fill: { fgColor: { rgb: COLORS.white } },
@@ -303,13 +299,30 @@ export const styles = {
     numFmt: '$#,##0.00'
   },
 
-  // Number cells
+  // Hours cells (#,##0.0 — 1 decimal place)
+  hoursEven: {
+    font: fonts.value,
+    fill: { fgColor: { rgb: COLORS.white } },
+    alignment: { horizontal: 'right', vertical: 'center' },
+    border: borders.thin,
+    numFmt: '#,##0.0'
+  },
+
+  hoursOdd: {
+    font: fonts.value,
+    fill: { fgColor: { rgb: COLORS.backgroundGray } },
+    alignment: { horizontal: 'right', vertical: 'center' },
+    border: borders.thin,
+    numFmt: '#,##0.0'
+  },
+
+  // Generic number cells (#,##0.00)
   numberEven: {
     font: fonts.value,
     fill: { fgColor: { rgb: COLORS.white } },
     alignment: { horizontal: 'right', vertical: 'center' },
     border: borders.thin,
-    numFmt: '#,##0.00'
+    numFmt: '#,##0.0'
   },
 
   numberOdd: {
@@ -317,7 +330,7 @@ export const styles = {
     fill: { fgColor: { rgb: COLORS.backgroundGray } },
     alignment: { horizontal: 'right', vertical: 'center' },
     border: borders.thin,
-    numFmt: '#,##0.00'
+    numFmt: '#,##0.0'
   },
 
   integerEven: {
@@ -336,7 +349,7 @@ export const styles = {
     numFmt: '#,##0'
   },
 
-  // Percentage cells
+  // Percentage cells (0.0%)
   percentEven: {
     font: fonts.value,
     fill: { fgColor: { rgb: COLORS.white } },
@@ -396,7 +409,7 @@ export const styles = {
     border: borders.thin
   },
 
-  // Empty cell
+  // Empty / filler cell
   empty: {
     border: borders.thin
   },
@@ -405,6 +418,25 @@ export const styles = {
   small: {
     font: fonts.small,
     alignment: { horizontal: 'left', vertical: 'center' }
+  },
+
+  // Brand header cell (for the top branding row)
+  brandHeader: {
+    font: { name: 'Calibri', sz: 14, bold: true, color: { rgb: COLORS.white } },
+    fill: { fgColor: { rgb: COLORS.navy } },
+    alignment: { horizontal: 'left', vertical: 'center', indent: 1 }
+  },
+
+  brandSubtitle: {
+    font: { name: 'Calibri', sz: 10, color: { rgb: 'BDD7EE' } },
+    fill: { fgColor: { rgb: COLORS.navy } },
+    alignment: { horizontal: 'left', vertical: 'center', indent: 1 }
+  },
+
+  brandRight: {
+    font: { name: 'Calibri', sz: 9, color: { rgb: 'BDD7EE' } },
+    fill: { fgColor: { rgb: COLORS.navy } },
+    alignment: { horizontal: 'right', vertical: 'center', indent: 1 }
   }
 };
 
@@ -428,9 +460,6 @@ export const columnWidths = {
 
 /**
  * Applies a style to a cell
- * @param {Object} worksheet - The worksheet
- * @param {string} cellRef - Cell reference (e.g., 'A1')
- * @param {Object} style - Style object to apply
  */
 export const applyStyle = (worksheet, cellRef, style) => {
   if (!worksheet[cellRef]) {
@@ -441,10 +470,6 @@ export const applyStyle = (worksheet, cellRef, style) => {
 
 /**
  * Applies a style to a range of cells
- * @param {Object} worksheet - The worksheet
- * @param {string} startCell - Start cell (e.g., 'A1')
- * @param {string} endCell - End cell (e.g., 'E1')
- * @param {Object} style - Style to apply
  */
 export const applyStyleRange = (worksheet, startCell, endCell, style) => {
   const startMatch = startCell.match(/([A-Z]+)(\d+)/);
@@ -467,9 +492,6 @@ export const applyStyleRange = (worksheet, startCell, endCell, style) => {
 
 /**
  * Gets the alternating row style
- * @param {number} rowIndex - Row index (0-based)
- * @param {string} baseStyle - Base style name (e.g., 'cell', 'currency')
- * @returns {Object} The appropriate style
  */
 export const getRowStyle = (rowIndex, baseStyle = 'cell') => {
   const isEven = rowIndex % 2 === 0;
@@ -479,8 +501,6 @@ export const getRowStyle = (rowIndex, baseStyle = 'cell') => {
 
 /**
  * Sets column widths for a worksheet
- * @param {Object} worksheet - The worksheet
- * @param {Array} widths - Array of column widths
  */
 export const setColumnWidths = (worksheet, widths) => {
   worksheet['!cols'] = widths.map(w => ({ wch: w }));
@@ -488,8 +508,6 @@ export const setColumnWidths = (worksheet, widths) => {
 
 /**
  * Merges cells in a worksheet
- * @param {Object} worksheet - The worksheet
- * @param {string} range - Range to merge (e.g., 'A1:E1')
  */
 export const mergeCells = (worksheet, range) => {
   if (!worksheet['!merges']) {

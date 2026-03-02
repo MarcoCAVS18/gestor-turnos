@@ -204,9 +204,13 @@ export async function detectUserLocation() {
         const { latitude, longitude } = position.coords;
 
         try {
+          const controller = new AbortController();
+          const fetchTimeout = setTimeout(() => controller.abort(), 8000);
           const res = await fetch(
-            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
+            { signal: controller.signal }
           );
+          clearTimeout(fetchTimeout);
           const data = await res.json();
 
           const country = data.countryCode || null;
@@ -230,7 +234,8 @@ export async function detectUserLocation() {
       },
       (error) => {
         reject(error);
-      }
+      },
+      { timeout: 30000, enableHighAccuracy: false, maximumAge: 300000 }
     );
   });
 }

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { LayoutDashboard } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import PageHeader from '../components/layout/PageHeader';
 import { useDashboardStats } from '../hooks/useDashboardStats';
@@ -34,7 +35,8 @@ import logger from '../utils/logger';
 import Australia88Ticker from '../components/australia88/Australia88Ticker';
 
 const Dashboard = () => {
-  const { loading, calculatePayment, shiftRanges, settings, isPremium, premium, requestAustraliaGeodetection } = useApp();
+  const { loading, calculatePayment, shiftRanges, settings, isPremium, premium, startOnboarding } = useApp();
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
   const stats = useDashboardStats();
   const { isActive } = useLiveMode();
@@ -197,6 +199,7 @@ const Dashboard = () => {
                           initial={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 0.95 }}
                           transition={{ duration: 0.3, ease: 'easeInOut' }}
+                          className="h-full"
                         >
                           <SuggestedActionCard onClose={() => setShowSuggestion(false)} className="h-full" />
                         </motion.div>
@@ -245,7 +248,7 @@ const Dashboard = () => {
       </Flex>
 
       {/* Welcome Demo — shown once after first login */}
-      <DemoModal onComplete={requestAustraliaGeodetection} />
+      <DemoModal onComplete={() => { startOnboarding(); navigate('/settings'); }} />
 
       {/* Live Mode Modals */}
       <LiveModeStartModal

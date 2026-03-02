@@ -99,18 +99,22 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     setError('');
+    // Safety net: if the auth flow hangs (e.g. iOS in-app browser closed without
+    // triggering an error), reset the loading state after 30 seconds.
+    const safetyTimer = setTimeout(() => setGoogleLoading(false), 30000);
     try {
       await loginWithGoogle();
       navigate(redirectTo);
-      setGoogleLoading(false);
     } catch (err) {
-      if (err.code === 'auth/popup-closed-by-user') {
+      if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
         setError('Sign-in popup was closed. Please try again.');
       } else {
         setError('Could not sign in with Google. Please try again.');
       }
-      setGoogleLoading(false);
       logger.error('Google login error:', err);
+    } finally {
+      clearTimeout(safetyTimer);
+      setGoogleLoading(false);
     }
   };
 

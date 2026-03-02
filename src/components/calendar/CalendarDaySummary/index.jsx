@@ -9,6 +9,7 @@ import { useIsMobile } from '../../../hooks/useIsMobile';
 import { createSafeDate } from '../../../utils/time';
 import ShiftCard from '../../cards/shift/ShiftCard';
 import DeliveryShiftCard from '../../cards/shift/DeliveryShiftCard';
+import DeletedShiftCard from '../../cards/shift/DeletedShiftCard';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
@@ -117,23 +118,9 @@ const CalendarDaySummary = ({
             {safeShiftsOfDay.map(shift => {
               const work = getWork(shift.workId);
               
-              // If we don't find the work, show limited information
+              // If we don't find the work, show deleted placeholder
               if (!work) {
-                return (
-                  <div key={shift.id} className="p-3 border border-gray-200 rounded-lg bg-gray-50">
-                    <Flex variant="between">
-                      <div>
-                        <p className="font-medium text-gray-600">Work deleted</p>
-                        <p className="text-sm text-gray-500">
-                          {shift.startTime} - {shift.endTime}
-                        </p>
-                      </div>
-                      <span className="text-sm text-gray-400">
-                        {shift.type === 'delivery' ? formatCurrency(shift.totalEarnings || 0) : '--'}
-                      </span>
-                    </Flex>
-                  </div>
-                );
+                return <DeletedShiftCard key={shift.id} shift={shift} />;
               }
               
               // Determine which component to use

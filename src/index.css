@@ -95,8 +95,8 @@ input[type="date"]:focus {
     display: block;
   }
 
-  /* Botones más grandes y accesibles */
-  .mobile-form button {
+  /* Botones más grandes y accesibles — excluir switches (role=switch) */
+  .mobile-form button:not([role="switch"]) {
     min-height: 48px;
     font-size: 16px;
     font-weight: 600;

@@ -17,7 +17,7 @@ import DeliveryPlatformsSection from '../components/settings/DeliveryPlatformsSe
 import SmokoSection from '../components/settings/SmokoSection';
 import HolidaySettingsSection from '../components/settings/HolidaySettingsSection';
 import IntegrationsBanner from '../components/settings/IntegrationsBanner';
-import UnusedDeliverySection from '../components/stats/UnusedDeliverySection';
+import OnboardingSpotlight from '../components/onboarding/OnboardingSpotlight';
 import { useApp } from '../contexts/AppContext';
 
 const Settings = () => {
@@ -71,10 +71,12 @@ const Settings = () => {
                   className="flex-grow"
                 />
                 <HolidaySettingsSection
+                  id="settings-holiday"
                   className="flex-grow"
                 />
                 <GoalsSection className="flex-grow" />
                 <PreferencesSection
+                  id="settings-preferences"
                   className="flex-grow"
                 />
               </div>
@@ -82,8 +84,9 @@ const Settings = () => {
               {/* CONTAINER 2: Integrations Banner + Customization + Smoko + Session */}
               <div className="flex flex-col gap-6 h-full">
                 <IntegrationsBanner className="flex-grow" />
-                <CustomizationSection className="flex-grow" />
+                <CustomizationSection id="settings-customization" className="flex-grow" />
                 <SmokoSection
+                  id="settings-smoko"
                   className="flex-grow"
                 />
                 <SessionSection
@@ -94,18 +97,14 @@ const Settings = () => {
               {/* CONTAINER 3: Delivery + Platforms + Shift Range */}
               <div className="flex flex-col gap-6 h-full">
                 <DeliverySection
+                  id="settings-delivery"
                   className="flex-grow"
                 />
-                {deliveryEnabled ? (
-                  <DeliveryPlatformsSection
-                    className="flex-grow"
-                  />
-                ) : (
-                  <UnusedDeliverySection>
-                    <DeliveryPlatformsSection className="flex-grow" />
-                  </UnusedDeliverySection>
-                )}
+                <div className={!deliveryEnabled ? 'opacity-40 pointer-events-none' : ''}>
+                  <DeliveryPlatformsSection className="flex-grow" />
+                </div>
                 <TurnRangeSection
+                  id="settings-turnrange"
                   className="flex-grow"
                 />
               </div>
@@ -122,30 +121,23 @@ const Settings = () => {
             <ProfileSection
             />
 
-            <HolidaySettingsSection />
+            <HolidaySettingsSection id="settings-holiday" />
 
-            <CustomizationSection />
+            <CustomizationSection id="settings-customization" />
 
-            <DeliverySection />
+            <DeliverySection id="settings-delivery" />
 
-            {deliveryEnabled ? (
+            <div className={!deliveryEnabled ? 'opacity-40 pointer-events-none' : ''}>
               <DeliveryPlatformsSection />
-            ) : (
-              <UnusedDeliverySection>
-                <DeliveryPlatformsSection />
-              </UnusedDeliverySection>
-            )}
+            </div>
 
-            <SmokoSection
-            />
+            <SmokoSection id="settings-smoko" />
 
             <GoalsSection />
 
-            <TurnRangeSection
-            />
+            <TurnRangeSection id="settings-turnrange" />
 
-            <PreferencesSection
-            />
+            <PreferencesSection id="settings-preferences" />
 
             <SessionSection
             />
@@ -154,6 +146,9 @@ const Settings = () => {
       </div>
 
       <FooterSection />
+
+      {/* Onboarding spotlight wizard — renders null when inactive */}
+      <OnboardingSpotlight />
     </div>
   );
 };

@@ -46,7 +46,8 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
     if (!formData.endTime) newErrors.endTime = 'Required';
     if (!formData.platform) newErrors.platform = 'Select a platform';
     if (!formData.vehicle) newErrors.vehicle = 'Select a vehicle';
-    if (formData.earnings <= 0) newErrors.earnings = 'Must be greater than 0';
+    const earningsNum = parseFloat(formData.earnings?.toString().replace(',', '.'));
+    if (!earningsNum || earningsNum <= 0) newErrors.earnings = 'Must be greater than 0';
     
     if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime) {
       newErrors.endTime = 'Must be after start';
@@ -56,9 +57,12 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
     return Object.keys(newErrors).length === 0;
   };
 
+  // Accept both ',' and '.' as decimal separator
+  const parseDecimal = (value) => parseFloat(value?.toString().replace(',', '.')) || 0;
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -67,6 +71,10 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
       ...formData,
       id: workId || Date.now().toString(),
       workedHours: workedHours,
+      kilometers: parseDecimal(formData.kilometers),
+      earnings: parseDecimal(formData.earnings),
+      tips: parseDecimal(formData.tips),
+      expenses: parseDecimal(formData.expenses),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -197,8 +205,8 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
               <div>
                 <label className="block text-xs font-medium mb-1">Orders</label>
                 <input
-                  type="number"
-                  min="1"
+                  type="text"
+                  inputMode="numeric"
                   value={formData.orders}
                   onChange={(e) => handleInputChange('orders', parseInt(e.target.value) || 1)}
                   className="w-full p-2 border rounded-lg text-sm"
@@ -207,11 +215,10 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
               <div>
                 <label className="block text-xs font-medium mb-1">Km</label>
                 <input
-                  type="number"
-                  min="0"
-                  step="0.1"
+                  type="text"
+                  inputMode="decimal"
                   value={formData.kilometers}
-                  onChange={(e) => handleInputChange('kilometers', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => handleInputChange('kilometers', e.target.value)}
                   className="w-full p-2 border rounded-lg text-sm"
                 />
               </div>
@@ -221,11 +228,10 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
             <div>
               <label className="block text-sm font-medium mb-1">Earnings *</label>
               <input
-                type="number"
-                min="0"
-                step="0.01"
+                type="text"
+                inputMode="decimal"
                 value={formData.earnings}
-                onChange={(e) => handleInputChange('earnings', parseFloat(e.target.value) || 0)}
+                onChange={(e) => handleInputChange('earnings', e.target.value)}
                 className={`w-full p-2 border rounded-lg text-sm ${errors.earnings ? 'border-red-500' : ''}`}
                 placeholder="0.00"
               />
@@ -237,11 +243,10 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
               <div>
                 <label className="block text-xs font-medium mb-1">Tips</label>
                 <input
-                  type="number"
-                  min="0"
-                  step="0.01"
+                  type="text"
+                  inputMode="decimal"
                   value={formData.tips}
-                  onChange={(e) => handleInputChange('tips', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => handleInputChange('tips', e.target.value)}
                   className="w-full p-2 border rounded-lg text-sm"
                   placeholder="0.00"
                 />
@@ -249,11 +254,10 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
               <div>
                 <label className="block text-xs font-medium mb-1">Fuel</label>
                 <input
-                  type="number"
-                  min="0"
-                  step="0.01"
+                  type="text"
+                  inputMode="decimal"
                   value={formData.expenses}
-                  onChange={(e) => handleInputChange('expenses', parseFloat(e.target.value) || 0)}
+                  onChange={(e) => handleInputChange('expenses', e.target.value)}
                   className="w-full p-2 border rounded-lg text-sm"
                   placeholder="0.00"
                 />

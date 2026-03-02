@@ -107,7 +107,7 @@ const ShiftCard = (props) => {
           </>
         ),
 
-        mobileStats: work.baseRate > 0 && calculationBreakdown && (
+        mobileStats: work?.baseRate > 0 && calculationBreakdown && (
           <div className="pt-2 border-t mt-2" style={{ borderColor: colors.border }}>
             <div className="flex items-center gap-1 mb-2">
               <Calculator size={12} style={{ color: colors.primary }} />
@@ -165,7 +165,7 @@ const ShiftCard = (props) => {
           </div>
         ),
 
-        desktopStats: work.baseRate > 0 && calculationBreakdown && (
+        desktopStats: work?.baseRate > 0 && calculationBreakdown && (
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5 mb-2">
               <Calculator size={12} style={{ color: colors.primary }} />

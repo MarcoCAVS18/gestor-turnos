@@ -1,6 +1,6 @@
 // src/services/export/png/PNGExporter.js
 
-import { loadLogoForPDF } from '../utils/LogoLoader';
+import { loadLogoWhite } from '../utils/LogoLoader';
 import { renderComponentToImage } from '../utils/ChartRenderer';
 import { PNGDashboard } from './PNGDashboard';
 import logger from '../../../utils/logger';
@@ -28,7 +28,8 @@ export class PNGExporter {
 
   async loadResources() {
     try {
-      this.logo = await loadLogoForPDF(this.options.logoColor);
+      // Use white logo for dark gradient header background
+      this.logo = await loadLogoWhite(300);
     } catch (error) {
       logger.warn('Could not load logo:', error);
       this.logo = null;

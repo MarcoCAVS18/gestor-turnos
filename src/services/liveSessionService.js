@@ -46,7 +46,21 @@ export const createLiveSession = async (userId, workId) => {
     // Also check with query as fallback
     const existingSession = await getActiveLiveSession(userId);
     if (existingSession) {
-      throw new Error('There is already an active live session. Please finish it first.');
+      // If the lock is already 'completed' but a session is still 'active' in
+      // Firestore, this is an orphaned session left behind by a previous bug
+      // (the lock doc was accidentally treated as the session and "finished",
+      // leaving the real session document in an active state). Auto-clean it.
+      const lockIsCompleted = lockDoc.exists() && lockDoc.data().status === 'completed';
+      if (lockIsCompleted) {
+        const orphanRef = doc(getLiveSessionsRef(), existingSession.id);
+        await updateDoc(orphanRef, {
+          status: 'completed',
+          completedAt: Timestamp.now(),
+          updatedAt: serverTimestamp(),
+        });
+      } else {
+        throw new Error('There is already an active live session. Please finish it first.');
+      }
     }
 
     const liveSessionsRef = getLiveSessionsRef();
@@ -96,7 +110,12 @@ export const getActiveLiveSession = async (userId) => {
 
   if (snapshot.empty) return null;
 
-  const doc = snapshot.docs[0];
+  // The lock document (id = lock_<userId>) shares this collection and matches
+  // the same query fields — filter it out to only process real session documents.
+  const sessionDoc = snapshot.docs.find(d => !d.id.startsWith('lock_'));
+  if (!sessionDoc) return null;
+
+  const doc = sessionDoc;
   const data = doc.data();
 
   return {
@@ -210,7 +229,16 @@ export const subscribeToLiveSession = (userId, callback) => {
       return;
     }
 
-    const doc = snapshot.docs[0];
+    // The lock document (id = lock_<userId>) lives in the same collection and
+    // matches the query (it has userId + status:'active'). Skip it so we only
+    // process the real session document.
+    const sessionDoc = snapshot.docs.find(d => !d.id.startsWith('lock_'));
+    if (!sessionDoc) {
+      callback(null);
+      return;
+    }
+
+    const doc = sessionDoc;
     const data = doc.data();
 
     callback({

@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { Edit, Edit2, Trash2, Clock, Calendar, Briefcase, Bike, ChevronDown, DollarSign, CircleDotDashed, Repeat } from 'lucide-react';
+import DeletedShiftCard from '../../shift/DeletedShiftCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import Card from '../../../ui/Card';
 import ShiftTypeBadge from '../../../shifts/ShiftTypeBadge';
@@ -45,16 +46,7 @@ const BaseShiftCard = ({
   }
 
   if (!job && type !== 'delivery') {
-    return (
-      <Card variant="outlined" className="opacity-50">
-        <div className="text-center text-gray-500">
-          <p className="text-sm">Job deleted</p>
-          <p className="text-xs text-gray-400 mt-1">
-            {shift.startTime} - {shift.endTime}
-          </p>
-        </div>
-      </Card>
-    );
+    return <DeletedShiftCard shift={shift} />;
   }
 
   const jobData = job || {

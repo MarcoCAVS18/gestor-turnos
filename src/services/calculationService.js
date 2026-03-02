@@ -773,8 +773,8 @@ export const calculateDeliveryHourlyStats = (shifts = []) => {
   deliveryShifts.forEach(shift => {
     if (!shift.startDate || !shift.endDate) return;
 
-    const date = new Date(shift.startDate);
-    const hour = date.getHours();
+    // Use startTime directly to avoid UTC timezone issues with date-only strings
+    const hour = shift.startTime ? parseInt(shift.startTime.split(':')[0], 10) : 0;
 
     let key = 'night';
     if (hour >= 6 && hour < 12) key = 'morning';

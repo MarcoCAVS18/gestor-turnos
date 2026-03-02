@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.jsx
 
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -11,14 +11,15 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithRedirect,
+  signInWithCredential,
   getRedirectResult
 } from 'firebase/auth';
+import { Capacitor } from '@capacitor/core';
 import { auth, db } from '../services/firebase';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { uploadProfilePhoto, deleteProfilePhoto, getDefaultProfilePhoto } from '../services/profilePhotoService';
 import { hasProfanity } from '../utils/profanityFilter';
 import logger from '../utils/logger';
-import { isBiometricEnabledOnDevice } from '../services/biometricService';
 
 // Create context
 const AuthContext = createContext();
@@ -36,7 +37,6 @@ export const AuthProvider = ({ children }) => {
   const [profilePhotoURL, setProfilePhotoURL] = useState(getDefaultProfilePhoto());
   const [resetAttempts, setResetAttempts] = useState({});
   const [isLocked, setIsLocked] = useState(false);
-  const currentUserRef = useRef(null);
 
   // Register user
   const signup = async (email, password, displayName) => {
@@ -90,12 +90,38 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Sign in with Google.
-  // Tries signInWithPopup first. If the browser blocks sessionStorage
-  // (Safari ITP, incognito strict mode, etc.), falls back to signInWithRedirect.
-  // The redirect result is handled by the getRedirectResult useEffect above.
+  // On native iOS/Android: WebView blocks signInWithPopup, so we force signInWithRedirect.
+  // The redirect result is handled by the getRedirectResult useEffect below.
+  // On web: tries signInWithPopup first, falls back to signInWithRedirect if sessionStorage
+  // is blocked (Safari ITP, incognito strict mode, etc.).
   const loginWithGoogle = async () => {
     setError('');
     const provider = buildGoogleProvider();
+
+    // Native app — use native Google Sign-In plugin (bypasses WebView CORS restrictions)
+    if (Capacitor.isNativePlatform()) {
+      const { GoogleSignIn } = await import('@capawesome/capacitor-google-sign-in');
+      const googleUser = await GoogleSignIn.signIn();
+      const credential = GoogleAuthProvider.credential(googleUser.idToken);
+      const result = await signInWithCredential(auth, credential);
+
+      // Create Firestore document on first Google sign-in (mirrors web popup flow)
+      const userDoc = await getDoc(doc(db, 'users', result.user.uid));
+      if (!userDoc.exists()) {
+        await setDoc(doc(db, 'users', result.user.uid), {
+          email: result.user.email,
+          displayName: result.user.displayName || 'User',
+          createdAt: new Date(),
+          signupMethod: 'google',
+          settings: {
+            defaultDiscount: 15,
+            currency: '$',
+            primaryColor: '#EC4899'
+          }
+        });
+      }
+      return result.user;
+    }
 
     try {
       const result = await signInWithPopup(auth, provider);
@@ -366,26 +392,16 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Keep ref in sync so the visibility handler can access the latest user
-  useEffect(() => { currentUserRef.current = currentUser; }, [currentUser]);
-
-  // Lock app when tab becomes visible again (if biometric is enabled on device)
-  useEffect(() => {
-    const handleVisibility = () => {
-      if (document.visibilityState === 'visible') {
-        const user = currentUserRef.current;
-        if (user && isBiometricEnabledOnDevice(user.uid)) {
-          setIsLocked(true);
-        }
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibility);
-    return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, []);
+  // Biometric lock is only triggered at initial login (Login page).
+  // No background/foreground auto-lock: for a shift tracker app, locking mid-session
+  // would be disruptive. The OS device lock screen provides security at the OS level.
 
   // Handle the result when Google redirects back after signInWithRedirect.
-  // Creates the Firestore user document on first sign-in (mirrors popup flow).
+  // On native, we use the GoogleAuth plugin (signInWithCredential) — no redirect needed.
+  // Skipping getRedirectResult on native prevents Firebase from loading gapi.js,
+  // which would fail with CORS errors from capacitor://localhost.
   useEffect(() => {
+    if (Capacitor.isNativePlatform()) return;
     getRedirectResult(auth)
       .then(async (result) => {
         if (!result?.user) return;
