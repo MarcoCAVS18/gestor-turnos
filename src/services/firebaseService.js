@@ -77,7 +77,7 @@ export const ensureUserDocument = async (user) => {
 
   const defaultSettings = {
     primaryColor: '#EC4899',
-    userEmoji: '😊',
+    language: 'en',
     defaultDiscount: 15,
     weeklyHoursGoal: null,
     deliveryEnabled: false,
@@ -117,7 +117,7 @@ export const savePreferences = async (userUid, preferences) => {
 
   const prefMap = {
     primaryColor: 'settings.primaryColor',
-    userEmoji: 'settings.userEmoji',
+    language: 'settings.language',
     defaultDiscount: 'settings.defaultDiscount',
     shiftRanges: 'settings.shiftRanges',
     deliveryEnabled: 'settings.deliveryEnabled',
@@ -557,11 +557,8 @@ export const clearUserData = async (userUid) => {
     // Reset integrations
     googleCalendarConnected: false,
     googleCalendarTokens: null,
-    // Reset Live Mode usage (give back free uses)
-    liveModeUsage: {
-      monthlyCount: 0,
-      lastResetDate: new Date(),
-    },
+    // NOTE: liveModeUsage is intentionally NOT reset here so users cannot
+    // bypass the monthly free-session limit by clearing their data.
     // Reset subscription if user wants fresh start
     subscription: {
       isPremium: false,

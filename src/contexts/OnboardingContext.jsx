@@ -1,8 +1,11 @@
 // src/contexts/OnboardingContext.jsx
 // Manages the first-time settings onboarding spotlight wizard.
 // Activates automatically after the DemoModal is dismissed (first login only).
+// Completion is persisted in both localStorage (fast) and Firestore (cross-device).
 
 import { createContext, useContext, useState, useCallback } from 'react';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { auth, db } from '../services/firebase';
 
 const OnboardingContext = createContext();
 
@@ -15,9 +18,25 @@ export const OnboardingProvider = ({ children }) => {
   const [isActive, setIsActive] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
 
-  // Start wizard — only if never completed before
-  const startOnboarding = useCallback(() => {
+  // Start wizard — only if never completed before (localStorage = fast cache, Firestore = cross-device truth)
+  const startOnboarding = useCallback(async () => {
+    // Fast path: already marked locally
     if (localStorage.getItem(STORAGE_KEY)) return;
+
+    // Definitive check: Firestore (handles reinstalls / new devices / other platforms)
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.data()?.onboardingDone) {
+          localStorage.setItem(STORAGE_KEY, 'true'); // sync locally for next time
+          return;
+        }
+      } catch (_) {
+        // If Firestore is unreachable, fall through and show onboarding
+      }
+    }
+
     setCurrentStep(0);
     setIsActive(true);
   }, []);
@@ -38,6 +57,12 @@ export const OnboardingProvider = ({ children }) => {
   const completeOnboarding = useCallback(() => {
     setIsActive(false);
     localStorage.setItem(STORAGE_KEY, 'true');
+
+    // Persist to Firestore so completion survives reinstalls and syncs across devices
+    const user = auth.currentUser;
+    if (user) {
+      updateDoc(doc(db, 'users', user.uid), { onboardingDone: true }).catch(() => {});
+    }
   }, []);
 
   return (

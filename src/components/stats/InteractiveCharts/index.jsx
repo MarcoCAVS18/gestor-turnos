@@ -1,8 +1,9 @@
 // src/components/stats/InteractiveCharts/index.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import BaseChart from '../../charts/BaseChart'; 
+import BaseChart from '../../charts/BaseChart';
 import { useStats } from '../../../contexts/StatsContext';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { formatCurrency } from '../../../utils/currency';
@@ -11,10 +12,11 @@ import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 
 const InteractiveCharts = () => {
+  const { t } = useTranslation();
   const { currentData, weeklyEvolutionData, thematicColors } = useStats();
   const [currentChartIndex, setCurrentChartIndex] = useState(0);
   const isMobile = useIsMobile();
-  
+
   const chartConfigs = getRechartsConfig(thematicColors);
 
   // Data for Pie Chart (Top 5 works)
@@ -40,7 +42,7 @@ const InteractiveCharts = () => {
   const prevChart = () => setCurrentChartIndex((prev) => (prev - 1 + staticChartConfigs.length) % staticChartConfigs.length);
 
   const currentChartConfig = staticChartConfigs[currentChartIndex];
-  
+
   const renderChart = () => {
     switch (currentChartIndex) {
       case 0: // Weekly Evolution - LineChart
@@ -51,7 +53,7 @@ const InteractiveCharts = () => {
             dataKeys={[{ key: 'earnings', stroke: chartConfigs.line.stroke }]}
             nameKey="week"
             valueFormatter={(value) => formatCurrency(value)}
-            tooltipFormatter={(value) => [formatCurrency(value), 'Earnings']}
+            tooltipFormatter={(value) => [formatCurrency(value), t('stats.charts.earnings')]}
             config={{ line: chartConfigs.line, grid: chartConfigs.grid, axis: chartConfigs.axis, tooltip: chartConfigs.tooltip }}
           />
         );
@@ -77,7 +79,7 @@ const InteractiveCharts = () => {
             dataKeys={[{ key: 'hours', stroke: chartConfigs.area.stroke, fill: chartConfigs.area.fill }]}
             nameKey="day"
             valueFormatter={(value) => `${value}h`}
-            tooltipFormatter={(value) => [`${value.toFixed(1)} hours`, 'Hours']}
+            tooltipFormatter={(value) => [`${value.toFixed(1)} hours`, t('stats.charts.hours')]}
             config={{ area: chartConfigs.area, grid: chartConfigs.grid, axis: chartConfigs.axis, tooltip: chartConfigs.tooltip }}
           />
         );
@@ -95,8 +97,8 @@ const InteractiveCharts = () => {
         <Flex>
           <CurrentIcon size={18} style={{ color: thematicColors?.base }} className="mr-2" />
           <div>
-            <h4 className="font-medium">{currentChartConfig.title}</h4>
-            <p className="text-xs text-gray-500">{currentChartConfig.subtitle}</p>
+            <h4 className="font-medium">{t(`stats.charts.${currentChartConfig.id}.title`)}</h4>
+            <p className="text-xs text-gray-500">{t(`stats.charts.${currentChartConfig.id}.subtitle`)}</p>
           </div>
         </Flex>
         <Flex className="space-x-2">
@@ -116,7 +118,7 @@ const InteractiveCharts = () => {
       <div className="flex-1 bg-gray-50 rounded-lg p-2 min-h-0">
         {isEmptyOverall ? (
           <Flex variant="center" className="h-full text-gray-500">
-            <p>No data for charts</p>
+            <p>{t('stats.charts.noData')}</p>
           </Flex>
         ) : renderChart()}
       </div>

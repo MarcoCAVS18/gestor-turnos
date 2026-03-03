@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { MapPin, Loader } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
@@ -15,6 +16,7 @@ import {
 import logger from '../../../utils/logger';
 
 const HolidaySettingsSection = ({ id, onError, onSuccess, className }) => {
+  const { t } = useTranslation();
   const {
     holidayCountry,
     holidayRegion,
@@ -126,20 +128,19 @@ const HolidaySettingsSection = ({ id, onError, onSuccess, className }) => {
         }
         onSuccess?.(`Location detected: ${location.country}${location.region ? ` · ${location.region}` : ''}`);
       } else {
-        setLocationError('Your location could not be matched to a supported country. Please select manually.');
+        setLocationError(t('settings.holidays.locationNotSupported'));
         onError?.('Could not detect a supported country from your location');
       }
     } catch (error) {
       logger.error('Error detecting location:', error);
-      // Show specific message based on geolocation error code
       if (error.code === 1) {
-        setLocationError('Location access denied. Please allow location in your browser settings and try again.');
+        setLocationError(t('settings.holidays.locationDenied'));
       } else if (error.code === 2) {
-        setLocationError('Location unavailable. Please select your country manually.');
+        setLocationError(t('settings.holidays.locationUnavailable'));
       } else if (error.code === 3) {
-        setLocationError('Location request timed out. Please try again or select manually.');
+        setLocationError(t('settings.holidays.locationTimeout'));
       } else {
-        setLocationError('Could not access location. Please select your country manually.');
+        setLocationError(t('settings.holidays.locationError'));
       }
       onError?.('Error accessing location. Please check browser permissions.');
     } finally {
@@ -148,12 +149,11 @@ const HolidaySettingsSection = ({ id, onError, onSuccess, className }) => {
   };
 
   return (
-    <SettingsSection id={id} icon={MapPin} title="Location" className={className}>
+    <SettingsSection id={id} icon={MapPin} title={t('settings.holidays.title')} className={className}>
       <div className="space-y-3">
 
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          Select your location to automatically detect public holidays and activate
-          Working Holiday Visa day tracking (Australia).
+          {t('settings.holidays.description')}
         </p>
 
         {/* Location Button */}
@@ -166,7 +166,7 @@ const HolidaySettingsSection = ({ id, onError, onSuccess, className }) => {
           icon={detectingLocation ? Loader : MapPin}
           themeColor={colors.primary}
         >
-          {detectingLocation ? 'Detecting location...' : 'Use my location'}
+          {detectingLocation ? t('settings.holidays.detectingLocation') : t('settings.holidays.useLocation')}
         </Button>
 
         {/* Inline location error */}
@@ -186,7 +186,7 @@ const HolidaySettingsSection = ({ id, onError, onSuccess, className }) => {
             style={{ '--tw-ring-color': colors.primary }}
             disabled={loading}
           >
-            <option value="">Country</option>
+            <option value="">{t('settings.holidays.country')}</option>
             {countries.map((country) => (
               <option key={country.code} value={country.code}>
                 {country.name}
@@ -202,7 +202,7 @@ const HolidaySettingsSection = ({ id, onError, onSuccess, className }) => {
             style={{ '--tw-ring-color': colors.primary }}
             disabled={loading || !selectedCountry || regions.length === 0}
           >
-            <option value="">State / Province</option>
+            <option value="">{t('settings.holidays.stateProvince')}</option>
             {regions.map((region) => (
               <option key={region.code} value={region.code}>
                 {region.name}

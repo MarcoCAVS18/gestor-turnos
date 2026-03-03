@@ -41,7 +41,9 @@ export const registerBiometric = async (userId, userEmail) => {
     const { NativeBiometric } = await import('@capgo/capacitor-native-biometric');
     await NativeBiometric.verifyIdentity({
       reason: 'Enable biometric login for Orary',
-      title: 'Set up Face ID / Touch ID',
+      title: 'Set up Biometric Login',
+      subtitle: 'Use your fingerprint or face to sign in faster',
+      negativeButtonText: 'Cancel', // Required on Android
     });
     localStorage.setItem(CRED_KEY(userId), 'native');
     localStorage.setItem(UID_KEY, userId);
@@ -72,7 +74,8 @@ export const verifyBiometric = async (userId) => {
     const { NativeBiometric } = await import('@capgo/capacitor-native-biometric');
     await NativeBiometric.verifyIdentity({
       reason: 'Unlock Orary',
-      title: 'Face ID / Touch ID',
+      title: 'Biometric Login',
+      negativeButtonText: 'Cancel', // Required on Android
     });
     return; // Resolves = success, rejects = cancelled/failed
   }

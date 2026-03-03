@@ -1,0 +1,429 @@
+{
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Agregar",
+    "loading": "Cargando...",
+    "saving": "Guardando...",
+    "saved": "Guardado correctamente",
+    "noChanges": "Sin cambios",
+    "error": "Algo salió mal",
+    "confirm": "Confirmar",
+    "back": "Volver",
+    "close": "Cerrar",
+    "yes": "Sí",
+    "no": "No",
+    "optional": "Opcional",
+    "help": "Ayuda",
+    "resume": "Reanudar",
+    "pause": "Pausar",
+    "finish": "Finalizar",
+    "moreInfo": "Más info"
+  },
+  "nav": {
+    "home": "Inicio",
+    "dashboard": "Inicio",
+    "shifts": "Turnos",
+    "works": "Trabajos",
+    "statistics": "Estadísticas",
+    "settings": "Ajustes",
+    "integrations": "Integraciones",
+    "calendar": "Calendario",
+    "tagline": "Tu gestor de trabajos y turnos",
+    "newShift": "Nuevo Turno",
+    "newWork": "Nuevo Trabajo",
+    "shiftsDisabledTooltip": "Primero crea un trabajo para agregar turnos",
+    "paused": "Pausado",
+    "liveMode": "Modo en Vivo"
+  },
+  "premium": {
+    "unlockAll": "Desbloquear todas las funciones",
+    "upgrade": "Mejorar a Premium",
+    "badge": "Premium"
+  },
+  "dashboard": {
+    "welcome": {
+      "greeting_morning": "Buenos días,",
+      "greeting_afternoon": "Buenas tardes,",
+      "greeting_evening": "Buenas noches,",
+      "summary": "Aquí hay un resumen de tu actividad",
+      "totalEarned": "Total ganado",
+      "disclaimer": "Los cálculos se basan en tus preferencias",
+      "disclaimerDesc": "A veces la nómina incluye otros factores que pueden causar pequeñas diferencias. ¡Este sistema te ayuda a registrar tus ganancias día a día!"
+    },
+    "liveMode": {
+      "title": "Modo en Vivo",
+      "newFeature": "Nueva Función",
+      "liveActive": "En Vivo",
+      "paused": "Pausado",
+      "liveShift": "Turno en Vivo",
+      "resume": "Reanudar",
+      "pause": "Pausar",
+      "finish": "Finalizar",
+      "moreInfo": "Más info",
+      "addWork": "Agregar Trabajo",
+      "needsWork": "Para usar el Modo en Vivo, primero debes agregar un trabajo tradicional a tu perfil.",
+      "deliveryComingSoon": "Soporte para trabajos de delivery próximamente",
+      "description": "Control total de tus turnos en tiempo real. Ficha entrada, pausa, y monitorea tus ganancias al instante.",
+      "freeTrial": "15 días de prueba gratis",
+      "unlimitedSessions": "Sesiones Ilimitadas",
+      "sessionsThisMonth": "sesiones este mes",
+      "tryNow": "Probar ahora",
+      "startSession": "Iniciar sesión"
+    },
+    "favoriteWorks": {
+      "title": "Trabajos favoritos",
+      "empty": "Sin datos aún",
+      "viewMore": "Ver más",
+      "shiftLabel": "turnos",
+      "totalLabel": "Total del top"
+    },
+    "quickStats": {
+      "works": "Trabajos",
+      "shifts": "Turnos",
+      "hours": "Horas",
+      "average": "Promedio",
+      "active": "activos",
+      "completed": "completados",
+      "worked": "trabajadas",
+      "perHour": "Por Hora",
+      "thisWeek": "Esta Semana",
+      "thisMonth": "Este Mes",
+      "currentWeek": "Semana actual",
+      "currentMonth": "Mes actual",
+      "weekEarnings": "Gan. semana"
+    },
+    "export": {
+      "title": "Exportar Informe",
+      "description": "Descarga un resumen completo de tus estadísticas, turnos y actividad"
+    }
+  },
+  "settings": {
+    "title": "Ajustes",
+    "subtitle": "Personaliza tu experiencia y gestiona tu cuenta",
+    "customization": {
+      "title": "Personalización",
+      "language": "Idioma",
+      "theme": "Tema",
+      "lightTheme": "Claro",
+      "lightThemeDesc": "Apariencia brillante y limpia",
+      "darkTheme": "Oscuro",
+      "darkThemeDesc": "Suave con los ojos por la noche",
+      "darkThemePremium": "Función Premium"
+    },
+    "smoko": {
+      "title": "Smoko (Descansos)",
+      "whatIsThis": "¿Qué es esto?",
+      "description": "Configura el tiempo de descanso no remunerado que se deducirá automáticamente de tus turnos.",
+      "enableDeduction": "Activar deducción",
+      "autoDeduct": "Deducir tiempo de descanso automáticamente",
+      "breakDuration": "Duración del descanso",
+      "minutes": "min"
+    },
+    "preferences": {
+      "title": "Configuración de Pagos e Impuestos",
+      "taxLabel": "Impuestos / Deducciones (%)",
+      "taxHelp": "¿Qué son estos impuestos?",
+      "taxHelpBtn": "Ayuda",
+      "taxDefault": "Valor por defecto para todos los trabajos sin impuesto específico.",
+      "perJobRates": "Impuestos por Trabajo",
+      "hideRates": "Ocultar tasas por trabajo",
+      "configureRates": "Configurar tasas por trabajo",
+      "saveTax": "Guardar configuración fiscal",
+      "taxPopover": {
+        "description": "Este porcentaje representa la retención que la empresa deduce de tu pago bruto antes de depositarlo.",
+        "taxes": "Impuestos (Tax)",
+        "socialSecurity": "Seguridad Social",
+        "otherDeductions": "Otras deducciones obligatorias",
+        "note": "* El 15% es un valor común para contratos casuales, pero deberías verificar tu caso específico."
+      }
+    },
+    "turnRange": {
+      "title": "Rangos de Turno",
+      "description": "Configura los rangos horarios para la detección automática del tipo de turno. Los turnos existentes se actualizarán automáticamente.",
+      "liveModeWarning": "El Modo en Vivo está activo — no se pueden guardar cambios durante una sesión activa.",
+      "dayShift": "Turno Diurno",
+      "afternoonShift": "Turno de Tarde",
+      "nightShift": "Turno Nocturno",
+      "startTime": "Hora de inicio",
+      "endTime": "Hora de fin",
+      "nightNote": "El turno nocturno se extiende hasta el final del día",
+      "save": "Guardar rangos de turno",
+      "blockedByLive": "Bloqueado por Modo en Vivo",
+      "validationDay": "La hora de inicio del turno diurno debe ser anterior a la hora de fin",
+      "validationAfternoon": "La hora de inicio del turno de tarde debe ser anterior a la hora de fin",
+      "validationAfternoonAfterDay": "El turno de tarde debe comenzar después o al mismo tiempo que termina el turno diurno",
+      "validationNightAfterAfternoon": "El turno nocturno debe comenzar después o al mismo tiempo que termina el turno de tarde"
+    },
+    "holidays": {
+      "title": "Ubicación",
+      "description": "Selecciona tu ubicación para detectar feriados automáticamente y activar el seguimiento de días de Working Holiday Visa (Australia).",
+      "detectingLocation": "Detectando ubicación...",
+      "useLocation": "Usar mi ubicación",
+      "country": "País",
+      "stateProvince": "Estado / Provincia",
+      "locationDenied": "Acceso a ubicación denegado. Por favor permite la ubicación en la configuración del navegador e intenta de nuevo.",
+      "locationUnavailable": "Ubicación no disponible. Por favor selecciona tu país manualmente.",
+      "locationTimeout": "Tiempo de espera agotado. Por favor intenta de nuevo o selecciona manualmente.",
+      "locationError": "No se pudo acceder a la ubicación. Por favor selecciona tu país manualmente.",
+      "locationNotSupported": "Tu ubicación no pudo asociarse a un país compatible. Por favor selecciona manualmente."
+    },
+    "delivery": {
+      "title": "Trabajos de Delivery",
+      "disable": "Desactivar modo delivery",
+      "enable": "Activar modo delivery",
+      "subtitle": "Permite registrar trabajos de delivery con ganancias variables.",
+      "disablePopoverTitle": "Consecuencias de desactivar",
+      "enablePopoverTitle": "¿Cómo funciona?",
+      "whatIfDisable": "¿Qué pasa si lo desactivo?",
+      "whatIfEnable": "¿Qué cambia al activarlo?"
+    },
+    "profile": {
+      "title": "Perfil",
+      "email": "Correo electrónico",
+      "name": "Nombre"
+    },
+    "session": {
+      "title": "Cuenta",
+      "terms": "Términos de Servicio",
+      "privacy": "Política de Privacidad",
+      "clearEverything": "Borrar Todo",
+      "deleteAccount": "Eliminar Cuenta",
+      "logout": "Cerrar sesión",
+      "managePremium": "Gestionar Premium",
+      "upgradePremium": "Mejorar a Premium"
+    }
+  },
+  "shifts": {
+    "title": "Turnos",
+    "subtitle": "Gestiona y visualiza tus turnos registrados.",
+    "addShift": "Agregar Turno",
+    "editShift": "Editar Turno",
+    "deleteShift": "Eliminar Turno",
+    "noShifts": "Aún no hay turnos",
+    "date": "Fecha",
+    "startTime": "Hora de inicio",
+    "endTime": "Hora de fin",
+    "work": "Trabajo",
+    "notes": "Notas",
+    "smoko": "Descanso (smoko)",
+    "noMatchingFilters": "No hay turnos que coincidan con los filtros",
+    "noMatchingFiltersDesc": "Intenta ajustar los filtros para ver más resultados.",
+    "clearFilters": "Limpiar filtros",
+    "upcoming": "Próximos"
+  },
+  "works": {
+    "title": "Trabajos",
+    "subtitle": "Gestiona tus diferentes trabajos o empleos.",
+    "addWork": "Agregar Trabajo",
+    "editWork": "Editar Trabajo",
+    "deleteWork": "Eliminar Trabajo",
+    "noWorks": "Aún no hay trabajos",
+    "name": "Nombre",
+    "baseRate": "Tarifa base",
+    "color": "Color",
+    "premiumOnly": "Solo Premium",
+    "premiumUpgrade": "Mejora para agregar más trabajos",
+    "addFirstJob": "Agrega tu primer trabajo",
+    "createToTrack": "Crea un trabajo para comenzar a registrar",
+    "addAnotherJob": "Agregar otro trabajo",
+    "trackMultiple": "Registra múltiples trabajos",
+    "traditionalSection": "Trabajos Tradicionales",
+    "deliverySection": "Trabajos de Delivery",
+    "addDeliveryPlatform": "Agregar plataforma de delivery",
+    "trackDeliveries": "Registra tus deliveries",
+    "addAnotherPlatform": "Agregar otra plataforma",
+    "multipleApps": "Múltiples apps compatibles",
+    "deleteWarning": "Todos los turnos asociados a este trabajo también serán eliminados.",
+    "deleteWarningDelivery": "Todos los turnos de delivery asociados a este trabajo también serán eliminados."
+  },
+  "statistics": {
+    "title": "Estadísticas",
+    "subtitle": "Analiza tu rendimiento y proyecciones",
+    "totalEarned": "Total ganado",
+    "totalHours": "Total de horas",
+    "averagePerHour": "Promedio por hora",
+    "shiftsCount": "Turnos",
+    "weekly": "Semanal",
+    "monthly": "Mensual",
+    "daily": "Diario",
+    "deliveryTitle": "Estadísticas de Delivery",
+    "deliverySubtitle": "Analiza tus ganancias y eficiencia en delivery"
+  },
+  "stats": {
+    "weeklyComparison": {
+      "title": "Comparación Semanal",
+      "vsLastWeek": "vs semana anterior",
+      "earnings": "Ganancias",
+      "hoursWorked": "Horas trabajadas",
+      "avgPerHour": "Prom. por hora",
+      "shifts": "Turnos",
+      "daysWorked": "Días trabajados",
+      "shiftsUnit": "turnos",
+      "daysUnit": "días",
+      "thisWeek": "Esta semana",
+      "lastWeek": "Semana pasada",
+      "tapHint": "Toca una fila para ver esta semana vs la anterior"
+    },
+    "dailyDistribution": {
+      "title": "Distribución Semanal",
+      "empty": "Sin datos de ganancias esta semana.",
+      "activeDays": "días activos",
+      "total": "Total:"
+    },
+    "mostProductiveDay": {
+      "title": "Día más Productivo",
+      "empty": "Datos insuficientes esta semana.",
+      "hours": "Horas",
+      "shifts": "Turnos"
+    },
+    "weeklyStatsGrid": {
+      "totalEarned": "Total ganado",
+      "hoursWorked": "Horas trabajadas",
+      "totalShifts": "Total de turnos",
+      "daysWorked": "Días trabajados"
+    },
+    "progressBar": {
+      "title": "Progreso Semanal",
+      "remaining": "Restante",
+      "earnings": "Ganancias",
+      "goal": "Meta",
+      "hoursWorked": "horas trabajadas",
+      "hourGoal": "h meta",
+      "milestoneOverachiever": "¡Superestrella!",
+      "milestoneGoal": "¡Meta alcanzada!",
+      "milestoneAlmost": "¡Casi llegas!",
+      "celebrationIncredible": "¡Trabajo increíble!",
+      "celebrationExceeded": "¡Superaste tu meta!",
+      "celebrationAchieved": "¡Meta semanal lograda!"
+    },
+    "smokoCard": {
+      "title": "Config. de Descanso",
+      "status": "Estado",
+      "time": "Tiempo",
+      "week": "Semana",
+      "tapHint": "Toca para configurar"
+    },
+    "shiftTypeStats": {
+      "emptyText": "Agrega turnos para ver esta estadística."
+    },
+    "charts": {
+      "noData": "Sin datos para los gráficos",
+      "earnings": "Ganancias",
+      "hours": "Horas",
+      "evolution": {
+        "title": "Evolución Semanal",
+        "subtitle": "Progreso de ganancias"
+      },
+      "byWorks": {
+        "title": "Por Trabajos",
+        "subtitle": "Distribución de ganancias"
+      },
+      "daily": {
+        "title": "Horas Diarias",
+        "subtitle": "Distribución semanal"
+      }
+    },
+    "days": {
+      "Monday": "Lun",
+      "Tuesday": "Mar",
+      "Wednesday": "Mié",
+      "Thursday": "Jue",
+      "Friday": "Vie",
+      "Saturday": "Sáb",
+      "Sunday": "Dom"
+    },
+    "daysFull": {
+      "Monday": "Lunes",
+      "Tuesday": "Martes",
+      "Wednesday": "Miércoles",
+      "Thursday": "Jueves",
+      "Friday": "Viernes",
+      "Saturday": "Sábado",
+      "Sunday": "Domingo"
+    },
+    "deliverySummary": {
+      "title": "Resumen de Delivery",
+      "totalEarnings": "Total ganado:",
+      "totalShifts": "Total de turnos",
+      "totalHours": "Total de horas",
+      "totalOrders": "Total de pedidos",
+      "totalTips": "Total de propinas",
+      "netEarnings": "Ganancias netas"
+    },
+    "platformComparison": {
+      "title": "Comparación de plataformas",
+      "mostOrders": "Más pedidos",
+      "totalOrders": "Total de pedidos",
+      "bestAvgHour": "Mejor prom/hora",
+      "overallAvg": "Promedio general",
+      "mostTips": "Más propinas",
+      "totalTips": "Total de propinas",
+      "mostProfitable": "Más rentable",
+      "totalEarned": "Total ganado",
+      "noData": "Sin datos de plataforma",
+      "noDataDesc": "Los datos aparecerán al registrar turnos",
+      "shifts": "turnos",
+      "perOrder": "/pedido",
+      "orders": "pedidos",
+      "perHour": "/hora",
+      "tips": "propinas",
+      "earnings": "ganancias",
+      "tabEarnings": "Ganancias",
+      "tabOrders": "Pedidos",
+      "tabPerHour": "Por hora",
+      "tabTips": "Propinas"
+    },
+    "vehicleEfficiency": {
+      "title": "Eficiencia del vehículo",
+      "costPerKm": "Costo por KM",
+      "efficiency": "Eficiencia",
+      "kmPerDollar": "km/$",
+      "totalSpent": "Total gastado"
+    },
+    "fuelEfficiency": {
+      "title": "Control de combustible",
+      "highConsumption": "Alto consumo",
+      "totalFuel": "Total combustible",
+      "percentEarnings": "% ganancias",
+      "kmPerDollar": "km / $",
+      "emptyText": "Registra gastos de combustible en tus turnos para ver el gráfico",
+      "emptyMin": "Agrega al menos 2 turnos con datos de combustible para mostrar el gráfico",
+      "earnings": "Ganancias",
+      "earningsDollar": "Ganancias ($)",
+      "fuel": "Combustible",
+      "fuelDollar": "Combustible ($)",
+      "fuelEarnings": "combustible/ganancias"
+    },
+    "deliveryHourlyAnalysis": {
+      "title": "Rentabilidad por hora",
+      "premiumDesc": "Desbloquea Premium para ver qué horas y días te generan más ganancias.",
+      "unlockPremium": "Desbloquear Premium",
+      "noData": "Sin datos esta semana",
+      "addShift": "Agregar turno",
+      "bestMoment": "Mejor momento",
+      "perHour": "/hora",
+      "profitability": "Rentabilidad:",
+      "perH": "/h",
+      "totalEarned": "Total ganado:",
+      "hours": "Horas:",
+      "noDataRecorded": "Sin datos registrados",
+      "lessEarnings": "Menos $",
+      "moreEarnings": "Más $",
+      "insights": {
+        "title": "Análisis de tu patrón de trabajo",
+        "recommendation": "Según tus turnos registrados, {{bestDay}} durante la {{bestPeriod}} es tu franja horaria más rentable — promedias {{bestRate}}/h en tu pico. Con {{activeDays}} día(s) activo(s) de datos, el patrón es claro: concentrar más horas en esta franja tendrá el mayor impacto en tus ganancias totales. Sigue registrando turnos para refinar este análisis.",
+        "avoidNote": "Por otro lado, {{worstDay}} ha sido tu día menos productivo hasta ahora — considera si redistribuir esas horas podría aumentar tus ingresos.",
+        "activeDays": "Análisis basado en {{count}} día(s) activo(s) · {{hours}}h de turnos registrados en total",
+        "periods": {
+          "morning": "mañana (6–11h)",
+          "afternoon": "tarde (12–15h)",
+          "evening": "tarde-noche (16–19h)",
+          "night": "noche (20–5h)"
+        }
+      }
+    }
+  }
+}

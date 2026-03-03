@@ -1,6 +1,7 @@
 // src/components/settings/SessionSection/index.jsx
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LogOut, FileText, Shield, Trash2, ChevronRight, Crown, RefreshCw } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -12,6 +13,7 @@ import Button from '../../ui/Button';
 import PremiumModal from '../../modals/premium/PremiumModal';
 
 const SessionSection = ({ onError, className = '' }) => {
+  const { t } = useTranslation();
   const { logout, lockApp } = useAuth();
   const colors = useThemeColors();
   const navigate = useNavigate();
@@ -72,7 +74,7 @@ const SessionSection = ({ onError, className = '' }) => {
       <div className="flex items-center gap-2">
         <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
         <span className="text-sm">
-          {isPremium ? 'Manage Premium' : 'Upgrade to Premium'}
+          {isPremium ? t('settings.session.managePremium') : t('settings.session.upgradePremium')}
         </span>
       </div>
       <ChevronRight size={16} style={{ color: PREMIUM_COLORS.primary }} />
@@ -81,14 +83,14 @@ const SessionSection = ({ onError, className = '' }) => {
 
   return (
     <>
-      <SettingsSection icon={LogOut} title="Account" className={className}>
+      <SettingsSection icon={LogOut} title={t('settings.session.title')} className={className}>
         <div className="space-y-3">
           {/* Grid layout: 2 columns */}
           <div className="grid grid-cols-2 gap-1">
-            <LinkItem to="/terms" icon={FileText} label="Terms of Service" />
+            <LinkItem to="/terms" icon={FileText} label={t('settings.session.terms')} />
             <PremiumButton />
-            <LinkItem to="/privacy" icon={Shield} label="Privacy Policy" />
-            <LinkItem to="/clear-everything" icon={RefreshCw} label="Clear Everything" />
+            <LinkItem to="/privacy" icon={Shield} label={t('settings.session.privacy')} />
+            <LinkItem to="/clear-everything" icon={RefreshCw} label={t('settings.session.clearEverything')} />
           </div>
 
           {/* Delete Account - Full width, centered */}
@@ -99,7 +101,7 @@ const SessionSection = ({ onError, className = '' }) => {
               className="flex items-center justify-center gap-2 p-2 rounded-lg transition-colors text-red-500 hover:bg-red-50"
             >
               <Trash2 size={16} />
-              <span className="text-sm">Delete Account</span>
+              <span className="text-sm">{t('settings.session.deleteAccount')}</span>
             </Link>
           </div>
 
@@ -112,7 +114,7 @@ const SessionSection = ({ onError, className = '' }) => {
               themeColor={colors.primary}
               className="w-full justify-center"
             >
-              Log out
+              {t('settings.session.logout')}
             </Button>
           </div>
         </div>

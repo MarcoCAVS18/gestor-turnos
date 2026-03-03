@@ -5,7 +5,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  sendPasswordResetEmail,
   onAuthStateChanged,
   updateProfile,
   GoogleAuthProvider,
@@ -14,8 +13,9 @@ import {
   signInWithCredential,
   getRedirectResult
 } from 'firebase/auth';
+import { httpsCallable } from 'firebase/functions';
 import { Capacitor } from '@capacitor/core';
-import { auth, db } from '../services/firebase';
+import { auth, db, functions } from '../services/firebase';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import { uploadProfilePhoto, deleteProfilePhoto, getDefaultProfilePhoto } from '../services/profilePhotoService';
 import { hasProfanity } from '../utils/profanityFilter';
@@ -101,8 +101,15 @@ export const AuthProvider = ({ children }) => {
     // Native app — use native Google Sign-In plugin (bypasses WebView CORS restrictions)
     if (Capacitor.isNativePlatform()) {
       const { GoogleSignIn } = await import('@capawesome/capacitor-google-sign-in');
+      await GoogleSignIn.initialize({
+        clientId: process.env.REACT_APP_GOOGLE_WEB_CLIENT_ID,
+      });
       const googleUser = await GoogleSignIn.signIn();
-      const credential = GoogleAuthProvider.credential(googleUser.idToken);
+      // The plugin returns the token inside the `authentication` object.
+      // googleUser.idToken is undefined; use googleUser.authentication.idToken instead.
+      const idToken = googleUser?.authentication?.idToken ?? googleUser?.idToken;
+      if (!idToken) throw new Error('Google Sign-In did not return an ID token.');
+      const credential = GoogleAuthProvider.credential(idToken);
       const result = await signInWithCredential(auth, credential);
 
       // Create Firestore document on first Google sign-in (mirrors web popup flow)
@@ -186,13 +193,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Reset password with rate limiting
+  // Reset password — sends branded email via Cloud Function (Resend)
   const resetPassword = async (email) => {
     const now = Date.now();
     const lastAttempt = resetAttempts[email] || 0;
     const COOLDOWN_MS = 60000; // 1 minute
 
-    // Check if user is in cooldown period
     if (now - lastAttempt < COOLDOWN_MS) {
       const remainingSeconds = Math.ceil((COOLDOWN_MS - (now - lastAttempt)) / 1000);
       const errorMsg = `Please wait ${remainingSeconds} seconds before requesting another password reset`;
@@ -200,15 +206,28 @@ export const AuthProvider = ({ children }) => {
       throw new Error(errorMsg);
     }
 
-    // Update last attempt time
     setResetAttempts(prev => ({ ...prev, [email]: now }));
 
     try {
       setError('');
-      await sendPasswordResetEmail(auth, email);
+      const fn = httpsCallable(functions, 'sendPasswordResetEmailCustom');
+      await fn({ email });
     } catch (error) {
       logger.error('Password reset error:', error);
       setError('Error sending reset email. Please try again.');
+      throw error;
+    }
+  };
+
+  // Send verification email — sends branded email via Cloud Function (Resend)
+  const sendVerificationEmail = async () => {
+    try {
+      setError('');
+      const fn = httpsCallable(functions, 'sendVerificationEmail');
+      await fn({});
+    } catch (error) {
+      logger.error('Send verification email error:', error);
+      setError('Error sending verification email. Please try again.');
       throw error;
     }
   };
@@ -449,6 +468,7 @@ export const AuthProvider = ({ children }) => {
     loginWithGoogle,
     logout,
     resetPassword,
+    sendVerificationEmail,
     getUserData,
     updateUserName,
     updateProfilePhoto,

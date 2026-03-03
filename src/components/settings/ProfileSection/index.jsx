@@ -1,6 +1,7 @@
 // src/components/settings/ProfileSection/index.jsx - REFACTORED
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { User, Edit2, Save } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -8,6 +9,7 @@ import SettingsSection from '../SettingsSection';
 import Button from '../../ui/Button';
 
 const ProfileSection = ({ onError, onSuccess, className }) => {
+  const { t } = useTranslation();
   const { currentUser, updateUserName } = useAuth();
   const colors = useThemeColors();
   const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
@@ -28,17 +30,17 @@ const ProfileSection = ({ onError, onSuccess, className }) => {
   };
 
   return (
-    <SettingsSection icon={User} title="Profile" className={className}>
+    <SettingsSection icon={User} title={t('settings.profile.title')} className={className}>
       <div className="space-y-4">
         {/* Email and Name on the same line on desktop */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="min-w-0">
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700">{t('settings.profile.email')}</label>
             <div className="mt-1 text-gray-900 truncate">{currentUser?.email}</div>
           </div>
 
           <div className="min-w-0">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('settings.profile.name')}</label>
             {editingName ? (
               <div className="flex items-center gap-2">
                 <input

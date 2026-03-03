@@ -1,0 +1,408 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "loading": "Chargement...",
+    "saving": "Enregistrement...",
+    "saved": "Enregistré correctement",
+    "noChanges": "Aucune modification",
+    "error": "Quelque chose s'est mal passé",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non",
+    "optional": "Optionnel",
+    "help": "Aide",
+    "resume": "Reprendre",
+    "pause": "Pause",
+    "finish": "Terminer",
+    "moreInfo": "Plus d'infos"
+  },
+  "nav": {
+    "home": "Accueil",
+    "dashboard": "Tableau de bord",
+    "shifts": "Quarts",
+    "works": "Travaux",
+    "statistics": "Statistiques",
+    "settings": "Paramètres",
+    "integrations": "Intégrations",
+    "calendar": "Calendrier",
+    "tagline": "Votre gestionnaire de travail et de quarts",
+    "newShift": "Nouveau quart",
+    "newWork": "Nouveau travail",
+    "shiftsDisabledTooltip": "Créez d'abord un travail pour ajouter des quarts",
+    "paused": "En pause",
+    "liveMode": "Mode en direct"
+  },
+  "premium": {
+    "unlockAll": "Débloquer toutes les fonctionnalités",
+    "upgrade": "Passer à Premium",
+    "badge": "Premium"
+  },
+  "dashboard": {
+    "welcome": {
+      "greeting_morning": "Bonjour,",
+      "greeting_afternoon": "Bon après-midi,",
+      "greeting_evening": "Bonsoir,",
+      "summary": "Voici un résumé de votre activité",
+      "totalEarned": "Total gagné",
+      "disclaimer": "Les calculs sont basés sur vos préférences",
+      "disclaimerDesc": "Parfois, la paie inclut d'autres facteurs qui peuvent causer de légères différences. Ce système vous aide à suivre vos gains jour par jour !"
+    },
+    "liveMode": {
+      "title": "Mode en direct",
+      "newFeature": "Nouvelle fonctionnalité",
+      "liveActive": "En direct",
+      "paused": "En pause",
+      "liveShift": "Quart en direct",
+      "resume": "Reprendre",
+      "pause": "Pause",
+      "finish": "Terminer",
+      "moreInfo": "Plus d'infos",
+      "addWork": "Ajouter un travail",
+      "needsWork": "Pour utiliser le mode en direct, vous devez d'abord ajouter un travail traditionnel à votre profil.",
+      "deliveryComingSoon": "Support des travaux de livraison bientôt disponible",
+      "description": "Contrôle total de vos quarts en temps réel. Pointez, faites une pause et suivez vos gains instantanément.",
+      "freeTrial": "15 jours d'essai gratuit",
+      "unlimitedSessions": "Sessions illimitées",
+      "sessionsThisMonth": "sessions ce mois",
+      "tryNow": "Essayer maintenant",
+      "startSession": "Démarrer la session"
+    },
+    "favoriteWorks": {
+      "title": "Travaux favoris",
+      "empty": "Pas encore de données",
+      "viewMore": "Voir plus",
+      "shiftLabel": "quarts",
+      "totalLabel": "Total du top"
+    },
+    "quickStats": {
+      "works": "Travaux",
+      "shifts": "Quarts",
+      "hours": "Heures",
+      "average": "Moyenne",
+      "active": "actifs",
+      "completed": "complétés",
+      "worked": "travaillées",
+      "perHour": "Par heure",
+      "thisWeek": "Cette semaine",
+      "thisMonth": "Ce mois",
+      "currentWeek": "Semaine actuelle",
+      "currentMonth": "Mois actuel",
+      "weekEarnings": "Gains sem."
+    },
+    "export": {
+      "title": "Exporter le rapport",
+      "description": "Téléchargez un résumé complet de vos statistiques, quarts et activité"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Personnalisez votre expérience et gérez votre compte",
+    "customization": {
+      "title": "Personnalisation",
+      "language": "Langue",
+      "theme": "Thème",
+      "lightTheme": "Clair",
+      "lightThemeDesc": "Apparence lumineuse et épurée",
+      "darkTheme": "Sombre",
+      "darkThemeDesc": "Doux pour les yeux la nuit",
+      "darkThemePremium": "Fonction Premium"
+    },
+    "smoko": {
+      "title": "Smoko (Pauses)",
+      "whatIsThis": "C'est quoi ?",
+      "description": "Configurez le temps de pause non rémunéré qui sera automatiquement déduit de vos quarts.",
+      "enableDeduction": "Activer la déduction",
+      "autoDeduct": "Déduire automatiquement le temps de pause",
+      "breakDuration": "Durée de la pause",
+      "minutes": "min"
+    },
+    "preferences": {
+      "title": "Paramètres de paiement et de taxes",
+      "taxLabel": "Taxes / Déductions (%)",
+      "taxHelp": "Que sont ces taxes ?",
+      "taxHelpBtn": "Aide",
+      "taxDefault": "Valeur par défaut pour tous les travaux sans taxe spécifique.",
+      "perJobRates": "Taxes par travail",
+      "hideRates": "Masquer les taux par travail",
+      "configureRates": "Configurer les taux par travail",
+      "saveTax": "Enregistrer les paramètres fiscaux",
+      "taxPopover": {
+        "description": "Ce pourcentage représente la retenue que l'entreprise déduit de votre paiement brut avant de le déposer.",
+        "taxes": "Taxes (Tax)",
+        "socialSecurity": "Sécurité sociale",
+        "otherDeductions": "Autres déductions obligatoires",
+        "note": "* 15% est une valeur courante pour les contrats occasionnels, mais vous devriez vérifier votre cas spécifique."
+      }
+    },
+    "turnRange": {
+      "title": "Plages horaires",
+      "description": "Configurez les plages horaires pour la détection automatique du type de quart. Les quarts existants seront mis à jour automatiquement.",
+      "liveModeWarning": "Le mode en direct est actif — les modifications ne peuvent pas être enregistrées pendant une session active.",
+      "dayShift": "Quart de jour",
+      "afternoonShift": "Quart d'après-midi",
+      "nightShift": "Quart de nuit",
+      "startTime": "Heure de début",
+      "endTime": "Heure de fin",
+      "nightNote": "Le quart de nuit s'étend jusqu'à la fin de la journée",
+      "save": "Enregistrer les plages horaires",
+      "blockedByLive": "Bloqué par le mode en direct",
+      "validationDay": "L'heure de début du quart de jour doit être antérieure à l'heure de fin",
+      "validationAfternoon": "L'heure de début du quart d'après-midi doit être antérieure à l'heure de fin",
+      "validationAfternoonAfterDay": "Le quart d'après-midi doit commencer après ou en même temps que se termine le quart de jour",
+      "validationNightAfterAfternoon": "Le quart de nuit doit commencer après ou en même temps que se termine le quart d'après-midi"
+    },
+    "holidays": {
+      "title": "Localisation",
+      "description": "Sélectionnez votre localisation pour détecter automatiquement les jours fériés et activer le suivi des jours du visa vacances-travail (Australie).",
+      "detectingLocation": "Détection de la localisation...",
+      "useLocation": "Utiliser ma localisation",
+      "country": "Pays",
+      "stateProvince": "État / Province",
+      "locationDenied": "Accès à la localisation refusé. Veuillez autoriser la localisation dans les paramètres de votre navigateur et réessayer.",
+      "locationUnavailable": "Localisation non disponible. Veuillez sélectionner votre pays manuellement.",
+      "locationTimeout": "Délai de la demande de localisation dépassé. Veuillez réessayer ou sélectionner manuellement.",
+      "locationError": "Impossible d'accéder à la localisation. Veuillez sélectionner votre pays manuellement.",
+      "locationNotSupported": "Votre localisation n'a pas pu être associée à un pays pris en charge. Veuillez sélectionner manuellement."
+    },
+    "delivery": {
+      "title": "Travaux de livraison",
+      "disable": "Désactiver le mode livraison",
+      "enable": "Activer le mode livraison",
+      "subtitle": "Permet d'enregistrer des travaux de livraison avec des gains variables.",
+      "disablePopoverTitle": "Conséquences de la désactivation",
+      "enablePopoverTitle": "Comment ça marche ?",
+      "whatIfDisable": "Que se passe-t-il si je le désactive ?",
+      "whatIfEnable": "Qu'est-ce qui change si je l'active ?"
+    },
+    "profile": {
+      "title": "Profil",
+      "email": "Adresse e-mail",
+      "name": "Nom"
+    },
+    "session": {
+      "title": "Compte",
+      "terms": "Conditions d'utilisation",
+      "privacy": "Politique de confidentialité",
+      "clearEverything": "Tout effacer",
+      "deleteAccount": "Supprimer le compte",
+      "logout": "Se déconnecter",
+      "managePremium": "Gérer Premium",
+      "upgradePremium": "Passer à Premium"
+    }
+  },
+  "shifts": {
+    "title": "Quarts",
+    "subtitle": "Gérez et visualisez vos quarts enregistrés.",
+    "addShift": "Ajouter un quart",
+    "editShift": "Modifier le quart",
+    "deleteShift": "Supprimer le quart",
+    "noShifts": "Aucun quart pour l'instant",
+    "date": "Date",
+    "startTime": "Heure de début",
+    "endTime": "Heure de fin",
+    "work": "Travail",
+    "notes": "Notes",
+    "smoko": "Pause smoko",
+    "noMatchingFilters": "Aucun quart correspondant aux filtres",
+    "noMatchingFiltersDesc": "Essayez d'ajuster les filtres pour voir plus de résultats.",
+    "clearFilters": "Effacer les filtres",
+    "upcoming": "À venir"
+  },
+  "works": {
+    "title": "Travaux",
+    "subtitle": "Gérez vos différents emplois ou travaux.",
+    "addWork": "Ajouter un travail",
+    "editWork": "Modifier le travail",
+    "deleteWork": "Supprimer le travail",
+    "noWorks": "Aucun travail pour l'instant",
+    "name": "Nom",
+    "baseRate": "Taux de base",
+    "color": "Couleur",
+    "premiumOnly": "Premium uniquement",
+    "premiumUpgrade": "Passez à Premium pour ajouter plus de travaux",
+    "addFirstJob": "Ajoutez votre premier emploi",
+    "createToTrack": "Créez un travail pour commencer le suivi",
+    "addAnotherJob": "Ajouter un autre emploi",
+    "trackMultiple": "Suivez plusieurs emplois",
+    "traditionalSection": "Travaux traditionnels",
+    "deliverySection": "Travaux de livraison",
+    "addDeliveryPlatform": "Ajouter une plateforme de livraison",
+    "trackDeliveries": "Suivez vos livraisons",
+    "addAnotherPlatform": "Ajouter une autre plateforme",
+    "multipleApps": "Plusieurs applications prises en charge",
+    "deleteWarning": "Tous les quarts associés à ce travail seront également supprimés.",
+    "deleteWarningDelivery": "Tous les quarts de livraison associés à ce travail seront également supprimés."
+  },
+  "statistics": {
+    "title": "Statistiques",
+    "subtitle": "Analysez vos performances et projections",
+    "totalEarned": "Total gagné",
+    "totalHours": "Total des heures",
+    "averagePerHour": "Moyenne par heure",
+    "shiftsCount": "Quarts",
+    "weekly": "Hebdomadaire",
+    "monthly": "Mensuel",
+    "daily": "Quotidien",
+    "deliveryTitle": "Statistiques de livraison",
+    "deliverySubtitle": "Analysez vos gains et votre efficacité en livraison"
+  },
+  "stats": {
+    "weeklyComparison": {
+      "title": "Comparaison hebdomadaire",
+      "vsLastWeek": "vs semaine dernière",
+      "earnings": "Gains",
+      "hoursWorked": "Heures travaillées",
+      "avgPerHour": "Moy. par heure",
+      "shifts": "Quarts",
+      "daysWorked": "Jours travaillés",
+      "shiftsUnit": "quarts",
+      "daysUnit": "jours",
+      "thisWeek": "Cette semaine",
+      "lastWeek": "Semaine dernière",
+      "tapHint": "Appuyez sur une ligne pour voir cette semaine vs la précédente"
+    },
+    "dailyDistribution": {
+      "title": "Distribution hebdomadaire",
+      "empty": "Pas de données de gains cette semaine.",
+      "activeDays": "jours actifs",
+      "total": "Total :"
+    },
+    "mostProductiveDay": {
+      "title": "Jour le plus productif",
+      "empty": "Données insuffisantes cette semaine.",
+      "hours": "Heures",
+      "shifts": "Quarts"
+    },
+    "weeklyStatsGrid": {
+      "totalEarned": "Total gagné",
+      "hoursWorked": "Heures travaillées",
+      "totalShifts": "Total des quarts",
+      "daysWorked": "Jours travaillés"
+    },
+    "progressBar": {
+      "title": "Progrès hebdomadaire",
+      "remaining": "Restant",
+      "earnings": "Gains",
+      "goal": "Objectif",
+      "hoursWorked": "heures travaillées",
+      "hourGoal": "h objectif",
+      "milestoneOverachiever": "Superstar !",
+      "milestoneGoal": "Objectif atteint !",
+      "milestoneAlmost": "Presque là !",
+      "celebrationIncredible": "Travail incroyable !",
+      "celebrationExceeded": "Objectif dépassé !",
+      "celebrationAchieved": "Objectif hebdomadaire atteint !"
+    },
+    "smokoCard": {
+      "title": "Paramètres de pause",
+      "status": "Statut",
+      "time": "Temps",
+      "week": "Semaine",
+      "tapHint": "Appuyez pour configurer"
+    },
+    "shiftTypeStats": {
+      "emptyText": "Ajoutez des quarts pour voir cette statistique."
+    },
+    "charts": {
+      "noData": "Pas de données pour les graphiques",
+      "earnings": "Gains",
+      "hours": "Heures",
+      "evolution": {
+        "title": "Évolution hebdomadaire",
+        "subtitle": "Progression des gains"
+      },
+      "byWorks": {
+        "title": "Par travaux",
+        "subtitle": "Distribution des gains"
+      },
+      "daily": {
+        "title": "Heures quotidiennes",
+        "subtitle": "Distribution hebdomadaire"
+      }
+    },
+    "days": {
+      "Monday": "Lun",
+      "Tuesday": "Mar",
+      "Wednesday": "Mer",
+      "Thursday": "Jeu",
+      "Friday": "Ven",
+      "Saturday": "Sam",
+      "Sunday": "Dim"
+    },
+    "deliverySummary": {
+      "title": "Résumé livraison",
+      "totalEarnings": "Total gagné :",
+      "totalShifts": "Total des quarts",
+      "totalHours": "Total des heures",
+      "totalOrders": "Total des commandes",
+      "totalTips": "Total des pourboires",
+      "netEarnings": "Gains nets"
+    },
+    "platformComparison": {
+      "title": "Comparaison des plateformes",
+      "mostOrders": "Plus de commandes",
+      "totalOrders": "Total commandes",
+      "bestAvgHour": "Meilleure moy/heure",
+      "overallAvg": "Moyenne globale",
+      "mostTips": "Plus de pourboires",
+      "totalTips": "Total pourboires",
+      "mostProfitable": "Plus rentable",
+      "totalEarned": "Total gagné",
+      "noData": "Pas de données de plateforme",
+      "noDataDesc": "Les données apparaîtront lors de l'enregistrement des quarts",
+      "shifts": "quarts",
+      "perOrder": "/commande",
+      "orders": "commandes",
+      "perHour": "/heure",
+      "tips": "pourboires",
+      "earnings": "gains",
+      "tabEarnings": "Gains",
+      "tabOrders": "Commandes",
+      "tabPerHour": "Par heure",
+      "tabTips": "Pourboires"
+    },
+    "vehicleEfficiency": {
+      "title": "Efficacité du véhicule",
+      "costPerKm": "Coût par KM",
+      "efficiency": "Efficacité",
+      "kmPerDollar": "km/$",
+      "totalSpent": "Total dépensé"
+    },
+    "fuelEfficiency": {
+      "title": "Contrôle carburant",
+      "highConsumption": "Haute consommation",
+      "totalFuel": "Total carburant",
+      "percentEarnings": "% gains",
+      "kmPerDollar": "km / $",
+      "emptyText": "Enregistrez vos dépenses de carburant dans vos quarts pour voir le graphique",
+      "emptyMin": "Ajoutez au moins 2 quarts avec des données de carburant pour afficher le graphique",
+      "earnings": "Gains",
+      "earningsDollar": "Gains ($)",
+      "fuel": "Carburant",
+      "fuelDollar": "Carburant ($)",
+      "fuelEarnings": "carburant/gains"
+    },
+    "deliveryHourlyAnalysis": {
+      "title": "Rentabilité horaire",
+      "premiumDesc": "Débloquez Premium pour voir quelles heures et quels jours vous rapportent le plus.",
+      "unlockPremium": "Débloquer Premium",
+      "noData": "Pas de données cette semaine",
+      "addShift": "Ajouter un quart",
+      "bestMoment": "Meilleur moment",
+      "perHour": "/heure",
+      "profitability": "Rentabilité :",
+      "perH": "/h",
+      "totalEarned": "Total gagné :",
+      "hours": "Heures :",
+      "noDataRecorded": "Aucune donnée enregistrée",
+      "lessEarnings": "Moins $",
+      "moreEarnings": "Plus $"
+    }
+  }
+}

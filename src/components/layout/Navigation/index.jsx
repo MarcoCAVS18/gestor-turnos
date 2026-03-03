@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Briefcase, Calendar, BarChart2, CalendarDays, Settings, PlusCircle, Pencil, CircleDotDashed, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../../contexts/AppContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -19,6 +20,7 @@ import logger from '../../../utils/logger';
 
 
 const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { works, deliveryWork } = useApp();
@@ -47,7 +49,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
       window.removeEventListener('profile-photo-loading-end', handleLoadingEnd);
     };
   }, []);
-  
+
   const getCurrentView = () => {
     const path = location.pathname;
     if (path === '/dashboard' || path === '/') return 'dashboard';
@@ -58,19 +60,19 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
     if (path === '/settings') return 'settings';
     return 'dashboard';
   };
-  
+
   const currentView = getCurrentView();
-  
+
   // Check if there are works created
   const totalWorks = (works?.length || 0) + (deliveryWork?.length || 0);
   const hasWorks = totalWorks > 0;
-  
+
   const navigateToView = (view) => {
     // If trying to go to shifts but there are no works, do nothing on desktop
     if (view === 'shifts' && !hasWorks) {
       return;
     }
-    
+
     const routes = {
       'dashboard': '/dashboard',
       'works': '/works',
@@ -79,15 +81,15 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
       'calendar': '/calendar',
       'settings': '/settings'
     };
-    
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+
     navigate(routes[view]);
   };
-  
+
   const getActiveTextStyle = (view) => {
-    return currentView === view 
-      ? { color: colors.primary } 
+    return currentView === view
+      ? { color: colors.primary }
       : { color: '#6B7280' };
   };
 
@@ -112,10 +114,10 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
           color: '#6B7280'
         };
   };
-  
+
   const calendarButtonStyle = {
     backgroundColor: colors.primary,
-    borderColor: currentView === 'calendar' 
+    borderColor: currentView === 'calendar'
       ? colors.primaryDark
       : 'white'
   };
@@ -158,7 +160,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
     e.stopPropagation();
     fileInputRef.current?.click();
   };
-  
+
   return (
     <>
       {/* MOBILE NAVIGATION */}
@@ -172,7 +174,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
             style={getActiveTextStyle('dashboard')}
           >
             <Home size={20} />
-            <span className="text-xs mt-1">Home</span>
+            <span className="text-xs mt-1">{t('nav.home')}</span>
           </button>
 
           <button
@@ -181,7 +183,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
             style={getActiveTextStyle('works')}
           >
             <Briefcase size={20} />
-            <span className="text-xs mt-1">Works</span>
+            <span className="text-xs mt-1">{t('nav.works')}</span>
           </button>
 
           <div className="flex justify-center items-start -mt-6">
@@ -190,7 +192,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
               className="text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg border-4 transition-all duration-200"
               style={calendarButtonStyle}
               whileTap={{ scale: 0.95 }}
-              whileHover={{ 
+              whileHover={{
                 scale: 1.05,
                 boxShadow: `0 8px 25px ${colors.transparent50}`
               }}
@@ -205,7 +207,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
             style={getActiveTextStyle('shifts')}
           >
             <Calendar size={20} />
-            <span className="text-xs mt-1">Shifts</span>
+            <span className="text-xs mt-1">{t('nav.shifts')}</span>
           </button>
 
           <button
@@ -214,14 +216,14 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
             style={getActiveTextStyle('statistics')}
           >
             <BarChart2 size={20} />
-            <span className="text-xs mt-1">Statistics</span>
+            <span className="text-xs mt-1">{t('nav.statistics')}</span>
           </button>
         </div>
       </nav>
 
       {/* DESKTOP SIDEBAR */}
       <aside className="hidden md:flex md:flex-col w-72 bg-white dark:bg-slate-900 border-r border-gray-200 dark:border-slate-700 shadow-sm h-screen fixed left-0 top-0 z-30">
-        
+
         {/* SIDEBAR HEADER - WITH PROFILE PHOTO */}
         <div className="p-6 border-b border-gray-100 dark:border-slate-800">
           {/* Hidden input for photo upload */}
@@ -279,7 +281,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
                 Orary.
               </h1>
               <p className="text-xs text-gray-500 dark:text-slate-400 font-light">
-                Your work and shift manager
+                {t('nav.tagline')}
               </p>
             </div>
           </button>
@@ -293,7 +295,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
                 <button
                   onClick={openNewShiftModal}
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-lg transform hover:scale-105 btn-primary text-white"
-                  style={{ 
+                  style={{
                     backgroundColor: colors.primary
                   }}
                   onMouseEnter={(e) => {
@@ -304,7 +306,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
                   }}
                 >
                   <PlusCircle size={20} />
-                  <span>New Shift</span>
+                  <span>{t('nav.newShift')}</span>
                 </button>
               )}
               {openNewWorkModal && (
@@ -325,7 +327,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
                   }}
                 >
                   <Briefcase size={20} />
-                  <span>New Work</span>
+                  <span>{t('nav.newWork')}</span>
                 </button>
               )}
             </div>
@@ -343,7 +345,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
               whileTap={{ scale: 0.98 }}
             >
               <Home size={20} />
-              <span>Dashboard</span>
+              <span>{t('nav.dashboard')}</span>
             </motion.button>
 
             <motion.button
@@ -354,7 +356,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
               whileTap={{ scale: 0.98 }}
             >
               <Briefcase size={20} />
-              <span>Works</span>
+              <span>{t('nav.works')}</span>
             </motion.button>
 
             <motion.button
@@ -365,11 +367,11 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
               whileTap={{ scale: 0.98 }}
             >
               <CalendarDays size={20} />
-              <span>Calendar</span>
-              <div 
+              <span>{t('nav.calendar')}</span>
+              <div
                 className="w-2 h-2 rounded-full ml-auto"
-                style={{ 
-                  backgroundColor: currentView === 'calendar' ? 'white' : colors.primary 
+                style={{
+                  backgroundColor: currentView === 'calendar' ? 'white' : colors.primary
                 }}
               />
             </motion.button>
@@ -386,7 +388,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
                 whileTap={hasWorks ? { scale: 0.98 } : {}}
               >
                 <Calendar size={20} />
-                <span>Shifts</span>
+                <span>{t('nav.shifts')}</span>
                 {!hasWorks && (
                   <div className="ml-auto">
                     <div className="w-2 h-2 rounded-full bg-red-400"></div>
@@ -398,7 +400,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
               {showTooltip && !hasWorks && (
                 <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 z-50">
                   <div className="bg-gray-800 text-white text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
-                    First create a job to add shifts
+                    {t('nav.shiftsDisabledTooltip')}
                     <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800"></div>
                   </div>
                 </div>
@@ -413,7 +415,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
               whileTap={{ scale: 0.98 }}
             >
               <BarChart2 size={20} />
-              <span>Statistics</span>
+              <span>{t('nav.statistics')}</span>
             </motion.button>
           </div>
         </nav>
@@ -446,7 +448,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
                 </motion.div>
                 <div className="flex-1 text-left">
                   <p className="text-xs text-gray-500 font-normal">
-                    {isPaused ? 'Paused' : 'Live Mode'}
+                    {isPaused ? t('nav.paused') : t('nav.liveMode')}
                   </p>
                   <p className="font-semibold font-mono text-sm">
                     {formattedTime?.formatted || '00:00:00'}
@@ -483,10 +485,10 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
                 <Crown size={20} style={{ color: PREMIUM_COLORS.gold }} />
                 <div className="flex-1 text-left">
                   <p className="text-xs opacity-70 font-normal">
-                    Unlock all features
+                    {t('premium.unlockAll')}
                   </p>
                   <p className="font-semibold text-sm">
-                    Upgrade to Premium
+                    {t('premium.upgrade')}
                   </p>
                 </div>
                 <motion.div
@@ -509,7 +511,7 @@ const Navigation = ({ openNewWorkModal, openNewShiftModal }) => {
             whileTap={{ scale: 0.98 }}
           >
             <Settings size={20} />
-            <span>Settings</span>
+            <span>{t('nav.settings')}</span>
           </motion.button>
         </div>
       </aside>

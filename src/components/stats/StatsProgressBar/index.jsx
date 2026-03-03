@@ -1,6 +1,6 @@
 // src/components/stats/StatsProgressBar/index.jsx
 
-import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Clock, DollarSign, Target, Trophy, TrendingUp, Flame } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -10,6 +10,7 @@ import Flex from '../../ui/Flex';
 import ProgressBar from '../../ui/ProgressBar';
 
 const StatsProgressBar = ({ className = '', currentData, weeklyHoursGoal }) => {
+  const { t } = useTranslation();
   const { hoursWorked, totalEarned } = currentData;
   const colors = useThemeColors();
 
@@ -27,9 +28,9 @@ const StatsProgressBar = ({ className = '', currentData, weeklyHoursGoal }) => {
   };
 
   const getMilestoneLabel = () => {
-    if (percentage >= 150) return { text: 'Overachiever!', icon: Flame, color: '#EF4444' };
-    if (percentage >= 100) return { text: 'Goal reached!', icon: Trophy, color: '#10B981' };
-    if (percentage >= 75) return { text: 'Almost there!', icon: TrendingUp, color: colors.primary };
+    if (percentage >= 150) return { text: t('stats.progressBar.milestoneOverachiever'), icon: Flame, color: '#EF4444' };
+    if (percentage >= 100) return { text: t('stats.progressBar.milestoneGoal'), icon: Trophy, color: '#10B981' };
+    if (percentage >= 75) return { text: t('stats.progressBar.milestoneAlmost'), icon: TrendingUp, color: colors.primary };
     return null;
   };
 
@@ -42,7 +43,7 @@ const StatsProgressBar = ({ className = '', currentData, weeklyHoursGoal }) => {
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-gray-800 dark:text-white flex items-center">
             <Target size={18} className="mr-2" style={{ color: colors.primary }} />
-            Weekly Progress
+            {t('stats.progressBar.title')}
           </h3>
           {milestone && (
             <motion.div
@@ -61,8 +62,8 @@ const StatsProgressBar = ({ className = '', currentData, weeklyHoursGoal }) => {
         {/* Progress Bar */}
         <div className="space-y-2">
           <Flex variant="between" className="text-sm">
-            <span className="font-medium dark:text-gray-200">{hoursWorked.toFixed(1)} hours worked</span>
-            <span className="text-gray-500 dark:text-gray-400">{goalHours}h goal</span>
+            <span className="font-medium dark:text-gray-200">{hoursWorked.toFixed(1)} {t('stats.progressBar.hoursWorked')}</span>
+            <span className="text-gray-500 dark:text-gray-400">{goalHours}h {t('stats.progressBar.hourGoal')}</span>
           </Flex>
 
           <ProgressBar
@@ -87,7 +88,7 @@ const StatsProgressBar = ({ className = '', currentData, weeklyHoursGoal }) => {
           <Flex>
             <Clock size={16} className="text-blue-500 mr-2 flex-shrink-0" />
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Remaining</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('stats.progressBar.remaining')}</p>
               <p className="font-medium dark:text-white">
                 {Math.max(0, goalHours - hoursWorked).toFixed(1)}h
               </p>
@@ -97,7 +98,7 @@ const StatsProgressBar = ({ className = '', currentData, weeklyHoursGoal }) => {
           <Flex>
             <DollarSign size={16} className="text-green-500 mr-2 flex-shrink-0" />
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Earnings</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('stats.progressBar.earnings')}</p>
               <p className="font-medium dark:text-white">{formatCurrency(totalEarned)}</p>
             </div>
           </Flex>
@@ -105,7 +106,7 @@ const StatsProgressBar = ({ className = '', currentData, weeklyHoursGoal }) => {
           <Flex>
             <Target size={16} className="mr-2 flex-shrink-0" style={{ color: colors.primary }} />
             <div>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Goal</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('stats.progressBar.goal')}</p>
               <p className="font-medium dark:text-white">{goalHours}h</p>
             </div>
           </Flex>
@@ -131,7 +132,11 @@ const StatsProgressBar = ({ className = '', currentData, weeklyHoursGoal }) => {
               </motion.div>
               <div className="flex-1">
                 <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">
-                  {percentage >= 150 ? 'Incredible work!' : percentage >= 120 ? 'Exceeded your goal!' : 'Weekly goal achieved!'}
+                  {percentage >= 150
+                    ? t('stats.progressBar.celebrationIncredible')
+                    : percentage >= 120
+                    ? t('stats.progressBar.celebrationExceeded')
+                    : t('stats.progressBar.celebrationAchieved')}
                 </p>
                 <p className="text-xs text-emerald-600/80 dark:text-emerald-500/80">
                   {overHours > 0

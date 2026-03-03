@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Pen, Plus } from 'lucide-react';
 import { useApp } from '../../../../contexts/AppContext';
+import { useConfigContext } from '../../../../contexts/ConfigContext';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import BaseModal from '../../base/BaseModal';
@@ -16,6 +17,7 @@ import logger from '../../../../utils/logger';
 
 const DeliveryWorkModal = ({ isOpen, onClose, work }) => {
   const { addDeliveryJob, editDeliveryJob } = useApp();
+  const { deliveryEnabled, savePreferences } = useConfigContext();
   const isMobile = useIsMobile();
   const colors = useThemeColors();
   const [loading, setLoading] = useState(false);
@@ -27,6 +29,10 @@ const DeliveryWorkModal = ({ isOpen, onClose, work }) => {
         await editDeliveryJob(work.id, deliveryData);
       } else {
         await addDeliveryJob(deliveryData);
+        // Auto-enable the delivery toggle the first time a delivery job is created
+        if (!deliveryEnabled) {
+          await savePreferences({ deliveryEnabled: true });
+        }
       }
       setLoading(false);
       onClose();

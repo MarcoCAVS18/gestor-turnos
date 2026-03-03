@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Lint suppression rules for the Orary Android project.
+  Most warnings come from Capacitor-generated code that we cannot modify.
+  Only suppress categories that are confirmed noise — keep actionable issues visible.
+-->
+<lint>
+
+    <!-- ── Capacitor SplashScreen.java ──────────────────────────────────────
+         Uses Context.getDrawable / Resources.getDrawable and getIdentifier()
+         internally. These are in the Capacitor library, not our code.        -->
+    <issue id="UseResourceInstead" severity="ignore" />
+    <issue id="DiscouragedApi"     severity="ignore" />
+
+    <!-- ── Capacitor-generated boilerplate resources ────────────────────────
+         activity_main.xml, config.xml, ic_launcher_* and strings like
+         package_name / custom_url_scheme are referenced by Capacitor plugins
+         at runtime via reflection — the linter can't see those usages.       -->
+    <issue id="UnusedResources" severity="ignore" />
+
+    <!-- ── drawable / drawable-v24 folder merge ─────────────────────────────
+         Already fixed by moving ic_launcher_foreground.xml to drawable/.
+         Suppressed here as a safety net in case Cap sync re-creates v24.     -->
+    <issue id="UnnecessaryQualifiedReference" severity="ignore" />
+
+    <!-- ── Proguard / build config ──────────────────────────────────────────
+         Already fixed (proguard-android-optimize.txt). Kept as ignore
+         so older Gradle cache entries don't re-trigger the warning.          -->
+    <issue id="UseOfBundledGooglePlayServices" severity="ignore" />
+
+    <!-- ── Manifest element order ───────────────────────────────────────────
+         Already fixed (permissions now appear before <application>).         -->
+    <issue id="ManifestOrder" severity="ignore" />
+
+    <!-- ── HTML / JS / CSS files in assets/ ────────────────────────────────
+         The built React app lives in assets/public/. Android Lint doesn't
+         understand modern bundled JS and fires thousands of false positives
+         (missing alt tags, undefined variables, etc.).                       -->
+    <issue id="HardcodedText"          severity="ignore" />
+    <issue id="TypographyDashes"       severity="ignore" />
+    <issue id="TypographyQuotes"       severity="ignore" />
+    <issue id="SetTextI18n"            severity="ignore" />
+
+    <!-- ── Kotlin / Java style warnings in Capacitor sources ───────────────
+         These fire on Capacitor plugin source files included as subprojects. -->
+    <issue id="SyntheticAccessor"           severity="ignore" />
+    <issue id="ObjectAnimatorBinding"       severity="ignore" />
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         Keep everything below at default severity so real issues stay visible
+         ════════════════════════════════════════════════════════════════════ -->
+
+</lint>

@@ -1,11 +1,12 @@
 // src/components/stats/WeeklyStatsGrid/index.jsx
-import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { DollarSign, Clock, Target, Activity } from 'lucide-react';
 import Flex from '../../ui/Flex';
 import Card from '../../ui/Card';
 import LoadingSpinner from '../../ui/LoadingSpinner/LoadingSpinner';
 
 const WeeklyStatsGrid = ({ currentData, thematicColors, loading, className = '' }) => {
+  const { t } = useTranslation();
   const safeData = {
     totalEarned: (currentData && typeof currentData.totalEarned === 'number' && !isNaN(currentData.totalEarned)) ? currentData.totalEarned : 0,
     hoursWorked: (currentData && typeof currentData.hoursWorked === 'number') ? currentData.hoursWorked : 0,
@@ -14,10 +15,10 @@ const WeeklyStatsGrid = ({ currentData, thematicColors, loading, className = '' 
   };
 
   const stats = [
-    { icon: DollarSign, label: 'Total earned', value: `${safeData.totalEarned.toFixed(2)}` },
-    { icon: Clock, label: 'Hours worked', value: `${safeData.hoursWorked.toFixed(1)}h` },
-    { icon: Target, label: 'Total shifts', value: safeData.totalShifts },
-    { icon: Activity, label: 'Days worked', value: `${safeData.daysWorked}/7` }
+    { icon: DollarSign, label: t('stats.weeklyStatsGrid.totalEarned'), value: `${safeData.totalEarned.toFixed(2)}` },
+    { icon: Clock, label: t('stats.weeklyStatsGrid.hoursWorked'), value: `${safeData.hoursWorked.toFixed(1)}h` },
+    { icon: Target, label: t('stats.weeklyStatsGrid.totalShifts'), value: safeData.totalShifts },
+    { icon: Activity, label: t('stats.weeklyStatsGrid.daysWorked'), value: `${safeData.daysWorked}/7` }
   ];
 
   if (loading) {

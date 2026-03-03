@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, X } from 'lucide-react';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { auth, db } from '../../services/firebase';
 import StepWelcome from './steps/StepWelcome';
 import StepWorkTypes from './steps/StepWorkTypes';
 import StepLiveMode from './steps/StepLiveMode';
@@ -21,17 +23,42 @@ const DemoModal = ({ onComplete }) => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    const seen = localStorage.getItem(STORAGE_KEY);
-    if (!seen) {
-      // Small delay so the login page renders underneath first
+    const checkAndShow = async () => {
+      // Fast path: already seen locally
+      if (localStorage.getItem(STORAGE_KEY)) return;
+
+      // Definitive check: Firestore (handles reinstalls / new devices / other platforms)
+      const user = auth.currentUser;
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.data()?.demoDone) {
+            localStorage.setItem(STORAGE_KEY, 'true'); // sync locally for next time
+            return;
+          }
+        } catch (_) {
+          // If Firestore is unreachable, fall through and show the demo
+        }
+      }
+
+      // Small delay so the dashboard renders underneath first
       const timer = setTimeout(() => setIsVisible(true), 400);
       return () => clearTimeout(timer);
-    }
+    };
+
+    checkAndShow();
   }, []);
 
   const handleClose = useCallback(() => {
     setIsVisible(false);
     localStorage.setItem(STORAGE_KEY, 'true');
+
+    // Persist to Firestore so it survives reinstalls and syncs across devices
+    const user = auth.currentUser;
+    if (user) {
+      updateDoc(doc(db, 'users', user.uid), { demoDone: true }).catch(() => {});
+    }
+
     setTimeout(() => onComplete?.(), 350);
   }, [onComplete]);
 

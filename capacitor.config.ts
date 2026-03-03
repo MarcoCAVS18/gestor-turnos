@@ -4,6 +4,7 @@ const config: CapacitorConfig = {
   appId: 'app.orary',
   appName: 'Orary',
   webDir: 'build',
+  loggingBehavior: 'none', // suppress Capacitor bridge logs (native/result calls)
   server: {
     androidScheme: 'https'
   },

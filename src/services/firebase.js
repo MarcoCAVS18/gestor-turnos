@@ -4,6 +4,7 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth, initializeAuth, indexedDBLocalPersistence } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
+import { getFunctions } from 'firebase/functions';
 import { Capacitor } from '@capacitor/core';
 
 // Firebase configuration from environment variables only
@@ -29,6 +30,7 @@ const auth = Capacitor.isNativePlatform()
   : getAuth(app);
 
 const storage = getStorage(app);
+const functions = getFunctions(app, 'us-central1');
 
-export { db, auth, storage };
+export { db, auth, storage, functions };
 export default app;

@@ -1,6 +1,7 @@
 // src/components/dashboard/ExportReportCard/index.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Download,
   FileText,
@@ -21,6 +22,7 @@ import Button from '../../ui/Button';
 import logger from '../../../utils/logger';
 
 const ExportReportCard = ({ onExport }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const { isPremium, openPremiumModal } = usePremium();
 
@@ -74,12 +76,12 @@ const ExportReportCard = ({ onExport }) => {
                 </div>
 
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Export Report
+                  {t('dashboard.export.title')}
                 </h3>
               </Flex>
 
               <p className="text-sm text-gray-700 mb-4">
-                Download a complete summary of your statistics, shifts, and activity
+                {t('dashboard.export.description')}
               </p>
 
               <div className="flex gap-2 flex-wrap">
@@ -118,7 +120,7 @@ const ExportReportCard = ({ onExport }) => {
                 </div>
 
                 <h3 className="text-lg font-semibold text-gray-800">
-                  Export Report
+                  {t('dashboard.export.title')}
                 </h3>
               </Flex>
 

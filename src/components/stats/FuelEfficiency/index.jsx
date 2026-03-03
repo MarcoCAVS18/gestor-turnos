@@ -1,6 +1,7 @@
 // src/components/stats/FuelEfficiency/index.jsx
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Fuel, AlertTriangle } from 'lucide-react';
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid,
@@ -21,6 +22,7 @@ const getDotColor = (expenses, earnings) => {
 };
 
 const CustomTooltip = ({ active, payload }) => {
+  const { t } = useTranslation();
   if (!active || !payload?.length) return null;
   const d = payload[0]?.payload;
   if (!d) return null;
@@ -39,22 +41,22 @@ const CustomTooltip = ({ active, payload }) => {
       {d.platform && <p className="text-gray-400 dark:text-gray-500 mb-2">{d.platform}</p>}
       <div className="space-y-1">
         <div className="flex justify-between gap-4">
-          <span className="text-gray-500 dark:text-gray-400">Earnings</span>
+          <span className="text-gray-500 dark:text-gray-400">{t('stats.fuelEfficiency.earnings')}</span>
           <span className="font-medium text-green-600">{formatCurrency(d.earnings)}</span>
         </div>
         <div className="flex justify-between gap-4">
-          <span className="text-gray-500 dark:text-gray-400">Fuel cost</span>
+          <span className="text-gray-500 dark:text-gray-400">{t('stats.fuelEfficiency.fuel')}</span>
           <span className="font-medium text-red-500">{formatCurrency(d.expenses)}</span>
         </div>
         {ratio && (
           <div className="flex justify-between gap-4 pt-1 border-t border-gray-100 dark:border-gray-700">
-            <span className="text-gray-500 dark:text-gray-400">Ratio</span>
+            <span className="text-gray-500 dark:text-gray-400">{t('stats.fuelEfficiency.fuelEarnings')}</span>
             <span className={`font-bold ${ratioColor}`}>{ratio}%</span>
           </div>
         )}
         {d.km > 0 && (
           <div className="flex justify-between gap-4">
-            <span className="text-gray-500 dark:text-gray-400">Distance</span>
+            <span className="text-gray-500 dark:text-gray-400">{t('stats.vehicleEfficiency.kmPerDollar')}</span>
             <span className="font-medium text-gray-700 dark:text-gray-300">{d.km} km</span>
           </div>
         )}
@@ -64,6 +66,7 @@ const CustomTooltip = ({ active, payload }) => {
 };
 
 const FuelEfficiency = ({ deliveryStats, shifts = [], className = '' }) => {
+  const { t } = useTranslation();
   const totalExpenses = deliveryStats?.totalExpenses || 0;
   const totalKilometers = deliveryStats?.totalKilometers || 0;
   const totalEarnings = deliveryStats?.totalEarned || 0;
@@ -94,12 +97,12 @@ const FuelEfficiency = ({ deliveryStats, shifts = [], className = '' }) => {
       <Flex variant="between" className="mb-4">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
           <Fuel size={20} className="text-red-500" />
-          Fuel Control
+          {t('stats.fuelEfficiency.title')}
         </h3>
         {expensesPercentage > 25 && (
           <div className="flex items-center text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 rounded-full">
             <AlertTriangle size={10} className="mr-1" />
-            High consumption
+            {t('stats.fuelEfficiency.highConsumption')}
           </div>
         )}
       </Flex>
@@ -107,45 +110,45 @@ const FuelEfficiency = ({ deliveryStats, shifts = [], className = '' }) => {
       {/* Summary row */}
       <div className="grid grid-cols-3 gap-2 mb-4">
         <div className="bg-gray-50 dark:bg-slate-700 rounded-lg p-2 text-center">
-          <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5">Total fuel</p>
+          <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5">{t('stats.fuelEfficiency.totalFuel')}</p>
           <p className="text-sm font-bold text-red-500">{formatCurrency(totalExpenses)}</p>
         </div>
         <div className="bg-gray-50 dark:bg-slate-700 rounded-lg p-2 text-center">
-          <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5">% earnings</p>
+          <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5">{t('stats.fuelEfficiency.percentEarnings')}</p>
           <p className="text-sm font-bold text-gray-800 dark:text-gray-100">
             {expensesPercentage.toFixed(1)}%
           </p>
         </div>
         <div className="bg-gray-50 dark:bg-slate-700 rounded-lg p-2 text-center">
-          <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5">km / $</p>
+          <p className="text-[10px] text-gray-500 dark:text-gray-400 mb-0.5">{t('stats.fuelEfficiency.kmPerDollar')}</p>
           <p className="text-sm font-bold text-gray-800 dark:text-gray-100">
             {totalExpenses > 0 ? efficiency.toFixed(1) : '—'}
           </p>
         </div>
       </div>
 
-      {/* Scatter chart */}
-      <div className="flex-grow min-h-[180px]">
+      {/* Scatter chart — fixed height so ResponsiveContainer works on mobile/iOS/Android */}
+      <div className="flex-grow" style={{ height: 200 }}>
         {!hasChart ? (
-          <div className="h-full flex items-center justify-center py-6">
+          <div className="flex items-center justify-center" style={{ height: 200 }}>
             <p className="text-xs text-gray-400 dark:text-gray-500 text-center leading-relaxed max-w-[180px]">
               {scatterData.length === 0
-                ? 'Log fuel expenses in your shifts to see the chart'
-                : 'Add at least 2 shifts with fuel data to display the chart'}
+                ? t('stats.fuelEfficiency.emptyText')
+                : t('stats.fuelEfficiency.emptyMin')}
             </p>
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="100%" height={200}>
             <ScatterChart margin={{ top: 4, right: 8, bottom: 24, left: 16 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:opacity-20" />
               <XAxis
                 type="number"
                 dataKey="earnings"
-                name="Earnings"
+                name={t('stats.fuelEfficiency.earnings')}
                 tickFormatter={(v) => `$${v}`}
                 tick={{ fontSize: 10, fill: '#9ca3af' }}
                 label={{
-                  value: 'Earnings ($)',
+                  value: t('stats.fuelEfficiency.earningsDollar'),
                   position: 'insideBottom',
                   offset: -14,
                   fontSize: 10,
@@ -155,11 +158,11 @@ const FuelEfficiency = ({ deliveryStats, shifts = [], className = '' }) => {
               <YAxis
                 type="number"
                 dataKey="expenses"
-                name="Fuel"
+                name={t('stats.fuelEfficiency.fuel')}
                 tickFormatter={(v) => `$${v}`}
                 tick={{ fontSize: 10, fill: '#9ca3af' }}
                 label={{
-                  value: 'Fuel ($)',
+                  value: t('stats.fuelEfficiency.fuelDollar'),
                   angle: -90,
                   position: 'insideLeft',
                   offset: 12,
@@ -200,7 +203,7 @@ const FuelEfficiency = ({ deliveryStats, shifts = [], className = '' }) => {
               <span className="text-[10px] text-gray-500 dark:text-gray-400">{label}</span>
             </div>
           ))}
-          <span className="text-[10px] text-gray-400 dark:text-gray-500">fuel/earnings</span>
+          <span className="text-[10px] text-gray-400 dark:text-gray-500">{t('stats.fuelEfficiency.fuelEarnings')}</span>
         </div>
       )}
     </Card>

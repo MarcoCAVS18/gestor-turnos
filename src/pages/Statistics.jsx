@@ -1,10 +1,10 @@
 // src/pages/Statistics.jsx
 
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import PageHeader from '../components/layout/PageHeader';
 import { Bike, BarChart } from 'lucide-react';
 import { useStats } from '../contexts/StatsContext';
-import LoadingWrapper from '../components/layout/LoadingWrapper';
 import WeekNavigator from '../components/stats/WeekNavigator';
 import StatsProgressBar from '../components/stats/StatsProgressBar';
 import WeeklyStatsGrid from '../components/stats/WeeklyStatsGrid';
@@ -26,6 +26,7 @@ import PlatformComparison from '../components/stats/PlatformComparison';
 import DeliveryHourlyAnalysis from '../components/stats/DeliveryHourlyAnalysis';
 
 const Statistics = () => {
+  const { t } = useTranslation();
   const {
     loading,
     currentData,
@@ -78,11 +79,11 @@ const Statistics = () => {
   );
 
   return (
-    <LoadingWrapper loading={loading}>
+    <>
       <div className="px-4 py-6 space-y-6">
         <PageHeader
-          title="Statistics"
-          subtitle="Analyze your performance and projections"
+          title={t('statistics.title')}
+          subtitle={t('statistics.subtitle')}
           icon={BarChart}
           rightContent={
             !isMobile ? (
@@ -160,8 +161,8 @@ const Statistics = () => {
         {hasDelivery && (
           <>
             <PageHeader
-              title="Delivery Statistics"
-              subtitle="Analyze your delivery earnings and efficiency"
+              title={t('statistics.deliveryTitle')}
+              subtitle={t('statistics.deliverySubtitle')}
               icon={Bike}
               className="pt-8"
             />
@@ -201,7 +202,7 @@ const Statistics = () => {
           </>
         )}
       </div>
-    </LoadingWrapper>
+    </>
   );
 };
 

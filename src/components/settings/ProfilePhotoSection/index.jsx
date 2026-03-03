@@ -103,6 +103,7 @@ const ProfilePhotoSection = ({ className }) => {
               className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
                 isDefaultPhoto ? 'p-6 filter brightness-0 invert opacity-90' : ''
               }`}
+              onError={(e) => { e.target.style.display = 'none'; }}
             />
 
             {/* Hover overlay */}

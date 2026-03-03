@@ -1,10 +1,10 @@
 // src/pages/Works.jsx
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useWorks } from '../hooks/useWorks';
 import { useLiveModeContext } from '../contexts/LiveModeContext';
-import LoadingWrapper from '../components/layout/LoadingWrapper';
 import ShareMessages from '../components/work/ShareMessages';
 import PageHeader from '../components/layout/PageHeader';
 import { Briefcase, Plus, Truck, Lock, Crown, Radio } from 'lucide-react';
@@ -36,7 +36,7 @@ const EmptyWorkCard = ({ onClick, icon: Icon, title, subtitle, themeColor }) => 
 );
 
 // Premium locked card component - matches BaseWorkCard height
-const PremiumLockedCard = ({ onClick }) => (
+const PremiumLockedCard = ({ onClick, label, sublabel }) => (
   <button
     onClick={onClick}
     className="w-full min-h-[280px] h-full border-2 border-dashed rounded-xl transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden"
@@ -59,20 +59,20 @@ const PremiumLockedCard = ({ onClick }) => (
       <div className="text-center">
         <div className="flex items-center gap-1.5 justify-center mb-1">
           <Crown size={14} style={{ color: PREMIUM_COLORS.gold }} />
-          <p className="font-medium text-gray-700 dark:text-gray-200">Premium Only</p>
+          <p className="font-medium text-gray-700 dark:text-gray-200">{label}</p>
         </div>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Upgrade to add more works</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{sublabel}</p>
       </div>
     </div>
   </button>
 );
 
 const Works = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { isPremium } = usePremium();
   const { isActive: isLiveModeActive, selectedWork: liveWork } = useLiveModeContext();
   const {
-    loading,
     allWorks,
     isModalOpen,
     selectedWork,
@@ -119,7 +119,7 @@ const Works = () => {
   };
 
   return (
-    <LoadingWrapper loading={loading}>
+    <>
       <div className="px-4 py-6 pb-32 space-y-6">
         {/* Share messages */}
         <ShareMessages messages={messages} />
@@ -134,10 +134,10 @@ const Works = () => {
 
         {/* Header */}
         <PageHeader
-          title="Works"
-          subtitle="Manage your different jobs or employments."
+          title={t('works.title')}
+          subtitle={t('works.subtitle')}
           icon={Briefcase}
-          action={{ onClick: () => openNewModal(), icon: Plus, label: 'New Work' }}
+          action={{ onClick: () => openNewModal(), icon: Plus, label: t('works.addWork') }}
         />
 
         {/* Main content - Always show grids */}
@@ -150,7 +150,7 @@ const Works = () => {
                 style={{ backgroundColor: traditionalColor }}
               />
               <h2 className="text-lg font-semibold text-gray-800">
-                Traditional Works
+                {t('works.traditionalSection')}
               </h2>
               <span className="ml-2 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">
                 {traditionalWorks.length}
@@ -177,7 +177,11 @@ const Works = () => {
 
               {/* Show Premium locked card if user has 1 traditional work and is not premium */}
               {traditionalWorks.length === 1 && !isPremium && (
-                <PremiumLockedCard onClick={handlePremiumClick} />
+                <PremiumLockedCard
+                  onClick={handlePremiumClick}
+                  label={t('works.premiumOnly')}
+                  sublabel={t('works.premiumUpgrade')}
+                />
               )}
 
               {/* Show empty state cards if no traditional works */}
@@ -186,19 +190,23 @@ const Works = () => {
                   <EmptyWorkCard
                     onClick={() => openNewModal('traditional')}
                     icon={Briefcase}
-                    title="Add your first job"
-                    subtitle="Create a work to start tracking"
+                    title={t('works.addFirstJob')}
+                    subtitle={t('works.createToTrack')}
                     themeColor={traditionalColor}
                   />
                   {/* Second card is locked for non-premium */}
                   {!isPremium ? (
-                    <PremiumLockedCard onClick={handlePremiumClick} />
+                    <PremiumLockedCard
+                      onClick={handlePremiumClick}
+                      label={t('works.premiumOnly')}
+                      sublabel={t('works.premiumUpgrade')}
+                    />
                   ) : (
                     <EmptyWorkCard
                       onClick={() => openNewModal('traditional')}
                       icon={Briefcase}
-                      title="Add another job"
-                      subtitle="Track multiple jobs"
+                      title={t('works.addAnotherJob')}
+                      subtitle={t('works.trackMultiple')}
                       themeColor={traditionalColor}
                     />
                   )}
@@ -215,7 +223,7 @@ const Works = () => {
                 style={{ backgroundColor: deliveryColor }}
               />
               <h2 className="text-lg font-semibold text-gray-800">
-                Delivery Works
+                {t('works.deliverySection')}
               </h2>
               <span className="ml-2 px-2 py-1 bg-green-100 text-green-600 text-xs rounded-full">
                 {deliveryWorks.length}
@@ -246,15 +254,15 @@ const Works = () => {
                   <EmptyWorkCard
                     onClick={() => openNewModal('delivery')}
                     icon={Truck}
-                    title="Add delivery platform"
-                    subtitle="Track your deliveries"
+                    title={t('works.addDeliveryPlatform')}
+                    subtitle={t('works.trackDeliveries')}
                     themeColor={deliveryColor}
                   />
                   <EmptyWorkCard
                     onClick={() => openNewModal('delivery')}
                     icon={Truck}
-                    title="Add another platform"
-                    subtitle="Multiple apps supported"
+                    title={t('works.addAnotherPlatform')}
+                    subtitle={t('works.multipleApps')}
                     themeColor={deliveryColor}
                   />
                 </>
@@ -265,8 +273,8 @@ const Works = () => {
                 <EmptyWorkCard
                   onClick={() => openNewModal('delivery')}
                   icon={Truck}
-                  title="Add another platform"
-                  subtitle="Multiple apps supported"
+                  title={t('works.addAnotherPlatform')}
+                  subtitle={t('works.multipleApps')}
                   themeColor={deliveryColor}
                 />
               )}
@@ -292,11 +300,11 @@ const Works = () => {
         details={generateWorkDetails(deleteManager.itemToDelete)}
         warning={
           deleteManager.itemToDelete?.type === 'delivery'
-            ? "All delivery shifts associated with this job will also be deleted."
-            : "All shifts associated with this job will also be deleted."
+            ? t('works.deleteWarningDelivery')
+            : t('works.deleteWarning')
         }
       />
-    </LoadingWrapper>
+    </>
   );
 };
 

@@ -16,7 +16,7 @@ const AccountCard = ({ currentUser, profilePhotoURL, isPremium = true, membershi
               className="w-16 h-16 rounded-full overflow-hidden border-3"
               style={{ borderColor: PREMIUM_COLORS.light }}
             >
-              <img src={profilePhotoURL} alt="Profile" className="w-full h-full object-cover" />
+              <img src={profilePhotoURL} alt="Profile" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; }} />
             </div>
             <div
               className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center"

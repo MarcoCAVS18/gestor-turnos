@@ -14,7 +14,7 @@
 // the default block. Keep each variant's UI in its own component/folder.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Award, Clock, Repeat } from 'lucide-react';
 import { formatCurrency } from '../../../utils/currency';
 import { formatHoursDecimal } from '../../../utils/time';
@@ -24,6 +24,7 @@ import Australia88StatsCard from '../../australia88/Australia88StatsCard';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const MostProductiveDay = ({ currentData, loading, thematicColors, className = '' }) => {
+  const { t } = useTranslation();
   const { isAustraliaMode, hasEligibleWorks } = useAustralia88();
   const colors = useThemeColors();
 
@@ -44,10 +45,10 @@ const MostProductiveDay = ({ currentData, loading, thematicColors, className = '
   return (
     <BaseStatsCard
       icon={Award}
-      title="Most Productive Day"
+      title={t('stats.mostProductiveDay.title')}
       loading={loading}
       empty={isEmpty}
-      emptyMessage="Not enough data this week."
+      emptyMessage={t('stats.mostProductiveDay.empty')}
       className={className}
     >
       {/* Two-column layout: left = earnings + day, right = hours + shifts */}
@@ -73,7 +74,7 @@ const MostProductiveDay = ({ currentData, loading, thematicColors, className = '
             <Clock size={14} className="text-gray-400 flex-shrink-0" />
             <div>
               <p className="text-xs text-gray-400 dark:text-gray-500 leading-none mb-0.5">
-                Hours
+                {t('stats.mostProductiveDay.hours')}
               </p>
               <p className="text-sm font-bold text-gray-700 dark:text-gray-200">
                 {formatHoursDecimal(mostProductiveDay.hours || 0)}
@@ -85,7 +86,7 @@ const MostProductiveDay = ({ currentData, loading, thematicColors, className = '
             <Repeat size={14} className="text-gray-400 flex-shrink-0" />
             <div>
               <p className="text-xs text-gray-400 dark:text-gray-500 leading-none mb-0.5">
-                Shifts
+                {t('stats.mostProductiveDay.shifts')}
               </p>
               <p className="text-sm font-bold text-gray-700 dark:text-gray-200">
                 {mostProductiveDay.shifts || 0}

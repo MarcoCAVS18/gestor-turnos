@@ -98,6 +98,7 @@ const Header = () => {
                 className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-500 ${
                   showSettingsIcon ? 'opacity-0' : 'opacity-100'
                 }`}
+                onError={(e) => { e.target.style.display = 'none'; }}
               />
               {/* Settings icon overlay */}
               <Flex

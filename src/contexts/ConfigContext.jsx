@@ -7,6 +7,7 @@ import { generateColorVariations } from '../utils/colorUtils';
 import { DELIVERY_PLATFORMS_AUSTRALIA } from '../constants/delivery';
 import { isCountrySupported } from '../services/holidayService';
 import logger from '../utils/logger';
+import i18n from '../i18n';
 
 const ConfigContext = createContext();
 
@@ -31,7 +32,7 @@ export const ConfigProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [primaryColor, setPrimaryColor] = useState(() => getCachedValue('orary_primaryColor', '#EC4899'));
-  const [userEmoji, setUserEmoji] = useState('😊');
+  const [language, setLanguage] = useState(() => getCachedValue('orary_language', 'en'));
   const [defaultDiscount, setDefaultDiscount] = useState(15);
   const [taxesPerWork, setTaxesPerWork] = useState({});
   const [weeklyHoursGoal, setWeeklyHoursGoal] = useState(null);
@@ -62,7 +63,9 @@ export const ConfigProvider = ({ children }) => {
           const settings = await firebaseService.ensureUserDocument(currentUser);
           if (settings) {
             setPrimaryColor(settings.primaryColor);
-            setUserEmoji(settings.userEmoji);
+            const lang = settings.language || 'en';
+            setLanguage(lang);
+            i18n.changeLanguage(lang);
             setDefaultDiscount(settings.defaultDiscount);
             setTaxesPerWork(settings.taxesPerWork || {});
             setWeeklyHoursGoal(settings.weeklyHoursGoal);
@@ -93,7 +96,7 @@ export const ConfigProvider = ({ children }) => {
     loadConfig();
   }, [currentUser]);
 
-  // Cache primaryColor and themeMode in localStorage to prevent flash on reload
+  // Cache primaryColor, themeMode, and language in localStorage to prevent flash on reload
   useEffect(() => {
     try { localStorage.setItem('orary_primaryColor', JSON.stringify(primaryColor)); } catch {}
   }, [primaryColor]);
@@ -101,6 +104,10 @@ export const ConfigProvider = ({ children }) => {
   useEffect(() => {
     try { localStorage.setItem('orary_themeMode', JSON.stringify(themeMode)); } catch {}
   }, [themeMode]);
+
+  useEffect(() => {
+    try { localStorage.setItem('orary_language', JSON.stringify(language)); } catch {}
+  }, [language]);
 
   // Apply theme mode to document body.
   // Cleanup removes the dark class when ConfigProvider unmounts (user logs out),
@@ -127,7 +134,10 @@ export const ConfigProvider = ({ children }) => {
     try {
       // Optimistic update
       if (preferences.primaryColor !== undefined) setPrimaryColor(preferences.primaryColor);
-      if (preferences.userEmoji !== undefined) setUserEmoji(preferences.userEmoji);
+      if (preferences.language !== undefined) {
+        setLanguage(preferences.language);
+        i18n.changeLanguage(preferences.language);
+      }
       if (preferences.defaultDiscount !== undefined) setDefaultDiscount(preferences.defaultDiscount);
       if (preferences.taxesPerWork !== undefined) setTaxesPerWork(preferences.taxesPerWork);
       if (preferences.shiftRanges !== undefined) setShiftRanges(preferences.shiftRanges);
@@ -189,7 +199,7 @@ export const ConfigProvider = ({ children }) => {
     loading,
     error,
     primaryColor,
-    userEmoji,
+    language,
     defaultDiscount,
     taxesPerWork,
     weeklyHoursGoal,
