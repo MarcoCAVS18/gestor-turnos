@@ -1,6 +1,7 @@
 // src/components/stats/PlatformComparison/index.jsx
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BarChart3, Package, Clock, DollarSign, TrendingUp } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
@@ -16,6 +17,7 @@ import Flex from '../../ui/Flex';
 import ProgressBar from '../../ui/ProgressBar';
 
 const PlatformComparison = ({ deliveryStats }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const [sortBy, setSortBy] = useState('totalEarned');
 
@@ -55,34 +57,34 @@ const PlatformComparison = ({ deliveryStats }) => {
     switch (sortBy) {
       case 'totalOrders':
         return {
-          bestLabel: 'Most orders',
+          bestLabel: t('stats.platformComparison.mostOrders'),
           bestValue: bestPlatform.name,
-          avgLabel: 'Total orders',
+          avgLabel: t('stats.platformComparison.totalOrders'),
           avgValue: totals.totalOrders
         };
       case 'averagePerHour':
         return {
-          bestLabel: 'Best avg/hour',
+          bestLabel: t('stats.platformComparison.bestAvgHour'),
           bestValue: bestPlatform.name,
-          avgLabel: 'Overall avg',
+          avgLabel: t('stats.platformComparison.overallAvg'),
           avgValue: formatCurrency(totals.totalEarned / (platforms.reduce((acc, p) => acc + p.totalHours, 0) || 1))
         };
       case 'totalTips':
         return {
-          bestLabel: 'Most tips',
+          bestLabel: t('stats.platformComparison.mostTips'),
           bestValue: bestPlatform.name,
-          avgLabel: 'Total tips',
+          avgLabel: t('stats.platformComparison.totalTips'),
           avgValue: formatCurrency(totals.totalTips)
         };
       default:
         return {
-          bestLabel: 'Most profitable',
+          bestLabel: t('stats.platformComparison.mostProfitable'),
           bestValue: bestPlatform.name,
-          avgLabel: 'Total earned',
+          avgLabel: t('stats.platformComparison.totalEarned'),
           avgValue: formatCurrency(totals.totalEarned)
         };
     }
-  }, [sortBy, sortedPlatforms, totals, platforms]);
+  }, [sortBy, sortedPlatforms, totals, platforms, t]);
 
   if (platforms.length === 0) {
     return (
@@ -90,10 +92,10 @@ const PlatformComparison = ({ deliveryStats }) => {
         <div className="text-center py-6">
           <BarChart3 size={48} className="mx-auto mb-4 text-gray-300 dark:text-gray-600" />
           <h3 className="text-lg font-semibold text-gray-600 dark:text-gray-400 mb-2">
-            No platform data
+            {t('stats.platformComparison.noData')}
           </h3>
           <p className="text-gray-500 dark:text-gray-500">
-            Data will appear when registering shifts
+            {t('stats.platformComparison.noDataDesc')}
           </p>
         </div>
       </Card>
@@ -106,21 +108,21 @@ const PlatformComparison = ({ deliveryStats }) => {
       case 'totalOrders':
         mainStat = platform.totalOrders;
         percentage = totals.totalOrders > 0 ? (platform.totalOrders / totals.totalOrders) * 100 : 0;
-        label = 'orders';
+        label = t('stats.platformComparison.orders');
         icon = <Package size={18} className="text-blue-500" />;
         progressColor = '#3b82f6';
         return { mainStat, percentage, label, icon, progressColor, formattedMainStat: mainStat };
       case 'averagePerHour':
         mainStat = platform.averagePerHour;
         percentage = totals.maxAveragePerHour > 0 ? (mainStat / totals.maxAveragePerHour) * 100 : 0;
-        label = '/hour';
+        label = t('stats.platformComparison.perHour');
         icon = <Clock size={18} className="text-purple-500" />;
         progressColor = '#8b5cf6';
         return { mainStat, percentage, label, icon, progressColor, formattedMainStat: formatCurrency(mainStat) };
       case 'totalTips':
         mainStat = platform.totalTips;
         percentage = totals.totalTips > 0 ? (platform.totalTips / totals.totalTips) * 100 : 0;
-        label = 'tips';
+        label = t('stats.platformComparison.tips');
         icon = <TrendingUp size={18} className="text-orange-500" />;
         progressColor = '#f97316';
         return { mainStat, percentage, label, icon, progressColor, formattedMainStat: formatCurrency(mainStat) };
@@ -128,7 +130,7 @@ const PlatformComparison = ({ deliveryStats }) => {
       default:
         mainStat = platform.totalEarned;
         percentage = totals.totalEarned > 0 ? (platform.totalEarned / totals.totalEarned) * 100 : 0;
-        label = 'earnings';
+        label = t('stats.platformComparison.earnings');
         icon = <DollarSign size={18} className="text-green-500" />;
         progressColor = '#22c55e';
         return { mainStat, percentage, label, icon, progressColor, formattedMainStat: formatCurrency(mainStat) };
@@ -143,23 +145,25 @@ const PlatformComparison = ({ deliveryStats }) => {
     }`;
   };
 
+  const sortTabs = [
+    { key: 'totalEarned', label: t('stats.platformComparison.tabEarnings') },
+    { key: 'totalOrders', label: t('stats.platformComparison.tabOrders') },
+    { key: 'averagePerHour', label: t('stats.platformComparison.tabPerHour') },
+    { key: 'totalTips', label: t('stats.platformComparison.tabTips') },
+  ];
+
   return (
     <Card>
       <Flex variant="between" className="mb-4">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 flex items-center">
           <BarChart3 size={20} style={{ color: colors.primary }} className="mr-2" />
-          Platform Comparison
+          {t('stats.platformComparison.title')}
         </h3>
       </Flex>
 
       <div className="mb-4">
         <div className="flex flex-wrap gap-2">
-          {[
-            { key: 'totalEarned', label: 'Earnings' },
-            { key: 'totalOrders', label: 'Orders' },
-            { key: 'averagePerHour', label: 'Per hour' },
-            { key: 'totalTips', label: 'Tips' },
-          ].map(({ key, label }) => (
+          {sortTabs.map(({ key, label }) => (
             <button
               key={key}
               onClick={() => setSortBy(key)}
@@ -191,7 +195,7 @@ const PlatformComparison = ({ deliveryStats }) => {
                       {platform.name}
                     </h4>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {platform.shifts} shifts
+                      {platform.shifts} {t('stats.platformComparison.shifts')}
                     </p>
                   </div>
                 </Flex>
@@ -214,10 +218,10 @@ const PlatformComparison = ({ deliveryStats }) => {
               </div>
 
               <div className="grid grid-cols-4 gap-2 text-xs">
-                <StatItem icon={DollarSign} value={formatCurrency(platform.averagePerOrder)} label="/order" color="text-green-500" />
-                <StatItem icon={Package} value={platform.totalOrders} label="orders" color="text-blue-500" />
-                <StatItem icon={Clock} value={formatCurrency(platform.averagePerHour)} label="/hour" color="text-purple-500" />
-                <StatItem icon={TrendingUp} value={formatCurrency(platform.totalTips)} label="tips" color="text-orange-500" />
+                <StatItem icon={DollarSign} value={formatCurrency(platform.averagePerOrder)} label={t('stats.platformComparison.perOrder')} color="text-green-500" />
+                <StatItem icon={Package} value={platform.totalOrders} label={t('stats.platformComparison.orders')} color="text-blue-500" />
+                <StatItem icon={Clock} value={formatCurrency(platform.averagePerHour)} label={t('stats.platformComparison.perHour')} color="text-purple-500" />
+                <StatItem icon={TrendingUp} value={formatCurrency(platform.totalTips)} label={t('stats.platformComparison.tips')} color="text-orange-500" />
               </div>
             </div>
           );

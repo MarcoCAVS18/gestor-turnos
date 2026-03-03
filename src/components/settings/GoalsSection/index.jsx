@@ -1,11 +1,12 @@
 // src/components/settings/GoalsSection/index.jsx
 
-import React, { useState } from 'react';
-import { Target, Save, X, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { Target, Save, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
+import Button from '../../ui/Button';
 import logger from '../../../utils/logger';
 
 const PRESETS = [
@@ -178,27 +179,33 @@ const GoalsSection = ({ className }) => {
               transition={{ duration: 0.15 }}
               className="space-y-3"
             >
-              {/* Preset buttons */}
+              {/* Preset buttons — 2 columns on mobile, 4 on sm+ */}
               <div>
                 <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
                   Quick presets
                 </label>
-                <div className="flex gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {PRESETS.map((preset) => {
                     const isSelected = parseFloat(newGoal) === preset.hours;
                     return (
                       <button
                         key={preset.hours}
                         onClick={() => handlePresetClick(preset.hours)}
-                        className="flex-1 py-2 px-2 rounded-lg text-xs font-medium transition-all border-2"
-                        style={{
-                          borderColor: isSelected ? colors.primary : 'transparent',
-                          backgroundColor: isSelected ? colors.transparent10 : 'rgb(249 250 251)',
-                          color: isSelected ? colors.primary : '#6b7280',
+                        className={`py-2 px-2 rounded-lg text-xs font-medium transition-all border-2 ${
+                          isSelected
+                            ? ''
+                            : 'bg-gray-50 dark:bg-slate-700 text-gray-500 dark:text-gray-300'
+                        }`}
+                        style={isSelected ? {
+                          borderColor: colors.primary,
+                          backgroundColor: colors.transparent10,
+                          color: colors.primary,
+                        } : {
+                          borderColor: 'transparent',
                         }}
                       >
                         <div className="font-bold text-sm">{preset.hours}h</div>
-                        <div className="opacity-70">{preset.label}</div>
+                        <div className="opacity-70 text-[11px] truncate">{preset.label}</div>
                       </button>
                     );
                   })}
@@ -238,13 +245,13 @@ const GoalsSection = ({ className }) => {
                   Save
                 </button>
 
-                <button
+                <Button
                   onClick={handleCancel}
-                  className="flex items-center px-4 py-2 rounded-lg text-sm font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                  variant="cancel"
+                  size="sm"
                 >
-                  <X size={14} className="mr-1.5" />
                   Cancel
-                </button>
+                </Button>
 
                 {weeklyHoursGoal && (
                   <button

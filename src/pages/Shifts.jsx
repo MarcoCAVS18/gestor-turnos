@@ -1,12 +1,12 @@
 // src/pages/Shifts.jsx
 
-import React, { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../contexts/AppContext';
 import { useTurnManager } from '../hooks/useTurnManager';
 import { useDeleteManager } from '../hooks/useDeleteManager';
 import { useShiftFilters } from '../hooks/useFilterTurnos';
 import { createSafeDate } from '../utils/time';
-import LoadingWrapper from '../components/layout/LoadingWrapper';
 import PageHeader from '../components/layout/PageHeader';
 import { List, Plus, Search } from 'lucide-react';
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
@@ -19,8 +19,8 @@ import Flex from '../components/ui/Flex';
 import logger from '../utils/logger';
 
 const Shifts = () => {
+  const { t } = useTranslation();
   const {
-    loading,
     deleteShift,
     deleteDeliveryShift,
     thematicColors,
@@ -158,13 +158,13 @@ const Shifts = () => {
   ], [futureWeeks, currentWeekData, pastWeeks]);
 
   return (
-    <LoadingWrapper loading={loading}>
+    <>
       <div className="px-4 py-6 pb-32 space-y-4">
         <PageHeader
-          title="Shifts"
-          subtitle="Manage and visualize your registered shifts."
+          title={t('shifts.title')}
+          subtitle={t('shifts.subtitle')}
           icon={List}
-          action={{ onClick: openNewModal, icon: Plus, label: 'New Shift' }}
+          action={{ onClick: openNewModal, icon: Plus, label: t('shifts.addShift') }}
         />
 
         {/* Filter system */}
@@ -192,17 +192,17 @@ const Shifts = () => {
               <Search size={32} style={{ color: thematicColors?.base }} />
             </Flex>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              No shifts matching filters
+              {t('shifts.noMatchingFilters')}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              Try adjusting the filters to see more results.
+              {t('shifts.noMatchingFiltersDesc')}
             </p>
             <button
               onClick={() => updateFilters({ work: 'all', weekDays: [], shiftType: 'all' })}
               className="text-white px-6 py-3 rounded-lg transition-colors hover:opacity-90"
               style={{ backgroundColor: thematicColors?.base }}
             >
-              Clear filters
+              {t('shifts.clearFilters')}
             </button>
           </div>
         ) : (
@@ -210,7 +210,7 @@ const Shifts = () => {
             {/* Future weeks label */}
             {futureWeeks.length > 0 && (
               <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1 pt-1">
-                Upcoming
+                {t('shifts.upcoming')}
               </p>
             )}
 
@@ -250,7 +250,7 @@ const Shifts = () => {
         type="shift"
         details={generateShiftDetails(deleteManager.itemToDelete, allJobs)}
       />
-    </LoadingWrapper>
+    </>
   );
 };
 

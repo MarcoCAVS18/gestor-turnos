@@ -2,7 +2,6 @@
 
 export const DEFAULT_USER_SETTINGS = {
   colorPrincipal: '#EC4899',
-  emojiUsuario: '😊',
   descuentoDefault: 15,
   rangosTurnos: {
     diurnoInicio: 6,
@@ -12,11 +11,6 @@ export const DEFAULT_USER_SETTINGS = {
     nocheInicio: 20
   }
 };
-
-export const COMMON_EMOJIS = [
-  '😊', '😎', '🚀', '💼', '⭐', '🔥', 
-  '💻', '📊', '🎯', '💪', '🌟', '⚡'
-];
 
 export const SHIFT_RANGES = {
   DIURNO: { start: 6, end: 14, label: 'Morning Shift' },

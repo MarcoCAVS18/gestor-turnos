@@ -69,3 +69,86 @@ export const sendLocalNotification = async (title, body) => {
   }
   return null;
 };
+
+// ─── Re-engagement notification IDs (reserved range 9000–9099) ──────────────
+const REENGAGEMENT_IDS = [9001, 9002, 9003, 9004];
+
+const REENGAGEMENT_MESSAGES = [
+  {
+    title: "We miss you! 👋",
+    body: "You haven't logged a shift in a while. Ready to get back on track?",
+    daysOffset: 7,
+  },
+  {
+    title: "On vacation? 🏖️",
+    body: "We'll be here whenever you're back! Your shifts are waiting for you.",
+    daysOffset: 14,
+  },
+  {
+    title: "Your stats are waiting 📊",
+    body: "Log your recent shifts to keep your earnings history up to date.",
+    daysOffset: 21,
+  },
+  {
+    title: "Long time no see! ⏰",
+    body: "Don't lose track of your work. Open Orary and add your latest shifts.",
+    daysOffset: 30,
+  },
+];
+
+/**
+ * Schedule re-engagement local notifications.
+ * Cancels any previously scheduled ones first, then schedules new ones
+ * starting from `referenceDate` (defaults to now).
+ *
+ * Only works on native platforms (iOS/Android) with LocalNotifications.
+ * On web there is no persistent scheduling API — this is a no-op.
+ *
+ * @param {Date} [referenceDate] - Base date from which offsets are calculated.
+ */
+export const scheduleReengagementNotifications = async (referenceDate = new Date()) => {
+  if (!isNative()) return;
+
+  try {
+    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    const { display } = await LocalNotifications.checkPermissions();
+    if (display !== 'granted') return;
+
+    // Cancel any previously scheduled re-engagement notifications
+    await LocalNotifications.cancel({ notifications: REENGAGEMENT_IDS.map(id => ({ id })) });
+
+    const notifications = REENGAGEMENT_MESSAGES.map(({ title, body, daysOffset }, i) => {
+      const fireAt = new Date(referenceDate);
+      fireAt.setDate(fireAt.getDate() + daysOffset);
+      // Always fire at 10:00 local time on that day
+      fireAt.setHours(10, 0, 0, 0);
+      return {
+        id: REENGAGEMENT_IDS[i],
+        title,
+        body,
+        schedule: { at: fireAt },
+        smallIcon: 'ic_stat_orary',
+        iconColor: '#EC4899',
+      };
+    });
+
+    await LocalNotifications.schedule({ notifications });
+  } catch (err) {
+    // Non-critical — swallow silently so app startup is never blocked
+    console.warn('[nativeNotifications] scheduleReengagementNotifications error:', err);
+  }
+};
+
+/**
+ * Cancel all pending re-engagement notifications.
+ * Call this when the user opens the app so the cycle resets.
+ */
+export const cancelReengagementNotifications = async () => {
+  if (!isNative()) return;
+  try {
+    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    await LocalNotifications.cancel({ notifications: REENGAGEMENT_IDS.map(id => ({ id })) });
+  } catch {
+    // ignore
+  }
+};

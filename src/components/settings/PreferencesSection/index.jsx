@@ -1,7 +1,8 @@
 // src/components/settings/PreferencesSection/index.jsx
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { Info, Receipt, Check } from 'lucide-react'; // Added Check
+import { useState, useEffect, useMemo } from 'react';
+import { Info, Receipt, Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useWorks } from '../../../hooks/useWorks';
@@ -11,66 +12,54 @@ import Popover from '../../ui/Popover';
 import WorkAvatar from '../../work/WorkAvatar';
 
 const PreferencesSection = ({ id, onError, onSuccess, className }) => {
-  const { 
+  const { t } = useTranslation();
+  const {
     defaultDiscount,
-    taxesPerWork, // comes from context
+    taxesPerWork,
     savePreferences
   } = useApp();
-  const { allWorks } = useWorks(); // Changed from trabajos to allWorks
-  
+  const { allWorks } = useWorks();
+
   const colors = useThemeColors();
-  
-  // Data states
+
   const [defaultTax, setDefaultTax] = useState(defaultDiscount || 0);
   const [localTaxes, setLocalTaxes] = useState({});
   const [showMultiRate, setShowMultiRate] = useState(false);
-
-  // UI/Feedback states
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
-  const traditionalWorks = useMemo(() => 
+  const traditionalWorks = useMemo(() =>
     (allWorks || []).filter(w => w.type === 'tradicional'),
     [allWorks]
   );
 
-  // Initialize local state when context changes (initial load)
   useEffect(() => {
     setDefaultTax(defaultDiscount || 0);
   }, [defaultDiscount]);
-  
+
   useEffect(() => {
     const initialTaxes = {};
     traditionalWorks.forEach(work => {
-      // The initialization logic must be consistent
       initialTaxes[work.id] = taxesPerWork[work.id] ?? defaultDiscount ?? 0;
     });
     setLocalTaxes(initialTaxes);
   }, [traditionalWorks, taxesPerWork, defaultDiscount]);
 
-  // Effect to detect changes (Dirty Checking)
   useEffect(() => {
-    // 1. Check if default changed
     const defaultChanged = defaultTax !== (defaultDiscount || 0);
-
-    // 2. Check if any specific tax changed
     const localTaxesChanged = traditionalWorks.some(work => {
       const originalValue = taxesPerWork[work.id] ?? defaultDiscount ?? 0;
       const currentValue = localTaxes[work.id];
-      // We compare values (we use == to be tolerant with strings/numbers if it happens, 
-      // although here we force number in the input)
       return originalValue !== currentValue;
     });
 
     const isDirty = defaultChanged || localTaxesChanged;
     setHasChanges(isDirty);
 
-    // If the user edits again, hide the success message
     if (isDirty && showSuccess) {
       setShowSuccess(false);
     }
-
   }, [defaultTax, localTaxes, defaultDiscount, taxesPerWork, traditionalWorks, showSuccess]);
 
   const handleLocalTaxChange = (jobId, value) => {
@@ -87,13 +76,11 @@ const PreferencesSection = ({ id, onError, onSuccess, className }) => {
         defaultDiscount: defaultTax,
         taxesPerWork: localTaxes
       });
-      
-      // Show success
+
       setShowSuccess(true);
-      setHasChanges(false); // Assume successful save
+      setHasChanges(false);
       onSuccess?.('Tax settings saved successfully');
 
-      // Hide success message after 3s
       setTimeout(() => {
         setShowSuccess(false);
       }, 3000);
@@ -107,39 +94,39 @@ const PreferencesSection = ({ id, onError, onSuccess, className }) => {
 
   const popoverContent = (
     <div className="p-2 max-w-xs">
-      <p className="text-sm text-gray-600 mb-2">
-        This percentage represents the <strong>retention</strong> that the company deducts from your gross payment before depositing it.
+      <p className="text-sm text-gray-600 dark:text-slate-300 mb-2">
+        {t('settings.preferences.taxPopover.description')}
       </p>
-      <ul className="text-xs text-gray-500 list-disc pl-4 space-y-1">
-        <li>Taxes (Tax)</li>
-        <li>Social Security</li>
-        <li>Other mandatory deductions</li>
+      <ul className="text-xs text-gray-500 dark:text-slate-400 list-disc pl-4 space-y-1">
+        <li>{t('settings.preferences.taxPopover.taxes')}</li>
+        <li>{t('settings.preferences.taxPopover.socialSecurity')}</li>
+        <li>{t('settings.preferences.taxPopover.otherDeductions')}</li>
       </ul>
-      <p className="text-xs text-gray-400 mt-3 border-t pt-2">
-        * 15% is a common value for casual contracts, but you should verify your specific case.
+      <p className="text-xs text-gray-400 dark:text-slate-500 mt-3 border-t border-gray-100 dark:border-slate-600 pt-2">
+        {t('settings.preferences.taxPopover.note')}
       </p>
     </div>
   );
 
   return (
-    <SettingsSection id={id} icon={Receipt} title="Payment and Tax Settings" className={className}>
+    <SettingsSection id={id} icon={Receipt} title={t('settings.preferences.title')} className={className}>
       <div className="space-y-4">
 
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="block text-sm font-semibold text-gray-700">
-              Tax / Deductions (%)
+              {t('settings.preferences.taxLabel')}
             </label>
 
             <Popover
               content={popoverContent}
-              title="What are these taxes?"
+              title={t('settings.preferences.taxHelp')}
               position="top"
               trigger="click"
             >
               <button className="flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors focus:outline-none">
                 <Info size={14} />
-                <span>Help</span>
+                <span>{t('settings.preferences.taxHelpBtn')}</span>
               </button>
             </Popover>
           </div>
@@ -162,14 +149,14 @@ const PreferencesSection = ({ id, onError, onSuccess, className }) => {
               </span>
             </div>
             <p className="text-xs text-gray-500 flex-1">
-              Default value for all jobs without specific tax.
+              {t('settings.preferences.taxDefault')}
             </p>
           </div>
         </div>
 
         {showMultiRate && traditionalWorks.length > 1 && (
           <div className="space-y-4 pt-4 border-t animate-in fade-in slide-in-from-top-2">
-            <h3 className="text-md font-semibold text-gray-800">Taxes per Job</h3>
+            <h3 className="text-md font-semibold text-gray-800">{t('settings.preferences.perJobRates')}</h3>
             {traditionalWorks.map(work => (
               <div key={work.id} className="flex items-center gap-4">
                 <WorkAvatar name={work.name} color={work.color} size="md" />
@@ -194,7 +181,7 @@ const PreferencesSection = ({ id, onError, onSuccess, className }) => {
             ))}
           </div>
         )}
-        
+
         {traditionalWorks.length > 1 && (
           <div className="pt-3">
             <Button
@@ -203,7 +190,7 @@ const PreferencesSection = ({ id, onError, onSuccess, className }) => {
               themeColor={colors.primary}
               size="sm"
             >
-              {showMultiRate ? 'Hide per-job rates' : 'Configure per-job rates'}
+              {showMultiRate ? t('settings.preferences.hideRates') : t('settings.preferences.configureRates')}
             </Button>
           </div>
         )}
@@ -216,9 +203,9 @@ const PreferencesSection = ({ id, onError, onSuccess, className }) => {
           themeColor={colors.primary}
           icon={showSuccess ? Check : undefined}
         >
-          {loading ? 'Saving...' :
-           showSuccess ? 'Saved correctly' :
-           hasChanges ? 'Save tax settings' : 'No changes'}
+          {loading ? t('common.saving') :
+           showSuccess ? t('common.saved') :
+           hasChanges ? t('settings.preferences.saveTax') : t('common.noChanges')}
         </Button>
       </div>
     </SettingsSection>

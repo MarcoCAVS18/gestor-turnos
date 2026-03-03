@@ -1,9 +1,13 @@
 // src/App.js
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
 import { useAuth } from './contexts/AuthContext';
+import {
+  scheduleReengagementNotifications,
+  cancelReengagementNotifications,
+} from './services/native/nativeNotifications';
 import { AppProvider } from './contexts/AppContext';
 import { useConfigContext } from './contexts/ConfigContext';
 import ProtectedLayout from './components/layout/ProtectedLayout/ProtectedLayout';
@@ -74,6 +78,17 @@ const PublicRoute = ({ children }) => {
 // General app layout
 function AppLayout() {
   const { loading: configLoading } = useConfigContext();
+
+  // Re-engagement notifications: every time the authenticated user opens the app,
+  // cancel any pending notifications and reschedule them starting from now.
+  // This resets the 7-day clock so users only get notifications when truly inactive.
+  useEffect(() => {
+    const resetNotifications = async () => {
+      await cancelReengagementNotifications();
+      await scheduleReengagementNotifications(new Date());
+    };
+    resetNotifications();
+  }, []);
   const { isPremiumModalOpen, closePremiumModal } = usePremium();
   const {
     isWorkModalOpen,

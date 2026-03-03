@@ -1,12 +1,14 @@
 // src/components/stats/WeeklyComparison/index.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BarChart3, ChevronDown, DollarSign, Clock, TrendingUp, CalendarDays, CalendarCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
 const WeeklyComparison = ({ currentData, previousData, thematicColors, className = '' }) => {
+  const { t } = useTranslation();
   const [expandedIndex, setExpandedIndex] = useState(0); // Earnings open by default
 
   const hoursCurrent = currentData?.hoursWorked || 0;
@@ -26,9 +28,12 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
     return ((current - previous) / previous) * 100;
   };
 
+  const shiftsUnit = t('stats.weeklyComparison.shiftsUnit');
+  const daysUnit = t('stats.weeklyComparison.daysUnit');
+
   const comparisons = [
     {
-      label: 'Earnings',
+      label: t('stats.weeklyComparison.earnings'),
       icon: DollarSign,
       change: calculateChange(earningsCurrent, earningsPrevious),
       current: formatCurrency(earningsCurrent),
@@ -38,7 +43,7 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
         : `-${formatCurrency(earningsPrevious - earningsCurrent)}`
     },
     {
-      label: 'Hours worked',
+      label: t('stats.weeklyComparison.hoursWorked'),
       icon: Clock,
       change: calculateChange(hoursCurrent, hoursPrevious),
       current: `${hoursCurrent.toFixed(1)}h`,
@@ -46,7 +51,7 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
       delta: `${hoursCurrent >= hoursPrevious ? '+' : ''}${(hoursCurrent - hoursPrevious).toFixed(1)}h`
     },
     {
-      label: 'Avg per hour',
+      label: t('stats.weeklyComparison.avgPerHour'),
       icon: TrendingUp,
       change: calculateChange(avgCurrent, avgPrevious),
       current: formatCurrency(avgCurrent),
@@ -56,20 +61,20 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
         : `-${formatCurrency(avgPrevious - avgCurrent)}`
     },
     {
-      label: 'Shifts',
+      label: t('stats.weeklyComparison.shifts'),
       icon: CalendarDays,
       change: calculateChange(shiftsCurrent, shiftsPrevious),
-      current: `${shiftsCurrent} shifts`,
-      previous: `${shiftsPrevious} shifts`,
-      delta: `${shiftsCurrent >= shiftsPrevious ? '+' : ''}${shiftsCurrent - shiftsPrevious} shifts`
+      current: `${shiftsCurrent} ${shiftsUnit}`,
+      previous: `${shiftsPrevious} ${shiftsUnit}`,
+      delta: `${shiftsCurrent >= shiftsPrevious ? '+' : ''}${shiftsCurrent - shiftsPrevious} ${shiftsUnit}`
     },
     {
-      label: 'Days worked',
+      label: t('stats.weeklyComparison.daysWorked'),
       icon: CalendarCheck,
       change: calculateChange(daysCurrent, daysPrevious),
-      current: `${daysCurrent} days`,
-      previous: `${daysPrevious} days`,
-      delta: `${daysCurrent >= daysPrevious ? '+' : ''}${daysCurrent - daysPrevious} days`
+      current: `${daysCurrent} ${daysUnit}`,
+      previous: `${daysPrevious} ${daysUnit}`,
+      delta: `${daysCurrent >= daysPrevious ? '+' : ''}${daysCurrent - daysPrevious} ${daysUnit}`
     }
   ];
 
@@ -117,9 +122,9 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
     <Card className={`flex flex-col ${className}`}>
       <h3 className="font-semibold mb-4 flex items-center gap-2 text-gray-800 dark:text-gray-100">
         <BarChart3 size={20} style={{ color: thematicColors?.base }} />
-        Weekly Comparison
+        {t('stats.weeklyComparison.title')}
         <span className="text-xs font-normal text-gray-400 dark:text-gray-500 ml-auto">
-          vs last week
+          {t('stats.weeklyComparison.vsLastWeek')}
         </span>
       </h3>
 
@@ -206,7 +211,7 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
                     <div className="px-3 pb-3 pt-2 bg-white dark:bg-gray-900/40 flex gap-3">
                       <div className="flex-1 rounded-lg p-2.5 bg-gray-50 dark:bg-gray-800/60 text-center">
                         <p className="text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-0.5">
-                          This week
+                          {t('stats.weeklyComparison.thisWeek')}
                         </p>
                         <p className="text-sm font-bold text-gray-800 dark:text-gray-100">
                           {comp.current}
@@ -215,7 +220,7 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
                       <div className="flex items-center text-gray-300 dark:text-gray-600">→</div>
                       <div className="flex-1 rounded-lg p-2.5 bg-gray-50 dark:bg-gray-800/60 text-center">
                         <p className="text-[10px] uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-0.5">
-                          Last week
+                          {t('stats.weeklyComparison.lastWeek')}
                         </p>
                         <p className="text-sm font-bold text-gray-400 dark:text-gray-500">
                           {comp.previous}
@@ -231,7 +236,7 @@ const WeeklyComparison = ({ currentData, previousData, thematicColors, className
       </div>
 
       <p className="text-[10px] text-gray-400 dark:text-gray-600 text-center mt-3">
-        Tap any row to see current vs last week
+        {t('stats.weeklyComparison.tapHint')}
       </p>
     </Card>
   );

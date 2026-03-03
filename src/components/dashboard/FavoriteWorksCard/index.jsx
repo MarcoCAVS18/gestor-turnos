@@ -18,9 +18,9 @@
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3, ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useAustralia88 } from '../../../hooks/useAustralia88';
@@ -33,6 +33,7 @@ import ProgressBar from '../../ui/ProgressBar';
 import Australia88DashboardCard from '../../australia88/Australia88DashboardCard';
 
 const FavoriteWorksCard = ({ favoriteWorks }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -70,13 +71,13 @@ const FavoriteWorksCard = ({ favoriteWorks }) => {
         <Flex variant="between" className="mb-4 flex-nowrap gap-3">
           <h3 className="text-base font-semibold flex items-center text-gray-800 dark:text-gray-100 truncate">
             <BarChart3 size={20} style={{ color: colors.primary }} className="mr-2 flex-shrink-0" />
-            <span className="truncate">Favorite works</span>
+            <span className="truncate">{t('dashboard.favoriteWorks.title')}</span>
           </h3>
         </Flex>
         <Flex variant="center" className="flex-grow py-6">
           <div className="text-center text-gray-400">
             <BarChart3 size={32} className="mx-auto mb-2 opacity-50" />
-            <p className="text-sm">No data yet</p>
+            <p className="text-sm">{t('dashboard.favoriteWorks.empty')}</p>
           </div>
         </Flex>
       </Card>
@@ -91,7 +92,7 @@ const FavoriteWorksCard = ({ favoriteWorks }) => {
       <Flex variant="between" className="mb-4 flex-nowrap gap-3">
         <h3 className="text-base font-semibold flex items-center text-gray-800 dark:text-gray-100 truncate">
           <BarChart3 size={20} style={{ color: colors.primary }} className="mr-2 flex-shrink-0" />
-          <span className="truncate">Favorite works</span>
+          <span className="truncate">{t('dashboard.favoriteWorks.title')}</span>
         </h3>
 
         <Button
@@ -105,7 +106,7 @@ const FavoriteWorksCard = ({ favoriteWorks }) => {
           icon={ChevronRight}
           iconPosition="right"
         >
-          View more
+          {t('dashboard.favoriteWorks.viewMore')}
         </Button>
       </Flex>
 
@@ -132,7 +133,7 @@ const FavoriteWorksCard = ({ favoriteWorks }) => {
                       {workInfo.work.name}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {workInfo.shifts} shifts • {workInfo.hours.toFixed(1)}h
+                      {workInfo.shifts} {t('dashboard.favoriteWorks.shiftLabel')} • {workInfo.hours.toFixed(1)}h
                     </p>
                   </div>
                 </Flex>
@@ -161,7 +162,7 @@ const FavoriteWorksCard = ({ favoriteWorks }) => {
       <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
         <Flex variant="between">
           <span className="text-sm text-gray-600 dark:text-gray-400">
-            Total from top {favoriteWorks.length}
+            {t('dashboard.favoriteWorks.totalLabel')} {favoriteWorks.length}
           </span>
           <span className="text-base font-bold" style={{ color: colors.primary }}>
             {formatCurrency(favoriteWorks.reduce((sum, w) => sum + w.earnings, 0))}

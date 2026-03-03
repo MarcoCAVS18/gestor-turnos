@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { generateColorVariations } from '../../../utils/colorUtils';
 import Button from '../../ui/Button';
@@ -30,6 +31,7 @@ import { PREMIUM_COLORS } from '../../../contexts/PremiumContext';
 import logger from '../../../utils/logger';
 
 const LiveModeCard = ({ onClick, onShowActive, className }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const navigate = useNavigate();
   const { works } = useDataContext();
@@ -50,12 +52,10 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
     liveModeLimit
   } = useLiveMode();
 
-  // Modal state for finish confirmation
   const [showFinishConfirm, setShowFinishConfirm] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
   const [frozenSessionData, setFrozenSessionData] = useState(null);
 
-  // Check if user has regular (traditional) works
   const regularWorks = useMemo(() => {
     return (works || []).filter(w => w.type === 'regular' && w.active !== false);
   }, [works]);
@@ -73,7 +73,6 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
 
   const gradient = `linear-gradient(135deg, ${palette.lighter} 0%, ${colors.primary} 50%, ${palette.darker} 100%)`;
 
-  // Handle pause/resume
   const handlePauseResume = async (e) => {
     e.stopPropagation();
     setActionLoading('pause');
@@ -90,7 +89,6 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
     }
   };
 
-  // Handle finish - open confirmation modal
   const handleFinish = (e) => {
     e.stopPropagation();
     const hadPauses = (liveSession?.totalPauseDuration || 0) > 0;
@@ -108,7 +106,6 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
     setShowFinishConfirm(true);
   };
 
-  // Confirm finish
   const handleConfirmFinish = async (deductSmoko = false) => {
     setActionLoading('finish');
     try {
@@ -122,20 +119,18 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
     }
   };
 
-  // Navigate to add work
   const handleAddWork = (e) => {
     e.stopPropagation();
     navigate('/works');
   };
 
-  // Determine CTA button label
-  // Premium users always see "Start session" (no trial concept for them).
-  // Free users: "Try now" on first use, "Start session" once they've used it.
   const hasUsedBefore = liveModeUsage?.remaining !== undefined &&
     liveModeUsage.remaining < liveModeLimit;
-  const ctaText = (liveModeUsage?.isPremium || hasUsedBefore) ? 'Start session' : 'Try now';
+  const ctaText = (liveModeUsage?.isPremium || hasUsedBefore)
+    ? t('dashboard.liveMode.startSession')
+    : t('dashboard.liveMode.tryNow');
 
-  // Active state - Live Mode is running
+  // Active state
   if (isActive) {
     return (
       <>
@@ -146,9 +141,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
           decorativeIcon={Timer}
         >
           <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between gap-6 h-full">
-            {/* Left Side: Active Status Content */}
             <div className="flex-1 space-y-4">
-              {/* Live indicator badge with CircleDotDashed icon */}
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/20 border border-white/20 backdrop-blur-md text-white text-xs font-bold tracking-wide uppercase shadow-sm">
                 <motion.div
                   animate={isPaused ? {} : { scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
@@ -156,13 +149,12 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                 >
                   <CircleDotDashed size={14} className="text-red-400" />
                 </motion.div>
-                <span>{isPaused ? 'Paused' : 'Live Active'}</span>
+                <span>{isPaused ? t('dashboard.liveMode.paused') : t('dashboard.liveMode.liveActive')}</span>
                 {isPaused && <Pause size={12} />}
               </div>
 
-              {/* Work name and timer */}
               <div>
-                <p className="text-white/80 text-sm mb-1">{selectedWork?.name || 'Live Shift'}</p>
+                <p className="text-white/80 text-sm mb-1">{selectedWork?.name || t('dashboard.liveMode.liveShift')}</p>
                 <motion.h2
                   animate={isPaused ? {} : { scale: [1, 1.01, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
@@ -172,7 +164,6 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                 </motion.h2>
               </div>
 
-              {/* Earnings indicator */}
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
                   <DollarSign size={18} className="text-white/80" />
@@ -182,7 +173,6 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                 </div>
               </div>
 
-              {/* Action buttons: Pause/Resume, Finish, More Info */}
               <div className="pt-2 flex flex-wrap gap-2">
                 <Button
                   onClick={handlePauseResume}
@@ -194,7 +184,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                   className="border-none font-semibold shadow-md active:scale-95 transition-transform"
                   icon={isPaused ? Play : Pause}
                 >
-                  {isPaused ? 'Resume' : 'Pause'}
+                  {isPaused ? t('dashboard.liveMode.resume') : t('dashboard.liveMode.pause')}
                 </Button>
                 <Button
                   onClick={handleFinish}
@@ -205,7 +195,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                   className="border-none font-semibold shadow-md active:scale-95 transition-transform"
                   icon={Square}
                 >
-                  Finish
+                  {t('dashboard.liveMode.finish')}
                 </Button>
                 <Button
                   onClick={(e) => {
@@ -217,12 +207,11 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                   themeColor={colors.primary}
                   icon={Info}
                 >
-                  More info
+                  {t('dashboard.liveMode.moreInfo')}
                 </Button>
               </div>
             </div>
 
-            {/* Right Side: Animated clock with Live icon */}
             <div className="hidden sm:flex flex-col items-center justify-center relative">
               <motion.div
                 animate={{ rotate: [0, 5, -5, 0] }}
@@ -231,7 +220,6 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                 style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}
               >
                 <Clock size={32} className="text-white" />
-                {/* Live indicator */}
                 <motion.div
                   animate={{ scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
@@ -244,7 +232,6 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
           </div>
         </BaseAnnouncementCard>
 
-        {/* Finish Confirmation Modal */}
         <LiveModeFinishConfirmModal
           isOpen={showFinishConfirm}
           onClose={() => {
@@ -263,7 +250,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
     );
   }
 
-  // Inactive state - No regular works available
+  // Inactive — no works
   if (!hasRegularWorks) {
     return (
       <BaseAnnouncementCard
@@ -272,26 +259,24 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
         decorativeIcon={Timer}
       >
         <div className="relative z-10 p-6 sm:p-8 flex items-center justify-between gap-6 h-full">
-          {/* Left Side: Text Content */}
           <div className="flex-1 space-y-4">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 border border-white/20 backdrop-blur-md text-white text-xs font-bold tracking-wide uppercase shadow-sm">
               <Sparkles size={12} className="text-yellow-300" />
-              <span>New Feature</span>
+              <span>{t('dashboard.liveMode.newFeature')}</span>
             </div>
 
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-2">
-                Live Mode
+                {t('dashboard.liveMode.title')}
               </h2>
               <p className="text-white text-sm sm:text-base leading-relaxed max-w-md opacity-90">
-                To use Live Mode, you need to add a traditional work to your profile first.
+                {t('dashboard.liveMode.needsWork')}
               </p>
             </div>
 
-            {/* Info about delivery coming soon */}
             <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2 text-white/80 text-xs">
               <Truck size={14} />
-              <span>Delivery works support coming soon</span>
+              <span>{t('dashboard.liveMode.deliveryComingSoon')}</span>
             </div>
 
             <div className="pt-2">
@@ -302,12 +287,11 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                 themeColor={colors.primary}
                 icon={Plus}
               >
-                Add Work
+                {t('dashboard.liveMode.addWork')}
               </Button>
             </div>
           </div>
 
-          {/* Right Side: Illustration */}
           <div className="hidden sm:flex flex-col items-center justify-center relative opacity-50 group-hover/card:opacity-100 transition-opacity">
             <div
               className="absolute -bottom-2 -left-4 w-12 h-12 rounded-xl backdrop-blur-sm border border-white/20 flex items-center justify-center transform -rotate-12 shadow-lg animate-pulse"
@@ -321,7 +305,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
     );
   }
 
-  // Inactive state - Has regular works, show "Try now"
+  // Inactive — has works, show CTA
   return (
     <BaseAnnouncementCard
       onClick={onClick}
@@ -330,109 +314,102 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
       decorativeIcon={Timer}
     >
       <div className="relative z-10 p-6 sm:p-8 h-full">
-        {/* Trial badge — top-right corner, free users only */}
         {!liveModeUsage?.isPremium && (
           <button
             onClick={(e) => { e.stopPropagation(); navigate('/premium'); }}
             className="absolute top-4 right-4 px-2.5 py-1 rounded-full text-xs font-semibold hover:opacity-80 transition-opacity"
             style={{ backgroundColor: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.35)', color: 'white' }}
           >
-            15-day free trial
+            {t('dashboard.liveMode.freeTrial')}
           </button>
         )}
 
         <div className="flex items-center justify-between gap-6 h-full">
-        {/* Left Side: Text Content */}
-        <div className="flex-1 space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 border border-white/20 backdrop-blur-md text-white text-xs font-bold tracking-wide uppercase shadow-sm">
-            <Sparkles size={12} className="text-yellow-300" />
-            <span>New Feature</span>
-          </div>
-
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-2">
-              Live Mode
-            </h2>
-            <p className="text-white text-sm sm:text-base leading-relaxed max-w-md opacity-90">
-              Full control of your shifts in real time. Clock in, pause, and monitor your earnings instantly.
-            </p>
-          </div>
-
-          {/* Usage counter section */}
-          {liveModeUsage?.isPremium ? (
-            // Premium user badge
-            <div
-              className="flex items-center gap-2 rounded-lg px-3 py-2 w-fit"
-              style={{
-                backgroundColor: `${PREMIUM_COLORS.gold}30`,
-                border: `1px solid ${PREMIUM_COLORS.gold}50`
-              }}
-            >
-              <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
-              <span className="text-sm text-white font-semibold">
-                Unlimited Sessions
-              </span>
+          <div className="flex-1 space-y-4">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 border border-white/20 backdrop-blur-md text-white text-xs font-bold tracking-wide uppercase shadow-sm">
+              <Sparkles size={12} className="text-yellow-300" />
+              <span>{t('dashboard.liveMode.newFeature')}</span>
             </div>
-          ) : (
-            // Free user - usage counter with progress
-            <div className="space-y-2">
+
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white leading-tight mb-2">
+                {t('dashboard.liveMode.title')}
+              </h2>
+              <p className="text-white text-sm sm:text-base leading-relaxed max-w-md opacity-90">
+                {t('dashboard.liveMode.description')}
+              </p>
+            </div>
+
+            {liveModeUsage?.isPremium ? (
               <div
-                className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-lg px-3 py-2 w-fit"
-                style={(liveModeUsage?.remaining ?? liveModeLimit) <= 2 ? {
-                  backgroundColor: 'rgba(251, 191, 36, 0.2)',
-                  border: '1px solid rgba(251, 191, 36, 0.4)'
-                } : {}}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 w-fit"
+                style={{
+                  backgroundColor: `${PREMIUM_COLORS.gold}30`,
+                  border: `1px solid ${PREMIUM_COLORS.gold}50`
+                }}
               >
                 <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
-                <span className="text-sm text-white">
-                  <span className="font-semibold">{liveModeUsage?.remaining ?? liveModeLimit}</span>
-                  <span className="opacity-80">/{liveModeLimit} sessions this month</span>
+                <span className="text-sm text-white font-semibold">
+                  {t('dashboard.liveMode.unlimitedSessions')}
                 </span>
               </div>
-
-              {/* Progress bar */}
-              <div className="w-32 h-1.5 bg-white/20 rounded-full overflow-hidden">
+            ) : (
+              <div className="space-y-2">
                 <div
-                  className="h-full rounded-full transition-all duration-300"
-                  style={{
-                    width: `${((liveModeUsage?.remaining ?? liveModeLimit) / liveModeLimit) * 100}%`,
-                    backgroundColor: (liveModeUsage?.remaining ?? liveModeLimit) <= 2
-                      ? PREMIUM_COLORS.gold
-                      : 'white'
-                  }}
-                />
+                  className="flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-lg px-3 py-2 w-fit"
+                  style={(liveModeUsage?.remaining ?? liveModeLimit) <= 2 ? {
+                    backgroundColor: 'rgba(251, 191, 36, 0.2)',
+                    border: '1px solid rgba(251, 191, 36, 0.4)'
+                  } : {}}
+                >
+                  <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
+                  <span className="text-sm text-white">
+                    <span className="font-semibold">{liveModeUsage?.remaining ?? liveModeLimit}</span>
+                    <span className="opacity-80">/{liveModeLimit} {t('dashboard.liveMode.sessionsThisMonth')}</span>
+                  </span>
+                </div>
+
+                <div className="w-32 h-1.5 bg-white/20 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-300"
+                    style={{
+                      width: `${((liveModeUsage?.remaining ?? liveModeLimit) / liveModeLimit) * 100}%`,
+                      backgroundColor: (liveModeUsage?.remaining ?? liveModeLimit) <= 2
+                        ? PREMIUM_COLORS.gold
+                        : 'white'
+                    }}
+                  />
+                </div>
               </div>
+            )}
+
+            <div className="pt-2">
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClick?.();
+                }}
+                variant='solid'
+                animatedChevron
+                iconSize={16}
+                className="bg-white border-none font-semibold shadow-md active:scale-95 transition-transform hover:bg-gray-50"
+                themeColor={colors.primary}
+                icon={ArrowRight}
+              >
+                {ctaText}
+              </Button>
             </div>
-          )}
+          </div>
 
-          <div className="pt-2">
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                onClick?.();
-              }}
-              variant='solid'
-              animatedChevron
-              iconSize={16}
-              className="bg-white border-none font-semibold shadow-md active:scale-95 transition-transform hover:bg-gray-50"
-              themeColor={colors.primary}
-              icon={ArrowRight}
+          <div className="hidden sm:flex flex-col items-center justify-center relative opacity-50 group-hover/card:opacity-100 transition-opacity">
+            <div
+              className="absolute -bottom-2 -left-4 w-12 h-12 rounded-xl backdrop-blur-sm border border-white/20 flex items-center justify-center transform -rotate-12 shadow-lg animate-pulse"
+              style={{ backgroundColor: palette.light }}
             >
-              {ctaText}
-            </Button>
+              <Clock size={24} className="text-white" />
+            </div>
           </div>
         </div>
-
-        {/* Right Side: Illustration / Iconography */}
-        <div className="hidden sm:flex flex-col items-center justify-center relative opacity-50 group-hover/card:opacity-100 transition-opacity">
-          <div
-            className="absolute -bottom-2 -left-4 w-12 h-12 rounded-xl backdrop-blur-sm border border-white/20 flex items-center justify-center transform -rotate-12 shadow-lg animate-pulse"
-            style={{ backgroundColor: palette.light }}
-          >
-            <Clock size={24} className="text-white" />
-          </div>
-        </div>
-      </div>
       </div>
     </BaseAnnouncementCard>
   );

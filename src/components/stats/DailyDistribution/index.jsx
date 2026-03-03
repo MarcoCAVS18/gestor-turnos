@@ -1,23 +1,15 @@
 // src/components/stats/DailyDistribution/index.jsx
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar, Clock, DollarSign, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatCurrency } from '../../../utils/currency';
 import { formatHoursDecimal } from '../../../utils/time';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
 
-const DAY_ABBREVIATIONS = {
-  Monday: 'Mon',
-  Tuesday: 'Tue',
-  Wednesday: 'Wed',
-  Thursday: 'Thu',
-  Friday: 'Fri',
-  Saturday: 'Sat',
-  Sunday: 'Sun',
-};
-
 const DailyDistribution = ({ currentData, loading, thematicColors }) => {
+  const { t } = useTranslation();
   const { earningsByDay, totalEarned } = currentData || {};
   const [selectedDay, setSelectedDay] = useState(null);
 
@@ -35,10 +27,10 @@ const DailyDistribution = ({ currentData, loading, thematicColors }) => {
   return (
     <BaseStatsCard
       icon={Calendar}
-      title="Weekly Distribution"
+      title={t('stats.dailyDistribution.title')}
       loading={loading}
       empty={isEmpty}
-      emptyMessage="No earnings data this week."
+      emptyMessage={t('stats.dailyDistribution.empty')}
     >
       <div className="space-y-1.5">
         {days.map(([day, data], index) => {
@@ -75,7 +67,7 @@ const DailyDistribution = ({ currentData, loading, thematicColors }) => {
                       }`}
                         style={isBusiest ? { color: primaryColor } : undefined}
                       >
-                        {DAY_ABBREVIATIONS[day] || day.substring(0, 3)}
+                        {t(`stats.days.${day}`) || day.substring(0, 3)}
                       </span>
                     </div>
 
@@ -156,8 +148,8 @@ const DailyDistribution = ({ currentData, loading, thematicColors }) => {
       {days.length > 0 && (
         <div className="mt-3 pt-3 border-t border-gray-100 dark:border-slate-700">
           <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-            <span>{days.filter(([, d]) => d.shifts > 0).length} active days</span>
-            <span>Total: <strong className="dark:text-white" style={{ color: primaryColor }}>{formatCurrency(totalEarned)}</strong></span>
+            <span>{days.filter(([, d]) => d.shifts > 0).length} {t('stats.dailyDistribution.activeDays')}</span>
+            <span>{t('stats.dailyDistribution.total')} <strong className="dark:text-white" style={{ color: primaryColor }}>{formatCurrency(totalEarned)}</strong></span>
           </div>
         </div>
       )}

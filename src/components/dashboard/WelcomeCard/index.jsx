@@ -3,19 +3,42 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Info } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 
+// Large pool of emojis — one is selected deterministically per calendar day
+const DAILY_EMOJIS = [
+  '😊', '😎', '🚀', '💪', '⭐', '🔥', '💻', '📊', '🎯', '🌟',
+  '⚡', '🎉', '🏆', '💡', '🎨', '🌈', '🦋', '🌺', '🌸', '🍀',
+  '🎵', '🎸', '🏄', '🌊', '🍕', '🦄', '🐬', '🌙', '☀️', '🌻',
+  '🎃', '🦊', '🐧', '🌵', '🎲', '🏋️', '🧩', '🎭', '🛸', '🌍',
+  '🦁', '🐉', '🎪', '🍉', '🥑', '🌮', '🎠', '🚂', '🏔️', '🌅',
+  '🎑', '🌠', '🎆', '🎇', '🧨', '✨', '🎀', '🎁', '🎗️', '🏅',
+  '🥇', '🏖️', '🏕️', '⛺', '🌄', '🌃', '🌆', '🌇', '🗻', '🌋',
+  '🎢', '🎡', '💎', '🔮', '🧿', '🪄', '🎩', '🎰', '🎳',
+];
+
+// Returns the same emoji for the entire calendar day
+const getDailyEmoji = () => {
+  const now = new Date();
+  const dayOfYear =
+    Math.floor(
+      (now - new Date(now.getFullYear(), 0, 0)) / 86400000
+    );
+  return DAILY_EMOJIS[dayOfYear % DAILY_EMOJIS.length];
+};
+
 const WelcomeCard = ({ totalEarned, isFeatureVisible = false, className }) => {
+  const { t } = useTranslation();
   const { currentUser } = useAuth();
-  const { userEmoji } = useApp();
   const colors = useThemeColors();
   const [userName, setUserName] = useState('');
   const [showDisclaimer, setShowDisclaimer] = useState(false);
   const timerRef = useRef(null);
+  const dailyEmoji = getDailyEmoji();
 
   useEffect(() => {
     if (currentUser) {
@@ -56,9 +79,9 @@ const WelcomeCard = ({ totalEarned, isFeatureVisible = false, className }) => {
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Good morning,';
-    if (hour < 18) return 'Good afternoon,';
-    return 'Good evening,';
+    if (hour < 12) return t('dashboard.welcome.greeting_morning');
+    if (hour < 18) return t('dashboard.welcome.greeting_afternoon');
+    return t('dashboard.welcome.greeting_evening');
   };
 
   const variants = {
@@ -88,15 +111,15 @@ const WelcomeCard = ({ totalEarned, isFeatureVisible = false, className }) => {
               <div className={`${isFeatureVisible ? 'block' : 'block sm:hidden'} text-center space-y-4`}>
                 <div>
                   <h1 className="text-xl font-bold text-gray-800">
-                    {getGreeting()} {userName && `${userName} `}{userEmoji}
+                    {getGreeting()} {userName && `${userName} `}{dailyEmoji}
                   </h1>
                   <p className="text-gray-600 text-sm mt-2">
-                    Here is a summary of your activity
+                    {t('dashboard.welcome.summary')}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-xs text-gray-500 pt-4 mb-1">Total earned</p>
+                  <p className="text-xs text-gray-500 pt-4 mb-1">{t('dashboard.welcome.totalEarned')}</p>
                   <p
                     className="text-4xl font-bold"
                     style={{ color: colors.primary }}
@@ -110,15 +133,14 @@ const WelcomeCard = ({ totalEarned, isFeatureVisible = false, className }) => {
               <div className={`${isFeatureVisible ? 'hidden' : 'hidden sm:flex'} items-center justify-between`}>
                 <div>
                   <h1 className="text-2xl font-bold text-gray-800">
-                    {getGreeting()} {userName && `${userName} `}{userEmoji}
+                    {getGreeting()} {userName && `${userName} `}{dailyEmoji}
                   </h1>
                   <p className="text-gray-600 mt-1">
-                    Here is a summary<br />
-                    of your activity
+                    {t('dashboard.welcome.summary')}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-gray-500">Total earned</p>
+                  <p className="text-sm text-gray-500">{t('dashboard.welcome.totalEarned')}</p>
                   <p
                     className="text-2xl font-bold"
                     style={{ color: colors.primary }}
@@ -144,7 +166,6 @@ const WelcomeCard = ({ totalEarned, isFeatureVisible = false, className }) => {
             transition={{ duration: 0.25 }}
             className="flex flex-col h-full"
           >
-
             {/* Disclaimer content */}
             <div className="flex-1 flex flex-col justify-center text-center px-2">
               <div
@@ -155,12 +176,11 @@ const WelcomeCard = ({ totalEarned, isFeatureVisible = false, className }) => {
               </div>
 
               <p className="text-base font-semibold text-gray-800 leading-snug">
-                Calculations are based on your preferences
+                {t('dashboard.welcome.disclaimer')}
               </p>
 
               <p className="text-xs text-gray-500 mt-2 leading-relaxed">
-                Sometimes payroll includes other factors that may cause slight differences.
-                This system helps you track your earnings day by day!
+                {t('dashboard.welcome.disclaimerDesc')}
               </p>
             </div>
           </motion.div>

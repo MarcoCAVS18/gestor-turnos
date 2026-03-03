@@ -159,7 +159,14 @@ const OnboardingSpotlight = () => {
     const el = getVisibleElement(step.elementId);
     if (!el) return;
 
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Scroll element to ~15% from the top of the viewport so the spotlight
+    // appears high on screen and doesn't clash with the bottom guide card.
+    const mainEl = document.querySelector('main');
+    const scrollContainer = mainEl || window;
+    const elRect = el.getBoundingClientRect();
+    const currentScroll = mainEl ? mainEl.scrollTop : window.scrollY;
+    const targetScroll = currentScroll + elRect.top - window.innerHeight * 0.15;
+    scrollContainer.scrollTo({ top: Math.max(0, targetScroll), behavior: 'smooth' });
 
     clearTimeout(recalcTimerRef.current);
     recalcTimerRef.current = setTimeout(calculateRect, 650);

@@ -43,55 +43,54 @@ const WeeklyShiftsSection = ({
       {/* ── Collapsible header ── */}
       <button
         onClick={onToggle}
-        className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+        className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors ${
           isOpen
             ? 'bg-white dark:bg-slate-800'
             : 'bg-gray-50/60 dark:bg-slate-800/40 hover:bg-gray-50 dark:hover:bg-slate-800/70'
         }`}
         style={isCurrentWeek && isOpen ? { backgroundColor: `${accent}08` } : undefined}
       >
-        {/* Chevron */}
+        {/* Chevron — vertically centred with the first line */}
         <ChevronRight
           size={15}
-          className="flex-shrink-0 transition-transform duration-200"
+          className="flex-shrink-0 transition-transform duration-200 mt-0.5"
           style={{
             transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)',
             color: isCurrentWeek ? accent : '#9CA3AF',
           }}
         />
 
-        {/* Week range */}
-        <span
-          className={`font-medium text-sm flex-1 min-w-0 truncate ${
-            isCurrentWeek
-              ? ''
-              : 'text-gray-700 dark:text-gray-300'
-          }`}
-          style={isCurrentWeek ? { color: accent } : undefined}
-        >
-          {weekRange}
-        </span>
-
-        {/* Badges */}
-        {isCurrentWeek && (
+        {/* Two-line content block */}
+        <div className="flex-1 min-w-0">
+          {/* Line 1: full week range — never truncated */}
           <span
-            className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white flex-shrink-0"
-            style={{ backgroundColor: accent }}
+            className={`font-medium text-sm block leading-snug ${
+              isCurrentWeek ? '' : 'text-gray-700 dark:text-gray-300'
+            }`}
+            style={isCurrentWeek ? { color: accent } : undefined}
           >
-            NOW
+            {weekRange}
           </span>
-        )}
-        {isFuture && !isCurrentWeek && (
-          <span className="text-[10px] font-medium text-blue-500 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-full flex-shrink-0">
-            Upcoming
-          </span>
-        )}
 
-        {/* Stats */}
-        <div className="flex items-center gap-1.5 text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">
-          <span>{totalShifts} {totalShifts === 1 ? 'shift' : 'shifts'}</span>
-          <span>·</span>
-          <span>{totalHours.toFixed(1)}h</span>
+          {/* Line 2: badges + stats */}
+          <div className="flex items-center gap-1.5 mt-0.5">
+            {isCurrentWeek && (
+              <span
+                className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
+                style={{ backgroundColor: accent }}
+              >
+                NOW
+              </span>
+            )}
+            {isFuture && !isCurrentWeek && (
+              <span className="text-[10px] font-medium text-blue-500 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">
+                Upcoming
+              </span>
+            )}
+            <span className="text-xs text-gray-400 dark:text-gray-500">
+              {totalShifts} {totalShifts === 1 ? 'shift' : 'shifts'} · {totalHours.toFixed(1)}h
+            </span>
+          </div>
         </div>
       </button>
 

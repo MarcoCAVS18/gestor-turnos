@@ -1,7 +1,7 @@
 // src/components/settings/CustomizationSection/index.jsx
 
-import React, { useState, useEffect } from 'react';
-import { Palette, Smile, Sun, Moon, Lock, Crown, Check } from 'lucide-react';
+import React from 'react';
+import { Palette, Sun, Moon, Lock, Crown, Check, Globe } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { usePremium, PREMIUM_COLORS } from '../../../contexts/PremiumContext';
@@ -16,23 +16,22 @@ const COLORS = [
   { name: 'Blue', value: '#3B82F6' }
 ];
 
-const COMMON_EMOJIS = ['😊', '😎', '🚀', '⭐', '🔥', '💻', '📊'];
+const LANGUAGES = [
+  { code: 'en', label: 'English', native: 'English' },
+  { code: 'es', label: 'Spanish', native: 'Español' },
+  { code: 'fr', label: 'French', native: 'Français' },
+];
 
 const CustomizationSection = ({ id, className }) => {
   const {
     primaryColor: appColor,
-    userEmoji: appEmoji,
+    language,
     themeMode,
     savePreferences
   } = useApp();
 
   const colors = useThemeColors();
   const { isPremium, openPremiumModal } = usePremium();
-  const [emojiInput, setEmojiInput] = useState(appEmoji);
-
-  useEffect(() => {
-    setEmojiInput(appEmoji);
-  }, [appEmoji]);
 
   const changeColor = (newColor) => {
     savePreferences({ primaryColor: newColor });
@@ -46,20 +45,8 @@ const CustomizationSection = ({ id, className }) => {
     savePreferences({ themeMode: mode });
   };
 
-  const changeEmoji = (newEmoji) => {
-    setEmojiInput(newEmoji);
-    savePreferences({ userEmoji: newEmoji });
-  };
-
-  const handleEmojiChange = (e) => {
-    const value = e.target.value;
-    setEmojiInput(value);
-
-    if (value.trim() === '') {
-      savePreferences({ userEmoji: '😊' });
-    } else {
-      savePreferences({ userEmoji: value });
-    }
+  const changeLanguage = (lang) => {
+    savePreferences({ language: lang });
   };
 
   // Color selector row component
@@ -198,37 +185,53 @@ const CustomizationSection = ({ id, className }) => {
             </div>
           </div>
 
-          {/* Emoji selection */}
+          {/* Language Selector */}
           <div className="pt-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Your personal emoji
-            </label>
-            {/* Desktop: all in one row | Mobile: stacked */}
-            <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
-              <input
-                type="text"
-                value={emojiInput}
-                onChange={handleEmojiChange}
-                className="w-16 h-10 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm px-3 focus:outline-none focus:ring-2 text-xl bg-white dark:bg-slate-700 flex-shrink-0"
-                style={{ '--tw-ring-color': colors.primary }}
-              />
-              <p className="text-sm text-gray-500 dark:text-gray-400 flex-shrink-0">
-                <Smile className="inline h-4 w-4 mb-1 mr-1" />
-                Type or paste your favorite emoji
-              </p>
-              <div className="overflow-x-auto md:ml-auto -mx-1 px-1">
-                <div className="flex gap-2" style={{ minWidth: 'min-content' }}>
-                  {COMMON_EMOJIS.map(emoji => (
-                    <button
-                      key={emoji}
-                      onClick={() => changeEmoji(emoji)}
-                      className="w-8 h-8 rounded-md flex items-center justify-center text-lg hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors flex-shrink-0"
+            <div className="flex items-center gap-2 mb-3">
+              <Globe size={15} className="text-gray-500 dark:text-gray-400" />
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Language
+              </label>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {LANGUAGES.map((lang) => {
+                const isSelected = language === lang.code;
+                return (
+                  <button
+                    key={lang.code}
+                    onClick={() => changeLanguage(lang.code)}
+                    className={`relative flex flex-col items-center justify-center py-3 px-2 rounded-xl border-2 transition-all ${
+                      isSelected
+                        ? 'shadow-md'
+                        : 'border-gray-200 dark:border-slate-600 hover:border-gray-300 dark:hover:border-slate-500 bg-transparent'
+                    }`}
+                    style={{
+                      backgroundColor: isSelected ? `${appColor}12` : undefined,
+                      borderColor: isSelected ? appColor : undefined,
+                    }}
+                  >
+                    <span
+                      className="text-lg font-bold tracking-wide"
+                      style={{ color: isSelected ? appColor : undefined }}
                     >
-                      {emoji}
-                    </button>
-                  ))}
-                </div>
-              </div>
+                      {lang.code.toUpperCase()}
+                    </span>
+                    <span className={`text-xs mt-0.5 font-medium ${
+                      isSelected ? 'text-gray-700 dark:text-gray-200' : 'text-gray-500 dark:text-gray-400'
+                    }`}>
+                      {lang.native}
+                    </span>
+                    {isSelected && (
+                      <div
+                        className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: appColor }}
+                      >
+                        <Check size={9} className="text-white" />
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -1,0 +1,429 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "saved": "Saved correctly",
+    "noChanges": "No changes",
+    "error": "Something went wrong",
+    "confirm": "Confirm",
+    "back": "Back",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "optional": "Optional",
+    "help": "Help",
+    "resume": "Resume",
+    "pause": "Pause",
+    "finish": "Finish",
+    "moreInfo": "More info"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "shifts": "Shifts",
+    "works": "Works",
+    "statistics": "Statistics",
+    "settings": "Settings",
+    "integrations": "Integrations",
+    "calendar": "Calendar",
+    "tagline": "Your work and shift manager",
+    "newShift": "New Shift",
+    "newWork": "New Work",
+    "shiftsDisabledTooltip": "First create a job to add shifts",
+    "paused": "Paused",
+    "liveMode": "Live Mode"
+  },
+  "premium": {
+    "unlockAll": "Unlock all features",
+    "upgrade": "Upgrade to Premium",
+    "badge": "Premium"
+  },
+  "dashboard": {
+    "welcome": {
+      "greeting_morning": "Good morning,",
+      "greeting_afternoon": "Good afternoon,",
+      "greeting_evening": "Good evening,",
+      "summary": "Here is a summary of your activity",
+      "totalEarned": "Total earned",
+      "disclaimer": "Calculations are based on your preferences",
+      "disclaimerDesc": "Sometimes payroll includes other factors that may cause slight differences. This system helps you track your earnings day by day!"
+    },
+    "liveMode": {
+      "title": "Live Mode",
+      "newFeature": "New Feature",
+      "liveActive": "Live Active",
+      "paused": "Paused",
+      "liveShift": "Live Shift",
+      "resume": "Resume",
+      "pause": "Pause",
+      "finish": "Finish",
+      "moreInfo": "More info",
+      "addWork": "Add Work",
+      "needsWork": "To use Live Mode, you need to add a traditional work to your profile first.",
+      "deliveryComingSoon": "Delivery works support coming soon",
+      "description": "Full control of your shifts in real time. Clock in, pause, and monitor your earnings instantly.",
+      "freeTrial": "15-day free trial",
+      "unlimitedSessions": "Unlimited Sessions",
+      "sessionsThisMonth": "sessions this month",
+      "tryNow": "Try now",
+      "startSession": "Start session"
+    },
+    "favoriteWorks": {
+      "title": "Favorite works",
+      "empty": "No data yet",
+      "viewMore": "View more",
+      "shiftLabel": "shifts",
+      "totalLabel": "Total from top"
+    },
+    "quickStats": {
+      "works": "Works",
+      "shifts": "Shifts",
+      "hours": "Hours",
+      "average": "Average",
+      "active": "active",
+      "completed": "completed",
+      "worked": "worked",
+      "perHour": "Per Hour",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "currentWeek": "Current Week",
+      "currentMonth": "Current Month",
+      "weekEarnings": "Week Earn."
+    },
+    "export": {
+      "title": "Export Report",
+      "description": "Download a complete summary of your statistics, shifts, and activity"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Customize your experience and manage your account",
+    "customization": {
+      "title": "Customization",
+      "language": "Language",
+      "theme": "Theme",
+      "lightTheme": "Light",
+      "lightThemeDesc": "Bright and clean appearance",
+      "darkTheme": "Dark",
+      "darkThemeDesc": "Easy on the eyes at night",
+      "darkThemePremium": "Premium feature"
+    },
+    "smoko": {
+      "title": "Smoko (Breaks)",
+      "whatIsThis": "What is this?",
+      "description": "Configure the unpaid break time that will be automatically deducted from your shifts.",
+      "enableDeduction": "Enable deduction",
+      "autoDeduct": "Automatically deduct break time",
+      "breakDuration": "Break duration",
+      "minutes": "min"
+    },
+    "preferences": {
+      "title": "Payment and Tax Settings",
+      "taxLabel": "Tax / Deductions (%)",
+      "taxHelp": "What are these taxes?",
+      "taxHelpBtn": "Help",
+      "taxDefault": "Default value for all jobs without specific tax.",
+      "perJobRates": "Taxes per Job",
+      "hideRates": "Hide per-job rates",
+      "configureRates": "Configure per-job rates",
+      "saveTax": "Save tax settings",
+      "taxPopover": {
+        "description": "This percentage represents the retention that the company deducts from your gross payment before depositing it.",
+        "taxes": "Taxes (Tax)",
+        "socialSecurity": "Social Security",
+        "otherDeductions": "Other mandatory deductions",
+        "note": "* 15% is a common value for casual contracts, but you should verify your specific case."
+      }
+    },
+    "turnRange": {
+      "title": "Shift Ranges",
+      "description": "Configure the time ranges for automatic shift type detection. Existing shift tags will be updated automatically.",
+      "liveModeWarning": "Live Mode is active — changes cannot be saved during an active session.",
+      "dayShift": "Day Shift",
+      "afternoonShift": "Afternoon Shift",
+      "nightShift": "Night Shift",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "nightNote": "The night shift extends until the end of the day",
+      "save": "Save shift ranges",
+      "blockedByLive": "Blocked by Live Mode",
+      "validationDay": "The day shift start time must be earlier than the end time",
+      "validationAfternoon": "The afternoon shift start time must be earlier than the end time",
+      "validationAfternoonAfterDay": "The afternoon shift must start after or at the same time the day shift ends",
+      "validationNightAfterAfternoon": "The night shift must start after or at the same time the afternoon shift ends"
+    },
+    "holidays": {
+      "title": "Location",
+      "description": "Select your location to automatically detect public holidays and activate Working Holiday Visa day tracking (Australia).",
+      "detectingLocation": "Detecting location...",
+      "useLocation": "Use my location",
+      "country": "Country",
+      "stateProvince": "State / Province",
+      "locationDenied": "Location access denied. Please allow location in your browser settings and try again.",
+      "locationUnavailable": "Location unavailable. Please select your country manually.",
+      "locationTimeout": "Location request timed out. Please try again or select manually.",
+      "locationError": "Could not access location. Please select your country manually.",
+      "locationNotSupported": "Your location could not be matched to a supported country. Please select manually."
+    },
+    "delivery": {
+      "title": "Delivery Jobs",
+      "disable": "Disable delivery mode",
+      "enable": "Enable delivery mode",
+      "subtitle": "Allows registering delivery jobs with variable earnings.",
+      "disablePopoverTitle": "Consequences of disabling",
+      "enablePopoverTitle": "How it works?",
+      "whatIfDisable": "What happens if I disable it?",
+      "whatIfEnable": "What changes when I enable it?"
+    },
+    "profile": {
+      "title": "Profile",
+      "email": "Email",
+      "name": "Name"
+    },
+    "session": {
+      "title": "Account",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "clearEverything": "Clear Everything",
+      "deleteAccount": "Delete Account",
+      "logout": "Log out",
+      "managePremium": "Manage Premium",
+      "upgradePremium": "Upgrade to Premium"
+    }
+  },
+  "shifts": {
+    "title": "Shifts",
+    "subtitle": "Manage and visualize your registered shifts.",
+    "addShift": "Add Shift",
+    "editShift": "Edit Shift",
+    "deleteShift": "Delete Shift",
+    "noShifts": "No shifts yet",
+    "date": "Date",
+    "startTime": "Start time",
+    "endTime": "End time",
+    "work": "Work",
+    "notes": "Notes",
+    "smoko": "Smoko break",
+    "noMatchingFilters": "No shifts matching filters",
+    "noMatchingFiltersDesc": "Try adjusting the filters to see more results.",
+    "clearFilters": "Clear filters",
+    "upcoming": "Upcoming"
+  },
+  "works": {
+    "title": "Works",
+    "subtitle": "Manage your different jobs or employments.",
+    "addWork": "Add Work",
+    "editWork": "Edit Work",
+    "deleteWork": "Delete Work",
+    "noWorks": "No works yet",
+    "name": "Name",
+    "baseRate": "Base rate",
+    "color": "Color",
+    "premiumOnly": "Premium Only",
+    "premiumUpgrade": "Upgrade to add more works",
+    "addFirstJob": "Add your first job",
+    "createToTrack": "Create a work to start tracking",
+    "addAnotherJob": "Add another job",
+    "trackMultiple": "Track multiple jobs",
+    "traditionalSection": "Traditional Works",
+    "deliverySection": "Delivery Works",
+    "addDeliveryPlatform": "Add delivery platform",
+    "trackDeliveries": "Track your deliveries",
+    "addAnotherPlatform": "Add another platform",
+    "multipleApps": "Multiple apps supported",
+    "deleteWarning": "All shifts associated with this job will also be deleted.",
+    "deleteWarningDelivery": "All delivery shifts associated with this job will also be deleted."
+  },
+  "statistics": {
+    "title": "Statistics",
+    "subtitle": "Analyze your performance and projections",
+    "totalEarned": "Total earned",
+    "totalHours": "Total hours",
+    "averagePerHour": "Average per hour",
+    "shiftsCount": "Shifts",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "daily": "Daily",
+    "deliveryTitle": "Delivery Statistics",
+    "deliverySubtitle": "Analyze your delivery earnings and efficiency"
+  },
+  "stats": {
+    "weeklyComparison": {
+      "title": "Weekly Comparison",
+      "vsLastWeek": "vs last week",
+      "earnings": "Earnings",
+      "hoursWorked": "Hours worked",
+      "avgPerHour": "Avg per hour",
+      "shifts": "Shifts",
+      "daysWorked": "Days worked",
+      "shiftsUnit": "shifts",
+      "daysUnit": "days",
+      "thisWeek": "This week",
+      "lastWeek": "Last week",
+      "tapHint": "Tap any row to see current vs last week"
+    },
+    "dailyDistribution": {
+      "title": "Weekly Distribution",
+      "empty": "No earnings data this week.",
+      "activeDays": "active days",
+      "total": "Total:"
+    },
+    "mostProductiveDay": {
+      "title": "Most Productive Day",
+      "empty": "Not enough data this week.",
+      "hours": "Hours",
+      "shifts": "Shifts"
+    },
+    "weeklyStatsGrid": {
+      "totalEarned": "Total earned",
+      "hoursWorked": "Hours worked",
+      "totalShifts": "Total shifts",
+      "daysWorked": "Days worked"
+    },
+    "progressBar": {
+      "title": "Weekly Progress",
+      "remaining": "Remaining",
+      "earnings": "Earnings",
+      "goal": "Goal",
+      "hoursWorked": "hours worked",
+      "hourGoal": "h goal",
+      "milestoneOverachiever": "Overachiever!",
+      "milestoneGoal": "Goal reached!",
+      "milestoneAlmost": "Almost there!",
+      "celebrationIncredible": "Incredible work!",
+      "celebrationExceeded": "Exceeded your goal!",
+      "celebrationAchieved": "Weekly goal achieved!"
+    },
+    "smokoCard": {
+      "title": "Break Settings",
+      "status": "Status",
+      "time": "Time",
+      "week": "Week",
+      "tapHint": "Tap to configure"
+    },
+    "shiftTypeStats": {
+      "emptyText": "Add shifts to see this statistic."
+    },
+    "charts": {
+      "noData": "No data for charts",
+      "earnings": "Earnings",
+      "hours": "Hours",
+      "evolution": {
+        "title": "Weekly Evolution",
+        "subtitle": "Earnings progress"
+      },
+      "byWorks": {
+        "title": "By Works",
+        "subtitle": "Earnings distribution"
+      },
+      "daily": {
+        "title": "Daily Hours",
+        "subtitle": "Weekly distribution"
+      }
+    },
+    "days": {
+      "Monday": "Mon",
+      "Tuesday": "Tue",
+      "Wednesday": "Wed",
+      "Thursday": "Thu",
+      "Friday": "Fri",
+      "Saturday": "Sat",
+      "Sunday": "Sun"
+    },
+    "daysFull": {
+      "Monday": "Monday",
+      "Tuesday": "Tuesday",
+      "Wednesday": "Wednesday",
+      "Thursday": "Thursday",
+      "Friday": "Friday",
+      "Saturday": "Saturday",
+      "Sunday": "Sunday"
+    },
+    "deliverySummary": {
+      "title": "Delivery Summary",
+      "totalEarnings": "Total Earnings:",
+      "totalShifts": "Total Shifts",
+      "totalHours": "Total Hours",
+      "totalOrders": "Total Orders",
+      "totalTips": "Total Tips",
+      "netEarnings": "Net Earnings"
+    },
+    "platformComparison": {
+      "title": "Platform Comparison",
+      "mostOrders": "Most orders",
+      "totalOrders": "Total orders",
+      "bestAvgHour": "Best avg/hour",
+      "overallAvg": "Overall avg",
+      "mostTips": "Most tips",
+      "totalTips": "Total tips",
+      "mostProfitable": "Most profitable",
+      "totalEarned": "Total earned",
+      "noData": "No platform data",
+      "noDataDesc": "Data will appear when registering shifts",
+      "shifts": "shifts",
+      "perOrder": "/order",
+      "orders": "orders",
+      "perHour": "/hour",
+      "tips": "tips",
+      "earnings": "earnings",
+      "tabEarnings": "Earnings",
+      "tabOrders": "Orders",
+      "tabPerHour": "Per hour",
+      "tabTips": "Tips"
+    },
+    "vehicleEfficiency": {
+      "title": "Vehicle Efficiency",
+      "costPerKm": "Cost per KM",
+      "efficiency": "Efficiency",
+      "kmPerDollar": "km/$",
+      "totalSpent": "Total Spent"
+    },
+    "fuelEfficiency": {
+      "title": "Fuel Control",
+      "highConsumption": "High consumption",
+      "totalFuel": "Total fuel",
+      "percentEarnings": "% earnings",
+      "kmPerDollar": "km / $",
+      "emptyText": "Log fuel expenses in your shifts to see the chart",
+      "emptyMin": "Add at least 2 shifts with fuel data to display the chart",
+      "earnings": "Earnings",
+      "earningsDollar": "Earnings ($)",
+      "fuel": "Fuel",
+      "fuelDollar": "Fuel ($)",
+      "fuelEarnings": "fuel/earnings"
+    },
+    "deliveryHourlyAnalysis": {
+      "title": "Hourly Profitability",
+      "premiumDesc": "Unlock Premium to see which hours and days earn you the most.",
+      "unlockPremium": "Unlock Premium",
+      "noData": "No data this week",
+      "addShift": "Add shift",
+      "bestMoment": "Best moment",
+      "perHour": "/hour",
+      "profitability": "Profitability:",
+      "perH": "/h",
+      "totalEarned": "Total Earned:",
+      "hours": "Hours:",
+      "noDataRecorded": "No data recorded",
+      "lessEarnings": "Less $",
+      "moreEarnings": "More $",
+      "insights": {
+        "title": "Your Work Pattern Analysis",
+        "recommendation": "Based on your recorded shifts, {{bestDay}} during the {{bestPeriod}} is your most profitable window — you average {{bestRate}}/h at your peak. With {{activeDays}} active day(s) of data, the pattern is clear: concentrating more hours during this window will have the greatest impact on your overall earnings. Keep tracking shifts to refine this analysis further.",
+        "avoidNote": "On the flip side, {{worstDay}} has been your least productive day so far — consider whether reallocating those hours could increase your total take-home pay.",
+        "activeDays": "Analysis based on {{count}} active day(s) · {{hours}}h of total recorded shifts",
+        "periods": {
+          "morning": "morning (6–11h)",
+          "afternoon": "afternoon (12–15h)",
+          "evening": "evening (16–19h)",
+          "night": "night (20–5h)"
+        }
+      }
+    }
+  }
+}

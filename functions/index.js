@@ -3,6 +3,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const { Timestamp, FieldValue } = require('firebase-admin/firestore');
+const emailService = require('./emailService');
 const { google } = require('googleapis');
 const allowedOrigins = [
   'https://gestionturnos-7ec99.web.app',
@@ -1400,5 +1401,160 @@ exports.cleanExpiredShares = functions.https.onRequest(async (req, res) => {
   } catch (error) {
     console.error('Cleanup error:', error.message);
     res.status(500).json({ error: 'Cleanup failed' });
+  }
+});
+
+
+// ============================================
+// CUSTOM AUTH EMAILS — powered by Resend
+// ============================================
+// Firebase blocks editing certain email templates (spam prevention).
+// These callable functions generate the official Firebase action links
+// via Admin SDK and send branded HTML emails through Resend instead.
+
+const APP_URL = process.env.APP_URL || 'https://orary.app';
+
+/**
+ * sendVerificationEmail
+ * Called after user registration. Generates a Firebase email-verification
+ * link and delivers it using the branded HTML template.
+ */
+exports.sendVerificationEmail = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in.');
+  }
+
+  const uid = context.auth.uid;
+
+  const allowed = await checkRateLimit(uid, 'sendVerificationEmail', 3, 300000); // 3 per 5 min
+  if (!allowed) {
+    throw new functions.https.HttpsError('resource-exhausted', 'Too many requests. Please wait a few minutes.');
+  }
+
+  try {
+    const user = await admin.auth().getUser(uid);
+    if (user.emailVerified) {
+      return { success: true, alreadyVerified: true };
+    }
+
+    const link = await admin.auth().generateEmailVerificationLink(user.email, {
+      url: `${APP_URL}/dashboard`,
+    });
+
+    await emailService.sendVerificationEmail({
+      email: user.email,
+      displayName: user.displayName || '',
+      link,
+    });
+
+    return { success: true };
+  } catch (err) {
+    console.error('sendVerificationEmail error:', err);
+    throw new functions.https.HttpsError('internal', 'Failed to send verification email.');
+  }
+});
+
+/**
+ * sendPasswordResetEmailCustom
+ * Replaces Firebase's built-in password reset email with the branded template.
+ * Can be called without authentication (user forgot their password).
+ */
+exports.sendPasswordResetEmailCustom = functions.https.onCall(async (data) => {
+  const email = (data.email || '').trim().toLowerCase();
+  if (!email) {
+    throw new functions.https.HttpsError('invalid-argument', 'Email is required.');
+  }
+
+  // Rate-limit by email hash to prevent enumeration attacks
+  const crypto = require('crypto');
+  const emailHash = crypto.createHash('sha256').update(email).digest('hex').slice(0, 16);
+  const allowed = await checkRateLimit(emailHash, 'passwordReset', 3, 300000); // 3 per 5 min
+  if (!allowed) {
+    throw new functions.https.HttpsError('resource-exhausted', 'Too many requests. Please wait a few minutes.');
+  }
+
+  try {
+    const link = await admin.auth().generatePasswordResetLink(email, {
+      url: `${APP_URL}/login`,
+    });
+
+    await emailService.sendPasswordResetEmail({ email, link });
+
+    return { success: true };
+  } catch (err) {
+    // Don't reveal whether the email exists — always return success
+    console.error('sendPasswordResetEmailCustom error:', err.code, err.message);
+    return { success: true };
+  }
+});
+
+/**
+ * sendEmailChangeNotification
+ * Notifies the OLD email address when it is changed.
+ * Should be called right before calling updateEmail() on the client.
+ */
+exports.sendEmailChangeNotification = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in.');
+  }
+
+  const uid = context.auth.uid;
+  const newEmail = (data.newEmail || '').trim().toLowerCase();
+  if (!newEmail) {
+    throw new functions.https.HttpsError('invalid-argument', 'newEmail is required.');
+  }
+
+  const allowed = await checkRateLimit(uid, 'emailChange', 2, 600000); // 2 per 10 min
+  if (!allowed) {
+    throw new functions.https.HttpsError('resource-exhausted', 'Too many requests.');
+  }
+
+  try {
+    const user = await admin.auth().getUser(uid);
+    const oldEmail = user.email;
+
+    // Generate a "revert" link pointing back to the old email (sign-in page)
+    const link = `${APP_URL}/login`;
+
+    await emailService.sendEmailChangeNotification({
+      oldEmail,
+      newEmail,
+      displayName: user.displayName || '',
+      link,
+    });
+
+    return { success: true };
+  } catch (err) {
+    console.error('sendEmailChangeNotification error:', err);
+    throw new functions.https.HttpsError('internal', 'Failed to send email change notification.');
+  }
+});
+
+/**
+ * sendMFAEnrollmentNotification
+ * Confirms MFA enrollment to the user's email.
+ */
+exports.sendMFAEnrollmentNotification = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in.');
+  }
+
+  const uid = context.auth.uid;
+  const allowed = await checkRateLimit(uid, 'mfaNotification', 2, 3600000); // 2 per hour
+  if (!allowed) {
+    throw new functions.https.HttpsError('resource-exhausted', 'Too many requests.');
+  }
+
+  try {
+    const user = await admin.auth().getUser(uid);
+    await emailService.sendMFAEnrollmentNotification({
+      email: user.email,
+      displayName: user.displayName || '',
+    });
+
+    return { success: true };
+  } catch (err) {
+    console.error('sendMFAEnrollmentNotification error:', err);
+    throw new functions.https.HttpsError('internal', 'Failed to send MFA notification.');
   }
 });

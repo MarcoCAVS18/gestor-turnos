@@ -143,22 +143,7 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
 
           {/* Body */}
           <div className="px-6 pb-6 space-y-4">
-            {/* Warning if already active */}
-            {isActive && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-start gap-3 p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20"
-              >
-                <AlertCircle size={20} className="text-yellow-300 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-medium text-white">Active session detected</p>
-                  <p className="text-sm text-white/70 mt-1">
-                    You already have a live session running. Please finish it first.
-                  </p>
-                </div>
-              </motion.div>
-            )}
+
 
             {/* Error display */}
             <AnimatePresence>

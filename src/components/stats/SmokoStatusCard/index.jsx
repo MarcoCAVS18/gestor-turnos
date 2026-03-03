@@ -1,6 +1,7 @@
 // src/components/stats/SmokoStatusCard/index.jsx
 
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Coffee, Clock, Hash } from 'lucide-react';
 import Card from '../../ui/Card';
 import LoadingSpinner from '../../ui/LoadingSpinner/LoadingSpinner';
@@ -13,6 +14,7 @@ const SmokoStatusCard = ({
   loading,
   className = ''
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const colors = useThemeColors();
 
@@ -46,14 +48,14 @@ const SmokoStatusCard = ({
       {/* Header with title */}
       <div className="flex items-center gap-2 mb-4">
         <Coffee size={20} style={{ color: colors.primary }} />
-        <h3 className="text-lg font-semibold">Break Settings</h3>
+        <h3 className="text-lg font-semibold">{t('stats.smokoCard.title')}</h3>
       </div>
 
       {/* Horizontal stats row */}
       <div className="flex items-center justify-between gap-2 sm:gap-4">
         {/* Status */}
         <div className="flex-1 text-center min-w-0">
-          <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide mb-1 whitespace-nowrap">Status</p>
+          <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide mb-1 whitespace-nowrap">{t('stats.smokoCard.status')}</p>
           <p
             className="text-lg sm:text-2xl font-bold"
             style={{ color: smokoEnabled ? '#10B981' : '#9CA3AF' }}
@@ -69,7 +71,7 @@ const SmokoStatusCard = ({
         <div className="flex-1 text-center min-w-0">
           <div className="flex items-center justify-center gap-0.5 sm:gap-1 mb-1">
             <Clock size={10} className="text-gray-500 flex-shrink-0 sm:w-3 sm:h-3" />
-            <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide whitespace-nowrap">Time</p>
+            <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide whitespace-nowrap">{t('stats.smokoCard.time')}</p>
           </div>
           <p
             className="text-lg sm:text-2xl font-bold"
@@ -86,7 +88,7 @@ const SmokoStatusCard = ({
         <div className="flex-1 text-center min-w-0">
           <div className="flex items-center justify-center gap-0.5 sm:gap-1 mb-1">
             <Hash size={10} className="text-gray-500 flex-shrink-0 sm:w-3 sm:h-3" />
-            <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide whitespace-nowrap">Week</p>
+            <p className="text-[10px] sm:text-xs text-gray-500 uppercase tracking-wide whitespace-nowrap">{t('stats.smokoCard.week')}</p>
           </div>
           <p
             className="text-lg sm:text-2xl font-bold"
@@ -98,7 +100,7 @@ const SmokoStatusCard = ({
       </div>
 
       {/* Tap to edit hint */}
-      <p className="text-xs text-gray-400 text-center mt-3">Tap to configure</p>
+      <p className="text-xs text-gray-400 text-center mt-3">{t('stats.smokoCard.tapHint')}</p>
     </Card>
   );
 };
