@@ -73,9 +73,15 @@ service cloud.firestore {
       allow delete: if request.auth != null && resource.data.sharedBy == request.auth.uid;
     }
 
-    // Feedback collection - own read/write only
+    // Feedback collection
+    // Anyone can read approved feedback (for the carousel)
+    // Users can read/write their own feedback
     match /feedback/{feedbackId} {
+      // Anyone (even unauthenticated) can read approved feedback
+      allow read: if resource.data.status == 'approved';
+      // Authenticated users can read their own feedback (any status)
       allow read: if request.auth != null && feedbackId == request.auth.uid;
+      // Users can only create/update their own feedback
       allow create, update: if request.auth != null && feedbackId == request.auth.uid;
       allow delete: if false;
     }

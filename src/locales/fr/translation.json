@@ -1104,6 +1104,12 @@
         "monthsAgo": "mo",
         "yearsAgo": "a"
       }
+    },
+    "footer": {
+      "version": "Version 3.0.1",
+      "developed": "Développé avec",
+      "by": "par Marqui",
+      "copyright": "© 2026 Orary. Tous droits réservés."
     }
   },
   "alerts": {

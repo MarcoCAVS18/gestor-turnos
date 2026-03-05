@@ -51,10 +51,13 @@ const FeedbackSection = ({ colors }) => {
     let cancelled = false;
     const init = async () => {
       try {
+        console.log('Current user UID:', currentUser?.uid);
         const [fetchedReviews, existingFeedback] = await Promise.all([
           getFeedbackReviews(),
           currentUser ? getUserFeedback(currentUser.uid) : null,
         ]);
+        console.log('Fetched reviews:', fetchedReviews);
+        console.log('Existing feedback:', existingFeedback);
         if (cancelled) return;
         setReviews(fetchedReviews);
         if (existingFeedback) {
@@ -66,7 +69,8 @@ const FeedbackSection = ({ colors }) => {
         } else {
           setView('form');
         }
-      } catch {
+      } catch (error) {
+        console.error('Error loading feedback:', error);
         if (!cancelled) {
           setReviews([]);
           setView('form');
