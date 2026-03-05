@@ -237,7 +237,7 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20"
+                className="p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 select-none"
               >
                 <p className="text-sm text-white/60 mb-3">{t('common.hourlyRate')}:</p>
                 <div className="grid grid-cols-3 gap-2">

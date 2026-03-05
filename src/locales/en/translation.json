@@ -100,6 +100,9 @@
   },
   "premium": {
     "title": "Premium",
+    "badge": "Premium",
+    "unlockAll": "Unlock all features",
+    "upgrade": "Upgrade",
     "unlockFeatures": "Unlock unlimited access to all features",
     "manageSubscription": "Manage your subscription",
     "account": "Account",
@@ -390,11 +393,20 @@
     "notifications": {
       "title": "Browser Notifications",
       "description": "Receive notifications directly in your browser when important events occur.",
+      "enable": "Enable notifications",
       "enableNotifications": "Enable notifications",
       "blockedByBrowser": "Blocked by browser",
       "blockedHelp": "Notifications are blocked. Please enable them in your browser settings.",
       "enabledSuccess": "Notifications enabled!",
       "enabledSuccessDesc": "You will now receive shift reminders."
+    },
+    "reminders": {
+      "title": "Shift Reminders",
+      "description": "Get notified before your shifts start so you never miss one.",
+      "enable": "Enable reminders",
+      "remindMe": "Remind me",
+      "minutes": "{{count}} minutes before",
+      "hour": "1 hour before"
     },
     "shiftReminders": {
       "title": "Shift Reminders",
@@ -412,7 +424,13 @@
       "description": "Use Touch ID, Face ID, or Windows Hello to quickly unlock the app when you return.",
       "notSupported": "Not supported on this device or browser.",
       "activeOnDevice": "Active on this device",
-      "enableForDevice": "Enable for this device"
+      "enableForDevice": "Enable for this device",
+      "enable": "Enable biometric"
+    },
+    "mobile": {
+      "title": "Mobile App",
+      "description": "Get push notifications and manage your shifts on the go with our mobile app.",
+      "platforms": "iOS & Android"
     },
     "mobileApp": {
       "title": "Mobile App",
@@ -422,16 +440,48 @@
     "calendar": {
       "title": "Calendar Subscription",
       "description": "Subscribe to your shifts in any calendar app — Google Calendar, Apple Calendar, Outlook and more. Updates automatically every few hours.",
+      "subscribe": "Subscribe to Calendar",
       "subscribeButton": "Subscribe to Calendar",
       "opening": "Opening...",
       "copyLink": "Copy link (other apps)",
       "copied": "Copied!",
+      "error": "Could not generate calendar link. Please try again.",
       "errorGenerate": "Could not generate calendar link. Please try again.",
-      "noLoginRequired": "No login required · Works with any calendar app",
-      "howItWorks": "How calendar subscription works",
+      "note": "No login required · Works with any calendar app",
+      "noLoginRequired": "No login required · Works with any calendar app"
+    },
+    "howItWorks": {
+      "title": "How calendar subscription works",
       "step1": "Generate your personal link and add it to any calendar app",
       "step2": "Your shifts appear automatically and refresh every few hours",
       "step3": "The link is permanent — add it once and it always stays in sync"
+    },
+    "install": {
+      "title": "Install Orary",
+      "description": "Add it to your home screen — works like a native app, no App Store needed",
+      "iosTab": "iPhone / iPad",
+      "androidTab": "Android",
+      "share": "Share",
+      "menu": "Menu",
+      "addToHome": "Add to Home Screen",
+      "ios": {
+        "safariOnly": "<strong>Only works in Safari.</strong> If you're using Chrome or Firefox on iPhone, open this page in Safari first.",
+        "step1": "Open this page in <strong>Safari</strong>",
+        "step1Note": "If you're already in Safari, you're good to go!",
+        "step2": "Tap the <strong>Share</strong> button at the bottom of Safari",
+        "step3": "Find <strong>\"Add to Home Screen\"</strong> in the share menu",
+        "step3Warning": "<strong>Scroll down!</strong> This option is NOT at the top of the share sheet — it's hidden below. Keep swiping down through the icons row until you see the \"Add to Home Screen\" icon with a plus symbol.",
+        "step4": "Tap <strong>\"Add\"</strong> in the top-right corner",
+        "step4Note": "Orary will appear on your home screen — open it just like any app."
+      },
+      "android": {
+        "chromeOnly": "<strong>Works best in Chrome.</strong> Samsung Browser also supports it.",
+        "step1": "Tap the <strong>menu</strong> icon at the top-right of Chrome",
+        "step2": "Select <strong>\"Add to Home Screen\"</strong> or <strong>\"Install App\"</strong>",
+        "step2Note": "The label may vary depending on your Chrome version.",
+        "step3": "Tap <strong>\"Install\"</strong> to confirm",
+        "step3Note": "Orary will appear on your home screen and in your app drawer."
+      }
     },
     "pwa": {
       "title": "Install Orary",
@@ -550,7 +600,9 @@
     "features": {
       "trackShifts": "Track Shifts",
       "analytics": "Analytics",
-      "liveMode": "Live Mode"
+      "liveMode": "Live Mode",
+      "delivery": "Delivery Option",
+      "australia88": "88 days"
     },
     "getStartedFree": "Get Started Free",
     "signIn": "Sign in",
@@ -803,6 +855,42 @@
       "unknownWork": "Unknown work"
     }
   },
+  "settingsOnboarding": {
+    "title": "Welcome to Settings",
+    "continue": "Continue",
+    "welcomeMessage": "Let's set up a few things to personalize your experience and help you get the most out of Orary.",
+    "welcomeTitle": "Welcome to Orary",
+    "whyLocation": "To offer you the best experience, we need your location for:",
+    "location": {
+      "title": "Location access",
+      "feature1": "Detect public holidays in your country",
+      "feature2": "Show the correct local currency",
+      "feature3": "Working Holiday Visa features",
+      "benefit1": "Public holidays",
+      "benefit2": "Local currency",
+      "benefit3": "Working Holiday"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Stay informed about your shifts and goals.",
+      "feature1": "Shift reminders and alerts",
+      "feature2": "Weekly goal progress updates"
+    },
+    "privacyNote": "Your data is safe. We only use your location for these features.",
+    "privacyNotice": "Your data is safe with us. We only use your location for the features mentioned above and never share it with third parties.",
+    "recommendations": {
+      "title": "We recommend you customize:",
+      "customization": "Theme and colors",
+      "shiftSettings": "Shift schedules",
+      "personalization": "Personalization",
+      "shiftRanges": "Shift ranges",
+      "notifications": "Notifications",
+      "goals": "Set goals",
+      "deductions": "Deductions (TAX)",
+      "breaks": "Breaks"
+    },
+    "nativePromptsNote": "System permission prompts will appear after closing this window."
+  },
   "works": {
     "title": "Works",
     "subtitle": "Manage your different jobs or employments.",
@@ -857,6 +945,7 @@
     "totalEarned": "Total earned",
     "totalHours": "Total hours",
     "averagePerHour": "Average per hour",
+    "shiftTypes": "Shift types",
     "shiftsCount": "Shifts",
     "weekly": "Weekly",
     "monthly": "Monthly",

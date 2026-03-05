@@ -23,7 +23,7 @@ const LANGUAGES = [
   { code: 'fr', label: 'French', native: 'Français' },
 ];
 
-const CustomizationSection = ({ id, className }) => {
+const CustomizationSection = ({ className }) => {
   const { t } = useTranslation();
   const {
     primaryColor: appColor,
@@ -82,7 +82,7 @@ const CustomizationSection = ({ id, className }) => {
   );
 
   return (
-    <Card id={id} className={`flex flex-col${className ? ` ${className}` : ''}`}>
+    <Card className={`flex flex-col${className ? ` ${className}` : ''}`}>
       <div className="flex items-center mb-4">
         <Palette className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" />
         <h2 className="text-lg font-semibold dark:text-white">{t('settings.customization.title')}</h2>

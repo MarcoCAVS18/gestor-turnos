@@ -8,7 +8,7 @@ import Switch from '../../ui/Switch';
 import Flex from '../../ui/Flex';
 import logger from '../../../utils/logger';
 
-const DeliverySection = ({ id, onError, onSuccess, className }) => {
+const DeliverySection = ({ onError, onSuccess, className }) => {
   const { t } = useTranslation();
   const { deliveryEnabled, savePreferences } = useApp();
 
@@ -23,7 +23,7 @@ const DeliverySection = ({ id, onError, onSuccess, className }) => {
   };
 
   return (
-    <SettingsSection id={id} icon={Truck} title={t('settings.delivery.title')} className={className}>
+    <SettingsSection icon={Truck} title={t('settings.delivery.title')} className={className}>
       <div className="space-y-4">
         <Flex variant="between" className="items-start">
           <div className="flex-1 pr-4">

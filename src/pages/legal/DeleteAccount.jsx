@@ -77,7 +77,7 @@ const DeleteAccount = () => {
 
       // 4. Clear first-time experience flags so re-registration starts fresh
       localStorage.removeItem('orary_demo_seen');
-      localStorage.removeItem('orary_onboarding_done');
+      localStorage.removeItem('orary_settings_onboarding_done');
       // 5. Clear biometric credentials so the button doesn't appear on the login screen
       removeBiometricCredential(currentUser.uid);
 

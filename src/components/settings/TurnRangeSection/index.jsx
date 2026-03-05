@@ -45,7 +45,7 @@ const TurnRange = ({ title, icon: Icon, iconColor, children, colors }) => {
   );
 };
 
-const ShiftRangeSection = ({ id, onError, onSuccess, className }) => {
+const ShiftRangeSection = ({ onError, onSuccess, className }) => {
   const { t } = useTranslation();
   const { shiftRanges, savePreferences } = useApp();
   const colors = useThemeColors();
@@ -109,7 +109,7 @@ const ShiftRangeSection = ({ id, onError, onSuccess, className }) => {
   };
 
   return (
-    <SettingsSection id={id} icon={Clock} title={t('settings.turnRange.title')} className={className}>
+    <SettingsSection icon={Clock} title={t('settings.turnRange.title')} className={className}>
       <p className="text-sm text-gray-600 mb-4">
         {t('settings.turnRange.description')}
       </p>

@@ -70,15 +70,28 @@ const Integrations = () => {
   const [pwaTab, setPwaTab] = useState('ios');
 
 
-  // Check notification permission on mount
+  // Check notification permission on mount and when tab becomes visible
   useEffect(() => {
-    checkNotificationPermission().then(permission => {
+    const checkPermissions = async () => {
+      const permission = await checkNotificationPermission();
       setNotifications(prev => ({
         ...prev,
         permission,
         enabled: permission === 'granted'
       }));
-    });
+    };
+    
+    checkPermissions();
+    
+    // Re-check when tab becomes visible (after system prompts)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkPermissions();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   // Check biometric support and load device state on mount
@@ -425,7 +438,7 @@ const Integrations = () => {
         </IntegrationCard>
 
         {/* How it works */}
-        <Card padding="lg" variant="ghost" className="bg-gray-50 border border-gray-200">
+        <Card padding="lg" variant="transparent" className="bg-gray-50 border border-gray-200">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
               <Link2 size={16} className="text-blue-600" />

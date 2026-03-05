@@ -1,7 +1,6 @@
 // src/pages/Settings.jsx
 
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import { Settings as SettingsIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../components/layout/PageHeader';
@@ -18,34 +17,37 @@ import DeliveryPlatformsSection from '../components/settings/DeliveryPlatformsSe
 import SmokoSection from '../components/settings/SmokoSection';
 import HolidaySettingsSection from '../components/settings/HolidaySettingsSection';
 import IntegrationsBanner from '../components/settings/IntegrationsBanner';
-import OnboardingSpotlight from '../components/onboarding/OnboardingSpotlight';
+import SettingsOnboardingModal from '../components/modals/SettingsOnboardingModal';
+
 import { useApp } from '../contexts/AppContext';
+import { detectUserLocation } from '../services/holidayService';
+import { requestNotificationPermission } from '../services/native/nativeNotifications';
 
 const Settings = () => {
   const { t } = useTranslation();
   const { deliveryEnabled } = useApp();
-  const location = useLocation();
+  const [permissionsUpdated, setPermissionsUpdated] = useState(0);
 
-  // Scroll to section based on URL hash (with retry for late renders)
-  useEffect(() => {
-    if (!location.hash) return;
-    const elementId = location.hash.replace('#', '');
-
-    const scrollToElement = () => {
-      const element = document.getElementById(elementId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return true;
-      }
-      return false;
-    };
-
-    // Try immediately, then retry once after the page has rendered
-    if (!scrollToElement()) {
-      const timer = setTimeout(scrollToElement, 350);
-      return () => clearTimeout(timer);
+  // Handle native permission requests after onboarding modal closes
+  const handleOnboardingComplete = async () => {
+    // Request location permission
+    try {
+      await detectUserLocation();
+    } catch {
+      // User denied or error - silent fail, they can configure manually
     }
-  }, [location.hash]);
+    
+    // Request notification permission
+    try {
+      await requestNotificationPermission();
+    } catch {
+      // User denied or error - silent fail
+    }
+    
+    // Trigger re-render of components to reflect new permissions
+    setPermissionsUpdated(prev => prev + 1);
+  };
+
   return (
     <div className="px-4 py-6 space-y-6">
       <PageHeader
@@ -73,24 +75,18 @@ const Settings = () => {
                   className="flex-grow"
                 />
                 <HolidaySettingsSection
-                  id="settings-holiday"
+                  key={`holiday-${permissionsUpdated}`}
                   className="flex-grow"
                 />
                 <GoalsSection className="flex-grow" />
-                <PreferencesSection
-                  id="settings-preferences"
-                  className="flex-grow"
-                />
+                <PreferencesSection className="flex-grow" />
               </div>
 
               {/* CONTAINER 2: Integrations Banner + Customization + Smoko + Session */}
               <div className="flex flex-col gap-6 h-full">
                 <IntegrationsBanner className="flex-grow" />
-                <CustomizationSection id="settings-customization" className="flex-grow" />
-                <SmokoSection
-                  id="settings-smoko"
-                  className="flex-grow"
-                />
+                <CustomizationSection className="flex-grow" />
+                <SmokoSection className="flex-grow" />
                 <SessionSection
                   className="flex-grow"
                 />
@@ -98,17 +94,11 @@ const Settings = () => {
 
               {/* CONTAINER 3: Delivery + Platforms + Shift Range */}
               <div className="flex flex-col gap-6 h-full">
-                <DeliverySection
-                  id="settings-delivery"
-                  className="flex-grow"
-                />
+                <DeliverySection className="flex-grow" />
                 <div className={!deliveryEnabled ? 'opacity-40 pointer-events-none' : ''}>
                   <DeliveryPlatformsSection className="flex-grow" />
                 </div>
-                <TurnRangeSection
-                  id="settings-turnrange"
-                  className="flex-grow"
-                />
+                <TurnRangeSection className="flex-grow" />
               </div>
             </div>
 
@@ -123,23 +113,23 @@ const Settings = () => {
             <ProfileSection
             />
 
-            <HolidaySettingsSection id="settings-holiday" />
+            <HolidaySettingsSection key={`holiday-${permissionsUpdated}`} />
 
-            <CustomizationSection id="settings-customization" />
+            <CustomizationSection />
 
-            <DeliverySection id="settings-delivery" />
+            <DeliverySection />
 
             <div className={!deliveryEnabled ? 'opacity-40 pointer-events-none' : ''}>
               <DeliveryPlatformsSection />
             </div>
 
-            <SmokoSection id="settings-smoko" />
+            <SmokoSection />
 
             <GoalsSection />
 
-            <TurnRangeSection id="settings-turnrange" />
+            <TurnRangeSection />
 
-            <PreferencesSection id="settings-preferences" />
+            <PreferencesSection />
 
             <SessionSection
             />
@@ -149,8 +139,8 @@ const Settings = () => {
 
       <FooterSection />
 
-      {/* Onboarding spotlight wizard — renders null when inactive */}
-      <OnboardingSpotlight />
+      {/* Settings onboarding modal - shown once after demos */}
+      <SettingsOnboardingModal onComplete={handleOnboardingComplete} />
     </div>
   );
 };

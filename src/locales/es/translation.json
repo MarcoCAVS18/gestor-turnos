@@ -98,6 +98,9 @@
   },
   "premium": {
     "title": "Premium",
+    "badge": "Premium",
+    "unlockAll": "Desbloquear todas las funciones",
+    "upgrade": "Mejorar plan",
     "unlockFeatures": "Desbloquea acceso ilimitado a todas las funciones",
     "manageSubscription": "Gestiona tu suscripción",
     "account": "Cuenta",
@@ -280,7 +283,9 @@
     "features": {
       "trackShifts": "Registrar Turnos",
       "analytics": "Analíticas",
-      "liveMode": "Modo Live"
+      "liveMode": "Modo Live",
+      "delivery": "Opción Delivery",
+      "australia88": "88 días"
     },
     "getStartedFree": "Comenzar Gratis",
     "signIn": "Iniciar sesión",
@@ -321,7 +326,8 @@
       "title": "Inicio Biométrico",
       "description": "Usa Touch ID, Face ID o Windows Hello para desbloquear la app rápidamente cuando vuelvas.",
       "active": "Activo en este dispositivo",
-      "enable": "Activar para este dispositivo",
+      "enable": "Activar biométrico",
+      "enableForDevice": "Activar para este dispositivo",
       "notSupported": "No compatible con este dispositivo o navegador."
     },
     "mobile": {
@@ -669,7 +675,7 @@
       "title": "Cuenta",
       "terms": "Términos de Servicio",
       "privacy": "Política de Privacidad",
-      "clearEverything": "Borrar Todo",
+      "clearEverything": "Borrarlo Todo",
       "deleteAccount": "Eliminar Cuenta",
       "logout": "Cerrar sesión",
       "managePremium": "Gestionar Premium",
@@ -752,6 +758,42 @@
     "weeklySummary": "Resumen semanal",
     "shifts": "turnos",
     "hours": "horas"
+  },
+  "settingsOnboarding": {
+    "title": "Bienvenido a Ajustes",
+    "continue": "Continuar",
+    "welcomeMessage": "Configuremos algunas cosas para personalizar tu experiencia y ayudarte a aprovechar al máximo Orary.",
+    "welcomeTitle": "Bienvenido a Orary",
+    "whyLocation": "Para ofrecerte la mejor experiencia, necesitamos tu ubicación para:",
+    "location": {
+      "title": "Acceso a ubicación",
+      "feature1": "Detectar días festivos en tu país",
+      "feature2": "Mostrar la moneda local correcta",
+      "feature3": "Funciones de Working Holiday Visa",
+      "benefit1": "Días festivos",
+      "benefit2": "Tu moneda local",
+      "benefit3": "Working Holiday"
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "description": "Mantente informado sobre tus turnos y objetivos.",
+      "feature1": "Recordatorios y alertas de turnos",
+      "feature2": "Actualizaciones de progreso semanal"
+    },
+    "privacyNote": "Tus datos están seguros. Solo usamos tu ubicación para estas funciones.",
+    "privacyNotice": "Tus datos están seguros con nosotros. Solo usamos tu ubicación para las funciones mencionadas y nunca la compartimos con terceros.",
+    "recommendations": {
+      "title": "Te recomendamos:",
+      "customization": "Tema y colores",
+      "shiftSettings": "Horarios de turnos",
+      "personalization": "Personalización",
+      "shiftRanges": "Rangos de turnos",
+      "notifications": "Notificaciones",
+      "goals": "Establecer metas",
+      "deductions": "Deducciones (TAX)",
+      "breaks": "Descansos"
+    },
+    "nativePromptsNote": "Los permisos del sistema aparecerán después de cerrar esta ventana."
   },
   "works": {
     "title": "Trabajos",
@@ -1383,7 +1425,7 @@
     "helpMessage": "Al agregar este trabajo, se copiará a tu cuenta con todas sus configuraciones."
   },
   "clearEverything": {
-    "title": "Borrar Todo",
+    "title": "Borrarlo Todo",
     "subtitle": "Comenzar de cero manteniendo tu cuenta.",
     "intro": "Si quieres comenzar de nuevo con <strong>Orary</strong> sin eliminar tu cuenta, puedes borrar todos tus datos de trabajo y turnos manteniendo tus credenciales de inicio de sesión.",
     "whatWillBeDeleted": {

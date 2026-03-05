@@ -15,7 +15,7 @@ import {
 } from '../../../services/holidayService';
 import logger from '../../../utils/logger';
 
-const HolidaySettingsSection = ({ id, onError, onSuccess, className }) => {
+const HolidaySettingsSection = ({ onError, onSuccess, className }) => {
   const { t } = useTranslation();
   const {
     holidayCountry,
@@ -149,7 +149,7 @@ const HolidaySettingsSection = ({ id, onError, onSuccess, className }) => {
   };
 
   return (
-    <SettingsSection id={id} icon={MapPin} title={t('settings.holidays.title')} className={className}>
+    <SettingsSection icon={MapPin} title={t('settings.holidays.title')} className={className}>
       <div className="space-y-3">
 
         <p className="text-xs text-gray-500 dark:text-gray-400">

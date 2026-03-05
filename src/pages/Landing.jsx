@@ -7,7 +7,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
-import { Clock, TrendingUp, Zap, ArrowRight } from 'lucide-react';
+import { Clock, TrendingUp, Zap, ArrowRight, Bike } from 'lucide-react';
+import New from '../components/ui/New';
 
 const PINK = '#EC4899';
 
@@ -17,10 +18,15 @@ const Landing = () => {
   const navigate = useNavigate();
   const [videoReady, setVideoReady] = useState(false);
 
-  const features = [
+  const topFeatures = [
     { icon: Clock, label: t('landing.features.trackShifts'), color: '#F59E0B' },
     { icon: TrendingUp, label: t('landing.features.analytics'), color: '#6366F1' },
     { icon: Zap, label: t('landing.features.liveMode'), color: PINK },
+  ];
+
+  const bottomFeatures = [
+    { icon: Bike, label: t('landing.features.delivery'), color: '#10B981' },
+    { icon: () => <span className="text-base">🇦🇺</span>, label: t('landing.features.australia88'), color: '#FFD700', isEmoji: true, isNew: true },
   ];
 
   useEffect(() => {
@@ -78,23 +84,49 @@ const Landing = () => {
           </p>
         </motion.div>
 
-        {/* Feature pills */}
+        {/* Feature pills - Two rows */}
         <motion.div
-          className="flex flex-wrap justify-center gap-2 mb-5 flex-shrink-0"
+          className="flex flex-col items-center gap-2 mb-5 flex-shrink-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
-          {features.map((f) => (
-            <div
-              key={f.label}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium text-white/90"
-              style={{ backgroundColor: `${f.color}20`, borderColor: `${f.color}40` }}
-            >
-              <f.icon size={12} style={{ color: f.color }} />
-              {f.label}
-            </div>
-          ))}
+          {/* Top row */}
+          <div className="flex flex-wrap justify-center gap-2">
+            {topFeatures.map((f) => (
+              <div
+                key={f.label}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium text-white/90"
+                style={{ backgroundColor: `${f.color}20`, borderColor: `${f.color}40` }}
+              >
+                <f.icon size={12} style={{ color: f.color }} />
+                {f.label}
+              </div>
+            ))}
+          </div>
+          
+          {/* Bottom row */}
+          <div className="flex flex-wrap justify-center gap-2">
+            {bottomFeatures.map((f) => (
+              <div
+                key={f.label}
+                className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium text-white/90"
+                style={{ backgroundColor: `${f.color}20`, borderColor: `${f.color}40` }}
+              >
+                {f.isEmoji ? (
+                  <f.icon />
+                ) : (
+                  <f.icon size={12} style={{ color: f.color }} />
+                )}
+                {f.label}
+                {f.isNew && (
+                  <div className="absolute -top-1.5 -right-1.5 transform rotate-12">
+                    <New size="xs" animated={false}>NEW</New>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </motion.div>
 
         {/* CTA card — same shape/shadow as the AuthLayout form card */}

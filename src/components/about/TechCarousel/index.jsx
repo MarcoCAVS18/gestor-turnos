@@ -15,6 +15,8 @@ const technologies = [
   { name: 'XLSX', icon: '/assets/SVG/about/XLSX.svg' },
   { name: 'Lucide Icons', icon: '/assets/SVG/about/LucideIcons.svg' },
   { name: 'React Router', icon: '/assets/SVG/about/ReactRouter.svg' },
+  { name: 'i18n', icon: '/assets/SVG/about/i18n.svg' },
+  { name: 'Resend', icon: '/assets/SVG/about/Resend.svg' },
 ];
 
 const ITEM_SIZE = 80; // w-20 h-20
