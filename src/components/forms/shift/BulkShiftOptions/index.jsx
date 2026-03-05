@@ -2,12 +2,14 @@
 // Simple toggle component for enabling bulk shift creation
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Repeat, Sparkles } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import Switch from '../../../ui/Switch';
 import New from '../../../ui/New';
 
 const BulkShiftOptions = ({ isEnabled, onToggle }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   return (
@@ -24,12 +26,12 @@ const BulkShiftOptions = ({ isEnabled, onToggle }) => {
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-semibold" style={{ color: colors.text }}>
-              Create Multiple Shifts at Once
+              {t('forms.shift.bulk.newFeatureTitle')}
             </span>
             <New size="xs">NEW</New>
           </div>
           <p className="text-xs" style={{ color: colors.textSecondary }}>
-            Save time by creating shifts for multiple days in a single step. Select your pattern in the next screen.
+            {t('forms.shift.bulk.newFeatureDescription')}
           </p>
         </div>
       </div>
@@ -39,7 +41,7 @@ const BulkShiftOptions = ({ isEnabled, onToggle }) => {
         <div className="flex items-center gap-2">
           <Repeat size={18} style={{ color: colors.primary }} />
           <span className="text-sm font-medium" style={{ color: colors.text }}>
-            Enable bulk creation
+            {t('forms.shift.bulk.enableBulkCreation')}
           </span>
         </div>
         <Switch

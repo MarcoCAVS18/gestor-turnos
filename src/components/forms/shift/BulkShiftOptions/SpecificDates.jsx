@@ -1,12 +1,14 @@
 // src/components/forms/shift/BulkShiftOptions/SpecificDates.jsx
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar, X, Plus } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { FormLabel } from '../../base/BaseForm';
 import Button from '../../../ui/Button';
 
 const SpecificDates = ({ selectedDates, onSelectedDatesChange, minDate }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const [dateInput, setDateInput] = useState('');
 
@@ -41,7 +43,7 @@ const SpecificDates = ({ selectedDates, onSelectedDatesChange, minDate }) => {
     <div className="space-y-4">
       {/* Date Picker */}
       <div>
-        <FormLabel htmlFor="date-picker">Select dates</FormLabel>
+        <FormLabel htmlFor="date-picker">{t('forms.shift.bulk.selectDates')}</FormLabel>
         <div className="flex gap-2 mt-2">
           <input
             id="date-picker"
@@ -70,20 +72,20 @@ const SpecificDates = ({ selectedDates, onSelectedDatesChange, minDate }) => {
             size="sm"
             themeColor={colors.primary}
           >
-            Add
+            {t('common.add')}
           </Button>
         </div>
         <p className="text-xs mt-1" style={{ color: colors.textSecondary }}>
-          Press Enter or click Add to include each date
+          {t('forms.shift.bulk.pressEnterHint')}
         </p>
       </div>
 
       {/* Selected Dates List */}
       {selectedDates.length > 0 ? (
         <div>
-          <FormLabel>Selected dates ({selectedDates.length})</FormLabel>
+          <FormLabel>{t('forms.shift.bulk.selectedDates', { count: selectedDates.length })}</FormLabel>
           <div className="mt-2 space-y-2 max-h-48 overflow-y-auto">
-            {selectedDates.map((date, index) => (
+            {selectedDates.map((date) => (
               <div
                 key={date}
                 className="flex items-center justify-between p-2 rounded-lg"
@@ -103,7 +105,7 @@ const SpecificDates = ({ selectedDates, onSelectedDatesChange, minDate }) => {
                   onClick={() => handleRemoveDate(date)}
                   className="p-1 rounded hover:opacity-70 transition-opacity"
                   style={{ color: colors.error }}
-                  title="Remove date"
+                  title={t('common.remove')}
                 >
                   <X size={16} />
                 </button>
@@ -121,10 +123,10 @@ const SpecificDates = ({ selectedDates, onSelectedDatesChange, minDate }) => {
         >
           <Calendar size={24} style={{ color: colors.textSecondary }} className="mx-auto mb-2 opacity-50" />
           <p className="text-sm" style={{ color: colors.textSecondary }}>
-            No dates selected yet
+            {t('forms.shift.bulk.noDatesSelected')}
           </p>
           <p className="text-xs mt-1" style={{ color: colors.textSecondary }}>
-            Add dates above to create shifts
+            {t('forms.shift.bulk.addDatesHint')}
           </p>
         </div>
       )}

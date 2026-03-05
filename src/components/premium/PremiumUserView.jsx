@@ -1,6 +1,7 @@
 // src/components/premium/PremiumUserView.jsx
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Crown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
@@ -17,6 +18,7 @@ import RecentInvoices from './RecentInvoices';
 import logger from '../../utils/logger';
 
 const PremiumUserView = () => {
+  const { t } = useTranslation();
   const { currentUser, profilePhotoURL } = useAuth();
   const { subscription, cancelSubscription } = usePremium();
   const [portalLoading, setPortalLoading] = useState(false);
@@ -25,9 +27,9 @@ const PremiumUserView = () => {
     if (!subscription?.startDate) return null;
     const start = subscription.startDate.toDate ? subscription.startDate.toDate() : new Date(subscription.startDate);
     const months = Math.floor((Date.now() - start.getTime()) / (30 * 24 * 60 * 60 * 1000));
-    if (months < 1) return 'Less than a month';
-    if (months === 1) return '1 month';
-    return `${months} months`;
+    if (months < 1) return t('premium.lessThanMonth');
+    if (months === 1) return t('premium.oneMonth');
+    return t('premium.months', { count: months });
   };
 
   const getTotalInvested = () => {
@@ -53,8 +55,8 @@ const PremiumUserView = () => {
   return (
     <div className="px-4 py-6 space-y-6">
       <PageHeader
-        title="Premium"
-        subtitle="Manage your subscription"
+        title={t('premium.title')}
+        subtitle={t('premium.manageSubscription')}
         icon={Crown}
       />
 

@@ -1,6 +1,7 @@
 // src/components/premium/ManageSubscriptionCard.jsx
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ExternalLink, AlertTriangle, XCircle, Settings, CreditCard, FileText, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeColors } from '../../hooks/useThemeColors';
@@ -10,6 +11,7 @@ import { formatDate } from './constants';
 import logger from '../../utils/logger';
 
 const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoading, onCancelSubscription }) => {
+  const { t } = useTranslation();
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
   const colors = useThemeColors();
@@ -30,15 +32,15 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
   const actions = [
     {
       icon: CreditCard,
-      label: 'Update Payment',
-      description: 'Change your card or payment method',
+      label: t('premium.updatePayment'),
+      description: t('premium.changePayment'),
       onClick: onOpenBillingPortal,
       loading: portalLoading,
     },
     {
       icon: FileText,
-      label: 'View Invoices',
-      description: 'Download receipts and invoices',
+      label: t('premium.viewInvoices'),
+      description: t('premium.downloadReceipts'),
       onClick: onOpenBillingPortal,
       loading: portalLoading,
     },
@@ -53,7 +55,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
         >
           <Settings size={16} style={{ color: colors.primary }} />
         </div>
-        <h2 className="text-lg font-semibold text-gray-900">Manage</h2>
+        <h2 className="text-lg font-semibold text-gray-900">{t('common.manage')}</h2>
       </div>
 
       <div className="space-y-2 flex-1">
@@ -97,7 +99,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
           <Button
             onClick={onOpenBillingPortal}
             loading={portalLoading}
-            loadingText="Opening..."
+            loadingText={t('premium.opening')}
             variant="outline"
             size="sm"
             className="w-full justify-center mt-1"
@@ -105,7 +107,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
             icon={ExternalLink}
             iconPosition="left"
           >
-            Open Billing Portal
+            {t('premium.openBillingPortal')}
           </Button>
         </motion.div>
       </div>
@@ -123,9 +125,9 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
             >
               <AlertTriangle size={16} className="text-amber-500 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-xs font-semibold text-amber-700 mb-0.5">Cancellation scheduled</p>
+                <p className="text-xs font-semibold text-amber-700 mb-0.5">{t('premium.cancellationScheduled')}</p>
                 <p className="text-xs text-amber-600">
-                  Access continues until {formatDate(subscription?.trialEnd || subscription?.expiryDate)}
+                  {t('premium.accessContinues', { date: formatDate(subscription?.trialEnd || subscription?.expiryDate) })}
                 </p>
               </div>
             </motion.div>
@@ -139,9 +141,11 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
             >
               <div className="flex items-start gap-2.5 p-3 rounded-xl bg-red-50 border border-red-200">
                 <AlertTriangle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
-                <p className="text-xs text-red-700">
-                  You'll keep access until <strong>{formatDate(subscription?.trialEnd || subscription?.expiryDate)}</strong>. After that, your plan reverts to Free.
-                </p>
+                <p className="text-xs text-red-700"
+                  dangerouslySetInnerHTML={{ 
+                    __html: t('premium.keepAccess', { date: formatDate(subscription?.trialEnd || subscription?.expiryDate) }) 
+                  }}
+                />
               </div>
               <div className="flex gap-2">
                 <Button
@@ -151,7 +155,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
                   className="flex-1 justify-center"
                   themeColor={colors.primary}
                 >
-                  Keep Plan
+                  {t('common.keepPlan')}
                 </Button>
                 <Button
                   onClick={handleCancelSubscription}
@@ -161,7 +165,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
                   icon={XCircle}
                   className="flex-1 justify-center bg-red-500 hover:bg-red-600 text-white"
                 >
-                  Confirm
+                  {t('common.confirm')}
                 </Button>
               </div>
             </motion.div>
@@ -174,7 +178,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
               onClick={() => setShowCancelConfirm(true)}
               className="w-full text-xs text-gray-400 hover:text-red-500 transition-colors py-1.5 rounded-lg hover:bg-red-50"
             >
-              Cancel subscription
+              {t('premium.cancelSubscription')}
             </motion.button>
           )}
         </AnimatePresence>

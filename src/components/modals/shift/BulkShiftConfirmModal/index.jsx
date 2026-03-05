@@ -1,6 +1,7 @@
 // src/components/modals/shift/BulkShiftConfirmModal/index.jsx
 
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar, AlertCircle, LayoutGrid, CalendarDays, CalendarRange } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { generateBulkShifts, detectDuplicates } from '../../../../services/bulkShiftService';
@@ -22,6 +23,7 @@ const BulkShiftConfirmModal = ({
   existingShifts = [],
   onConfirm
 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   // Tab state
@@ -151,9 +153,9 @@ const BulkShiftConfirmModal = ({
   };
 
   const tabs = [
-    { id: 'weekly', label: 'Weekly', icon: LayoutGrid },
-    { id: 'dates', label: 'Specific Dates', icon: CalendarDays },
-    { id: 'range', label: 'Date Range', icon: CalendarRange }
+    { id: 'weekly', label: t('modals.bulkShift.weekly'), icon: LayoutGrid },
+    { id: 'dates', label: t('modals.bulkShift.specificDates'), icon: CalendarDays },
+    { id: 'range', label: t('modals.bulkShift.dateRange'), icon: CalendarRange }
   ];
 
   const getTabButtonStyle = (tabId) => {
@@ -165,12 +167,25 @@ const BulkShiftConfirmModal = ({
     };
   };
 
+  const getEmptyMessage = () => {
+    switch (activeTab) {
+      case 'weekly':
+        return t('modals.bulkShift.selectDay');
+      case 'dates':
+        return t('modals.bulkShift.addDates');
+      case 'range':
+        return t('modals.bulkShift.selectDates');
+      default:
+        return '';
+    }
+  };
+
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Create Multiple Shifts"
-      subtitle={`Configure pattern for: ${workName}`}
+      title={t('modals.bulkShift.title')}
+      subtitle={t('modals.bulkShift.subtitle', { workName })}
       icon={Calendar}
       maxWidth="md"
     >
@@ -178,7 +193,7 @@ const BulkShiftConfirmModal = ({
         {/* Tab Navigation */}
         <div>
           <h4 className="text-sm font-semibold mb-3" style={{ color: colors.text }}>
-            Repetition Pattern
+            {t('modals.bulkShift.repetitionPattern')}
           </h4>
           <div className="flex gap-2 mb-4">
             {tabs.map(tab => {
@@ -241,11 +256,7 @@ const BulkShiftConfirmModal = ({
           <Card variant="surface2">
             <div className="flex items-center gap-2 text-sm" style={{ color: colors.textSecondary }}>
               <AlertCircle size={18} />
-              <span>
-                {activeTab === 'weekly' && 'Select at least one day to create shifts'}
-                {activeTab === 'dates' && 'Add dates to create shifts'}
-                {activeTab === 'range' && 'Select start and end dates'}
-              </span>
+              <span>{getEmptyMessage()}</span>
             </div>
           </Card>
         )}
@@ -258,7 +269,7 @@ const BulkShiftConfirmModal = ({
             disabled={isCreating}
             className="flex-1"
           >
-            Back
+            {t('common.back')}
           </Button>
           <Button
             onClick={handleConfirm}
@@ -269,8 +280,8 @@ const BulkShiftConfirmModal = ({
             themeColor={colors.primary}
           >
             {isCreating
-              ? 'Creating...'
-              : `Create ${generatedShifts.length} Shift${generatedShifts.length > 1 ? 's' : ''}`
+              ? t('common.creating')
+              : t('modals.bulkShift.createShifts', { count: generatedShifts.length })
             }
           </Button>
         </div>

@@ -1,6 +1,7 @@
 // src/components/shifts/ShiftDetailsPopover/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Popover from '../../ui/Popover';
 import { formatCurrency } from '../../../utils/currency';
 import logger from '../../../utils/logger';
@@ -14,6 +15,8 @@ const ShiftDetailsPopover = ({
   position = 'top', 
   fullWidth = true
 }) => {
+  const { t } = useTranslation();
+
   const formatCreationDate = (timestamp) => {
     if (!timestamp || typeof timestamp.seconds !== 'number') return '';
     try {
@@ -46,7 +49,7 @@ const ShiftDetailsPopover = ({
     <div>
       {hasNotes && (
         <div className="mb-3 pb-2 border-b border-gray-100">
-          <p className="font-semibold text-gray-700">Notes:</p>
+          <p className="font-semibold text-gray-700">{t('shifts.notes')}:</p>
           <p className="text-sm text-gray-600 break-words">{shift.notes}</p>
         </div>
       )}
@@ -60,12 +63,12 @@ const ShiftDetailsPopover = ({
 
           return (
             <div>
-              <p className="font-semibold text-gray-700 mb-1">Financial Details:</p>
+              <p className="font-semibold text-gray-700 mb-1">{t('shifts.financialDetails')}:</p>
               <div className='text-sm text-gray-600 space-y-1'>
-                <div className="flex justify-between"><span>Gross Earnings:</span> <span>{formatCurrency(grossEarnings)}</span></div>
-                {tips > 0 && <div className="flex justify-between"><span>Tips:</span> <span>{formatCurrency(tips)}</span></div>}
-                {expenses > 0 && <div className="flex justify-between"><span>Expenses:</span> <span className='text-red-500'>-{formatCurrency(expenses)}</span></div>}
-                <div className="flex justify-between font-bold pt-1 border-t mt-1 border-gray-200"><span>Net Earnings:</span> <span className='text-green-600'>{formatCurrency(netEarnings)}</span></div>
+                <div className="flex justify-between"><span>{t('shifts.grossEarnings')}:</span> <span>{formatCurrency(grossEarnings)}</span></div>
+                {tips > 0 && <div className="flex justify-between"><span>{t('shifts.tips')}:</span> <span>{formatCurrency(tips)}</span></div>}
+                {expenses > 0 && <div className="flex justify-between"><span>{t('shifts.expenses')}:</span> <span className='text-red-500'>-{formatCurrency(expenses)}</span></div>}
+                <div className="flex justify-between font-bold pt-1 border-t mt-1 border-gray-200"><span>{t('shifts.netEarnings')}:</span> <span className='text-green-600'>{formatCurrency(netEarnings)}</span></div>
               </div>
             </div>
           );
@@ -78,7 +81,7 @@ const ShiftDetailsPopover = ({
               .map(([type, hours]) => (
                 <div key={type} className="flex justify-between text-gray-600">
                   <span>
-                    {hours.toFixed(2)}hs in {type.charAt(0).toUpperCase() + type.slice(1)}
+                    {hours.toFixed(2)}{t('shifts.hoursIn')} {type.charAt(0).toUpperCase() + type.slice(1)}
                   </span>
                   <span>
                     {formatCurrency(shiftData.breakdown[type] || 0)}
@@ -89,13 +92,13 @@ const ShiftDetailsPopover = ({
           <div className="pt-1 border-t border-gray-100" />
 
           <div className="flex justify-between font-semibold">
-            <span>Gross Earnings</span>
+            <span>{t('shifts.grossEarnings')}</span>
             <span>{formatCurrency(shiftData.total || 0)}</span>
           </div>
 
           {shiftData.defaultDiscount > 0 && (
             <div className="flex justify-between text-red-500">
-              <span>Discount ({shiftData.defaultDiscount}%)</span>
+              <span>{t('shifts.discount')} ({shiftData.defaultDiscount}%)</span>
               <span>
                 -{formatCurrency((shiftData.total || 0) * (shiftData.defaultDiscount / 100))}
               </span>
@@ -104,12 +107,12 @@ const ShiftDetailsPopover = ({
 
           {shiftData.smokoApplied && (
             <div className="flex justify-between text-red-500">
-              <span>Smoko Discount</span>
+              <span>{t('shifts.smokoDiscount')}</span>
               <span>-{shiftData.smokoMinutes} min</span>
             </div>
           )}          
           <div className="flex justify-between items-center font-bold text-base pt-1 border-t border-gray-200">
-            <span className="text-gray-700">Net Earnings</span>
+            <span className="text-gray-700">{t('shifts.netEarnings')}</span>
             <span className="text-green-600">
               {formatCurrency(shiftData.totalWithDiscount || 0)}
             </span>
@@ -119,12 +122,12 @@ const ShiftDetailsPopover = ({
     </div>
   );
 
-  const footerContent = shift.createdAt ? `Created: ${formatCreationDate(shift.createdAt)}` : '';
+  const footerContent = shift.createdAt ? `${t('shifts.created')}: ${formatCreationDate(shift.createdAt)}` : '';
 
   return (
     <Popover 
         content={content} 
-        title="More information" 
+        title={t('shifts.moreInfo')} 
         footer={footerContent}
         position={position}    // Use the prop (default 'top')
         trigger="click"

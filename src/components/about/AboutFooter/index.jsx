@@ -4,15 +4,17 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Heart, Settings, BarChart3, Calendar } from 'lucide-react';
-
-const quickLinks = [
-  { label: 'Settings', path: '/settings', icon: Settings },
-  { label: 'Statistics', path: '/statistics', icon: BarChart3 },
-  { label: 'Calendar', path: '/calendar', icon: Calendar },
-];
+import { useTranslation } from 'react-i18next';
 
 const AboutFooter = ({ colors }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const quickLinks = [
+    { label: t('nav.settings'), path: '/settings', icon: Settings },
+    { label: t('nav.statistics'), path: '/statistics', icon: BarChart3 },
+    { label: t('nav.calendar'), path: '/calendar', icon: Calendar },
+  ];
 
   return (
     <motion.footer
@@ -44,13 +46,13 @@ const AboutFooter = ({ colors }) => {
       {/* Version & Credits */}
       <div className="text-center space-y-2">
         <p className="text-sm font-medium" style={{ color: colors.textSecondary }}>
-          Version 3.0.1
+          {t('about.footer.version')}
         </p>
         <p className="text-xs flex items-center justify-center gap-1" style={{ color: colors.textSecondary, opacity: 0.7 }}>
-          Developed with <Heart size={12} className="text-red-400 fill-red-400" /> by Marqui
+          {t('about.footer.developed')} <Heart size={12} className="text-red-400 fill-red-400" /> {t('about.footer.by')}
         </p>
         <p className="text-xs" style={{ color: colors.textSecondary, opacity: 0.5 }}>
-          &copy; 2026 Orary. All rights reserved.
+          {t('about.footer.copyright')}
         </p>
       </div>
     </motion.footer>

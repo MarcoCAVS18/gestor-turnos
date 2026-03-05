@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import BackLink from '../../components/ui/BackLink';
 import Button from '../../components/ui/Button';
 import ConfirmActionModal from '../../components/modals/ConfirmActionModal';
@@ -11,6 +12,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePremium } from '../../contexts/PremiumContext';
 
 const ClearEverything = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { clearing, clearProfile } = useClearProfile();
@@ -35,7 +37,7 @@ const ClearEverything = () => {
         await logout();
         navigate('/login', {
           state: {
-            message: 'Your data has been cleared successfully. Please log in again to continue.'
+            message: t('clearEverything.successMessage')
           }
         });
       } catch {
@@ -44,7 +46,7 @@ const ClearEverything = () => {
 
     } catch (err) {
       setShowConfirmModal(false);
-      setError(err.message || 'Failed to clear data');
+      setError(err.message || t('clearEverything.errorMessage'));
     }
   };
 
@@ -54,8 +56,8 @@ const ClearEverything = () => {
 
       <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">Clear Everything</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Start fresh while keeping your account.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">{t('clearEverything.title')}</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{t('clearEverything.subtitle')}</p>
         </div>
         <img
           src="/assets/SVG/logo.svg"
@@ -66,25 +68,23 @@ const ClearEverything = () => {
       </div>
 
       <div className="prose prose-lg text-gray-700 dark:text-gray-300 dark:prose-invert max-w-none">
-          <p className="text-lg leading-relaxed">
-            If you want to start fresh with <strong>Orary</strong> without deleting your account, you can clear all your work and shift data while keeping your login credentials.
-          </p>
+          <p className="text-lg leading-relaxed" dangerouslySetInnerHTML={{ __html: t('clearEverything.intro') }} />
 
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">What Will Be Deleted</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">{t('clearEverything.whatWillBeDeleted.title')}</h2>
           <ul className="list-disc pl-5 space-y-2 mt-2">
-            <li>All your registered <strong>works</strong> (jobs and delivery platforms)</li>
-            <li>All your recorded <strong>shifts</strong> and their associated data</li>
-            <li>All your <strong>earnings history</strong> and statistics</li>
-            <li>Your <strong>preferences</strong> and settings</li>
+            <li dangerouslySetInnerHTML={{ __html: t('clearEverything.whatWillBeDeleted.works') }} />
+            <li dangerouslySetInnerHTML={{ __html: t('clearEverything.whatWillBeDeleted.shifts') }} />
+            <li dangerouslySetInnerHTML={{ __html: t('clearEverything.whatWillBeDeleted.earnings') }} />
+            <li dangerouslySetInnerHTML={{ __html: t('clearEverything.whatWillBeDeleted.preferences') }} />
             {isPremium && (
-              <li>Your <strong>Premium subscription</strong> will be cancelled</li>
+              <li dangerouslySetInnerHTML={{ __html: t('clearEverything.whatWillBeDeleted.premium') }} />
             )}
           </ul>
 
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">What Will Be Preserved</h2>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">{t('clearEverything.whatWillBePreserved.title')}</h2>
           <ul className="list-disc pl-5 space-y-2 mt-2">
-            <li>Your <strong>account</strong> and login credentials</li>
-            <li>Your <strong>email</strong> and <strong>display name</strong></li>
+            <li dangerouslySetInnerHTML={{ __html: t('clearEverything.whatWillBePreserved.account') }} />
+            <li dangerouslySetInnerHTML={{ __html: t('clearEverything.whatWillBePreserved.profile') }} />
           </ul>
 
           {error && (
@@ -104,7 +104,7 @@ const ClearEverything = () => {
             bgColor="#EF4444"
             textColor="white"
           >
-            Clear All Data
+            {t('clearEverything.clearButton')}
           </Button>
         </div>
 

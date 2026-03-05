@@ -1,6 +1,6 @@
 # i18n — Seguimiento de Traducción de Componentes
 
-> **Estado actual:** Fase 2 en progreso
+> **Estado actual:** Fase 2 completa
 > **Idiomas:** EN · ES · FR
 > **Framework:** `react-i18next` + JSON locales en `src/locales/`
 
@@ -30,8 +30,8 @@
 | `src/pages/Works.jsx` | ✅ Traducido | — |
 | `src/pages/Statistics.jsx` | ✅ Traducido | — |
 | `src/pages/Settings.jsx` | ✅ Sin strings (composición) | — |
-| `src/pages/Landing.jsx` | ❌ Pendiente | "Get Started Free", "Sign in", "already have an account?", privacy links |
-| `src/pages/Integrations.jsx` | ❌ Pendiente | ~50 strings: notificaciones, biometric, instrucciones PWA iOS/Android |
+| `src/pages/Landing.jsx` | ✅ Traducido | — |
+| `src/pages/Integrations.jsx` | ✅ Traducido | — |
 
 ---
 
@@ -40,7 +40,7 @@
 | Archivo | Estado | Strings pendientes |
 |---------|--------|--------------------|
 | `src/components/layout/Navigation/index.jsx` | ✅ Traducido | — |
-| `src/components/layout/AuthLayout/index.jsx` | ❌ Pendiente | Verificar |
+| `src/components/layout/AuthLayout/index.jsx` | ✅ Traducido | — |
 
 ---
 
@@ -51,8 +51,8 @@
 | `src/components/dashboard/WelcomeCard/index.jsx` | ✅ Traducido | — |
 | `src/components/dashboard/LiveModeCard/index.jsx` | ✅ Traducido | — |
 | `src/components/dashboard/FavoriteWorksCard/index.jsx` | ✅ Traducido | — |
-| `src/components/dashboard/QuickStatsGrid/index.jsx` | ❌ Pendiente | "This Week", "This Month", "Per Hour", "Works", "Shifts", "Hours", "Average", "active", "completed", "worked" |
-| `src/components/dashboard/ExportReportCard/index.jsx` | ❌ Pendiente | "Export Report", descripción, "PDF", "PNG", "Excel", "Premium" |
+| `src/components/dashboard/QuickStatsGrid/index.jsx` | ✅ Traducido | — |
+| `src/components/dashboard/ExportReportCard/index.jsx` | ✅ Traducido | — |
 
 ---
 
@@ -66,8 +66,8 @@
 | `src/components/settings/TurnRangeSection/index.jsx` | ✅ Traducido | — |
 | `src/components/settings/HolidaySettingsSection/index.jsx` | ✅ Traducido | — |
 | `src/components/settings/DeliverySection/index.jsx` | ✅ Traducido | — |
-| `src/components/settings/ProfileSection/index.jsx` | ❌ Pendiente | "Profile", "Email", "Name" |
-| `src/components/settings/SessionSection/index.jsx` | ❌ Pendiente | "Account", "Log out", "Terms of Service", "Privacy Policy", "Clear Everything", "Delete Account", "Manage Premium", "Upgrade to Premium" |
+| `src/components/settings/ProfileSection/index.jsx` | ✅ Traducido | — |
+| `src/components/settings/SessionSection/index.jsx` | ✅ Traducido | — |
 
 ---
 
@@ -75,19 +75,19 @@
 
 | Archivo | Estado | Strings pendientes |
 |---------|--------|--------------------|
-| `src/components/stats/WeeklyComparison/index.jsx` | ❌ Pendiente | Verificar labels |
-| `src/components/stats/DailyDistribution/index.jsx` | ❌ Pendiente | Verificar labels |
-| `src/components/stats/MostProductiveDay/index.jsx` | ❌ Pendiente | Verificar labels |
-| `src/components/stats/InteractiveCharts/index.jsx` | ❌ Pendiente | Verificar labels de gráficos |
-| `src/components/stats/WeeklyStatsGrid/index.jsx` | ❌ Pendiente | Verificar |
-| `src/components/stats/StatsProgressBar/index.jsx` | ❌ Pendiente | Verificar |
-| `src/components/stats/ShiftTypeStats/index.jsx` | ❌ Pendiente | Verificar |
-| `src/components/stats/SmokoStatusCard/index.jsx` | ❌ Pendiente | Verificar |
-| `src/components/stats/DeliverySummary/index.jsx` | ❌ Pendiente | Verificar |
-| `src/components/stats/PlatformComparison/index.jsx` | ❌ Pendiente | Verificar |
-| `src/components/stats/VehicleEfficiency/index.jsx` | ❌ Pendiente | Verificar |
-| `src/components/stats/FuelEfficiency/index.jsx` | ❌ Pendiente | Verificar |
-| `src/components/stats/DeliveryHourlyAnalysis/index.jsx` | ❌ Pendiente | Verificar |
+| `src/components/stats/WeeklyComparison/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/DailyDistribution/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/MostProductiveDay/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/InteractiveCharts/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/WeeklyStatsGrid/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/StatsProgressBar/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/ShiftTypeStats/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/SmokoStatusCard/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/DeliverySummary/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/PlatformComparison/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/VehicleEfficiency/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/FuelEfficiency/index.jsx` | ✅ Traducido | — |
+| `src/components/stats/DeliveryHourlyAnalysis/index.jsx` | ✅ Traducido | — |
 
 ---
 
@@ -95,10 +95,10 @@
 
 | Archivo | Estado | Strings pendientes |
 |---------|--------|--------------------|
-| `src/components/forms/shift/ShiftForm/index.jsx` | ❌ Pendiente | "Work", "Select work", "Traditional Works", "Delivery Works", "Start date", "End date", "Break", "Notes (optional)", mensajes de validación |
-| `src/components/forms/shift/BulkShiftOptions/WeeklyPattern.jsx` | ❌ Pendiente | "Select days of the week", "Mon"–"Sun", "Repeat for", "week/weeks", "Select at least one day" |
-| `src/components/forms/work/WorkForm/index.jsx` | ❌ Pendiente | Verificar labels del formulario |
-| `src/components/forms/work/DeliveryWorkForm/index.jsx` | ❌ Pendiente | Verificar labels del formulario |
+| `src/components/forms/shift/ShiftForm/index.jsx` | ✅ Traducido | — |
+| `src/components/forms/shift/BulkShiftOptions/WeeklyPattern.jsx` | ✅ Traducido | — |
+| `src/components/forms/work/WorkForm/index.jsx` | ✅ Traducido | — |
+| `src/components/forms/work/DeliveryWorkForm/index.jsx` | ✅ Traducido | — |
 
 ---
 
@@ -106,10 +106,10 @@
 
 | Archivo | Estado | Strings pendientes |
 |---------|--------|--------------------|
-| `src/components/modals/shift/BulkShiftConfirmModal/index.jsx` | ❌ Pendiente | Verificar |
-| `src/components/modals/shift/ShiftModal/index.jsx` | ❌ Pendiente | Verificar |
-| `src/components/modals/work/WorkModal/index.jsx` | ❌ Pendiente | Verificar |
-| `src/components/modals/liveMode/LiveModeFinishConfirmModal/index.jsx` | ❌ Pendiente | Verificar |
+| `src/components/modals/shift/BulkShiftConfirmModal/index.jsx` | ✅ Traducido | — |
+| `src/components/modals/shift/ShiftModal/index.jsx` | ✅ Traducido | — |
+| `src/components/modals/work/WorkModal/index.jsx` | ✅ Traducido | — |
+| `src/components/modals/liveMode/LiveModeFinishConfirmModal/index.jsx` | ✅ Traducido | — |
 
 ---
 
@@ -117,8 +117,8 @@
 
 | Archivo | Estado | Strings pendientes |
 |---------|--------|--------------------|
-| `src/components/cards/work/WorkCard/index.jsx` | ❌ Pendiente | "Base rate:", "Night", "Saturday", "Sunday", "Holiday" |
-| `src/components/cards/work/DeliveryWorkCard/index.jsx` | ❌ Pendiente | Verificar |
+| `src/components/cards/work/WorkCard/index.jsx` | ✅ Traducido | — |
+| `src/components/cards/work/DeliveryWorkCard/index.jsx` | ✅ Traducido | — |
 
 ---
 
@@ -126,9 +126,9 @@
 
 | Archivo | Estado | Strings pendientes |
 |---------|--------|--------------------|
-| `src/components/shifts/ShiftsEmptyState/index.jsx` | ❌ Pendiente | Verificar empty state strings |
-| `src/components/shifts/WeeklyShiftsSection/index.jsx` | ❌ Pendiente | Verificar labels de semana |
-| `src/components/filters/ShiftFilters/index.jsx` | ❌ Pendiente | Verificar filtros |
+| `src/components/shifts/ShiftsEmptyState/index.jsx` | ✅ Traducido | — |
+| `src/components/shifts/WeeklyShiftsSection/index.jsx` | ✅ Traducido | — |
+| `src/components/filters/ShiftFilters/index.jsx` | ✅ Traducido | — |
 
 ---
 
@@ -136,8 +136,8 @@
 
 | Archivo | Estado | Strings pendientes |
 |---------|--------|--------------------|
-| `src/components/australia88/Australia88DashboardCard/index.jsx` | ❌ Pendiente | "Working Holiday Visa", "Details", "Complete", "Remaining", "This week", "Year X complete!" |
-| `src/components/australia88/Australia88StatsCard/` | ❌ Pendiente | Verificar |
+| `src/components/australia88/Australia88DashboardCard/index.jsx` | ✅ Traducido | — |
+| `src/components/australia88/Australia88StatsCard/` | ✅ Traducido | — |
 
 ---
 
@@ -145,7 +145,7 @@
 
 | Archivo | Estado | Strings pendientes |
 |---------|--------|--------------------|
-| `src/components/about/FeedbackSection/index.jsx` | ❌ Pendiente | ~25 strings: "Your feedback matters", "How would you rate...", "What people are saying", tiempo relativo ("m ago", "h ago"), botones Send/Update |
+| `src/components/about/FeedbackSection/index.jsx` | ✅ Traducido | — |
 
 ---
 
@@ -153,8 +153,8 @@
 
 | Archivo | Estado | Strings pendientes |
 |---------|--------|--------------------|
-| `src/components/alerts/DeleteAlert/index.jsx` | ❌ Pendiente | Verificar "Delete", "Cancel", "Are you sure?" |
-| `src/components/work/ShareMessages/index.jsx` | ❌ Pendiente | Verificar |
+| `src/components/alerts/DeleteAlert/index.jsx` | ✅ Traducido | — |
+| `src/components/work/ShareMessages/index.jsx` | ✅ Traducido | — |
 
 ---
 
@@ -163,25 +163,47 @@
 | Categoría | ✅ Hecho | ❌ Pendiente |
 |-----------|---------|------------|
 | Infraestructura | 8 | 0 |
-| Páginas | 4 | 2 |
-| Layout | 1 | 1 |
-| Dashboard | 3 | 2 |
-| Settings | 6 | 2 |
-| Stats | 0 | 13 |
-| Forms | 0 | 4 |
-| Modals | 0 | 4 |
-| Cards | 0 | 2 |
-| Shifts | 0 | 3 |
-| Australia 88 | 0 | 2 |
-| About | 0 | 1 |
-| Otros | 0 | 2 |
-| **TOTAL** | **22** | **38** |
+| Páginas | 6 | 0 |
+| Layout | 2 | 0 |
+| Dashboard | 5 | 0 |
+| Settings | 8 | 0 |
+| Stats | 13 | 0 |
+| Forms | 4 | 0 |
+| Modals | 4 | 0 |
+| Cards | 2 | 0 |
+| Shifts | 3 | 0 |
+| Australia 88 | 2 | 0 |
+| About | 1 | 0 |
+| Otros | 2 | 0 |
+| **TOTAL** | **60** | **0** |
 
 ---
 
 ## Notas
 
+- ✅ **Fase 2 completada:** Todos los componentes identificados en el plan han sido traducidos.
 - Los strings del **Popover de Delivery** (contenido HTML con `<strong>`) se mantienen en inglés por ahora — requieren el componente `<Trans>` de react-i18next.
-- `src/pages/Integrations.jsx` es el archivo con más strings (~50), prioridad baja ya que es pantalla secundaria.
-- Los **labels de gráficos** en `src/config/chartConfig.js` también pueden necesitar traducción.
+- Los **labels de gráficos** en `src/config/chartConfig.js` ya están traducidos mediante las claves `stats.charts.*`.
 - Strings dinámicos con nombre de trabajos (ej: `"${work.name}" is currently active`) se mantienen parcialmente hardcoded — solo el texto fijo se traduce.
+
+---
+
+## Claves de traducción agregadas recientemente
+
+### `dashboard.export`
+- `formats.pdf` / `formats.png` / `formats.excel`
+
+### `forms.shift.bulk.dayLabels`
+- `Mon`, `Tue`, `Wed`, `Thu`, `Fri`, `Sat`, `Sun`
+
+### `forms.shift.validation`
+- `positiveNumber`, `endAfterStart`
+
+### `forms.work`
+- `companyName`, `workColor`, `customColor`, `baseHourlyRate`, `ratesByShiftType`, `descriptionOptional`, `descriptionPlaceholder`
+
+### `australia88`
+- `formLabel`, `qualifiesDescription`, `regionalWork`, `notSure`, `checkHomeAffairs`
+
+### `about.feedback`
+- Todas las claves de feedback ya estaban definidas y se actualizó el componente para usarlas correctamente.

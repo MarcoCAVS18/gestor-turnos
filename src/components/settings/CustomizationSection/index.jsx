@@ -1,6 +1,7 @@
 // src/components/settings/CustomizationSection/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Palette, Sun, Moon, Lock, Crown, Check, Globe } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -23,6 +24,7 @@ const LANGUAGES = [
 ];
 
 const CustomizationSection = ({ id, className }) => {
+  const { t } = useTranslation();
   const {
     primaryColor: appColor,
     language,
@@ -83,7 +85,7 @@ const CustomizationSection = ({ id, className }) => {
     <Card id={id} className={`flex flex-col${className ? ` ${className}` : ''}`}>
       <div className="flex items-center mb-4">
         <Palette className="h-5 w-5 text-gray-500 dark:text-gray-400 mr-2" />
-        <h2 className="text-lg font-semibold dark:text-white">Customization</h2>
+        <h2 className="text-lg font-semibold dark:text-white">{t('settings.customization.title')}</h2>
       </div>
       <div className="flex-1">
         <div className="space-y-4">
@@ -108,8 +110,8 @@ const CustomizationSection = ({ id, className }) => {
                 <Sun size={24} className="text-yellow-600" />
               </div>
               <div className="flex-1">
-                <span className="text-base font-medium text-gray-800 dark:text-white">Light</span>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Bright and clean appearance</p>
+                <span className="text-base font-medium text-gray-800 dark:text-white">{t('settings.customization.lightTheme')}</span>
+                <p className="text-xs text-gray-500 dark:text-gray-400">{t('settings.customization.lightThemeDesc')}</p>
               </div>
               {themeMode === 'light' && (
                 <div
@@ -149,7 +151,7 @@ const CustomizationSection = ({ id, className }) => {
                       style={{ backgroundColor: `${PREMIUM_COLORS.gold}20` }}
                     >
                       <Crown size={14} style={{ color: PREMIUM_COLORS.gold }} />
-                      <span className="text-sm font-medium" style={{ color: PREMIUM_COLORS.primary }}>Premium</span>
+                      <span className="text-sm font-medium" style={{ color: PREMIUM_COLORS.primary }}>{t('premium.badge')}</span>
                     </div>
                     <Lock size={20} className="text-gray-400" />
                   </div>
@@ -166,10 +168,10 @@ const CustomizationSection = ({ id, className }) => {
                 </div>
                 <div className="flex-1">
                   <span className={`text-base font-medium ${themeMode === 'dark' ? 'text-white' : 'text-gray-800 dark:text-white'}`}>
-                    Dark
+                    {t('settings.customization.darkTheme')}
                   </span>
                   <p className={`text-xs ${themeMode === 'dark' ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                    Easy on the eyes at night
+                    {t('settings.customization.darkThemeDesc')}
                   </p>
                 </div>
                 {themeMode === 'dark' && (
@@ -190,7 +192,7 @@ const CustomizationSection = ({ id, className }) => {
             <div className="flex items-center gap-2 mb-3">
               <Globe size={15} className="text-gray-500 dark:text-gray-400" />
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Language
+                {t('settings.customization.language')}
               </label>
             </div>
             <div className="grid grid-cols-3 gap-2">

@@ -19,7 +19,7 @@ import Flex from '../components/ui/Flex';
 import logger from '../utils/logger';
 
 const Shifts = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const {
     deleteShift,
     deleteDeliveryShift,
@@ -82,18 +82,19 @@ const Shifts = () => {
     return getMondayOfWeek(`${y}-${m}-${d}`);
   }, []);
 
-  // Format "Mon 3 Mar – Sun 9 Mar 2026"
-  const formatWeekRange = (mondayDate) => {
-    const monday = createSafeDate(mondayDate);
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 6);
-    const mondayStr = monday.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
-    const sundayStr = sunday.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-    return `${mondayStr} – ${sundayStr}`;
-  };
-
   // Group shifts by week, compute totals
   const shiftsByWeek = useMemo(() => {
+    // Format "Mon 3 Mar – Sun 9 Mar 2026"
+    const formatWeekRange = (mondayDate) => {
+      const monday = createSafeDate(mondayDate);
+      const sunday = new Date(monday);
+      sunday.setDate(monday.getDate() + 6);
+      const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+      const mondayStr = monday.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' });
+      const sundayStr = sunday.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+      return `${mondayStr} – ${sundayStr}`;
+    };
+
     const weeks = {};
     Object.entries(shiftsToDisplay || {}).forEach(([date, shifts]) => {
       const mondayDate = getMondayOfWeek(date);
@@ -121,7 +122,7 @@ const Shifts = () => {
         totalHours,
       };
     });
-  }, [shiftsToDisplay]);
+  }, [shiftsToDisplay, i18n.language]);
 
   // Split into future / current / past
   const { futureWeeks, currentWeekData, pastWeeks } = useMemo(() => ({
@@ -148,90 +149,119 @@ const Shifts = () => {
     });
   }, []);
 
-  const hasShifts = shiftsByWeek.length > 0;
+  // Calculate total shifts
+  const totalShifts = useMemo(() => {
+    return Object.values(shiftsByDate || {}).reduce((sum, arr) => sum + (arr?.length || 0), 0);
+  }, [shiftsByDate]);
 
-  // Ordered flat list: future (furthest→closest) → current → past (recent→oldest)
-  const orderedWeeks = useMemo(() => [
-    ...futureWeeks,
-    ...(currentWeekData ? [{ ...currentWeekData, isCurrentWeek: true }] : []),
-    ...pastWeeks,
-  ], [futureWeeks, currentWeekData, pastWeeks]);
+  const hasShifts = totalShifts > 0;
+
+  // Flatten filtered shifts for edit modal
+  const handleEditShift = (shift) => {
+    openEditModal(shift);
+  };
+
+  // Format shift details for delete alert
+  const deletionDetails = useMemo(() => {
+    return generateShiftDetails(deleteManager.itemToDelete, allJobs);
+  }, [deleteManager.itemToDelete, allJobs]);
 
   return (
-    <>
-      <div className="px-4 py-6 pb-32 space-y-4">
-        <PageHeader
-          title={t('shifts.title')}
-          subtitle={t('shifts.subtitle')}
-          icon={List}
-          action={{ onClick: openNewModal, icon: Plus, label: t('shifts.addShift') }}
+    <div className="px-4 py-6 pb-32 space-y-4">
+      <PageHeader
+        title={t('nav.shifts')}
+        subtitle={t('shifts.subtitle')}
+        icon={List}
+        action={{
+          onClick: openNewModal,
+          icon: Plus,
+          label: t('nav.newShift'),
+          mobileLabel: t('nav.newShift'),
+          themeColor: thematicColors?.base,
+        }}
+      />
+
+      {/* Filter system */}
+      {hasShifts && (
+        <ShiftFilters
+          onFiltersChange={updateFilters}
+          activeFilters={filters}
         />
+      )}
 
-        {/* Filter system */}
-        {(Object.keys(shiftsByDate || {}).length > 0) && (
-          <ShiftFilters
-            onFiltersChange={updateFilters}
-            activeFilters={filters}
-          />
-        )}
-
-        {/* Main content */}
+      {/* Content */}
+      <div className="space-y-3">
         {!hasShifts && !hasActiveFilters ? (
-          <ShiftsEmptyState
-            allJobs={allJobs}
-            onNewShift={openNewModal}
-            thematicColors={thematicColors}
-          />
+          <ShiftsEmptyState />
         ) : !hasShifts && hasActiveFilters ? (
-          <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-12 text-center">
-            <Flex
-              variant="center"
-              className="p-4 rounded-full w-20 h-20 mx-auto mb-4"
-              style={{ backgroundColor: thematicColors?.transparent10 }}
-            >
-              <Search size={32} style={{ color: thematicColors?.base }} />
-            </Flex>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              {t('shifts.noMatchingFilters')}
-            </h3>
-            <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
-              {t('shifts.noMatchingFiltersDesc')}
-            </p>
-            <button
-              onClick={() => updateFilters({ work: 'all', weekDays: [], shiftType: 'all' })}
-              className="text-white px-6 py-3 rounded-lg transition-colors hover:opacity-90"
-              style={{ backgroundColor: thematicColors?.base }}
-            >
-              {t('shifts.clearFilters')}
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {/* Future weeks label */}
-            {futureWeeks.length > 0 && (
-              <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-1 pt-1">
-                {t('shifts.upcoming')}
+          <Flex variant="center" className="py-16">
+            <div className="text-center">
+              <Search size={32} style={{ color: thematicColors?.base }} className="mx-auto mb-3 opacity-50" />
+              <p className="text-gray-500 font-medium">
+                {t('shifts.noMatchingFilters')}
               </p>
-            )}
-
-            {orderedWeeks.map((week) => (
+              <p className="text-sm text-gray-400 mt-1">
+                {t('shifts.noMatchingFiltersDesc')}
+              </p>
+              <button
+                onClick={() => updateFilters({ work: 'all', weekDays: [], shiftType: 'all' })}
+                className="mt-4 text-sm font-medium hover:underline"
+                style={{ color: thematicColors?.base }}
+              >
+                {t('shifts.clearFilters')}
+              </button>
+            </div>
+          </Flex>
+        ) : (
+          <>
+            {/* Future weeks (top) */}
+            {futureWeeks.map(week => (
               <WeeklyShiftsSection
                 key={week.mondayDate}
                 weekRange={week.weekRange}
                 shifts={week.shifts}
                 totalShifts={week.totalShifts}
                 totalHours={week.totalHours}
-                isCurrentWeek={!!week.isCurrentWeek}
-                isFuture={week.mondayDate > todayMonday}
                 isOpen={openWeeks.has(week.mondayDate)}
                 onToggle={() => toggleWeek(week.mondayDate)}
                 allJobs={allJobs}
-                onEditShift={openEditModal}
-                onDeleteShift={(shift) => deleteManager.startDeletion(shift)}
-                thematicColors={thematicColors}
+                onEdit={handleEditShift}
+                onDelete={deleteManager.startDeletion}
               />
             ))}
-          </div>
+
+            {/* Current week */}
+            {currentWeekData && (
+              <WeeklyShiftsSection
+                weekRange={currentWeekData.weekRange}
+                shifts={currentWeekData.shifts}
+                totalShifts={currentWeekData.totalShifts}
+                totalHours={currentWeekData.totalHours}
+                isOpen={openWeeks.has(currentWeekData.mondayDate)}
+                onToggle={() => toggleWeek(currentWeekData.mondayDate)}
+                allJobs={allJobs}
+                onEdit={handleEditShift}
+                onDelete={deleteManager.startDeletion}
+                highlight
+              />
+            )}
+
+            {/* Past weeks */}
+            {pastWeeks.map(week => (
+              <WeeklyShiftsSection
+                key={week.mondayDate}
+                weekRange={week.weekRange}
+                shifts={week.shifts}
+                totalShifts={week.totalShifts}
+                totalHours={week.totalHours}
+                isOpen={openWeeks.has(week.mondayDate)}
+                onToggle={() => toggleWeek(week.mondayDate)}
+                allJobs={allJobs}
+                onEdit={handleEditShift}
+                onDelete={deleteManager.startDeletion}
+              />
+            ))}
+          </>
         )}
       </div>
 
@@ -244,13 +274,13 @@ const Shifts = () => {
 
       <DeleteAlert
         visible={deleteManager.showDeleteModal}
-        onCancel={() => deleteManager.cancelDeletion()}
-        onConfirm={() => deleteManager.confirmDeletion()}
+        onCancel={deleteManager.cancelDeletion}
+        onConfirm={deleteManager.confirmDeletion}
         deleting={deleteManager.deleting}
         type="shift"
-        details={generateShiftDetails(deleteManager.itemToDelete, allJobs)}
+        details={deletionDetails}
       />
-    </>
+    </div>
   );
 };
 

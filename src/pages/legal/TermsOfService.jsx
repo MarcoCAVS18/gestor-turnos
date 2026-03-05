@@ -1,12 +1,14 @@
 // src/pages/legal/TermsOfService.jsx
 
+import { useTranslation } from 'react-i18next';
 import BackLink from '../../components/ui/BackLink';
 import { AlertTriangle } from 'lucide-react';
 
 const TermsOfService = () => {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950 px-4 pb-6 space-y-6" style={{ paddingTop: 'max(1.5rem, env(safe-area-inset-top))' }}>
-      <BackLink back />
+      <BackLink to="/settings">{t('common.backToSettings')}</BackLink>
 
       <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">
         <div>

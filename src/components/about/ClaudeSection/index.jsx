@@ -2,9 +2,12 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import Card from '../../ui/Card';
 
 const ClaudeSection = ({ colors }) => {
+  const { t } = useTranslation();
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -50,15 +53,13 @@ const ClaudeSection = ({ colors }) => {
             {/* Content */}
             <div>
               <h3 className="text-lg font-bold mb-1" style={{ color: colors.text }}>
-                Powered by Claude
+                {t('about.claude.title')}
               </h3>
               <p className="text-xs font-medium mb-3" style={{ color: '#D97757' }}>
-                by Anthropic
+                {t('about.claude.subtitle')}
               </p>
               <p className="text-xs leading-relaxed" style={{ color: colors.textSecondary }}>
-                Some of the more complex features in Orary were built with the help of Claude AI,
-                an assistant that made it possible to tackle challenges that would have taken much
-                longer to solve alone.
+                {t('about.claude.description')}
               </p>
             </div>
           </div>

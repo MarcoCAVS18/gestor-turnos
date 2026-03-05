@@ -1,6 +1,7 @@
 // src/components/forms/shift/ShiftForm/index.jsx
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Briefcase, Calendar, Clock, FileText, Coffee, Pencil, Check } from 'lucide-react';
 import Switch from '../../../ui/Switch';
 import { hapticMedium, hapticError } from '../../../../services/native/haptics';
@@ -24,6 +25,7 @@ const ShiftForm = ({
   isMobile = false,
   initialDate
 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const { smokoEnabled, smokoMinutes } = useApp(); // NEW
 
@@ -121,16 +123,16 @@ const ShiftForm = ({
     const newErrors = {};
 
     if (!formData.workId) {
-      newErrors.workId = 'Select a job';
+      newErrors.workId = t('forms.shift.validation.selectWork');
     }
     if (!formData.startDate) {
-      newErrors.startDate = 'Date is required';
+      newErrors.startDate = t('forms.shift.validation.dateRequired');
     }
     if (!formData.startTime) {
-      newErrors.startTime = 'Start time is required';
+      newErrors.startTime = t('forms.shift.validation.startTimeRequired');
     }
     if (!formData.endTime) {
-      newErrors.endTime = 'End time is required';
+      newErrors.endTime = t('forms.shift.validation.endTimeRequired');
     }
 
     setErrors(newErrors);
@@ -216,7 +218,7 @@ const ShiftForm = ({
     >
       {/* Work selection */}
       <FormSection>
-        <FormLabel icon={Briefcase}>Work</FormLabel>
+        <FormLabel icon={Briefcase}>{t('forms.shift.work')}</FormLabel>
         <select
           value={formData.workId}
           onChange={(e) => handleInputChange('workId', e.target.value)}
@@ -224,10 +226,10 @@ const ShiftForm = ({
           style={{ '--tw-ring-color': colors.primary }}
           required
         >
-          <option value="">Select work</option>
+          <option value="">{t('forms.shift.selectWork')}</option>
 
           {traditionalWorks.length > 0 && (
-            <optgroup label="Traditional Works">
+            <optgroup label={t('forms.shift.traditionalWorks')}>
               {traditionalWorks.map(work => (
                 <option key={work.id} value={work.id}>
                   {work.name}
@@ -237,7 +239,7 @@ const ShiftForm = ({
           )}
 
           {deliveryWork.length > 0 && (
-            <optgroup label="Delivery Works">
+            <optgroup label={t('forms.shift.deliveryWorks')}>
               {deliveryWork.map(work => (
                 <option key={work.id} value={work.id}>
                   {work.name}
@@ -253,7 +255,7 @@ const ShiftForm = ({
       <FormGrid columns={2}>
         {/* Start date */}
         <FormField className={!formData.crossesMidnight ? 'col-span-2' : ''}>
-          <FormLabel icon={Calendar}>Start date</FormLabel>
+          <FormLabel icon={Calendar}>{t('forms.shift.startDate')}</FormLabel>
           <input
             type="date"
             value={formData.startDate}
@@ -268,7 +270,7 @@ const ShiftForm = ({
         {/* End date - only show if it's a night shift */}
         {formData.crossesMidnight && (
           <FormField>
-            <FormLabel icon={Calendar}>End date</FormLabel>
+            <FormLabel icon={Calendar}>{t('forms.shift.endDate')}</FormLabel>
             <input
               type="date"
               value={formData.endDate || calculateEndDate(formData.startDate)}
@@ -285,7 +287,7 @@ const ShiftForm = ({
       <FormGrid columns={2}>
         {/* Start time */}
         <FormField>
-          <FormLabel icon={Clock}>Start time</FormLabel>
+          <FormLabel icon={Clock}>{t('forms.shift.startTime')}</FormLabel>
           <input
             type="time"
             value={formData.startTime}
@@ -299,7 +301,7 @@ const ShiftForm = ({
 
         {/* End time */}
         <FormField>
-          <FormLabel icon={Clock}>End time</FormLabel>
+          <FormLabel icon={Clock}>{t('forms.shift.endTime')}</FormLabel>
           <input
             type="time"
             value={formData.endTime}
@@ -330,7 +332,7 @@ const ShiftForm = ({
             style={{ color: colors.primary }}
           />
           <span className="text-sm font-medium" style={{ color: colors.text }}>
-            Break
+            {t('forms.shift.break')}
           </span>
         </div>
 
@@ -347,7 +349,7 @@ const ShiftForm = ({
           {/* Break minutes editor */}
           <div className="flex items-center justify-between p-2 rounded" style={{ backgroundColor: colors.surface2 }}>
             <span className="text-xs" style={{ color: colors.textSecondary }}>
-              Break duration:
+              {t('forms.shift.breakDuration')}
             </span>
             {isEditingBreak ? (
               <div className="flex items-center gap-2">
@@ -375,7 +377,7 @@ const ShiftForm = ({
             ) : (
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold" style={{ color: colors.text }}>
-                  {formData.breakMinutes} min
+                  {formData.breakMinutes} {t('settings.smoko.minutes')}
                 </span>
                 <button
                   type="button"
@@ -395,7 +397,7 @@ const ShiftForm = ({
             borderColor: colors.primary + '20'
           }}>
             <span className="text-xs font-medium" style={{ color: colors.primary }}>
-              Paid time:
+              {t('forms.shift.paidTime')}
             </span>
             <span className="text-xs font-bold" style={{ color: colors.primary }}>
               {duration.hours}h {duration.minutes}min
@@ -409,11 +411,11 @@ const ShiftForm = ({
 
       {/* Notes field */}
       <FormSection>
-        <FormLabel icon={FileText}>Notes (optional)</FormLabel>
+        <FormLabel icon={FileText}>{t('forms.shift.notes')}</FormLabel>
         <textarea
           value={formData.notes}
           onChange={(e) => handleInputChange('notes', e.target.value)}
-          placeholder="Add notes about this shift..."
+          placeholder={t('forms.shift.notesPlaceholder')}
           className={`${getInputClasses(isMobile)} border-gray-300 resize-none`}
           style={{ '--tw-ring-color': colors.primary }}
           rows={3}

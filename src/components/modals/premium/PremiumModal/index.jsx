@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Crown, X, Check, ArrowRight, Zap, BarChart3, Clock, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Flex from '../../../ui/Flex';
@@ -23,30 +24,10 @@ const reflectionStyles = `
   }
 `;
 
-const PREMIUM_BENEFITS = [
-  {
-    icon: Clock,
-    title: 'Unlimited Live Mode',
-    description: 'Track unlimited shifts in real-time, no monthly limits',
-  },
-  {
-    icon: BarChart3,
-    title: 'Advanced Statistics',
-    description: 'Detailed analytics and insights about your earnings',
-  },
-  {
-    icon: Zap,
-    title: 'Priority Support',
-    description: 'Get help faster with priority customer support',
-  },
-  {
-    icon: Shield,
-    title: 'Data Export',
-    description: 'Export your data in multiple formats anytime',
-  },
-];
+const BENEFIT_ICONS = [Clock, BarChart3, Zap, Shield];
 
 const PremiumModal = ({ isOpen, onClose }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -56,6 +37,13 @@ const PremiumModal = ({ isOpen, onClose }) => {
   };
 
   if (!isOpen) return null;
+
+  const benefits = [
+    { key: 'unlimitedLive' },
+    { key: 'advancedStats' },
+    { key: 'prioritySupport' },
+    { key: 'dataExport' },
+  ];
 
   return (
     <AnimatePresence>
@@ -144,14 +132,13 @@ const PremiumModal = ({ isOpen, onClose }) => {
                     className="text-2xl font-bold mb-2"
                     style={{ color: PREMIUM_COLORS.text }}
                   >
-                    Unlock the Full Experience
+                    {t('premium.modal.title')}
                   </h2>
                   <p
                     className="text-sm"
                     style={{ color: `${PREMIUM_COLORS.text}cc` }}
-                  >
-                    Start your <strong>15-day free trial</strong> — no charge until trial ends.
-                  </p>
+                    dangerouslySetInnerHTML={{ __html: t('premium.modal.subtitle') }}
+                  />
                 </div>
 
                 {/* Close button */}
@@ -172,68 +159,64 @@ const PremiumModal = ({ isOpen, onClose }) => {
             {/* Benefits list */}
             <div className="px-6 pb-6 space-y-4">
               <div className="space-y-3">
-                {PREMIUM_BENEFITS.map((benefit, index) => (
-                  <motion.div
-                    key={benefit.title}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex items-start gap-3 p-3 rounded-xl backdrop-blur-sm"
-                    style={{
-                      backgroundColor: `${PREMIUM_COLORS.text}08`,
-                      border: `1px solid ${PREMIUM_COLORS.text}15`,
-                    }}
-                  >
-                    <div
-                      className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: `${PREMIUM_COLORS.gold}30` }}
+                {benefits.map((benefit, index) => {
+                  const Icon = BENEFIT_ICONS[index];
+                  return (
+                    <motion.div
+                      key={benefit.key}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="flex items-start gap-3 p-3 rounded-xl backdrop-blur-sm"
+                      style={{
+                        backgroundColor: `${PREMIUM_COLORS.text}08`,
+                        border: `1px solid ${PREMIUM_COLORS.text}15`,
+                      }}
                     >
-                      <benefit.icon size={20} style={{ color: PREMIUM_COLORS.text }} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p
-                          className="font-semibold"
-                          style={{ color: PREMIUM_COLORS.text }}
-                        >
-                          {benefit.title}
-                        </p>
-                        <Check
-                          size={16}
-                          style={{ color: PREMIUM_COLORS.primary }}
-                        />
-                      </div>
-                      <p
-                        className="text-sm mt-0.5"
-                        style={{ color: `${PREMIUM_COLORS.text}99` }}
+                      <div
+                        className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: `${PREMIUM_COLORS.gold}30` }}
                       >
-                        {benefit.description}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
+                        <Icon size={20} style={{ color: PREMIUM_COLORS.text }} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p
+                            className="font-semibold"
+                            style={{ color: PREMIUM_COLORS.text }}
+                          >
+                            {t(`premium.benefits.${benefit.key}`)}
+                          </p>
+                          <Check
+                            size={16}
+                            className="flex-shrink-0"
+                            style={{ color: PREMIUM_COLORS.gold }}
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
               </div>
 
-
-              {/* Action buttons */}
-              <div className="flex gap-3 pt-2">
+              {/* CTA Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="pt-2"
+              >
                 <Button
-                  variant="cancel"
-                  onClick={onClose}
-                  className="flex-1"
-                >
-                  Maybe Later
-                </Button>
-                <Button
-                  variant="premium"
                   onClick={handleLetsGo}
-                  className="flex-1"
+                  variant="premium"
+                  size="lg"
                   icon={ArrowRight}
                   iconPosition="right"
+                  className="w-full justify-center"
                 >
-                  Start Free Trial
+                  {t('premium.modal.ctaButton')}
                 </Button>
-              </div>
+              </motion.div>
             </div>
           </div>
         </motion.div>

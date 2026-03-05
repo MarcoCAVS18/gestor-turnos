@@ -140,8 +140,8 @@ const StatsProgressBar = ({ className = '', currentData, weeklyHoursGoal }) => {
                 </p>
                 <p className="text-xs text-emerald-600/80 dark:text-emerald-500/80">
                   {overHours > 0
-                    ? `${hoursWorked.toFixed(1)}h worked — ${overHours.toFixed(1)}h over your ${goalHours}h goal`
-                    : `You completed ${goalHours} hours this week`
+                    ? t('stats.progressBar.overGoalMessage', { hours: hoursWorked.toFixed(1), over: overHours.toFixed(1), goal: goalHours })
+                    : t('stats.progressBar.goalCompletedMessage', { goal: goalHours })
                   }
                 </p>
               </div>

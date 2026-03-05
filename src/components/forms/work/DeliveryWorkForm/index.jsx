@@ -1,11 +1,14 @@
 // src/components/forms/DeliveryWorkForm/index.jsx
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../../contexts/AppContext';
 import { Truck, Clock } from 'lucide-react';
 import { calculateShiftHours, formatHoursDecimal } from '../../../../utils/time';
+import Flex from '../../../ui/Flex';
 
 const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialData = null }) => {
+  const { t } = useTranslation();
   const { thematicColors, vehicles = [], deliveryPlatforms = [] } = useApp();
   
   const [formData, setFormData] = useState({
@@ -42,15 +45,15 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.startTime) newErrors.startTime = 'Required';
-    if (!formData.endTime) newErrors.endTime = 'Required';
-    if (!formData.platform) newErrors.platform = 'Select a platform';
-    if (!formData.vehicle) newErrors.vehicle = 'Select a vehicle';
+    if (!formData.startTime) newErrors.startTime = t('forms.shift.validation.startTimeRequired');
+    if (!formData.endTime) newErrors.endTime = t('forms.shift.validation.endTimeRequired');
+    if (!formData.platform) newErrors.platform = t('forms.work.delivery.selectPlatform');
+    if (!formData.vehicle) newErrors.vehicle = t('forms.work.delivery.selectVehicle');
     const earningsNum = parseFloat(formData.earnings?.toString().replace(',', '.'));
-    if (!earningsNum || earningsNum <= 0) newErrors.earnings = 'Must be greater than 0';
+    if (!earningsNum || earningsNum <= 0) newErrors.earnings = t('forms.validation.positiveNumber');
     
     if (formData.startTime && formData.endTime && formData.startTime >= formData.endTime) {
-      newErrors.endTime = 'Must be after start';
+      newErrors.endTime = t('forms.validation.endAfterStart');
     }
 
     setErrors(newErrors);
@@ -106,7 +109,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
           <Flex variant="between" className="mb-6">
             <h2 className="text-lg font-bold flex items-center">
               <Truck size={20} style={{ color: thematicColors?.base }} className="mr-2" />
-              {workId ? 'Edit' : 'New'} Shift
+              {workId ? t('modals.shift.editTitle') : t('modals.shift.newTitle')}
             </h2>
             <button
               onClick={onClose}
@@ -119,7 +122,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Date */}
             <div>
-              <label className="block text-sm font-medium mb-1">Date</label>
+              <label className="block text-sm font-medium mb-1">{t('shifts.date')}</label>
               <input
                 type="date"
                 value={formData.date}
@@ -131,7 +134,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
             {/* Times */}
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-xs font-medium mb-1">Start</label>
+                <label className="block text-xs font-medium mb-1">{t('shifts.startTime')}</label>
                 <input
                   type="time"
                   value={formData.startTime}
@@ -141,7 +144,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
                 {errors.startTime && <p className="text-red-500 text-xs">{errors.startTime}</p>}
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1">End</label>
+                <label className="block text-xs font-medium mb-1">{t('shifts.endTime')}</label>
                 <input
                   type="time"
                   value={formData.endTime}
@@ -156,21 +159,21 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
             {workedHours > 0 && (
               <Flex className="text-xs text-blue-600 bg-blue-50 p-2 rounded-lg">
                 <Clock size={14} className="mr-1" />
-                Time: {formatHoursDecimal(workedHours)}
+                {t('modals.liveMode.active.duration')}: {formatHoursDecimal(workedHours)}
               </Flex>
             )}
             
             {/* PLATFORM */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Platform *
+                {t('forms.work.delivery.platform')} *
               </label>
               <select
                 value={formData.platform}
                 onChange={(e) => handleInputChange('platform', e.target.value)}
                 className={`w-full p-3 border rounded-lg text-sm ${errors.platform ? 'border-red-500' : 'border-gray-300'}`}
               >
-                <option value="">-- Select Platform --</option>
+                <option value="">-- {t('forms.work.delivery.selectPlatform')} --</option>
                 {deliveryPlatforms.map(platform => (
                   <option key={platform.id} value={platform.name}>
                     {platform.name}
@@ -183,14 +186,14 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
             {/* VEHICLE */}
             <div>
               <label className="block text-sm font-medium mb-1">
-                Vehicle *
+                {t('forms.work.delivery.vehicle')} *
               </label>
               <select
                 value={formData.vehicle}
                 onChange={(e) => handleInputChange('vehicle', e.target.value)}
                 className={`w-full p-3 border rounded-lg text-sm ${errors.vehicle ? 'border-red-500' : 'border-gray-300'}`}
               >
-                <option value="">-- Select Vehicle --</option>
+                <option value="">-- {t('forms.work.delivery.selectVehicle')} --</option>
                 {vehicles.map(vehicle => (
                   <option key={vehicle.id} value={vehicle.name}>
                     {vehicle.name}
@@ -203,7 +206,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
             {/* Orders and Kilometers */}
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-xs font-medium mb-1">Orders</label>
+                <label className="block text-xs font-medium mb-1">{t('cards.delivery.orders')}</label>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -213,7 +216,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1">Km</label>
+                <label className="block text-xs font-medium mb-1">{t('cards.delivery.km')}</label>
                 <input
                   type="text"
                   inputMode="decimal"
@@ -226,7 +229,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
 
             {/* Earnings */}
             <div>
-              <label className="block text-sm font-medium mb-1">Earnings *</label>
+              <label className="block text-sm font-medium mb-1">{t('statistics.totalEarned')} *</label>
               <input
                 type="text"
                 inputMode="decimal"
@@ -241,7 +244,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
             {/* Tips and Expenses */}
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="block text-xs font-medium mb-1">Tips</label>
+                <label className="block text-xs font-medium mb-1">{t('cards.delivery.tips')}</label>
                 <input
                   type="text"
                   inputMode="decimal"
@@ -252,7 +255,7 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1">Fuel</label>
+                <label className="block text-xs font-medium mb-1">{t('stats.fuelEfficiency.fuel')}</label>
                 <input
                   type="text"
                   inputMode="decimal"
@@ -271,14 +274,14 @@ const DeliveryWorkForm = ({ isOpen, onClose, onSubmit, workId = null, initialDat
                 onClick={onClose}
                 className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-sm"
               >
-                Cancel
+                {t('common.cancel')}
               </button>
               <button
                 type="submit"
                 className="flex-1 py-2 px-4 text-white rounded-lg hover:opacity-90 text-sm"
                 style={{ backgroundColor: thematicColors?.base || '#3B82F6' }}
               >
-                {workId ? 'Update' : 'Save'}
+                {workId ? t('common.save') : t('common.add')}
               </button>
             </div>
           </form>

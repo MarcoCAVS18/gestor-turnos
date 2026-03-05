@@ -1,31 +1,43 @@
 // src/components/filters/ShiftFilters/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { X, Briefcase, Truck } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { getAvailableShiftTypes } from '../../../utils/shiftTypesConfig';
 
-const DAYS = [
-  { id: 1, label: 'M' },
-  { id: 2, label: 'T' },
-  { id: 3, label: 'W' },
-  { id: 4, label: 'T' },
-  { id: 5, label: 'F' },
-  { id: 6, label: 'S' },
-  { id: 0, label: 'S' },
-];
-
 const ShiftFilters = ({ onFiltersChange, activeFilters = {} }) => {
+  const { t, i18n } = useTranslation();
   const colors = useThemeColors();
   const { works, deliveryWork, shiftsByDate, shiftRanges } = useApp();
+
+  // Get translated day labels based on current language
+  const getDayLabels = () => {
+    if (i18n.language === 'es') {
+      return ['L', 'M', 'M', 'J', 'V', 'S', 'D']; // Spanish: Lunes, Martes, Miércoles, Jueves, Viernes, Sábado, Domingo
+    } else if (i18n.language === 'fr') {
+      return ['L', 'M', 'M', 'J', 'V', 'S', 'D']; // French: Lundi, Mardi, Mercredi, Jeudi, Vendredi, Samedi, Dimanche
+    }
+    return ['M', 'T', 'W', 'T', 'F', 'S', 'S']; // English: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+  };
+
+  const DAYS = [
+    { id: 1, label: getDayLabels()[0] },
+    { id: 2, label: getDayLabels()[1] },
+    { id: 3, label: getDayLabels()[2] },
+    { id: 4, label: getDayLabels()[3] },
+    { id: 5, label: getDayLabels()[4] },
+    { id: 6, label: getDayLabels()[5] },
+    { id: 0, label: getDayLabels()[6] },
+  ];
 
   const allWorks = [
     ...works.map(t => ({ ...t, type: t.type || 'traditional' })),
     ...deliveryWork.map(t => ({ ...t, type: 'delivery' })),
   ];
 
-  const shiftTypes = getAvailableShiftTypes(shiftsByDate, shiftRanges, { base: colors.primary });
+  const shiftTypes = getAvailableShiftTypes(shiftsByDate, shiftRanges, { base: colors.primary }, t);
 
   const hasActiveFilters =
     (activeFilters.work && activeFilters.work !== 'all') ||
@@ -72,10 +84,10 @@ const ShiftFilters = ({ onFiltersChange, activeFilters = {} }) => {
                 borderColor: workActive ? colors.primary : undefined,
               }}
             >
-              <option value="all">All works</option>
+              <option value="all">{t('shifts.filters.allWorks')}</option>
               {allWorks.map(work => (
                 <option key={work.id} value={work.id}>
-                  {work.name}{work.type === 'delivery' ? ' (Delivery)' : ''}
+                  {work.name}{work.type === 'delivery' ? ` (${t('common.delivery')})` : ''}
                 </option>
               ))}
             </select>
@@ -145,7 +157,7 @@ const ShiftFilters = ({ onFiltersChange, activeFilters = {} }) => {
           className="inline-flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex-shrink-0"
         >
           <X size={12} />
-          Clear
+          {t('shifts.filters.clear')}
         </button>
       )}
     </div>

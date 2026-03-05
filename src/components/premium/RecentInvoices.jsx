@@ -1,6 +1,7 @@
 // src/components/premium/RecentInvoices.jsx
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Receipt, ExternalLink, Download, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { PREMIUM_COLORS } from '../../contexts/PremiumContext';
@@ -9,6 +10,7 @@ import Card from '../ui/Card';
 import logger from '../../utils/logger';
 
 const RecentInvoices = () => {
+  const { t } = useTranslation();
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,7 +43,7 @@ const RecentInvoices = () => {
       <Card className="p-5">
         <div className="flex items-center gap-2 mb-4">
           <Receipt size={20} style={{ color: PREMIUM_COLORS.primary }} />
-          <h2 className="text-lg font-semibold text-gray-900">Recent Invoices</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('premium.invoices.title')}</h2>
         </div>
         <div className="space-y-3">
           {[1, 2, 3].map(i => (
@@ -64,7 +66,7 @@ const RecentInvoices = () => {
       <Card className="p-5">
         <div className="flex items-center gap-2 mb-4">
           <Receipt size={20} style={{ color: PREMIUM_COLORS.primary }} />
-          <h2 className="text-lg font-semibold text-gray-900">Recent Invoices</h2>
+          <h2 className="text-lg font-semibold text-gray-900">{t('premium.invoices.title')}</h2>
         </div>
         <div className="flex flex-col items-center py-6 text-center">
           <div
@@ -73,8 +75,8 @@ const RecentInvoices = () => {
           >
             <FileText size={20} style={{ color: PREMIUM_COLORS.primary }} />
           </div>
-          <p className="text-sm text-gray-500">No invoices yet</p>
-          <p className="text-xs text-gray-400 mt-1">Your invoices will appear here after your first payment</p>
+          <p className="text-sm text-gray-500">{t('premium.invoices.noInvoices')}</p>
+          <p className="text-xs text-gray-400 mt-1">{t('premium.invoices.noInvoicesDesc')}</p>
         </div>
       </Card>
     );
@@ -84,7 +86,7 @@ const RecentInvoices = () => {
     <Card className="p-5">
       <div className="flex items-center gap-2 mb-4">
         <Receipt size={20} style={{ color: PREMIUM_COLORS.primary }} />
-        <h2 className="text-lg font-semibold text-gray-900">Recent Invoices</h2>
+        <h2 className="text-lg font-semibold text-gray-900">{t('premium.invoices.title')}</h2>
       </div>
       <div className="space-y-2">
         {invoices.map((invoice, index) => (
@@ -103,7 +105,7 @@ const RecentInvoices = () => {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 truncate">
-                {invoice.number || `Invoice #${index + 1}`}
+                {invoice.number || t('premium.invoices.invoiceNumber', { number: index + 1 })}
               </p>
               <p className="text-xs text-gray-500">
                 {formatInvoiceDate(invoice.date)}
@@ -120,7 +122,7 @@ const RecentInvoices = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
-                    title="Download PDF"
+                    title={t('premium.invoices.downloadPdf')}
                   >
                     <Download size={14} className="text-gray-500" />
                   </a>
@@ -131,7 +133,7 @@ const RecentInvoices = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
-                    title="View invoice"
+                    title={t('premium.invoices.viewInvoice')}
                   >
                     <ExternalLink size={14} className="text-gray-500" />
                   </a>

@@ -1,5 +1,6 @@
 // src/components/cards/shift/DeliveryShiftCard/index.jsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Package, Navigation, Fuel, DollarSign } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Flex from '../../../ui/Flex';
@@ -8,6 +9,7 @@ import { formatCurrency } from '../../../../utils/currency';
 import { useApp } from '../../../../contexts/AppContext';
 
 const DeliveryShiftCard = (props) => {
+  const { t } = useTranslation();
   const { shift } = props;
   const { currencySymbol } = useApp();
 
@@ -48,7 +50,7 @@ const DeliveryShiftCard = (props) => {
       shiftData={shiftData}
       // We pass earning to Base to put it at the bottom
       earningValue={shiftData.totalWithDiscount}
-      earningLabel="Net Earnings"
+      earningLabel={t('shifts.netEarnings')}
     >
       {{
         // Mobile stats - Orders and km (NO Earning, only physical stats)
@@ -65,7 +67,7 @@ const DeliveryShiftCard = (props) => {
               {shiftData.kilometers > 0 && (
                 <Flex variant="center">
                   <Navigation size={12} className="mr-1 text-purple-500" />
-                  <span>{shiftData.kilometers}km</span>
+                  <span>{shiftData.kilometers}{t('common.km')}</span>
                 </Flex>
               )}
             </Flex>
@@ -79,7 +81,7 @@ const DeliveryShiftCard = (props) => {
             <Flex variant="between">
               <Flex variant="center" className="text-gray-600 dark:text-gray-400">
                 <Package size={12} className="mr-1.5 text-blue-500" />
-                <span>Orders</span>
+                <span>{t('cards.shift.orders')}</span>
               </Flex>
               <span className="font-semibold dark:text-white">{shiftData.numberOfOrders || 0}</span>
             </Flex>
@@ -88,16 +90,16 @@ const DeliveryShiftCard = (props) => {
               <Flex variant="between">
                 <Flex variant="center" className="text-gray-600 dark:text-gray-400">
                   <Navigation size={12} className="mr-1.5 text-purple-500" />
-                  <span>Distance</span>
+                  <span>{t('cards.shift.distance')}</span>
                 </Flex>
-                <span className="font-semibold dark:text-white">{shiftData.kilometers} km</span>
+                <span className="font-semibold dark:text-white">{shiftData.kilometers} {t('common.km')}</span>
               </Flex>
             )}
 
             {/* Earnings breakdown */}
             <div className="pt-2 border-t border-gray-100 dark:border-[rgba(255,255,255,0.08)] space-y-1.5">
               <Flex variant="between">
-                <span className="text-gray-500 dark:text-gray-400">Base earnings</span>
+                <span className="text-gray-500 dark:text-gray-400">{t('cards.shift.baseEarnings')}</span>
                 <span className="font-medium dark:text-white">{formatCurrency(shiftData.baseEarning, currencySymbol)}</span>
               </Flex>
 
@@ -105,7 +107,7 @@ const DeliveryShiftCard = (props) => {
                 <Flex variant="between">
                   <Flex variant="center" className="text-gray-500 dark:text-gray-400">
                     <DollarSign size={10} className="mr-1 text-green-500" />
-                    <span>Tips</span>
+                    <span>{t('shifts.tips')}</span>
                   </Flex>
                   <span className="font-medium text-green-600">{formatCurrency(shiftData.tips, currencySymbol)}</span>
                 </Flex>
@@ -115,7 +117,7 @@ const DeliveryShiftCard = (props) => {
                 <Flex variant="between">
                   <Flex variant="center" className="text-gray-500 dark:text-gray-400">
                     <Fuel size={10} className="mr-1 text-orange-500" />
-                    <span>Fuel expense</span>
+                    <span>{t('cards.shift.fuelExpense')}</span>
                   </Flex>
                   <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(shiftData.expenses, currencySymbol)}</span>
                 </Flex>
@@ -123,7 +125,7 @@ const DeliveryShiftCard = (props) => {
 
               {shiftData.averagePerOrder > 0 && (
                 <Flex variant="between" className="pt-1.5 border-t border-gray-50 dark:border-[rgba(255,255,255,0.05)]">
-                  <span className="text-gray-500 dark:text-gray-400">Avg per order</span>
+                  <span className="text-gray-500 dark:text-gray-400">{t('cards.shift.avgPerOrder')}</span>
                   <span className="font-semibold text-blue-600">{formatCurrency(shiftData.averagePerOrder, currencySymbol)}</span>
                 </Flex>
               )}

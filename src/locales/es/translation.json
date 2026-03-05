@@ -11,8 +11,11 @@
     "noChanges": "Sin cambios",
     "error": "Algo salió mal",
     "confirm": "Confirmar",
+    "create": "Crear",
     "back": "Volver",
+    "backToSettings": "Volver a Configuraciones",
     "close": "Cerrar",
+    "locale": "es-ES",
     "yes": "Sí",
     "no": "No",
     "optional": "Opcional",
@@ -20,7 +23,62 @@
     "resume": "Reanudar",
     "pause": "Pausar",
     "finish": "Finalizar",
-    "moreInfo": "Más info"
+    "moreInfo": "Más info",
+    "or": "o",
+    "continue": "Continuar",
+    "password": "Contraseña",
+    "email": "Correo electrónico",
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "tomorrow": "Mañana",
+    "shift": "turno",
+    "shifts": "turnos",
+    "work": "Trabajo",
+    "duration": "Duración",
+    "earnings": "Ganancias",
+    "hours": "horas",
+    "viewDetails": "Ver detalles",
+    "time": "Hora",
+    "hourlyRate": "Tarifas por hora",
+    "day": "Día",
+    "afternoon": "Tarde",
+    "night": "Noche",
+    "update": "Actualizar",
+    "manage": "Gestionar",
+    "off": "OFF",
+    "on": "ON",
+    "perShift": "por turno",
+    "keepPlan": "Mantener Plan",
+    "tip": "Consejo",
+    "view": "Ver",
+    "pausing": "Pausando...",
+    "resuming": "Reanudando...",
+    "hide": "Ocultar",
+    "goBack": "Volver",
+    "creating": "Creando...",
+    "remove": "Eliminar",
+    "confirmDeletion": "Confirmar Eliminación",
+    "deleting": "Eliminando...",
+    "hours": "Horas",
+    "minutes": "Minutos",
+    "seconds": "Segundos",
+    "perHour": "h",
+    "km": "km",
+    "saturday": "Sábado",
+    "sunday": "Domingo",
+    "saveChanges": "Guardar Cambios",
+    "delivery": "Delivery",
+    "liveMode": "Modo Live",
+    "share": "Compartir",
+    "daysFull": {
+      "Monday": "Lunes",
+      "Tuesday": "Martes",
+      "Wednesday": "Miércoles",
+      "Thursday": "Jueves",
+      "Friday": "Viernes",
+      "Saturday": "Sábado",
+      "Sunday": "Domingo"
+    }
   },
   "nav": {
     "home": "Inicio",
@@ -36,49 +94,418 @@
     "newWork": "Nuevo Trabajo",
     "shiftsDisabledTooltip": "Primero crea un trabajo para agregar turnos",
     "paused": "Pausado",
-    "liveMode": "Modo en Vivo"
+    "liveMode": "Modo Live"
   },
   "premium": {
-    "unlockAll": "Desbloquear todas las funciones",
-    "upgrade": "Mejorar a Premium",
-    "badge": "Premium"
+    "title": "Premium",
+    "unlockFeatures": "Desbloquea acceso ilimitado a todas las funciones",
+    "manageSubscription": "Gestiona tu suscripción",
+    "account": "Cuenta",
+    "profile": "Perfil",
+    "freePlan": "Plan Gratuito",
+    "premiumFor": "Premium por {{duration}}",
+    "lessThanMonth": "Menos de un mes",
+    "oneMonth": "1 mes",
+    "months": "{{count}} meses",
+    "paymentDetails": "Detalles de Pago",
+    "updatePayment": "Actualizar Pago",
+    "changePayment": "Cambia tu tarjeta o método de pago",
+    "viewInvoices": "Ver Facturas",
+    "downloadReceipts": "Descargar recibos y facturas",
+    "opening": "Abriendo...",
+    "openBillingPortal": "Abrir Portal de Facturación",
+    "cancellationScheduled": "Cancelación programada",
+    "accessContinues": "El acceso continúa hasta {{date}}",
+    "keepAccess": "Mantendrás acceso hasta <strong>{{date}}</strong>. Después de eso, tu plan volverá a Gratuito.",
+    "confirm": "Confirmar",
+    "cancelSubscription": "Cancelar suscripción",
+    "subtitle": "Desbloquea acceso ilimitado a todas las funciones",
+    "hero": {
+      "freeTrial": "15 días de prueba gratis",
+      "unlockPremium": "Desbloquear Premium",
+      "month": "mes",
+      "trialDescription": "Prueba gratis por 15 días, luego ${{price}} AUD/mes"
+    },
+    "celebration": {
+      "trialStarted": "¡Prueba iniciada!",
+      "yourePremium": "¡Eres Premium!",
+      "trialDescription": "Disfruta 15 días de acceso Premium completo, completamente gratis.",
+      "premiumDescription": "Disfruta acceso ilimitado a todas las funciones",
+      "cardCharged": "Tarjeta cargada el",
+      "redirecting": "Redirigiendo..."
+    },
+    "payment": {
+      "title": "Pago y Facturas",
+      "cardOnFile": "Tarjeta guardada",
+      "defaultMethod": "Método de pago predeterminado",
+      "totalInvested": "Total invertido en Premium",
+      "invoices": "Facturas",
+      "history": "Historial"
+    },
+    "invoices": {
+      "title": "Facturas Recientes",
+      "noInvoices": "Aún no hay facturas",
+      "noInvoicesDesc": "Tus facturas aparecerán aquí después de tu primer pago",
+      "invoiceNumber": "Factura #{{number}}",
+      "downloadPdf": "Descargar PDF",
+      "viewInvoice": "Ver factura"
+    },
+    "benefits": {
+      "unlimitedLive": "Live Ilimitado",
+      "advancedStats": "Estadísticas Avanzadas",
+      "prioritySupport": "Soporte Prioritario",
+      "dataExport": "Exportación de Datos",
+      "unlimitedLiveDesc": "Registra turnos ilimitados en tiempo real",
+      "advancedStatsDesc": "Análisis detallados e insights",
+      "prioritySupportDesc": "Obtén ayuda más rápido con soporte prioritario",
+      "dataExportDesc": "Exporta tus datos en cualquier momento"
+    },
+    "modal": {
+      "title": "Desbloquea la Experiencia Completa",
+      "subtitle": "Comienza tu <strong>prueba gratuita de 15 días</strong> — sin cargo hasta que termine la prueba.",
+      "ctaButton": "Vamos"
+    },
+    "weekNavigator": {
+      "thisWeek": "Esta semana",
+      "lastWeek": "Semana pasada",
+      "nextWeek": "Próxima semana",
+      "inWeeks": "En {{count}} semanas",
+      "weeksAgo": "Hace {{count}} semanas"
+    },
+    "subscription": {
+      "title": "Suscripción",
+      "planName": "Plan Premium",
+      "freeDuringTrial": "Gratis durante la prueba",
+      "memberSince": "Miembro desde",
+      "trialEnds": "La prueba termina",
+      "accessUntil": "Acceso hasta",
+      "nextBilling": "Próximo cobro",
+      "trialInfo": "Tu prueba gratuita de 15 días está activa. Se cobrará ${{price}} AUD el {date} a menos que canceles antes.",
+      "cancellationInfo": "Tu suscripción terminará el {date}. Mantendrás acceso completo hasta entonces."
+    },
+    "status": {
+      "active": "Activo",
+      "trialing": "Prueba gratuita",
+      "cancelling": "Cancelando",
+      "pastDue": "Pago atrasado"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Orary",
+      "subtitle": "Gestiona tus turnos de trabajo fácilmente.",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Contraseña",
+      "continue": "Continuar",
+      "continueWithGoogle": "Continuar con Google",
+      "continueWithBiometric": "Continuar con biometría",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "noAccount": "¿No tienes cuenta?",
+      "registerHere": "¡Regístrate aquí!",
+      "recoverySent": "Hemos enviado un enlace de recuperación a tu correo."
+    },
+    "register": {
+      "title": "Orary",
+      "subtitle": "Crea tu cuenta",
+      "name": "Nombre",
+      "namePlaceholder": "Tu nombre",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "Mínimo 6 caracteres",
+      "confirmPassword": "Confirmar Contraseña",
+      "confirmPasswordPlaceholder": "Confirma tu contraseña",
+      "register": "Registrarse",
+      "registerWithGoogle": "Registrarse con Google",
+      "haveAccount": "¿Ya tienes cuenta?",
+      "signInHere": "Inicia sesión aquí",
+      "passwordRequirements": {
+        "minLength": "Mínimo 6 caracteres",
+        "uppercase": "Al menos una letra mayúscula",
+        "lowercase": "Al menos una letra minúscula",
+        "number": "Al menos un número"
+      }
+    },
+    "forgotPassword": {
+      "title": "Orary",
+      "subtitle": "Recupera tu contraseña",
+      "description": "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@correo.com",
+      "sendLink": "Recuperar contraseña",
+      "backToLogin": "Volver al inicio de sesión",
+      "emailSent": "Revisa tu correo para el enlace de restablecimiento",
+      "sending": "Enviando...",
+      "errorSend": "No se pudo enviar el correo de recuperación. Verifica tu dirección de correo."
+    },
+    "resetPassword": {
+      "title": "Orary",
+      "subtitle": "Crear nueva contraseña",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar contraseña",
+      "resetButton": "Confirmar nueva contraseña",
+      "resetting": "Restableciendo...",
+      "success": "¡Tu contraseña ha sido restablecida correctamente! Redirigiendo...",
+      "backToLogin": "Volver al inicio de sesión",
+      "invalidLink": "Enlace inválido o expirado. Solicita un nuevo enlace de recuperación.",
+      "expiredLink": "El enlace ha expirado. Solicita un nuevo enlace de recuperación.",
+      "errorReset": "Error al restablecer tu contraseña. Inténtalo de nuevo."
+    },
+    "errors": {
+      "emailRequired": "Por favor ingresa tu correo",
+      "passwordRequired": "Por favor ingresa tu contraseña",
+      "emailPasswordRequired": "Por favor ingresa tu correo y contraseña",
+      "invalidEmail": "Por favor ingresa un correo válido",
+      "wrongPassword": "Correo o contraseña incorrectos",
+      "emailInUse": "Este correo ya está en uso. Intenta iniciar sesión.",
+      "weakPassword": "La contraseña es muy débil. Debe tener al menos 6 caracteres.",
+      "popupClosed": "La ventana de inicio de sesión fue cerrada. Por favor intenta de nuevo.",
+      "googleSignInFailed": "No se pudo iniciar sesión con Google. Por favor intenta de nuevo.",
+      "googleRegisterFailed": "No se pudo registrar con Google. Por favor intenta de nuevo.",
+      "accountExists": "Ya existe una cuenta con este correo. Intenta con otro método de inicio de sesión.",
+      "createAccountFailed": "Error al crear la cuenta. Por favor intenta de nuevo.",
+      "nameTooShort": "El nombre debe tener al menos 2 caracteres",
+      "inappropriateName": "Por favor elige un nombre apropiado",
+      "passwordRequirements": "La contraseña no cumple con los requisitos mínimos",
+      "passwordsMismatch": "Las contraseñas no coinciden",
+      "biometricFailed": "La verificación biométrica falló. Intenta con tu contraseña.",
+      "sessionExpired": "Por favor inicia sesión con tu correo o Google para continuar."
+    }
+  },
+  "landing": {
+    "brandName": "Orary",
+    "tagline": "Gestión de Turnos de Trabajo y Seguimiento de Ganancias",
+    "features": {
+      "trackShifts": "Registrar Turnos",
+      "analytics": "Analíticas",
+      "liveMode": "Modo Live"
+    },
+    "getStartedFree": "Comenzar Gratis",
+    "signIn": "Iniciar sesión",
+    "alreadyHaveAccount": "¿ya tienes cuenta?",
+    "freeWorldwide": "Gratis para trabajadores de todo el mundo · No se requiere tarjeta de crédito",
+    "legalAgreement": "Al usar Orary aceptas nuestra",
+    "privacyPolicy": "Política de Privacidad",
+    "and": "y",
+    "termsOfService": "Términos de Servicio"
+  },
+  "integrations": {
+    "subtitle": "Conecta servicios externos y configura notificaciones",
+    "backToSettings": "Volver a Configuraciones",
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "checking": "Verificando...",
+      "soon": "Pronto"
+    },
+    "notifications": {
+      "title": "Notificaciones del Navegador",
+      "description": "Recibe notificaciones directamente en tu navegador cuando ocurran eventos importantes.",
+      "enable": "Activar notificaciones",
+      "blocked": "Bloqueado por el navegador",
+      "blockedHelp": "Las notificaciones están bloqueadas. Por favor, actívalas en la configuración de tu navegador.",
+      "enabledTitle": "¡Notificaciones activadas!",
+      "enabledMessage": "Ahora recibirás recordatorios de turnos."
+    },
+    "reminders": {
+      "title": "Recordatorios de Turnos",
+      "description": "Recibe notificaciones antes de que comiencen tus turnos para no perderte ninguno.",
+      "enable": "Activar recordatorios",
+      "remindMe": "Recordarme",
+      "minutes": "{{count}} minutos antes",
+      "hour": "1 hora antes"
+    },
+    "biometric": {
+      "title": "Inicio Biométrico",
+      "description": "Usa Touch ID, Face ID o Windows Hello para desbloquear la app rápidamente cuando vuelvas.",
+      "active": "Activo en este dispositivo",
+      "enable": "Activar para este dispositivo",
+      "notSupported": "No compatible con este dispositivo o navegador."
+    },
+    "mobile": {
+      "title": "App Móvil",
+      "description": "Recibe notificaciones push y gestiona tus turnos sobre la marcha con nuestra app móvil.",
+      "platforms": "iOS y Android"
+    },
+    "deliveryVehicle": {
+      "helpText": "Selecciona el vehículo que usarás para tus deliveries"
+    },
+    "calendar": {
+      "title": "Suscripción al Calendario",
+      "description": "Suscríbete a tus turnos en cualquier app de calendario — Google Calendar, Apple Calendar, Outlook y más. Se actualiza automáticamente cada pocas horas.",
+      "subscribe": "Suscribirse al Calendario",
+      "opening": "Abriendo...",
+      "copyLink": "Copiar enlace (otras apps)",
+      "copied": "¡Copiado!",
+      "error": "No se pudo generar el enlace del calendario. Inténtalo de nuevo.",
+      "note": "No requiere inicio de sesión · Funciona con cualquier app de calendario"
+    },
+    "howItWorks": {
+      "title": "Cómo funciona la suscripción al calendario",
+      "step1": "Genera tu enlace personal y añádelo a cualquier app de calendario",
+      "step2": "Tus turnos aparecen automáticamente y se actualizan cada pocas horas",
+      "step3": "El enlace es permanente — añádelo una vez y siempre se mantiene sincronizado"
+    },
+    "install": {
+      "title": "Instalar Orary",
+      "description": "Añádelo a tu pantalla de inicio — funciona como una app nativa, sin necesidad de App Store",
+      "iosTab": "iPhone / iPad",
+      "androidTab": "Android",
+      "share": "Compartir",
+      "menu": "Menú",
+      "addToHome": "Añadir a la Pantalla de Inicio",
+      "ios": {
+        "safariOnly": "<strong>Solo funciona en Safari.</strong> Si usas Chrome o Firefox en iPhone, abre esta página en Safari primero.",
+        "step1": "Abre esta página en <strong>Safari</strong>",
+        "step1Note": "¡Si ya estás en Safari, todo listo!",
+        "step2": "Toca el botón <strong>Compartir</strong> en la parte inferior de Safari",
+        "step3": "Busca <strong>\"Añadir a la Pantalla de Inicio\"</strong> en el menú de compartir",
+        "step3Warning": "<strong>¡Desplázate hacia abajo!</strong> Esta opción NO está en la parte superior del menú — está oculta debajo. Sigue deslizando hacia abajo por la fila de iconos hasta ver el icono de <strong>\"Añadir a la Pantalla de Inicio\"</strong> con un símbolo de más.",
+        "step4": "Toca <strong>\"Añadir\"</strong> en la esquina superior derecha",
+        "step4Note": "Orary aparecerá en tu pantalla de inicio — ábrelo como cualquier app."
+      },
+      "android": {
+        "chromeOnly": "<strong>Funciona mejor en Chrome.</strong> Samsung Browser también lo soporta.",
+        "step1": "Toca el icono de <strong>menú</strong> en la parte superior derecha de Chrome",
+        "step2": "Selecciona <strong>\"Añadir a la pantalla de inicio\"</strong> o <strong>\"Instalar app\"</strong>",
+        "step2Note": "La etiqueta puede variar según tu versión de Chrome.",
+        "step3": "Toca <strong>\"Instalar\"</strong> para confirmar",
+        "step3Note": "Orary aparecerá en tu pantalla de inicio y en tu cajón de apps."
+      }
+    }
   },
   "dashboard": {
+    "subtitle": "Un resumen de tu actividad y progreso.",
+    "motivation": {
+      "keepGoing": "¡Sigue así!",
+      "onFire": "¡Estás on fire!",
+      "niceWork": "¡Buen trabajo!",
+      "crushingIt": "¡Lo estás rompiendo!",
+      "goodPace": "¡Buen ritmo!",
+      "unstoppable": "¡Imparable!",
+      "stayStrong": "¡Mantente fuerte!",
+      "amazing": "¡Increíble!",
+      "youGotThis": "¡Tú puedes!",
+      "legend": "¡Leyenda!",
+      "wellDone": "¡Bien hecho!",
+      "superstar": "¡Superestrella!",
+      "greatEffort": "¡Gran esfuerzo!",
+      "incredible": "¡Increíble!",
+      "solidWork": "¡Trabajo sólido!",
+      "topNotch": "¡De primera!",
+      "makingMoves": "¡Haciendo movimientos!",
+      "beastMode": "¡Modo bestia!",
+      "onTrack": "¡En camino!",
+      "brilliant": "¡Brillante!"
+    },
+    "quickActions": {
+      "title": "Acciones rápidas",
+      "newShift": "Nuevo turno",
+      "newWork": "Nuevo trabajo"
+    },
     "welcome": {
-      "greeting_morning": "Buenos días,",
-      "greeting_afternoon": "Buenas tardes,",
-      "greeting_evening": "Buenas noches,",
-      "summary": "Aquí hay un resumen de tu actividad",
+      "greeting_morning": "¡Buenos días!",
+      "greeting_afternoon": "¡Buenas tardes!",
+      "greeting_evening": "¡Buenas noches!",
+      "summary": "Aquí está tu resumen",
       "totalEarned": "Total ganado",
       "disclaimer": "Los cálculos se basan en tus preferencias",
-      "disclaimerDesc": "A veces la nómina incluye otros factores que pueden causar pequeñas diferencias. ¡Este sistema te ayuda a registrar tus ganancias día a día!"
+      "disclaimerDesc": "A veces la nómina incluye otros factores que pueden causar pequeñas diferencias. ¡Este sistema te ayuda a seguir tus ganancías día a día!"
+    },
+    "favoriteWorks": {
+      "title": "Trabajos favoritos",
+      "empty": "Aún no hay trabajos favoritos",
+      "viewMore": "Ver más",
+      "shiftLabel": "turnos",
+      "totalLabel": "Total de los top {{count}}"
+    },
+    "topWork": {
+      "title": "Trabajo más rentable"
+    },
+    "nextShift": {
+      "title": "Próximo turno"
+    },
+    "recentActivity": {
+      "title": "Actividad reciente",
+      "empty": "Sin actividad reciente",
+      "viewAll": "Ver todos",
+      "totalRecent": "Total reciente"
+    },
+    "projection": {
+      "title": "Proyección",
+      "worksAdded": "Trabajos agregados",
+      "stepCompleted": "Paso completado",
+      "addWorks": "Agregar trabajos",
+      "unlocksShifts": "Desbloquea la creación de turnos",
+      "trackShifts": "Registrar turnos",
+      "addOrLive": "Agrega manualmente o usa Live",
+      "firstMonth": "Tu primer mes registrado",
+      "moreThanLast": "{{amount}} más que el mes pasado (+{{percent}}%)",
+      "lessThanLast": "{{amount}} menos que el mes pasado (-{{percent}}%)",
+      "sameAsLast": "Igual que el mes pasado",
+      "keepPace": "Si mantienes este ritmo durante el mes"
+    },
+    "export": {
+      "title": "Exportar reporte",
+      "description": "Descarga tu información en diferentes formatos",
+      "formats": {
+        "pdf": "PDF",
+        "png": "PNG",
+        "excel": "Excel"
+      }
+    },
+    "common": {
+      "noDataYet": "Aún no hay datos"
+    },
+    "thisWeek": {
+      "title": "Esta semana",
+      "shifts": "turnos",
+      "hours": "horas",
+      "earnings": "ganancias",
+      "totalEarned": "Total ganado",
+      "progress": "Progreso",
+      "goal": "meta",
+      "noGoalYet": "¿Aún sin meta semanal?",
+      "goalHelps": "Establecer una te ayuda a mantenerte en rumbo",
+      "setUp": "Configurar"
     },
     "liveMode": {
-      "title": "Modo en Vivo",
-      "newFeature": "Nueva Función",
-      "liveActive": "En Vivo",
+      "title": "Modo Live",
+      "newFeature": "Nueva función",
+      "liveActive": "Live activo",
       "paused": "Pausado",
-      "liveShift": "Turno en Vivo",
+      "liveShift": "Turno en vivo",
       "resume": "Reanudar",
       "pause": "Pausar",
       "finish": "Finalizar",
       "moreInfo": "Más info",
-      "addWork": "Agregar Trabajo",
-      "needsWork": "Para usar el Modo en Vivo, primero debes agregar un trabajo tradicional a tu perfil.",
+      "addWork": "Agregar trabajo",
+      "needsWork": "Para usar el Modo Live, primero debes agregar un trabajo tradicional a tu perfil.",
       "deliveryComingSoon": "Soporte para trabajos de delivery próximamente",
-      "description": "Control total de tus turnos en tiempo real. Ficha entrada, pausa, y monitorea tus ganancias al instante.",
-      "freeTrial": "15 días de prueba gratis",
-      "unlimitedSessions": "Sesiones Ilimitadas",
-      "sessionsThisMonth": "sesiones este mes",
+      "description": "Control total de tus turnos en tiempo real. Registra, pausa y monitorea tus ganancias al instante.",
+      "freeTrial": "Prueba gratis 15 días",
+      "unlimitedSessions": "Sesiones ilimitadas",
+      "sessionsThisMonth": "usos este mes",
       "tryNow": "Probar ahora",
-      "startSession": "Iniciar sesión"
+      "startSession": "Iniciar sesión",
+      "active": "Live activo",
+      "tapToView": "Toca para ver detalles",
+      "startRecording": "Iniciar grabación",
+      "trackRealTime": "Registra tu turno en tiempo real",
+      "freePlan": "Plan gratuito",
+      "usesThisMonth": "usos este mes",
+      "upgradeForUnlimited": "Mejora a Premium para Live ilimitado"
     },
-    "favoriteWorks": {
-      "title": "Trabajos favoritos",
-      "empty": "Sin datos aún",
-      "viewMore": "Ver más",
-      "shiftLabel": "turnos",
-      "totalLabel": "Total del top"
+    "clockIn": {
+      "title": "Registro de entrada",
+      "noShiftsToday": "No hay turnos hoy",
+      "addShift": "Agregar turno",
+      "shiftStarted": "Turno iniciado",
+      "startedAt": "Iniciado a las",
+      "estimatedEnd": "Final estimado",
+      "estimatedEarnings": "Ganancias estimadas"
     },
     "quickStats": {
       "works": "Trabajos",
@@ -88,16 +515,21 @@
       "active": "activos",
       "completed": "completados",
       "worked": "trabajadas",
-      "perHour": "Por Hora",
-      "thisWeek": "Esta Semana",
-      "thisMonth": "Este Mes",
+      "perHour": "Por hora",
+      "thisWeek": "Esta semana",
+      "thisMonth": "Este mes",
       "currentWeek": "Semana actual",
       "currentMonth": "Mes actual",
-      "weekEarnings": "Gan. semana"
+      "weekEarnings": "Gan. semana",
+      "viewMore": "Ver más",
+      "details": "Detalles",
+      "traditional": "Tradicional",
+      "delivery": "Delivery",
+      "noData": "Sin datos disponibles"
     },
-    "export": {
-      "title": "Exportar Informe",
-      "description": "Descarga un resumen completo de tus estadísticas, turnos y actividad"
+    "suggestedAction": {
+      "title": "¿Disfrutando Orary?",
+      "description": "Comparte tu experiencia y ayúdanos a mejorar"
     }
   },
   "settings": {
@@ -112,6 +544,49 @@
       "darkTheme": "Oscuro",
       "darkThemeDesc": "Suave con los ojos por la noche",
       "darkThemePremium": "Función Premium"
+    },
+    "goals": {
+      "title": "Metas Semanales",
+      "week": "semana",
+      "weekdays": "días laborables",
+      "partTime": "Medio tiempo",
+      "standard": "Estándar",
+      "fullTime": "Tiempo completo",
+      "extended": "Extendido",
+      "setWeeklyGoal": "Establecer una meta semanal",
+      "trackInStats": "Seguimiento en Estadísticas",
+      "quickPresets": "Valores predefinidos",
+      "orCustomHours": "O ingresa horas personalizadas",
+      "placeholder": "Ej: 40",
+      "hoursPerWeek": "horas/semana",
+      "tipDescription": "Establece una meta realista para ver tu progreso semanal en la barra de progreso."
+    },
+    "deliveryPlatforms": {
+      "title": "Plataformas de Delivery",
+      "description": "Selecciona tu plataforma por defecto o agrega personalizadas.",
+      "platformName": "Nombre de plataforma",
+      "default": "Por defecto",
+      "defaultSet": "Plataforma por defecto establecida",
+      "defaultCleared": "Plataforma por defecto eliminada",
+      "platformAdded": "Plataforma agregada",
+      "platformRemoved": "Plataforma eliminada",
+      "errorSetDefault": "Error al establecer plataforma por defecto",
+      "errorAdd": "Error al agregar plataforma",
+      "errorRemove": "Error al eliminar plataforma"
+    },
+    "profile": {
+      "title": "Perfil",
+      "email": "Correo electrónico",
+      "name": "Nombre",
+      "addPhoto": "Agregar una foto",
+      "yourPhoto": "Tu foto de perfil",
+      "personalizeDesc": "Personaliza tu perfil con una foto.",
+      "removePhoto": "Eliminar foto",
+      "avatar": "Avatar de usuario",
+      "deletePhoto": "Eliminar foto de perfil",
+      "currentProfile": "Foto de perfil actual",
+      "defaultLogo": "Logo por defecto",
+      "deletePhotoConfirm": "¿Estás seguro de que quieres eliminar tu foto de perfil? Será reemplazada por el logo por defecto."
     },
     "smoko": {
       "title": "Smoko (Descansos)",
@@ -149,9 +624,9 @@
       "nightShift": "Turno Nocturno",
       "startTime": "Hora de inicio",
       "endTime": "Hora de fin",
-      "nightNote": "El turno nocturno se extiende hasta el final del día",
+      "nightNote": "El turno nocturno se extiende hasta el inicio del turno diurno",
       "save": "Guardar rangos de turno",
-      "blockedByLive": "Bloqueado por Modo en Vivo",
+      "blockedByLive": "Bloqueado por Modo Live",
       "validationDay": "La hora de inicio del turno diurno debe ser anterior a la hora de fin",
       "validationAfternoon": "La hora de inicio del turno de tarde debe ser anterior a la hora de fin",
       "validationAfternoonAfterDay": "El turno de tarde debe comenzar después o al mismo tiempo que termina el turno diurno",
@@ -178,12 +653,17 @@
       "disablePopoverTitle": "Consecuencias de desactivar",
       "enablePopoverTitle": "¿Cómo funciona?",
       "whatIfDisable": "¿Qué pasa si lo desactivo?",
-      "whatIfEnable": "¿Qué cambia al activarlo?"
-    },
-    "profile": {
-      "title": "Perfil",
-      "email": "Correo electrónico",
-      "name": "Nombre"
+      "whatIfEnable": "¿Qué cambia al activarlo?",
+      "enabledMessage": "Modo delivery activado",
+      "disabledMessage": "Modo delivery desactivado",
+      "errorMessage": "Error al cambiar la configuración de delivery",
+      "disableInfo": "Al desactivar esta opción, la interfaz se simplificará para trabajos por hora:",
+      "disablePoint1": "Solo se mostrarán estadísticas de <strong>trabajos tradicionales</strong> en el dashboard.",
+      "disablePoint2": "Tus turnos de delivery anteriores <strong>seguirán visibles</strong> en el historial, pero <strong>no podrás agregar nuevos</strong> hasta que lo vuelvas a activar.",
+      "enablePoint1": "Los trabajos <strong>no requieren</strong> una tarifa fija por hora.",
+      "enablePoint2": "Registras <strong>las ganancias totales</strong> de cada turno.",
+      "enablePoint3": "Campos para <strong>propinas</strong> y cantidad de pedidos.",
+      "enablePoint4": "Seguimiento detallado de <strong>km y combustible</strong>."
     },
     "session": {
       "title": "Cuenta",
@@ -194,11 +674,16 @@
       "logout": "Cerrar sesión",
       "managePremium": "Gestionar Premium",
       "upgradePremium": "Mejorar a Premium"
+    },
+    "integrationsBanner": {
+      "title": "Integraciones",
+      "description": "Configura alertas, Google Calendar y más.",
+      "button": "Configurar"
     }
   },
   "shifts": {
     "title": "Turnos",
-    "subtitle": "Gestiona y visualiza tus turnos registrados.",
+    "subtitle": "Gestiona y visualiza tus turnos",
     "addShift": "Agregar Turno",
     "editShift": "Editar Turno",
     "deleteShift": "Eliminar Turno",
@@ -209,10 +694,64 @@
     "work": "Trabajo",
     "notes": "Notas",
     "smoko": "Descanso (smoko)",
-    "noMatchingFilters": "No hay turnos que coincidan con los filtros",
-    "noMatchingFiltersDesc": "Intenta ajustar los filtros para ver más resultados.",
+    "noMatchingFilters": "No hay turnos que coincidan",
+    "noMatchingFiltersDesc": "Prueba ajustando los filtros",
     "clearFilters": "Limpiar filtros",
-    "upcoming": "Próximos"
+    "upcoming": "Próximos",
+    "firstAddWork": "Primero, agrega un trabajo",
+    "needWorkDesc": "Antes de poder registrar turnos, necesitas crear al menos un trabajo. Puede ser un empleo, una plataforma de delivery o cualquier otra fuente de ingresos.",
+    "goToWorks": "Ir a Trabajos",
+    "noShiftsYet": "Aún no hay turnos",
+    "startTrackingDesc": "Comienza a registrar tus horas de trabajo para ver tus ganancias y estadísticas.",
+    "addManually": "Agregar manualmente",
+    "enterShiftDetails": "Ingresa los detalles del turno como fecha, hora de inicio y fin",
+    "useLiveMode": "Usar Modo en Vivo",
+    "liveModeDesc": "Inicia un temporizador y registra tu turno en tiempo real",
+    "addFirstShift": "Agrega tu primer turno",
+    "jobDeleted": "Trabajo eliminado",
+    "financialDetails": "Detalles Financieros",
+    "grossEarnings": "Ganancias Brutas",
+    "tips": "Propinas",
+    "expenses": "Gastos",
+    "netEarnings": "Ganancias netas",
+    "hoursIn": "hs en",
+    "discount": "Descuento",
+    "smokoDiscount": "Descuento Smoko",
+    "calculation": "Cálculo",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "estimatedEarnings": "Ganancias estimadas",
+    "rates": {
+      "day": "Día",
+      "afternoon": "Tarde",
+      "night": "Noche",
+      "saturday": "Sábado",
+      "sunday": "Domingo",
+      "holiday": "Feriado"
+    },
+    "moreInfo": "Más información",
+    "created": "Creado",
+    "holiday": "Feriado",
+    "finishLiveShift": "¿Finalizar Turno en Vivo?",
+    "finishShiftDesc": "Tu turno se guardará con estos detalles",
+    "deductSmoko": "¿Descontar smoko?",
+    "noBreaks": "Sin descansos registrados",
+    "smokoDeduct": "-{{minutes}} min",
+    "liveShiftNote": "Este turno se guardará en tu historial y se marcará como un turno registrado en vivo.",
+    "smokoWillDeduct": "Se descontarán {{minutes}} minutos por tiempo de descanso.",
+    "schedule": "Horario",
+    "createdWithLiveMode": "Creado con Modo Live",
+    "createdWithBulk": "Creado con Masivo",
+    "deliveryInfo": "Info de Delivery",
+    "additionalInfo": "Info Adicional",
+    "basePay": "Pago base",
+    "nightBonus": "Bonus nocturno",
+    "saturdayBonus": "Bonus sábado",
+    "sundayBonus": "Bonus domingo",
+    "holidayBonus": "Bonus feriado",
+    "weeklySummary": "Resumen semanal",
+    "shifts": "turnos",
+    "hours": "horas"
   },
   "works": {
     "title": "Trabajos",
@@ -220,6 +759,9 @@
     "addWork": "Agregar Trabajo",
     "editWork": "Editar Trabajo",
     "deleteWork": "Eliminar Trabajo",
+    "newDeliveryWork": "Nuevo Trabajo de Delivery",
+    "editDeliveryWork": "Editar Trabajo de Delivery",
+    "createWork": "Crear Trabajo",
     "noWorks": "Aún no hay trabajos",
     "name": "Nombre",
     "baseRate": "Tarifa base",
@@ -237,7 +779,27 @@
     "addAnotherPlatform": "Agregar otra plataforma",
     "multipleApps": "Múltiples apps compatibles",
     "deleteWarning": "Todos los turnos asociados a este trabajo también serán eliminados.",
-    "deleteWarningDelivery": "Todos los turnos de delivery asociados a este trabajo también serán eliminados."
+    "deleteWarningDelivery": "Todos los turnos de delivery asociados a este trabajo también serán eliminados.",
+    "traditionalBadge": "Tradicional",
+    "deliveryBadge": "Delivery",
+    "platform": "Plataforma",
+    "noDescription": "Sin descripción",
+    "workNotFound": "Trabajo no encontrado",
+    "selectTypeTitle": "¿Qué tipo de trabajo quieres agregar?",
+    "selectTypeSubtitle": "Selecciona el tipo que mejor describa tu trabajo",
+    "hourlyWork": "Trabajo por hora",
+    "hourlyWorkDesc": "Para empleos con tarifa por hora fija y diferentes tipos de turno",
+    "hourlyFeature1": "Tarifas por tipo de turno (día, tarde, noche)",
+    "hourlyFeature2": "Tarifas especiales de fin de semana",
+    "hourlyFeature3": "Cálculo automático con descuentos",
+    "deliveryWork": "Delivery Work",
+    "deliveryWorkDesc": "Para trabajos de delivery con ganancias variables por turno",
+    "deliveryFeature1": "Registro de ganancias totales por turno",
+    "deliveryFeature2": "Seguimiento de pedidos y kilómetros",
+    "deliveryFeature3": "Control de propinas y gastos de combustible",
+    "notSureWhich": "¿No estás seguro cuál elegir?",
+    "helpChoose": "Si tienes dudas sobre qué tipo elegir, puedes cambiarlo más tarde en la configuración del trabajo.",
+    "liveModeActiveError": "\"{{workName}}\" está activo en Modo Live. Detén la sesión para editarlo."
   },
   "statistics": {
     "title": "Estadísticas",
@@ -250,7 +812,275 @@
     "monthly": "Mensual",
     "daily": "Diario",
     "deliveryTitle": "Estadísticas de Delivery",
-    "deliverySubtitle": "Analiza tus ganancias y eficiencia en delivery"
+    "deliverySubtitle": "Analiza tus ganancias y eficiencia en delivery",
+    "shiftTypes": "Tipos de turno"
+  },
+  "forms": {
+    "shift": {
+      "title": "Turno",
+      "work": "Trabajo",
+      "selectWork": "Seleccionar trabajo",
+      "traditionalWorks": "Trabajos Tradicionales",
+      "deliveryWorks": "Trabajos de Delivery",
+      "startDate": "Fecha de inicio",
+      "endDate": "Fecha de fin",
+      "startTime": "Hora de inicio",
+      "endTime": "Hora de fin",
+      "break": "Descanso",
+      "breakDuration": "Duración del descanso:",
+      "paidTime": "Tiempo pagado:",
+      "notes": "Notas (opcional)",
+      "notesPlaceholder": "Agrega notas sobre este turno...",
+      "validation": {
+        "selectWork": "Selecciona un trabajo",
+        "dateRequired": "La fecha es obligatoria",
+        "startTimeRequired": "La hora de inicio es obligatoria",
+        "endTimeRequired": "La hora de fin es obligatoria",
+        "positiveNumber": "Debe ser mayor que 0",
+        "endAfterStart": "Debe ser después del inicio"
+      },
+      "bulk": {
+        "title": "Creación Múltiple de Turnos",
+        "enable": "Crear múltiples turnos",
+        "newFeatureTitle": "Crea Múltiples Turnos a la Vez",
+        "newFeatureDescription": "Ahorra tiempo creando turnos para varios días en un solo paso. Selecciona tu patrón en la siguiente pantalla.",
+        "enableBulkCreation": "Activar creación Masivo",
+        "selectDays": "Selecciona los días de la semana",
+        "repeatFor": "Repetir por",
+        "week": "semana",
+        "weeks": "semanas",
+        "selectAtLeastOne": "Selecciona al menos un día",
+        "preview": "Vista previa",
+        "preview_one": "Vista previa: {{count}} turno",
+        "preview_other": "Vista previa: {{count}} turnos",
+        "shiftsWillBeCreated": "turnos serán creados",
+        "shiftsWillBeCreated_one": "{{count}} turno será creado",
+        "shiftsWillBeCreated_other": "{{count}} turnos serán creados",
+        "selectDates": "Seleccionar fechas",
+        "pressEnterHint": "Presiona Enter o haz clic en Agregar para incluir cada fecha",
+        "selectedDates": "Fechas seleccionadas ({{count}})",
+        "noDatesSelected": "Aún no hay fechas seleccionadas",
+        "addDatesHint": "Agrega fechas arriba para crear turnos",
+        "startDate": "Fecha de inicio",
+        "endDate": "Fecha de fin",
+        "skipWeekends": "Omitir fines de semana",
+        "skipWeekendsDesc": "Solo crear turnos en días laborables (Lun-Vie)",
+        "fromToDate": "Desde {{from}} hasta {{to}}",
+        "weekdaysOnly": "solo días laborables",
+        "endDateAfterStart": "La fecha de fin debe ser posterior a la fecha de inicio",
+        "andMore": "... y {{count}} más",
+        "workLabel": "Trabajo: ",
+        "dayLabels": {
+          "Mon": "Lun",
+          "Tue": "Mar",
+          "Wed": "Mié",
+          "Thu": "Jue",
+          "Fri": "Vie",
+          "Sat": "Sáb",
+          "Sun": "Dom"
+        }
+      }
+    },
+    "work": {
+      "companyName": "Nombre de la Empresa",
+      "workColor": "Color del Trabajo",
+      "customColor": "o elige un color personalizado",
+      "baseHourlyRate": "Tarifa por hora base",
+      "ratesByShiftType": "Tarifas por tipo de turno",
+      "descriptionOptional": "Descripción (opcional)",
+      "descriptionPlaceholder": "Detalles adicionales sobre este trabajo...",
+      "name": "Nombre",
+      "namePlaceholder": "ej. Mi Trabajo",
+      "baseRate": "Tarifa Base",
+      "baseRatePlaceholder": "0.00",
+      "currency": "Moneda",
+      "selectCurrency": "Seleccionar moneda",
+      "rates": {
+        "title": "Tarifas Adicionales",
+        "night": "Nocturna",
+        "saturday": "Sábado",
+        "sunday": "Domingo",
+        "holiday": "Feriado"
+      },
+      "delivery": {
+        "namePlaceholder": "ej., Delivery Zona Norte",
+        "descriptionPlaceholder": "ej., Trabajo de delivery en el centro...",
+        "platform": "Plataforma",
+        "selectPlatform": "Selecciona una plataforma",
+        "selectPlatformWithDefault": "Seleccionar (por defecto: {{defaultPlatform}})",
+        "selectVehicle": "Selecciona tu vehículo",
+        "vehicles": {
+          "bicycle": "Bicicleta",
+          "motorbike": "Moto",
+          "car": "Auto",
+          "on_foot": "A pie"
+        }
+      },
+      "validation": {
+        "nameRequired": "El nombre es obligatorio",
+        "baseRateRequired": "La tarifa base es obligatoria",
+        "selectPlatform": "Selecciona una plataforma",
+        "selectVehicle": "Selecciona un vehículo"
+      }
+    }
+  },
+  "modals": {
+    "createMultipleShifts": "Crear Múltiples Turnos",
+    "configurePattern": "Configurar patrón para: {{workName}}",
+    "repetitionPattern": "Patrón de Repetición",
+    "weekly": "Semanal",
+    "specificDates": "Fechas Específicas",
+    "dateRange": "Rango de Fechas",
+    "selectAtLeastOneDay": "Selecciona al menos un día para crear turnos",
+    "addDates": "Agrega fechas para crear turnos",
+    "selectStartEnd": "Selecciona fecha de inicio y fin",
+    "creating": "Creando...",
+    "createShifts": "Crear {{count}} Turno",
+    "createShifts_plural": "Crear {{count}} Turnos",
+    "back": "Volver",
+    "deletePhotoTitle": "Eliminar Foto de Perfil",
+    "currentPhoto": "Foto actual",
+    "defaultLogo": "Logo por defecto",
+    "deletePhotoWarning": "Tu foto de perfil será eliminada permanentemente y reemplazada por el logo por defecto. Esto no se puede deshacer.",
+    "deleting": "Eliminando...",
+    "confirmDeletion": "Confirmar",
+    "clearAllData": "Borrar Todos los Datos",
+    "clearDataDesc": "Esto borrará todos tus <strong>trabajos</strong>, <strong>turnos</strong> y <strong>ajustes</strong>. Tus credenciales de cuenta permanecerán intactas.",
+    "sessionWarning": "Tu sesión se cerrará después de borrar. Puedes iniciar sesión de nuevo con las mismas credenciales.",
+    "premiumWarning": "Tu <strong>suscripción Premium</strong> será cancelada automáticamente.",
+    "deleteAccount": "Eliminar Cuenta",
+    "deleteAccountDesc": "<strong class=\"text-red-600\">Esta acción es irreversible.</strong> Todos tus datos, incluyendo trabajos, turnos e información de cuenta serán eliminados permanentemente.",
+    "googleConfirm": "Haz clic en el botón de abajo para confirmar con tu <strong>cuenta de Google</strong>.",
+    "enterPassword": "Ingresa tu contraseña para confirmar",
+    "passwordPlaceholder": "Tu contraseña",
+    "farewell": "¡Esperamos verte de nuevo! Puedes crear una nueva cuenta en cualquier momento.",
+    "clearData": "Borrar Datos",
+    "clearing": "Borrando...",
+    "deleteAccountConfirm": "Eliminar Cuenta",
+    "deletingAccount": "Eliminando...",
+    "selectWorkFirst": "Por favor selecciona un trabajo primero",
+    "activeSession": "Ya hay una sesión en vivo activa",
+    "work": {
+      "calculationSettings": "Configuración de cálculo",
+      "includeTips": "Incluir propinas",
+      "trackFuel": "Seguimiento de combustible",
+      "noFuelNeeded": "No se requiere combustible para este vehículo"
+    }
+  },
+  "cards": {
+    "shift": {
+      "orders": "Pedidos",
+      "distance": "Distancia",
+      "baseEarnings": "Ganancias base",
+      "fuelExpense": "Gasto de combustible",
+      "avgPerOrder": "Prom. por pedido",
+      "fuel": "Combustible",
+      "tips": "Propinas",
+      "totalEarnings": "Ganancias totales"
+    },
+    "work": {
+      "baseRate": "Tarifa base:",
+      "perHour": "/h",
+      "night": "Nocturno",
+      "saturday": "Sábado",
+      "sunday": "Domingo",
+      "holiday": "Feriado"
+    },
+    "deliveryWork": {
+      "shifts": "Turnos",
+      "vehicle": "Vehículo"
+    }
+  },
+  "australia88": {
+    "visaTitle": "Working Holiday Visa",
+    "details": "Detalles",
+    "complete": "Completo",
+    "remaining": "Restante",
+    "thisWeek": "Esta semana",
+    "yearComplete": "¡Año {{year}} completo!",
+    "yearGoal": "Año {{year}} · días · meta 88",
+    "daysUnit": "d",
+    "formLabel": "Working Holiday Visa (88 días)",
+    "qualifiesDescription": "Califica para extensión de Working Holiday Visa",
+    "regionalWork": "Trabajo en áreas regionales o críticas de Australia",
+    "notSure": "¿No estás seguro si tu trabajo califica?",
+    "checkHomeAffairs": "Verificar en Home Affairs"
+  },
+  "about": {
+    "hero": {
+      "phrase1": "Tu gestor de trabajo y turnos",
+      "phrase2": "Gestión profesional de turnos y horarios",
+      "phrase3": "Porque las matemáticas no deberían ser tan difíciles",
+      "phrase4": "Registra de forma inteligente, no más difícil",
+      "phrase5": "Construido por un trabajador, para trabajadores"
+    },
+    "story": {
+      "title": "Cómo empezó todo",
+      "p1": "Todo comenzó en Australia. Estaba trabajando allí y noté algo que me volvía loco: cada semana, mis amigos y yo nos sentábamos con una calculadora, un bloc de notas y demasiada paciencia tratando de calcular cuánto íbamos a ganar realmente.",
+      "p2": "¿Horas nocturnas? Tarifa diferente. ¿Fines de semana? Otra tarifa. ¿Días festivos? Quién sabe. Y después de toda esa matemática, el número en la boleta de pago <em>nunca</em> coincidía con lo que calculábamos. Cada. Single. Vez.",
+      "p3": "Así que pensé: <strong>\"Basta. Tiene que haber una mejor manera.\"</strong>",
+      "p4": "Hice hojas de cálculo. Probé plantillas. Hice pequeñas herramientas que más o menos funcionaban... pero nunca acertaban del todo. Nada coincidía con los valores reales de la boleta de pago. Era frustrante.",
+      "p5": "Entonces un día se me ocurrió:",
+      "p5highlight": "\"¿Por qué no construyo algo real? Algo a escala. Algo que realmente funcione Y me ayude a aprender al mismo tiempo.\"",
+      "p6": "Y así, Orary nació. Lo que comenzó como una molestia personal se convirtió en una aplicación completa que maneja múltiples tipos de tarifas, detección automática de festivos, seguimiento en vivo, creación masiva, exportaciones y mucho más de lo que jamás imaginé.",
+      "p7": "Resulta que la frustración es un buen combustible para construir cosas."
+    },
+    "creator": {
+      "name": "Marqui",
+      "role": "Creador y Desarrollador",
+      "p1": "Soy un desarrollador de Argentina, actualmente viviendo en Nueva Zelanda. Construí Orary porque yo mismo lo necesitaba, y pensé que si me ayudaba a mí, podría ayudar a otros también.",
+      "p2": "Siempre estoy trabajando en diferentes cosas, pero nunca dejo de esforzarme por crecer en este mundo. Seguiré moviéndome de lugar en lugar, y espero que lo mismo pase con Orary — siempre evolucionando, siempre llegando a nuevas personas.",
+      "p3": "Si tienes alguna pregunta, idea, o solo quieres saludar, no dudes en contactarme."
+    },
+    "claude": {
+      "title": "Potenciado por Claude",
+      "subtitle": "por Anthropic",
+      "description": "Algunas de las características más complejas de Orary fueron construidas con la ayuda de Claude AI, un asistente que hizo posible abordar desafíos que habrían tomado mucho más tiempo resolver solo."
+    },
+    "feedback": {
+      "title": "Dejar Opinión",
+      "updateTitle": "Actualizar Tu Opinión",
+      "description": "Tu opinión nos ayuda a mejorar Orary. ¡Comparte lo que piensas!",
+      "updateDescription": "Ya dejaste una reseña. ¿Quieres actualizarla?",
+      "rateQuestion": "¿Cómo calificarías tu experiencia?",
+      "commentPlaceholder": "Cuéntanos qué te gusta o qué podemos mejorar...",
+      "profanityWarning": "Por favor mantén tu opinión respetuosa.",
+      "publishAs": "Publicar como",
+      "anonymous": "Anónimo",
+      "anonymousUser": "Usuario Anónimo",
+      "send": "Enviar",
+      "update": "Actualizar",
+      "sending": "Enviando...",
+      "thankYou": "¡Gracias!",
+      "thankYouDesc": "Tu opinión nos ayuda a crecer.",
+      "underReview": "En Revisión",
+      "underReviewDesc": "Tu opinión está siendo revisada antes de su publicación.",
+      "whatPeopleSay": "Lo que dice la gente",
+      "yourReviewPending": "Tu reseña está pendiente de aprobación",
+      "changeReview": "Cambiar mi reseña",
+      "leaveReview": "Dejar una reseña",
+      "noFeedback": "Aún no hay opiniones",
+      "noFeedbackDesc": "¡Sé el primero en compartir tus pensamientos!",
+      "timeAgo": {
+        "justNow": "Ahora mismo",
+        "minutesAgo": "m",
+        "hoursAgo": "h",
+        "daysAgo": "d",
+        "monthsAgo": "me",
+        "yearsAgo": "a"
+      }
+    }
+  },
+  "alerts": {
+    "delete": {
+      "title": "¿Eliminar {{type}}?",
+      "warning": "Advertencia: El trabajo seleccionado será eliminado permanentemente."
+    }
+  },
+  "errors": {
+    "pageNotFound": "Página no encontrada",
+    "serverError": "Error del servidor",
+    "somethingWentWrong": "Algo salió mal"
   },
   "stats": {
     "weeklyComparison": {
@@ -297,7 +1127,9 @@
       "milestoneAlmost": "¡Casi llegas!",
       "celebrationIncredible": "¡Trabajo increíble!",
       "celebrationExceeded": "¡Superaste tu meta!",
-      "celebrationAchieved": "¡Meta semanal lograda!"
+      "celebrationAchieved": "¡Meta semanal lograda!",
+      "overGoalMessage": "{{hours}}h trabajadas — {{over}}h sobre tu meta de {{goal}}h",
+      "goalCompletedMessage": "Completaste {{goal}} horas esta semana"
     },
     "smokoCard": {
       "title": "Config. de Descanso",
@@ -333,16 +1165,21 @@
       "Thursday": "Jue",
       "Friday": "Vie",
       "Saturday": "Sáb",
-      "Sunday": "Dom"
-    },
-    "daysFull": {
-      "Monday": "Lunes",
-      "Tuesday": "Martes",
-      "Wednesday": "Miércoles",
-      "Thursday": "Jueves",
-      "Friday": "Viernes",
-      "Saturday": "Sábado",
-      "Sunday": "Domingo"
+      "Sunday": "Dom",
+      "Mon": "Lun",
+      "Tue": "Mar",
+      "Wed": "Mié",
+      "Thu": "Jue",
+      "Fri": "Vie",
+      "Sat": "Sáb",
+      "Sun": "Dom",
+      "monday": "Lunes",
+      "tuesday": "Martes",
+      "wednesday": "Miércoles",
+      "thursday": "Jueves",
+      "friday": "Viernes",
+      "saturday": "Sábado",
+      "sunday": "Domingo"
     },
     "deliverySummary": {
       "title": "Resumen de Delivery",
@@ -424,6 +1261,217 @@
           "night": "noche (20–5h)"
         }
       }
+    },
+    "monthlyProjection": {
+      "title": "Proyección Mensual",
+      "empty": "Sin datos de actividad reciente",
+      "emptyDesc": "Registra turnos para ver tu proyección mensual",
+      "description": "Si mantienes este ritmo durante el mes",
+      "hours": "horas"
+    },
+    "dailyBreakdown": {
+      "title": "Desglose Diario",
+      "empty": "No hay turnos registrados esta semana",
+      "emptyDesc": "Los turnos aparecerán aquí cuando agregues algunos"
+    },
+    "smokoTimeCard": {
+      "title": "Duración",
+      "emptyText": "Descansos no activos"
+    },
+    "months": {
+      "January": "Ene",
+      "February": "Feb",
+      "March": "Mar",
+      "April": "Abr",
+      "May": "May",
+      "June": "Jun",
+      "July": "Jul",
+      "August": "Ago",
+      "September": "Sep",
+      "October": "Oct",
+      "November": "Nov",
+      "December": "Dic"
+    },
+    "monthsFull": {
+      "January": "Enero",
+      "February": "Febrero",
+      "March": "Marzo",
+      "April": "Abril",
+      "May": "Mayo",
+      "June": "Junio",
+      "July": "Julio",
+      "August": "Agosto",
+      "September": "Septiembre",
+      "October": "Octubre",
+      "November": "Noviembre",
+      "December": "Diciembre"
     }
+  },
+  "calendarDaySummary": {
+    "noShifts": "Sin turnos para",
+    "theDate": "{{date}}",
+    "thisDate": "esta fecha",
+    "addShift": "Agregar turno"
+  },
+  "calendar": {
+    "subtitle": "Visualiza y gestiona tus turnos por fecha",
+    "new": "Nuevo",
+    "noWorksMessage": "Para usar el calendario, primero necesitas crear al menos un trabajo en la sección \"Trabajos\".",
+    "todayDate": "Hoy, {{date}}",
+    "yesterdayDate": "Ayer, {{date}}",
+    "invalidDate": "Fecha inválida",
+    "today": "Hoy",
+    "selectWork": "Seleccionar trabajo",
+    "startTracking": "Iniciar seguimiento",
+    "selectWorkDesc": "Selecciona tu trabajo y comienza a registrar tu turno en tiempo real",
+    "noWorksAvailable": "No hay trabajos disponibles",
+    "createWorkFirst": "Primero crea un trabajo",
+    "liveMode": "Modo Live",
+    "liveActive": "Live activo",
+    "paused": "Pausado",
+    "sessionsRemaining": "uso restante este mes",
+    "sessionsRemaining_plural": "usos restantes este mes",
+    "freeTrial": "Prueba gratis 15 días — Sesiones ilimitadas",
+    "monthlyLimit": "Límite mensual alcanzado",
+    "startFreeTrial": "Comienza tu <strong>prueba gratis de 15 días</strong> para sesiones ilimitadas de Modo Live",
+    "startFreeTrialButton": "Comenzar prueba gratis",
+    "cancel": "Cancelar",
+    "starting": "Iniciando...",
+    "startLive": "Iniciar Live",
+    "now": "AHORA",
+    "upcoming": "Próximos"
+  },
+  "shared": {
+    "workPreview": {
+      "platform": "Plataforma",
+      "vehicle": "Vehículo",
+      "jobType": "Tipo de trabajo",
+      "variableEarnings": "Ganancias variables por entrega",
+      "baseRate": "Tarifa base",
+      "specialRates": "Tarifas especiales:"
+    }
+  },
+  "authLayout": {
+    "agreement": "Al usar Orary aceptas nuestra",
+    "privacyPolicy": "Política de Privacidad",
+    "and": "y",
+    "termsOfService": "Términos de Servicio"
+  },
+  "notFound": {
+    "title": "Página No Encontrada",
+    "description": "¡Ups! La página que buscas no existe. Puede haber sido movida o eliminada.",
+    "goHome": "Ir al Dashboard",
+    "goBack": "Volver Atrás",
+    "support": "Si crees que esto es un error, por favor contacta con soporte."
+  },
+  "serverError": {
+    "title": "Algo Salió Mal",
+    "description": "Estamos experimentando dificultades técnicas. Por favor, inténtalo de nuevo en un momento o contacta con soporte si el problema persiste.",
+    "refresh": "Actualizar Página",
+    "goHome": "Ir al Dashboard",
+    "support": "Código de error: 500 | Si este problema continúa, por favor contacta con soporte."
+  },
+  "sharedWork": {
+    "title": "Trabajo Compartido",
+    "subtitle": "Detalles del trabajo compartido contigo.",
+    "signInTitle": "Iniciar Sesión",
+    "signInDesc": "Necesitas iniciar sesión para agregar este trabajo a tu cuenta",
+    "errorTitle": "Error",
+    "goToWorks": "Ir a mis trabajos",
+    "addToMyWorks": "Agregar a mis trabajos",
+    "adding": "Agregando...",
+    "helpMessage": "Al agregar este trabajo, se copiará a tu cuenta con todas sus configuraciones."
+  },
+  "clearEverything": {
+    "title": "Borrar Todo",
+    "subtitle": "Comenzar de cero manteniendo tu cuenta.",
+    "intro": "Si quieres comenzar de nuevo con <strong>Orary</strong> sin eliminar tu cuenta, puedes borrar todos tus datos de trabajo y turnos manteniendo tus credenciales de inicio de sesión.",
+    "whatWillBeDeleted": {
+      "title": "Qué Se Eliminará",
+      "works": "Todos tus <strong>trabajos</strong> registrados (empleos y plataformas de delivery)",
+      "shifts": "Todos tus <strong>turnos</strong> registrados y sus datos asociados",
+      "earnings": "Todo tu <strong>historial de ganancias</strong> y estadísticas",
+      "preferences": "Tus <strong>preferencias</strong> y configuraciones",
+      "premium": "Tu <strong>suscripción Premium</strong> será cancelada"
+    },
+    "whatWillBePreserved": {
+      "title": "Qué Se Conservará",
+      "account": "Tu <strong>cuenta</strong> y credenciales de inicio de sesión",
+      "profile": "Tu <strong>correo electrónico</strong> y <strong>nombre de perfil</strong>"
+    },
+    "clearButton": "Borrar Todos los Datos",
+    "successMessage": "Tus datos han sido borrados exitosamente. Por favor inicia sesión de nuevo para continuar.",
+    "errorMessage": "Error al borrar los datos"
+  },
+  "deleteAccount": {
+    "title": "Eliminación de Cuenta",
+    "subtitle": "Sentimos que te vayas.",
+    "intro": "Si deseas eliminar permanentemente tu cuenta de <strong>Orary</strong> y todos los datos asociados, puedes hacerlo a continuación. Ten en cuenta que esta acción es <strong class=\"text-red-600 dark:text-red-400\">irreversible</strong>.",
+    "whatWillBeDeleted": {
+      "title": "Qué Se Eliminará",
+      "account": "Tu <strong>cuenta</strong> y credenciales de inicio de sesión",
+      "works": "Todos tus <strong>trabajos</strong> registrados (empleos y plataformas de delivery)",
+      "shifts": "Todos tus <strong>turnos</strong> registrados y sus datos asociados",
+      "earnings": "Todo tu <strong>historial de ganancias</strong> y estadísticas",
+      "profile": "Tu <strong>perfil</strong> y toda la información personal",
+      "premium": "Tu <strong>suscripción Premium</strong> será cancelada"
+    },
+    "warning": {
+      "title": "Advertencia de Eliminación Permanente",
+      "description": "Esta acción <strong>no se puede deshacer</strong>. Una vez que elimines tu cuenta, todos tus datos se borrarán permanentemente de nuestros servidores y no podrán recuperarse bajo ninguna circunstancia."
+    },
+    "deleteButton": "Eliminar Mi Cuenta",
+    "emailAlternative": {
+      "title": "¿Prefieres solicitar la eliminación por correo?",
+      "description": "Si lo prefieres, también puedes solicitar la eliminación de la cuenta enviando un correo a:",
+      "note": "Envía el correo desde tu dirección de cuenta registrada en Orary — el mismo correo que usas para iniciar sesión. Incluye tu nombre de perfil para verificación. La eliminación se procesará dentro de 30 días."
+    },
+    "errors": {
+      "noUser": "No hay usuario conectado",
+      "wrongPassword": "Contraseña incorrecta. Inténtalo de nuevo.",
+      "popupClosed": "El inicio de sesión con Google fue cancelado. Inténtalo de nuevo.",
+      "popupBlocked": "La ventana emergente fue bloqueada. Por favor permite ventanas emergentes e inténtalo de nuevo.",
+      "sessionExpired": "Sesión expirada. Inténtalo de nuevo.",
+      "generic": "Error al eliminar la cuenta. Inténtalo de nuevo o contacta con soporte."
+    },
+    "success": {
+      "title": "Cuenta Eliminada",
+      "description": "Tu cuenta ha sido eliminada permanentemente.",
+      "farewell": "Gracias por usar Orary. ¡Esperamos verte de nuevo!",
+      "redirectMessage": "Tu cuenta ha sido eliminada exitosamente. ¡Esperamos verte de nuevo!"
+    }
+  },
+  "filters": {
+    "allWorks": "Todos los trabajos",
+    "clear": "Limpiar",
+    "shiftTypes": {
+      "day": "Día",
+      "afternoon": "Tarde",
+      "night": "Noche",
+      "saturday": "Sábado",
+      "sunday": "Domingo",
+      "delivery": "Delivery",
+      "mixed": "Mixto",
+      "all": "Todos los tipos"
+    },
+    "shiftTypeLabel": "Tipo de turno",
+    "filteredBy": "Filtrado por",
+    "activeFilters": "Filtros activos",
+    "of": "de",
+    "clearAll": "Limpiar todo",
+    "workLabel": "Trabajo",
+    "daysLabel": "Días",
+    "allDays": "Todos",
+    "typeLabel": "Tipo",
+    "unknownWork": "Trabajo desconocido"
+  },
+  "footer": {
+    "version": "Versión 3.0.1",
+    "developed": "Desarrollado con",
+    "by": "por Marqui",
+    "copyright": "© 2026 Orary. Todos los derechos reservados.",
+    "terms": "Términos",
+    "privacy": "Privacidad",
+    "about": "Acerca de"
   }
 }

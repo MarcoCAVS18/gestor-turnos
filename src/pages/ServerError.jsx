@@ -4,10 +4,12 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../hooks/useThemeColors';
 import Button from '../components/ui/Button';
 
 const ServerError = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const colors = useThemeColors();
 
@@ -43,7 +45,7 @@ const ServerError = () => {
           transition={{ delay: 0.2 }}
           className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white"
         >
-          Something Went Wrong
+          {t('serverError.title')}
         </motion.h1>
 
         {/* Description */}
@@ -53,7 +55,7 @@ const ServerError = () => {
           transition={{ delay: 0.3 }}
           className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-lg mx-auto"
         >
-          We're experiencing technical difficulties. Please try again in a moment or contact support if the problem persists.
+          {t('serverError.description')}
         </motion.p>
 
         {/* Action Buttons */}
@@ -72,7 +74,7 @@ const ServerError = () => {
             themeColor={colors.primary}
             className="min-w-[200px]"
           >
-            Refresh Page
+            {t('serverError.refresh')}
           </Button>
 
           <Button
@@ -83,7 +85,7 @@ const ServerError = () => {
             iconPosition="left"
             className="min-w-[200px] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
           >
-            Go to Dashboard
+            {t('serverError.goHome')}
           </Button>
         </motion.div>
 
@@ -94,7 +96,7 @@ const ServerError = () => {
           transition={{ delay: 0.5 }}
           className="mt-12 text-sm text-gray-500 dark:text-gray-500"
         >
-          Error code: 500 | If this issue continues, please reach out to support.
+          {t('serverError.support')}
         </motion.p>
       </motion.div>
     </div>

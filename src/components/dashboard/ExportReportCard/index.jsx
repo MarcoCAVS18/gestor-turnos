@@ -125,7 +125,7 @@ const ExportReportCard = ({ onExport }) => {
               </Flex>
 
           <p className="text-sm text-gray-700 mb-4">
-            Download a complete summary of your statistics, shifts, and activity
+            {t('dashboard.export.description')}
           </p>
 
           {/* Format selector */}
@@ -139,7 +139,7 @@ const ExportReportCard = ({ onExport }) => {
               iconPosition="left"
               className="px-4"
             >
-              PDF
+              {t('dashboard.export.formats.pdf')}
             </Button>
 
             <Button
@@ -151,7 +151,7 @@ const ExportReportCard = ({ onExport }) => {
               iconPosition="left"
               className="px-4"
             >
-              PNG
+              {t('dashboard.export.formats.png')}
             </Button>
 
             <Button
@@ -163,7 +163,7 @@ const ExportReportCard = ({ onExport }) => {
               iconPosition="left"
               className="px-4"
             >
-              Excel
+              {t('dashboard.export.formats.excel')}
             </Button>
           </div>
         </div>

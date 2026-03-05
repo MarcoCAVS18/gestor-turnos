@@ -1,6 +1,7 @@
 // src/components/calendar/CalendarGrid/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import CalendarDayCell from '../CalendarDayCell';
 import { localDateToISO } from '../../../utils/calendarUtils';
 
@@ -12,7 +13,17 @@ const CalendarGrid = ({
   thematicColors, 
   onDayClick 
 }) => {
-  const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const { t } = useTranslation();
+  
+  const weekDays = [
+    t('stats.days.Monday'),
+    t('stats.days.Tuesday'),
+    t('stats.days.Wednesday'),
+    t('stats.days.Thursday'),
+    t('stats.days.Friday'),
+    t('stats.days.Saturday'),
+    t('stats.days.Sunday')
+  ];
   const currentDateISO = localDateToISO(currentDate);
 
   // Function to get job colors

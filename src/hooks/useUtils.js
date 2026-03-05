@@ -1,9 +1,12 @@
 // src/hooks/useUtils.js
 
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createSafeDate } from '../utils/time';
 
 export const useUtils = () => {
+  const { i18n } = useTranslation();
+  const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
   
   // Currency formatting
   const formatCurrency = useCallback((amount, currency = '$') => {
@@ -21,31 +24,30 @@ export const useUtils = () => {
     
     switch (format) {
       case 'short':
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString(locale, {
           day: '2-digit',
           month: '2-digit',
           year: 'numeric'
         });
       case 'medium':
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString(locale, {
           day: 'numeric',
           month: 'short',
           year: 'numeric'
         });
       case 'full':
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleDateString(locale, {
           weekday: 'long',
           day: 'numeric',
           month: 'long',
           year: 'numeric'
         });
       case 'weekday':
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        return days[date.getDay()];
+        return date.toLocaleDateString(locale, { weekday: 'long' });
       default:
         return dateString;
     }
-  }, []);
+  }, [locale]);
 
   // Check if a date is today
   const isToday = useCallback((dateString) => {

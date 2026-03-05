@@ -1,12 +1,14 @@
 // src/components/stats/MonthlyProjection/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { TrendingUp } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
 
 const MonthlyProjection = ({ totalEarned = 0, hoursWorked = 0 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   // Validate data
@@ -21,14 +23,14 @@ const MonthlyProjection = ({ totalEarned = 0, hoursWorked = 0 }) => {
   return (
     <BaseStatsCard
       icon={TrendingUp}
-      title="Monthly Projection"
+      title={t('stats.monthlyProjection.title')}
       empty={isEmpty}
-      emptyMessage="No recent activity data"
-      emptyDescription="Register shifts to see your monthly projection"
+      emptyMessage={t('stats.monthlyProjection.empty')}
+      emptyDescription={t('stats.monthlyProjection.emptyDesc')}
     >
       <div className="text-center">
         <p className="text-sm text-gray-600 mb-2">
-          If you maintain this pace throughout the month
+          {t('stats.monthlyProjection.description')}
         </p>
         <p
           className="text-3xl font-bold"
@@ -37,7 +39,7 @@ const MonthlyProjection = ({ totalEarned = 0, hoursWorked = 0 }) => {
           {formatCurrency(projectedEarnings)}
         </p>
         <p className="text-sm text-gray-500">
-          ~{projectedHours.toFixed(0)} hours
+          ~{projectedHours.toFixed(0)} {t('stats.monthlyProjection.hours')}
         </p>
       </div>
     </BaseStatsCard>

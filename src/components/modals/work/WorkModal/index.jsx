@@ -1,6 +1,7 @@
 // src/components/modals/work/WorkModal/index.jsx
 
 import React, { useState, useEffect, useId } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pen, Plus } from 'lucide-react';
 import { useApp } from '../../../../contexts/AppContext';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
@@ -10,6 +11,7 @@ import WorkTypeSelector from '../../base/WorkTypeSelector';
 import DeliveryWorkModal from '../DeliveryWorkModal';
 
 const WorkModal = ({ isOpen, onClose, work, defaultWorkType = null }) => {
+  const { t } = useTranslation();
   const { addJob, editJob, deliveryEnabled } = useApp();
   const isMobile = useIsMobile();
   const [showSelector, setShowSelector] = useState(false);
@@ -97,14 +99,14 @@ const WorkModal = ({ isOpen, onClose, work, defaultWorkType = null }) => {
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title={work ? 'Edit Work' : 'New Work'}
+      title={work ? t('works.editWork') : t('works.addWork')}
       icon={work ? Pen : Plus}
       loading={loading}
       maxWidth="lg"
       showActions={!showSelector}
       onCancel={handleClose}
       formId={formId}
-      saveText={work ? 'Save Changes' : 'Create Work'}
+      saveText={work ? t('common.saveChanges') : t('works.createWork')}
     >
       {showSelector ? (
         <WorkTypeSelector

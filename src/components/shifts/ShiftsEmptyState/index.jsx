@@ -1,15 +1,17 @@
 // src/components/shifts/ShiftsEmptyState/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar, Plus, Briefcase, ArrowRight, Clock, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../ui/Card';
 
 function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   // No jobs - need to create a work first
-  if (allJobs.length === 0) {
+  if (!allJobs || allJobs.length === 0) {
     return (
       <Card className="p-8 sm:p-12">
         <div className="max-w-md mx-auto text-center">
@@ -26,11 +28,10 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
 
           {/* Text */}
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            First, add a work
+            {t('shifts.firstAddWork')}
           </h3>
           <p className="text-gray-500 mb-8">
-            Before you can track shifts, you need to create at least one work.
-            This could be a job, a delivery platform, or any other income source.
+            {t('shifts.needWorkDesc')}
           </p>
 
           {/* Action button */}
@@ -40,7 +41,7 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
             style={{ backgroundColor: thematicColors?.base }}
           >
             <Briefcase size={18} />
-            <span>Go to Works</span>
+            <span>{t('shifts.goToWorks')}</span>
             <ArrowRight size={18} />
           </button>
         </div>
@@ -64,10 +65,10 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
             />
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            No shifts yet
+            {t('shifts.noShiftsYet')}
           </h3>
           <p className="text-gray-500">
-            Start tracking your work hours to see your earnings and statistics.
+            {t('shifts.startTrackingDesc')}
           </p>
         </div>
 
@@ -85,10 +86,10 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
               >
                 <Clock size={20} style={{ color: thematicColors?.base }} />
               </div>
-              <span className="font-medium text-gray-900">Add manually</span>
+              <span className="font-medium text-gray-900">{t('shifts.addManually')}</span>
             </div>
             <p className="text-sm text-gray-500">
-              Enter shift details like date, start and end time
+              {t('shifts.enterShiftDetails')}
             </p>
           </button>
 
@@ -101,10 +102,10 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
               <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-green-100">
                 <Zap size={20} className="text-green-600" />
               </div>
-              <span className="font-medium text-gray-900">Use Live Mode</span>
+              <span className="font-medium text-gray-900">{t('shifts.useLiveMode')}</span>
             </div>
             <p className="text-sm text-gray-500">
-              Start a timer and track your shift in real-time
+              {t('shifts.liveModeDesc')}
             </p>
           </button>
         </div>
@@ -117,7 +118,7 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
             style={{ backgroundColor: thematicColors?.base }}
           >
             <Plus size={18} />
-            <span>Add your first shift</span>
+            <span>{t('shifts.addFirstShift')}</span>
           </button>
         </div>
       </div>

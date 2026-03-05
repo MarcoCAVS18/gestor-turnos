@@ -1,17 +1,20 @@
 // src/components/about/HeroSection/index.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
-
-const phrases = [
-  'Your work and shift manager',
-  'Professional shift tracking and management',
-  'Because math shouldn\'t be this hard',
-  'Track smarter, not harder',
-  'Built by a worker, for workers',
-];
+import { useTranslation } from 'react-i18next';
 
 const HeroSection = ({ colors }) => {
+  const { t } = useTranslation();
+  
+  const phrases = useMemo(() => [
+    t('about.hero.phrase1'),
+    t('about.hero.phrase2'),
+    t('about.hero.phrase3'),
+    t('about.hero.phrase4'),
+    t('about.hero.phrase5'),
+  ], [t]);
+  
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [displayedText, setDisplayedText] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
@@ -40,7 +43,7 @@ const HeroSection = ({ colors }) => {
         setPhraseIndex((prev) => (prev + 1) % phrases.length);
       }
     }
-  }, [displayedText, isDeleting, phraseIndex]);
+  }, [displayedText, isDeleting, phraseIndex, phrases]);
 
   return (
     <motion.div

@@ -11,8 +11,17 @@
     "noChanges": "No changes",
     "error": "Something went wrong",
     "confirm": "Confirm",
+    "create": "Create",
     "back": "Back",
+    "backToSettings": "Back to Settings",
     "close": "Close",
+    "locale": "en-US",
+    "hours": "hours",
+    "earnings": "earnings",
+    "viewDetails": "View details",
+    "time": "Time",
+    "duration": "Duration",
+    "date": "Date",
     "yes": "Yes",
     "no": "No",
     "optional": "Optional",
@@ -20,7 +29,57 @@
     "resume": "Resume",
     "pause": "Pause",
     "finish": "Finish",
-    "moreInfo": "More info"
+    "moreInfo": "More info",
+    "or": "or",
+    "continue": "Continue",
+    "password": "Password",
+    "email": "Email",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "shift": "shift",
+    "shifts": "shifts",
+    "work": "Work",
+    "duration": "Duration",
+    "earnings": "Earnings",
+    "hourlyRate": "Hourly rates",
+    "day": "Day",
+    "afternoon": "Afternoon",
+    "night": "Night",
+    "update": "Update",
+    "manage": "Manage",
+    "off": "OFF",
+    "on": "ON",
+    "perShift": "per shift",
+    "keepPlan": "Keep Plan",
+    "tip": "Tip",
+    "view": "View",
+    "pausing": "Pausing...",
+    "resuming": "Resuming...",
+    "hide": "Hide",
+    "goBack": "Go Back",
+    "creating": "Creating...",
+    "remove": "Remove",
+    "confirmDeletion": "Confirm Deletion",
+    "deleting": "Deleting...",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds",
+    "perHour": "hr",
+    "km": "km",
+    "saturday": "Saturday",
+    "sunday": "Sunday",
+    "saveChanges": "Save Changes",
+    "delivery": "Delivery",
+    "daysFull": {
+      "Monday": "Monday",
+      "Tuesday": "Tuesday",
+      "Wednesday": "Wednesday",
+      "Thursday": "Thursday",
+      "Friday": "Friday",
+      "Saturday": "Saturday",
+      "Sunday": "Sunday"
+    }
   },
   "nav": {
     "home": "Home",
@@ -36,12 +95,118 @@
     "newWork": "New Work",
     "shiftsDisabledTooltip": "First create a job to add shifts",
     "paused": "Paused",
-    "liveMode": "Live Mode"
+    "liveMode": "Live Mode",
+    "share": "Share"
   },
   "premium": {
-    "unlockAll": "Unlock all features",
-    "upgrade": "Upgrade to Premium",
-    "badge": "Premium"
+    "title": "Premium",
+    "unlockFeatures": "Unlock unlimited access to all features",
+    "manageSubscription": "Manage your subscription",
+    "account": "Account",
+    "profile": "Profile",
+    "freePlan": "Free Plan",
+    "premiumFor": "Premium for {{duration}}",
+    "lessThanMonth": "Less than a month",
+    "oneMonth": "1 month",
+    "months": "{{count}} months",
+    "paymentDetails": "Payment Details",
+    "updatePayment": "Update Payment",
+    "changePayment": "Change your card or payment method",
+    "viewInvoices": "View Invoices",
+    "downloadReceipts": "Download receipts and invoices",
+    "opening": "Opening...",
+    "openBillingPortal": "Open Billing Portal",
+    "cancellationScheduled": "Cancellation scheduled",
+    "accessContinues": "Access continues until {{date}}",
+    "keepAccess": "You'll keep access until <strong>{{date}}</strong>. After that, your plan reverts to Free.",
+    "confirm": "Confirm",
+    "cancelSubscription": "Cancel subscription",
+    "subtitle": "Unlock unlimited access to all features",
+    "hero": {
+      "freeTrial": "15-day free trial",
+      "unlockPremium": "Unlock Premium",
+      "month": "month",
+      "trialDescription": "Try free for 15 days, then ${{price}} AUD/month"
+    },
+    "celebration": {
+      "trialStarted": "Trial Started!",
+      "yourePremium": "You're Premium!",
+      "trialDescription": "Enjoy 15 days of full Premium access, completely free.",
+      "premiumDescription": "Enjoy unlimited access to all features",
+      "cardCharged": "Card charged on",
+      "redirecting": "Redirecting..."
+    },
+    "payment": {
+      "testMode": "STRIPE TEST MODE",
+      "testModeDesc": "Use card",
+      "testModeDateCvc": "with any future date and CVC.",
+      "systemNotReady": "Payment system not ready. Please refresh and try again.",
+      "cardInputNotFound": "Card input not found. Please refresh and try again.",
+      "noResponse": "No response from payment server. Please try again.",
+      "processingFailed": "Payment processing failed ({{status}}). Please try again.",
+      "unexpectedError": "An unexpected error occurred. Please try again.",
+      "billingDetails": "Billing Details",
+      "cardholderName": "Cardholder Name",
+      "fullNameOnCard": "Full name on card",
+      "country": "Country",
+      "postalCode": "Postal Code",
+      "postalCodePlaceholder": "e.g. 2000",
+      "city": "City",
+      "cityPlaceholder": "City",
+      "address": "Address",
+      "addressPlaceholder": "Street address",
+      "cardNumber": "Card Number",
+      "expiryDate": "Expiry Date",
+      "cvc": "CVC",
+      "trialNotice": "Your card won't be charged for 15 days. After your trial, ${{price}} AUD/month is billed to <strong>{{email}}</strong>. Cancel anytime.",
+      "settingUpTrial": "Setting up trial...",
+      "startTrial": "Start 15-Day Free Trial",
+      "securePayment": "Secure payment powered by Stripe"
+    },
+    "invoices": {
+      "title": "Recent Invoices",
+      "noInvoices": "No invoices yet",
+      "noInvoicesDesc": "Your invoices will appear here after your first payment",
+      "invoiceNumber": "Invoice #{{number}}",
+      "downloadPdf": "Download PDF",
+      "viewInvoice": "View invoice"
+    },
+    "benefits": {
+      "unlimitedLive": "Unlimited Live",
+      "advancedStats": "Advanced Statistics",
+      "prioritySupport": "Priority Support",
+      "dataExport": "Data Export",
+      "unlimitedLiveDesc": "Track unlimited shifts in real-time",
+      "advancedStatsDesc": "Detailed analytics and insights",
+      "prioritySupportDesc": "Get help faster with priority support",
+      "dataExportDesc": "Export your data anytime"
+    },
+    "modal": {
+      "title": "Unlock the Full Experience",
+      "subtitle": "Start your <strong>15-day free trial</strong> — no charge until trial ends.",
+      "ctaButton": "Let's Go"
+    },
+    "weekNavigator": {
+      "thisWeek": "This week",
+      "lastWeek": "Last week",
+      "nextWeek": "Next week",
+      "inWeeks": "In {{count}} weeks",
+      "weeksAgo": "{{count}} weeks ago"
+    }
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "Oops! The page you're looking for doesn't exist. It might have been moved or deleted.",
+    "goHome": "Go to Dashboard",
+    "goBack": "Go Back",
+    "support": "If you believe this is an error, please contact support."
+  },
+  "serverError": {
+    "title": "Something Went Wrong",
+    "description": "We're experiencing technical difficulties. Please try again in a moment or contact support if the problem persists.",
+    "refresh": "Refresh Page",
+    "goHome": "Go to Dashboard",
+    "support": "Error code: 500 | If this issue continues, please reach out to support."
   },
   "dashboard": {
     "welcome": {
@@ -78,7 +243,7 @@
       "empty": "No data yet",
       "viewMore": "View more",
       "shiftLabel": "shifts",
-      "totalLabel": "Total from top"
+      "totalLabel": "Total from top {{count}}"
     },
     "quickStats": {
       "works": "Works",
@@ -93,12 +258,308 @@
       "thisMonth": "This Month",
       "currentWeek": "Current Week",
       "currentMonth": "Current Month",
-      "weekEarnings": "Week Earn."
+      "weekEarnings": "Week Earn.",
+      "viewMore": "View more",
+      "details": "Details",
+      "traditional": "Traditional",
+      "delivery": "Delivery",
+      "noData": "No data available"
+    },
+    "suggestedAction": {
+      "title": "Enjoying Orary?",
+      "description": "Share your experience and help us improve"
+    },
+    "clockIn": {
+      "startShift": "Start Shift",
+      "readyToWork": "Ready to work?",
+      "quickClockIn": "Quick clock-in available",
+      "live": "LIVE",
+      "earned": "earned"
+    },
+    "projection": {
+      "title": "Monthly projection",
+      "worksAdded": "Works added",
+      "stepCompleted": "Step completed",
+      "addWorks": "Add your works",
+      "unlocksShifts": "This unlocks Shifts page",
+      "trackShifts": "Track your shifts",
+      "addOrLive": "Add manually or use Live Mode",
+      "firstMonth": "Your first recorded month",
+      "moreThanLast": "{{amount}} more than last month (+{{percent}}%)",
+      "lessThanLast": "{{amount}} less than last month (-{{percent}}%)",
+      "sameAsLast": "Same as last month",
+      "keepPace": "If you keep this pace throughout the month"
+    },
+    "nextShift": {
+      "title": "Next shift"
+    },
+    "recentActivity": {
+      "title": "Recent activity",
+      "viewAll": "View all",
+      "totalRecent": "Total recent"
+    },
+    "topWork": {
+      "title": "Most profitable work"
+    },
+    "thisWeek": {
+      "title": "This week",
+      "totalEarned": "Total earned",
+      "progress": "Progress",
+      "noGoalYet": "No weekly goal yet?",
+      "goalHelps": "Setting one helps you stay on track",
+      "setUp": "Set up",
+      "goal": "goal"
+    },
+    "common": {
+      "noDataYet": "No data yet",
+      "deletedWork": "Deleted work",
+      "view": "View"
+    },
+    "motivation": {
+      "keepGoing": "Keep going!",
+      "onFire": "On fire!",
+      "niceWork": "Nice work!",
+      "crushingIt": "Crushing it!",
+      "goodPace": "Good pace!",
+      "unstoppable": "Unstoppable!",
+      "stayStrong": "Stay strong!",
+      "amazing": "Amazing!",
+      "youGotThis": "You got this!",
+      "legend": "Legend!",
+      "wellDone": "Well done!",
+      "superstar": "Superstar!",
+      "greatEffort": "Great effort!",
+      "incredible": "Incredible!",
+      "solidWork": "Solid work!",
+      "topNotch": "Top notch!",
+      "makingMoves": "Making moves!",
+      "beastMode": "Beast mode!",
+      "onTrack": "On track!",
+      "brilliant": "Brilliant!"
     },
     "export": {
       "title": "Export Report",
-      "description": "Download a complete summary of your statistics, shifts, and activity"
+      "description": "Download a complete summary of your statistics, shifts, and activity",
+      "formats": {
+        "pdf": "PDF",
+        "png": "PNG",
+        "excel": "Excel"
+      }
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "newShift": "New shift",
+      "newWork": "New work"
     }
+  },
+  "deliveryVehicle": {
+    "helpText": "Select the vehicle you will use for your deliveries"
+  },
+  "calendar": {
+    "today": "Today",
+    "selectWork": "Select Work",
+    "startTracking": "Start Tracking",
+    "selectWorkDesc": "Select your work and start tracking your shift in real-time",
+    "noWorksAvailable": "No works available",
+    "createWorkFirst": "Please create a work first",
+    "liveMode": "Live Mode",
+    "liveActive": "Live Active",
+    "paused": "Paused",
+    "sessionsRemaining": "session remaining this month",
+    "sessionsRemaining_plural": "sessions remaining this month",
+    "freeTrial": "15-day free trial — Start unlimited sessions",
+    "monthlyLimit": "Monthly limit reached",
+    "startFreeTrial": "Start your <strong>15-day free trial</strong> for unlimited Live Mode sessions",
+    "startFreeTrialButton": "Start Free Trial",
+    "cancel": "Cancel",
+    "starting": "Starting...",
+    "startLive": "Start Live",
+    "now": "NOW",
+    "upcoming": "Upcoming"
+  },
+  "integrations": {
+    "title": "Integrations",
+    "subtitle": "Connect external services and configure notifications",
+    "backToSettings": "Back to Settings",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "checking": "Checking...",
+      "soon": "Soon"
+    },
+    "notifications": {
+      "title": "Browser Notifications",
+      "description": "Receive notifications directly in your browser when important events occur.",
+      "enableNotifications": "Enable notifications",
+      "blockedByBrowser": "Blocked by browser",
+      "blockedHelp": "Notifications are blocked. Please enable them in your browser settings.",
+      "enabledSuccess": "Notifications enabled!",
+      "enabledSuccessDesc": "You will now receive shift reminders."
+    },
+    "shiftReminders": {
+      "title": "Shift Reminders",
+      "description": "Get notified before your shifts start so you never miss one.",
+      "enableReminders": "Enable reminders",
+      "remindMe": "Remind me",
+      "minutesBefore": "5 minutes before",
+      "minutesBefore_10": "10 minutes before",
+      "minutesBefore_15": "15 minutes before",
+      "minutesBefore_30": "30 minutes before",
+      "hourBefore": "1 hour before"
+    },
+    "biometric": {
+      "title": "Biometric Login",
+      "description": "Use Touch ID, Face ID, or Windows Hello to quickly unlock the app when you return.",
+      "notSupported": "Not supported on this device or browser.",
+      "activeOnDevice": "Active on this device",
+      "enableForDevice": "Enable for this device"
+    },
+    "mobileApp": {
+      "title": "Mobile App",
+      "description": "Get push notifications and manage your shifts on the go with our mobile app.",
+      "iOSAndroid": "iOS & Android"
+    },
+    "calendar": {
+      "title": "Calendar Subscription",
+      "description": "Subscribe to your shifts in any calendar app — Google Calendar, Apple Calendar, Outlook and more. Updates automatically every few hours.",
+      "subscribeButton": "Subscribe to Calendar",
+      "opening": "Opening...",
+      "copyLink": "Copy link (other apps)",
+      "copied": "Copied!",
+      "errorGenerate": "Could not generate calendar link. Please try again.",
+      "noLoginRequired": "No login required · Works with any calendar app",
+      "howItWorks": "How calendar subscription works",
+      "step1": "Generate your personal link and add it to any calendar app",
+      "step2": "Your shifts appear automatically and refresh every few hours",
+      "step3": "The link is permanent — add it once and it always stays in sync"
+    },
+    "pwa": {
+      "title": "Install Orary",
+      "subtitle": "Add it to your home screen — works like a native app, no App Store needed",
+      "iosTab": "iPhone / iPad",
+      "androidTab": "Android",
+      "ios": {
+        "safariOnly": "Only works in Safari.",
+        "safariOnlyDesc": "If you're using Chrome or Firefox on iPhone, open this page in Safari first.",
+        "step1Title": "Open this page in Safari",
+        "step1Desc": "If you're already in Safari, you're good to go!",
+        "step2Title": "Tap the Share button at the bottom of Safari",
+        "step3Title": "Find \"Add to Home Screen\" in the share menu",
+        "step3Warning": "Scroll down! This option is NOT at the top of the share sheet — it's hidden below. Keep swiping down through the icons row until you see the \"Add to Home Screen\" icon with a plus symbol.",
+        "step4Title": "Tap \"Add\" in the top-right corner",
+        "step4Desc": "Orary will appear on your home screen — open it just like any app."
+      },
+      "android": {
+        "chromeBest": "Works best in Chrome.",
+        "chromeBestDesc": "Samsung Browser also supports it.",
+        "step1Title": "Tap the menu icon at the top-right of Chrome",
+        "step2Title": "Select \"Add to Home Screen\" or \"Install App\"",
+        "step2Desc": "The label may vary depending on your Chrome version.",
+        "step3Title": "Tap \"Install\" to confirm",
+        "step3Desc": "Orary will appear on your home screen and in your app drawer."
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Orary",
+      "subtitle": "Manage your work shifts easily.",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Password",
+      "continue": "Continue",
+      "continueWithGoogle": "Continue with Google",
+      "continueWithBiometric": "Continue with biometric",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "Don't have an account?",
+      "registerHere": "Register here!",
+      "recoverySent": "We have sent a recovery link to your email."
+    },
+    "register": {
+      "title": "Orary",
+      "subtitle": "Create your account",
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 6 characters",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "register": "Register",
+      "registerWithGoogle": "Register with Google",
+      "haveAccount": "Already have an account?",
+      "signInHere": "Sign in here",
+      "passwordRequirements": {
+        "minLength": "Minimum 6 characters",
+        "uppercase": "At least one uppercase letter",
+        "lowercase": "At least one lowercase letter",
+        "number": "At least one number"
+      }
+    },
+    "forgotPassword": {
+      "title": "Orary",
+      "subtitle": "Recover your password",
+      "description": "Enter your email address and we will send you a link to reset your password.",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "sendLink": "Recover password",
+      "backToLogin": "Back to login",
+      "emailSent": "Check your email for the reset link",
+      "sending": "Sending...",
+      "errorSend": "Could not send recovery email. Check your email address."
+    },
+    "resetPassword": {
+      "title": "Orary",
+      "subtitle": "Create new password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm password",
+      "resetButton": "Confirm new password",
+      "resetting": "Resetting...",
+      "success": "Your password has been successfully reset! Redirecting...",
+      "backToLogin": "Back to login",
+      "invalidLink": "Invalid or expired link. Please request a new recovery link.",
+      "expiredLink": "The link has expired. Please request a new recovery link.",
+      "errorReset": "Error resetting your password. Please try again."
+    },
+    "errors": {
+      "emailRequired": "Please enter your email",
+      "passwordRequired": "Please enter your password",
+      "emailPasswordRequired": "Please enter your email and password",
+      "invalidEmail": "Please enter a valid email",
+      "wrongPassword": "Incorrect email or password",
+      "emailInUse": "This email is already in use. Try signing in.",
+      "weakPassword": "Password is too weak. It must be at least 6 characters.",
+      "popupClosed": "Sign-in popup was closed. Please try again.",
+      "googleSignInFailed": "Could not sign in with Google. Please try again.",
+      "googleRegisterFailed": "Could not register with Google. Please try again.",
+      "accountExists": "An account already exists with this email. Try a different sign-in method.",
+      "createAccountFailed": "Error creating account. Please try again.",
+      "nameTooShort": "Name must be at least 2 characters",
+      "inappropriateName": "Please choose an appropriate name",
+      "passwordRequirements": "Password does not meet minimum requirements",
+      "passwordsMismatch": "Passwords do not match",
+      "biometricFailed": "Biometric verification failed. Try your password instead.",
+      "sessionExpired": "Please log in with your email or Google to continue."
+    }
+  },
+  "landing": {
+    "brandName": "Orary",
+    "tagline": "Work Shift Management & Earnings Tracker",
+    "features": {
+      "trackShifts": "Track Shifts",
+      "analytics": "Analytics",
+      "liveMode": "Live Mode"
+    },
+    "getStartedFree": "Get Started Free",
+    "signIn": "Sign in",
+    "alreadyHaveAccount": "already have an account?",
+    "freeWorldwide": "Free for all workers worldwide · No credit card required",
+    "legalAgreement": "By using Orary you agree to our",
+    "privacyPolicy": "Privacy Policy",
+    "and": "and",
+    "termsOfService": "Terms of Service"
   },
   "settings": {
     "title": "Settings",
@@ -112,6 +573,49 @@
       "darkTheme": "Dark",
       "darkThemeDesc": "Easy on the eyes at night",
       "darkThemePremium": "Premium feature"
+    },
+    "goals": {
+      "title": "Weekly Goals",
+      "week": "week",
+      "weekdays": "weekdays",
+      "partTime": "Part-time",
+      "standard": "Standard",
+      "fullTime": "Full-time",
+      "extended": "Extended",
+      "setWeeklyGoal": "Set a weekly goal",
+      "trackInStats": "Track your progress in Statistics",
+      "quickPresets": "Quick presets",
+      "orCustomHours": "Or enter custom hours",
+      "placeholder": "E.g: 40",
+      "hoursPerWeek": "hours/week",
+      "tipDescription": "Set a realistic goal to see your weekly progress in the Statistics progress bar."
+    },
+    "deliveryPlatforms": {
+      "title": "Delivery Platforms",
+      "description": "Select your default platform or add custom ones.",
+      "platformName": "Platform name",
+      "default": "Default",
+      "defaultSet": "Default platform set",
+      "defaultCleared": "Default platform cleared",
+      "platformAdded": "Platform added",
+      "platformRemoved": "Platform removed",
+      "errorSetDefault": "Error setting default platform",
+      "errorAdd": "Error adding platform",
+      "errorRemove": "Error removing platform"
+    },
+    "profile": {
+      "title": "Profile",
+      "email": "Email",
+      "name": "Name",
+      "addPhoto": "Add a photo",
+      "yourPhoto": "Your profile photo",
+      "personalizeDesc": "Personalize your profile with a photo.",
+      "removePhoto": "Remove photo",
+      "avatar": "User avatar",
+      "deletePhoto": "Delete Profile Photo",
+      "currentProfile": "Current Profile Photo",
+      "defaultLogo": "Default Logo",
+      "deletePhotoConfirm": "Are you sure you want to delete your profile photo? It will be replaced by the default logo."
     },
     "smoko": {
       "title": "Smoko (Breaks)",
@@ -178,12 +682,17 @@
       "disablePopoverTitle": "Consequences of disabling",
       "enablePopoverTitle": "How it works?",
       "whatIfDisable": "What happens if I disable it?",
-      "whatIfEnable": "What changes when I enable it?"
-    },
-    "profile": {
-      "title": "Profile",
-      "email": "Email",
-      "name": "Name"
+      "whatIfEnable": "What changes when I enable it?",
+      "enabledMessage": "Delivery mode enabled",
+      "disabledMessage": "Delivery mode disabled",
+      "errorMessage": "Error changing delivery setting",
+      "disableInfo": "By disabling this option, the interface will simplify for hourly jobs:",
+      "disablePoint1": "Only statistics for <strong>traditional jobs</strong> will be shown on the dashboard.",
+      "disablePoint2": "Your previous delivery shifts <strong>will remain visible</strong> in history, but you <strong>won't be able to add new</strong> ones until re-enabled.",
+      "enablePoint1": "Jobs <strong>do not require</strong> a fixed hourly rate.",
+      "enablePoint2": "You record <strong>total earnings</strong> for each shift.",
+      "enablePoint3": "Fields for <strong>tips</strong> and order count.",
+      "enablePoint4": "Detailed tracking of <strong>km and fuel</strong>."
     },
     "session": {
       "title": "Account",
@@ -194,6 +703,11 @@
       "logout": "Log out",
       "managePremium": "Manage Premium",
       "upgradePremium": "Upgrade to Premium"
+    },
+    "integrationsBanner": {
+      "title": "Integrations",
+      "description": "Set up alerts, Google Calendar and more.",
+      "button": "Set up"
     }
   },
   "shifts": {
@@ -212,7 +726,82 @@
     "noMatchingFilters": "No shifts matching filters",
     "noMatchingFiltersDesc": "Try adjusting the filters to see more results.",
     "clearFilters": "Clear filters",
-    "upcoming": "Upcoming"
+    "upcoming": "Upcoming",
+    "firstAddWork": "First, add a work",
+    "needWorkDesc": "Before you can track shifts, you need to create at least one work. This could be a job, a delivery platform, or any other income source.",
+    "goToWorks": "Go to Works",
+    "noShiftsYet": "No shifts yet",
+    "startTrackingDesc": "Start tracking your work hours to see your earnings and statistics.",
+    "addManually": "Add manually",
+    "enterShiftDetails": "Enter shift details like date, start and end time",
+    "useLiveMode": "Use Live Mode",
+    "liveModeDesc": "Start a timer and track your shift in real-time",
+    "addFirstShift": "Add your first shift",
+    "jobDeleted": "Job deleted",
+    "financialDetails": "Financial Details",
+    "grossEarnings": "Gross Earnings",
+    "tips": "Tips",
+    "expenses": "Expenses",
+    "netEarnings": "Net Earnings",
+    "hoursIn": "hs in",
+    "discount": "Discount",
+    "smokoDiscount": "Smoko Discount",
+    "calculation": "Calculation",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "estimatedEarnings": "Estimated Earnings",
+    "rates": {
+      "day": "Day",
+      "afternoon": "Afternoon",
+      "night": "Night",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "holiday": "Holiday"
+    },
+    "moreInfo": "More information",
+    "created": "Created",
+    "holiday": "Holiday",
+    "finishLiveShift": "Finish Live Shift?",
+    "finishShiftDesc": "Your shift will be saved with these details",
+    "deductSmoko": "Deduct smoko?",
+    "noBreaks": "No breaks recorded",
+    "smokoDeduct": "-{{minutes}} min",
+    "liveShiftNote": "This shift will be saved to your history and marked as a live-tracked shift.",
+    "smokoWillDeduct": "{{minutes}} minutes will be deducted for break time.",
+    "schedule": "Schedule",
+    "createdWithLiveMode": "Created with Live Mode",
+    "createdWithBulk": "Created with Bulk Creation",
+    "deliveryInfo": "Delivery Info",
+    "additionalInfo": "Additional Info",
+    "basePay": "Base pay",
+    "nightBonus": "Night bonus",
+    "saturdayBonus": "Saturday bonus",
+    "sundayBonus": "Sunday bonus",
+    "holidayBonus": "Holiday bonus",
+    "filters": {
+      "allWorks": "All works",
+      "clear": "Clear",
+      "shiftTypes": {
+        "day": "Day",
+        "afternoon": "Afternoon",
+        "night": "Night",
+        "saturday": "Saturday",
+        "sunday": "Sunday",
+        "delivery": "Delivery",
+        "mixed": "Mixed",
+        "all": "All types"
+      },
+      "shiftTypeLabel": "Shift type",
+      "filteredBy": "Filtered by",
+      "activeFilters": "Active filters",
+      "of": "of",
+      "clearAll": "Clear all",
+      "workLabel": "Work",
+      "daysLabel": "Days",
+      "allDays": "All",
+      "typeLabel": "Type",
+      "unknownWork": "Unknown work"
+    }
   },
   "works": {
     "title": "Works",
@@ -220,6 +809,9 @@
     "addWork": "Add Work",
     "editWork": "Edit Work",
     "deleteWork": "Delete Work",
+    "newDeliveryWork": "New Delivery Work",
+    "editDeliveryWork": "Edit Delivery Work",
+    "createWork": "Create Work",
     "noWorks": "No works yet",
     "name": "Name",
     "baseRate": "Base rate",
@@ -237,7 +829,27 @@
     "addAnotherPlatform": "Add another platform",
     "multipleApps": "Multiple apps supported",
     "deleteWarning": "All shifts associated with this job will also be deleted.",
-    "deleteWarningDelivery": "All delivery shifts associated with this job will also be deleted."
+    "deleteWarningDelivery": "All delivery shifts associated with this job will also be deleted.",
+    "traditionalBadge": "Traditional",
+    "deliveryBadge": "Delivery",
+    "platform": "Platform",
+    "noDescription": "No description",
+    "workNotFound": "Work not found",
+    "selectTypeTitle": "What type of work do you want to add?",
+    "selectTypeSubtitle": "Select the type that best describes your work",
+    "hourlyWork": "Hourly Work",
+    "hourlyWorkDesc": "For jobs with a fixed hourly rate and different shift types",
+    "hourlyFeature1": "Rates by shift type (day, afternoon, night)",
+    "hourlyFeature2": "Special weekend rates",
+    "hourlyFeature3": "Automatic calculation with discounts",
+    "deliveryWork": "Delivery Work",
+    "deliveryWorkDesc": "For delivery jobs with variable earnings per shift",
+    "deliveryFeature1": "Record of total earnings per shift",
+    "deliveryFeature2": "Tracking of orders and kilometers",
+    "deliveryFeature3": "Control of tips and fuel expenses",
+    "notSureWhich": "Not sure which to choose?",
+    "helpChoose": "If you have doubts about which type to choose, you can change this later in the job settings.",
+    "liveModeActiveError": "\"{{workName}}\" is currently active in Live Mode. Stop the session to edit it."
   },
   "statistics": {
     "title": "Statistics",
@@ -251,6 +863,270 @@
     "daily": "Daily",
     "deliveryTitle": "Delivery Statistics",
     "deliverySubtitle": "Analyze your delivery earnings and efficiency"
+  },
+  "forms": {
+    "shift": {
+      "title": "Shift",
+      "work": "Work",
+      "selectWork": "Select work",
+      "traditionalWorks": "Traditional Works",
+      "deliveryWorks": "Delivery Works",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "break": "Break",
+      "breakDuration": "Break duration:",
+      "paidTime": "Paid time:",
+      "notes": "Notes (optional)",
+      "notesPlaceholder": "Add notes about this shift...",
+      "validation": {
+        "selectWork": "Select a job",
+        "dateRequired": "Date is required",
+        "startTimeRequired": "Start time is required",
+        "endTimeRequired": "End time is required",
+        "positiveNumber": "Must be greater than 0",
+        "endAfterStart": "Must be after start"
+      },
+      "bulk": {
+        "title": "Bulk Shift Creation",
+        "enable": "Create multiple shifts",
+        "newFeatureTitle": "Create Multiple Shifts at Once",
+        "newFeatureDescription": "Save time by creating shifts for multiple days in a single step. Select your pattern in the next screen.",
+        "enableBulkCreation": "Enable bulk creation",
+        "selectDays": "Select days of the week",
+        "repeatFor": "Repeat for",
+        "week": "week",
+        "weeks": "weeks",
+        "selectAtLeastOne": "Select at least one day",
+        "preview": "Preview",
+        "preview_one": "Preview: {{count}} shift",
+        "preview_other": "Preview: {{count}} shifts",
+        "shiftsWillBeCreated_one": "{{count}} shift will be created",
+        "shiftsWillBeCreated_other": "{{count}} shifts will be created",
+        "selectDates": "Select dates",
+        "pressEnterHint": "Press Enter or click Add to include each date",
+        "selectedDates": "Selected dates ({{count}})",
+        "noDatesSelected": "No dates selected yet",
+        "addDatesHint": "Add dates above to create shifts",
+        "startDate": "Start date",
+        "endDate": "End date",
+        "skipWeekends": "Skip weekends",
+        "skipWeekendsDesc": "Only create shifts on weekdays (Mon-Fri)",
+        "fromToDate": "From {{from}} to {{to}}",
+        "weekdaysOnly": "weekdays only",
+        "endDateAfterStart": "End date must be after start date",
+        "andMore": "... and {{count}} more",
+        "workLabel": "Work: ",
+        "shiftsWillBeCreated": "shifts will be created",
+        "dayLabels": {
+          "Mon": "Mon",
+          "Tue": "Tue",
+          "Wed": "Wed",
+          "Thu": "Thu",
+          "Fri": "Fri",
+          "Sat": "Sat",
+          "Sun": "Sun"
+        }
+      }
+    },
+    "work": {
+      "companyName": "Company Name",
+      "workColor": "Work Color",
+      "customColor": "or choose a custom color",
+      "baseHourlyRate": "Base hourly rate",
+      "ratesByShiftType": "Rates by shift type",
+      "descriptionOptional": "Description (optional)",
+      "descriptionPlaceholder": "Additional details about this job...",
+      "name": "Name",
+      "namePlaceholder": "e.g. My Job",
+      "baseRate": "Base Rate",
+      "baseRatePlaceholder": "0.00",
+      "currency": "Currency",
+      "selectCurrency": "Select currency",
+      "rates": {
+        "title": "Additional Rates",
+        "night": "Night",
+        "saturday": "Saturday",
+        "sunday": "Sunday",
+        "holiday": "Holiday"
+      },
+      "delivery": {
+        "namePlaceholder": "e.g., North Zone Delivery",
+        "descriptionPlaceholder": "e.g., Delivery job in downtown area...",
+        "platform": "Platform",
+        "selectPlatform": "Select a platform",
+        "selectPlatformWithDefault": "Select (default: {{defaultPlatform}})",
+        "selectVehicle": "Select your vehicle",
+        "vehicles": {
+          "bicycle": "Bicycle",
+          "motorbike": "Motorbike",
+          "car": "Car",
+          "on_foot": "On foot"
+        }
+      },
+      "validation": {
+        "nameRequired": "Name is required",
+        "baseRateRequired": "Base rate is required",
+        "selectPlatform": "Select a platform",
+        "selectVehicle": "Select a vehicle"
+      }
+    }
+  },
+  "modals": {
+    "createMultipleShifts": "Create Multiple Shifts",
+    "configurePattern": "Configure pattern for: {{workName}}",
+    "repetitionPattern": "Repetition Pattern",
+    "weekly": "Weekly",
+    "specificDates": "Specific Dates",
+    "dateRange": "Date Range",
+    "selectAtLeastOneDay": "Select at least one day to create shifts",
+    "addDates": "Add dates to create shifts",
+    "selectStartEnd": "Select start and end dates",
+    "creating": "Creating...",
+    "createShifts": "Create {{count}} Shift",
+    "createShifts_plural": "Create {{count}} Shifts",
+    "back": "Back",
+    "deletePhotoTitle": "Delete Profile Photo",
+    "currentPhoto": "Current photo",
+    "defaultLogo": "Default logo",
+    "deletePhotoWarning": "Your profile photo will be permanently deleted and replaced by the default logo. This cannot be undone.",
+    "deleting": "Deleting...",
+    "confirmDeletion": "Confirm Deletion",
+    "clearAllData": "Clear All Data",
+    "clearDataDesc": "This will clear all your <strong>works</strong>, <strong>shifts</strong>, and <strong>settings</strong>. Your account credentials will remain intact.",
+    "sessionWarning": "Your session will be closed after clearing. You can log in again with the same credentials.",
+    "premiumWarning": "Your <strong>Premium subscription</strong> will be cancelled automatically.",
+    "deleteAccount": "Delete Account",
+    "deleteAccountDesc": "<strong class=\"text-red-600\">This action is irreversible.</strong> All your data, including works, shifts, and account information will be permanently deleted.",
+    "googleConfirm": "Click the button below to confirm with your <strong>Google account</strong>.",
+    "enterPassword": "Enter your password to confirm",
+    "passwordPlaceholder": "Your password",
+    "farewell": "We hope to see you again! You can create a new account anytime.",
+    "clearData": "Clear Data",
+    "clearing": "Clearing...",
+    "deleteAccountConfirm": "Delete Account",
+    "deletingAccount": "Deleting...",
+    "selectWorkFirst": "Please select a work first",
+    "activeSession": "There is already an active live session",
+    "work": {
+      "calculationSettings": "Calculation settings",
+      "includeTips": "Include tips",
+      "trackFuel": "Track fuel",
+      "noFuelNeeded": "No fuel needed for this vehicle"
+    }
+  },
+  "cards": {
+    "shift": {
+      "orders": "Orders",
+      "distance": "Distance",
+      "baseEarnings": "Base earnings",
+      "fuelExpense": "Fuel expense",
+      "avgPerOrder": "Avg per order"
+    },
+    "work": {
+      "baseRate": "Base rate:",
+      "perHour": "/h",
+      "night": "Night",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "holiday": "Holiday"
+    },
+    "deliveryWork": {
+      "shifts": "Shifts",
+      "vehicle": "Vehicle"
+    }
+  },
+  "australia88": {
+    "visaTitle": "Working Holiday Visa",
+    "details": "Details",
+    "complete": "Complete",
+    "remaining": "Remaining",
+    "thisWeek": "This week",
+    "yearComplete": "Year {{year}} complete!",
+    "yearGoal": "Year {{year}} · days · goal 88",
+    "daysUnit": "d",
+    "formLabel": "Working Holiday Visa (88 days)",
+    "qualifiesDescription": "Qualifies for Working Holiday Visa extension",
+    "regionalWork": "Work in regional or critical areas of Australia",
+    "notSure": "Not sure if your work qualifies?",
+    "checkHomeAffairs": "Check on Home Affairs"
+  },
+  "about": {
+    "hero": {
+      "phrase1": "Your work and shift manager",
+      "phrase2": "Professional shift tracking and management",
+      "phrase3": "Because math shouldn't be this hard",
+      "phrase4": "Track smarter, not harder",
+      "phrase5": "Built by a worker, for workers"
+    },
+    "story": {
+      "title": "How it all started",
+      "p1": "It all started in Australia. I was working there and noticed something that drove me crazy: every single week, my friends and I would sit down with a calculator, a notepad, and way too much patience trying to figure out how much we'd actually earn.",
+      "p2": "Night hours? Different rate. Weekends? Another rate. Public holidays? Who even knows. And after all that math, the number on the payslip was <em>never</em> what we calculated. Every. Single. Time.",
+      "p3": "So I thought: <strong>\"Enough. There has to be a better way.\"</strong>",
+      "p4": "I built spreadsheets. I tried templates. I made little tools that kind of worked... but never really nailed it. Nothing matched the actual payslip values. It was frustrating.",
+      "p5": "Then one day it hit me:",
+      "p5highlight": "\"Why don't I build something real? Something at scale. Something that actually works AND helps me learn at the same time.\"",
+      "p6": "And just like that, Orary was born. What started as a personal itch to scratch turned into a full-blown application that handles multiple rate types, automatic holiday detection, live tracking, bulk creation, exports, and way more than I ever imagined.",
+      "p7": "Turns out, frustration is a pretty good fuel for building things."
+    },
+    "creator": {
+      "name": "Marqui",
+      "role": "Creator & Developer",
+      "p1": "I'm a developer from Argentina, currently based in New Zealand. I built Orary because I needed it myself, and I figured if it helped me, it could help others too.",
+      "p2": "I'm always working on different things, but I never stop pushing to grow in this world. I'll keep moving from place to place, and I hope the same happens with Orary — always evolving, always reaching new people.",
+      "p3": "If you have any questions, ideas, or just want to say hi, feel free to reach out."
+    },
+    "claude": {
+      "title": "Powered by Claude",
+      "subtitle": "by Anthropic",
+      "description": "Some of the more complex features in Orary were built with the help of Claude AI, an assistant that made it possible to tackle challenges that would have taken much longer to solve alone."
+    },
+    "feedback": {
+      "title": "Leave Feedback",
+      "updateTitle": "Update Your Feedback",
+      "description": "Your opinion helps us improve Orary. Share what you think!",
+      "updateDescription": "You already left a review. Want to update it?",
+      "rateQuestion": "How would you rate your experience?",
+      "commentPlaceholder": "Tell us what you like or what we can improve...",
+      "profanityWarning": "Please keep your feedback respectful.",
+      "publishAs": "Publish as",
+      "anonymous": "Anonymous",
+      "anonymousUser": "Anonymous",
+      "send": "Send",
+      "update": "Update",
+      "sending": "Sending...",
+      "thankYou": "Thank You!",
+      "thankYouDesc": "Your feedback helps us grow.",
+      "underReview": "Under Review",
+      "underReviewDesc": "Your feedback is being reviewed before publication.",
+      "whatPeopleSay": "What people say",
+      "yourReviewPending": "Your review is pending approval",
+      "changeReview": "Change my review",
+      "leaveReview": "Leave a review",
+      "noFeedback": "No feedback yet",
+      "noFeedbackDesc": "Be the first to share your thoughts!",
+      "timeAgo": {
+        "justNow": "Just now",
+        "minutesAgo": "m ago",
+        "hoursAgo": "h ago",
+        "daysAgo": "d ago",
+        "monthsAgo": "mo ago",
+        "yearsAgo": "y ago"
+      }
+    }
+  },
+  "alerts": {
+    "delete": {
+      "title": "Delete {{type}}?",
+      "warning": "Warning: The selected job will be permanently deleted."
+    }
+  },
+  "errors": {
+    "pageNotFound": "Page not found",
+    "serverError": "Server error",
+    "somethingWentWrong": "Something went wrong"
   },
   "stats": {
     "weeklyComparison": {
@@ -297,7 +1173,9 @@
       "milestoneAlmost": "Almost there!",
       "celebrationIncredible": "Incredible work!",
       "celebrationExceeded": "Exceeded your goal!",
-      "celebrationAchieved": "Weekly goal achieved!"
+      "celebrationAchieved": "Weekly goal achieved!",
+      "overGoalMessage": "{{hours}}h worked — {{over}}h over your {{goal}}h goal",
+      "goalCompletedMessage": "You completed {{goal}} hours this week"
     },
     "smokoCard": {
       "title": "Break Settings",
@@ -333,16 +1211,21 @@
       "Thursday": "Thu",
       "Friday": "Fri",
       "Saturday": "Sat",
-      "Sunday": "Sun"
-    },
-    "daysFull": {
-      "Monday": "Monday",
-      "Tuesday": "Tuesday",
-      "Wednesday": "Wednesday",
-      "Thursday": "Thursday",
-      "Friday": "Friday",
-      "Saturday": "Saturday",
-      "Sunday": "Sunday"
+      "Sunday": "Sun",
+      "Mon": "Mon",
+      "Tue": "Tue",
+      "Wed": "Wed",
+      "Thu": "Thu",
+      "Fri": "Fri",
+      "Sat": "Sat",
+      "Sun": "Sun",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
     },
     "deliverySummary": {
       "title": "Delivery Summary",
@@ -424,6 +1307,117 @@
           "night": "night (20–5h)"
         }
       }
+    },
+    "monthlyProjection": {
+      "title": "Monthly Projection",
+      "empty": "No recent activity data",
+      "emptyDesc": "Register shifts to see your monthly projection",
+      "description": "If you maintain this pace throughout the month",
+      "hours": "hours"
+    },
+    "dailyBreakdown": {
+      "title": "Daily Breakdown",
+      "empty": "No shifts registered this week",
+      "emptyDesc": "Shifts will appear here once you add some"
+    },
+    "smokoTimeCard": {
+      "title": "Duration",
+      "emptyText": "Breaks not active"
     }
+  },
+  "shared": {
+    "workPreview": {
+      "platform": "Platform",
+      "vehicle": "Vehicle",
+      "jobType": "Job type",
+      "variableEarnings": "Variable earnings per delivery",
+      "baseRate": "Base rate",
+      "specialRates": "Special rates:"
+    }
+  },
+  "authLayout": {
+    "agreement": "By using Orary you agree to our",
+    "privacyPolicy": "Privacy Policy",
+    "and": "and",
+    "termsOfService": "Terms of Service"
+  },
+  "sharedWork": {
+    "title": "Shared Work",
+    "subtitle": "Details of the work shared with you.",
+    "signInTitle": "Sign In",
+    "signInDesc": "You need to sign in to add this work to your account",
+    "errorTitle": "Error",
+    "goToWorks": "Go to my works",
+    "addToMyWorks": "Add to my works",
+    "adding": "Adding...",
+    "helpMessage": "By adding this work, it will be copied to your account with all its configurations."
+  },
+  "clearEverything": {
+    "title": "Clear Everything",
+    "subtitle": "Start fresh while keeping your account.",
+    "intro": "If you want to start fresh with <strong>Orary</strong> without deleting your account, you can clear all your work and shift data while keeping your login credentials.",
+    "whatWillBeDeleted": {
+      "title": "What Will Be Deleted",
+      "works": "All your registered <strong>works</strong> (jobs and delivery platforms)",
+      "shifts": "All your recorded <strong>shifts</strong> and their associated data",
+      "earnings": "All your <strong>earnings history</strong> and statistics",
+      "preferences": "Your <strong>preferences</strong> and settings",
+      "premium": "Your <strong>Premium subscription</strong> will be cancelled"
+    },
+    "whatWillBePreserved": {
+      "title": "What Will Be Preserved",
+      "account": "Your <strong>account</strong> and login credentials",
+      "profile": "Your <strong>email</strong> and <strong>display name</strong>"
+    },
+    "clearButton": "Clear All Data",
+    "successMessage": "Your data has been cleared successfully. Please log in again to continue.",
+    "errorMessage": "Failed to clear data"
+  },
+  "deleteAccount": {
+    "title": "Account Deletion",
+    "subtitle": "We are sorry to see you go.",
+    "intro": "If you wish to permanently delete your <strong>Orary</strong> account and all associated data, you can do so below. Please be aware that this action is <strong class=\"text-red-600 dark:text-red-400\">irreversible</strong>.",
+    "whatWillBeDeleted": {
+      "title": "What Will Be Deleted",
+      "account": "Your <strong>account</strong> and login credentials",
+      "works": "All your registered <strong>works</strong> (jobs and delivery platforms)",
+      "shifts": "All your recorded <strong>shifts</strong> and their associated data",
+      "earnings": "All your <strong>earnings history</strong> and statistics",
+      "profile": "Your <strong>profile</strong> and all personal information",
+      "premium": "Your <strong>Premium subscription</strong> will be cancelled"
+    },
+    "warning": {
+      "title": "Permanent Deletion Warning",
+      "description": "This action <strong>cannot be undone</strong>. Once you delete your account, all your data will be permanently erased from our servers and cannot be recovered under any circumstances."
+    },
+    "deleteButton": "Delete My Account",
+    "emailAlternative": {
+      "title": "Prefer to request deletion by email?",
+      "description": "If you prefer, you can also request account deletion by sending an email to:",
+      "note": "Send the email from your registered Orary account address — the same email you use to log in. Include your display name for verification. Deletion will be processed within 30 days."
+    },
+    "errors": {
+      "noUser": "No user logged in",
+      "wrongPassword": "Incorrect password. Please try again.",
+      "popupClosed": "Google sign-in was cancelled. Please try again.",
+      "popupBlocked": "Popup was blocked. Please allow popups and try again.",
+      "sessionExpired": "Session expired. Please try again.",
+      "generic": "Failed to delete account. Please try again or contact support."
+    },
+    "success": {
+      "title": "Account Deleted",
+      "description": "Your account has been permanently deleted.",
+      "farewell": "Thank you for using Orary. We hope to see you again!",
+      "redirectMessage": "Your account has been deleted successfully. We hope to see you again!"
+    }
+  },
+  "footer": {
+    "version": "Version 3.0.1",
+    "developed": "Developed with",
+    "by": "by Marqui",
+    "copyright": "© 2026 Orary. All rights reserved.",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "about": "About"
   }
 }

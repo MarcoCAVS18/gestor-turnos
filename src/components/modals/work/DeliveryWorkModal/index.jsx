@@ -1,6 +1,7 @@
 // src/components/modals/work/DeliveryWorkModal/index.jsx
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pen, Plus } from 'lucide-react';
 import { useApp } from '../../../../contexts/AppContext';
 import { useConfigContext } from '../../../../contexts/ConfigContext';
@@ -16,6 +17,7 @@ import Button from '../../../ui/Button';
 import logger from '../../../../utils/logger';
 
 const DeliveryWorkModal = ({ isOpen, onClose, work }) => {
+  const { t } = useTranslation();
   const { addDeliveryJob, editDeliveryJob } = useApp();
   const { deliveryEnabled, savePreferences } = useConfigContext();
   const isMobile = useIsMobile();
@@ -53,10 +55,10 @@ const DeliveryWorkModal = ({ isOpen, onClose, work }) => {
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title={work ? 'Edit Delivery Work' : 'New Delivery Work'}
+      title={work ? t('works.editDeliveryWork') : t('works.newDeliveryWork')}
       icon={work ? Pen : Plus}
       loading={loading}
-      loadingText="Saving..."
+      loadingText={t('common.saving')}
       showFooter={true}
       maxWidth="md"
     >
@@ -72,6 +74,7 @@ const DeliveryWorkModal = ({ isOpen, onClose, work }) => {
 };
 
 const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isMobile }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: '',
     platform: '',
@@ -136,13 +139,13 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
     const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = t('forms.validation.nameRequired');
     }
     if (!formData.platform) {
-      newErrors.platform = 'Select a platform';
+      newErrors.platform = t('forms.validation.selectPlatform');
     }
     if (!formData.vehicle) {
-      newErrors.vehicle = 'Select a vehicle';
+      newErrors.vehicle = t('forms.validation.selectVehicle');
     }
 
     setErrors(newErrors);
@@ -198,7 +201,7 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
       {/* Job Name */}
       <div>
         <label className="block text-sm font-medium mb-2">
-          Job Name
+          {t('forms.work.companyName')}
         </label>
         <input
           type="text"
@@ -213,7 +216,7 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
             '--tw-ring-color': thematicColors.primary,
             borderColor: errors.name ? '#EF4444' : undefined
           }}
-          placeholder="e.g., North Zone Delivery"
+          placeholder={t('forms.work.delivery.namePlaceholder')}
         />
         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
       </div>
@@ -241,10 +244,10 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
         className="space-y-3 p-4 rounded-lg"
         style={{ backgroundColor: thematicColors.transparent5 }}
       >
-        <h3 className="text-sm font-medium text-gray-700">Calculation settings</h3>
+        <h3 className="text-sm font-medium text-gray-700">{t('modals.work.calculationSettings')}</h3>
 
         <div className="flex items-center justify-between">
-          <span className="text-sm">Include tips in record</span>
+          <span className="text-sm">{t('modals.work.includeTips')}</span>
           <Switch
             checked={formData.configuration.includeTips}
             onChange={(val) => handleConfigChange('includeTips', val)}
@@ -255,7 +258,7 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
         {/* Only show fuel option if vehicle requires it */}
         {showFuelOption && (
           <div className="flex items-center justify-between">
-            <span className="text-sm">Track fuel expenses</span>
+            <span className="text-sm">{t('modals.work.trackFuel')}</span>
             <Switch
               checked={formData.configuration.trackFuel}
               onChange={(val) => handleConfigChange('trackFuel', val)}
@@ -267,7 +270,7 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
         {/* Informational message for vehicles without fuel */}
         {!showFuelOption && formData.vehicle && (
           <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded border border-blue-200">
-            This vehicle does not require fuel, so related expenses will not be included.
+            {t('modals.work.noFuelNeeded')}
           </div>
         )}
       </div>
@@ -275,7 +278,7 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
       {/* Description (optional) */}
       <div>
         <label className="block text-sm font-medium mb-2">
-          Description (optional)
+          {t('forms.work.descriptionOptional')}
         </label>
         <textarea
           value={formData.description}
@@ -286,7 +289,7 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
           `}
           style={{ '--tw-ring-color': thematicColors.primary }}
           rows={isMobile ? "3" : "2"}
-          placeholder="e.g., Delivery job in downtown area..."
+          placeholder={t('forms.work.delivery.descriptionPlaceholder')}
         />
       </div>
 
@@ -298,7 +301,7 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
           disabled={saving}
           className={isMobile ? 'w-full' : 'flex-1'}
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
         <button
           type="submit"
@@ -323,10 +326,10 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
           {saving ? (
             <Flex variant="center" className="space-x-2">
               <LoadingSpinner size="h-4 w-4" color="border-white" />
-              <span>Saving...</span>
+              <span>{t('common.saving')}</span>
             </Flex>
           ) : (
-            work ? 'Update' : 'Create'
+            work ? t('common.update') : t('common.create')
           )}
         </button>
       </div>

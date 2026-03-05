@@ -1,6 +1,7 @@
 // src/components/settings/GoalsSection/index.jsx
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Target, Save, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useApp } from '../../../contexts/AppContext';
@@ -10,10 +11,10 @@ import Button from '../../ui/Button';
 import logger from '../../../utils/logger';
 
 const PRESETS = [
-  { label: 'Part-time', hours: 20 },
-  { label: 'Standard', hours: 38 },
-  { label: 'Full-time', hours: 40 },
-  { label: 'Extended', hours: 50 },
+  { labelKey: 'settings.goals.partTime', hours: 20 },
+  { labelKey: 'settings.goals.standard', hours: 38 },
+  { labelKey: 'settings.goals.fullTime', hours: 40 },
+  { labelKey: 'settings.goals.extended', hours: 50 },
 ];
 
 // Circular progress ring
@@ -51,6 +52,7 @@ const ProgressRing = ({ percentage, color, size = 64, strokeWidth = 5 }) => {
 };
 
 const GoalsSection = ({ className }) => {
+  const { t } = useTranslation();
   const { weeklyHoursGoal, updateWeeklyHoursGoal } = useApp();
   const colors = useThemeColors();
   const [editing, setEditing] = useState(false);
@@ -91,7 +93,7 @@ const GoalsSection = ({ className }) => {
   const weekdayAvg = weeklyHoursGoal ? (weeklyHoursGoal / 5).toFixed(1) : 0;
 
   return (
-    <SettingsSection icon={Target} title="Weekly Goals" className={className}>
+    <SettingsSection icon={Target} title={t('settings.goals.title')} className={className}>
       <div className="space-y-4">
         <AnimatePresence mode="wait">
           {!editing ? (
@@ -124,15 +126,15 @@ const GoalsSection = ({ className }) => {
                         <span className="text-2xl font-bold dark:text-white" style={{ color: colors.primary }}>
                           {weeklyHoursGoal}h
                         </span>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">/ week</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400">/ {t('settings.goals.week')}</span>
                       </div>
                       <div className="flex flex-wrap gap-x-2 gap-y-0 mt-0.5">
                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                          ~{dailyAvg}h/day
+                          ~{dailyAvg}h/{t('common.day').toLowerCase()}
                         </span>
                         <span className="text-xs text-gray-400 dark:text-gray-500 hidden sm:inline">|</span>
                         <span className="text-xs text-gray-500 dark:text-gray-400">
-                          ~{weekdayAvg}h weekdays
+                          ~{weekdayAvg}h {t('settings.goals.weekdays')}
                         </span>
                       </div>
                     </div>
@@ -146,7 +148,7 @@ const GoalsSection = ({ className }) => {
                         color: colors.primary
                       }}
                     >
-                      Edit
+                      {t('common.edit')}
                     </button>
                   </div>
                 </div>
@@ -163,8 +165,8 @@ const GoalsSection = ({ className }) => {
                       <Target size={20} style={{ color: colors.primary }} />
                     </div>
                     <div className="text-center">
-                      <p className="text-sm font-medium text-gray-700 dark:text-gray-200">Set a weekly goal</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">Track your progress in Statistics</p>
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{t('settings.goals.setWeeklyGoal')}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{t('settings.goals.trackInStats')}</p>
                     </div>
                   </div>
                 </button>
@@ -182,7 +184,7 @@ const GoalsSection = ({ className }) => {
               {/* Preset buttons — 2 columns on mobile, 4 on sm+ */}
               <div>
                 <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
-                  Quick presets
+                  {t('settings.goals.quickPresets')}
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {PRESETS.map((preset) => {
@@ -205,7 +207,7 @@ const GoalsSection = ({ className }) => {
                         }}
                       >
                         <div className="font-bold text-sm">{preset.hours}h</div>
-                        <div className="opacity-70 text-[11px] truncate">{preset.label}</div>
+                        <div className="opacity-70 text-[11px] truncate">{t(preset.labelKey)}</div>
                       </button>
                     );
                   })}
@@ -215,21 +217,21 @@ const GoalsSection = ({ className }) => {
               {/* Custom input */}
               <div>
                 <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
-                  Or enter custom hours
+                  {t('settings.goals.orCustomHours')}
                 </label>
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
                     value={newGoal}
                     onChange={(e) => setNewGoal(e.target.value)}
-                    placeholder="E.g: 40"
+                    placeholder={t('settings.goals.placeholder')}
                     min="1"
                     max="168"
                     step="0.5"
                     className="flex-1 px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:border-transparent transition-colors bg-white dark:bg-slate-700 dark:text-white"
                     style={{ '--tw-ring-color': colors.primary }}
                   />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">hours/week</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400">{t('settings.goals.hoursPerWeek')}</span>
                 </div>
               </div>
 
@@ -242,7 +244,7 @@ const GoalsSection = ({ className }) => {
                   style={{ backgroundColor: colors.primary }}
                 >
                   <Save size={14} className="mr-1.5" />
-                  Save
+                  {t('common.save')}
                 </button>
 
                 <Button
@@ -250,7 +252,7 @@ const GoalsSection = ({ className }) => {
                   variant="cancel"
                   size="sm"
                 >
-                  Cancel
+                  {t('common.cancel')}
                 </Button>
 
                 {weeklyHoursGoal && (
@@ -259,7 +261,7 @@ const GoalsSection = ({ className }) => {
                     className="flex items-center px-3 py-2 rounded-lg text-sm font-medium text-red-600 bg-red-50 dark:bg-red-900/20 transition-colors hover:bg-red-100 dark:hover:bg-red-900/30 ml-auto"
                   >
                     <Trash2 size={14} className="mr-1.5" />
-                    Remove
+                    {t('common.remove')}
                   </button>
                 )}
               </div>
@@ -272,8 +274,7 @@ const GoalsSection = ({ className }) => {
           style={{ backgroundColor: colors.transparent5 }}
         >
           <p className="text-sm" style={{ color: colors.primary }}>
-            <strong>Tip:</strong> Set a realistic goal to see your weekly progress
-            in the Statistics progress bar.
+            <strong>{t('common.tip')}:</strong> {t('settings.goals.tipDescription')}
           </p>
         </div>
       </div>

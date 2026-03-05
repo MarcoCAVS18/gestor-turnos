@@ -1,10 +1,12 @@
 // src/components/delivery/PlatformSelector/index.jsx
 
+import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useApp } from '../../../contexts/AppContext';
 import Flex from '../../ui/Flex';
 
 const PlatformSelector = ({ selectedPlatform, onPlatformSelect }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const { deliveryPlatforms, defaultDeliveryPlatform } = useApp();
 
@@ -13,7 +15,7 @@ const PlatformSelector = ({ selectedPlatform, onPlatformSelect }) => {
 
   return (
     <div className="space-y-3">
-      <h3 className="text-sm font-medium text-gray-700">Platform</h3>
+      <h3 className="text-sm font-medium text-gray-700">{t('forms.work.delivery.platform')}</h3>
       <select
         value={selectedPlatform || ''}
         onChange={(e) => onPlatformSelect(e.target.value)}
@@ -23,7 +25,7 @@ const PlatformSelector = ({ selectedPlatform, onPlatformSelect }) => {
         }}
       >
         <option value="">
-          {defaultPlatform ? `Select (default: ${defaultPlatform.name})` : 'Select a platform'}
+          {defaultPlatform ? t('forms.work.delivery.selectPlatformWithDefault', { defaultPlatform: defaultPlatform.name }) : t('forms.work.delivery.selectPlatform')}
         </option>
         {deliveryPlatforms.map(platform => (
           <option key={platform.id} value={platform.name}>

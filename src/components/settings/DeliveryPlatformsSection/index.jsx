@@ -1,6 +1,7 @@
 // src/components/settings/DeliveryPlatformsSection/index.jsx
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Package, Plus, X, Check } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -9,6 +10,7 @@ import Flex from '../../ui/Flex';
 import logger from '../../../utils/logger';
 
 const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
+  const { t } = useTranslation();
   const { deliveryPlatforms, defaultDeliveryPlatform, savePreferences } = useApp();
   const colors = useThemeColors();
 
@@ -20,10 +22,10 @@ const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
     try {
       const newDefault = platformId === defaultDeliveryPlatform ? null : platformId;
       await savePreferences({ defaultDeliveryPlatform: newDefault });
-      onSuccess?.(newDefault ? 'Default platform set' : 'Default platform cleared');
+      onSuccess?.(newDefault ? t('settings.deliveryPlatforms.defaultSet') : t('settings.deliveryPlatforms.defaultCleared'));
     } catch (error) {
       logger.error('Error setting default platform:', error);
-      onError?.('Error setting default platform');
+      onError?.(t('settings.deliveryPlatforms.errorSetDefault'));
     }
   };
 
@@ -42,10 +44,10 @@ const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
       setNewPlatformName('');
       setNewPlatformColor('#6B7280');
       setIsAddingNew(false);
-      onSuccess?.('Platform added');
+      onSuccess?.(t('settings.deliveryPlatforms.platformAdded'));
     } catch (error) {
       logger.error('Error adding platform:', error);
-      onError?.('Error adding platform');
+      onError?.(t('settings.deliveryPlatforms.errorAdd'));
     }
   };
 
@@ -60,10 +62,10 @@ const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
       }
 
       await savePreferences(updates);
-      onSuccess?.('Platform removed');
+      onSuccess?.(t('settings.deliveryPlatforms.platformRemoved'));
     } catch (error) {
       logger.error('Error removing platform:', error);
-      onError?.('Error removing platform');
+      onError?.(t('settings.deliveryPlatforms.errorRemove'));
     }
   };
 
@@ -74,10 +76,10 @@ const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
   ];
 
   return (
-    <SettingsSection icon={Package} title="Delivery Platforms" className={className}>
+    <SettingsSection icon={Package} title={t('settings.deliveryPlatforms.title')} className={className}>
       <div className="space-y-4">
         <p className="text-sm text-gray-500">
-          Select your default platform or add custom ones.
+          {t('settings.deliveryPlatforms.description')}
         </p>
 
         {/* Platforms horizontal scroll */}
@@ -146,7 +148,7 @@ const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
                 className="w-20 h-20 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-1 text-gray-400 hover:border-gray-400 hover:text-gray-500 transition-colors flex-shrink-0"
               >
                 <Plus size={24} />
-                <span className="text-xs">Add</span>
+                <span className="text-xs">{t('common.add')}</span>
               </button>
             ) : (
               <div className="w-48 h-20 rounded-xl border-2 border-gray-200 p-2 flex flex-col gap-1 flex-shrink-0 bg-white">
@@ -154,7 +156,7 @@ const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
                   type="text"
                   value={newPlatformName}
                   onChange={(e) => setNewPlatformName(e.target.value)}
-                  placeholder="Platform name"
+                  placeholder={t('settings.deliveryPlatforms.platformName')}
                   className="text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1"
                   style={{ '--tw-ring-color': colors.primary }}
                   autoFocus
@@ -197,7 +199,7 @@ const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
 
         {defaultDeliveryPlatform && (
           <p className="text-xs text-gray-400">
-            Default: {deliveryPlatforms.find(p => p.id === defaultDeliveryPlatform)?.name}
+            {t('settings.deliveryPlatforms.default')}: {deliveryPlatforms.find(p => p.id === defaultDeliveryPlatform)?.name}
           </p>
         )}
       </div>

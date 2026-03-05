@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../hooks/useThemeColors';
 import BackLink from '../components/ui/BackLink';
 import HeroSection from '../components/about/HeroSection';
@@ -13,6 +14,7 @@ import FeedbackSection from '../components/about/FeedbackSection';
 import AboutFooter from '../components/about/AboutFooter';
 
 const About = () => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const location = useLocation();
 
@@ -42,7 +44,7 @@ const About = () => {
 
   return (
     <div className="px-4 py-6 space-y-6 overflow-x-hidden">
-      <BackLink to="/settings">Settings</BackLink>
+      <BackLink to="/settings">{t('common.backToSettings')}</BackLink>
 
       {/* Hero - full width always */}
       <HeroSection colors={colors} />

@@ -3,7 +3,7 @@
 import { useTranslation } from 'react-i18next';
 import { Zap } from 'lucide-react';
 import { TURN_TYPE_COLORS } from '../../../constants/colors';
-import { formatShiftsCount, pluralizeShiftTypes, calculateTotalShifts } from '../../../utils/pluralization';
+import { formatShiftsCount } from '../../../utils/pluralization';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
 
 // Columns per number of shift types (1–6)
@@ -16,8 +16,6 @@ const ShiftTypeStats = ({ currentData, loading, className = '' }) => {
   const validTypes = shiftTypes && typeof shiftTypes === 'object' && !Array.isArray(shiftTypes) ? shiftTypes : {};
   const entries = Object.entries(validTypes);
   const count = entries.length;
-  const totalShifts = calculateTotalShifts(validTypes);
-  const titlePlural = pluralizeShiftTypes(totalShifts);
   const isEmpty = count === 0;
 
   const getColorForType = (type) => {
@@ -25,12 +23,20 @@ const ShiftTypeStats = ({ currentData, loading, className = '' }) => {
     return TURN_TYPE_COLORS[key] || '#6B7280';
   };
 
+  // Get translated label for shift type
+  const getTypeLabel = (type) => {
+    const key = type === 'undefined' ? 'mixed' : type.toLowerCase();
+    // Capitalize first letter as fallback instead of ALL CAPS
+    const fallback = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+    return t(`filters.shiftTypes.${key}`, fallback);
+  };
+
   const cols = COLS[count] || 3;
 
   return (
     <BaseStatsCard
       icon={Zap}
-      title={titlePlural}
+      title={t('statistics.shiftTypes')}
       loading={loading}
       empty={isEmpty}
       emptyMessage={t('stats.shiftTypeStats.emptyText')}
@@ -51,7 +57,7 @@ const ShiftTypeStats = ({ currentData, loading, className = '' }) => {
             earnings: (data && typeof data.earnings === 'number') ? data.earnings : 0,
           };
 
-          const typeShown = type === 'undefined' ? 'MIXTO' : type.toUpperCase();
+          const typeShown = getTypeLabel(type);
           const typeColor = getColorForType(type);
 
           return (
@@ -72,7 +78,7 @@ const ShiftTypeStats = ({ currentData, loading, className = '' }) => {
                 }}
               />
               <p
-                className="text-gray-600 dark:text-gray-300 capitalize font-medium leading-tight text-center"
+                className="text-gray-600 dark:text-gray-300 font-medium leading-tight text-center"
                 style={{ fontSize: count <= 2 ? '0.8rem' : '0.7rem' }}
               >
                 {typeShown}
@@ -81,7 +87,7 @@ const ShiftTypeStats = ({ currentData, loading, className = '' }) => {
                 className="font-bold text-gray-800 dark:text-gray-100 leading-tight"
                 style={{ fontSize: count === 1 ? '2rem' : count <= 3 ? '1.25rem' : '0.95rem' }}
               >
-                {formatShiftsCount(safeData.shifts)}
+                {formatShiftsCount(safeData.shifts, false, t)}
               </p>
               <p
                 className="text-gray-500 dark:text-gray-400 leading-tight"

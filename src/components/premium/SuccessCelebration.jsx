@@ -1,6 +1,7 @@
 // src/components/premium/SuccessCelebration.jsx
 
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Crown, Calendar } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { PREMIUM_COLORS } from '../../contexts/PremiumContext';
@@ -35,6 +36,8 @@ const formatTrialEnd = (trialEnd) => {
 };
 
 const SuccessCelebration = ({ isTrial = false, trialEnd = null }) => {
+  const { t } = useTranslation();
+  
   // Lock body scroll while celebration overlay is visible
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -43,7 +46,7 @@ const SuccessCelebration = ({ isTrial = false, trialEnd = null }) => {
 
   return (<>
     <div className="px-4 py-6 space-y-6 blur-sm pointer-events-none">
-      <PageHeader title="Premium" subtitle="Unlock unlimited access to all features" icon={Crown} />
+      <PageHeader title={t('premium.title')} subtitle={t('premium.subtitle')} icon={Crown} />
     </div>
 
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -90,7 +93,7 @@ const SuccessCelebration = ({ isTrial = false, trialEnd = null }) => {
             className="text-2xl font-black text-white mb-2 drop-shadow-md"
             style={{ transform: 'rotate(-2deg)' }}
           >
-            {isTrial ? 'Trial Started!' : "You're Premium!"}
+            {isTrial ? t('premium.celebration.trialStarted') : t('premium.celebration.yourePremium')}
           </motion.h1>
 
           <motion.p
@@ -100,8 +103,8 @@ const SuccessCelebration = ({ isTrial = false, trialEnd = null }) => {
             className="text-white/85 text-sm mb-4"
           >
             {isTrial
-              ? 'Enjoy 15 days of full Premium access, completely free.'
-              : 'Enjoy unlimited access to all features'}
+              ? t('premium.celebration.trialDescription')
+              : t('premium.celebration.premiumDescription')}
           </motion.p>
 
           {isTrial && trialEnd && (
@@ -113,7 +116,7 @@ const SuccessCelebration = ({ isTrial = false, trialEnd = null }) => {
             >
               <Calendar size={14} className="text-white/70 flex-shrink-0" />
               <p className="text-xs text-white/80">
-                Card charged on <strong className="text-white">{formatTrialEnd(trialEnd)}</strong>
+                {t('premium.celebration.cardCharged')} <strong className="text-white">{formatTrialEnd(trialEnd)}</strong>
               </p>
             </motion.div>
           )}
@@ -125,7 +128,7 @@ const SuccessCelebration = ({ isTrial = false, trialEnd = null }) => {
             className="flex items-center justify-center gap-2"
           >
             <div className="w-1.5 h-1.5 rounded-full bg-white/50 animate-pulse" />
-            <span className="text-xs text-white/50">Redirecting...</span>
+            <span className="text-xs text-white/50">{t('premium.celebration.redirecting')}</span>
           </motion.div>
         </div>
       </motion.div>

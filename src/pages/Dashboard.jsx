@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import PageHeader from '../components/layout/PageHeader';
 import { useDashboardStats } from '../hooks/useDashboardStats';
@@ -35,6 +36,7 @@ import logger from '../utils/logger';
 import Australia88Ticker from '../components/australia88/Australia88Ticker';
 
 const Dashboard = () => {
+  const { t } = useTranslation();
   const { loading, calculatePayment, shiftRanges, settings, isPremium, premium, startOnboarding } = useApp();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -115,8 +117,8 @@ const Dashboard = () => {
       <Australia88Ticker />
 
       <PageHeader
-        title="Dashboard"
-        subtitle="An overview of your activity and progress."
+        title={t('nav.dashboard')}
+        subtitle={t('dashboard.subtitle')}
         icon={LayoutDashboard}
       />
 

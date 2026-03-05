@@ -3,6 +3,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { CalendarDays, Plus } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../contexts/AppContext';
 import { useThemeColors } from '../hooks/useThemeColors';
 import PageHeader from '../components/layout/PageHeader';
@@ -20,6 +21,7 @@ import Flex from '../components/ui/Flex';
 import logger from '../utils/logger';
 
 const CalendarView = () => {
+  const { t, i18n } = useTranslation();
   const { shiftsByDate, allWorks, thematicColors, loading, deleteShift } = useApp();
   const colors = useThemeColors();
   
@@ -56,14 +58,15 @@ const CalendarView = () => {
     // Explicitly check for invalid date object
     if (isNaN(date.getTime())) {
       logger.error('Invalid Date object created by createSafeDate for input:', dateStr);
-      return 'Invalid date'; 
+      return t('calendar.invalidDate'); 
     }
     
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
     
-    const baseFormattedDate = date.toLocaleDateString('en-US', {
+    const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+    const baseFormattedDate = date.toLocaleDateString(locale, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -71,14 +74,14 @@ const CalendarView = () => {
     });
 
     if (date.toDateString() === today.toDateString()) {
-      return `Today, ${baseFormattedDate}`;
+      return t('calendar.todayDate', { date: baseFormattedDate });
     }
     if (date.toDateString() === yesterday.toDateString()) {
-      return `Yesterday, ${baseFormattedDate}`;
+      return t('calendar.yesterdayDate', { date: baseFormattedDate });
     }
     
     return baseFormattedDate;
-  }, []);
+  }, [t, i18n.language]);
   
   // Format itemToDelete for summary display using shared utility
   const deletionDetails = useMemo(() => {
@@ -114,14 +117,14 @@ const CalendarView = () => {
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
       <PageHeader
-        title="Calendar"
-        subtitle={hasWorks ? "Visualize and manage your shifts by date" : null}
+        title={t('nav.calendar')}
+        subtitle={hasWorks ? t('calendar.subtitle') : null}
         icon={CalendarDays}
         action={hasWorks && selectedDate && {
           onClick: () => onNewShift(createSafeDate(selectedDate)),
           icon: Plus,
-          label: "New Shift",
-          mobileLabel: "New",
+          label: t('nav.newShift'),
+          mobileLabel: t('calendar.new'),
           themeColor: colors.primary,
         }}
       />
@@ -137,7 +140,7 @@ const CalendarView = () => {
           animate={{ opacity: 1 }}
         >
           <p style={{ color: thematicColors?.base || '#FFC107' }} className="text-sm font-medium">
-            To use the calendar, you first need to create at least one work in the "Works" section.
+            {t('calendar.noWorksMessage')}
           </p>
         </motion.div>
       )}
