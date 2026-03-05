@@ -120,7 +120,7 @@ const Landing = () => {
                 )}
                 {f.label}
                 {f.isNew && (
-                  <div className="absolute -top-1.5 -right-1.5 transform rotate-12">
+                  <div className="absolute -top-1.5 -right-5 transform rotate-12 translate-x-0.5">
                     <New size="xs" animated={false}>NEW</New>
                   </div>
                 )}

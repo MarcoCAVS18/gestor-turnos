@@ -1111,6 +1111,12 @@
         "monthsAgo": "me",
         "yearsAgo": "a"
       }
+    },
+    "footer": {
+      "version": "Versión 3.0.1",
+      "developed": "Desarrollado con",
+      "by": "por Marqui",
+      "copyright": "© 2026 Orary. Todos los derechos reservados."
     }
   },
   "alerts": {
