@@ -1,6 +1,7 @@
 // src/pages/auth/Login.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { Mail, Lock, Eye, EyeOff, Fingerprint } from 'lucide-react';
 import { isBiometricAvailable, getStoredBiometricUid, verifyBiometric } from '../../services/biometricService';
@@ -11,6 +12,7 @@ import GoogleIcon from '../../components/icons/GoogleIcon';
 import logger from '../../utils/logger';
 
 const Login = () => {
+  const { t } = useTranslation();
   const { login, loginWithGoogle, currentUser, unlockApp, isLocked } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -24,21 +26,12 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [biometricLoading, setBiometricLoading] = useState(false);
 
-  // Show biometric button whenever credentials exist on this device.
-  // Normal flow: "Log out" with biometric enabled locks the app (session preserved),
-  // so currentUser is still set here and unlockApp() works correctly.
-  // Edge case: if the session truly expired, handleBiometricLogin shows a clear error.
   const [showBiometric] = useState(() => isBiometricAvailable());
   const [biometricUid] = useState(() => getStoredBiometricUid());
 
   const redirectTo = location.state?.redirectTo || '/dashboard';
-
-  // Capture whether the user was already logged in when Login mounted.
-  // This distinguishes a Google redirect return (currentUser is null on mount,
-  // then becomes set) from a logout (currentUser is still set on mount briefly).
   const wasAlreadyLoggedIn = useRef(currentUser != null);
 
-  // Auto-redirect after Google signInWithRedirect completes and Firebase restores the session
   useEffect(() => {
     if (!wasAlreadyLoggedIn.current && currentUser && !isLocked) {
       navigate(redirectTo, { replace: true });
@@ -47,7 +40,7 @@ const Login = () => {
 
   useEffect(() => {
     if (location.state && location.state.emailSent) {
-      setSuccessMessage('We have sent a recovery link to your email.');
+      setSuccessMessage(t('auth.login.recoverySent'));
       setEmail(location.state.email || '');
 
       const timer = setTimeout(() => {
@@ -56,12 +49,12 @@ const Login = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [location]);
+  }, [location, t]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) {
-      return setError('Please enter your email and password');
+      return setError(t('auth.errors.emailPasswordRequired'));
     }
 
     setLoading(true);
@@ -70,7 +63,7 @@ const Login = () => {
       await login(email, password);
       navigate(redirectTo);
     } catch (err) {
-      setError('Incorrect email or password');
+      setError(t('auth.errors.wrongPassword'));
       setLoading(false);
     }
   };
@@ -81,17 +74,14 @@ const Login = () => {
     try {
       await verifyBiometric(biometricUid);
       if (!currentUser) {
-        // The biometric credential is valid but the Firebase session is gone
-        // (only possible if the user force-signed-out or cleared browser data).
-        // Biometric cannot recreate a Firebase session — email/password needed.
-        setError('Please log in with your email or Google to continue.');
+        setError(t('auth.errors.sessionExpired'));
         setBiometricLoading(false);
         return;
       }
       unlockApp();
       navigate('/dashboard');
     } catch {
-      setError('Biometric verification failed. Try your password instead.');
+      setError(t('auth.errors.biometricFailed'));
       setBiometricLoading(false);
     }
   };
@@ -99,17 +89,15 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
     setError('');
-    // Safety net: if the auth flow hangs (e.g. iOS in-app browser closed without
-    // triggering an error), reset the loading state after 30 seconds.
     const safetyTimer = setTimeout(() => setGoogleLoading(false), 30000);
     try {
       await loginWithGoogle();
       navigate(redirectTo);
     } catch (err) {
       if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
-        setError('Sign-in popup was closed. Please try again.');
+        setError(t('auth.errors.popupClosed'));
       } else {
-        setError('Could not sign in with Google. Please try again.');
+        setError(t('auth.errors.googleSignInFailed'));
       }
       logger.error('Google login error:', err);
     } finally {
@@ -120,7 +108,7 @@ const Login = () => {
 
   return (
     <>
-      <AuthLayout title="Orary" subtitle="Manage your work shifts easily.">
+      <AuthLayout title={t('auth.login.title')} subtitle={t('auth.login.subtitle')}>
         {error && (
           <div className="mb-3 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
             {error}
@@ -137,11 +125,11 @@ const Login = () => {
           <div className="mb-3">
             <Input
               type="email"
-              label="Email"
+              label={t('auth.login.email')}
               icon={Mail}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
+              placeholder={t('auth.login.emailPlaceholder')}
               required
             />
           </div>
@@ -149,7 +137,7 @@ const Login = () => {
           <div className="mb-1.5">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               <Lock size={16} className="inline mr-2" />
-              Password
+              {t('auth.login.password')}
             </label>
             <div className="relative">
               <input
@@ -157,7 +145,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 transition-colors"
-                placeholder="Password"
+                placeholder={t('auth.login.passwordPlaceholder')}
                 required
               />
               <button
@@ -176,12 +164,12 @@ const Login = () => {
               onClick={() => navigate('/forgot-password', { state: { email } })}
               className="text-sm text-pink-600 hover:text-pink-800"
             >
-              Forgot your password?
+              {t('auth.login.forgotPassword')}
             </button>
           </div>
 
           <Button type="submit" loading={loading} className="w-full mb-3">
-            Continue
+            {t('auth.login.continue')}
           </Button>
         </form>
 
@@ -190,7 +178,7 @@ const Login = () => {
             <div className="w-full border-t border-gray-300" />
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-white px-3 text-gray-500 text-sm">or</span>
+            <span className="bg-white px-3 text-gray-500 text-sm">{t('common.or')}</span>
           </div>
         </div>
 
@@ -204,7 +192,7 @@ const Login = () => {
           bgColor="#121212"
           textColor="white"
         >
-          Continue with Google
+          {t('auth.login.continueWithGoogle')}
         </Button>
 
         {showBiometric && (
@@ -216,17 +204,17 @@ const Login = () => {
             icon={Fingerprint}
             iconPosition="left"
           >
-            Continue with biometric
+            {t('auth.login.continueWithBiometric')}
           </Button>
         )}
 
         <div className="text-center">
-          <p className="text-gray-600 text-sm mb-1">Don't have an account?</p>
+          <p className="text-gray-600 text-sm mb-1">{t('auth.login.noAccount')}</p>
           <button
             onClick={() => navigate('/register', { state: redirectTo ? { redirectTo } : undefined })}
             className="text-pink-600 hover:text-pink-800 font-bold text-sm"
           >
-            Register here!
+            {t('auth.login.registerHere')}
           </button>
         </div>
       </AuthLayout>

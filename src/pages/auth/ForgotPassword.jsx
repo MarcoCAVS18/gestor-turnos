@@ -2,12 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/ui/Button';
 import AuthLayout from '../../components/layout/AuthLayout';
 import logger from '../../utils/logger';
 
 const ForgotPassword = () => {
+  const { t } = useTranslation();
   const { resetPassword } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,7 +27,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!emailValid) return setError('Please enter a valid email');
+    if (!emailValid) return setError(t('auth.errors.invalidEmail'));
 
     try {
       setError('');
@@ -34,15 +36,15 @@ const ForgotPassword = () => {
       navigate('/login', { state: { emailSent: true, email } });
     } catch (error) {
       logger.error('Error sending recovery email:', error);
-      setError('Could not send recovery email. Check your email address.');
+      setError(t('auth.forgotPassword.errorSend'));
       setLoading(false);
     }
   };
 
   return (
-    <AuthLayout title="Orary" subtitle="Recover your password">
+    <AuthLayout title={t('auth.forgotPassword.title')} subtitle={t('auth.forgotPassword.subtitle')}>
       <p className="text-center text-gray-600 text-sm mb-4">
-        Enter your email address and we will send you a link to reset your password.
+        {t('auth.forgotPassword.description')}
       </p>
 
       {error && (
@@ -53,13 +55,13 @@ const ForgotPassword = () => {
 
       <form onSubmit={handleSubmit} className="space-y-3">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('auth.forgotPassword.email')}</label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-offset-0 transition-colors"
-            placeholder="your@email.com"
+            placeholder={t('auth.forgotPassword.emailPlaceholder')}
             required
           />
         </div>
@@ -71,15 +73,16 @@ const ForgotPassword = () => {
             variant="cancel"
             disabled={loading}
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button
             type="submit"
             disabled={loading || !emailValid}
             loading={loading}
+            loadingText={t('auth.forgotPassword.sending')}
             className="flex-1"
           >
-            Recover password
+            {t('auth.forgotPassword.sendLink')}
           </Button>
         </div>
       </form>

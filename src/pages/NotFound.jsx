@@ -4,10 +4,12 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Home, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../hooks/useThemeColors';
 import Button from '../components/ui/Button';
 
 const NotFound = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const colors = useThemeColors();
 
@@ -43,7 +45,7 @@ const NotFound = () => {
           transition={{ delay: 0.2 }}
           className="text-4xl md:text-5xl font-bold mb-4 text-gray-900 dark:text-white"
         >
-          Page Not Found
+          {t('notFound.title')}
         </motion.h1>
 
         {/* Description */}
@@ -53,7 +55,7 @@ const NotFound = () => {
           transition={{ delay: 0.3 }}
           className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-lg mx-auto"
         >
-          Oops! The page you're looking for doesn't exist. It might have been moved or deleted.
+          {t('notFound.description')}
         </motion.p>
 
         {/* Action Buttons */}
@@ -72,7 +74,7 @@ const NotFound = () => {
             themeColor={colors.primary}
             className="min-w-[200px]"
           >
-            Go to Dashboard
+            {t('notFound.goHome')}
           </Button>
 
           <Button
@@ -83,7 +85,7 @@ const NotFound = () => {
             iconPosition="left"
             className="min-w-[200px] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800"
           >
-            Go Back
+            {t('notFound.goBack')}
           </Button>
         </motion.div>
 
@@ -94,7 +96,7 @@ const NotFound = () => {
           transition={{ delay: 0.5 }}
           className="mt-12 text-sm text-gray-500 dark:text-gray-500"
         >
-          If you believe this is an error, please contact support.
+          {t('notFound.support')}
         </motion.p>
       </motion.div>
     </div>

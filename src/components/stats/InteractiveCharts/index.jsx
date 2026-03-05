@@ -29,10 +29,28 @@ const InteractiveCharts = () => {
       fullName: work.name,
     }));
 
+  // Map English day names to translation keys
+  const dayKeyMap = {
+    'Monday': 'Mon',
+    'Tuesday': 'Tue',
+    'Wednesday': 'Wed',
+    'Thursday': 'Thu',
+    'Friday': 'Fri',
+    'Saturday': 'Sat',
+    'Sunday': 'Sun',
+    'Mon': 'Mon',
+    'Tue': 'Tue',
+    'Wed': 'Wed',
+    'Thu': 'Thu',
+    'Fri': 'Fri',
+    'Sat': 'Sat',
+    'Sun': 'Sun',
+  };
+
   // Data for daily hours
   const dailyData = currentData?.earningsByDay
     ? Object.entries(currentData.earningsByDay).map(([day, data]) => ({
-        day: day.substring(0, 3),
+        day: t(`common.days.${dayKeyMap[day] || day.substring(0, 3)}`),
         hours: data.hours || 0,
         earnings: data.earnings || 0,
       }))

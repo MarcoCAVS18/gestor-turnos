@@ -1,12 +1,13 @@
 // src/components/modals/shift/DeliveryShiftModal/index.jsx
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Modal } from '../../ui/Modal';
 import { ThemeInput } from '../../ui/ThemeInput';
 import { DollarSign, Heart, Package, Navigation, Fuel } from 'lucide-react';
 
-
 const DeliveryShiftModal = ({ isOpen, onClose, shift }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     date: '',
     startTime: '',
@@ -19,16 +20,16 @@ const DeliveryShiftModal = ({ isOpen, onClose, shift }) => {
   });
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Delivery Shift">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('modals.shift.deliveryTitle')}>
       <form className="space-y-4">
         {/* Date and time fields same as normal shift */}
         
         <div className="border-t pt-4">
-          <h4 className="font-medium mb-3">Earnings details</h4>
+          <h4 className="font-medium mb-3">{t('modals.shift.earningsDetails')}</h4>
           
           <div className="grid grid-cols-2 gap-4">
             <ThemeInput
-              label="Total earnings"
+              label={t('modals.shift.totalEarnings')}
               icon={DollarSign}
               type="number"
               step="0.01"
@@ -37,7 +38,7 @@ const DeliveryShiftModal = ({ isOpen, onClose, shift }) => {
             />
             
             <ThemeInput
-              label="Tips"
+              label={t('modals.shift.tips')}
               icon={Heart}
               type="number"
               step="0.01"
@@ -46,7 +47,7 @@ const DeliveryShiftModal = ({ isOpen, onClose, shift }) => {
           </div>
           
           <ThemeInput
-            label="Order count"
+            label={t('modals.shift.orderCount')}
             icon={Package}
             type="number"
             placeholder="0"
@@ -55,11 +56,11 @@ const DeliveryShiftModal = ({ isOpen, onClose, shift }) => {
         </div>
         
         <div className="border-t pt-4">
-          <h4 className="font-medium mb-3">Additional data (optional)</h4>
+          <h4 className="font-medium mb-3">{t('modals.shift.additionalData')}</h4>
           
           <div className="grid grid-cols-2 gap-4">
             <ThemeInput
-              label="Kilometers driven"
+              label={t('modals.shift.kilometers')}
               icon={Navigation}
               type="number"
               step="0.1"
@@ -67,7 +68,7 @@ const DeliveryShiftModal = ({ isOpen, onClose, shift }) => {
             />
             
             <ThemeInput
-              label="Fuel expenses"
+              label={t('modals.shift.fuelExpenses')}
               icon={Fuel}
               type="number"
               step="0.01"

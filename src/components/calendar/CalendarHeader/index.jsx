@@ -1,6 +1,7 @@
 // src/components/calendar/CalendarHeader/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 
@@ -11,24 +12,27 @@ const CalendarHeader = ({
   onChangeMonth,
   onGoToToday
 }) => {
+  const { t, i18n } = useTranslation();
   const colors = useThemeColors();
 
   const getMonthName = () => {
-    return new Date(currentYear, currentMonth, 1).toLocaleDateString('en-US', { month: 'long' });
+    const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+    return new Date(currentYear, currentMonth, 1).toLocaleDateString(locale, { month: 'long' });
   };
 
   const getSelectedDayLabel = () => {
-    if (!selectedDay) return 'Today';
+    if (!selectedDay) return t('calendar.today');
 
     const today = new Date();
     const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-    if (selectedDay === todayISO) return 'Today';
+    if (selectedDay === todayISO) return t('calendar.today');
 
     const [year, month, day] = selectedDay.split('-').map(Number);
     const selectedDate = new Date(year, month - 1, day);
 
-    return selectedDate.toLocaleDateString('en-US', {
+    const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+    return selectedDate.toLocaleDateString(locale, {
       weekday: 'short',
       day: 'numeric',
       month: 'short'

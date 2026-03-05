@@ -1,6 +1,7 @@
 // src/components/dashboard/RecentActivityCard/index.jsx
 
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Activity, ChevronRight } from 'lucide-react'; 
 import { useNavigate } from 'react-router-dom';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -12,6 +13,7 @@ import Flex from '../../ui/Flex';
 import Button from '../../ui/Button'; 
 
 const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const navigate = useNavigate();
   const isMobile = useIsMobile(); 
@@ -48,8 +50,8 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
       const yesterday = new Date(today);
       yesterday.setDate(today.getDate() - 1);
 
-      if (date.toDateString() === today.toDateString()) return 'Today';
-      if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
+      if (date.toDateString() === today.toDateString()) return t('common.today');
+      if (date.toDateString() === yesterday.toDateString()) return t('common.yesterday');
 
       return date.toLocaleDateString('en-US', {
         day: 'numeric',
@@ -95,13 +97,13 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
         <Flex variant="between" className="mb-4 flex-nowrap gap-3">
           <h3 className="text-base font-semibold flex items-center text-gray-800 truncate">
             <Activity size={20} style={{ color: colors.primary }} className="mr-2 flex-shrink-0" />
-            <span className="truncate">Recent</span>
+            <span className="truncate">{t('dashboard.recentActivity.title')}</span>
           </h3>
         </Flex>
         <Flex variant="center" className="flex-grow py-6">
           <div className="text-center text-gray-400">
             <Activity size={32} className="mx-auto mb-2 opacity-50" />
-            <p className="text-sm">No data yet</p>
+            <p className="text-sm">{t('dashboard.common.noDataYet')}</p>
           </div>
         </Flex>
       </Card>
@@ -113,7 +115,7 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
       <Flex variant="between" className="mb-4 flex-nowrap gap-3">
         <h3 className="text-base font-semibold flex items-center text-gray-800 truncate">
           <Activity size={20} style={{ color: colors.primary }} className="mr-2 flex-shrink-0" />
-          <span className="truncate">Recent</span>
+          <span className="truncate">{t('dashboard.recentActivity.title')}</span>
         </h3>
         
         <Button
@@ -127,7 +129,7 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
           icon={ChevronRight}
           iconPosition="right"
         >
-          View all
+          {t('dashboard.recentActivity.viewAll')}
         </Button>
       </Flex>
 
@@ -150,7 +152,7 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
                 />
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm text-gray-800 truncate">
-                    {work?.name || 'Deleted work'}
+                    {work?.name || t('dashboard.common.deletedWork')}
                   </p>
                   <p className="text-xs text-gray-500">
                     {relativeDate}
@@ -171,7 +173,7 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
       {/* Simple total */}
       <div className="mt-4 pt-3 border-t border-gray-200">
         <Flex variant="between">
-          <span className="text-sm text-gray-600">Total recent:</span>
+          <span className="text-sm text-gray-600">{t('dashboard.recentActivity.totalRecent')}:</span>
           <span className="text-lg font-bold" style={{ color: colors.primary }}>
             {formatCurrency(
               recentShifts.reduce((total, shift) => total + calculateShiftEarnings(shift), 0)

@@ -1,6 +1,7 @@
 // src/components/dashboard/ClockInCard/index.jsx
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Play, Square, Clock, PauseCircle, ChevronRight } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Flex from '../../ui/Flex';
@@ -13,6 +14,7 @@ const ClockInCard = ({
   onViewDetails,
   activeShift = null // If null, no active shift
 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const [elapsedTime, setElapsedTime] = useState('00:00:00');
 
@@ -45,8 +47,8 @@ const ClockInCard = ({
         <div className="p-5 relative z-10">
           <Flex variant="between" className="mb-4">
             <div>
-              <h3 className="text-lg font-bold text-gray-800">Start Shift</h3>
-              <p className="text-sm text-gray-500">Ready to work?</p>
+              <h3 className="text-lg font-bold text-gray-800">{t('dashboard.clockIn.startShift')}</h3>
+              <p className="text-sm text-gray-500">{t('dashboard.clockIn.readyToWork')}</p>
             </div>
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md transition-transform group-hover:scale-110"
@@ -58,7 +60,7 @@ const ClockInCard = ({
 
           <div className="flex items-center gap-2 text-xs text-gray-400 bg-gray-50 p-2 rounded-lg w-fit">
             <Clock size={14} />
-            <span>Quick clock-in available</span>
+            <span>{t('dashboard.clockIn.quickClockIn')}</span>
           </div>
         </div>
       </div>
@@ -84,13 +86,13 @@ const ClockInCard = ({
         <Flex variant="between" className="items-start mb-6">
           <div>
             <Badge variant="outline" className="text-white border-white/30 bg-white/10 mb-2">
-              LIVE
+              {t('dashboard.clockIn.live')}
             </Badge>
             <h2 className="text-4xl font-mono font-bold tracking-tight">
               {elapsedTime}
             </h2>
             <p className="text-white/80 text-sm mt-1 flex items-center gap-1">
-              {activeShift.workName} • {formatCurrency(activeShift.currentEarnings || 0)} earned
+              {activeShift.workName} • {formatCurrency(activeShift.currentEarnings || 0)} {t('dashboard.clockIn.earned')}
             </p>
           </div>
 
@@ -110,7 +112,7 @@ const ClockInCard = ({
             style={{ backgroundColor: colors.transparent20 }}
           >
             <PauseCircle size={18} />
-            <span>Pause</span>
+            <span>{t('common.pause')}</span>
           </button>
 
           <button
@@ -119,7 +121,7 @@ const ClockInCard = ({
             style={{ backgroundColor: colors.transparent10, color: colors.textContrast }}
           >
             <Square fill="currentColor" size={16} />
-            <span>Finish</span>
+            <span>{t('common.finish')}</span>
           </button>
         </div>
       </div>

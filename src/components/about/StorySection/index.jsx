@@ -3,8 +3,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { BookOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const StorySection = ({ colors }) => {
+  const { t } = useTranslation();
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -21,42 +24,24 @@ const StorySection = ({ colors }) => {
           <BookOpen size={20} style={{ color: colors.primary }} />
         </div>
         <h2 className="text-2xl md:text-3xl font-bold" style={{ color: colors.text }}>
-          How it all started
+          {t('about.story.title')}
         </h2>
       </div>
 
       <div className="space-y-4 text-sm md:text-base leading-relaxed" style={{ color: colors.textSecondary }}>
+        <p>{t('about.story.p1')}</p>
+        <p>{t('about.story.p2')}</p>
+        <p dangerouslySetInnerHTML={{ __html: t('about.story.p3') }} />
+        <p>{t('about.story.p4')}</p>
         <p>
-          It all started in Australia. I was working there and noticed something that drove me crazy:
-          every single week, my friends and I would sit down with a calculator, a notepad, and way too
-          much patience trying to figure out how much we'd actually earn.
-        </p>
-        <p>
-          Night hours? Different rate. Weekends? Another rate. Public holidays? Who even knows.
-          And after all that math, the number on the payslip was <em>never</em> what we calculated.
-          Every. Single. Time.
-        </p>
-        <p>
-          So I thought: <strong>"Enough. There has to be a better way."</strong>
-        </p>
-        <p>
-          I built spreadsheets. I tried templates. I made little tools that kind of worked...
-          but never really nailed it. Nothing matched the actual payslip values. It was frustrating.
-        </p>
-        <p>
-          Then one day it hit me:{' '}
+          {t('about.story.p5')}{' '}
           <span className="font-semibold" style={{ color: colors.primary }}>
-            "Why don't I build something real? Something at scale.
-            Something that actually works AND helps me learn at the same time."
+            {t('about.story.p5highlight')}
           </span>
         </p>
-        <p>
-          And just like that, Orary was born. What started as a personal itch to scratch turned into a
-          full-blown application that handles multiple rate types, automatic holiday detection, live tracking,
-          bulk creation, exports, and way more than I ever imagined.
-        </p>
+        <p>{t('about.story.p6')}</p>
         <p className="text-xs" style={{ color: colors.textSecondary, opacity: 0.7 }}>
-          Turns out, frustration is a pretty good fuel for building things.
+          {t('about.story.p7')}
         </p>
       </div>
     </motion.div>

@@ -2,12 +2,14 @@
 // Modal component for selecting work type
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Briefcase, Truck, Clock, DollarSign, Package, Navigation } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useConfigContext } from '../../../../contexts/ConfigContext';
 import Flex from '../../../ui/Flex';
 
 const WorkTypeSelector = ({ onSelectType, isMobile }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const { themeMode } = useConfigContext();
   const isDark = themeMode === 'dark';
@@ -23,10 +25,10 @@ const WorkTypeSelector = ({ onSelectType, isMobile }) => {
           className={`font-semibold mb-3 ${isMobile ? 'text-xl' : 'text-lg'}`}
           style={{ color: colors.primary }}
         >
-          What type of work do you want to add?
+          {t('works.selectTypeTitle')}
         </h3>
         <p className={`text-gray-600 dark:text-gray-400 ${isMobile ? 'text-base' : 'text-sm'}`}>
-          Select the type that best describes your work
+          {t('works.selectTypeSubtitle')}
         </p>
       </div>
       
@@ -65,23 +67,23 @@ const WorkTypeSelector = ({ onSelectType, isMobile }) => {
             </div>
             <div className="flex-1">
               <h4 className={`font-semibold mb-2 dark:text-white ${isMobile ? 'text-lg' : 'text-base'}`}>
-                Hourly Work
+                {t('works.hourlyWork')}
               </h4>
               <p className={`text-gray-600 dark:text-gray-400 mb-3 ${isMobile ? 'text-base leading-relaxed' : 'text-sm'}`}>
-                For jobs with a fixed hourly rate and different shift types
+                {t('works.hourlyWorkDesc')}
               </p>
               <ul className={`space-y-2 ${isMobile ? 'text-sm' : 'text-xs'} text-gray-500 dark:text-gray-400`}>
                 <li className="flex items-center">
                   <Clock size={isMobile ? 14 : 12} className="mr-2 text-blue-500 flex-shrink-0" />
-                  <span>Rates by shift type (day, afternoon, night)</span>
+                  <span>{t('works.hourlyFeature1')}</span>
                 </li>
                 <li className="flex items-center">
                   <DollarSign size={isMobile ? 14 : 12} className="mr-2 text-green-500 flex-shrink-0" />
-                  <span>Special weekend rates</span>
+                  <span>{t('works.hourlyFeature2')}</span>
                 </li>
                 <li className="flex items-center">
                   <Briefcase size={isMobile ? 14 : 12} className="mr-2 text-purple-500 flex-shrink-0" />
-                  <span>Automatic calculation with discounts</span>
+                  <span>{t('works.hourlyFeature3')}</span>
                 </li>
               </ul>
             </div>
@@ -122,23 +124,23 @@ const WorkTypeSelector = ({ onSelectType, isMobile }) => {
             </div>
             <div className="flex-1">
               <h4 className={`font-semibold mb-2 dark:text-white ${isMobile ? 'text-lg' : 'text-base'}`}>
-                Delivery Work
+                {t('works.deliveryWork')}
               </h4>
               <p className={`text-gray-600 dark:text-gray-400 mb-3 ${isMobile ? 'text-base leading-relaxed' : 'text-sm'}`}>
-                For delivery jobs with variable earnings per shift
+                {t('works.deliveryWorkDesc')}
               </p>
               <ul className={`space-y-2 ${isMobile ? 'text-sm' : 'text-xs'} text-gray-500 dark:text-gray-400`}>
                 <li className="flex items-center">
                   <DollarSign size={isMobile ? 14 : 12} className="mr-2 text-green-500 flex-shrink-0" />
-                  <span>Record of total earnings per shift</span>
+                  <span>{t('works.deliveryFeature1')}</span>
                 </li>
                 <li className="flex items-center">
                   <Package size={isMobile ? 14 : 12} className="mr-2 text-blue-500 flex-shrink-0" />
-                  <span>Tracking of orders and kilometers</span>
+                  <span>{t('works.deliveryFeature2')}</span>
                 </li>
                 <li className="flex items-center">
                   <Navigation size={isMobile ? 14 : 12} className="mr-2 text-orange-500 flex-shrink-0" />
-                  <span>Control of tips and fuel expenses</span>
+                  <span>{t('works.deliveryFeature3')}</span>
                 </li>
               </ul>
             </div>
@@ -153,10 +155,10 @@ const WorkTypeSelector = ({ onSelectType, isMobile }) => {
             type="button"
             className="text-sm text-gray-500 underline"
             onClick={() => {
-              alert('If you have doubts about which type to choose, you can change this later in the job settings.');
+              alert(t('works.helpChoose'));
             }}
           >
-            Not sure which to choose?
+            {t('works.notSureWhich')}
           </button>
         </div>
       )}

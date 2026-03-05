@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Settings as SettingsIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import PageHeader from '../components/layout/PageHeader';
 import ProfileSection from '../components/settings/ProfileSection';
 import ProfilePhotoSection from '../components/settings/ProfilePhotoSection';
@@ -21,6 +22,7 @@ import OnboardingSpotlight from '../components/onboarding/OnboardingSpotlight';
 import { useApp } from '../contexts/AppContext';
 
 const Settings = () => {
+  const { t } = useTranslation();
   const { deliveryEnabled } = useApp();
   const location = useLocation();
 
@@ -47,8 +49,8 @@ const Settings = () => {
   return (
     <div className="px-4 py-6 space-y-6">
       <PageHeader
-        title="Settings"
-        subtitle="Customize your experience and manage your account"
+        title={t('nav.settings')}
+        subtitle={t('settings.subtitle')}
         icon={SettingsIcon}
       />
 

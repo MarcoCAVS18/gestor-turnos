@@ -4,22 +4,24 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { Clock, TrendingUp, Zap, ArrowRight } from 'lucide-react';
 
 const PINK = '#EC4899';
 
-const FEATURES = [
-  { icon: Clock, label: 'Track Shifts', color: '#F59E0B' },
-  { icon: TrendingUp, label: 'Analytics', color: '#6366F1' },
-  { icon: Zap, label: 'Live Mode', color: PINK },
-];
-
 const Landing = () => {
+  const { t } = useTranslation();
   const { currentUser, loading } = useAuth();
   const navigate = useNavigate();
   const [videoReady, setVideoReady] = useState(false);
+
+  const features = [
+    { icon: Clock, label: t('landing.features.trackShifts'), color: '#F59E0B' },
+    { icon: TrendingUp, label: t('landing.features.analytics'), color: '#6366F1' },
+    { icon: Zap, label: t('landing.features.liveMode'), color: PINK },
+  ];
 
   useEffect(() => {
     if (!loading && currentUser) {
@@ -70,9 +72,9 @@ const Landing = () => {
               className="h-10 w-10 md:h-14 md:w-14"
             />
           </div>
-          <h1 className="text-2xl md:text-4xl font-bold text-white mb-0.5">Orary</h1>
+          <h1 className="text-2xl md:text-4xl font-bold text-white mb-0.5">{t('landing.brandName')}</h1>
           <p className="text-sm md:text-base text-white/80 text-center">
-            Work Shift Management &amp; Earnings Tracker
+            {t('landing.tagline')}
           </p>
         </motion.div>
 
@@ -83,7 +85,7 @@ const Landing = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
-          {FEATURES.map((f) => (
+          {features.map((f) => (
             <div
               key={f.label}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium text-white/90"
@@ -107,7 +109,7 @@ const Landing = () => {
             className="flex items-center justify-center gap-2 w-full font-semibold text-white py-3 rounded-lg text-sm mb-3 transition-opacity hover:opacity-90"
             style={{ backgroundColor: PINK }}
           >
-            Get Started Free <ArrowRight size={16} />
+            {t('landing.getStartedFree')} <ArrowRight size={16} />
           </Link>
 
           <div className="relative my-3">
@@ -115,7 +117,7 @@ const Landing = () => {
               <div className="w-full border-t border-gray-200" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white px-3 text-gray-400 text-xs">already have an account?</span>
+              <span className="bg-white px-3 text-gray-400 text-xs">{t('landing.alreadyHaveAccount')}</span>
             </div>
           </div>
 
@@ -123,21 +125,21 @@ const Landing = () => {
             to="/login"
             className="block w-full text-center font-medium text-gray-700 py-3 rounded-lg text-sm border border-gray-200 hover:bg-gray-50 transition-colors"
           >
-            Sign in
+            {t('landing.signIn')}
           </Link>
 
           <p className="text-xs text-center text-gray-400 mt-4">
-            Free for all workers worldwide · No credit card required
+            {t('landing.freeWorldwide')}
           </p>
         </motion.div>
 
         {/* Legal footer — identical to AuthLayout */}
         <div className="mt-4 flex-shrink-0 text-center">
           <p className="text-white/60 text-xs">
-            By using Orary you agree to our{' '}
-            <Link to="/privacy" className="text-white/90 underline hover:text-white">Privacy Policy</Link>
-            {' '}and{' '}
-            <Link to="/terms" className="text-white/90 underline hover:text-white">Terms of Service</Link>
+            {t('landing.legalAgreement')}{' '}
+            <Link to="/privacy" className="text-white/90 underline hover:text-white">{t('landing.privacyPolicy')}</Link>
+            {' '}{t('landing.and')}{' '}
+            <Link to="/terms" className="text-white/90 underline hover:text-white">{t('landing.termsOfService')}</Link>
           </p>
         </div>
 

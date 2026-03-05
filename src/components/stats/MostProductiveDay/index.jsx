@@ -63,7 +63,7 @@ const MostProductiveDay = ({ currentData, loading, thematicColors, className = '
             {formatCurrency(mostProductiveDay.earnings)}
           </p>
           <p className="text-base font-semibold text-gray-700 dark:text-gray-200 mt-1.5">
-            {mostProductiveDay.day}
+            {t(`common.daysFull.${mostProductiveDay.day}`, mostProductiveDay.day)}
           </p>
         </div>
 

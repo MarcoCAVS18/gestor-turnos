@@ -1,17 +1,19 @@
 // src/components/premium/PaymentMethodCard.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { CreditCard, FileText, History, DollarSign } from 'lucide-react';
 import { PREMIUM_COLORS } from '../../contexts/PremiumContext';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import Card from '../ui/Card';
 
 const PaymentMethodCard = ({ subscription, totalInvested, onOpenBillingPortal, portalLoading }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   return (
     <Card className="p-5 h-full">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Payment & Invoices</h2>
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('premium.payment.title')}</h2>
       <div className="space-y-3">
         {/* Payment method */}
         <div className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
@@ -20,9 +22,9 @@ const PaymentMethodCard = ({ subscription, totalInvested, onOpenBillingPortal, p
           </div>
           <div className="flex-1">
             <p className="font-medium text-gray-900 text-sm">
-              {subscription?.paymentMethod || 'Card on file'}
+              {subscription?.paymentMethod || t('premium.payment.cardOnFile')}
             </p>
-            <p className="text-xs text-gray-500">Default payment method</p>
+            <p className="text-xs text-gray-500">{t('premium.payment.defaultMethod')}</p>
           </div>
         </div>
 
@@ -34,7 +36,7 @@ const PaymentMethodCard = ({ subscription, totalInvested, onOpenBillingPortal, p
             </div>
             <div>
               <p className="font-medium text-gray-900 text-sm">{totalInvested}</p>
-              <p className="text-xs text-gray-500">Total invested in Premium</p>
+              <p className="text-xs text-gray-500">{t('premium.payment.totalInvested')}</p>
             </div>
           </div>
         )}
@@ -50,7 +52,7 @@ const PaymentMethodCard = ({ subscription, totalInvested, onOpenBillingPortal, p
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.transparent10}
           >
             <FileText size={14} />
-            <span>Invoices</span>
+            <span>{t('premium.payment.invoices')}</span>
           </button>
           <button
             onClick={onOpenBillingPortal}
@@ -61,7 +63,7 @@ const PaymentMethodCard = ({ subscription, totalInvested, onOpenBillingPortal, p
             onMouseLeave={(e) => e.currentTarget.style.backgroundColor = colors.transparent10}
           >
             <History size={14} />
-            <span>History</span>
+            <span>{t('premium.payment.history')}</span>
           </button>
         </div>
       </div>

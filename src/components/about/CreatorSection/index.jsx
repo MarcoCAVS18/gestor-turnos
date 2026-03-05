@@ -3,8 +3,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Linkedin, Instagram } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const CreatorSection = ({ colors }) => {
+  const { t } = useTranslation();
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -34,28 +37,19 @@ const CreatorSection = ({ colors }) => {
         {/* Info */}
         <div className="flex-1 text-center md:text-right">
           <h2 className="text-2xl md:text-3xl font-bold mb-2" style={{ color: colors.text }}>
-            Marqui
+            {t('about.creator.name')}
           </h2>
           <p
             className="text-sm font-medium mb-4"
             style={{ color: colors.primary }}
           >
-            Creator & Developer
+            {t('about.creator.role')}
           </p>
 
           <div className="space-y-3 text-sm md:text-base leading-relaxed" style={{ color: colors.textSecondary }}>
-            <p>
-              I'm a developer from Argentina, currently based in New Zealand. I built Orary
-              because I needed it myself, and I figured if it helped me, it could help others too.
-            </p>
-            <p>
-              I'm always working on different things, but I never stop pushing to grow in this world.
-              I'll keep moving from place to place, and I hope the same happens with Orary — always
-              evolving, always reaching new people.
-            </p>
-            <p>
-              If you have any questions, ideas, or just want to say hi, feel free to reach out.
-            </p>
+            <p>{t('about.creator.p1')}</p>
+            <p>{t('about.creator.p2')}</p>
+            <p>{t('about.creator.p3')}</p>
           </div>
 
           {/* Social Links */}

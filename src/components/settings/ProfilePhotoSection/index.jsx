@@ -1,6 +1,7 @@
 // src/components/settings/ProfilePhotoSection/index.jsx
 
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Camera, Trash2 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -9,6 +10,7 @@ import ConfirmDeleteProfilePhotoModal from '../../modals/ConfirmDeleteProfilePho
 import logger from '../../../utils/logger';
 
 const ProfilePhotoSection = ({ className }) => {
+  const { t } = useTranslation();
   const { profilePhotoURL, updateProfilePhoto, removeProfilePhoto } = useAuth();
   const colors = useThemeColors();
   const [loading, setLoading] = useState(false);
@@ -99,7 +101,7 @@ const ProfilePhotoSection = ({ className }) => {
           >
             <img
               src={profilePhotoURL}
-              alt="User avatar"
+              alt={t('settings.profile.avatar')}
               className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
                 isDefaultPhoto ? 'p-6 filter brightness-0 invert opacity-90' : ''
               }`}
@@ -131,10 +133,10 @@ const ProfilePhotoSection = ({ className }) => {
         {/* Text and actions */}
         <div className="mt-4 text-center space-y-2">
           <h3 className="font-medium text-gray-900">
-            {isDefaultPhoto ? 'Add a photo' : 'Your profile photo'}
+            {isDefaultPhoto ? t('settings.profile.addPhoto') : t('settings.profile.yourPhoto')}
           </h3>
           <p className="text-xs text-gray-500 max-w-[200px] mx-auto">
-            Personalize your profile with a photo.
+            {t('settings.profile.personalizeDesc')}
           </p>
 
           {!isDefaultPhoto && (
@@ -144,7 +146,7 @@ const ProfilePhotoSection = ({ className }) => {
               className="mt-2 text-xs font-medium text-red-500 hover:text-red-600 hover:bg-red-50 px-3 py-1 rounded-full transition-colors flex items-center gap-1.5 mx-auto"
             >
               <Trash2 size={12} />
-              Remove photo
+              {t('settings.profile.removePhoto')}
             </button>
           )}
         </div>

@@ -4,10 +4,13 @@
  * Pluralizes the word "shift" according to the quantity
  * @param {number} quantity - Number of shifts
  * @param {boolean} uppercase - If it should be uppercase (default false)
+ * @param {Function} t - Optional translation function
  * @returns {string} "shift" or "shifts" as appropriate
  */
-export const pluralizeShifts = (quantity, uppercase = false) => {
-  const word = quantity === 1 ? 'shift' : 'shifts';
+export const pluralizeShifts = (quantity, uppercase = false, t) => {
+  const word = t 
+    ? t(quantity === 1 ? 'common.shift' : 'common.shifts')
+    : (quantity === 1 ? 'shift' : 'shifts');
   return uppercase ? word.toUpperCase() : word;
 };
 
@@ -15,10 +18,11 @@ export const pluralizeShifts = (quantity, uppercase = false) => {
  * Formats quantity + pluralized word
  * @param {number} quantity - Number of shifts
  * @param {boolean} uppercase - If the word should be uppercase
+ * @param {Function} t - Optional translation function
  * @returns {string} Ex: "1 shift", "5 shifts"
  */
-export const formatShiftsCount = (quantity, uppercase = false) => {
-  return `${quantity} ${pluralizeShifts(quantity, uppercase)}`;
+export const formatShiftsCount = (quantity, uppercase = false, t) => {
+  return `${quantity} ${pluralizeShifts(quantity, uppercase, t)}`;
 };
 
 /**

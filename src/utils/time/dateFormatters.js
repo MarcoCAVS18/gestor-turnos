@@ -30,7 +30,7 @@ export const createSafeDate = (dateString) => {
  * @example
  * formatRelativeDate("2025-01-15") // "Today", "Yesterday", "Tomorrow" or "Jan 15th"
  */
-export const formatRelativeDate = (dateString) => {
+export const formatRelativeDate = (dateString, locale = 'en-US', t = null) => {
   const date = createSafeDate(dateString);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -44,11 +44,17 @@ export const formatRelativeDate = (dateString) => {
   const targetDate = new Date(dateString);
   targetDate.setHours(0, 0, 0, 0);
 
-  if (targetDate.getTime() === today.getTime()) return 'Today';
-  if (targetDate.getTime() === yesterday.getTime()) return 'Yesterday';
-  if (targetDate.getTime() === tomorrow.getTime()) return 'Tomorrow';
+  if (t) {
+    if (targetDate.getTime() === today.getTime()) return t('common.today');
+    if (targetDate.getTime() === yesterday.getTime()) return t('common.yesterday');
+    if (targetDate.getTime() === tomorrow.getTime()) return t('common.tomorrow') || 'Tomorrow';
+  } else {
+    if (targetDate.getTime() === today.getTime()) return 'Today';
+    if (targetDate.getTime() === yesterday.getTime()) return 'Yesterday';
+    if (targetDate.getTime() === tomorrow.getTime()) return 'Tomorrow';
+  }
 
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(locale, {
     weekday: 'short',
     day: 'numeric',
     month: 'short'
@@ -64,8 +70,8 @@ export const formatRelativeDate = (dateString) => {
  * @example
  * formatFullDate("2025-01-15") // "Wednesday, 15th of January 2025"
  */
-export const formatFullDate = (dateString) => {
-  return createSafeDate(dateString).toLocaleDateString('en-US', {
+export const formatFullDate = (dateString, locale = 'en-US') => {
+  return createSafeDate(dateString).toLocaleDateString(locale, {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -82,8 +88,8 @@ export const formatFullDate = (dateString) => {
  * @example
  * formatShortDate("2025-01-15") // "Jan 15th"
  */
-export const formatShortDate = (dateString) => {
-  return createSafeDate(dateString).toLocaleDateString('en-US', {
+export const formatShortDate = (dateString, locale = 'en-US') => {
+  return createSafeDate(dateString).toLocaleDateString(locale, {
     day: 'numeric',
     month: 'short'
   });
@@ -98,8 +104,8 @@ export const formatShortDate = (dateString) => {
  * @example
  * formatNumericDate("2025-01-15") // "01/15/2025"
  */
-export const formatNumericDate = (dateString) => {
-  return createSafeDate(dateString).toLocaleDateString('en-US', {
+export const formatNumericDate = (dateString, locale = 'en-US') => {
+  return createSafeDate(dateString).toLocaleDateString(locale, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'
@@ -115,8 +121,8 @@ export const formatNumericDate = (dateString) => {
  * @example
  * getDayName("2025-01-15") // "Wednesday"
  */
-export const getDayName = (dateString) => {
-  return createSafeDate(dateString).toLocaleDateString('en-US', {
+export const getDayName = (dateString, locale = 'en-US') => {
+  return createSafeDate(dateString).toLocaleDateString(locale, {
     weekday: 'long'
   });
 };
@@ -130,8 +136,8 @@ export const getDayName = (dateString) => {
  * @example
  * getShortDayName("2025-01-15") // "Wed"
  */
-export const getShortDayName = (dateString) => {
-  return createSafeDate(dateString).toLocaleDateString('en-US', {
+export const getShortDayName = (dateString, locale = 'en-US') => {
+  return createSafeDate(dateString).toLocaleDateString(locale, {
     weekday: 'short'
   });
 };
@@ -145,8 +151,8 @@ export const getShortDayName = (dateString) => {
  * @example
  * getMonthName("2025-01-15") // "January"
  */
-export const getMonthName = (dateString) => {
-  return createSafeDate(dateString).toLocaleDateString('en-US', {
+export const getMonthName = (dateString, locale = 'en-US') => {
+  return createSafeDate(dateString).toLocaleDateString(locale, {
     month: 'long'
   });
 };
@@ -236,9 +242,9 @@ export const getMonthRange = (year, month) => {
  * @example
  * getCurrentMonthYear() // "January 2025"
  */
-export const getCurrentMonthYear = () => {
+export const getCurrentMonthYear = (locale = 'en-US') => {
   const now = new Date();
-  return now.toLocaleDateString('en-US', {
+  return now.toLocaleDateString(locale, {
     month: 'long',
     year: 'numeric'
   });

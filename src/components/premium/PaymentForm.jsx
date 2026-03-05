@@ -1,6 +1,7 @@
 // src/components/premium/PaymentForm.jsx
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapPin, Shield, Receipt } from 'lucide-react';
 import { CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useAuth } from '../../contexts/AuthContext';
@@ -12,6 +13,7 @@ import { CARD_NUMBER_OPTIONS, CARD_EXPIRY_OPTIONS, CARD_CVC_OPTIONS, COUNTRIES }
 import logger from '../../utils/logger';
 
 const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
+  const { t } = useTranslation();
   const stripe = useStripe();
   const elements = useElements();
   const { currentUser } = useAuth();
@@ -40,20 +42,18 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
     e.preventDefault();
 
     if (!stripe || !elements) {
-      setError('Payment system not ready. Please refresh and try again.');
+      setError(t('premium.payment.systemNotReady'));
       return;
     }
 
     setLoading(true);
     setError(null);
-    // NOTE: do NOT call onProcessingStart here — it unmounts the Stripe Elements
-    // before createPaymentMethod can read the card data.
 
     try {
       const cardNumberElement = elements.getElement(CardNumberElement);
 
       if (!cardNumberElement) {
-        throw new Error('Card input not found. Please refresh and try again.');
+        throw new Error(t('premium.payment.cardInputNotFound'));
       }
 
       // Step 1: tokenize card while Elements are still mounted
@@ -93,7 +93,7 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
       );
 
       if (!result) {
-        throw new Error('No response from payment server. Please try again.');
+        throw new Error(t('premium.payment.noResponse'));
       }
 
       const successStatuses = ['success', 'active', 'succeeded', 'processing', 'trial'];
@@ -103,12 +103,11 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
         throw new Error(result.error);
       } else {
         logger.error('[Premium] Unexpected result status:', result.status, result);
-        throw new Error(`Payment processing failed (${result.status || 'unknown'}). Please try again.`);
+        throw new Error(t('premium.payment.processingFailed', { status: result.status || 'unknown' }));
       }
     } catch (err) {
       logger.error('[Premium] Payment error:', err);
-      setError(err.message || 'An unexpected error occurred. Please try again.');
-      // Return to the form — overlay would stay visible forever without this
+      setError(err.message || t('premium.payment.unexpectedError'));
       onPaymentError?.();
     } finally {
       setLoading(false);
@@ -120,9 +119,9 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
       {/* Test Mode Banner */}
       {isStripeTestMode && (
         <div className="mb-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
-          <p className="text-orange-700 text-sm font-semibold">STRIPE TEST MODE</p>
+          <p className="text-orange-700 text-sm font-semibold">{t('premium.payment.testMode')}</p>
           <p className="text-orange-600 text-xs mt-1">
-            Use card <code className="bg-orange-100 px-1 rounded">4242 4242 4242 4242</code> with any future date and CVC.
+            {t('premium.payment.testModeDesc')} <code className="bg-orange-100 px-1 rounded">4242 4242 4242 4242</code> {t('premium.payment.testModeDateCvc')}
           </p>
         </div>
       )}
@@ -131,19 +130,19 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
       <div className="mb-5">
         <div className="flex items-center gap-2 mb-3">
           <MapPin size={16} className="text-gray-400" />
-          <span className="text-sm font-medium text-gray-700">Billing Details</span>
+          <span className="text-sm font-medium text-gray-700">{t('premium.payment.billingDetails')}</span>
         </div>
 
         {/* Cardholder Name */}
         <div className="mb-3">
           <label className="block text-xs font-medium text-gray-500 mb-1.5">
-            Cardholder Name
+            {t('premium.payment.cardholderName')}
           </label>
           <input
             type="text"
             value={billingDetails.name}
             onChange={handleBillingChange('name')}
-            placeholder="Full name on card"
+            placeholder={t('premium.payment.fullNameOnCard')}
             required
             autoComplete="cc-name"
             className="w-full p-3 border rounded-xl text-sm transition-colors focus:outline-none focus:border-gray-400"
@@ -155,7 +154,7 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1.5">
-              Country
+              {t('premium.payment.country')}
             </label>
             <select
               value={billingDetails.country}
@@ -172,13 +171,13 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1.5">
-              Postal Code
+              {t('premium.payment.postalCode')}
             </label>
             <input
               type="text"
               value={billingDetails.postalCode}
               onChange={handleBillingChange('postalCode')}
-              placeholder="e.g. 2000"
+              placeholder={t('premium.payment.postalCodePlaceholder')}
               required
               autoComplete="billing postal-code"
               className="w-full p-3 border rounded-xl text-sm transition-colors focus:outline-none focus:border-gray-400"
@@ -191,13 +190,13 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1.5">
-              City <span className="text-gray-300">(optional)</span>
+              {t('premium.payment.city')} <span className="text-gray-300">({t('common.optional').toLowerCase()})</span>
             </label>
             <input
               type="text"
               value={billingDetails.city}
               onChange={handleBillingChange('city')}
-              placeholder="City"
+              placeholder={t('premium.payment.cityPlaceholder')}
               autoComplete="billing address-level2"
               className="w-full p-3 border rounded-xl text-sm transition-colors focus:outline-none focus:border-gray-400"
               style={{ borderColor: '#e5e7eb' }}
@@ -205,13 +204,13 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1.5">
-              Address <span className="text-gray-300">(optional)</span>
+              {t('premium.payment.address')} <span className="text-gray-300">({t('common.optional').toLowerCase()})</span>
             </label>
             <input
               type="text"
               value={billingDetails.address}
               onChange={handleBillingChange('address')}
-              placeholder="Street address"
+              placeholder={t('premium.payment.addressPlaceholder')}
               autoComplete="billing street-address"
               className="w-full p-3 border rounded-xl text-sm transition-colors focus:outline-none focus:border-gray-400"
               style={{ borderColor: '#e5e7eb' }}
@@ -226,7 +225,7 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
       {/* Card Number */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Card Number
+          {t('premium.payment.cardNumber')}
         </label>
         <div
           className="p-4 border rounded-xl transition-colors focus-within:border-gray-400"
@@ -240,7 +239,7 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Expiry Date
+            {t('premium.payment.expiryDate')}
           </label>
           <div
             className="p-4 border rounded-xl transition-colors focus-within:border-gray-400"
@@ -251,7 +250,7 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            CVC
+            {t('premium.payment.cvc')}
           </label>
           <div
             className="p-4 border rounded-xl transition-colors focus-within:border-gray-400"
@@ -276,7 +275,7 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
       >
         <Receipt size={18} style={{ color: PREMIUM_COLORS.primary }} className="flex-shrink-0 mt-0.5" />
         <p className="text-sm text-gray-600">
-          Your card won't be charged for 15 days. After your trial, ${AUD_PRICE} AUD/month is billed to <strong>{currentUser?.email}</strong>. Cancel anytime.
+          {t('premium.payment.trialNotice', { price: AUD_PRICE, email: currentUser?.email })}
         </p>
       </div>
 
@@ -287,16 +286,16 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
         className="w-full"
         size="lg"
         loading={loading}
-        loadingText="Setting up trial..."
+        loadingText={t('premium.payment.settingUpTrial')}
         disabled={!stripe || loading}
       >
-        Start 15-Day Free Trial
+        {t('premium.payment.startTrial')}
       </Button>
 
       {/* Security Note */}
       <div className="flex items-center justify-center gap-2 text-xs text-gray-400 mt-3">
         <Shield size={14} />
-        <span>Secure payment powered by Stripe</span>
+        <span>{t('premium.payment.securePayment')}</span>
       </div>
     </form>
   );

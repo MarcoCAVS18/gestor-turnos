@@ -4,11 +4,13 @@ import React, { useRef, useState } from 'react';
 import { ThumbsUp, X } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { generateColorVariations } from '../../../utils/colorUtils';
 import BaseAnnouncementCard from '../../cards/base/BaseAnnouncementCard';
 
 const SuggestedActionCard = ({ onClose, className }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const navigate = useNavigate();
 
@@ -115,10 +117,10 @@ const SuggestedActionCard = ({ onClose, className }) => {
 
           {/* Text */}
           <h3 className="text-white font-bold text-lg leading-tight mb-2">
-            Enjoying Orary?
+            {t('dashboard.suggestedAction.title')}
           </h3>
           <p className="text-white/80 text-sm leading-relaxed max-w-[200px]">
-            Share your experience and help us improve
+            {t('dashboard.suggestedAction.description')}
           </p>
         </div>
       </BaseAnnouncementCard>

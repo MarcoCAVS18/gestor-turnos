@@ -1,11 +1,13 @@
 // src/components/forms/shift/BulkShiftOptions/BulkPreview.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar, Clock } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import Card from '../../../ui/Card';
 
 const BulkPreview = ({ shifts, workName }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   if (!shifts || shifts.length === 0) {
@@ -30,7 +32,7 @@ const BulkPreview = ({ shifts, workName }) => {
       <div className="flex items-center gap-2 mb-3">
         <Calendar size={18} style={{ color: colors.primary }} />
         <h4 className="font-semibold" style={{ color: colors.text }}>
-          Preview: {shifts.length} shift{shifts.length > 1 ? 's' : ''}
+          {t('forms.shift.bulk.preview', { count: shifts.length })}
         </h4>
       </div>
 
@@ -57,7 +59,7 @@ const BulkPreview = ({ shifts, workName }) => {
             className="text-sm text-center py-2"
             style={{ color: colors.textSecondary }}
           >
-            ... and {remainingCount} more
+            {t('forms.shift.bulk.andMore', { count: remainingCount })}
           </div>
         )}
       </div>
@@ -65,7 +67,7 @@ const BulkPreview = ({ shifts, workName }) => {
       {workName && (
         <div className="mt-3 pt-3 border-t" style={{ borderColor: colors.border }}>
           <div className="text-sm">
-            <span style={{ color: colors.textSecondary }}>Work: </span>
+            <span style={{ color: colors.textSecondary }}>{t('forms.shift.bulk.workLabel')}</span>
             <span className="font-medium" style={{ color: colors.text }}>
               {workName}
             </span>

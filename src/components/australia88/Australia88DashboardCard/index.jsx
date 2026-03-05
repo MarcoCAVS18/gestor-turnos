@@ -14,6 +14,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Globe, ChevronRight, CalendarDays, Target, CheckCircle2 } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -25,6 +26,7 @@ import Flex from '../../ui/Flex';
 import ProgressBar from '../../ui/ProgressBar';
 
 const Australia88DashboardCard = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const colors = useThemeColors();
@@ -56,8 +58,8 @@ const Australia88DashboardCard = () => {
 
   // Sub-label beneath the big number
   const goalLabel = isCompleteForView
-    ? `Year ${viewYear} complete!`
-    : `Year ${viewYear} · days · goal 88`;
+    ? t('australia88.yearComplete', { year: viewYear })
+    : t('australia88.yearGoal', { year: viewYear });
 
   // Show progress bar while the viewed year is still in progress
   const showProgressBar = !isCompleteForView;
@@ -71,7 +73,7 @@ const Australia88DashboardCard = () => {
       <Flex variant="between" className="mb-3 flex-nowrap gap-2">
         <h3 className="text-sm font-semibold flex items-center gap-2 text-gray-800 dark:text-gray-100 truncate">
           <Globe size={16} className="flex-shrink-0" style={{ color: colors.primary }} />
-          <span className="truncate">Working Holiday Visa</span>
+          <span className="truncate">{t('australia88.visaTitle')}</span>
         </h3>
 
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -106,7 +108,7 @@ const Australia88DashboardCard = () => {
             icon={ChevronRight}
             iconPosition="right"
           >
-            Details
+            {t('australia88.details')}
           </Button>
         </div>
       </Flex>
@@ -141,7 +143,7 @@ const Australia88DashboardCard = () => {
             <div className="mt-3 flex items-center justify-center gap-1.5">
               <CheckCircle2 size={14} style={{ color: colors.primary }} />
               <span className="text-xs font-semibold" style={{ color: colors.primary }}>
-                Year {viewYear} complete!
+                {t('australia88.yearComplete', { year: viewYear })}
               </span>
             </div>
           )}
@@ -164,12 +166,12 @@ const Australia88DashboardCard = () => {
                 className="text-[10px] uppercase tracking-wide font-medium"
                 style={{ color: colors.primary }}
               >
-                This week
+                {t('australia88.thisWeek')}
               </p>
             </div>
             <p className="text-base font-bold" style={{ color: colors.primary }}>
               +{currentWeekVisaDays}
-              <span className="text-xs font-normal ml-0.5">d</span>
+              <span className="text-xs font-normal ml-0.5">{t('australia88.daysUnit')}</span>
             </p>
           </div>
 
@@ -188,7 +190,7 @@ const Australia88DashboardCard = () => {
                     className="text-[10px] uppercase tracking-wide font-medium"
                     style={{ color: colors.primary }}
                   >
-                    Complete
+                    {t('australia88.complete')}
                   </p>
                 </div>
                 <CheckCircle2
@@ -202,12 +204,12 @@ const Australia88DashboardCard = () => {
                 <div className="flex items-center justify-center gap-1 mb-0.5">
                   <Target size={10} className="text-gray-500" />
                   <p className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400 font-medium">
-                    Remaining
+                    {t('australia88.remaining')}
                   </p>
                 </div>
                 <p className="text-base font-bold text-gray-700 dark:text-gray-200">
                   {daysRemaining}
-                  <span className="text-xs font-normal ml-0.5">d</span>
+                  <span className="text-xs font-normal ml-0.5">{t('australia88.daysUnit')}</span>
                 </p>
               </>
             )}

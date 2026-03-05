@@ -2,6 +2,7 @@
 // Modal displaying active Live Mode session - Styled like FeatureAnnouncementCard
 
 import React, { useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Play,
   Pause,
@@ -29,14 +30,15 @@ import LiveModeFinishConfirmModal from '../LiveModeFinishConfirmModal';
 import logger from '../../../../utils/logger';
 
 const RATE_TYPE_CONFIG = {
-  day: { icon: Sun, label: 'Day', color: '#10B981' },
-  afternoon: { icon: Sunset, label: 'Afternoon', color: '#F59E0B' },
-  night: { icon: Moon, label: 'Night', color: '#6366F1' },
-  saturday: { icon: Briefcase, label: 'Saturday', color: '#8B5CF6' },
-  sunday: { icon: Briefcase, label: 'Sunday', color: '#EF4444' },
+  day: { icon: Sun, key: 'day', color: '#10B981' },
+  afternoon: { icon: Sunset, key: 'afternoon', color: '#F59E0B' },
+  night: { icon: Moon, key: 'night', color: '#6366F1' },
+  saturday: { icon: Briefcase, key: 'saturday', color: '#8B5CF6' },
+  sunday: { icon: Briefcase, key: 'sunday', color: '#EF4444' },
 };
 
 const LiveModeActiveModal = ({ isOpen, onClose }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const isMobile = useIsMobile();
   const { smokoEnabled, smokoMinutes } = useConfigContext();
@@ -179,7 +181,7 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
                     >
                       <CircleDotDashed size={14} className="text-red-400" />
                     </motion.div>
-                    <span>{isPaused ? 'Paused' : 'Live Active'}</span>
+                    <span>{isPaused ? t('calendar.paused') : t('calendar.liveActive')}</span>
                     {isPaused && <Pause size={12} />}
                   </div>
 
@@ -234,7 +236,7 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
                 <div className="flex items-center justify-center gap-3 text-white/70 text-sm">
                   <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-1.5">
                     <RateIcon size={16} />
-                    <span>{rateConfig.label}</span>
+                    <span>{t(`common.${rateConfig.key}`)}</span>
                   </div>
                   <span className="text-white/50">·</span>
                   <span className="font-medium text-white">${currentRate}/hr</span>
@@ -247,15 +249,15 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
               <div className="grid grid-cols-3 gap-2">
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl py-3 text-center border border-white/10">
                   <p className="text-white font-bold text-2xl">{formattedTime.hours}</p>
-                  <p className="text-white/60 text-xs">Hours</p>
+                  <p className="text-white/60 text-xs">{t('common.hours')}</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl py-3 text-center border border-white/10">
                   <p className="text-white font-bold text-2xl">{formattedTime.minutes}</p>
-                  <p className="text-white/60 text-xs">Minutes</p>
+                  <p className="text-white/60 text-xs">{t('common.minutes')}</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl py-3 text-center border border-white/10">
                   <p className="text-white font-bold text-2xl">{formattedTime.seconds}</p>
-                  <p className="text-white/60 text-xs">Seconds</p>
+                  <p className="text-white/60 text-xs">{t('common.seconds')}</p>
                 </div>
               </div>
             </div>
@@ -267,13 +269,13 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
                 variant="solid"
                 onClick={handlePauseResume}
                 loading={actionLoading === 'pause'}
-                loadingText={isPaused ? 'Resuming...' : 'Pausing...'}
+                loadingText={isPaused ? t('common.resuming') : t('common.pausing')}
                 disabled={loading || actionLoading !== null}
                 className="w-full bg-white hover:bg-gray-50 font-semibold py-4 shadow-lg"
                 themeColor={colors.primary}
                 icon={isPaused ? Play : Pause}
               >
-                {isPaused ? 'Resume' : 'Pause'}
+                {isPaused ? t('common.resume') : t('common.pause')}
               </Button>
 
               {/* Finish and Hide buttons */}
@@ -287,7 +289,7 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
                   textColor={colors.textContrast}
                   icon={Square}
                 >
-                  Finish
+                  {t('common.finish')}
                 </Button>
                 <Button
                   variant="ghost"
@@ -297,7 +299,7 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
                   themeColor={colors.textContrast}
                   icon={EyeOff}
                 >
-                  Hide
+                  {t('common.hide')}
                 </Button>
               </div>
             </div>

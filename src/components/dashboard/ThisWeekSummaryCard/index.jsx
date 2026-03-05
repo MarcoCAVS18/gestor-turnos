@@ -1,6 +1,7 @@
 // src/components/dashboard/ThisWeekSummaryCard/index.jsx
 
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar, TrendingUp, Target, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -12,21 +13,22 @@ import Card from '../../ui/Card';
 import ProgressBar from '../../ui/ProgressBar';
 import Button from '../../ui/Button';
 
-// Frases motivacionales cortas
+// Motivational phrases
 const MOTIVATIONAL_PHRASES = [
-  { good: 'Keep going!', excellent: 'On fire!' },
-  { good: 'Nice work!', excellent: 'Crushing it!' },
-  { good: 'Good pace!', excellent: 'Unstoppable!' },
-  { good: 'Stay strong!', excellent: 'Amazing!' },
-  { good: 'You got this!', excellent: 'Legend!' },
-  { good: 'Well done!', excellent: 'Superstar!' },
-  { good: 'Great effort!', excellent: 'Incredible!' },
-  { good: 'Solid work!', excellent: 'Top notch!' },
-  { good: 'Making moves!', excellent: 'Beast mode!' },
-  { good: 'On track!', excellent: 'Brilliant!' },
+  { good: 'dashboard.motivation.keepGoing', excellent: 'dashboard.motivation.onFire' },
+  { good: 'dashboard.motivation.niceWork', excellent: 'dashboard.motivation.crushingIt' },
+  { good: 'dashboard.motivation.goodPace', excellent: 'dashboard.motivation.unstoppable' },
+  { good: 'dashboard.motivation.stayStrong', excellent: 'dashboard.motivation.amazing' },
+  { good: 'dashboard.motivation.youGotThis', excellent: 'dashboard.motivation.legend' },
+  { good: 'dashboard.motivation.wellDone', excellent: 'dashboard.motivation.superstar' },
+  { good: 'dashboard.motivation.greatEffort', excellent: 'dashboard.motivation.incredible' },
+  { good: 'dashboard.motivation.solidWork', excellent: 'dashboard.motivation.topNotch' },
+  { good: 'dashboard.motivation.makingMoves', excellent: 'dashboard.motivation.beastMode' },
+  { good: 'dashboard.motivation.onTrack', excellent: 'dashboard.motivation.brilliant' },
 ];
 
 const ThisWeekSummaryCard = ({ stats, className }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const navigate = useNavigate();
   const { weeklyHoursGoal } = useApp();
@@ -91,7 +93,7 @@ const ThisWeekSummaryCard = ({ stats, className }) => {
           <Flex variant="between" className="mb-4">
             <h3 className="text-lg font-semibold flex items-center">
               <Calendar size={20} style={{ color: colors.primary }} className="mr-2" />
-              This week
+              {t('dashboard.thisWeek.title')}
             </h3>
           </Flex>
 
@@ -104,14 +106,14 @@ const ThisWeekSummaryCard = ({ stats, className }) => {
               >
                 {formatCurrency(totalWeek)}
               </p>
-              <p className="text-sm text-gray-600">Total earned</p>
+              <p className="text-sm text-gray-600">{t('dashboard.thisWeek.totalEarned')}</p>
             </div>
 
             {/* Hours progress - Only if there is a goal */}
             {hasHoursGoal ? (
               <div className="space-y-2">
                 <Flex variant="between" className="text-sm">
-                  <span className="text-gray-600">Progress: </span>
+                  <span className="text-gray-600">{t('dashboard.thisWeek.progress')}: </span>
                   <span className="font-medium">{hoursWeek.toFixed(1)}h / {goalHours}h</span>
                 </Flex>
 
@@ -134,10 +136,10 @@ const ThisWeekSummaryCard = ({ stats, className }) => {
                   }}
                 >
                   <p className="text-xs text-gray-600 mb-1">
-                    No weekly goal yet?
+                    {t('dashboard.thisWeek.noGoalYet')}
                   </p>
                   <p className="text-xs text-gray-600 mb-2">
-                    Setting one helps you stay on track
+                    {t('dashboard.thisWeek.goalHelps')}
                   </p>
                   <Button
                     onClick={goToSettings}
@@ -148,7 +150,7 @@ const ThisWeekSummaryCard = ({ stats, className }) => {
                     themeColor={colors.primary}
                     className="-ml-2"
                   >
-                    Set up
+                    {t('dashboard.thisWeek.setUp')}
                   </Button>
                 </div>
               </div>
@@ -158,19 +160,19 @@ const ThisWeekSummaryCard = ({ stats, className }) => {
             <Flex variant="between" className=" text-sm">
               <div className="text-center">
                 <p className="font-semibold text-gray-800">{shiftsWeek}</p>
-                <p className="text-xs text-gray-500">shifts</p>
+                <p className="text-xs text-gray-500">{t('common.shifts').toLowerCase()}</p>
               </div>
               
               {hasHoursGoal && (
                 <div className="text-center">
                   <p className="font-semibold text-gray-800">{Math.ceil(limitedProgress)}%</p>
-                  <p className="text-xs text-gray-500">goal</p>
+                  <p className="text-xs text-gray-500">{t('dashboard.thisWeek.goal')}</p>
                 </div>
               )}
               
               <div className="text-center">
                 <p className="font-semibold text-gray-800">{hoursWeek.toFixed(1)}h</p>
-                <p className="text-xs text-gray-500">hours</p>
+                <p className="text-xs text-gray-500">{t('common.hours').toLowerCase()}</p>
               </div>
             </Flex>
 
@@ -197,7 +199,7 @@ const ThisWeekSummaryCard = ({ stats, className }) => {
                       className="text-xs font-medium"
                       style={{ color: colors.primary }}
                     >
-                      {getCurrentPhrase()}
+                      {t(getCurrentPhrase())}
                     </motion.p>
                   </AnimatePresence>
                 </Flex>

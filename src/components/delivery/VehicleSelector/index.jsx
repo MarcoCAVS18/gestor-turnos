@@ -1,13 +1,14 @@
 // src/components/delivery/VehicleSelector/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Check, Bike, Car, User } from 'lucide-react';
 import MotorbikeIcon from '../../icons/MotorbikeIcon';
 import { DELIVERY_VEHICLES } from '../../../constants/delivery';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Flex from '../../ui/Flex';
 
-const VehicleButton = ({ vehicle, isSelected, onClick, colors }) => {
+const VehicleButton = ({ vehicle, isSelected, onClick, colors, t }) => {
   const getVehicleIcon = (vehicleId) => {
     const icons = {
       'bicycle': Bike,
@@ -23,7 +24,7 @@ const VehicleButton = ({ vehicle, isSelected, onClick, colors }) => {
   return (
     <button
       type="button"
-      onClick={() => onClick(vehicle.name)} 
+      onClick={() => onClick(vehicle.id)} 
       className={`relative p-3 rounded-lg border-2 transition-all duration-200 w-full h-16 flex flex-col items-center justify-center ${
         isSelected 
           ? 'border-pink-500 bg-pink-50 shadow-md' 
@@ -46,7 +47,7 @@ const VehicleButton = ({ vehicle, isSelected, onClick, colors }) => {
         
         {/* Vehicle name */}
         <p className="font-medium text-xs text-center leading-tight text-gray-800 truncate">
-          {vehicle.name}
+          {t(`forms.work.delivery.vehicles.${vehicle.id}`)}
         </p>
       </div>
       
@@ -66,14 +67,15 @@ const VehicleButton = ({ vehicle, isSelected, onClick, colors }) => {
 const VehicleSelector = ({ 
   selectedVehicle, 
   onVehicleSelect, 
-  title = "Select your vehicle",
+  title,
   className = "" 
 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   
   return (
     <div className={`space-y-3 ${className}`}>
-      <h3 className="text-sm font-medium text-gray-700">{title}</h3>
+      <h3 className="text-sm font-medium text-gray-700">{title || t('forms.work.delivery.selectVehicle')}</h3>
       
       {/* Grid 2x2 - two columns on all sizes */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
@@ -81,9 +83,10 @@ const VehicleSelector = ({
           <VehicleButton
             key={vehicle.id} 
             vehicle={vehicle} 
-            isSelected={selectedVehicle === vehicle.name}
+            isSelected={selectedVehicle === vehicle.id || selectedVehicle === vehicle.name}
             onClick={onVehicleSelect}
             colors={colors}
+            t={t}
           />
         ))}
       </div>
@@ -91,7 +94,7 @@ const VehicleSelector = ({
       {/* Help text — only shown when no vehicle is selected yet */}
       {!selectedVehicle && (
         <p className="text-xs text-gray-500 text-center mt-2">
-          Select the vehicle you will use for your deliveries
+          {t('deliveryVehicle.helpText')}
         </p>
       )}
     </div>

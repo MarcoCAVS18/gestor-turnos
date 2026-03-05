@@ -1,11 +1,13 @@
 // src/components/stats/SmokoTimeCard/index.jsx
 
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Timer, Coffee } from 'lucide-react';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 
 const SmokoTimeCard = ({ smokoMinutes, smokoEnabled, loading, thematicColors, className = '' }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const colors = useThemeColors();
 
@@ -25,10 +27,10 @@ const SmokoTimeCard = ({ smokoMinutes, smokoEnabled, loading, thematicColors, cl
     <div onClick={handleClick} className={`${className} cursor-pointer`}>
       <BaseStatsCard
         icon={Timer}
-        title="Duration"
+        title={t('stats.smokoTimeCard.title')}
         loading={loading}
         empty={!smokoEnabled}
-        emptyText="Breaks not active"
+        emptyText={t('stats.smokoTimeCard.emptyText')}
       >
         <div className="flex flex-col items-center justify-center w-full gap-2">
           <div
@@ -42,7 +44,7 @@ const SmokoTimeCard = ({ smokoMinutes, smokoEnabled, loading, thematicColors, cl
           >
             {formatTime(smokoMinutes)}
           </span>
-          <span className="text-xs text-gray-500">per shift</span>
+          <span className="text-xs text-gray-500">{t('common.perShift')}</span>
         </div>
       </BaseStatsCard>
     </div>

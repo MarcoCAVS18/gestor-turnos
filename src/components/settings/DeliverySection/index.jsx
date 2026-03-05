@@ -15,10 +15,10 @@ const DeliverySection = ({ id, onError, onSuccess, className }) => {
   const handleToggle = async (newValue) => {
     try {
       await savePreferences({ deliveryEnabled: newValue });
-      onSuccess?.(`Delivery mode ${newValue ? 'enabled' : 'disabled'}`);
+      onSuccess?.(newValue ? t('settings.delivery.enabledMessage') : t('settings.delivery.disabledMessage'));
     } catch (error) {
       logger.error('Error changing delivery setting:', error);
-      onError?.('Error changing delivery setting');
+      onError?.(t('settings.delivery.errorMessage'));
     }
   };
 
@@ -49,11 +49,11 @@ const DeliverySection = ({ id, onError, onSuccess, className }) => {
               <span>{t('settings.delivery.whatIfDisable')}</span>
             </div>
             <p className="text-amber-800 dark:text-amber-300">
-              By disabling this option, the interface will simplify for hourly jobs:
+              {t('settings.delivery.disableInfo')}
             </p>
             <ul className="space-y-1 text-amber-700 dark:text-amber-400 list-disc pl-4">
-              <li>Only statistics for <strong>traditional jobs</strong> will be shown on the dashboard.</li>
-              <li>Your previous delivery shifts <strong>will remain visible</strong> in history, but you <strong>won't be able to add new</strong> ones until re-enabled.</li>
+              <li dangerouslySetInnerHTML={{ __html: t('settings.delivery.disablePoint1') }} />
+              <li dangerouslySetInnerHTML={{ __html: t('settings.delivery.disablePoint2') }} />
             </ul>
           </div>
         ) : (
@@ -63,10 +63,10 @@ const DeliverySection = ({ id, onError, onSuccess, className }) => {
               <span>{t('settings.delivery.whatIfEnable')}</span>
             </div>
             <ul className="space-y-1 text-gray-600 dark:text-gray-300 list-disc pl-4">
-              <li>Jobs <strong>do not require</strong> a fixed hourly rate.</li>
-              <li>You record <strong>total earnings</strong> for each shift.</li>
-              <li>Fields for <strong>tips</strong> and order count.</li>
-              <li>Detailed tracking of <strong>km and fuel</strong>.</li>
+              <li dangerouslySetInnerHTML={{ __html: t('settings.delivery.enablePoint1') }} />
+              <li dangerouslySetInnerHTML={{ __html: t('settings.delivery.enablePoint2') }} />
+              <li dangerouslySetInnerHTML={{ __html: t('settings.delivery.enablePoint3') }} />
+              <li dangerouslySetInnerHTML={{ __html: t('settings.delivery.enablePoint4') }} />
             </ul>
           </div>
         )}

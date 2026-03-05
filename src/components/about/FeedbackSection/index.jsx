@@ -1,6 +1,7 @@
 // src/components/about/FeedbackSection/index.jsx
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, UserX, Send, Heart, User, EyeOff, MessageSquare, PenLine, Clock, ShieldAlert, Clock3 } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -9,25 +10,8 @@ import { hasProfanity } from '../../../utils/profanityFilter';
 import Button from '../../ui/Button';
 import Card from '../../ui/Card';
 
-const timeAgo = (date) => {
-  if (!date) return '';
-  const now = new Date();
-  const diff = Math.floor((now - date) / 1000);
-  if (diff < 60) return 'just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  if (diff < 2592000) return `${Math.floor(diff / 86400)}d ago`;
-  if (diff < 31536000) return `${Math.floor(diff / 2592000)}mo ago`;
-  return `${Math.floor(diff / 31536000)}y ago`;
-};
-
-const blurVariants = {
-  initial: { opacity: 0, scale: 0.95, filter: 'blur(4px)' },
-  animate: { opacity: 1, scale: 1, filter: 'blur(0px)' },
-  exit: { opacity: 0, scale: 1.05, filter: 'blur(4px)' },
-};
-
 const FeedbackSection = ({ colors }) => {
+  const { t } = useTranslation();
   const { currentUser } = useAuth();
   const [view, setView] = useState('loading');
   const [rating, setRating] = useState(0);
@@ -41,7 +25,26 @@ const FeedbackSection = ({ colors }) => {
   const [profanityError, setProfanityError] = useState(false);
   const [isPending, setIsPending] = useState(false);
 
-  const firstName = currentUser?.displayName?.split(' ')[0] || 'User';
+  const firstName = currentUser?.displayName?.split(' ')[0] || t('about.feedback.anonymousUser');
+
+  // timeAgo function using translations
+  const timeAgo = (date) => {
+    if (!date) return '';
+    const now = new Date();
+    const diff = Math.floor((now - date) / 1000);
+    if (diff < 60) return t('about.feedback.timeAgo.justNow');
+    if (diff < 3600) return `${Math.floor(diff / 60)}${t('about.feedback.timeAgo.minutesAgo')}`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}${t('about.feedback.timeAgo.hoursAgo')}`;
+    if (diff < 2592000) return `${Math.floor(diff / 86400)}${t('about.feedback.timeAgo.daysAgo')}`;
+    if (diff < 31536000) return `${Math.floor(diff / 2592000)}${t('about.feedback.timeAgo.monthsAgo')}`;
+    return `${Math.floor(diff / 31536000)}${t('about.feedback.timeAgo.yearsAgo')}`;
+  };
+
+  const blurVariants = {
+    initial: { opacity: 0, scale: 0.95, filter: 'blur(4px)' },
+    animate: { opacity: 1, scale: 1, filter: 'blur(0px)' },
+    exit: { opacity: 0, scale: 1.05, filter: 'blur(4px)' },
+  };
 
   // Load reviews + check if user already submitted
   useEffect(() => {
@@ -217,20 +220,20 @@ const FeedbackSection = ({ colors }) => {
                 <div className="flex items-center gap-2 mb-2">
                   <MessageSquare size={18} style={{ color: colors.primary }} />
                   <h3 className="text-lg font-semibold" style={{ color: colors.text }}>
-                    {hasSubmitted ? 'Update your review' : 'Your feedback matters'}
+                    {hasSubmitted ? t('about.feedback.updateTitle') : t('about.feedback.title')}
                   </h3>
                 </div>
                 <p className="text-xs leading-relaxed mb-5" style={{ color: colors.textSecondary }}>
                   {hasSubmitted
-                    ? 'Changed your mind? No worries, update your review anytime.'
-                    : 'Every comment helps me keep improving Orary. Who knows, maybe one day all of this will have been truly worth it!'
+                    ? t('about.feedback.updateDescription')
+                    : t('about.feedback.description')
                   }
                 </p>
 
                 {/* Stars */}
                 <div className="mb-4">
                   <p className="text-xs font-medium mb-2" style={{ color: colors.textSecondary }}>
-                    How would you rate your experience?
+                    {t('about.feedback.rateQuestion')}
                   </p>
                   {renderStars(rating, 28, true)}
                 </div>
@@ -242,9 +245,9 @@ const FeedbackSection = ({ colors }) => {
                     setComment(e.target.value);
                     if (profanityError) setProfanityError(false);
                   }}
-                  placeholder="Tell us what you think... (optional)"
+                  placeholder={t('about.feedback.commentPlaceholder')}
                   rows={3}
-                  className={`w-full rounded-xl border px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 placeholder-gray-400 dark:placeholder-gray-500 ${
+                  className={`w-full rounded-xl border px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 placeholder-gray-400 dark:placeholder-gray-500 placeholder:text-xs ${
                     profanityError ? 'border-red-400 dark:border-red-500' : 'border-gray-200 dark:border-slate-700'
                   }`}
                   style={{
@@ -265,7 +268,7 @@ const FeedbackSection = ({ colors }) => {
                       className="flex items-center gap-2 text-red-500 dark:text-red-400 mt-1.5 mb-3"
                     >
                       <ShieldAlert size={14} />
-                      <span className="text-xs">Please remove inappropriate language before submitting.</span>
+                      <span className="text-xs">{t('about.feedback.profanityWarning')}</span>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -287,7 +290,7 @@ const FeedbackSection = ({ colors }) => {
                       style={{ touchAction: 'manipulation', ...(!isAnonymous ? { backgroundColor: colors.primary } : {}) }}
                     >
                       <User size={13} />
-                      Publish as {firstName}
+                      {t('about.feedback.publishAs')} {firstName}
                     </button>
                     <button
                       type="button"
@@ -300,7 +303,7 @@ const FeedbackSection = ({ colors }) => {
                       style={{ touchAction: 'manipulation', ...(isAnonymous ? { backgroundColor: colors.primary } : {}) }}
                     >
                       <EyeOff size={13} />
-                      Anonymous
+                      {t('about.feedback.anonymous')}
                     </button>
                   </div>
 
@@ -313,9 +316,9 @@ const FeedbackSection = ({ colors }) => {
                     size="sm"
                     themeColor={colors.primary}
                     loading={loading}
-                    loadingText="Sending..."
+                    loadingText={t('about.feedback.sending')}
                   >
-                    {hasSubmitted ? 'Update' : 'Send'}
+                    {hasSubmitted ? t('about.feedback.update') : t('about.feedback.send')}
                   </Button>
                 </div>
               </motion.div>
@@ -341,10 +344,10 @@ const FeedbackSection = ({ colors }) => {
                 </motion.div>
                 <div>
                   <h3 className="text-xl font-bold mb-1" style={{ color: colors.text }}>
-                    Thank you so much!
+                    {t('about.feedback.thankYou')}
                   </h3>
                   <p className="text-sm" style={{ color: colors.textSecondary }}>
-                    Your feedback truly helps shape the future of the app.
+                    {t('about.feedback.thankYouDesc')}
                   </p>
                 </div>
               </motion.div>
@@ -370,10 +373,10 @@ const FeedbackSection = ({ colors }) => {
                 </motion.div>
                 <div>
                   <h3 className="text-xl font-bold mb-1" style={{ color: colors.text }}>
-                    Under review
+                    {t('about.feedback.underReview')}
                   </h3>
                   <p className="text-sm leading-relaxed max-w-xs mx-auto" style={{ color: colors.textSecondary }}>
-                    Your feedback will be reviewed shortly. In the meantime, here's what others are saying...
+                    {t('about.feedback.underReviewDesc')}
                   </p>
                 </div>
               </motion.div>
@@ -393,7 +396,7 @@ const FeedbackSection = ({ colors }) => {
                 <div className="flex items-center gap-2 mb-2">
                   <MessageSquare size={14} style={{ color: colors.primary }} />
                   <h3 className="text-sm font-semibold" style={{ color: colors.textSecondary }}>
-                    What people are saying
+                    {t('about.feedback.whatPeopleSay')}
                   </h3>
                 </div>
 
@@ -406,7 +409,7 @@ const FeedbackSection = ({ colors }) => {
                     style={{ backgroundColor: `${colors.primary}12`, color: colors.primary }}
                   >
                     <Clock3 size={12} />
-                    <span>Your review is under review — it'll appear within 24 h.</span>
+                    <span>{t('about.feedback.yourReviewPending')}</span>
                   </motion.div>
                 )}
 
@@ -457,7 +460,7 @@ const FeedbackSection = ({ colors }) => {
                               {/* Name + Stars */}
                               <div>
                                 <p className="text-base font-semibold mb-1" style={{ color: colors.text }}>
-                                  {review.isAnonymous ? 'Anonymous User' : review.displayName}
+                                  {review.isAnonymous ? t('about.feedback.anonymousUser') : review.displayName}
                                 </p>
                                 <div className="flex justify-center">
                                   {renderStars(review.rating, 18)}
@@ -483,7 +486,7 @@ const FeedbackSection = ({ colors }) => {
                         style={{ color: colors.primary, touchAction: 'manipulation' }}
                       >
                         <PenLine size={12} />
-                        {hasSubmitted ? 'Change your review' : 'Leave a review'}
+                        {hasSubmitted ? t('about.feedback.changeReview') : t('about.feedback.leaveReview')}
                       </button>
                       {reviews.length > 1 && (
                         <div className="flex gap-1.5">
@@ -520,10 +523,10 @@ const FeedbackSection = ({ colors }) => {
                     </motion.div>
                     <div>
                       <p className="text-sm font-medium mb-1" style={{ color: colors.text }}>
-                        No confirmed feedback yet
+                        {t('about.feedback.noFeedback')}
                       </p>
                       <p className="text-xs leading-relaxed max-w-[200px] mx-auto" style={{ color: colors.textSecondary }}>
-                        Reviews will appear here once approved. Check back soon!
+                        {t('about.feedback.noFeedbackDesc')}
                       </p>
                     </div>
                   </div>

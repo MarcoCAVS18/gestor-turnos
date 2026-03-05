@@ -2,27 +2,12 @@
 
 import { Clock, BarChart3, Zap, Shield } from 'lucide-react';
 
-export const PREMIUM_BENEFITS = [
-  {
-    icon: Clock,
-    title: 'Unlimited Live Mode',
-    description: 'Track unlimited shifts in real-time',
-  },
-  {
-    icon: BarChart3,
-    title: 'Advanced Statistics',
-    description: 'Detailed analytics and insights',
-  },
-  {
-    icon: Zap,
-    title: 'Priority Support',
-    description: 'Get help faster with priority support',
-  },
-  {
-    icon: Shield,
-    title: 'Data Export',
-    description: 'Export your data anytime',
-  },
+// Note: Titles and descriptions are now handled via i18n in components
+export const PREMIUM_BENEFIT_KEYS = [
+  { icon: Clock, key: 'unlimitedLive' },
+  { icon: BarChart3, key: 'advancedStats' },
+  { icon: Zap, key: 'prioritySupport' },
+  { icon: Shield, key: 'dataExport' },
 ];
 
 // Card Element styles (shared for all card elements)
@@ -104,12 +89,12 @@ export const COUNTRIES = [
 // Confetti animation colors
 export const CONFETTI_COLORS = ['#FFD700', '#FFA500', '#FF6347', '#7B68EE', '#00CED1', '#FF69B4', '#32CD32', '#FF4500'];
 
-// Status badge config
+// Status badge config - keys for i18n
 export const STATUS_CONFIG = {
-  active: { label: 'Active', color: 'bg-emerald-100 text-emerald-700' },
-  trialing: { label: 'Free Trial', color: 'bg-blue-100 text-blue-700' },
-  cancelling: { label: 'Cancelling', color: 'bg-amber-100 text-amber-700' },
-  past_due: { label: 'Past Due', color: 'bg-red-100 text-red-700' },
+  active: { labelKey: 'premium.status.active', color: 'bg-emerald-100 text-emerald-700' },
+  trialing: { labelKey: 'premium.status.trialing', color: 'bg-blue-100 text-blue-700' },
+  cancelling: { labelKey: 'premium.status.cancelling', color: 'bg-amber-100 text-amber-700' },
+  past_due: { labelKey: 'premium.status.pastDue', color: 'bg-red-100 text-red-700' },
 };
 
 // Helper to format subscription dates

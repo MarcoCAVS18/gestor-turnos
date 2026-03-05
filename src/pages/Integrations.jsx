@@ -12,6 +12,7 @@ import {
   Check,
   Copy,
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import BackLink from '../components/ui/BackLink';
 import PageHeader from '../components/layout/PageHeader';
 import Card from '../components/ui/Card';
@@ -43,6 +44,7 @@ import logger from '../utils/logger';
 const FUNCTIONS_URL = 'https://us-central1-gestionturnos-7ec99.cloudfunctions.net';
 
 const Integrations = () => {
+  const { t } = useTranslation();
   const { thematicColors } = useConfigContext();
   const { currentUser } = useAuth();
   // Integration states
@@ -123,7 +125,10 @@ const Integrations = () => {
       const permission = await requestNotificationPermission();
       setNotifications({ enabled: permission === 'granted', permission });
       if (permission === 'granted') {
-        await sendLocalNotification('Notifications enabled!', 'You will now receive shift reminders.');
+        await sendLocalNotification(
+          t('integrations.notifications.enabledTitle'),
+          t('integrations.notifications.enabledMessage')
+        );
       }
     } else {
       setNotifications(prev => ({ ...prev, enabled: false }));
@@ -259,11 +264,11 @@ const Integrations = () => {
 
   return (
     <div className="px-4 py-6 space-y-6">
-      <BackLink to="/settings">Back to Settings</BackLink>
+      <BackLink to="/settings">{t('integrations.backToSettings')}</BackLink>
 
       <PageHeader
-        title="Integrations"
-        subtitle="Connect external services and configure notifications"
+        title={t('nav.integrations')}
+        subtitle={t('integrations.subtitle')}
         icon={Puzzle}
       />
 
@@ -273,16 +278,16 @@ const Integrations = () => {
         {/* Browser Notifications */}
         <IntegrationCard
           icon={Bell}
-          title="Browser Notifications"
-          description="Receive notifications directly in your browser when important events occur."
-          status={notifications.enabled ? 'Active' : 'Inactive'}
+          title={t('integrations.notifications.title')}
+          description={t('integrations.notifications.description')}
+          status={notifications.enabled ? t('integrations.status.active') : t('integrations.status.inactive')}
           statusColor={notifications.enabled ? 'success' : 'default'}
         >
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">
               {notifications.permission === 'denied'
-                ? 'Blocked by browser'
-                : 'Enable notifications'}
+                ? t('integrations.notifications.blocked')
+                : t('integrations.notifications.enable')}
             </span>
             <Switch
               checked={notifications.enabled}
@@ -292,7 +297,7 @@ const Integrations = () => {
           </div>
           {notifications.permission === 'denied' && (
             <p className="text-xs text-amber-600 mt-2">
-              Notifications are blocked. Please enable them in your browser settings.
+              {t('integrations.notifications.blockedHelp')}
             </p>
           )}
         </IntegrationCard>
@@ -300,14 +305,14 @@ const Integrations = () => {
         {/* Shift Reminders */}
         <IntegrationCard
           icon={Clock}
-          title="Shift Reminders"
-          description="Get notified before your shifts start so you never miss one."
-          status={shiftReminders.enabled ? 'Active' : 'Inactive'}
+          title={t('integrations.reminders.title')}
+          description={t('integrations.reminders.description')}
+          status={shiftReminders.enabled ? t('integrations.status.active') : t('integrations.status.inactive')}
           statusColor={shiftReminders.enabled ? 'success' : 'default'}
         >
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Enable reminders</span>
+              <span className="text-sm text-gray-600">{t('integrations.reminders.enable')}</span>
               <Switch
                 checked={shiftReminders.enabled}
                 onChange={handleShiftRemindersToggle}
@@ -316,7 +321,7 @@ const Integrations = () => {
 
             {shiftReminders.enabled && (
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-2 border-t border-gray-100">
-                <span className="text-sm text-gray-600">Remind me</span>
+                <span className="text-sm text-gray-600">{t('integrations.reminders.remindMe')}</span>
                 <select
                   value={shiftReminders.minutesBefore}
                   onChange={(e) => setShiftReminders(prev => ({
@@ -325,11 +330,11 @@ const Integrations = () => {
                   }))}
                   className="w-full sm:w-auto text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500/20"
                 >
-                  <option value={5}>5 minutes before</option>
-                  <option value={10}>10 minutes before</option>
-                  <option value={15}>15 minutes before</option>
-                  <option value={30}>30 minutes before</option>
-                  <option value={60}>1 hour before</option>
+                  <option value={5}>{t('integrations.reminders.minutes', { count: 5 })}</option>
+                  <option value={10}>{t('integrations.reminders.minutes', { count: 10 })}</option>
+                  <option value={15}>{t('integrations.reminders.minutes', { count: 15 })}</option>
+                  <option value={30}>{t('integrations.reminders.minutes', { count: 30 })}</option>
+                  <option value={60}>{t('integrations.reminders.hour')}</option>
                 </select>
               </div>
             )}
@@ -339,17 +344,17 @@ const Integrations = () => {
         {/* Biometric Login */}
         <IntegrationCard
           icon={Fingerprint}
-          title="Biometric Login"
-          description="Use Touch ID, Face ID, or Windows Hello to quickly unlock the app when you return."
-          status={biometric.supported === null ? 'Checking...' : biometric.enabled ? 'Active' : 'Inactive'}
+          title={t('integrations.biometric.title')}
+          description={t('integrations.biometric.description')}
+          status={biometric.supported === null ? t('integrations.status.checking') : biometric.enabled ? t('integrations.status.active') : t('integrations.status.inactive')}
           statusColor={biometric.enabled ? 'green' : 'gray'}
         >
           {biometric.supported === false ? (
-            <p className="text-sm text-amber-600">Not supported on this device or browser.</p>
+            <p className="text-sm text-amber-600">{t('integrations.biometric.notSupported')}</p>
           ) : (
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">
-                {biometric.enabled ? 'Active on this device' : 'Enable for this device'}
+                {biometric.enabled ? t('integrations.biometric.active') : t('integrations.biometric.enable')}
               </span>
               <Switch
                 checked={biometric.enabled}
@@ -363,14 +368,14 @@ const Integrations = () => {
         {/* Mobile App - Coming Soon */}
         <IntegrationCard
           icon={Smartphone}
-          title="Mobile App"
-          description="Get push notifications and manage your shifts on the go with our mobile app."
-          status="Soon"
+          title={t('integrations.mobile.title')}
+          description={t('integrations.mobile.description')}
+          status={t('integrations.status.soon')}
           statusColor="primary"
         >
           <div className="flex items-center gap-3">
             <div className="flex-1 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-              <span className="text-sm text-gray-400">iOS & Android</span>
+              <span className="text-sm text-gray-400">{t('integrations.mobile.platforms')}</span>
             </div>
           </div>
         </IntegrationCard>
@@ -378,8 +383,8 @@ const Integrations = () => {
         {/* Calendar Subscription */}
         <IntegrationCard
           icon={Calendar}
-          title="Calendar Subscription"
-          description="Subscribe to your shifts in any calendar app — Google Calendar, Apple Calendar, Outlook and more. Updates automatically every few hours."
+          title={t('integrations.calendar.title')}
+          description={t('integrations.calendar.description')}
         >
           <div className="space-y-3">
             <Button
@@ -388,15 +393,15 @@ const Integrations = () => {
               iconPosition="left"
               onClick={handleSubscribeCalendar}
               loading={calendarFeed.loading}
-              loadingText="Opening..."
+              loadingText={t('integrations.calendar.opening')}
               className="w-full justify-center"
             >
-              Subscribe to Calendar
+              {t('integrations.calendar.subscribe')}
             </Button>
 
             {calendarFeed.error && (
               <p className="text-xs text-red-500 text-center">
-                Could not generate calendar link. Please try again.
+                {t('integrations.calendar.error')}
               </p>
             )}
 
@@ -409,12 +414,12 @@ const Integrations = () => {
                 onClick={handleCopyLink}
                 className="w-full justify-center"
               >
-                {calendarFeed.copied ? 'Copied!' : 'Copy link (other apps)'}
+                {calendarFeed.copied ? t('integrations.calendar.copied') : t('integrations.calendar.copyLink')}
               </Button>
             )}
 
             <p className="text-xs text-gray-400 text-center">
-              No login required · Works with any calendar app
+              {t('integrations.calendar.note')}
             </p>
           </div>
         </IntegrationCard>
@@ -426,11 +431,11 @@ const Integrations = () => {
               <Link2 size={16} className="text-blue-600" />
             </div>
             <div>
-              <h4 className="font-medium text-gray-800 mb-2">How calendar subscription works</h4>
+              <h4 className="font-medium text-gray-800 mb-2">{t('integrations.howItWorks.title')}</h4>
               <ul className="text-sm text-gray-600 space-y-1.5">
-                <li className="flex items-start gap-2"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> Generate your personal link and add it to any calendar app</li>
-                <li className="flex items-start gap-2"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> Your shifts appear automatically and refresh every few hours</li>
-                <li className="flex items-start gap-2"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> The link is permanent — add it once and it always stays in sync</li>
+                <li className="flex items-start gap-2"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> {t('integrations.howItWorks.step1')}</li>
+                <li className="flex items-start gap-2"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> {t('integrations.howItWorks.step2')}</li>
+                <li className="flex items-start gap-2"><Check size={14} className="text-green-500 mt-0.5 flex-shrink-0" /> {t('integrations.howItWorks.step3')}</li>
               </ul>
             </div>
           </div>
@@ -450,8 +455,8 @@ const Integrations = () => {
             style={{ filter: `brightness(0) saturate(100%) invert(45%) sepia(98%) saturate(1653%) hue-rotate(305deg) brightness(93%) contrast(101%)` }}
           />
           <div>
-            <h2 className="text-lg font-semibold text-gray-700">Install Orary</h2>
-            <p className="text-sm text-gray-500">Add it to your home screen — works like a native app, no App Store needed</p>
+            <h2 className="text-lg font-semibold text-gray-700">{t('integrations.install.title')}</h2>
+            <p className="text-sm text-gray-500">{t('integrations.install.description')}</p>
           </div>
         </div>
 
@@ -464,7 +469,7 @@ const Integrations = () => {
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
               <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
             </svg>
-            iPhone / iPad
+            {t('integrations.install.iosTab')}
           </button>
           <button
             onClick={() => setPwaTab('android')}
@@ -473,7 +478,7 @@ const Integrations = () => {
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
               <path d="M6 18c0 .55.45 1 1 1h1v3c0 .55.45 1 1 1s1-.45 1-1v-3h2v3c0 .55.45 1 1 1s1-.45 1-1v-3h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v7c0 .83.67 1.5 1.5 1.5S5 17.33 5 16.5v-7C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v7c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-7c0-.83-.67-1.5-1.5-1.5zm-4.97-5.84l1.3-1.3c.2-.2.2-.51 0-.71-.2-.2-.51-.2-.71 0l-1.48 1.48C13.85 1.23 12.95 1 12 1c-.96 0-1.86.23-2.66.63L7.85.15c-.2-.2-.51-.2-.71 0-.2.2-.2.51 0 .71l1.31 1.31C6.97 3.26 6 5.01 6 7h12c0-1.99-.97-3.75-2.47-4.84zM10 5H9V4h1v1zm5 0h-1V4h1v1z"/>
             </svg>
-            Android
+            {t('integrations.install.androidTab')}
           </button>
         </div>
 
@@ -485,8 +490,8 @@ const Integrations = () => {
               <svg className="w-4 h-4 text-blue-500 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
-              <p className="text-sm text-blue-700">
-                <strong>Only works in Safari.</strong> If you're using Chrome or Firefox on iPhone, open this page in Safari first.
+              <p className="text-sm text-blue-700"
+                 dangerouslySetInnerHTML={{ __html: t('integrations.install.ios.safariOnly') }}>
               </p>
             </div>
 
@@ -495,8 +500,10 @@ const Integrations = () => {
               <div className="flex gap-4">
                 <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: thematicColors?.base || '#EC4899' }}>1</div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-800 mb-1">Open this page in <strong>Safari</strong></p>
-                  <p className="text-xs text-gray-500">If you're already in Safari, you're good to go!</p>
+                  <p className="text-sm font-semibold text-gray-800 mb-1"
+                     dangerouslySetInnerHTML={{ __html: t('integrations.install.ios.step1') }}>
+                  </p>
+                  <p className="text-xs text-gray-500">{t('integrations.install.ios.step1Note')}</p>
                 </div>
               </div>
 
@@ -504,12 +511,14 @@ const Integrations = () => {
               <div className="flex gap-4">
                 <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: thematicColors?.base || '#EC4899' }}>2</div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-800 mb-2">Tap the <strong>Share</strong> button at the bottom of Safari</p>
+                  <p className="text-sm font-semibold text-gray-800 mb-2"
+                     dangerouslySetInnerHTML={{ __html: t('integrations.install.ios.step2') }}>
+                  </p>
                   <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
                     <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/>
                     </svg>
-                    <span className="text-xs font-medium text-gray-600">Share</span>
+                    <span className="text-xs font-medium text-gray-600">{t('integrations.install.share')}</span>
                   </div>
                 </div>
               </div>
@@ -518,18 +527,20 @@ const Integrations = () => {
               <div className="flex gap-4">
                 <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: thematicColors?.base || '#EC4899' }}>3</div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-800 mb-2">Find <strong>"Add to Home Screen"</strong> in the share menu</p>
+                  <p className="text-sm font-semibold text-gray-800 mb-2"
+                     dangerouslySetInnerHTML={{ __html: t('integrations.install.ios.step3') }}>
+                  </p>
                   <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2 mb-2">
                     <span className="text-amber-500 text-base leading-none flex-shrink-0 mt-0.5">⚠️</span>
-                    <p className="text-xs text-amber-800">
-                      <strong>Scroll down!</strong> This option is NOT at the top of the share sheet — it's hidden below. Keep swiping down through the icons row until you see the <strong>"Add to Home Screen"</strong> icon with a plus symbol.
+                    <p className="text-xs text-amber-800"
+                       dangerouslySetInnerHTML={{ __html: t('integrations.install.ios.step3Warning') }}>
                     </p>
                   </div>
                   <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
                     <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>
                     </svg>
-                    <span className="text-xs font-medium text-gray-600">Add to Home Screen</span>
+                    <span className="text-xs font-medium text-gray-600">{t('integrations.install.addToHome')}</span>
                   </div>
                 </div>
               </div>
@@ -538,8 +549,10 @@ const Integrations = () => {
               <div className="flex gap-4">
                 <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: thematicColors?.base || '#EC4899' }}>4</div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-800 mb-1">Tap <strong>"Add"</strong> in the top-right corner</p>
-                  <p className="text-xs text-gray-500">Orary will appear on your home screen — open it just like any app.</p>
+                  <p className="text-sm font-semibold text-gray-800 mb-1"
+                     dangerouslySetInnerHTML={{ __html: t('integrations.install.ios.step4') }}>
+                  </p>
+                  <p className="text-xs text-gray-500">{t('integrations.install.ios.step4Note')}</p>
                 </div>
               </div>
             </div>
@@ -553,7 +566,9 @@ const Integrations = () => {
               <svg className="w-4 h-4 text-green-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
-              <p className="text-sm text-green-700"><strong>Works best in Chrome.</strong> Samsung Browser also supports it.</p>
+              <p className="text-sm text-green-700"
+                 dangerouslySetInnerHTML={{ __html: t('integrations.install.android.chromeOnly') }}>
+              </p>
             </div>
 
             <div className="p-5 space-y-6">
@@ -561,12 +576,14 @@ const Integrations = () => {
               <div className="flex gap-4">
                 <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: thematicColors?.base || '#EC4899' }}>1</div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-800 mb-2">Tap the <strong>menu</strong> icon at the top-right of Chrome</p>
+                  <p className="text-sm font-semibold text-gray-800 mb-2"
+                     dangerouslySetInnerHTML={{ __html: t('integrations.install.android.step1') }}>
+                  </p>
                   <div className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
                     <svg className="w-5 h-5 text-gray-600" viewBox="0 0 24 24" fill="currentColor">
                       <circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/>
                     </svg>
-                    <span className="text-xs font-medium text-gray-600">⋮ Menu</span>
+                    <span className="text-xs font-medium text-gray-600">⋮ {t('integrations.install.menu')}</span>
                   </div>
                 </div>
               </div>
@@ -575,8 +592,10 @@ const Integrations = () => {
               <div className="flex gap-4">
                 <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: thematicColors?.base || '#EC4899' }}>2</div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-800 mb-1">Select <strong>"Add to Home Screen"</strong> or <strong>"Install App"</strong></p>
-                  <p className="text-xs text-gray-500">The label may vary depending on your Chrome version.</p>
+                  <p className="text-sm font-semibold text-gray-800 mb-1"
+                     dangerouslySetInnerHTML={{ __html: t('integrations.install.android.step2') }}>
+                  </p>
+                  <p className="text-xs text-gray-500">{t('integrations.install.android.step2Note')}</p>
                 </div>
               </div>
 
@@ -584,8 +603,10 @@ const Integrations = () => {
               <div className="flex gap-4">
                 <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: thematicColors?.base || '#EC4899' }}>3</div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold text-gray-800 mb-1">Tap <strong>"Install"</strong> to confirm</p>
-                  <p className="text-xs text-gray-500">Orary will appear on your home screen and in your app drawer.</p>
+                  <p className="text-sm font-semibold text-gray-800 mb-1"
+                     dangerouslySetInnerHTML={{ __html: t('integrations.install.android.step3') }}>
+                  </p>
+                  <p className="text-xs text-gray-500">{t('integrations.install.android.step3Note')}</p>
                 </div>
               </div>
             </div>

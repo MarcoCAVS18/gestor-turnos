@@ -1,6 +1,7 @@
 // src/components/cards/BaseWorkCard/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Edit, Edit2, Trash2, Share2, MoreVertical, Briefcase, Bike } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Card from '../../../ui/Card';
@@ -22,6 +23,7 @@ const BaseWorkCard = ({
   isSharing = false,
   children // For custom content
 }) => {
+  const { t } = useTranslation();
   const { holidayCountry } = useConfigContext();
   const isAustraliaMode = holidayCountry === 'AU';
 
@@ -30,7 +32,7 @@ const BaseWorkCard = ({
     return (
       <Card variant="outlined" className="opacity-50">
         <div className="text-center text-gray-500">
-          <p className="text-sm">Work not found</p>
+          <p className="text-sm">{t('works.workNotFound')}</p>
         </div>
       </Card>
     );
@@ -39,12 +41,12 @@ const BaseWorkCard = ({
   // Configuration based on type
   const config = {
     traditional: {
-      badge: { variant: 'primary', label: 'Traditional', icon: Briefcase },
+      badge: { variant: 'primary', label: t('works.traditionalBadge'), icon: Briefcase },
       editIcon: Edit,
       defaultColor: '#EC4899'
     },
     delivery: {
-      badge: { variant: 'success', label: 'Delivery', icon: Bike },
+      badge: { variant: 'success', label: t('works.deliveryBadge'), icon: Bike },
       editIcon: Edit2,
       defaultColor: '#10b981'
     }
@@ -85,18 +87,18 @@ const BaseWorkCard = ({
   const actions = [
     {
       icon: currentConfig.editIcon,
-      label: 'Edit',
+      label: t('common.edit'),
       onClick: () => onEdit?.(work)
     },
     ...(onShare ? [{
       icon: Share2,
-      label: 'Share',
+      label: t('common.share'),
       onClick: () => onShare?.(work),
       disabled: isSharing
     }] : []),
     {
       icon: Trash2,
-      label: 'Delete',
+      label: t('common.delete'),
       onClick: () => onDelete?.(work),
       variant: 'danger'
     }
@@ -192,7 +194,7 @@ const BaseWorkCard = ({
         <div className="px-6 pb-6 mt-4">
           {type === 'delivery' && work.platform ? (
             <div className="text-center">
-              <p className="text-xs text-gray-500 mb-1">Platform</p>
+              <p className="text-xs text-gray-500 mb-1">{t('works.platform')}</p>
               <p className="text-sm font-semibold" style={{ color: workColor }}>
                 {work.platform}
               </p>
@@ -203,7 +205,7 @@ const BaseWorkCard = ({
             </p>
           ) : (
             <p className="text-xs text-gray-400 text-center italic">
-              No description
+              {t('works.noDescription')}
             </p>
           )}
         </div>

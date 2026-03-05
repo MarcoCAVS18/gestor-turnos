@@ -1,6 +1,7 @@
 // src/components/modals/shift/ShiftModal/index.jsx
 
 import React, { useState, useEffect, useMemo, useId } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pen, Plus } from 'lucide-react';
 import { useApp } from '../../../../contexts/AppContext';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
@@ -12,6 +13,7 @@ import BulkShiftConfirmModal from '../BulkShiftConfirmModal';
 import logger from '../../../../utils/logger';
 
 const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
+  const { t } = useTranslation();
   const {
     addShift,
     editShift,
@@ -169,8 +171,8 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
 
   if (!isOpen) return null;
 
-  const title = shift ? 'Edit Shift' : 'New Shift';
-  const subtitle = formType === 'delivery' ? '• Delivery' : null;
+  const title = shift ? t('shifts.editShift') : t('shifts.addShift');
+  const subtitle = formType === 'delivery' ? `• ${t('nav.delivery')}` : null;
 
   let dateSubtitle = null;
   if (initialDate && !shift) {
@@ -191,9 +193,9 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
 
   // Determine save button text
   const getSaveText = () => {
-    if (shift) return 'Save Changes';
-    if (isBulkEnabled && formType === 'traditional') return 'Continue';
-    return 'Create Shift';
+    if (shift) return t('common.saveChanges');
+    if (isBulkEnabled && formType === 'traditional') return t('common.continue');
+    return t('shifts.addShift');
   };
 
   return (

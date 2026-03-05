@@ -1,6 +1,7 @@
 // src/components/alerts/DeleteAlert/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
@@ -15,14 +16,17 @@ const DeleteAlert = ({
   title,
   details = [],
   warning,
-  confirmText = 'Delete',
-  cancelText = 'Cancel'
+  confirmText,
+  cancelText
 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   if (!visible) return null;
 
-  const finalTitle = title || `Delete ${type}?`;
+  const finalTitle = title || t('alerts.delete.title', { type });
+  const finalConfirmText = confirmText || t('common.delete');
+  const finalCancelText = cancelText || t('common.cancel');
 
   return (
     <Flex variant="center" className="fixed inset-0 bg-black bg-opacity-50 p-4 z-[9999]">
@@ -54,7 +58,7 @@ const DeleteAlert = ({
           {warning && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
               <p className="text-sm text-yellow-800">
-                <AlertTriangle size={16} className="inline mr-1" />Warning: The selected job will be permanently deleted.
+                <AlertTriangle size={16} className="inline mr-1" />{t('alerts.delete.warning')}
               </p>
             </div>
           )}
@@ -62,12 +66,12 @@ const DeleteAlert = ({
           <div className="flex gap-3">
             <Button
               onClick={onCancel}
-              variant="outline"
+              variant="cancel"
               className="flex-1"
               disabled={deleting}
               themeColor={colors.primary}
             >
-              {cancelText}
+              {finalCancelText}
             </Button>
             <Button
               onClick={onConfirm}
@@ -76,7 +80,7 @@ const DeleteAlert = ({
               loading={deleting}
               themeColor={colors.primary}
             >
-              {confirmText}
+              {finalConfirmText}
             </Button>
           </div>
         </div>

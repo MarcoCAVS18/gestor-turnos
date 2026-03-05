@@ -1,20 +1,22 @@
 // src/components/forms/shift/BulkShiftOptions/WeeklyPattern.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { FormLabel } from '../../base/BaseForm';
 
 const WeeklyPattern = ({ selectedDays, weeks, onSelectedDaysChange, onWeeksChange }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   const daysOfWeek = [
-    { value: 1, label: 'Mon', fullName: 'Monday' },
-    { value: 2, label: 'Tue', fullName: 'Tuesday' },
-    { value: 3, label: 'Wed', fullName: 'Wednesday' },
-    { value: 4, label: 'Thu', fullName: 'Thursday' },
-    { value: 5, label: 'Fri', fullName: 'Friday' },
-    { value: 6, label: 'Sat', fullName: 'Saturday' },
-    { value: 0, label: 'Sun', fullName: 'Sunday' }
+    { value: 1, label: t('forms.shift.bulk.dayLabels.Mon'), fullName: t('stats.daysFull.Monday') },
+    { value: 2, label: t('forms.shift.bulk.dayLabels.Tue'), fullName: t('stats.daysFull.Tuesday') },
+    { value: 3, label: t('forms.shift.bulk.dayLabels.Wed'), fullName: t('stats.daysFull.Wednesday') },
+    { value: 4, label: t('forms.shift.bulk.dayLabels.Thu'), fullName: t('stats.daysFull.Thursday') },
+    { value: 5, label: t('forms.shift.bulk.dayLabels.Fri'), fullName: t('stats.daysFull.Friday') },
+    { value: 6, label: t('forms.shift.bulk.dayLabels.Sat'), fullName: t('stats.daysFull.Saturday') },
+    { value: 0, label: t('forms.shift.bulk.dayLabels.Sun'), fullName: t('stats.daysFull.Sunday') }
   ];
 
   const toggleDay = (dayValue) => {
@@ -44,7 +46,7 @@ const WeeklyPattern = ({ selectedDays, weeks, onSelectedDaysChange, onWeeksChang
     <div className="space-y-4">
       {/* Day Selection */}
       <div>
-        <FormLabel>Select days of the week</FormLabel>
+        <FormLabel>{t('forms.shift.bulk.selectDays')}</FormLabel>
         <div className="flex flex-wrap gap-2 mt-2">
           {daysOfWeek.map(day => {
             const isSelected = selectedDays.includes(day.value);
@@ -64,14 +66,14 @@ const WeeklyPattern = ({ selectedDays, weeks, onSelectedDaysChange, onWeeksChang
         </div>
         {selectedDays.length === 0 && (
           <p className="text-sm mt-2" style={{ color: colors.error }}>
-            Select at least one day
+            {t('forms.shift.bulk.selectAtLeastOne')}
           </p>
         )}
       </div>
 
       {/* Weeks Selection */}
       <div>
-        <FormLabel htmlFor="weeks-input">Repeat for</FormLabel>
+        <FormLabel htmlFor="weeks-input">{t('forms.shift.bulk.repeatFor')}</FormLabel>
         <div className="flex items-center gap-2 mt-2">
           <input
             id="weeks-input"
@@ -95,7 +97,7 @@ const WeeklyPattern = ({ selectedDays, weeks, onSelectedDaysChange, onWeeksChang
             }}
           />
           <span style={{ color: colors.text }}>
-            week{weeks > 1 ? 's' : ''}
+            {weeks > 1 ? t('forms.shift.bulk.weeks') : t('forms.shift.bulk.week')}
           </span>
         </div>
       </div>

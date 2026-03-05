@@ -1,6 +1,7 @@
 // src/components/modals/ConfirmDeleteProfilePhotoModal/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import BaseModal from '../base/BaseModal';
 import { ArrowRight } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -10,6 +11,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import Button from '../../ui/Button'; 
 
 const ConfirmDeleteProfilePhotoModal = ({ isOpen, onClose, onConfirm, loading }) => {
+  const { t } = useTranslation();
   const { profilePhotoURL } = useAuth();
   const defaultPhoto = getDefaultProfilePhoto();
   const colors = useThemeColors();
@@ -18,7 +20,7 @@ const ConfirmDeleteProfilePhotoModal = ({ isOpen, onClose, onConfirm, loading })
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Delete Profile Photo"
+      title={t('settings.profile.deletePhoto')}
       showActions={false}
       loading={loading}
     >
@@ -28,7 +30,7 @@ const ConfirmDeleteProfilePhotoModal = ({ isOpen, onClose, onConfirm, loading })
           <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-gray-300 flex items-center justify-center flex-shrink-0">
             <img
               src={profilePhotoURL}
-              alt="Current Profile"
+              alt={t('settings.profile.currentProfile')}
               className="w-full h-full object-cover"
             />
           </div>
@@ -42,14 +44,14 @@ const ConfirmDeleteProfilePhotoModal = ({ isOpen, onClose, onConfirm, loading })
           >
             <img
               src={defaultPhoto}
-              alt="Default Logo"
+              alt={t('settings.profile.defaultLogo')}
               className="w-full h-full object-contain p-3 sm:p-4 filter brightness-0 invert opacity-90"
             />
           </div>
         </Flex>
 
         <p className="text-center text-xs sm:text-sm text-gray-600 mb-4 px-2">
-          Are you sure you want to delete your profile photo? It will be replaced by the default logo.
+          {t('settings.profile.deletePhotoConfirm')}
         </p>
 
         {/* Custom Actions Footer */}
@@ -65,18 +67,18 @@ const ConfirmDeleteProfilePhotoModal = ({ isOpen, onClose, onConfirm, loading })
               themeColor={colors.primary}
               className="w-full sm:w-auto"
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
               form="delete-profile-photo-form"
               loading={loading}
-              loadingText="Deleting..."
+              loadingText={t('common.deleting')}
               disabled={loading}
               bgColor={colors.primary}
               className="w-full sm:w-auto"
             >
-              Confirm Deletion
+              {t('common.confirmDeletion')}
             </Button>
           </div>
         </div>

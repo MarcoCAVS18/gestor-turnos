@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Star, ChevronRight, CalendarX } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -10,6 +11,7 @@ import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 
 const NextShiftCard = ({ nextShift, formatDate }) => {
+  const { t } = useTranslation();
   const { works } = useApp();
   const colors = useThemeColors();
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ const NextShiftCard = ({ nextShift, formatDate }) => {
     <Card>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
         <Star size={20} style={{ color: colors.primary }} className="mr-2" />
-        Next shift
+        {t('dashboard.nextShift.title')}
       </h3>
       
       {nextShift && work ? (
@@ -38,14 +40,14 @@ const NextShiftCard = ({ nextShift, formatDate }) => {
             icon={ChevronRight}
             themeColor={colors.primary}
           >
-            View
+            {t('common.view')}
           </Button>
         </Flex>
       ) : (
         <Flex variant="center" className="py-4">
           <div className="text-center text-gray-400">
             <CalendarX size={32} className="mx-auto mb-2 opacity-50" />
-            <p className="text-sm">No data yet</p>
+            <p className="text-sm">{t('dashboard.common.noDataYet')}</p>
           </div>
         </Flex>
       )}

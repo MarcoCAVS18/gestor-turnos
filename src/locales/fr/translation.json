@@ -11,8 +11,17 @@
     "noChanges": "Aucune modification",
     "error": "Quelque chose s'est mal passé",
     "confirm": "Confirmer",
+    "create": "Créer",
     "back": "Retour",
+    "backToSettings": "Retour aux Paramètres",
     "close": "Fermer",
+    "locale": "fr-FR",
+    "hours": "heures",
+    "earnings": "gains",
+    "viewDetails": "Voir détails",
+    "time": "Heure",
+    "duration": "Durée",
+    "date": "Date",
     "yes": "Oui",
     "no": "Non",
     "optional": "Optionnel",
@@ -20,7 +29,63 @@
     "resume": "Reprendre",
     "pause": "Pause",
     "finish": "Terminer",
-    "moreInfo": "Plus d'infos"
+    "moreInfo": "Plus d'infos",
+    "or": "ou",
+    "continue": "Continuer",
+    "password": "Mot de passe",
+    "email": "Adresse e-mail",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "tomorrow": "Demain",
+    "shift": "quart",
+    "shifts": "quarts",
+    "work": "Travail",
+    "duration": "Durée",
+    "earnings": "Gains",
+    "hours": "heures",
+    "viewDetails": "Voir détails",
+    "time": "Heure",
+    "date": "Date",
+    "hourlyRate": "Taux horaires",
+    "day": "Jour",
+    "afternoon": "Après-midi",
+    "night": "Nuit",
+    "update": "Mettre à jour",
+    "manage": "Gérer",
+    "off": "OFF",
+    "on": "ON",
+    "perShift": "par quart",
+    "keepPlan": "Garder le Plan",
+    "tip": "Conseil",
+    "view": "Voir",
+    "pausing": "Mise en pause...",
+    "resuming": "Reprise...",
+    "hide": "Masquer",
+    "goBack": "Retour",
+    "creating": "Création...",
+    "remove": "Supprimer",
+    "confirmDeletion": "Confirmer la Suppression",
+    "deleting": "Suppression...",
+    "hours": "Heures",
+    "minutes": "Minutes",
+    "seconds": "Secondes",
+    "perHour": "h",
+    "km": "km",
+    "saturday": "Samedi",
+    "sunday": "Dimanche",
+    "saveChanges": "Enregistrer les Modifications",
+    "delivery": "Delivery",
+    "liveMode": "Mode Live",
+    "share": "Partager",
+    "daysFull": {
+      "Monday": "Lundi",
+      "Tuesday": "Mardi",
+      "Wednesday": "Mercredi",
+      "Thursday": "Jeudi",
+      "Friday": "Vendredi",
+      "Saturday": "Samedi",
+      "Sunday": "Dimanche"
+    }
   },
   "nav": {
     "home": "Accueil",
@@ -36,27 +101,387 @@
     "newWork": "Nouveau travail",
     "shiftsDisabledTooltip": "Créez d'abord un travail pour ajouter des quarts",
     "paused": "En pause",
-    "liveMode": "Mode en direct"
+    "liveMode": "Mode Live"
   },
   "premium": {
-    "unlockAll": "Débloquer toutes les fonctionnalités",
-    "upgrade": "Passer à Premium",
-    "badge": "Premium"
+    "title": "Premium",
+    "unlockFeatures": "Débloquez l'accès illimité à toutes les fonctionnalités",
+    "manageSubscription": "Gérez votre abonnement",
+    "account": "Compte",
+    "profile": "Profil",
+    "freePlan": "Plan Gratuit",
+    "premiumFor": "Premium depuis {{duration}}",
+    "lessThanMonth": "Moins d'un mois",
+    "oneMonth": "1 mois",
+    "months": "{{count}} mois",
+    "paymentDetails": "Détails de Paiement",
+    "updatePayment": "Mettre à jour le Paiement",
+    "changePayment": "Changez votre carte ou méthode de paiement",
+    "viewInvoices": "Voir les Factures",
+    "downloadReceipts": "Téléchargez les reçus et factures",
+    "opening": "Ouverture...",
+    "openBillingPortal": "Ouvrir le Portail de Facturation",
+    "cancellationScheduled": "Annulation programmée",
+    "accessContinues": "L'accès continue jusqu'au {{date}}",
+    "keepAccess": "Vous garderez l'accès jusqu'au <strong>{{date}}</strong>. Après cela, votre plan reviendra à Gratuit.",
+    "confirm": "Confirmer",
+    "cancelSubscription": "Annuler l'abonnement",
+    "subtitle": "Débloquez l'accès illimité à toutes les fonctionnalités",
+    "hero": {
+      "freeTrial": "15 jours d'essai gratuit",
+      "unlockPremium": "Débloquer Premium",
+      "month": "mois",
+      "trialDescription": "Essai gratuit de 15 jours, puis ${{price}} AUD/mois"
+    },
+    "celebration": {
+      "trialStarted": "Essai Commencé !",
+      "yourePremium": "Vous êtes Premium !",
+      "trialDescription": "Profitez de 15 jours d'accès Premium complet, complètement gratuit.",
+      "premiumDescription": "Profitez d'un accès illimité à toutes les fonctionnalités",
+      "cardCharged": "Carte débitée le",
+      "redirecting": "Redirection..."
+    },
+    "payment": {
+      "title": "Paiement et Factures",
+      "cardOnFile": "Carte enregistrée",
+      "defaultMethod": "Moyen de paiement par défaut",
+      "totalInvested": "Total investi dans Premium",
+      "invoices": "Factures",
+      "history": "Historique"
+    },
+    "invoices": {
+      "title": "Factures Récentes",
+      "noInvoices": "Pas encore de factures",
+      "noInvoicesDesc": "Vos factures apparaîtront ici après votre premier paiement",
+      "invoiceNumber": "Facture n°{{number}}",
+      "downloadPdf": "Télécharger PDF",
+      "viewInvoice": "Voir la facture"
+    },
+    "benefits": {
+      "unlimitedLive": "Live Illimité",
+      "advancedStats": "Statistiques Avancées",
+      "prioritySupport": "Support Prioritaire",
+      "dataExport": "Exportation de Données",
+      "unlimitedLiveDesc": "Suivez des quarts illimités en temps réel",
+      "advancedStatsDesc": "Analyses détaillées et insights",
+      "prioritySupportDesc": "Obtenez de l'aide plus rapidement",
+      "dataExportDesc": "Exportez vos données à tout moment"
+    },
+    "modal": {
+      "title": "Débloquez l'Expérience Complète",
+      "subtitle": "Commencez votre <strong>essai gratuit de 15 jours</strong> — aucun frais jusqu'à la fin de l'essai.",
+      "ctaButton": "C'est Parti"
+    },
+    "weekNavigator": {
+      "thisWeek": "Cette semaine",
+      "lastWeek": "Semaine dernière",
+      "nextWeek": "Semaine prochaine",
+      "inWeeks": "Dans {{count}} semaines",
+      "weeksAgo": "Il y a {{count}} semaines"
+    },
+    "subscription": {
+      "title": "Abonnement",
+      "planName": "Plan Premium",
+      "freeDuringTrial": "Gratuit pendant l'essai",
+      "memberSince": "Membre depuis",
+      "trialEnds": "L'essai se termine",
+      "accessUntil": "Accès jusqu'au",
+      "nextBilling": "Prochaine facturation",
+      "trialInfo": "Votre essai gratuit de 15 jours est actif. Votre carte sera débitée de {{price}} AUD le {date} à moins que vous ne résiliez avant.",
+      "cancellationInfo": "Votre abonnement se terminera le {date}. Vous garderez un accès complet jusqu'à cette date."
+    },
+    "status": {
+      "active": "Actif",
+      "trialing": "Essai gratuit",
+      "cancelling": "Annulation en cours",
+      "pastDue": "Paiement en retard"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Orary",
+      "subtitle": "Gérez vos quarts de travail facilement.",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Mot de passe",
+      "continue": "Continuer",
+      "continueWithGoogle": "Continuer avec Google",
+      "continueWithBiometric": "Continuer avec la biométrie",
+      "forgotPassword": "Mot de passe oublié ?",
+      "noAccount": "Vous n'avez pas de compte ?",
+      "registerHere": "Inscrivez-vous ici !",
+      "recoverySent": "Nous avons envoyé un lien de récupération à votre adresse e-mail."
+    },
+    "register": {
+      "title": "Orary",
+      "subtitle": "Créez votre compte",
+      "name": "Nom",
+      "namePlaceholder": "Votre nom",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Minimum 6 caractères",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre mot de passe",
+      "register": "S'inscrire",
+      "registerWithGoogle": "S'inscrire avec Google",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "signInHere": "Connectez-vous ici",
+      "passwordRequirements": {
+        "minLength": "Minimum 6 caractères",
+        "uppercase": "Au moins une lettre majuscule",
+        "lowercase": "Au moins une lettre minuscule",
+        "number": "Au moins un chiffre"
+      }
+    },
+    "forgotPassword": {
+      "title": "Orary",
+      "subtitle": "Récupérer votre mot de passe",
+      "description": "Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "votre@email.com",
+      "sendLink": "Récupérer le mot de passe",
+      "backToLogin": "Retour à la connexion",
+      "emailSent": "Vérifiez votre e-mail pour le lien de réinitialisation",
+      "sending": "Envoi en cours...",
+      "errorSend": "Impossible d'envoyer l'e-mail de récupération. Vérifiez votre adresse e-mail."
+    },
+    "resetPassword": {
+      "title": "Orary",
+      "subtitle": "Créer un nouveau mot de passe",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "resetButton": "Confirmer le nouveau mot de passe",
+      "resetting": "Réinitialisation...",
+      "success": "Votre mot de passe a été réinitialisé avec succès ! Redirection...",
+      "backToLogin": "Retour à la connexion",
+      "invalidLink": "Lien invalide ou expiré. Veuillez demander un nouveau lien de récupération.",
+      "expiredLink": "Le lien a expiré. Veuillez demander un nouveau lien de récupération.",
+      "errorReset": "Erreur lors de la réinitialisation de votre mot de passe. Veuillez réessayer."
+    },
+    "errors": {
+      "emailRequired": "Veuillez entrer votre adresse e-mail",
+      "passwordRequired": "Veuillez entrer votre mot de passe",
+      "emailPasswordRequired": "Veuillez entrer votre adresse e-mail et votre mot de passe",
+      "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+      "wrongPassword": "Adresse e-mail ou mot de passe incorrect",
+      "emailInUse": "Cette adresse e-mail est déjà utilisée. Essayez de vous connecter.",
+      "weakPassword": "Le mot de passe est trop faible. Il doit contenir au moins 6 caractères.",
+      "popupClosed": "La fenêtre de connexion a été fermée. Veuillez réessayer.",
+      "googleSignInFailed": "Impossible de se connecter avec Google. Veuillez réessayer.",
+      "googleRegisterFailed": "Impossible de s'inscrire avec Google. Veuillez réessayer.",
+      "accountExists": "Un compte existe déjà avec cette adresse e-mail. Essayez une autre méthode de connexion.",
+      "createAccountFailed": "Erreur lors de la création du compte. Veuillez réessayer.",
+      "nameTooShort": "Le nom doit contenir au moins 2 caractères",
+      "inappropriateName": "Veuillez choisir un nom approprié",
+      "passwordRequirements": "Le mot de passe ne répond pas aux exigences minimales",
+      "passwordsMismatch": "Les mots de passe ne correspondent pas",
+      "biometricFailed": "La vérification biométrique a échoué. Essayez votre mot de passe.",
+      "sessionExpired": "Veuillez vous connecter avec votre e-mail ou Google pour continuer."
+    }
+  },
+  "landing": {
+    "brandName": "Orary",
+    "tagline": "Gestion des Quarts de Travail et Suivi des Gains",
+    "features": {
+      "trackShifts": "Suivi des quarts",
+      "analytics": "Analyses",
+      "liveMode": "Mode Live"
+    },
+    "getStartedFree": "Commencer gratuitement",
+    "signIn": "Se connecter",
+    "alreadyHaveAccount": "vous avez déjà un compte ?",
+    "freeWorldwide": "Gratuit pour tous les travailleurs du monde · Aucune carte de crédit requise",
+    "legalAgreement": "En utilisant Orary, vous acceptez notre",
+    "privacyPolicy": "Politique de confidentialité",
+    "and": "et",
+    "termsOfService": "Conditions d'utilisation"
+  },
+  "integrations": {
+    "subtitle": "Connectez des services externes et configurez les notifications",
+    "backToSettings": "Retour aux Paramètres",
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "checking": "Vérification...",
+      "soon": "Bientôt"
+    },
+    "notifications": {
+      "title": "Notifications du Navigateur",
+      "description": "Recevez des notifications directement dans votre navigateur lors d'événements importants.",
+      "enable": "Activer les notifications",
+      "blocked": "Bloqué par le navigateur",
+      "blockedHelp": "Les notifications sont bloquées. Veuillez les activer dans les paramètres de votre navigateur.",
+      "enabledTitle": "Notifications activées !",
+      "enabledMessage": "Vous recevrez désormais des rappels de quarts de travail."
+    },
+    "reminders": {
+      "title": "Rappels de Quarts",
+      "description": "Soyez notifié avant le début de vos quarts de travail pour ne jamais en manquer un.",
+      "enable": "Activer les rappels",
+      "remindMe": "Me rappeler",
+      "minutes": "{{count}} minutes avant",
+      "hour": "1 heure avant"
+    },
+    "biometric": {
+      "title": "Connexion Biométrique",
+      "description": "Utilisez Touch ID, Face ID ou Windows Hello pour déverrouiller l'app rapidement lorsque vous revenez.",
+      "active": "Actif sur cet appareil",
+      "enable": "Activer pour cet appareil",
+      "notSupported": "Non pris en charge sur cet appareil ou navigateur."
+    },
+    "mobile": {
+      "title": "App Mobile",
+      "description": "Recevez des notifications push et gérez vos quarts de travail en déplacement avec notre app mobile.",
+      "platforms": "iOS et Android"
+    },
+    "deliveryVehicle": {
+      "helpText": "Sélectionnez le véhicule que vous utiliserez pour vos livraisons"
+    },
+    "calendar": {
+      "title": "Abonnement au Calendrier",
+      "description": "Abonnez-vous à vos quarts de travail dans n'importe quelle app de calendrier — Google Calendar, Apple Calendar, Outlook et plus. Se met à jour automatiquement toutes les quelques heures.",
+      "subscribe": "S'abonner au Calendrier",
+      "opening": "Ouverture...",
+      "copyLink": "Copier le lien (autres apps)",
+      "copied": "Copié !",
+      "error": "Impossible de générer le lien du calendrier. Veuillez réessayer.",
+      "note": "Aucune connexion requise · Fonctionne avec n'importe quelle app de calendrier"
+    },
+    "howItWorks": {
+      "title": "Comment fonctionne l'abonnement au calendrier",
+      "step1": "Générez votre lien personnel et ajoutez-le à n'importe quelle app de calendrier",
+      "step2": "Vos quarts de travail apparaissent automatiquement et se rafraîchissent toutes les quelques heures",
+      "step3": "Le lien est permanent — ajoutez-le une fois et il reste toujours synchronisé"
+    },
+    "install": {
+      "title": "Installer Orary",
+      "description": "Ajoutez-le à votre écran d'accueil — fonctionne comme une app native, pas besoin d'App Store",
+      "iosTab": "iPhone / iPad",
+      "androidTab": "Android",
+      "share": "Partager",
+      "menu": "Menu",
+      "addToHome": "Ajouter à l'Écran d'Accueil",
+      "ios": {
+        "safariOnly": "<strong>Fonctionne uniquement dans Safari.</strong> Si vous utilisez Chrome ou Firefox sur iPhone, ouvrez d'abord cette page dans Safari.",
+        "step1": "Ouvrez cette page dans <strong>Safari</strong>",
+        "step1Note": "Si vous êtes déjà dans Safari, tout va bien !",
+        "step2": "Appuyez sur le bouton <strong>Partager</strong> en bas de Safari",
+        "step3": "Trouvez <strong>\"Ajouter à l'Écran d'Accueil\"</strong> dans le menu de partage",
+        "step3Warning": "<strong>Faites défiler vers le bas !</strong> Cette option n'est PAS en haut du menu — elle est cachée en dessous. Continuez à faire défiler vers le bas dans la rangée d'icônes jusqu'à voir l'icône <strong>\"Ajouter à l'Écran d'Accueil\"</strong> avec un symbole plus.",
+        "step4": "Appuyez sur <strong>\"Ajouter\"</strong> dans le coin supérieur droit",
+        "step4Note": "Orary apparaîtra sur votre écran d'accueil — ouvrez-le comme n'importe quelle app."
+      },
+      "android": {
+        "chromeOnly": "<strong>Fonctionne mieux dans Chrome.</strong> Samsung Browser est également pris en charge.",
+        "step1": "Appuyez sur l'icône de <strong>menu</strong> en haut à droite de Chrome",
+        "step2": "Sélectionnez <strong>\"Ajouter à l'écran d'accueil\"</strong> ou <strong>\"Installer l'app\"</strong>",
+        "step2Note": "Le libellé peut varier selon votre version de Chrome.",
+        "step3": "Appuyez sur <strong>\"Installer\"</strong> pour confirmer",
+        "step3Note": "Orary apparaîtra sur votre écran d'accueil et dans votre tiroir d'apps."
+      }
+    }
   },
   "dashboard": {
+    "subtitle": "Un aperçu de votre activité et de votre progression.",
+    "motivation": {
+      "keepGoing": "Continuez comme ça !",
+      "onFire": "Vous êtes en feu !",
+      "niceWork": "Bon travail !",
+      "crushingIt": "Vous écrasez tout !",
+      "goodPace": "Bon rythme !",
+      "unstoppable": "Implacable !",
+      "stayStrong": "Restez fort !",
+      "amazing": "Incroyable !",
+      "youGotThis": "Vous pouvez le faire !",
+      "legend": "Légende !",
+      "wellDone": "Bien joué !",
+      "superstar": "Superstar !",
+      "greatEffort": "Super effort !",
+      "incredible": "Incroyable !",
+      "solidWork": "Travail solide !",
+      "topNotch": "De premier ordre !",
+      "makingMoves": "Vous bougez !",
+      "beastMode": "Mode bête !",
+      "onTrack": "Sur la bonne voie !",
+      "brilliant": "Brillant !"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "newShift": "Nouveau quart",
+      "newWork": "Nouveau travail"
+    },
     "welcome": {
-      "greeting_morning": "Bonjour,",
-      "greeting_afternoon": "Bon après-midi,",
-      "greeting_evening": "Bonsoir,",
-      "summary": "Voici un résumé de votre activité",
+      "greeting_morning": "Bonjour !",
+      "greeting_afternoon": "Bon après-midi !",
+      "greeting_evening": "Bonsoir !",
+      "summary": "Voici votre résumé",
       "totalEarned": "Total gagné",
-      "disclaimer": "Les calculs sont basés sur vos préférences",
-      "disclaimerDesc": "Parfois, la paie inclut d'autres facteurs qui peuvent causer de légères différences. Ce système vous aide à suivre vos gains jour par jour !"
+      "disclaimer": "Vos données sont privées",
+      "disclaimerDesc": "Toutes les informations sont stockées en toute sécurité et vous seul pouvez y accéder."
+    },
+    "favoriteWorks": {
+      "title": "Travaux favoris",
+      "empty": "Pas encore de travaux favoris",
+      "viewMore": "Voir plus",
+      "shiftLabel": "quarts",
+      "totalLabel": "Total des top {{count}}"
+    },
+    "topWork": {
+      "title": "Travail le plus rentable"
+    },
+    "nextShift": {
+      "title": "Prochain quart"
+    },
+    "recentActivity": {
+      "title": "Activité récente",
+      "empty": "Aucune activité récente",
+      "viewAll": "Voir tous",
+      "totalRecent": "Total récent"
+    },
+    "projection": {
+      "title": "Projection",
+      "worksAdded": "Travaux ajoutés",
+      "stepCompleted": "Étape terminée",
+      "addWorks": "Ajouter des travaux",
+      "unlocksShifts": "Débloque la création de quarts",
+      "trackShifts": "Enregistrer des quarts",
+      "addOrLive": "Ajoutez manuellement ou utilisez Live",
+      "firstMonth": "Votre premier mois enregistré",
+      "moreThanLast": "{{amount}} de plus que le mois dernier (+{{percent}}%)",
+      "lessThanLast": "{{amount}} de moins que le mois dernier (-{{percent}}%)",
+      "sameAsLast": "Identique au mois dernier",
+      "keepPace": "Si vous maintenez ce rythme tout au long du mois"
+    },
+    "export": {
+      "title": "Exporter le rapport",
+      "description": "Téléchargez vos informations dans différents formats",
+      "formats": {
+        "pdf": "PDF",
+        "png": "PNG",
+        "excel": "Excel"
+      }
+    },
+    "common": {
+      "noDataYet": "Pas encore de données"
+    },
+    "thisWeek": {
+      "title": "Cette semaine",
+      "shifts": "quarts",
+      "hours": "heures",
+      "earnings": "gains",
+      "totalEarned": "Total gagné",
+      "progress": "Progrès",
+      "goal": "objectif",
+      "noGoalYet": "Pas encore d'objectif hebdomadaire ?",
+      "goalHelps": "En définir un vous aide à rester sur la bonne voie",
+      "setUp": "Configurer"
     },
     "liveMode": {
-      "title": "Mode en direct",
-      "newFeature": "Nouvelle fonctionnalité",
-      "liveActive": "En direct",
+      "title": "Mode Live",
+      "newFeature": "Nouvelle fonction",
+      "liveActive": "Live actif",
       "paused": "En pause",
       "liveShift": "Quart en direct",
       "resume": "Reprendre",
@@ -64,21 +489,30 @@
       "finish": "Terminer",
       "moreInfo": "Plus d'infos",
       "addWork": "Ajouter un travail",
-      "needsWork": "Pour utiliser le mode en direct, vous devez d'abord ajouter un travail traditionnel à votre profil.",
+      "needsWork": "Pour utiliser le Mode Live, vous devez d'abord ajouter un travail traditionnel à votre profil.",
       "deliveryComingSoon": "Support des travaux de livraison bientôt disponible",
-      "description": "Contrôle total de vos quarts en temps réel. Pointez, faites une pause et suivez vos gains instantanément.",
-      "freeTrial": "15 jours d'essai gratuit",
+      "description": "Contrôle total de vos quarts en temps réel. Enregistrez, mettez en pause et surveillez vos gains instantanément.",
+      "freeTrial": "Essai gratuit 15 jours",
       "unlimitedSessions": "Sessions illimitées",
-      "sessionsThisMonth": "sessions ce mois",
+      "sessionsThisMonth": "utilisations ce mois",
       "tryNow": "Essayer maintenant",
-      "startSession": "Démarrer la session"
+      "startSession": "Démarrer la session",
+      "active": "Live actif",
+      "tapToView": "Appuyez pour voir les détails",
+      "startRecording": "Démarrer l'enregistrement",
+      "trackRealTime": "Enregistrez votre quart en temps réel",
+      "freePlan": "Plan gratuit",
+      "usesThisMonth": "utilisations ce mois",
+      "upgradeForUnlimited": "Passez à Premium pour du Live illimité"
     },
-    "favoriteWorks": {
-      "title": "Travaux favoris",
-      "empty": "Pas encore de données",
-      "viewMore": "Voir plus",
-      "shiftLabel": "quarts",
-      "totalLabel": "Total du top"
+    "clockIn": {
+      "title": "Pointage",
+      "noShiftsToday": "Pas de quarts aujourd'hui",
+      "addShift": "Ajouter un quart",
+      "shiftStarted": "Quart commencé",
+      "startedAt": "Commencé à",
+      "estimatedEnd": "Fin estimée",
+      "estimatedEarnings": "Gains estimés"
     },
     "quickStats": {
       "works": "Travaux",
@@ -91,13 +525,18 @@
       "perHour": "Par heure",
       "thisWeek": "Cette semaine",
       "thisMonth": "Ce mois",
-      "currentWeek": "Semaine actuelle",
-      "currentMonth": "Mois actuel",
-      "weekEarnings": "Gains sem."
+      "currentWeek": "Semaine en cours",
+      "currentMonth": "Mois en cours",
+      "weekEarnings": "Gains sem.",
+      "viewMore": "Voir plus",
+      "details": "Détails",
+      "traditional": "Traditionnel",
+      "delivery": "Livraison",
+      "noData": "Aucune donnée disponible"
     },
-    "export": {
-      "title": "Exporter le rapport",
-      "description": "Téléchargez un résumé complet de vos statistiques, quarts et activité"
+    "suggestedAction": {
+      "title": "Vous appréciez Orary ?",
+      "description": "Partagez votre expérience et aidez-nous à nous améliorer"
     }
   },
   "settings": {
@@ -112,6 +551,49 @@
       "darkTheme": "Sombre",
       "darkThemeDesc": "Doux pour les yeux la nuit",
       "darkThemePremium": "Fonction Premium"
+    },
+    "goals": {
+      "title": "Objectifs Hebdomadaires",
+      "week": "semaine",
+      "weekdays": "jours ouvrables",
+      "partTime": "Mi-temps",
+      "standard": "Standard",
+      "fullTime": "Temps plein",
+      "extended": "Étendu",
+      "setWeeklyGoal": "Définir un objectif hebdomadaire",
+      "trackInStats": "Suivi dans Statistiques",
+      "quickPresets": "Préréglages rapides",
+      "orCustomHours": "Ou entrez des heures personnalisées",
+      "placeholder": "Ex: 40",
+      "hoursPerWeek": "heures/semaine",
+      "tipDescription": "Définissez un objectif réaliste pour voir votre progression hebdomadaire dans la barre de progression."
+    },
+    "deliveryPlatforms": {
+      "title": "Plateformes de Livraison",
+      "description": "Sélectionnez votre plateforme par défaut ou ajoutez des plateformes personnalisées.",
+      "platformName": "Nom de la plateforme",
+      "default": "Par défaut",
+      "defaultSet": "Plateforme par défaut définie",
+      "defaultCleared": "Plateforme par défaut supprimée",
+      "platformAdded": "Plateforme ajoutée",
+      "platformRemoved": "Plateforme supprimée",
+      "errorSetDefault": "Erreur lors de la définition de la plateforme par défaut",
+      "errorAdd": "Erreur lors de l'ajout de la plateforme",
+      "errorRemove": "Erreur lors de la suppression de la plateforme"
+    },
+    "profile": {
+      "title": "Profil",
+      "email": "Adresse e-mail",
+      "name": "Nom",
+      "addPhoto": "Ajouter une photo",
+      "yourPhoto": "Votre photo de profil",
+      "personalizeDesc": "Personnalisez votre profil avec une photo.",
+      "removePhoto": "Supprimer la photo",
+      "avatar": "Avatar utilisateur",
+      "deletePhoto": "Supprimer la Photo de Profil",
+      "currentProfile": "Photo de profil actuelle",
+      "defaultLogo": "Logo par défaut",
+      "deletePhotoConfirm": "Êtes-vous sûr de vouloir supprimer votre photo de profil? Elle sera remplacée par le logo par défaut."
     },
     "smoko": {
       "title": "Smoko (Pauses)",
@@ -143,7 +625,7 @@
     "turnRange": {
       "title": "Plages horaires",
       "description": "Configurez les plages horaires pour la détection automatique du type de quart. Les quarts existants seront mis à jour automatiquement.",
-      "liveModeWarning": "Le mode en direct est actif — les modifications ne peuvent pas être enregistrées pendant une session active.",
+      "liveModeWarning": "Le Mode Live est actif — les modifications ne peuvent pas être enregistrées pendant une session active.",
       "dayShift": "Quart de jour",
       "afternoonShift": "Quart d'après-midi",
       "nightShift": "Quart de nuit",
@@ -178,12 +660,17 @@
       "disablePopoverTitle": "Conséquences de la désactivation",
       "enablePopoverTitle": "Comment ça marche ?",
       "whatIfDisable": "Que se passe-t-il si je le désactive ?",
-      "whatIfEnable": "Qu'est-ce qui change si je l'active ?"
-    },
-    "profile": {
-      "title": "Profil",
-      "email": "Adresse e-mail",
-      "name": "Nom"
+      "whatIfEnable": "Qu'est-ce qui change si je l'active ?",
+      "enabledMessage": "Mode livraison activé",
+      "disabledMessage": "Mode livraison désactivé",
+      "errorMessage": "Erreur lors du changement du paramètre de livraison",
+      "disableInfo": "En désactivant cette option, l'interface se simplifiera pour les emplois horaires:",
+      "disablePoint1": "Seules les statistiques des <strong>emplois traditionnels</strong> seront affichées sur le tableau de bord.",
+      "disablePoint2": "Vos quarts de livraison précédents <strong>resteront visibles</strong> dans l'historique, mais vous <strong>ne pourrez pas en ajouter de nouveaux</strong> jusqu'à réactivation.",
+      "enablePoint1": "Les emplois <strong>ne nécessitent pas</strong> de taux horaire fixe.",
+      "enablePoint2": "Vous enregistrez <strong>les gains totaux</strong> pour chaque quart.",
+      "enablePoint3": "Champs pour <strong>pourboires</strong> et nombre de commandes.",
+      "enablePoint4": "Suivi détaillé des <strong>km et carburant</strong>."
     },
     "session": {
       "title": "Compte",
@@ -194,25 +681,91 @@
       "logout": "Se déconnecter",
       "managePremium": "Gérer Premium",
       "upgradePremium": "Passer à Premium"
+    },
+    "integrationsBanner": {
+      "title": "Intégrations",
+      "description": "Configurez les alertes, Google Calendar et plus.",
+      "button": "Configurer"
     }
   },
   "shifts": {
     "title": "Quarts",
-    "subtitle": "Gérez et visualisez vos quarts enregistrés.",
-    "addShift": "Ajouter un quart",
-    "editShift": "Modifier le quart",
-    "deleteShift": "Supprimer le quart",
+    "subtitle": "Gérez et visualisez vos quarts",
+    "addShift": "Ajouter un Quart",
+    "editShift": "Modifier le Quart",
+    "deleteShift": "Supprimer le Quart",
+    "deliveryTitle": "Quart de Livraison",
+    "earningsDetails": "Détails des gains",
+    "totalEarnings": "Gains totaux",
+    "tips": "Pourboires",
+    "orderCount": "Nombre de commandes",
+    "additionalData": "Données additionnelles (optionnel)",
+    "kilometers": "Kilomètres parcourus",
+    "fuelExpenses": "Dépenses de carburant",
     "noShifts": "Aucun quart pour l'instant",
     "date": "Date",
     "startTime": "Heure de début",
     "endTime": "Heure de fin",
     "work": "Travail",
     "notes": "Notes",
-    "smoko": "Pause smoko",
-    "noMatchingFilters": "Aucun quart correspondant aux filtres",
-    "noMatchingFiltersDesc": "Essayez d'ajuster les filtres pour voir plus de résultats.",
+    "smoko": "Pause (smoko)",
+    "noMatchingFilters": "Aucun quart ne correspond",
+    "noMatchingFiltersDesc": "Essayez d'ajuster les filtres",
     "clearFilters": "Effacer les filtres",
-    "upcoming": "À venir"
+    "upcoming": "À venir",
+    "firstAddWork": "D'abord, ajoutez un travail",
+    "needWorkDesc": "Avant de pouvoir suivre des quarts, vous devez créer au moins un travail. Cela peut être un emploi, une plateforme de livraison ou toute autre source de revenus.",
+    "goToWorks": "Aller aux Travaux",
+    "noShiftsYet": "Aucun quart pour l'instant",
+    "startTrackingDesc": "Commencez à suivre vos heures de travail pour voir vos gains et statistiques.",
+    "addManually": "Ajouter manuellement",
+    "enterShiftDetails": "Entrez les détails du quart comme la date, l'heure de début et de fin",
+    "useLiveMode": "Utiliser le Mode Live",
+    "liveModeDesc": "Lancez un chronomètre et suivez votre quart en temps réel",
+    "addFirstShift": "Ajoutez votre premier quart",
+    "jobDeleted": "Travail supprimé",
+    "financialDetails": "Détails Financiers",
+    "grossEarnings": "Gains Bruts",
+    "expenses": "Dépenses",
+    "netEarnings": "Gains nets",
+    "hoursIn": "h en",
+    "discount": "Remise",
+    "smokoDiscount": "Remise Smoko",
+    "calculation": "Calcul",
+    "subtotal": "Sous-total",
+    "total": "Total",
+    "estimatedEarnings": "Gains estimés",
+    "rates": {
+      "day": "Jour",
+      "afternoon": "Après-midi",
+      "night": "Nuit",
+      "saturday": "Samedi",
+      "sunday": "Dimanche",
+      "holiday": "Jour férié"
+    },
+    "moreInfo": "Plus d'informations",
+    "created": "Créé",
+    "holiday": "Jour férié",
+    "finishLiveShift": "Terminer le Quart en Direct?",
+    "finishShiftDesc": "Votre quart sera enregistré avec ces détails",
+    "deductSmoko": "Déduire le smoko?",
+    "noBreaks": "Aucune pause enregistrée",
+    "smokoDeduct": "-{{minutes}} min",
+    "liveShiftNote": "Ce quart sera enregistré dans votre historique et marqué comme un quart suivi en direct.",
+    "smokoWillDeduct": "{{minutes}} minutes seront déduites pour le temps de pause.",
+    "schedule": "Horaire",
+    "createdWithLiveMode": "Créé avec le Mode en Direct",
+    "createdWithBulk": "Créé avec Création en Masse",
+    "deliveryInfo": "Info Livraison",
+    "additionalInfo": "Info Additionnelle",
+    "basePay": "Paie de base",
+    "nightBonus": "Prime de nuit",
+    "saturdayBonus": "Prime samedi",
+    "sundayBonus": "Prime dimanche",
+    "holidayBonus": "Prime jour férié",
+    "weeklySummary": "Résumé hebdomadaire",
+    "shifts": "quarts",
+    "hours": "heures"
   },
   "works": {
     "title": "Travaux",
@@ -237,7 +790,27 @@
     "addAnotherPlatform": "Ajouter une autre plateforme",
     "multipleApps": "Plusieurs applications prises en charge",
     "deleteWarning": "Tous les quarts associés à ce travail seront également supprimés.",
-    "deleteWarningDelivery": "Tous les quarts de livraison associés à ce travail seront également supprimés."
+    "deleteWarningDelivery": "Tous les quarts de livraison associés à ce travail seront également supprimés.",
+    "traditionalBadge": "Traditionnel",
+    "deliveryBadge": "Delivery",
+    "platform": "Plateforme",
+    "noDescription": "Pas de description",
+    "workNotFound": "Travail non trouvé",
+    "selectTypeTitle": "Quel type de travail voulez-vous ajouter ?",
+    "selectTypeSubtitle": "Sélectionnez le type qui décrit le mieux votre travail",
+    "hourlyWork": "Travail horaire",
+    "hourlyWorkDesc": "Pour les emplois avec un taux horaire fixe et différents types de quarts",
+    "hourlyFeature1": "Taux par type de quart (jour, après-midi, nuit)",
+    "hourlyFeature2": "Taux spéciaux le week-end",
+    "hourlyFeature3": "Calcul automatique avec déductions",
+    "deliveryWork": "Delivery Work",
+    "deliveryWorkDesc": "Pour les travaux de livraison avec des gains variables par quart",
+    "deliveryFeature1": "Enregistrement des gains totaux par quart",
+    "deliveryFeature2": "Suivi des commandes et kilomètres",
+    "deliveryFeature3": "Contrôle des pourboires et dépenses de carburant",
+    "notSureWhich": "Pas sûr de quel type choisir ?",
+    "helpChoose": "Si vous avez des doutes sur le type à choisir, vous pouvez le modifier plus tard dans les paramètres du travail.",
+    "liveModeActiveError": "\"{{workName}}\" est actuellement actif en Mode Live. Arrêtez la session pour le modifier."
   },
   "statistics": {
     "title": "Statistiques",
@@ -250,7 +823,257 @@
     "monthly": "Mensuel",
     "daily": "Quotidien",
     "deliveryTitle": "Statistiques de livraison",
-    "deliverySubtitle": "Analysez vos gains et votre efficacité en livraison"
+    "deliverySubtitle": "Analysez vos gains et votre efficacité en livraison",
+    "shiftTypes": "Types de quart"
+  },
+  "forms": {
+    "shift": {
+      "title": "Quart",
+      "work": "Travail",
+      "selectWork": "Sélectionner un travail",
+      "traditionalWorks": "Travaux traditionnels",
+      "deliveryWorks": "Travaux de livraison",
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "startTime": "Heure de début",
+      "endTime": "Heure de fin",
+      "break": "Pause",
+      "breakDuration": "Durée de la pause :",
+      "paidTime": "Temps payé :",
+      "notes": "Notes (optionnel)",
+      "notesPlaceholder": "Ajoutez des notes sur ce quart...",
+      "validation": {
+        "selectWork": "Sélectionnez un travail",
+        "dateRequired": "La date est obligatoire",
+        "startTimeRequired": "L'heure de début est obligatoire",
+        "endTimeRequired": "L'heure de fin est obligatoire",
+        "positiveNumber": "Doit être supérieur à 0",
+        "endAfterStart": "Doit être après le début"
+      },
+      "bulk": {
+        "title": "Création multiple de quarts",
+        "enable": "Créer plusieurs quarts",
+        "newFeatureTitle": "Créer plusieurs quarts à la fois",
+        "newFeatureDescription": "Gagnez du temps en créant des quarts pour plusieurs jours en une seule étape. Sélectionnez votre modèle à l'écran suivant.",
+        "enableBulkCreation": "Activer la création en masse",
+        "selectDays": "Sélectionnez les jours de la semaine",
+        "repeatFor": "Répéter pendant",
+        "week": "semaine",
+        "weeks": "semaines",
+        "selectAtLeastOne": "Sélectionnez au moins un jour",
+        "preview": "Aperçu",
+        "shiftsWillBeCreated": "quarts seront créés",
+        "dayLabels": {
+          "Mon": "Lun",
+          "Tue": "Mar",
+          "Wed": "Mer",
+          "Thu": "Jeu",
+          "Fri": "Ven",
+          "Sat": "Sam",
+          "Sun": "Dim"
+        }
+      }
+    },
+    "work": {
+      "companyName": "Nom de l'entreprise",
+      "workColor": "Couleur du travail",
+      "customColor": "ou choisissez une couleur personnalisée",
+      "baseHourlyRate": "Taux horaire de base",
+      "ratesByShiftType": "Taux par type de quart",
+      "descriptionOptional": "Description (optionnel)",
+      "descriptionPlaceholder": "Détails supplémentaires sur ce travail...",
+      "name": "Nom",
+      "namePlaceholder": "ex. Mon Travail",
+      "baseRate": "Taux de base",
+      "baseRatePlaceholder": "0.00",
+      "currency": "Devise",
+      "selectCurrency": "Sélectionner la devise",
+      "rates": {
+        "title": "Taux supplémentaires",
+        "night": "Nuit",
+        "saturday": "Samedi",
+        "sunday": "Dimanche",
+        "holiday": "Jour férié"
+      },
+      "delivery": {
+        "namePlaceholder": "ex., Livraison Zone Nord",
+        "descriptionPlaceholder": "ex., Travail de delivery dans le centre...",
+        "platform": "Plateforme",
+        "selectPlatform": "Sélectionnez une plateforme",
+        "selectPlatformWithDefault": "Sélectionner (par défaut: {{defaultPlatform}})",
+        "vehicle": "Véhicule",
+        "selectVehicle": "Sélectionnez votre véhicule",
+        "perOrderRate": "Taux par commande",
+        "vehicles": {
+          "bicycle": "Vélo",
+          "motorbike": "Moto",
+          "car": "Voiture",
+          "on_foot": "À pied"
+        }
+      },
+      "validation": {
+        "nameRequired": "Le nom est obligatoire",
+        "baseRateRequired": "Le taux de base est obligatoire"
+      }
+    }
+  },
+  "modals": {
+    "createMultipleShifts": "Créer des Quarts Multiples",
+    "configurePattern": "Configurer le motif pour: {{workName}}",
+    "repetitionPattern": "Motif de Répétition",
+    "weekly": "Hebdomadaire",
+    "specificDates": "Dates Spécifiques",
+    "dateRange": "Plage de Dates",
+    "selectAtLeastOneDay": "Sélectionnez au moins un jour pour créer des quarts",
+    "addDates": "Ajoutez des dates pour créer des quarts",
+    "selectStartEnd": "Sélectionnez les dates de début et fin",
+    "creating": "Création...",
+    "createShifts": "Créer {{count}} Quart",
+    "createShifts_plural": "Créer {{count}} Quarts",
+    "back": "Retour",
+    "deletePhotoTitle": "Supprimer la Photo de Profil",
+    "currentPhoto": "Photo actuelle",
+    "defaultLogo": "Logo par défaut",
+    "deletePhotoWarning": "Votre photo de profil sera définitivement supprimée et remplacée par le logo par défaut. Cela ne peut pas être annulé.",
+    "deleting": "Suppression...",
+    "confirmDeletion": "Confirmer la Suppression",
+    "clearAllData": "Effacer Toutes les Données",
+    "clearDataDesc": "Cela effacera tous vos <strong>travaux</strong>, <strong>quarts</strong> et <strong>paramètres</strong>. Vos identifiants de compte resteront intacts.",
+    "sessionWarning": "Votre session sera fermée après l'effacement. Vous pourrez vous reconnecter avec les mêmes identifiants.",
+    "premiumWarning": "Votre <strong>abonnement Premium</strong> sera automatiquement annulé.",
+    "deleteAccount": "Supprimer le Compte",
+    "deleteAccountDesc": "<strong class=\"text-red-600\">Cette action est irréversible.</strong> Toutes vos données, y compris les travaux, quarts et informations de compte seront définitivement supprimées.",
+    "googleConfirm": "Cliquez sur le bouton ci-dessous pour confirmer avec votre <strong>compte Google</strong>.",
+    "enterPassword": "Entrez votre mot de passe pour confirmer",
+    "passwordPlaceholder": "Votre mot de passe",
+    "farewell": "Nous espérons vous revoir ! Vous pouvez créer un nouveau compte à tout moment.",
+    "clearData": "Effacer les Données",
+    "clearing": "Effacement...",
+    "deleteAccountConfirm": "Supprimer le Compte",
+    "deletingAccount": "Suppression...",
+    "selectWorkFirst": "Veuillez d'abord sélectionner un travail",
+    "activeSession": "Il y a déjà une session en direct active",
+    "work": {
+      "calculationSettings": "Paramètres de calcul",
+      "includeTips": "Inclure les pourboires",
+      "trackFuel": "Suivre le carburant",
+      "noFuelNeeded": "Pas de carburant nécessaire pour ce véhicule"
+    }
+  },
+  "cards": {
+    "shift": {
+      "orders": "Commandes",
+      "distance": "Distance",
+      "baseEarnings": "Gains de base",
+      "fuelExpense": "Dépense de carburant",
+      "avgPerOrder": "Moy. par commande",
+      "fuel": "Carburant",
+      "tips": "Pourboires",
+      "totalEarnings": "Gains totaux"
+    },
+    "work": {
+      "baseRate": "Taux de base:",
+      "perHour": "/h",
+      "night": "Nuit",
+      "saturday": "Samedi",
+      "sunday": "Dimanche",
+      "holiday": "Jour férié"
+    },
+    "deliveryWork": {
+      "shifts": "Quarts",
+      "vehicle": "Véhicule"
+    }
+  },
+  "australia88": {
+    "visaTitle": "Visa Vacances-Travail",
+    "details": "Détails",
+    "complete": "Complet",
+    "remaining": "Restant",
+    "thisWeek": "Cette semaine",
+    "yearComplete": "Année {{year}} complète !",
+    "yearGoal": "Année {{year}} · jours · objectif 88",
+    "daysUnit": "j",
+    "formLabel": "Visa Vacances-Travail (88 jours)",
+    "qualifiesDescription": "Éligible pour l'extension du Visa Vacances-Travail",
+    "regionalWork": "Travail dans des zones régionales ou critiques d'Australie",
+    "notSure": "Pas sûr que votre travail soit éligible ?",
+    "checkHomeAffairs": "Vérifier sur Home Affairs"
+  },
+  "about": {
+    "hero": {
+      "phrase1": "Votre gestionnaire de travail et de quarts",
+      "phrase2": "Gestion professionnelle des quarts et horaires",
+      "phrase3": "Parce que les maths ne devraient pas être si difficiles",
+      "phrase4": "Suivez intelligemment, pas plus difficile",
+      "phrase5": "Construit par un travailleur, pour les travailleurs"
+    },
+    "story": {
+      "title": "Comment tout a commencé",
+      "p1": "Tout a commencé en Australie. J'y travaillais et j'ai remarqué quelque chose qui me rendait fou : chaque semaine, mes amis et moi nous asseyions avec une calculatrice, un bloc-notes et beaucoup trop de patience pour essayer de calculer combien nous allions vraiment gagner.",
+      "p2": "Des heures de nuit ? Tarif différent. Des week-ends ? Un autre tarif. Des jours fériés ? Qui sait. Et après tout ce calcul, le chiffre sur la fiche de paie <em>n'était jamais</em> ce que nous avions calculé. À. Chaque. Fois.",
+      "p3": "Alors j'ai pensé : <strong>\"Assez. Il doit y avoir une meilleure façon.\"</strong>",
+      "p4": "J'ai créé des feuilles de calcul. J'ai essayé des modèles. J'ai fait de petits outils qui fonctionnaient plus ou moins... mais ne réussissaient jamais vraiment. Rien ne correspondait aux valeurs réelles de la fiche de paie. C'était frustrant.",
+      "p5": "Puis un jour ça m'a frappé :",
+      "p5highlight": "\"Pourquoi ne pas construire quelque chose de réel ? Quelque chose à grande échelle. Quelque chose qui fonctionne vraiment ET qui m'aide à apprendre en même temps.\"",
+      "p6": "Et comme ça, Orary est né. Ce qui a commencé comme une démangeaison personnelle à gratter s'est transformé en une application complète qui gère plusieurs types de tarifs, la détection automatique des jours fériés, le suivi en direct, la création en masse, les exportations et bien plus que je n'aurais jamais imaginé.",
+      "p7": "Il s'avère que la frustration est un assez bon carburant pour construire des choses."
+    },
+    "creator": {
+      "name": "Marqui",
+      "role": "Créateur et Développeur",
+      "p1": "Je suis un développeur d'Argentine, actuellement basé en Nouvelle-Zélande. J'ai construit Orary parce que j'en avais besoin moi-même, et j'ai pensé que si ça m'aidait, ça pourrait aider d'autres aussi.",
+      "p2": "Je travaille toujours sur différentes choses, mais je ne cesse de m'efforcer de grandir dans ce monde. Je continuerai à bouger d'endroit en endroit, et j'espère qu'il en sera de même pour Orary — toujours en évolution, toujours atteignant de nouvelles personnes.",
+      "p3": "Si vous avez des questions, des idées, ou si vous voulez juste dire bonjour, n'hésitez pas à me contacter."
+    },
+    "claude": {
+      "title": "Propulsé par Claude",
+      "subtitle": "par Anthropic",
+      "description": "Certaines des fonctionnalités les plus complexes d'Orary ont été construites avec l'aide de Claude AI, un assistant qui a permis de relever des défis qui auraient pris beaucoup plus de temps à résoudre seul."
+    },
+    "feedback": {
+      "title": "Laisser un Avis",
+      "updateTitle": "Mettre à Jour Votre Avis",
+      "description": "Votre opinion nous aide à améliorer Orary. Partagez ce que vous pensez !",
+      "updateDescription": "Vous avez déjà laissé un avis. Voulez-vous le mettre à jour ?",
+      "rateQuestion": "Comment évalueriez-vous votre expérience ?",
+      "commentPlaceholder": "Dites-nous ce que vous aimez ou ce que nous pouvons améliorer...",
+      "profanityWarning": "Veuillez garder votre avis respectueux.",
+      "publishAs": "Publier comme",
+      "anonymous": "Anonyme",
+      "anonymousUser": "Utilisateur Anonyme",
+      "send": "Envoyer",
+      "update": "Mettre à jour",
+      "sending": "Envoi en cours...",
+      "thankYou": "Merci !",
+      "thankYouDesc": "Votre avis nous aide à grandir.",
+      "underReview": "En Cours de Révision",
+      "underReviewDesc": "Votre avis est en cours de révision avant sa publication.",
+      "whatPeopleSay": "Ce que disent les gens",
+      "yourReviewPending": "Votre avis est en attente d'approbation",
+      "changeReview": "Modifier mon avis",
+      "leaveReview": "Laisser un avis",
+      "noFeedback": "Pas encore d'avis",
+      "noFeedbackDesc": "Soyez le premier à partager vos pensées !",
+      "timeAgo": {
+        "justNow": "À l'instant",
+        "minutesAgo": "min",
+        "hoursAgo": "h",
+        "daysAgo": "j",
+        "monthsAgo": "mo",
+        "yearsAgo": "a"
+      }
+    }
+  },
+  "alerts": {
+    "delete": {
+      "title": "Supprimer {{type}} ?",
+      "warning": "Attention : Le travail sélectionné sera définitivement supprimé."
+    }
+  },
+  "errors": {
+    "pageNotFound": "Page non trouvée",
+    "serverError": "Erreur du serveur",
+    "somethingWentWrong": "Une erreur s'est produite"
   },
   "stats": {
     "weeklyComparison": {
@@ -297,7 +1120,9 @@
       "milestoneAlmost": "Presque là !",
       "celebrationIncredible": "Travail incroyable !",
       "celebrationExceeded": "Objectif dépassé !",
-      "celebrationAchieved": "Objectif hebdomadaire atteint !"
+      "celebrationAchieved": "Objectif hebdomadaire atteint !",
+      "overGoalMessage": "{{hours}}h travaillées — {{over}}h au-dessus de votre objectif de {{goal}}h",
+      "goalCompletedMessage": "Vous avez complété {{goal}} heures cette semaine"
     },
     "smokoCard": {
       "title": "Paramètres de pause",
@@ -333,7 +1158,21 @@
       "Thursday": "Jeu",
       "Friday": "Ven",
       "Saturday": "Sam",
-      "Sunday": "Dim"
+      "Sunday": "Dim",
+      "Mon": "Lun",
+      "Tue": "Mar",
+      "Wed": "Mer",
+      "Thu": "Jeu",
+      "Fri": "Ven",
+      "Sat": "Sam",
+      "Sun": "Dim",
+      "monday": "Lundi",
+      "tuesday": "Mardi",
+      "wednesday": "Mercredi",
+      "thursday": "Jeudi",
+      "friday": "Vendredi",
+      "saturday": "Samedi",
+      "sunday": "Dimanche"
     },
     "deliverySummary": {
       "title": "Résumé livraison",
@@ -402,7 +1241,230 @@
       "hours": "Heures :",
       "noDataRecorded": "Aucune donnée enregistrée",
       "lessEarnings": "Moins $",
-      "moreEarnings": "Plus $"
+      "moreEarnings": "Plus $",
+      "insights": {
+        "title": "Analyse de votre modèle de travail",
+        "recommendation": "Selon vos quarts enregistrés, {{bestDay}} pendant le {{bestPeriod}} est votre fenêtre la plus rentable — vous moyennez {{bestRate}}/h à votre pic. Avec {{activeDays}} jour(s) actif(s) de données, le modèle est clair : concentrer plus d'heures pendant cette fenêtre aura le plus grand impact sur vos gains globaux. Continuez à suivre les quarts pour affiner cette analyse.",
+        "avoidNote": "D'un autre côté, {{worstDay}} a été votre jour le moins productif jusqu'à présent — envisagez si la réaffectation de ces heures pourrait augmenter vos revenus.",
+        "activeDays": "Analyse basée sur {{count}} jour(s) actif(s) · {{hours}}h de quarts enregistrés au total",
+        "periods": {
+          "morning": "matin (6–11h)",
+          "afternoon": "après-midi (12–15h)",
+          "evening": "soir (16–19h)",
+          "night": "nuit (20–5h)"
+        }
+      }
+    },
+    "monthlyProjection": {
+      "title": "Projection Mensuelle",
+      "empty": "Aucune donnée d'activité récente",
+      "emptyDesc": "Enregistrez des quarts pour voir votre projection mensuelle",
+      "description": "Si vous maintenez ce rythme tout au long du mois",
+      "hours": "heures"
+    },
+    "dailyBreakdown": {
+      "title": "Répartition Quotidienne",
+      "empty": "Aucun quart enregistré cette semaine",
+      "emptyDesc": "Les quarts apparaîtront ici une fois que vous en ajouterez"
+    },
+    "smokoTimeCard": {
+      "title": "Durée",
+      "emptyText": "Pauses non actives"
+    },
+    "months": {
+      "January": "Jan",
+      "February": "Fév",
+      "March": "Mar",
+      "April": "Avr",
+      "May": "Mai",
+      "June": "Jun",
+      "July": "Jul",
+      "August": "Aoû",
+      "September": "Sep",
+      "October": "Oct",
+      "November": "Nov",
+      "December": "Déc"
+    },
+    "monthsFull": {
+      "January": "Janvier",
+      "February": "Février",
+      "March": "Mars",
+      "April": "Avril",
+      "May": "Mai",
+      "June": "Juin",
+      "July": "Juillet",
+      "August": "Août",
+      "September": "Septembre",
+      "October": "Octobre",
+      "November": "Novembre",
+      "December": "Décembre"
     }
+  },
+  "calendarDaySummary": {
+    "noShifts": "Aucun quart pour",
+    "theDate": "{{date}}",
+    "thisDate": "cette date",
+    "addShift": "Ajouter un quart"
+  },
+  "calendar": {
+    "subtitle": "Visualisez et gérez vos quarts de travail par date",
+    "new": "Nouveau",
+    "noWorksMessage": "Pour utiliser le calendrier, vous devez d'abord créer au moins un travail dans la section \"Travaux\".",
+    "todayDate": "Aujourd'hui, {{date}}",
+    "yesterdayDate": "Hier, {{date}}",
+    "invalidDate": "Date invalide",
+    "today": "Aujourd'hui",
+    "selectWork": "Sélectionner un travail",
+    "startTracking": "Commencer le suivi",
+    "selectWorkDesc": "Sélectionnez votre travail et commencez à suivre votre quart en temps réel",
+    "noWorksAvailable": "Aucun travail disponible",
+    "createWorkFirst": "Veuillez d'abord créer un travail",
+    "liveMode": "Mode Live",
+    "liveActive": "Live actif",
+    "paused": "En pause",
+    "sessionsRemaining": "utilisation restante ce mois",
+    "sessionsRemaining_plural": "utilisations restantes ce mois",
+    "freeTrial": "Essai gratuit 15 jours — Sessions illimitées",
+    "monthlyLimit": "Limite mensuelle atteinte",
+    "startFreeTrial": "Commencez votre <strong>essai gratuit de 15 jours</strong> pour des sessions illimitées en Mode Live",
+    "startFreeTrialButton": "Commencer l'essai gratuit",
+    "cancel": "Annuler",
+    "starting": "Démarrage...",
+    "startLive": "Démarrer Live",
+    "now": "MAINTENANT",
+    "upcoming": "À venir"
+  },
+  "shared": {
+    "workPreview": {
+      "platform": "Plateforme",
+      "vehicle": "Véhicule",
+      "jobType": "Type de travail",
+      "variableEarnings": "Gains variables par livraison",
+      "baseRate": "Taux de base",
+      "specialRates": "Taux spéciaux :"
+    }
+  },
+  "authLayout": {
+    "agreement": "En utilisant Orary, vous acceptez notre",
+    "privacyPolicy": "Politique de Confidentialité",
+    "and": "et",
+    "termsOfService": "Conditions d'Utilisation"
+  },
+  "notFound": {
+    "title": "Page Non Trouvée",
+    "description": "Oups ! La page que vous recherchez n'existe pas. Elle a peut-être été déplacée ou supprimée.",
+    "goHome": "Aller au Tableau de Bord",
+    "goBack": "Retour",
+    "support": "Si vous pensez qu'il s'agit d'une erreur, veuillez contacter le support."
+  },
+  "serverError": {
+    "title": "Quelque Chose S'est Mal Passé",
+    "description": "Nous rencontrons des difficultés techniques. Veuillez réessayer dans un moment ou contacter le support si le problème persiste.",
+    "refresh": "Actualiser la Page",
+    "goHome": "Aller au Tableau de Bord",
+    "support": "Code d'erreur : 500 | Si ce problème persiste, veuillez contacter le support."
+  },
+  "sharedWork": {
+    "title": "Travail Partagé",
+    "subtitle": "Détails du travail partagé avec vous.",
+    "signInTitle": "Connexion",
+    "signInDesc": "Vous devez vous connecter pour ajouter ce travail à votre compte",
+    "errorTitle": "Erreur",
+    "goToWorks": "Aller à mes travaux",
+    "addToMyWorks": "Ajouter à mes travaux",
+    "adding": "Ajout en cours...",
+    "helpMessage": "En ajoutant ce travail, il sera copié dans votre compte avec toutes ses configurations."
+  },
+  "clearEverything": {
+    "title": "Tout Effacer",
+    "subtitle": "Recommencer à zéro tout en gardant votre compte.",
+    "intro": "Si vous souhaitez recommencer à zéro avec <strong>Orary</strong> sans supprimer votre compte, vous pouvez effacer toutes vos données de travail et de quarts tout en conservant vos identifiants de connexion.",
+    "whatWillBeDeleted": {
+      "title": "Ce Qui Sera Supprimé",
+      "works": "Tous vos <strong>travaux</strong> enregistrés (emplois et plateformes de livraison)",
+      "shifts": "Tous vos <strong>quarts</strong> enregistrés et leurs données associées",
+      "earnings": "Tout votre <strong>historique de gains</strong> et statistiques",
+      "preferences": "Vos <strong>préférences</strong> et paramètres",
+      "premium": "Votre <strong>abonnement Premium</strong> sera annulé"
+    },
+    "whatWillBePreserved": {
+      "title": "Ce Qui Sera Conservé",
+      "account": "Votre <strong>compte</strong> et identifiants de connexion",
+      "profile": "Votre <strong>adresse e-mail</strong> et <strong>nom d'affichage</strong>"
+    },
+    "clearButton": "Effacer Toutes les Données",
+    "successMessage": "Vos données ont été effacées avec succès. Veuillez vous reconnecter pour continuer.",
+    "errorMessage": "Échec de l'effacement des données"
+  },
+  "deleteAccount": {
+    "title": "Suppression de Compte",
+    "subtitle": "Nous sommes désolés de vous voir partir.",
+    "intro": "Si vous souhaitez supprimer définitivement votre compte <strong>Orary</strong> et toutes les données associées, vous pouvez le faire ci-dessous. Veuillez noter que cette action est <strong class=\"text-red-600 dark:text-red-400\">irréversible</strong>.",
+    "whatWillBeDeleted": {
+      "title": "Ce Qui Sera Supprimé",
+      "account": "Votre <strong>compte</strong> et identifiants de connexion",
+      "works": "Tous vos <strong>travaux</strong> enregistrés (emplois et plateformes de livraison)",
+      "shifts": "Tous vos <strong>quarts</strong> enregistrés et leurs données associées",
+      "earnings": "Tout votre <strong>historique de gains</strong> et statistiques",
+      "profile": "Votre <strong>profil</strong> et toutes les informations personnelles",
+      "premium": "Votre <strong>abonnement Premium</strong> sera annulé"
+    },
+    "warning": {
+      "title": "Avertissement de Suppression Permanente",
+      "description": "Cette action <strong>ne peut pas être annulée</strong>. Une fois que vous supprimez votre compte, toutes vos données seront définitivement effacées de nos serveurs et ne pourront être récupérées sous aucune circonstance."
+    },
+    "deleteButton": "Supprimer Mon Compte",
+    "emailAlternative": {
+      "title": "Préférez-vous demander la suppression par e-mail ?",
+      "description": "Si vous préférez, vous pouvez également demander la suppression du compte en envoyant un e-mail à :",
+      "note": "Envoyez l'e-mail depuis votre adresse de compte Orary enregistrée — la même adresse que vous utilisez pour vous connecter. Incluez votre nom d'affichage pour vérification. La suppression sera traitée dans les 30 jours."
+    },
+    "errors": {
+      "noUser": "Aucun utilisateur connecté",
+      "wrongPassword": "Mot de passe incorrect. Veuillez réessayer.",
+      "popupClosed": "La connexion Google a été annulée. Veuillez réessayer.",
+      "popupBlocked": "La fenêtre contextuelle a été bloquée. Veuillez autoriser les fenêtres contextuelles et réessayer.",
+      "sessionExpired": "Session expirée. Veuillez réessayer.",
+      "generic": "Échec de la suppression du compte. Veuillez réessayer ou contacter le support."
+    },
+    "success": {
+      "title": "Compte Supprimé",
+      "description": "Votre compte a été définitivement supprimé.",
+      "farewell": "Merci d'avoir utilisé Orary. Nous espérons vous revoir !",
+      "redirectMessage": "Votre compte a été supprimé avec succès. Nous espérons vous revoir !"
+    }
+  },
+  "filters": {
+    "allWorks": "Tous les travaux",
+    "clear": "Effacer",
+    "shiftTypes": {
+      "day": "Jour",
+      "afternoon": "Après-midi",
+      "night": "Nuit",
+      "saturday": "Samedi",
+      "sunday": "Dimanche",
+      "delivery": "Delivery",
+      "mixed": "Mixte",
+      "all": "Tous les types"
+    },
+    "shiftTypeLabel": "Type de quart",
+    "filteredBy": "Filtré par",
+    "activeFilters": "Filtres actifs",
+    "of": "de",
+    "clearAll": "Tout effacer",
+    "workLabel": "Travail",
+    "daysLabel": "Jours",
+    "allDays": "Tous",
+    "typeLabel": "Type",
+    "unknownWork": "Travail inconnu"
+  },
+  "footer": {
+    "version": "Version 3.0.1",
+    "developed": "Développé avec",
+    "by": "par Marqui",
+    "copyright": "© 2026 Orary. Tous droits réservés.",
+    "terms": "Conditions",
+    "privacy": "Confidentialité",
+    "about": "À propos"
   }
 }

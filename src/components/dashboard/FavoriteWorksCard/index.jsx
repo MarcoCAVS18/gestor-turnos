@@ -133,7 +133,7 @@ const FavoriteWorksCard = ({ favoriteWorks }) => {
                       {workInfo.work.name}
                     </p>
                     <p className="text-xs text-gray-500">
-                      {workInfo.shifts} {t('dashboard.favoriteWorks.shiftLabel')} • {workInfo.hours.toFixed(1)}h
+                      {workInfo.shifts} {t('common.shifts')} • {workInfo.hours.toFixed(1)}h
                     </p>
                   </div>
                 </Flex>
@@ -162,7 +162,7 @@ const FavoriteWorksCard = ({ favoriteWorks }) => {
       <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
         <Flex variant="between">
           <span className="text-sm text-gray-600 dark:text-gray-400">
-            {t('dashboard.favoriteWorks.totalLabel')} {favoriteWorks.length}
+            {t('dashboard.favoriteWorks.totalLabel', { count: favoriteWorks.length })}
           </span>
           <span className="text-base font-bold" style={{ color: colors.primary }}>
             {formatCurrency(favoriteWorks.reduce((sum, w) => sum + w.earnings, 0))}

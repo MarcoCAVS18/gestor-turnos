@@ -2,6 +2,7 @@
 // Modal to start a new Live Mode session - Styled like FeatureAnnouncementCard
 
 import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Play, Briefcase, AlertCircle, X, Timer, Sparkles, Crown, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +16,7 @@ import { generateColorVariations } from '../../../../utils/colorUtils';
 import { PREMIUM_COLORS } from '../../../../contexts/PremiumContext';
 
 const LiveModeStartModal = ({ isOpen, onClose }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -48,12 +50,12 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
 
   const handleStart = async () => {
     if (!selectedWorkId) {
-      setLocalError('Please select a work first');
+      setLocalError(t('modals.selectWorkFirst'));
       return;
     }
 
     if (isActive) {
-      setLocalError('There is already an active live session');
+      setLocalError(t('modals.activeSession'));
       return;
     }
 
@@ -120,14 +122,14 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
                 {/* Badge */}
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 border border-white/20 backdrop-blur-md text-white text-xs font-bold tracking-wide uppercase shadow-sm mb-4">
                   <Sparkles size={12} className="text-yellow-300" />
-                  <span>Live Mode</span>
+                  <span>{t('calendar.liveMode')}</span>
                 </div>
 
                 <h2 className="text-2xl font-bold text-white mb-2">
-                  Start Tracking
+                  {t('calendar.startTracking')}
                 </h2>
                 <p className="text-white/80 text-sm">
-                  Select your work and start tracking your shift in real-time
+                  {t('calendar.selectWorkDesc')}
                 </p>
               </div>
 
@@ -163,14 +165,14 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
             {/* Work selector */}
             <div className="space-y-3">
               <label className="block text-sm font-medium text-white/80">
-                Select Work
+                {t('calendar.selectWork')}
               </label>
 
               {regularWorks.length === 0 ? (
                 <div className="text-center py-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
                   <Briefcase size={40} className="mx-auto mb-3 text-white/50" />
-                  <p className="text-white/80">No works available</p>
-                  <p className="text-sm mt-1 text-white/60">Please create a work first</p>
+                  <p className="text-white/80">{t('calendar.noWorksAvailable')}</p>
+                  <p className="text-sm mt-1 text-white/60">{t('calendar.createWorkFirst')}</p>
                 </div>
               ) : (
                 <div className="grid gap-2 max-h-64 overflow-y-auto pr-1">
@@ -197,7 +199,7 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
                           <p className="font-medium text-white truncate">{work.name}</p>
                           {work.rates && (
                             <p className="text-sm text-white/60">
-                              ${work.rates.day}/hr
+                              ${work.rates.day}/{t('common.hours').toLowerCase()}
                             </p>
                           )}
                         </div>
@@ -237,23 +239,23 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
                 animate={{ opacity: 1, y: 0 }}
                 className="p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20"
               >
-                <p className="text-sm text-white/60 mb-3">Hourly rates:</p>
+                <p className="text-sm text-white/60 mb-3">{t('common.hourlyRate')}:</p>
                 <div className="grid grid-cols-3 gap-2">
                   {selectedWork.rates?.day && (
                     <div className="text-center p-2 bg-white/10 rounded-lg">
-                      <p className="text-xs text-white/60">Day</p>
+                      <p className="text-xs text-white/60">{t('common.day')}</p>
                       <p className="font-semibold text-white">${selectedWork.rates.day}</p>
                     </div>
                   )}
                   {selectedWork.rates?.afternoon && (
                     <div className="text-center p-2 bg-white/10 rounded-lg">
-                      <p className="text-xs text-white/60">Afternoon</p>
+                      <p className="text-xs text-white/60">{t('common.afternoon')}</p>
                       <p className="font-semibold text-white">${selectedWork.rates.afternoon}</p>
                     </div>
                   )}
                   {selectedWork.rates?.night && (
                     <div className="text-center p-2 bg-white/10 rounded-lg">
-                      <p className="text-xs text-white/60">Night</p>
+                      <p className="text-xs text-white/60">{t('common.night')}</p>
                       <p className="font-semibold text-white">${selectedWork.rates.night}</p>
                     </div>
                   )}
@@ -271,7 +273,7 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
                 <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
                   <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
                   <span className="text-sm text-white/80">
-                    <span className="font-semibold text-white">{remaining}</span> session{remaining !== 1 ? 's' : ''} remaining this month
+                    <span className="font-semibold text-white">{remaining}</span> {remaining === 1 ? t('calendar.sessionsRemaining') : t('calendar.sessionsRemaining_plural')}
                   </span>
                 </div>
                 <button
@@ -283,7 +285,7 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
                   style={{ backgroundColor: `${PREMIUM_COLORS.gold}25`, border: `1px solid ${PREMIUM_COLORS.gold}40`, color: 'white' }}
                 >
                   <Crown size={11} style={{ color: PREMIUM_COLORS.gold }} />
-                  15-day free trial — Start unlimited sessions
+                  {t('calendar.freeTrial')}
                 </button>
               </motion.div>
             )}
@@ -307,10 +309,10 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
                     <Crown size={20} className="text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-white">Monthly limit reached</p>
-                    <p className="text-sm text-white/80 mt-0.5">
-                      Start your <strong>15-day free trial</strong> for unlimited Live Mode sessions
-                    </p>
+                    <p className="font-semibold text-white">{t('calendar.monthlyLimit')}</p>
+                    <p className="text-sm text-white/80 mt-0.5"
+                      dangerouslySetInnerHTML={{ __html: t('calendar.startFreeTrial') }}
+                    />
                   </div>
                 </div>
                 <Button
@@ -323,7 +325,7 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
                   icon={ArrowRight}
                   iconPosition="right"
                 >
-                  Start Free Trial
+                  {t('calendar.startFreeTrialButton')}
                 </Button>
               </motion.div>
             )}
@@ -335,19 +337,19 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
                 onClick={handleClose}
                 className="flex-1 bg-white/20 hover:bg-white/30 text-white border-none"
               >
-                Cancel
+                {t('calendar.cancel')}
               </Button>
               <Button
                 variant="solid"
                 onClick={handleStart}
                 loading={loading}
-                loadingText="Starting..."
+                loadingText={t('calendar.starting')}
                 disabled={!selectedWorkId || isActive || loading || (!isPremium && remaining <= 0)}
                 className="flex-1 bg-white hover:bg-gray-50 font-semibold shadow-lg"
                 themeColor={colors.primary}
                 icon={Play}
               >
-                Start Live
+                {t('calendar.startLive')}
               </Button>
             </div>
           </div>

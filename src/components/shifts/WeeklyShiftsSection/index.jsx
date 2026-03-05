@@ -4,6 +4,7 @@
 // an animated body listing shifts grouped by day.
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import ShiftCard from '../../cards/shift/ShiftCard';
@@ -20,10 +21,11 @@ const WeeklyShiftsSection = ({
   isOpen,
   onToggle,
   allJobs,
-  onEditShift,
-  onDeleteShift,
+  onEdit,
+  onDelete,
   thematicColors,
 }) => {
+  const { t, i18n } = useTranslation();
   const dates = Object.keys(shifts || {}).sort((a, b) =>
     new Date(b) - new Date(a)
   );
@@ -79,16 +81,16 @@ const WeeklyShiftsSection = ({
                 className="text-[10px] font-bold px-2 py-0.5 rounded-full text-white"
                 style={{ backgroundColor: accent }}
               >
-                NOW
+                {t('calendar.now')}
               </span>
             )}
             {isFuture && !isCurrentWeek && (
               <span className="text-[10px] font-medium text-blue-500 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded-full">
-                Upcoming
+                {t('calendar.upcoming')}
               </span>
             )}
             <span className="text-xs text-gray-400 dark:text-gray-500">
-              {totalShifts} {totalShifts === 1 ? 'shift' : 'shifts'} · {totalHours.toFixed(1)}h
+              {totalShifts} {totalShifts === 1 ? t('common.shift') : t('common.shifts')} · {totalHours.toFixed(1)}h
             </span>
           </div>
         </div>
@@ -108,7 +110,8 @@ const WeeklyShiftsSection = ({
             <div className="border-t border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-800">
               {dates.map((date, idx) => {
                 const dateObj = createSafeDate(date);
-                const dayLabel = dateObj.toLocaleDateString('en-US', {
+                const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+                const dayLabel = dateObj.toLocaleDateString(locale, {
                   weekday: 'long',
                   day: 'numeric',
                   month: 'short',
@@ -137,8 +140,8 @@ const WeeklyShiftsSection = ({
                               key={shift.id}
                               shift={shift}
                               work={work}
-                              onEdit={onEditShift}
-                              onDelete={onDeleteShift}
+                              onEdit={onEdit}
+                              onDelete={onDelete}
                             />
                           );
                         }
@@ -147,8 +150,8 @@ const WeeklyShiftsSection = ({
                             key={shift.id}
                             shift={shift}
                             work={work}
-                            onEdit={onEditShift}
-                            onDelete={onDeleteShift}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
                           />
                         );
                       })}

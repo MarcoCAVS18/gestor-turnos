@@ -1,11 +1,13 @@
 // src/components/shifts/ShiftTypeBadge/index.jsx 
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useApp } from '../../../contexts/AppContext';
 import { TURN_TYPE_COLORS } from '../../../constants/colors';
 import { determineShiftType } from '../../../utils/shiftDetailsUtils';
 
 const ShiftTypeBadge = ({ shiftType, shift, size = 'sm' }) => {
+  const { t } = useTranslation();
   const { shiftRanges } = useApp();
   
   // Determine the type if the full shift is passed
@@ -13,15 +15,16 @@ const ShiftTypeBadge = ({ shiftType, shift, size = 'sm' }) => {
   
   // Direct mapping to color constants
   const getColorAndConfig = (shiftType) => {
+    // Use centralized filter shift type translations
     const labels = {
-      day: 'Day',
-      afternoon: 'Afternoon',
-      night: 'Night',
-      saturday: 'Saturday',
-      sunday: 'Sunday',
-      holiday: 'Holiday',
-      delivery: 'Delivery',
-      mixed: 'Mixed',
+      day: t('filters.shiftTypes.day'),
+      afternoon: t('filters.shiftTypes.afternoon'),
+      night: t('filters.shiftTypes.night'),
+      saturday: t('filters.shiftTypes.saturday'),
+      sunday: t('filters.shiftTypes.sunday'),
+      holiday: t('forms.work.rates.holiday'),
+      delivery: t('filters.shiftTypes.delivery'),
+      mixed: t('filters.shiftTypes.mixed'),
     };
 
     const specialColors = {
@@ -34,7 +37,7 @@ const ShiftTypeBadge = ({ shiftType, shift, size = 'sm' }) => {
 
     const color = specialColors[shiftType] || TURN_TYPE_COLORS[shiftType] || '#6B7280';
     const bgColor = specialBg[shiftType] || color + '20';
-    const label = labels[shiftType] || 'Mixed';
+    const label = labels[shiftType] || labels.mixed;
 
     return { color, bgColor, label };
   };
@@ -55,7 +58,7 @@ const ShiftTypeBadge = ({ shiftType, shift, size = 'sm' }) => {
         backgroundColor: typeConfig.bgColor,
         color: typeConfig.color
       }}
-      title={`Shift ${typeConfig.label}`}
+      title={`${t('forms.shift.shift')} ${typeConfig.label}`}
     >
       <span className="truncate">{typeConfig.label}</span>
       

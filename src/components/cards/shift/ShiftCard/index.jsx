@@ -1,6 +1,7 @@
 // src/components/cards/shift/ShiftCard/index.jsx 
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Coffee, PartyPopper, Calculator } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Badge from '../../../ui/Badge';
@@ -10,6 +11,7 @@ import Flex from '../../../ui/Flex';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 
 const ShiftCard = (props) => {
+  const { t } = useTranslation();
   const { shift, work } = props;
   const { calculatePayment, smokoEnabled, currencySymbol, defaultDiscount } = useApp();
   const colors = useThemeColors();
@@ -48,7 +50,7 @@ const ShiftCard = (props) => {
         const hours = hoursBreakdown[rateType] || 0;
         rateItems.push({
           type: rateType,
-          label: rateType.charAt(0).toUpperCase() + rateType.slice(1),
+          label: t(`shifts.rates.${rateType}`),
           hours: hours,
           rate: appliedRates[rateType],
           amount: breakdown[rateType]
@@ -63,7 +65,7 @@ const ShiftCard = (props) => {
       rateItems,
       final: shiftData.totalWithDiscount
     };
-  }, [shiftData, work, defaultDiscount]);
+  }, [shiftData, work, defaultDiscount, t]);
 
   return (
     <BaseShiftCard
@@ -72,7 +74,7 @@ const ShiftCard = (props) => {
       type="traditional"
       shiftData={shiftData}
       earningValue={shiftData.totalWithDiscount}
-      earningLabel={'Estimated Earnings'}
+      earningLabel={t('shifts.estimatedEarnings')}
       currencySymbol={currencySymbol}
     >
       {{
@@ -81,7 +83,7 @@ const ShiftCard = (props) => {
           <>
             {shiftData.isHoliday && (
               <Badge variant="danger" size="xs" icon={PartyPopper}>
-                Holiday
+                {t('shifts.holiday')}
               </Badge>
             )}
             {smokoEnabled && shiftData.smokoApplied && (
@@ -96,7 +98,7 @@ const ShiftCard = (props) => {
           <>
             {shiftData.isHoliday && (
               <Badge variant="danger" size="xs" icon={PartyPopper} rounded>
-                Holiday
+                {t('shifts.holiday')}
               </Badge>
             )}
             {smokoEnabled && shiftData.smokoApplied && (
@@ -112,7 +114,7 @@ const ShiftCard = (props) => {
             <div className="flex items-center gap-1 mb-2">
               <Calculator size={12} style={{ color: colors.primary }} />
               <span className="text-xs font-semibold" style={{ color: colors.text }}>
-                Calculation
+                {t('shifts.calculation')}
               </span>
             </div>
             <div className="space-y-1 text-xs">
@@ -120,7 +122,7 @@ const ShiftCard = (props) => {
               {calculationBreakdown.rateItems && calculationBreakdown.rateItems.map((item) => (
                 <Flex key={item.type} variant="between">
                   <span style={{ color: colors.textSecondary }}>
-                    {item.hours.toFixed(1)}h × {formatCurrency(item.rate, currencySymbol)}/hr ({item.label})
+                    {item.hours.toFixed(1)}h × {formatCurrency(item.rate, currencySymbol)}/{t('common.perHour')} ({item.label})
                   </span>
                   <span className="font-medium" style={{ color: colors.text }}>
                     {formatCurrency(item.amount, currencySymbol)}
@@ -132,7 +134,7 @@ const ShiftCard = (props) => {
               {calculationBreakdown.rateItems && calculationBreakdown.rateItems.length > 1 && (
                 <Flex variant="between" className="pt-1 border-t" style={{ borderColor: colors.border }}>
                   <span className="font-medium" style={{ color: colors.text }}>
-                    Subtotal
+                    {t('shifts.subtotal')}
                   </span>
                   <span className="font-medium" style={{ color: colors.text }}>
                     {formatCurrency(calculationBreakdown.baseCalc, currencySymbol)}
@@ -144,7 +146,7 @@ const ShiftCard = (props) => {
               {calculationBreakdown.discountPercent > 0 && (
                 <Flex variant="between">
                   <span style={{ color: colors.textSecondary }}>
-                    Discount ({calculationBreakdown.discountPercent}%)
+                    {t('shifts.discount')} ({calculationBreakdown.discountPercent}%)
                   </span>
                   <span className="font-medium" style={{ color: colors.error }}>
                     -{formatCurrency(calculationBreakdown.discountAmount, currencySymbol)}
@@ -155,7 +157,7 @@ const ShiftCard = (props) => {
               {/* Total */}
               <Flex variant="between" className="pt-1 border-t" style={{ borderColor: colors.border }}>
                 <span className="font-semibold" style={{ color: colors.text }}>
-                  Total
+                  {t('shifts.total')}
                 </span>
                 <span className="font-bold text-green-600">
                   {formatCurrency(calculationBreakdown.final, currencySymbol)}
@@ -170,7 +172,7 @@ const ShiftCard = (props) => {
             <div className="flex items-center gap-1.5 mb-2">
               <Calculator size={12} style={{ color: colors.primary }} />
               <span className="text-xs font-semibold" style={{ color: colors.text }}>
-                Calculation
+                {t('shifts.calculation')}
               </span>
             </div>
             <div className="space-y-1.5 text-xs">
@@ -178,7 +180,7 @@ const ShiftCard = (props) => {
               {calculationBreakdown.rateItems && calculationBreakdown.rateItems.map((item) => (
                 <Flex key={item.type} variant="between">
                   <span style={{ color: colors.textSecondary }}>
-                    {item.hours.toFixed(1)}h × {formatCurrency(item.rate, currencySymbol)}/hr ({item.label})
+                    {item.hours.toFixed(1)}h × {formatCurrency(item.rate, currencySymbol)}/{t('common.perHour')} ({item.label})
                   </span>
                   <span className="font-medium" style={{ color: colors.text }}>
                     {formatCurrency(item.amount, currencySymbol)}
@@ -190,7 +192,7 @@ const ShiftCard = (props) => {
               {calculationBreakdown.rateItems && calculationBreakdown.rateItems.length > 1 && (
                 <Flex variant="between" className="pt-1 border-t" style={{ borderColor: colors.border }}>
                   <span className="font-medium" style={{ color: colors.text }}>
-                    Subtotal
+                    {t('shifts.subtotal')}
                   </span>
                   <span className="font-medium" style={{ color: colors.text }}>
                     {formatCurrency(calculationBreakdown.baseCalc, currencySymbol)}
@@ -202,7 +204,7 @@ const ShiftCard = (props) => {
               {calculationBreakdown.discountPercent > 0 && (
                 <Flex variant="between">
                   <span style={{ color: colors.textSecondary }}>
-                    Discount ({calculationBreakdown.discountPercent}%)
+                    {t('shifts.discount')} ({calculationBreakdown.discountPercent}%)
                   </span>
                   <span className="font-medium" style={{ color: colors.error }}>
                     -{formatCurrency(calculationBreakdown.discountAmount, currencySymbol)}
@@ -213,7 +215,7 @@ const ShiftCard = (props) => {
               {/* Total */}
               <Flex variant="between" className="pt-1.5 border-t" style={{ borderColor: colors.border }}>
                 <span className="font-semibold" style={{ color: colors.text }}>
-                  Total
+                  {t('shifts.total')}
                 </span>
                 <span className="font-bold text-green-600">
                   {formatCurrency(calculationBreakdown.final, currencySymbol)}

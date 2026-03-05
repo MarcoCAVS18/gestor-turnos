@@ -1,14 +1,15 @@
 // src/components/cards/base/BaseShiftCard/index.jsx
 
 import React, { useRef, useState } from 'react';
-import { Edit, Edit2, Trash2, Clock, Calendar, Briefcase, Bike, ChevronDown, DollarSign, CircleDotDashed, Repeat } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Edit, Edit2, Trash2, Clock, Briefcase, Bike, ChevronDown, DollarSign, CircleDotDashed, Repeat } from 'lucide-react';
 import DeletedShiftCard from '../../shift/DeletedShiftCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import Card from '../../../ui/Card';
 import ShiftTypeBadge from '../../../shifts/ShiftTypeBadge';
 import Badge from '../../../ui/Badge';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
-import { formatRelativeDate } from '../../../../utils/time';
+
 import { formatCurrency } from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
 import WorkAvatar from '../../../work/WorkAvatar';
@@ -30,6 +31,7 @@ const BaseShiftCard = ({
   currencySymbol,
   children
 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const cardWrapperRef = useRef(null);
   const [showDetails, setShowDetails] = React.useState(false);
@@ -63,14 +65,14 @@ const BaseShiftCard = ({
       defaultColor: colors.primary,
       badgeIcon: Briefcase,
       badgeVariant: 'primary',
-      badgeLabel: 'Traditional'
+      badgeLabel: t('works.traditionalBadge')
     },
     delivery: {
       editIcon: Edit2,
       defaultColor: '#10B981',
       badgeIcon: Bike,
       badgeVariant: 'success',
-      badgeLabel: 'Delivery'
+      badgeLabel: t('works.deliveryBadge')
     }
   };
 
@@ -122,14 +124,14 @@ const BaseShiftCard = ({
       return {
         icon: CircleDotDashed,
         color: 'bg-red-500',
-        label: 'Created with Live Mode'
+        label: t('shifts.createdWithLiveMode')
       };
     }
     if (isBulkShift) {
       return {
         icon: Repeat,
         color: 'bg-blue-500',
-        label: 'Created with Bulk Creation'
+        label: t('shifts.createdWithBulk')
       };
     }
     return null;
@@ -229,7 +231,7 @@ const BaseShiftCard = ({
                 <div className="text-4xl font-black mb-1" style={{ color: avatarColor }}>
                   {shiftData?.hours?.toFixed(1) || '0.0'}
                 </div>
-                <div className="text-xs text-gray-500 uppercase tracking-wide">hours</div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">{t('common.hours')}</div>
               </div>
 
               {/* Divider */}
@@ -241,14 +243,14 @@ const BaseShiftCard = ({
                   <div className="text-2xl font-bold text-green-600 mb-1">
                     {formatCurrency(earningValue, currencySymbol)}
                   </div>
-                  <div className="text-xs text-gray-500 uppercase tracking-wide">earnings</div>
+                  <div className="text-xs text-gray-500 uppercase tracking-wide">{t('common.earnings')}</div>
                 </div>
               )}
             </div>
 
             {/* Bottom indicator */}
             <div className="mt-auto pt-3 border-t border-gray-100 flex flex-col items-center opacity-60 group-hover:opacity-100 transition-opacity">
-              <span className="text-[10px] text-gray-400 font-medium mb-0.5">View details</span>
+              <span className="text-[10px] text-gray-400 font-medium mb-0.5">{t('common.viewDetails')}</span>
               <ChevronDown size={12} className="text-gray-400 animate-bounce" />
             </div>
           </motion.div>
@@ -286,29 +288,20 @@ const BaseShiftCard = ({
             <div className="flex-grow overflow-y-auto space-y-2 pr-1">
               {/* Time & Schedule */}
               <Card variant="surface" padding="sm" className="space-y-1.5">
-                <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Schedule</div>
+                <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{t('shifts.schedule')}</div>
                 <Flex variant="between" className="text-xs">
                   <Flex variant="center" className="text-gray-600 dark:text-gray-400">
                     <Clock size={12} className="mr-1.5" style={{ color: avatarColor }} />
-                    <span>Time</span>
+                    <span>{t('common.time')}</span>
                   </Flex>
                   <span className="font-semibold dark:text-white">{shift.startTime} - {shift.endTime}</span>
                 </Flex>
                 <Flex variant="between" className="text-xs">
-                  <span className="text-gray-600 dark:text-gray-400">Duration</span>
+                  <span className="text-gray-600 dark:text-gray-400">{t('common.duration')}</span>
                   <span className="font-bold" style={{ color: avatarColor }}>
                     {shiftData?.hours?.toFixed(1) || '0.0'}h
                   </span>
                 </Flex>
-                {date && (
-                  <Flex variant="between" className="text-xs">
-                    <Flex variant="center" className="text-gray-600 dark:text-gray-400">
-                      <Calendar size={12} className="mr-1.5" />
-                      <span>Date</span>
-                    </Flex>
-                    <span className="font-medium dark:text-white">{formatRelativeDate(date)}</span>
-                  </Flex>
-                )}
                 {/* Shift type & badges */}
                 <div className="pt-1.5 border-t border-gray-100 dark:border-[rgba(255,255,255,0.08)]">
                   <Flex variant="start" className="gap-2 flex-wrap">
@@ -321,7 +314,7 @@ const BaseShiftCard = ({
               {/* Earnings Breakdown */}
               {earningValue !== undefined && (
                 <Card variant="surface" padding="sm">
-                  <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">Earnings</div>
+                  <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">{t('common.earnings')}</div>
                   <Flex variant="between" className="items-center mb-2">
                     <Flex variant="center">
                       <DollarSign size={14} className="text-green-500 mr-1" />
@@ -337,31 +330,31 @@ const BaseShiftCard = ({
                     <div className="space-y-1 pt-2 border-t border-gray-100 dark:border-[rgba(255,255,255,0.08)] text-xs">
                       {shiftData.baseAmount !== undefined && (
                         <Flex variant="between">
-                          <span className="text-gray-500 dark:text-gray-400">Base pay</span>
+                          <span className="text-gray-500 dark:text-gray-400">{t('shifts.basePay')}</span>
                           <span className="font-medium dark:text-white">{formatCurrency(shiftData.baseAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.nightAmount !== undefined && shiftData.nightAmount > 0 && (
                         <Flex variant="between">
-                          <span className="text-gray-500 dark:text-gray-400">Night bonus</span>
+                          <span className="text-gray-500 dark:text-gray-400">{t('shifts.nightBonus')}</span>
                           <span className="font-medium dark:text-white">{formatCurrency(shiftData.nightAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.saturdayAmount !== undefined && shiftData.saturdayAmount > 0 && (
                         <Flex variant="between">
-                          <span className="text-gray-500 dark:text-gray-400">Saturday bonus</span>
+                          <span className="text-gray-500 dark:text-gray-400">{t('shifts.saturdayBonus')}</span>
                           <span className="font-medium dark:text-white">{formatCurrency(shiftData.saturdayAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.sundayAmount !== undefined && shiftData.sundayAmount > 0 && (
                         <Flex variant="between">
-                          <span className="text-gray-500 dark:text-gray-400">Sunday bonus</span>
+                          <span className="text-gray-500 dark:text-gray-400">{t('shifts.sundayBonus')}</span>
                           <span className="font-medium dark:text-white">{formatCurrency(shiftData.sundayAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.holidayAmount !== undefined && shiftData.holidayAmount > 0 && (
                         <Flex variant="between">
-                          <span className="text-gray-500 dark:text-gray-400">Holiday bonus</span>
+                          <span className="text-gray-500 dark:text-gray-400">{t('shifts.holidayBonus')}</span>
                           <span className="font-medium dark:text-white">{formatCurrency(shiftData.holidayAmount, currencySymbol)}</span>
                         </Flex>
                       )}
@@ -374,7 +367,7 @@ const BaseShiftCard = ({
               {children?.desktopStats && (
                 <Card variant="surface" padding="sm">
                   <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1.5">
-                    {type === 'delivery' ? 'Delivery Info' : 'Additional Info'}
+                    {type === 'delivery' ? t('shifts.deliveryInfo') : t('shifts.additionalInfo')}
                   </div>
                   {children.desktopStats}
                 </Card>
@@ -383,7 +376,7 @@ const BaseShiftCard = ({
               {/* Notes */}
               {shift.notes && (
                 <Card variant="surface" padding="sm">
-                  <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">Notes</div>
+                  <div className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-1">{t('forms.shift.notes')}</div>
                   <p className="text-xs text-gray-700 dark:text-gray-300 italic leading-relaxed">{shift.notes}</p>
                 </Card>
               )}
@@ -399,7 +392,7 @@ const BaseShiftCard = ({
                     className="flex-1 flex items-center justify-center gap-1.5 p-2 bg-gray-50 dark:bg-[rgba(255,255,255,0.05)] border border-gray-200 dark:border-[rgba(255,255,255,0.08)] rounded-lg hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,0.08)] transition-colors text-xs font-medium text-gray-700 dark:text-gray-300"
                   >
                     <Edit size={12} />
-                    Edit
+                    {t('common.edit')}
                   </button>
                   <button
                     onClick={(e) => {
@@ -409,7 +402,7 @@ const BaseShiftCard = ({
                     className="flex-1 flex items-center justify-center gap-1.5 p-2 bg-gray-50 dark:bg-[rgba(255,255,255,0.05)] border border-red-200 dark:border-red-500/30 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors text-xs font-medium text-red-600 dark:text-red-400"
                   >
                     <Trash2 size={12} />
-                    Delete
+                    {t('common.delete')}
                   </button>
                 </div>
               )}

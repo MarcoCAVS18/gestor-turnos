@@ -1,6 +1,7 @@
 // src/components/stats/WeekNavigator/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../hooks/useIsMobile'; // Import hook
@@ -14,6 +15,7 @@ const WeekNavigator = ({
   weekEnd,
   variant = 'default', // 'default' or 'transparent'
 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const isMobile = useIsMobile(); // Use hook
 
@@ -28,18 +30,18 @@ const WeekNavigator = ({
   const validEndDate = end instanceof Date ? end : (end ? new Date(end) : new Date());
 
   const getWeekTitle = () => {
-    if (weekOffset === 0) return 'This week';
-    if (weekOffset === -1) return 'Last week';
-    if (weekOffset === 1) return 'Next week';
-    if (weekOffset > 1) return `In ${weekOffset} weeks`;
-    return `${Math.abs(weekOffset)} weeks ago`;
+    if (weekOffset === 0) return t('premium.weekNavigator.thisWeek');
+    if (weekOffset === -1) return t('premium.weekNavigator.lastWeek');
+    if (weekOffset === 1) return t('premium.weekNavigator.nextWeek');
+    if (weekOffset > 1) return t('premium.weekNavigator.inWeeks', { count: weekOffset });
+    return t('premium.weekNavigator.weeksAgo', { count: Math.abs(weekOffset) });
   };
 
   const formatDate = (date) => {
     try {
-      return date.toLocaleDateString('en-US', { day: 'numeric', month: 'long' });
+      return date.toLocaleDateString(t('common.locale', 'en-US'), { day: 'numeric', month: 'long' });
     } catch (error) {
-      return 'Invalid date';
+      return t('common.invalidDate', 'Invalid date');
     }
   };
 

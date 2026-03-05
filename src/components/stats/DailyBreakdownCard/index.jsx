@@ -1,6 +1,7 @@
 // src/components/stats/DailyBreakdownCard/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar, Clock, DollarSign } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
@@ -9,6 +10,7 @@ import { calculateShiftHours, calculateShiftEarnings } from '../../../utils/stat
 import Flex from '../../ui/Flex';
 
 const DailyBreakdownCard = ({ shiftsByDay = {}, works = [] }) => {
+  const { t, i18n } = useTranslation();
   const colors = useThemeColors();
 
   // Validate data
@@ -21,7 +23,8 @@ const DailyBreakdownCard = ({ shiftsByDay = {}, works = [] }) => {
   const formatDate = (date) => {
     try {
       const dateObj = new Date(date);
-      return dateObj.toLocaleDateString('en-US', {
+      const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+      return dateObj.toLocaleDateString(locale, {
         weekday: 'short',
         day: 'numeric',
         month: 'short'
@@ -33,11 +36,11 @@ const DailyBreakdownCard = ({ shiftsByDay = {}, works = [] }) => {
 
   return (
     <BaseStatsCard
-      title="Daily Breakdown"
+      title={t('stats.dailyBreakdown.title')}
       icon={Calendar}
       empty={isEmpty}
-      emptyMessage="No shifts registered this week"
-      emptyDescription="Shifts will appear here once you add some"
+      emptyMessage={t('stats.dailyBreakdown.empty')}
+      emptyDescription={t('stats.dailyBreakdown.emptyDesc')}
     >
       <div className="space-y-3">
         {Object.entries(data).map(([date, shifts]) => {
@@ -58,7 +61,7 @@ const DailyBreakdownCard = ({ shiftsByDay = {}, works = [] }) => {
                     {formatDate(date)}
                   </p>
                   <p className="text-sm text-gray-500">
-                    {shifts.length} shift{shifts.length !== 1 ? 's' : ''}
+                    {shifts.length} {shifts.length === 1 ? t('common.shift') : t('common.shifts')}
                   </p>
                 </div>
               </Flex>

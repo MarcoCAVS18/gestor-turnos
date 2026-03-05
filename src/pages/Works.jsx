@@ -99,7 +99,7 @@ const Works = () => {
   // Guarded edit: block if the work is in use by Live Mode
   const handleEditWork = (work) => {
     if (isLiveModeActive && liveWork?.id === work.id) {
-      setLiveModeError(`"${work.name}" is currently active in Live Mode. Stop the session to edit it.`);
+      setLiveModeError(t('works.liveModeActiveError', { workName: work.name }));
       return;
     }
     openEditModal(work);

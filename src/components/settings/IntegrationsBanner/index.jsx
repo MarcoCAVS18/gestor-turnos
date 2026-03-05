@@ -2,12 +2,14 @@
 
 import React, { useMemo } from 'react';
 import { ArrowRight, Share2, Puzzle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { generateColorVariations } from '../../../utils/colorUtils';
 import BaseAnnouncementCard from '../../cards/base/BaseAnnouncementCard';
 import Button from '../../ui/Button';
 
 const IntegrationsBanner = ({ className }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   const palette = useMemo(() => {
@@ -34,11 +36,11 @@ const IntegrationsBanner = ({ className }) => {
           <div className="flex items-center gap-2">
             <Puzzle size={20} className="text-white/80" />
             <h3 className="text-lg font-bold text-white">
-              Integrations
+              {t('settings.integrationsBanner.title')}
             </h3>
           </div>
           <p className="text-sm text-white/80 mt-1 pl-8">
-            Set up alerts, Google Calendar and more.
+            {t('settings.integrationsBanner.description')}
           </p>
         </div>
 
@@ -50,7 +52,7 @@ const IntegrationsBanner = ({ className }) => {
             textColor="white"
             className="hover:bg-white/10"
           >
-            Set up
+            {t('settings.integrationsBanner.button')}
           </Button>
         </div>
       </div>

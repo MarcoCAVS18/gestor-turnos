@@ -1,11 +1,13 @@
 // src/components/settings/FooterSection/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Crown, Info } from 'lucide-react';
 import { usePremium } from '../../../contexts/PremiumContext';
 
 const FooterSection = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { openPremiumModal } = usePremium();
 
@@ -28,7 +30,7 @@ const FooterSection = () => {
             onClick={() => navigate('/terms', { state: { from: 'Settings' } })}
             className="hover:text-gray-800 transition-colors cursor-pointer whitespace-nowrap"
           >
-            Terms
+            {t('footer.terms')}
           </button>
 
           <span className="text-gray-300">•</span>
@@ -37,7 +39,7 @@ const FooterSection = () => {
             onClick={() => navigate('/privacy', { state: { from: 'Settings' } })}
             className="hover:text-gray-800 transition-colors cursor-pointer whitespace-nowrap"
           >
-            Privacy
+            {t('footer.privacy')}
           </button>
 
           <span className="text-gray-300">•</span>
@@ -47,7 +49,7 @@ const FooterSection = () => {
             className="flex items-center gap-1 hover:text-gray-800 transition-colors cursor-pointer whitespace-nowrap"
           >
             <Info size={12} />
-            <span>About</span>
+            <span>{t('footer.about')}</span>
           </button>
         </div>
       </div>

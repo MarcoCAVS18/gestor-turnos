@@ -1,5 +1,6 @@
 // src/components/dashboard/ProjectionCard/index.jsx
 
+import { useTranslation } from 'react-i18next';
 import { BarChart3, Briefcase, Timer, ArrowRight, Check } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
@@ -9,6 +10,7 @@ import Flex from '../../ui/Flex';
 import { useNavigate } from 'react-router-dom';
 
 const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const { calculateMonthlyStats, works, deliveryWork } = useApp();
   const navigate = useNavigate();
@@ -31,8 +33,8 @@ const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
                   </div>
                   <Briefcase size={16} className="text-green-600" />
                 </div>
-                <p className="text-sm font-medium text-green-700">Works added</p>
-                <p className="text-xs text-green-600 mt-1">Step completed</p>
+                <p className="text-sm font-medium text-green-700">{t('dashboard.projection.worksAdded')}</p>
+                <p className="text-xs text-green-600 mt-1">{t('dashboard.projection.stepCompleted')}</p>
               </div>
             ) : (
               // Step 1 active
@@ -49,8 +51,8 @@ const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
                   </div>
                   <Briefcase size={16} className="text-gray-400 group-hover:text-gray-600" />
                 </div>
-                <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Add your works</p>
-                <p className="text-xs text-gray-500 mt-1">This unlocks Shifts page</p>
+                <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{t('dashboard.projection.addWorks')}</p>
+                <p className="text-xs text-gray-500 mt-1">{t('dashboard.projection.unlocksShifts')}</p>
                 <ArrowRight size={14} className="text-gray-300 mt-2 group-hover:text-gray-500 group-hover:translate-x-1 transition-all" />
               </button>
             )}
@@ -72,8 +74,8 @@ const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
                   </div>
                   <Timer size={16} style={{ color: colors.primary }} />
                 </div>
-                <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Track your shifts</p>
-                <p className="text-xs text-gray-500 mt-1">Add manually or use Live Mode</p>
+                <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">{t('dashboard.projection.trackShifts')}</p>
+                <p className="text-xs text-gray-500 mt-1">{t('dashboard.projection.addOrLive')}</p>
                 <ArrowRight size={14} className="mt-2 group-hover:translate-x-1 transition-all" style={{ color: colors.primary }} />
               </button>
             ) : (
@@ -85,8 +87,8 @@ const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
                   </div>
                   <Timer size={16} className="text-gray-400" />
                 </div>
-                <p className="text-sm font-medium text-gray-500">Track your shifts</p>
-                <p className="text-xs text-gray-400 mt-1">Add manually or use Live Mode</p>
+                <p className="text-sm font-medium text-gray-500">{t('dashboard.projection.trackShifts')}</p>
+                <p className="text-xs text-gray-400 mt-1">{t('dashboard.projection.addOrLive')}</p>
               </div>
             )}
           </div>
@@ -99,18 +101,18 @@ const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
 
     const getComparisonText = () => {
       if (previousMonthStats.shiftsCount === 0) {
-        return 'Your first recorded month';
+        return t('dashboard.projection.firstMonth');
       }
 
       const diff = monthlyProjection - previousMonthStats.totalEarnings;
       const percent = ((diff / previousMonthStats.totalEarnings) * 100).toFixed(1);
 
       if (diff > 0) {
-        return `${formatCurrency(Math.abs(diff))} more than last month (+${percent}%)`;
+        return t('dashboard.projection.moreThanLast', { amount: formatCurrency(Math.abs(diff)), percent });
       } else if (diff < 0) {
-        return `${formatCurrency(Math.abs(diff))} less than last month (-${Math.abs(percent)}%)`;
+        return t('dashboard.projection.lessThanLast', { amount: formatCurrency(Math.abs(diff)), percent: Math.abs(percent) });
       } else {
-        return 'Same as last month';
+        return t('dashboard.projection.sameAsLast');
       }
     };
 
@@ -119,7 +121,7 @@ const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
         {/* Left text */}
         <div className="flex-1">
           <p className="text-sm text-gray-600 mb-1">
-            If you keep this pace throughout the month
+            {t('dashboard.projection.keepPace')}
           </p>
           <p className="text-xs text-gray-500">
             {getComparisonText()}
@@ -135,7 +137,7 @@ const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
             {formatCurrency(monthlyProjection)}
           </p>
           <p className="text-sm text-gray-500">
-            ~{((hoursWorked || 0) * 4.33).toFixed(0)} hours
+            ~{((hoursWorked || 0) * 4.33).toFixed(0)} {t('common.hours').toLowerCase()}
           </p>
         </div>
       </Flex>
@@ -147,7 +149,7 @@ const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
       {/* Header */}
       <div className="flex items-center mb-4">
         <BarChart3 size={20} style={{ color: colors.primary }} className="mr-2" />
-        <h3 className="text-lg font-semibold">Monthly projection</h3>
+        <h3 className="text-lg font-semibold">{t('dashboard.projection.title')}</h3>
       </div>
       
       {/* Content */}

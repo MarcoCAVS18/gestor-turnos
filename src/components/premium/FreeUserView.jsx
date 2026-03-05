@@ -1,6 +1,7 @@
 // src/components/premium/FreeUserView.jsx
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Crown, CreditCard } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
@@ -17,6 +18,7 @@ import PaymentForm from './PaymentForm';
 import SecurityCard from './SecurityCard';
 
 const FreeUserView = ({ onPaymentSuccess, onProcessingStart, onPaymentError }) => {
+  const { t } = useTranslation();
   const { currentUser, profilePhotoURL } = useAuth();
   const { holidayCountry } = useApp();
   const isMobile = useIsMobile();
@@ -32,7 +34,7 @@ const FreeUserView = ({ onPaymentSuccess, onProcessingStart, onPaymentError }) =
     <Card className="p-6 h-full">
       <div className="flex items-center gap-3 mb-6">
         <CreditCard size={24} style={{ color: PREMIUM_COLORS.primary }} />
-        <h2 className="text-lg font-semibold text-gray-900">Payment Details</h2>
+        <h2 className="text-lg font-semibold text-gray-900">{t('premium.paymentDetails')}</h2>
       </div>
       <PaymentForm onSuccess={onPaymentSuccess} onProcessingStart={onProcessingStart} onPaymentError={onPaymentError} />
     </Card>
@@ -41,8 +43,8 @@ const FreeUserView = ({ onPaymentSuccess, onProcessingStart, onPaymentError }) =
   return (
     <div className="px-4 py-6 space-y-6">
       <PageHeader
-        title="Premium"
-        subtitle="Unlock unlimited access to all features"
+        title={t('premium.title')}
+        subtitle={t('premium.unlockFeatures')}
         icon={Crown}
       />
 

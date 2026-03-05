@@ -1,6 +1,7 @@
 // src/contexts/StatsContext.jsx
 
 import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDataContext } from './DataContext';
 import { useDeliveryContext } from './DeliveryContext';
 import { useConfigContext } from './ConfigContext';
@@ -14,6 +15,7 @@ export const useStats = () => {
 };
 
 export const StatsProvider = ({ children }) => {
+  const { t } = useTranslation();
   // Hooks from data and configuration contexts
   const { works, shifts, loading: dataLoading } = useDataContext();
   const { deliveryWork, deliveryShifts, loading: deliveryLoading } = useDeliveryContext();
@@ -92,7 +94,12 @@ export const StatsProvider = ({ children }) => {
 
   // NEW: Calculate data for weekly evolution chart
   const weeklyEvolutionData = useMemo(() => {
-    const weekNames = ['This week', 'Last week', '2 weeks ago', '3 weeks ago'];
+    const weekNames = [
+      t('premium.weekNavigator.thisWeek'),
+      t('premium.weekNavigator.lastWeek'),
+      t('premium.weekNavigator.weeksAgo', { count: 2 }),
+      t('premium.weekNavigator.weeksAgo', { count: 3 })
+    ];
     return [0, -1, -2, -3].map((offset, index) => {
       const stats = calculationService.calculateWeeklyStats({
         shifts,
@@ -107,7 +114,7 @@ export const StatsProvider = ({ children }) => {
         earnings: stats.totalEarned || 0
       };
     }).reverse(); // Reverse to have the oldest week first
-  }, [shifts, deliveryShifts, allWork, calculatePayment, shiftRanges]);
+  }, [shifts, deliveryShifts, allWork, calculatePayment, shiftRanges, t]);
 
 
   // Memoized `shiftsByDate` (existing logic)

@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import { ArrowLeft, ChevronDown, Store, Bike } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import Card from '../../ui/Card';
 
 const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, type }) => {
+  const { t } = useTranslation();
   const [showDetails, setShowDetails] = useState(false);
 
   const variants = {
@@ -53,7 +55,7 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, typ
 
             {/* "View more" stuck to bottom */}
             <div className="mt-auto pt-1 flex flex-col items-center opacity-60 group-hover:opacity-100 transition-opacity">
-               <span className="text-[9px] md:text-[10px] text-gray-400 font-medium mb-0.5">View more</span>
+               <span className="text-[9px] md:text-[10px] text-gray-400 font-medium mb-0.5">{t('dashboard.quickStats.viewMore')}</span>
                <ChevronDown size={12} className="text-gray-400 animate-bounce md:w-[14px] md:h-[14px]" />
             </div>
           </motion.div>
@@ -69,7 +71,7 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, typ
             className="absolute inset-0 bg-gray-50 flex flex-col p-2 md:p-4 text-center"
           >
             <div className="flex items-center justify-between mb-2 pb-1 md:pb-2 border-b border-gray-200/50 shrink-0">
-              <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider w-full text-center pl-4">Details</span>
+              <span className="text-[10px] font-bold uppercase text-gray-400 tracking-wider w-full text-center pl-4">{t('dashboard.quickStats.details')}</span>
               <ArrowLeft size={14} className="text-gray-400 absolute left-2 md:left-4 cursor-pointer hover:text-gray-600 md:w-[16px] md:h-[16px]" />
             </div>
 
@@ -80,7 +82,7 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, typ
                   <div className="w-full flex items-center justify-between bg-white p-1.5 md:p-2 rounded-lg shadow-sm border border-gray-100">
                     <div className="flex items-center gap-1.5 md:gap-2">
                       <Store className="w-3 h-3 md:w-[14px] md:h-[14px] text-blue-500" />
-                      <span className="text-[10px] md:text-xs text-gray-600 font-medium">Traditional</span>
+                      <span className="text-[10px] md:text-xs text-gray-600 font-medium">{t('dashboard.quickStats.traditional')}</span>
                     </div>
                     <span className="text-xs md:text-sm font-bold text-gray-800">{details?.traditional || 0}</span>
                   </div>
@@ -88,7 +90,7 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, typ
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-1.5 md:gap-2">
                         <Bike className="w-3 h-3 md:w-[14px] md:h-[14px] text-orange-500" />
-                        <span className="text-[10px] md:text-xs text-gray-600 font-medium">Delivery</span>
+                        <span className="text-[10px] md:text-xs text-gray-600 font-medium">{t('dashboard.quickStats.delivery')}</span>
                       </div>
                       <span className="text-xs md:text-sm font-bold text-gray-800">{details?.delivery || 0}</span>
                     </div>
@@ -117,7 +119,7 @@ const QuickStatCard = ({ icon: Icon, label, value, subtitle, details, color, typ
                   </div>
                 ))
               ) : (
-                <div className="text-gray-400 text-xs">No data available</div>
+                <div className="text-gray-400 text-xs">{t('dashboard.quickStats.noData')}</div>
               )}
             </div>
           </motion.div>

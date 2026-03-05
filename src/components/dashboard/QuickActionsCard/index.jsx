@@ -1,12 +1,14 @@
 // src/components/dashboard/QuickActionsCard/index.jsx
 
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Plus, Briefcase, Zap, Timer } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 
 const QuickActionsCard = ({ className, onOpenLiveMode }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const navigate = useNavigate();
 
@@ -14,7 +16,7 @@ const QuickActionsCard = ({ className, onOpenLiveMode }) => {
     <Card className={`${className} flex flex-col`}>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
         <Zap size={20} style={{ color: colors.primary }} className="mr-2" />
-        Quick actions
+        {t('dashboard.quickActions.title')}
       </h3>
       <div className="grid grid-cols-2 gap-2 flex-grow items-center">
         <Button
@@ -24,7 +26,7 @@ const QuickActionsCard = ({ className, onOpenLiveMode }) => {
           icon={Plus}
           themeColor={colors.primary}
         >
-          New shift
+          {t('dashboard.quickActions.newShift')}
         </Button>
         <Button
           onClick={() => navigate('/works')}
@@ -33,7 +35,7 @@ const QuickActionsCard = ({ className, onOpenLiveMode }) => {
           icon={Briefcase}
           themeColor={colors.primary}
         >
-          New work
+          {t('dashboard.quickActions.newWork')}
         </Button>
         <Button
           onClick={onOpenLiveMode}
@@ -42,7 +44,7 @@ const QuickActionsCard = ({ className, onOpenLiveMode }) => {
           icon={Timer}
           themeColor={colors.primary}
         >
-          Live Mode
+          {t('common.liveMode')}
         </Button>
       </div>
     </Card>

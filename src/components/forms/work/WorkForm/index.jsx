@@ -1,6 +1,7 @@
 // src/components/forms/work/WorkForm/index.jsx
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Briefcase, DollarSign, Palette, FileText, Clock, Check, ExternalLink, Calendar } from 'lucide-react';
 import { useFormValidation } from '../../../../hooks/useFormValidation';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
@@ -16,6 +17,7 @@ const WorkForm = ({
   onSubmit,
   isMobile
 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const { holidayCountry } = useConfigContext();
   const isAustraliaMode = holidayCountry === 'AU';
@@ -134,6 +136,16 @@ const WorkForm = ({
     onSubmit(completeData);
   };
 
+  // Rate type labels with translation
+  const rateTypes = [
+    { key: 'day', label: t('stats.deliveryHourlyAnalysis.insights.periods.morning').split(' ')[0] },
+    { key: 'afternoon', label: t('stats.deliveryHourlyAnalysis.insights.periods.afternoon').split(' ')[0] },
+    { key: 'night', label: t('forms.work.rates.night') },
+    { key: 'saturday', label: t('forms.work.rates.saturday') },
+    { key: 'sunday', label: t('forms.work.rates.sunday') },
+    { key: 'holidays', label: t('forms.work.rates.holiday') }
+  ];
+
   return (
     <BaseForm
       id={id}
@@ -142,7 +154,7 @@ const WorkForm = ({
     >
       {/* Company Name */}
       <FormSection>
-        <FormLabel icon={Briefcase}>Company Name *</FormLabel>
+        <FormLabel icon={Briefcase}>{t('forms.work.companyName')} *</FormLabel>
         <ThemeInput
           type="text"
           value={formData.name}
@@ -152,7 +164,7 @@ const WorkForm = ({
             ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
             ${errors.name ? 'border-red-500' : 'border-gray-300'}
           `}
-          placeholder="e.g., Tech Company Inc."
+          placeholder={t('forms.work.namePlaceholder')}
           required
         />
         <FormError error={errors.name} size="sm" />
@@ -160,7 +172,7 @@ const WorkForm = ({
 
       {/* Color */}
       <FormSection>
-        <FormLabel icon={Palette}>Work Color</FormLabel>
+        <FormLabel icon={Palette}>{t('forms.work.workColor')}</FormLabel>
         <div className="space-y-3">
           <div className={`flex flex-wrap ${isMobile ? 'gap-3' : 'gap-2'}`}>
             {PREDEFINED_COLORS.map(color => (
@@ -188,14 +200,14 @@ const WorkForm = ({
               onChange={(e) => handleInputChange('color', e.target.value)}
               className={`border border-gray-300 rounded cursor-pointer ${isMobile ? 'w-20 h-10' : 'w-16 h-8'}`}
             />
-            <span className="text-sm text-gray-500">or choose a custom color</span>
+            <span className="text-sm text-gray-500">{t('forms.work.customColor')}</span>
           </div>
         </div>
       </FormSection>
 
       {/* Base rate */}
       <FormSection>
-        <FormLabel icon={DollarSign}>Base hourly rate *</FormLabel>
+        <FormLabel icon={DollarSign}>{t('forms.work.baseHourlyRate')} *</FormLabel>
         <ThemeInput
           type="text"
           inputMode="decimal"
@@ -206,7 +218,7 @@ const WorkForm = ({
             ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
             ${errors.baseRate ? 'border-red-500' : 'border-gray-300'}
           `}
-          placeholder="15.00"
+          placeholder={t('forms.work.baseRatePlaceholder')}
           required
         />
         <FormError error={errors.baseRate} size="sm" />
@@ -215,36 +227,29 @@ const WorkForm = ({
       {/* Specific rates */}
       <FormSection>
         <FormLabel icon={Clock}>
-          Rates by shift type *
+          {t('forms.work.ratesByShiftType')} *
         </FormLabel>
         <FormGrid columns={2}>
-          {Object.entries({
-            day: 'Day',
-            afternoon: 'Afternoon',
-            night: 'Night',
-            saturday: 'Saturday',
-            sunday: 'Sunday',
-            holidays: 'Holidays'
-          }).map(([type, label]) => (
-            <div key={type}>
+          {rateTypes.map(({ key, label }) => (
+            <div key={key}>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {label}
               </label>
               <ThemeInput
                 type="text"
                 inputMode="decimal"
-                value={formData.rates[type]}
-                onChange={(e) => handleRateChange(type, e.target.value)}
+                value={formData.rates[key]}
+                onChange={(e) => handleRateChange(key, e.target.value)}
                 className={`
                   w-full border rounded-lg transition-colors
                   ${isMobile ? 'p-3 text-base' : 'px-3 py-2 text-sm'}
-                  ${errors[`rates.${type}`] ? 'border-red-500' : 'border-gray-300'}
+                  ${errors[`rates.${key}`] ? 'border-red-500' : 'border-gray-300'}
                 `}
-                placeholder="0.00"
+                placeholder={t('forms.work.baseRatePlaceholder')}
                 required
               />
-              {errors[`rates.${type}`] && (
-                <p className="mt-1 text-xs text-red-600">{errors[`rates.${type}`]}</p>
+              {errors[`rates.${key}`] && (
+                <p className="mt-1 text-xs text-red-600">{errors[`rates.${key}`]}</p>
               )}
             </div>
           ))}
@@ -253,11 +258,11 @@ const WorkForm = ({
 
       {/* Description */}
       <FormSection>
-        <FormLabel icon={FileText}>Description (optional)</FormLabel>
+        <FormLabel icon={FileText}>{t('forms.work.descriptionOptional')}</FormLabel>
         <textarea
           value={formData.description}
           onChange={(e) => handleInputChange('description', e.target.value)}
-          placeholder="Additional details about this job..."
+          placeholder={t('forms.work.descriptionPlaceholder')}
           rows={isMobile ? 4 : 3}
           className={`
             w-full border border-gray-300 rounded-lg transition-colors resize-none
@@ -272,7 +277,7 @@ const WorkForm = ({
       {/* Working Holiday Visa — only visible in Australia mode */}
       {isAustraliaMode && (
         <FormSection>
-          <FormLabel icon={Calendar}>Working Holiday Visa (88 days)</FormLabel>
+          <FormLabel icon={Calendar}>{t('australia88.formLabel')}</FormLabel>
 
           {/* Selectable card */}
           <button
@@ -306,23 +311,23 @@ const WorkForm = ({
               {/* Text */}
               <div className="flex-1 min-w-0">
                 <p className={`font-medium text-gray-800 dark:text-gray-100 ${isMobile ? 'text-base' : 'text-sm'}`}>
-                  Qualifies for Working Holiday Visa extension
+                  {t('australia88.qualifiesDescription')}
                 </p>
                 <p className={`text-gray-500 dark:text-gray-400 mt-0.5 ${isMobile ? 'text-sm' : 'text-xs'}`}>
-                  Work in regional or critical areas of Australia
+                  {t('australia88.regionalWork')}
                 </p>
               </div>
 
               {/* AU flag pill */}
               <span className="flex-shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                🇦🇺 88 days
+                🇦🇺 88 {t('australia88.daysUnit')}
               </span>
             </div>
           </button>
 
           {/* Home Affairs link */}
           <p className={`mt-2 text-gray-500 dark:text-gray-400 ${isMobile ? 'text-sm' : 'text-xs'}`}>
-            Not sure if your work qualifies?{' '}
+            {t('australia88.notSure')}{' '}
             <a
               href="https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/work-holiday-417/specified-work"
               target="_blank"
@@ -331,7 +336,7 @@ const WorkForm = ({
               style={{ color: colors.primary }}
               onClick={(e) => e.stopPropagation()}
             >
-              Check on Home Affairs
+              {t('australia88.checkHomeAffairs')}
               <ExternalLink size={11} />
             </a>
           </p>

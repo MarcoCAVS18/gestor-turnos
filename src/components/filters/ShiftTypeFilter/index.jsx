@@ -1,23 +1,25 @@
 // src/components/filters/ShiftTypeFilter/index.jsx 
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Clock } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { getAvailableShiftTypes } from '../../../utils/shiftTypesConfig';
 
 const ShiftTypeFilter = ({ value, onChange }) => {
+  const { t } = useTranslation();
   const { shiftsByDate, shiftRanges } = useApp();
   const colors = useThemeColors();
   
   // Get available shift types dynamically
-  const shiftTypes = getAvailableShiftTypes(shiftsByDate, shiftRanges, { base: colors.primary });
+  const shiftTypes = getAvailableShiftTypes(shiftsByDate, shiftRanges, { base: colors.primary }, t);
 
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">
         <Clock size={16} className="inline mr-2" />
-        Shift type
+        {t('filters.shiftTypeLabel', 'Shift type')}
       </label>
       
       <div className="space-y-2">
@@ -63,7 +65,7 @@ const ShiftTypeFilter = ({ value, onChange }) => {
       {value !== 'all' && (
         <div className="mt-2 text-xs text-gray-600">
           <Clock size={12} className="inline mr-1" />
-          Filtered by: {shiftTypes.find(t => t.id === value)?.label}
+          {t('filters.filteredBy', 'Filtered by')}: {shiftTypes.find(st => st.id === value)?.label}
         </div>
       )}
     </div>

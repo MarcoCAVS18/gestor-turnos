@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, AlertTriangle, Mail } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import {
   deleteUser,
   reauthenticateWithCredential,
@@ -22,6 +23,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { usePremium } from '../../contexts/PremiumContext';
 
 const DeleteAccount = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { isPremium, cancelSubscription } = usePremium();
@@ -35,7 +37,7 @@ const DeleteAccount = () => {
     e.preventDefault();
 
     if (!currentUser) {
-      setError('No user logged in');
+      setError(t('deleteAccount.errors.noUser'));
       return;
     }
 
@@ -86,7 +88,7 @@ const DeleteAccount = () => {
       setTimeout(() => {
         navigate('/login', {
           state: {
-            message: 'Your account has been deleted successfully. We hope to see you again!'
+            message: t('deleteAccount.success.redirectMessage')
           }
         });
       }, 3000);
@@ -94,28 +96,28 @@ const DeleteAccount = () => {
     } catch (err) {
       // Handle re-authentication errors
       if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
-        setReAuthError('Incorrect password. Please try again.');
+        setReAuthError(t('deleteAccount.errors.wrongPassword'));
         setDeleting(false);
         return;
       }
       if (err.code === 'auth/popup-closed-by-user') {
-        setReAuthError('Google sign-in was cancelled. Please try again.');
+        setReAuthError(t('deleteAccount.errors.popupClosed'));
         setDeleting(false);
         return;
       }
       if (err.code === 'auth/popup-blocked') {
-        setReAuthError('Popup was blocked. Please allow popups and try again.');
+        setReAuthError(t('deleteAccount.errors.popupBlocked'));
         setDeleting(false);
         return;
       }
       if (err.code === 'auth/requires-recent-login') {
-        setReAuthError('Session expired. Please try again.');
+        setReAuthError(t('deleteAccount.errors.sessionExpired'));
         setDeleting(false);
         return;
       }
 
       // Handle other errors
-      setError(err.message || 'Failed to delete account. Please try again or contact support.');
+      setError(err.message || t('deleteAccount.errors.generic'));
       setDeleting(false);
     }
   };
@@ -126,8 +128,8 @@ const DeleteAccount = () => {
 
       <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">Account Deletion</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400">We are sorry to see you go.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">{t('deleteAccount.title')}</h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{t('deleteAccount.subtitle')}</p>
         </div>
         <img
           src="/assets/SVG/logo.svg"
@@ -150,41 +152,37 @@ const DeleteAccount = () => {
               className="w-full h-full"
             />
           </div>
-          <h3 className="text-xl font-semibold text-green-800 dark:text-green-300 mb-2">Account Deleted</h3>
+          <h3 className="text-xl font-semibold text-green-800 dark:text-green-300 mb-2">{t('deleteAccount.success.title')}</h3>
           <p className="text-green-700 dark:text-green-400 mb-4">
-            Your account has been permanently deleted.
+            {t('deleteAccount.success.description')}
           </p>
           <p className="text-sm text-green-600 dark:text-green-500">
-            Thank you for using Orary. We hope to see you again!
+            {t('deleteAccount.success.farewell')}
           </p>
         </motion.div>
       ) : (
         <>
           <div className="prose prose-lg text-gray-700 dark:text-gray-300 dark:prose-invert max-w-none">
-            <p className="text-lg leading-relaxed">
-              If you wish to permanently delete your <strong>Orary</strong> account and all associated data, you can do so below. Please be aware that this action is <strong className="text-red-600 dark:text-red-400">irreversible</strong>.
-            </p>
+            <p className="text-lg leading-relaxed" dangerouslySetInnerHTML={{ __html: t('deleteAccount.intro') }} />
 
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">What Will Be Deleted</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">{t('deleteAccount.whatWillBeDeleted.title')}</h2>
             <ul className="list-disc pl-5 space-y-2 mt-2">
-              <li>Your <strong>account</strong> and login credentials</li>
-              <li>All your registered <strong>works</strong> (jobs and delivery platforms)</li>
-              <li>All your recorded <strong>shifts</strong> and their associated data</li>
-              <li>All your <strong>earnings history</strong> and statistics</li>
-              <li>Your <strong>profile</strong> and all personal information</li>
+              <li dangerouslySetInnerHTML={{ __html: t('deleteAccount.whatWillBeDeleted.account') }} />
+              <li dangerouslySetInnerHTML={{ __html: t('deleteAccount.whatWillBeDeleted.works') }} />
+              <li dangerouslySetInnerHTML={{ __html: t('deleteAccount.whatWillBeDeleted.shifts') }} />
+              <li dangerouslySetInnerHTML={{ __html: t('deleteAccount.whatWillBeDeleted.earnings') }} />
+              <li dangerouslySetInnerHTML={{ __html: t('deleteAccount.whatWillBeDeleted.profile') }} />
               {isPremium && (
-                <li>Your <strong>Premium subscription</strong> will be cancelled</li>
+                <li dangerouslySetInnerHTML={{ __html: t('deleteAccount.whatWillBeDeleted.premium') }} />
               )}
             </ul>
 
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mt-6">
               <p className="text-red-800 dark:text-red-300 font-semibold flex items-center gap-2">
                 <AlertTriangle size={18} />
-                Permanent Deletion Warning
+                {t('deleteAccount.warning.title')}
               </p>
-              <p className="text-red-700 dark:text-red-400 mt-1">
-                This action <strong>cannot be undone</strong>. Once you delete your account, all your data will be permanently erased from our servers and cannot be recovered under any circumstances.
-              </p>
+              <p className="text-red-700 dark:text-red-400 mt-1" dangerouslySetInnerHTML={{ __html: t('deleteAccount.warning.description') }} />
             </div>
 
             {error && (
@@ -204,23 +202,23 @@ const DeleteAccount = () => {
               bgColor="#EF4444"
               textColor="white"
             >
-              Delete My Account
+              {t('deleteAccount.deleteButton')}
             </Button>
 
             {/* Alternative: Email deletion */}
             <div className="bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
               <p className="text-gray-700 dark:text-gray-300 font-medium flex items-center gap-2 mb-2">
                 <Mail size={18} />
-                Prefer to request deletion by email?
+                {t('deleteAccount.emailAlternative.title')}
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                If you prefer, you can also request account deletion by sending an email to:
+                {t('deleteAccount.emailAlternative.description')}
               </p>
               <div className="bg-white dark:bg-gray-900 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
                 <p className="font-mono text-pink-700 dark:text-pink-400 font-bold">support@orary.app</p>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                Send the email from your registered Orary account address — the same email you use to log in. Include your display name for verification. Deletion will be processed within 30 days.
+                {t('deleteAccount.emailAlternative.note')}
               </p>
             </div>
           </div>

@@ -2,6 +2,7 @@
 // Modal to confirm finishing a Live Mode session - Styled like FeatureAnnouncementCard
 
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle, Clock, DollarSign, Briefcase, AlertCircle, X, Timer, Coffee } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Button from '../../../ui/Button';
@@ -18,13 +19,14 @@ const LiveModeFinishConfirmModal = ({
   loading = false,
   sessionData = {},
 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
   const isMobile = useIsMobile();
 
   const {
     time = '00:00:00',
     earnings = '$0.00',
-    workName = 'Work',
+    workName = t('common.work'),
     shouldOfferSmoko = false,
     smokoMinutes = 30,
   } = sessionData;
@@ -98,10 +100,10 @@ const LiveModeFinishConfirmModal = ({
             </motion.div>
 
             <h2 className="text-xl font-bold text-white mb-2">
-              Finish Live Shift?
+              {t('shifts.finishLiveShift')}
             </h2>
             <p className="text-white/70 text-sm">
-              Your shift will be saved with these details
+              {t('shifts.finishShiftDesc')}
             </p>
           </div>
 
@@ -114,7 +116,7 @@ const LiveModeFinishConfirmModal = ({
                   <Briefcase size={18} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-xs text-white/60">Work</p>
+                  <p className="text-xs text-white/60">{t('common.work')}</p>
                   <p className="font-medium text-white">{workName}</p>
                 </div>
               </div>
@@ -125,7 +127,7 @@ const LiveModeFinishConfirmModal = ({
                   <Clock size={18} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-xs text-white/60">Duration</p>
+                  <p className="text-xs text-white/60">{t('common.duration')}</p>
                   <p className="font-medium text-white font-mono">{time}</p>
                 </div>
               </div>
@@ -136,7 +138,7 @@ const LiveModeFinishConfirmModal = ({
                   <DollarSign size={18} className="text-white" />
                 </div>
                 <div>
-                  <p className="text-xs text-white/60">Estimated Earnings</p>
+                  <p className="text-xs text-white/60">{t('shifts.estimatedEarnings')}</p>
                   <p className="font-bold text-lg text-white">{earnings}</p>
                 </div>
               </div>
@@ -155,9 +157,9 @@ const LiveModeFinishConfirmModal = ({
                       <Coffee size={18} className="text-yellow-300" />
                     </div>
                     <div>
-                      <p className="font-medium text-white text-sm">Deduct smoko?</p>
+                      <p className="font-medium text-white text-sm">{t('shifts.deductSmoko')}</p>
                       <p className="text-xs text-white/60">
-                        No breaks recorded • -{smokoMinutes} min
+                        {t('shifts.noBreaks')} • {t('shifts.smokoDeduct', { minutes: smokoMinutes })}
                       </p>
                     </div>
                   </div>
@@ -173,8 +175,8 @@ const LiveModeFinishConfirmModal = ({
             <div className="flex items-start gap-2 mt-4 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
               <AlertCircle size={16} className="text-yellow-300 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-white/80">
-                This shift will be saved to your history and marked as a live-tracked shift.
-                {deductSmoko && shouldOfferSmoko && ` ${smokoMinutes} minutes will be deducted for break time.`}
+                {t('shifts.liveShiftNote')}
+                {deductSmoko && shouldOfferSmoko && ` ${t('shifts.smokoWillDeduct', { minutes: smokoMinutes })}`}
               </p>
             </div>
           </div>
@@ -187,19 +189,19 @@ const LiveModeFinishConfirmModal = ({
               disabled={loading}
               className="flex-1 bg-white/20 hover:bg-white/30 text-white border-none"
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               variant="solid"
               onClick={() => onConfirm(deductSmoko)}
               loading={loading}
-              loadingText="Saving..."
+              loadingText={t('common.saving')}
               disabled={loading}
               className="flex-1 bg-white hover:bg-gray-50 font-semibold shadow-lg"
               themeColor={colors.primary}
               icon={CheckCircle}
             >
-              Finish
+              {t('common.finish')}
             </Button>
           </div>
         </div>

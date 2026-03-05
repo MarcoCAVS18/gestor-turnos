@@ -1,6 +1,7 @@
 // src/components/modals/shift/DuplicateWarningModal/index.jsx
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { AlertTriangle } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import BaseModal from '../../base/BaseModal';
@@ -16,13 +17,14 @@ const DuplicateWarningModal = ({
   onSkipDuplicates,
   onCancel
 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Duplicate Shifts Detected"
+      title={t('modals.duplicateWarning.title')}
       icon={AlertTriangle}
       maxWidth="sm"
     >
@@ -37,10 +39,10 @@ const DuplicateWarningModal = ({
             />
             <div>
               <p className="text-sm font-medium mb-2" style={{ color: colors.text }}>
-                {duplicateCount} of {totalCount} shifts already exist
+                {t('modals.duplicateWarning.existsMessage', { duplicate: duplicateCount, total: totalCount })}
               </p>
               <p className="text-xs" style={{ color: colors.textSecondary }}>
-                These shifts have the same work, date, and times as existing shifts in your schedule.
+                {t('modals.duplicateWarning.existsDescription')}
               </p>
             </div>
           </div>
@@ -57,10 +59,10 @@ const DuplicateWarningModal = ({
               }}
             >
               <p className="text-sm font-medium" style={{ color: colors.text }}>
-                {uniqueCount} unique shift{uniqueCount > 1 ? 's' : ''} can be created
+                {t('modals.duplicateWarning.uniqueCanCreate', { count: uniqueCount })}
               </p>
               <p className="text-xs mt-1" style={{ color: colors.textSecondary }}>
-                Click "Create Unique Only" to skip duplicates and create the remaining shifts.
+                {t('modals.duplicateWarning.clickHint')}
               </p>
             </div>
           </Card>
@@ -73,7 +75,7 @@ const DuplicateWarningModal = ({
             variant="cancel"
             className="flex-1"
           >
-            Go Back
+            {t('common.goBack')}
           </Button>
           {uniqueCount > 0 ? (
             <Button
@@ -82,7 +84,7 @@ const DuplicateWarningModal = ({
               className="flex-1"
               themeColor={colors.primary}
             >
-              Create Unique Only
+              {t('modals.duplicateWarning.createUnique')}
             </Button>
           ) : (
             <Button
@@ -91,7 +93,7 @@ const DuplicateWarningModal = ({
               className="flex-1"
               themeColor={colors.primary}
             >
-              Close
+              {t('common.close')}
             </Button>
           )}
         </div>
