@@ -37,7 +37,7 @@ import Australia88Ticker from '../components/australia88/Australia88Ticker';
 
 const Dashboard = () => {
   const { t } = useTranslation();
-  const { loading, calculatePayment, shiftRanges, settings, isPremium, premium, startOnboarding } = useApp();
+  const { loading, calculatePayment, shiftRanges, settings, isPremium, premium } = useApp();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const stats = useDashboardStats();
@@ -250,7 +250,7 @@ const Dashboard = () => {
       </Flex>
 
       {/* Welcome Demo — shown once after first login */}
-      <DemoModal onComplete={() => { startOnboarding(); navigate('/settings'); }} />
+      <DemoModal onComplete={() => { navigate('/settings'); }} />
 
       {/* Live Mode Modals */}
       <LiveModeStartModal

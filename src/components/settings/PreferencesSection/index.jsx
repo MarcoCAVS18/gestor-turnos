@@ -11,7 +11,7 @@ import Button from '../../ui/Button';
 import Popover from '../../ui/Popover';
 import WorkAvatar from '../../work/WorkAvatar';
 
-const PreferencesSection = ({ id, onError, onSuccess, className }) => {
+const PreferencesSection = ({ onError, onSuccess, className }) => {
   const { t } = useTranslation();
   const {
     defaultDiscount,
@@ -109,7 +109,7 @@ const PreferencesSection = ({ id, onError, onSuccess, className }) => {
   );
 
   return (
-    <SettingsSection id={id} icon={Receipt} title={t('settings.preferences.title')} className={className}>
+    <SettingsSection icon={Receipt} title={t('settings.preferences.title')} className={className}>
       <div className="space-y-4">
 
         <div>

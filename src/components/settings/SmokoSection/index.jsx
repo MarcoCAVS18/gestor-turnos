@@ -9,7 +9,7 @@ import SettingsSection from '../SettingsSection';
 import Flex from '../../ui/Flex';
 import Switch from '../../ui/Switch';
 
-const SmokoSection = ({ id, onError, onSuccess, className }) => {
+const SmokoSection = ({ onError, onSuccess, className }) => {
   const { t } = useTranslation();
   const {
     smokoEnabled = false,
@@ -58,7 +58,6 @@ const SmokoSection = ({ id, onError, onSuccess, className }) => {
 
   return (
     <SettingsSection
-      id={id}
       icon={Coffee}
       title={t('settings.smoko.title')}
       className={className}

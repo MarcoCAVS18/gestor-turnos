@@ -33,7 +33,7 @@ export const hapticHeavy = () => {
 };
 
 /**
- * Success pattern — onboarding complete, premium activated
+ * Success pattern — premium activated
  */
 export const hapticSuccess = () => {
   if (!isNative()) return;

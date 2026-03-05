@@ -329,8 +329,10 @@ export const AuthProvider = ({ children }) => {
       // Delete from Storage using => URL
       await deleteProfilePhoto(currentPhotoURL);
   
-      // Update in Firebase Auth to null
-      await updateProfile(currentUser, { photoURL: null });
+      // Update in Firebase Auth to null (use auth.currentUser to ensure valid Firebase user)
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, { photoURL: null });
+      }
   
       // Update in Firestore
       const userDocRef = doc(db, 'users', currentUser.uid);
@@ -340,7 +342,9 @@ export const AuthProvider = ({ children }) => {
       });
   
       // Force reload user state to get updated URL
-      await auth.currentUser.reload();
+      if (auth.currentUser) {
+        await auth.currentUser.reload();
+      }
       const updatedUser = auth.currentUser;
 
       // Revert to default logo and update state

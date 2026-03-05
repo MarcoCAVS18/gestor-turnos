@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useIsMobile } from '../../../hooks/useIsMobile';
-import Flex from '../ui/Flex';
+import Flex from '../Flex';
 
 const Modal = ({
   isOpen,

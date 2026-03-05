@@ -85,6 +85,15 @@ export const deleteProfilePhoto = async (photoURL) => {
     return;
   }
 
+  // Skip external URLs (Google, Facebook, etc.) - not stored in Firebase Storage
+  if (photoURL.includes('googleusercontent.com') || 
+      photoURL.includes('facebook.com') || 
+      photoURL.includes('twimg.com') ||
+      !photoURL.includes('firebasestorage.googleapis.com')) {
+    logger.info('Skipping deletion of external profile photo:', photoURL);
+    return;
+  }
+
   try {
     // Get the reference of the file from the URL
     const storageRef = ref(storage, photoURL);
@@ -93,6 +102,8 @@ export const deleteProfilePhoto = async (photoURL) => {
     // If the file is not found, it may have already been deleted.
     if (error.code === 'storage/object-not-found') {
       logger.warn('Profile photo not found in Storage, possibly already deleted:', photoURL);
+    } else if (error.code === 'storage/invalid-url') {
+      logger.warn('Invalid Storage URL, possibly external photo:', photoURL);
     } else {
       logger.error('Error deleting profile photo:', error);
       throw error;

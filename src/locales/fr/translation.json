@@ -105,6 +105,9 @@
   },
   "premium": {
     "title": "Premium",
+    "badge": "Premium",
+    "unlockAll": "Débloquer toutes les fonctionnalités",
+    "upgrade": "Mettre à niveau",
     "unlockFeatures": "Débloquez l'accès illimité à toutes les fonctionnalités",
     "manageSubscription": "Gérez votre abonnement",
     "account": "Compte",
@@ -287,7 +290,9 @@
     "features": {
       "trackShifts": "Suivi des quarts",
       "analytics": "Analyses",
-      "liveMode": "Mode Live"
+      "liveMode": "Mode Live",
+      "delivery": "Option Delivery",
+      "australia88": "88 jours"
     },
     "getStartedFree": "Commencer gratuitement",
     "signIn": "Se connecter",
@@ -328,7 +333,8 @@
       "title": "Connexion Biométrique",
       "description": "Utilisez Touch ID, Face ID ou Windows Hello pour déverrouiller l'app rapidement lorsque vous revenez.",
       "active": "Actif sur cet appareil",
-      "enable": "Activer pour cet appareil",
+      "enable": "Activer biométrique",
+      "enableForDevice": "Activer pour cet appareil",
       "notSupported": "Non pris en charge sur cet appareil ou navigateur."
     },
     "mobile": {
@@ -766,6 +772,42 @@
     "weeklySummary": "Résumé hebdomadaire",
     "shifts": "quarts",
     "hours": "heures"
+  },
+  "settingsOnboarding": {
+    "title": "Bienvenue dans Paramètres",
+    "continue": "Continuer",
+    "welcomeMessage": "Configurons quelques éléments pour personnaliser votre expérience et vous aider à profiter au maximum d'Orary.",
+    "welcomeTitle": "Bienvenue dans Orary",
+    "whyLocation": "Pour vous offrir la meilleure expérience, nous avons besoin de votre localisation pour :",
+    "location": {
+      "title": "Accès à la localisation",
+      "feature1": "Détecter les jours fériés dans votre pays",
+      "feature2": "Afficher la devise locale correcte",
+      "feature3": "Fonctionnalités Working Holiday Visa",
+      "benefit1": "Jours fériés",
+      "benefit2": "Devise locale",
+      "benefit3": "Working Holiday"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Restez informé de vos quarts et objectifs.",
+      "feature1": "Rappels et alertes de quarts",
+      "feature2": "Mises à jour de progression hebdomadaire"
+    },
+    "privacyNote": "Vos données sont en sécurité. Nous utilisons votre localisation uniquement pour ces fonctionnalités.",
+    "privacyNotice": "Vos données sont en sécurité avec nous. Nous utilisons votre localisation uniquement pour les fonctionnalités mentionnées et ne la partageons jamais avec des tiers.",
+    "recommendations": {
+      "title": "Nous vous recommandons :",
+      "customization": "Thème et couleurs",
+      "shiftSettings": "Horaires des quarts",
+      "personalization": "Personnalisation",
+      "shiftRanges": "Plages horaires",
+      "notifications": "Notifications",
+      "goals": "Définir des objectifs",
+      "deductions": "Déductions (TAX)",
+      "breaks": "Pauses"
+    },
+    "nativePromptsNote": "Les demandes d'autorisation système apparaîtront après la fermeture de cette fenêtre."
   },
   "works": {
     "title": "Travaux",
