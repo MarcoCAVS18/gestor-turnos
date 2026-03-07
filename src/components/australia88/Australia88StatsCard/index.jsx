@@ -16,8 +16,8 @@
 import React, { useState } from 'react';
 import { Globe, CalendarDays, Target, CheckCircle2 } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useAustralia88 } from '../../../hooks/useAustralia88';
-import Badge from '../../ui/Badge';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 
@@ -104,6 +104,7 @@ const StatBox = ({ icon: Icon, label, value, suffix, color, highlight }) => (
 
 const Australia88StatsCard = ({ className = '' }) => {
   const colors = useThemeColors();
+  const isMobile = useIsMobile();
   const {
     totalVisaDays,
     currentWeekVisaDays,
@@ -121,7 +122,8 @@ const Australia88StatsCard = ({ className = '' }) => {
   const showYearToggle = year2Active;
   const y1Days = Math.min(totalVisaDays, 88);
   const displayDays    = viewYear === 2 ? year2Days : y1Days;
-  const daysRemaining  = 88 - displayDays;
+  const yearGoal       = viewYear === 2 ? 176 : 88;
+  const daysRemaining  = yearGoal - displayDays;
   const isComplete     = viewYear === 2 ? year2Complete : year1Complete;
 
   // Most recent weeks at the top of the ledger
@@ -136,7 +138,7 @@ const Australia88StatsCard = ({ className = '' }) => {
       <Flex variant="between" className="mb-4 flex-nowrap gap-2">
         <h3 className="text-base font-semibold flex items-center gap-2 text-gray-800 dark:text-gray-100 truncate">
           <Globe size={18} className="flex-shrink-0" style={{ color: colors.primary }} />
-          <span className="truncate">Working Holiday Visa</span>
+          <span className="truncate">{isMobile ? 'WHV' : 'Working Holiday Visa'}</span>
         </h3>
 
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -160,21 +162,7 @@ const Australia88StatsCard = ({ className = '' }) => {
             </div>
           )}
 
-          {/* Milestone badge */}
-          <Badge
-            variant="theme"
-            size="xs"
-            rounded
-            className="whitespace-nowrap"
-            style={{
-              color: colors.primary,
-              backgroundColor: isComplete ? colors.transparent20 : colors.transparent10,
-            }}
-          >
-            {isComplete
-              ? `✓ Year ${viewYear} done`
-              : `Year ${viewYear} · Goal 88d`}
-          </Badge>
+
         </div>
       </Flex>
 

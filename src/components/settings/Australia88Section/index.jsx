@@ -75,7 +75,7 @@ const Australia88Section = ({ className }) => {
   return (
     <SettingsSection
       icon={Globe}
-      title={`🇦🇺 ${t('settings.australia88.title')}`}
+      title="🇦🇺 Working Holiday Visa"
       className={className}
     >
       <div className="space-y-4">
@@ -87,8 +87,9 @@ const Australia88Section = ({ className }) => {
             const isY1DoneByY2 = year === 1 && selectedYear === 2;
 
             // Goal display key — drives AnimatePresence swap
-            const goalKey = isActive && year === 2 ? '176' : isY1DoneByY2 ? 'done' : '88';
-            const goalText = isActive && year === 2 ? '176 d' : isY1DoneByY2 ? '88 / 88' : '88 d';
+            // Year 1 goal = 88 days, Year 2 goal = 176 days
+            const goalKey = year === 2 ? '176' : isY1DoneByY2 ? 'done' : '88';
+            const goalText = year === 2 ? '176 d' : isY1DoneByY2 ? '88 / 88' : '88 d';
 
             return (
               <button
@@ -165,21 +166,7 @@ const Australia88Section = ({ className }) => {
                   </motion.span>
                 </AnimatePresence>
 
-                {/* "~6 months" label — only for active Y2 */}
-                <AnimatePresence>
-                  {isActive && year === 2 && (
-                    <motion.span
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 4 }}
-                      transition={{ duration: 0.2, delay: 0.1 }}
-                      className="text-[9px] mt-0.5"
-                      style={{ color: `${colors.primary}90` }}
-                    >
-                      ~6 months
-                    </motion.span>
-                  )}
-                </AnimatePresence>
+
               </button>
             );
           })}

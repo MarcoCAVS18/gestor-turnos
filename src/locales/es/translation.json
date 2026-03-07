@@ -1196,7 +1196,7 @@
     "remaining": "Restante",
     "thisWeek": "Esta semana",
     "yearComplete": "¡Año {{year}} completo!",
-    "yearGoal": "Año {{year}} · días · meta 88",
+    "yearGoal": "Año {{year}} · días · meta {{goal}}",
     "daysUnit": "d",
     "formLabel": "Working Holiday Visa (88 días)",
     "qualifiesDescription": "Califica para extensión de Working Holiday Visa",
@@ -1671,5 +1671,29 @@
     "terms": "Términos",
     "privacy": "Privacidad",
     "about": "Acerca de Orary"
+  },
+  "filters": {
+    "allWorks": "Todos los trabajos",
+    "clear": "Limpiar",
+    "clearAll": "Limpiar todo",
+    "allDays": "Todos los días",
+    "daysLabel": "Días",
+    "workLabel": "Trabajo",
+    "shiftTypeLabel": "Tipo de turno",
+    "typeLabel": "Tipo",
+    "filteredBy": "Filtrado por",
+    "activeFilters": "Filtros activos",
+    "of": "de",
+    "unknownWork": "Trabajo desconocido",
+    "shiftTypes": {
+      "day": "Día",
+      "afternoon": "Tarde",
+      "night": "Noche",
+      "saturday": "Sábado",
+      "sunday": "Domingo",
+      "delivery": "Delivery",
+      "mixed": "Mixto",
+      "all": "Todos los tipos"
+    }
   }
 }
