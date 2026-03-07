@@ -94,6 +94,8 @@ export const ensureUserDocument = async (user) => {
     holidayCountry: null,
     holidayRegion: null,
     useAutoHolidays: false,
+    australia88VisaYear: 1,
+    australia88ManualDays: 0,
   };
 
   if (userDocSnapshot.exists()) {
@@ -128,6 +130,8 @@ export const savePreferences = async (userUid, preferences) => {
     holidayCountry: 'settings.holidayCountry',
     holidayRegion: 'settings.holidayRegion',
     useAutoHolidays: 'settings.useAutoHolidays',
+    australia88VisaYear: 'settings.australia88VisaYear',
+    australia88ManualDays: 'settings.australia88ManualDays',
   };
 
   for (const key in preferences) {

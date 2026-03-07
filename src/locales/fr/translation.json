@@ -1205,7 +1205,7 @@
     "remaining": "Restant",
     "thisWeek": "Cette semaine",
     "yearComplete": "Année {{year}} complète !",
-    "yearGoal": "Année {{year}} · jours · objectif 88",
+    "yearGoal": "Année {{year}} · jours · objectif {{goal}}",
     "daysUnit": "j",
     "formLabel": "Visa Vacances-Travail (88 jours)",
     "qualifiesDescription": "Éligible pour l'extension du Visa Vacances-Travail",
@@ -1680,5 +1680,29 @@
     "terms": "Conditions",
     "privacy": "Confidentialité",
     "about": "À propos Orary"
+  },
+  "filters": {
+    "allWorks": "Tous les travaux",
+    "clear": "Effacer",
+    "clearAll": "Tout effacer",
+    "allDays": "Tous les jours",
+    "daysLabel": "Jours",
+    "workLabel": "Travail",
+    "shiftTypeLabel": "Type de quart",
+    "typeLabel": "Type",
+    "filteredBy": "Filtré par",
+    "activeFilters": "Filtres actifs",
+    "of": "de",
+    "unknownWork": "Travail inconnu",
+    "shiftTypes": {
+      "day": "Jour",
+      "afternoon": "Après-midi",
+      "night": "Nuit",
+      "saturday": "Samedi",
+      "sunday": "Dimanche",
+      "delivery": "Livraison",
+      "mixed": "Mixte",
+      "all": "Tous les types"
+    }
   }
 }

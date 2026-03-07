@@ -1177,7 +1177,7 @@
     "remaining": "Remaining",
     "thisWeek": "This week",
     "yearComplete": "Year {{year}} complete!",
-    "yearGoal": "Year {{year}} · days · goal 88",
+    "yearGoal": "Year {{year}} · days · goal {{goal}}",
     "daysUnit": "d",
     "formLabel": "Working Holiday Visa (88 days)",
     "qualifiesDescription": "Qualifies for Working Holiday Visa extension",

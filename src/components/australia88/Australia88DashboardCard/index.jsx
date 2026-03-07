@@ -52,14 +52,15 @@ const Australia88DashboardCard = () => {
   // Derived display values based on which year is being viewed
   const y1Days = Math.min(totalVisaDays, 88);
   const displayDays = viewYear === 2 ? year2Days : y1Days;
-  const daysRemaining = 88 - displayDays;
-  const progressPercent = Math.min(100, Math.round((displayDays / 88) * 100));
+  const yearGoal = viewYear === 2 ? 176 : 88;
+  const daysRemaining = yearGoal - displayDays;
+  const progressPercent = Math.min(100, Math.round((displayDays / yearGoal) * 100));
   const isCompleteForView = viewYear === 2 ? year2Complete : year1Complete;
 
   // Sub-label beneath the big number
   const goalLabel = isCompleteForView
     ? t('australia88.yearComplete', { year: viewYear })
-    : t('australia88.yearGoal', { year: viewYear });
+    : t('australia88.yearGoal', { year: viewYear, goal: yearGoal });
 
   // Show progress bar while the viewed year is still in progress
   const showProgressBar = !isCompleteForView;
@@ -73,7 +74,7 @@ const Australia88DashboardCard = () => {
       <Flex variant="between" className="mb-3 flex-nowrap gap-2">
         <h3 className="text-sm font-semibold flex items-center gap-2 text-gray-800 dark:text-gray-100 truncate">
           <Globe size={16} className="flex-shrink-0" style={{ color: colors.primary }} />
-          <span className="truncate">{t('australia88.visaTitle')}</span>
+          <span className="truncate">{isMobile ? 'WHV' : 'Working Holiday Visa'}</span>
         </h3>
 
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -133,7 +134,7 @@ const Australia88DashboardCard = () => {
               <ProgressBar value={progressPercent} color={colors.primary} height="6px" />
               <Flex variant="between" className="mt-1">
                 <span className="text-[10px] text-gray-400">0</span>
-                <span className="text-[10px] text-gray-400">88</span>
+                <span className="text-[10px] text-gray-400">{yearGoal}</span>
               </Flex>
             </div>
           )}
