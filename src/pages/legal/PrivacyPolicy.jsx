@@ -119,23 +119,33 @@ const PrivacyPolicy = () => {
           <li>Any other sensitive payment information</li>
         </ul>
 
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">2.2 Information We Receive from Stripe</h3>
-        <p>To manage your subscription, we receive and store only:</p>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">2.2 Free Trial Period</h3>
+        <p>Orary offers a <strong>15-day free trial</strong> for new Premium subscribers. During the trial:</p>
         <ul className="list-disc pl-5 space-y-2 mt-2">
-          <li><strong>Stripe Customer ID:</strong> A unique identifier that links your Orary account to your Stripe customer profile.</li>
-          <li><strong>Subscription Status:</strong> Whether your subscription is active, cancelled, or past due.</li>
-          <li><strong>Billing Period:</strong> Current subscription period start and end dates.</li>
-          <li><strong>Payment Status:</strong> Whether payments are successful or require action.</li>
-          <li><strong>Last 4 Digits:</strong> Only the last 4 digits of your payment card (for display purposes in your account settings).</li>
+          <li>No charges are made to your payment method.</li>
+          <li>You can cancel anytime during the trial without any charges.</li>
+          <li>At the end of the 15-day trial, your subscription automatically begins and your payment method is charged.</li>
+          <li>We store your Stripe Customer ID and subscription status to manage the trial period.</li>
         </ul>
 
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">2.3 Stripe's Privacy Practices</h3>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">2.3 Information We Receive from Stripe</h3>
+        <p>To manage your subscription and trial, we receive and store only:</p>
+        <ul className="list-disc pl-5 space-y-2 mt-2">
+          <li><strong>Stripe Customer ID:</strong> A unique identifier that links your Orary account to your Stripe customer profile.</li>
+          <li><strong>Subscription Status:</strong> Whether your subscription is active, in trial, cancelled, or past due.</li>
+          <li><strong>Billing Period:</strong> Current subscription period start and end dates, including trial start/end dates.</li>
+          <li><strong>Payment Status:</strong> Whether payments are successful, pending, or require action.</li>
+          <li><strong>Purchase History:</strong> Records of your subscription transactions and trial conversions.</li>
+          <li><strong>Last 4 Digits:</strong> Only the last 4 digits of your payment card (for display purposes in your account settings). We never store your complete card number, CVV, or expiration date.</li>
+        </ul>
+
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">2.4 Stripe's Privacy Practices</h3>
         <p>
           Stripe is a certified PCI Service Provider Level 1, which is the most stringent level of certification available in the payments industry. When you provide payment information to Stripe, it is handled according to their privacy policy. We encourage you to review{' '}
           <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer" className="text-pink-600 dark:text-pink-400 hover:underline">Stripe's Privacy Policy</a> for more information on how they handle your data.
         </p>
 
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">2.4 Subscription Management</h3>
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">2.5 Subscription Management</h3>
         <ul className="list-disc pl-5 space-y-2">
           <li><strong>Billing:</strong> Subscription fees ($2.99 AUD/month) are charged automatically through Stripe on your billing date.</li>
           <li><strong>Cancellation:</strong> You can cancel your subscription at any time from the app. Cancellation takes effect at the end of your current billing period.</li>

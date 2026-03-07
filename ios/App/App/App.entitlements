@@ -2,5 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<!-- ============================================ -->
+	<!-- APP ENTITLEMENTS - ORARY -->
+	<!-- ============================================ -->
+
+	<!-- App Groups - Required for Live Activities and Widgets -->
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.app.orary</string>
+	</array>
+
+	<!-- Push Notifications (if enabled in the future) -->
+	<!-- Uncomment if you add remote push notifications -->
+	<!-- <key>aps-environment</key> -->
+	<!-- <string>development</string> -->
+
+	<!-- Keychain Sharing - For secure credential storage -->
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)app.orary</string>
+	</array>
 </dict>
 </plist>

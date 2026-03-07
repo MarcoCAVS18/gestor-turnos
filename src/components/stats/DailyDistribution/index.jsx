@@ -31,6 +31,7 @@ const DailyDistribution = ({ currentData, loading, thematicColors }) => {
       loading={loading}
       empty={isEmpty}
       emptyMessage={t('stats.dailyDistribution.empty')}
+      emptyDescription={t('stats.common.emptyDescription')}
     >
       <div className="space-y-1.5">
         {days.map(([day, data], index) => {

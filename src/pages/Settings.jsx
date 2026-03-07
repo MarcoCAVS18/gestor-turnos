@@ -25,7 +25,8 @@ import { requestNotificationPermission } from '../services/native/nativeNotifica
 
 const Settings = () => {
   const { t } = useTranslation();
-  const { deliveryEnabled } = useApp();
+  const { deliveryEnabled, holidayCountry } = useApp();
+  const isAustraliaMode = holidayCountry === 'AU';
   const [permissionsUpdated, setPermissionsUpdated] = useState(0);
 
   // Handle native permission requests after onboarding modal closes
@@ -95,7 +96,7 @@ const Settings = () => {
               {/* CONTAINER 3: Delivery + Platforms + Shift Range */}
               <div className="flex flex-col gap-6 h-full">
                 <DeliverySection className="flex-grow" />
-                <div className={!deliveryEnabled ? 'opacity-40 pointer-events-none' : ''}>
+                <div className={!deliveryEnabled && !isAustraliaMode ? 'opacity-40 pointer-events-none' : ''}>
                   <DeliveryPlatformsSection className="flex-grow" />
                 </div>
                 <TurnRangeSection className="flex-grow" />
@@ -119,7 +120,7 @@ const Settings = () => {
 
             <DeliverySection />
 
-            <div className={!deliveryEnabled ? 'opacity-40 pointer-events-none' : ''}>
+            <div className={!deliveryEnabled && !isAustraliaMode ? 'opacity-40 pointer-events-none' : ''}>
               <DeliveryPlatformsSection />
             </div>
 

@@ -63,10 +63,22 @@
 	<key>GIDClientID</key>
 	<string>314406109434-cp7cculsf1mh0mnj46rt6fi5t1bhac3s.apps.googleusercontent.com</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Orary uses Face ID to unlock the app securely.</string>
+	<string>Orary uses Face ID/Touch ID to provide secure and convenient access to your account without entering your password each time.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Orary uses your location to detect your country for public holidays and regional features.</string>
+	<string>Orary uses your location temporarily to detect your country and enable regional features like public holidays and the Australia Working Holiday Visa tracker. Your precise coordinates are not stored.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Orary needs access to your photo library to allow you to upload a profile picture.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Orary needs camera access if you want to take a profile photo directly.</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>Orary sends you notifications about your shifts, reminders, and important updates.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+	<true/>
+	<key>NSAppGroups</key>
+	<array>
+		<string>group.app.orary</string>
+	</array>
 </dict>
 </plist>

@@ -49,6 +49,7 @@ const MostProductiveDay = ({ currentData, loading, thematicColors, className = '
       loading={loading}
       empty={isEmpty}
       emptyMessage={t('stats.mostProductiveDay.empty')}
+      emptyDescription={t('stats.common.emptyDescription')}
       className={className}
     >
       {/* Two-column layout: left = earnings + day, right = hours + shifts */}

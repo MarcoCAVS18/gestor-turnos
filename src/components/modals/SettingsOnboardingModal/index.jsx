@@ -11,7 +11,6 @@ import { auth, db } from '../../../services/firebase';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { generateColorVariations } from '../../../utils/colorUtils';
-import Button from '../../ui/Button';
 
 const SETTINGS_ONBOARDING_KEY = 'settingsOnboardingDone';
 
@@ -37,7 +36,6 @@ const SettingsOnboardingModal = ({ onComplete }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Generate gradient like IntegrationsBanner
   const gradient = useMemo(() => {
     const palette = generateColorVariations(colors.primary) || {
       lighter: colors.primary,
@@ -192,18 +190,20 @@ const SettingsOnboardingModal = ({ onComplete }) => {
           </div>
 
           {/* Continue Button with gradient and animated arrow */}
-          <Button
+          <button
             onClick={handleContinue}
-            loading={loading}
-            icon={ArrowRight}
-            iconPosition="right"
-            animatedChevron={true}
-            textColor="white"
-            className="w-full hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
-            style={{ background: gradient, border: 'none' }}
+            disabled={loading}
+            className="w-full relative flex items-center justify-center gap-2 text-sm font-medium text-white rounded-xl px-5 py-3 transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden group"
+            style={{ background: gradient }}
           >
-            {t('settingsOnboarding.continue')}
-          </Button>
+            <span>{t('settingsOnboarding.continue')}</span>
+            <motion.div
+              animate={{ x: [0, 3, 0] }}
+              transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <ArrowRight size={16} />
+            </motion.div>
+          </button>
 
           {/* Native prompts note */}
           <p className="text-xs text-gray-400 dark:text-gray-500 text-center">

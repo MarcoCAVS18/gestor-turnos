@@ -39,6 +39,7 @@
     "hours": "horas",
     "viewDetails": "Ver detalles",
     "time": "Hora",
+    "date": "Fecha",
     "hourlyRate": "Tarifas por hora",
     "day": "Día",
     "afternoon": "Tarde",
@@ -59,7 +60,6 @@
     "remove": "Eliminar",
     "confirmDeletion": "Confirmar Eliminación",
     "deleting": "Eliminando...",
-    "hours": "Horas",
     "minutes": "Minutos",
     "seconds": "Segundos",
     "perHour": "h",
@@ -78,6 +78,15 @@
       "Friday": "Viernes",
       "Saturday": "Sábado",
       "Sunday": "Domingo"
+    },
+    "days": {
+      "Mon": "Lun",
+      "Tue": "Mar",
+      "Wed": "Mié",
+      "Thu": "Jue",
+      "Fri": "Vie",
+      "Sat": "Sáb",
+      "Sun": "Dom"
     }
   },
   "nav": {
@@ -94,7 +103,8 @@
     "newWork": "Nuevo Trabajo",
     "shiftsDisabledTooltip": "Primero crea un trabajo para agregar turnos",
     "paused": "Pausado",
-    "liveMode": "Modo Live"
+    "liveMode": "Modo Live",
+    "share": "Compartir"
   },
   "premium": {
     "title": "Premium",
@@ -143,7 +153,32 @@
       "defaultMethod": "Método de pago predeterminado",
       "totalInvested": "Total invertido en Premium",
       "invoices": "Facturas",
-      "history": "Historial"
+      "history": "Historial",
+      "address": "Dirección",
+      "addressPlaceholder": "Tu dirección",
+      "billingDetails": "Datos de facturación",
+      "cardInputNotFound": "Formulario de tarjeta no encontrado",
+      "cardNumber": "Número de tarjeta",
+      "cardholderName": "Nombre del titular",
+      "city": "Ciudad",
+      "cityPlaceholder": "Tu ciudad",
+      "country": "País",
+      "cvc": "CVC",
+      "expiryDate": "Fecha de vencimiento",
+      "fullNameOnCard": "Nombre completo en la tarjeta",
+      "noResponse": "Sin respuesta del servidor",
+      "postalCode": "Código postal",
+      "postalCodePlaceholder": "Tu código postal",
+      "processingFailed": "Error al procesar el pago",
+      "securePayment": "Pago seguro",
+      "settingUpTrial": "Configurando período de prueba...",
+      "startTrial": "Comenzar prueba gratuita",
+      "systemNotReady": "Sistema no disponible",
+      "testMode": "Modo de prueba",
+      "testModeDateCvc": "Fecha: 12/34 | CVC: 123",
+      "testModeDesc": "Usa datos de prueba para probar el pago",
+      "trialNotice": "No se realizará ningún cargo durante 15 días. Después del período de prueba, se cobrará {{price}}/mes a <strong>{{email}}</strong>. Cancela en cualquier momento.",
+      "unexpectedError": "Error inesperado"
     },
     "invoices": {
       "title": "Facturas Recientes",
@@ -183,8 +218,8 @@
       "trialEnds": "La prueba termina",
       "accessUntil": "Acceso hasta",
       "nextBilling": "Próximo cobro",
-      "trialInfo": "Tu prueba gratuita de 15 días está activa. Se cobrará ${{price}} AUD el {date} a menos que canceles antes.",
-      "cancellationInfo": "Tu suscripción terminará el {date}. Mantendrás acceso completo hasta entonces."
+      "trialInfo": "Tu prueba gratuita de 15 días está activa. Se cobrarán A${{price}} AUD/mes el {{date}} a menos que canceles antes.",
+      "cancellationInfo": "Tu suscripción termina el {{date}}. Mantendrás acceso completo hasta entonces."
     },
     "status": {
       "active": "Activo",
@@ -297,6 +332,7 @@
     "termsOfService": "Términos de Servicio"
   },
   "integrations": {
+    "title": "Integraciones",
     "subtitle": "Conecta servicios externos y configura notificaciones",
     "backToSettings": "Volver a Configuraciones",
     "status": {
@@ -309,10 +345,14 @@
       "title": "Notificaciones del Navegador",
       "description": "Recibe notificaciones directamente en tu navegador cuando ocurran eventos importantes.",
       "enable": "Activar notificaciones",
+      "enableNotifications": "Activar notificaciones",
       "blocked": "Bloqueado por el navegador",
+      "blockedByBrowser": "Las notificaciones están bloqueadas por el navegador",
       "blockedHelp": "Las notificaciones están bloqueadas. Por favor, actívalas en la configuración de tu navegador.",
       "enabledTitle": "¡Notificaciones activadas!",
-      "enabledMessage": "Ahora recibirás recordatorios de turnos."
+      "enabledMessage": "Ahora recibirás recordatorios de turnos.",
+      "enabledSuccess": "Notificaciones activadas",
+      "enabledSuccessDesc": "Recibirás recordatorios de turnos"
     },
     "reminders": {
       "title": "Recordatorios de Turnos",
@@ -326,6 +366,7 @@
       "title": "Inicio Biométrico",
       "description": "Usa Touch ID, Face ID o Windows Hello para desbloquear la app rápidamente cuando vuelvas.",
       "active": "Activo en este dispositivo",
+      "activeOnDevice": "Activo en este dispositivo",
       "enable": "Activar biométrico",
       "enableForDevice": "Activar para este dispositivo",
       "notSupported": "No compatible con este dispositivo o navegador."
@@ -342,11 +383,14 @@
       "title": "Suscripción al Calendario",
       "description": "Suscríbete a tus turnos en cualquier app de calendario — Google Calendar, Apple Calendar, Outlook y más. Se actualiza automáticamente cada pocas horas.",
       "subscribe": "Suscribirse al Calendario",
+      "subscribeButton": "Suscribirse al calendario",
       "opening": "Abriendo...",
       "copyLink": "Copiar enlace (otras apps)",
       "copied": "¡Copiado!",
       "error": "No se pudo generar el enlace del calendario. Inténtalo de nuevo.",
-      "note": "No requiere inicio de sesión · Funciona con cualquier app de calendario"
+      "errorGenerate": "Error al generar el calendario",
+      "note": "No requiere inicio de sesión · Funciona con cualquier app de calendario",
+      "noLoginRequired": "No requiere inicio de sesión"
     },
     "howItWorks": {
       "title": "Cómo funciona la suscripción al calendario",
@@ -380,7 +424,52 @@
         "step3": "Toca <strong>\"Instalar\"</strong> para confirmar",
         "step3Note": "Orary aparecerá en tu pantalla de inicio y en tu cajón de apps."
       }
+    },
+    "mobileApp": {
+      "description": "Instala Orary como app nativa en tu dispositivo",
+      "iOSAndroid": "iOS y Android",
+      "title": "App móvil"
+    },
+    "pwa": {
+      "androidTab": "Android",
+      "iosTab": "iOS",
+      "subtitle": "Instala la app en tu dispositivo para una mejor experiencia",
+      "title": "Instalar app",
+      "android": {
+        "chromeBest": "Chrome es el mejor navegador",
+        "chromeBestDesc": "Recomendamos usar Chrome para instalar en Android",
+        "step1Title": "Abre el menú del navegador",
+        "step2Desc": "Toca 'Agregar a pantalla de inicio'",
+        "step2Title": "Agrega a pantalla de inicio",
+        "step3Desc": "La app aparecerá en tu pantalla de inicio",
+        "step3Title": "Listo"
+      },
+      "ios": {
+        "safariOnly": "Solo Safari",
+        "safariOnlyDesc": "En iOS solo puedes instalar desde Safari",
+        "step1Desc": "Toca el botón de compartir en la barra inferior",
+        "step1Title": "Abre Safari",
+        "step2Title": "Toca el botón de compartir",
+        "step3Title": "Agrega a pantalla de inicio",
+        "step3Warning": "Solo funciona en Safari",
+        "step4Desc": "La app aparecerá en tu pantalla de inicio",
+        "step4Title": "Listo"
+      }
+    },
+    "shiftReminders": {
+      "description": "Recibe recordatorios antes de tus turnos",
+      "enableReminders": "Activar recordatorios",
+      "hourBefore": "1 hora antes",
+      "minutesBefore": "minutos antes",
+      "minutesBefore_10": "10 minutos antes",
+      "minutesBefore_15": "15 minutos antes",
+      "minutesBefore_30": "30 minutos antes",
+      "remindMe": "Recordarme",
+      "title": "Recordatorios de turnos"
     }
+  },
+  "deliveryVehicle": {
+    "helpText": "Selecciona tu vehículo principal para calcular los gastos de combustible"
   },
   "dashboard": {
     "subtitle": "Un resumen de tu actividad y progreso.",
@@ -463,7 +552,9 @@
       }
     },
     "common": {
-      "noDataYet": "Aún no hay datos"
+      "noDataYet": "Aún no hay datos",
+      "deletedWork": "Trabajo eliminado",
+      "view": "Ver"
     },
     "thisWeek": {
       "title": "Esta semana",
@@ -511,7 +602,12 @@
       "shiftStarted": "Turno iniciado",
       "startedAt": "Iniciado a las",
       "estimatedEnd": "Final estimado",
-      "estimatedEarnings": "Ganancias estimadas"
+      "estimatedEarnings": "Ganancias estimadas",
+      "earned": "ganado",
+      "live": "En vivo",
+      "quickClockIn": "Entrada rápida",
+      "readyToWork": "Listo para trabajar",
+      "startShift": "Iniciar turno"
     },
     "quickStats": {
       "works": "Trabajos",
@@ -553,7 +649,7 @@
     },
     "goals": {
       "title": "Metas Semanales",
-      "week": "semana",
+      "week": "sem",
       "weekdays": "días laborables",
       "partTime": "Medio tiempo",
       "standard": "Estándar",
@@ -685,6 +781,18 @@
       "title": "Integraciones",
       "description": "Configura alertas, Google Calendar y más.",
       "button": "Configurar"
+    },
+    "australia88": {
+      "title": "Visa de Vacaciones Trabajadas",
+      "visaYear": "Año de visa",
+      "year1": "Año 1",
+      "year2": "Año 2",
+      "year1Complete": "Año 1 completado — 88 días",
+      "manualDays": "Días antes de Orary",
+      "manualDaysY1Title": "Días del Año 1 antes de Orary",
+      "manualDaysDescY1": "Días trabajados en el Año 1 antes de registrar con Orary",
+      "manualDaysY2Title": "Días del Año 2 antes de Orary",
+      "manualDaysDescY2": "Días trabajados en el Año 2 antes de registrar con Orary"
     }
   },
   "shifts": {
@@ -757,7 +865,31 @@
     "holidayBonus": "Bonus feriado",
     "weeklySummary": "Resumen semanal",
     "shifts": "turnos",
-    "hours": "horas"
+    "hours": "horas",
+    "filters": {
+      "activeFilters": "Filtros activos",
+      "allDays": "Todos los días",
+      "allWorks": "Todos los trabajos",
+      "clear": "Limpiar",
+      "clearAll": "Limpiar todo",
+      "daysLabel": "Días",
+      "filteredBy": "Filtrado por",
+      "of": "de",
+      "shiftTypeLabel": "Tipo",
+      "typeLabel": "Tipo",
+      "unknownWork": "Trabajo desconocido",
+      "workLabel": "Trabajo",
+      "shiftTypes": {
+        "afternoon": "Tarde",
+        "all": "Todos",
+        "day": "Día",
+        "delivery": "Reparto",
+        "mixed": "Mixto",
+        "night": "Noche",
+        "saturday": "Sábado",
+        "sunday": "Domingo"
+      }
+    }
   },
   "settingsOnboarding": {
     "title": "Bienvenido a Ajustes",
@@ -841,7 +973,31 @@
     "deliveryFeature3": "Control de propinas y gastos de combustible",
     "notSureWhich": "¿No estás seguro cuál elegir?",
     "helpChoose": "Si tienes dudas sobre qué tipo elegir, puedes cambiarlo más tarde en la configuración del trabajo.",
-    "liveModeActiveError": "\"{{workName}}\" está activo en Modo Live. Detén la sesión para editarlo."
+    "liveModeActiveError": "\"{{workName}}\" está activo en Modo Live. Detén la sesión para editarlo.",
+    "filters": {
+      "allWorks": "Todos los trabajos",
+      "clear": "Limpiar",
+      "shiftTypes": {
+        "day": "Día",
+        "afternoon": "Tarde",
+        "night": "Noche",
+        "saturday": "Sábado",
+        "sunday": "Domingo",
+        "delivery": "Delivery",
+        "mixed": "Mixto",
+        "all": "Todos los tipos"
+      },
+      "shiftTypeLabel": "Tipo de turno",
+      "filteredBy": "Filtrado por",
+      "activeFilters": "Filtros activos",
+      "of": "de",
+      "clearAll": "Limpiar todo",
+      "workLabel": "Trabajo",
+      "daysLabel": "Días",
+      "allDays": "Todos",
+      "typeLabel": "Tipo",
+      "unknownWork": "Trabajo desconocido"
+    }
   },
   "statistics": {
     "title": "Estadísticas",
@@ -1131,6 +1287,9 @@
     "somethingWentWrong": "Algo salió mal"
   },
   "stats": {
+    "common": {
+      "emptyDescription": "Los datos aparecerán aquí una vez registrados"
+    },
     "weeklyComparison": {
       "title": "Comparación Semanal",
       "vsLastWeek": "vs semana anterior",
@@ -1197,7 +1356,7 @@
         "title": "Evolución Semanal",
         "subtitle": "Progreso de ganancias"
       },
-      "byWorks": {
+      "works": {
         "title": "Por Trabajos",
         "subtitle": "Distribución de ganancias"
       },
@@ -1228,6 +1387,15 @@
       "friday": "Viernes",
       "saturday": "Sábado",
       "sunday": "Domingo"
+    },
+    "daysFull": {
+      "Monday": "Lunes",
+      "Tuesday": "Martes",
+      "Wednesday": "Miércoles",
+      "Thursday": "Jueves",
+      "Friday": "Viernes",
+      "Saturday": "Sábado",
+      "Sunday": "Domingo"
     },
     "deliverySummary": {
       "title": "Resumen de Delivery",
@@ -1266,7 +1434,13 @@
       "costPerKm": "Costo por KM",
       "efficiency": "Eficiencia",
       "kmPerDollar": "km/$",
-      "totalSpent": "Total gastado"
+      "totalSpent": "Total gastado",
+      "vehicles": {
+        "bicycle": "Bicicleta",
+        "motorbike": "Moto",
+        "car": "Auto",
+        "on_foot": "A pie"
+      }
     },
     "fuelEfficiency": {
       "title": "Control de combustible",
@@ -1489,30 +1663,6 @@
       "redirectMessage": "Tu cuenta ha sido eliminada exitosamente. ¡Esperamos verte de nuevo!"
     }
   },
-  "filters": {
-    "allWorks": "Todos los trabajos",
-    "clear": "Limpiar",
-    "shiftTypes": {
-      "day": "Día",
-      "afternoon": "Tarde",
-      "night": "Noche",
-      "saturday": "Sábado",
-      "sunday": "Domingo",
-      "delivery": "Delivery",
-      "mixed": "Mixto",
-      "all": "Todos los tipos"
-    },
-    "shiftTypeLabel": "Tipo de turno",
-    "filteredBy": "Filtrado por",
-    "activeFilters": "Filtros activos",
-    "of": "de",
-    "clearAll": "Limpiar todo",
-    "workLabel": "Trabajo",
-    "daysLabel": "Días",
-    "allDays": "Todos",
-    "typeLabel": "Tipo",
-    "unknownWork": "Trabajo desconocido"
-  },
   "footer": {
     "version": "Versión 3.0.1",
     "developed": "Desarrollado con",
@@ -1520,6 +1670,6 @@
     "copyright": "© 2026 Orary. Todos los derechos reservados.",
     "terms": "Términos",
     "privacy": "Privacidad",
-    "about": "Acerca de"
+    "about": "Acerca de Orary"
   }
 }

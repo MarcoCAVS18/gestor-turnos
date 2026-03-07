@@ -193,6 +193,12 @@ const PremiumModal = ({ isOpen, onClose }) => {
                             style={{ color: PREMIUM_COLORS.gold }}
                           />
                         </div>
+                        <p
+                          className="text-xs mt-0.5"
+                          style={{ color: `${PREMIUM_COLORS.text}99` }}
+                        >
+                          {t(`premium.benefits.${benefit.key}Desc`)}
+                        </p>
                       </div>
                     </motion.div>
                   );

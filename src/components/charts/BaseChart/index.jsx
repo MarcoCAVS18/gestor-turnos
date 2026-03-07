@@ -58,6 +58,7 @@ const BaseChart = ({
                 key={item.key}
                 type="monotone"
                 dataKey={item.key}
+                name={item.name || item.key}
                 stroke={item.stroke || thematicColors.primary || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]}
                 {...chartConfig.line}
               />
@@ -81,6 +82,7 @@ const BaseChart = ({
                 key={item.key}
                 type="monotone"
                 dataKey={item.key}
+                name={item.name || item.key}
                 stroke={item.stroke || thematicColors.primary || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]}
                 fill={item.fill || thematicColors.transparent20 || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]}
                 {...chartConfig.area}

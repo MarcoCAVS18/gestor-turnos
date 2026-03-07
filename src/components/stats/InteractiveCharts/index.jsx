@@ -68,7 +68,7 @@ const InteractiveCharts = () => {
           <BaseChart
             data={weeklyEvolutionData}
             chartType="line"
-            dataKeys={[{ key: 'earnings', stroke: chartConfigs.line.stroke }]}
+            dataKeys={[{ key: 'earnings', name: t('stats.charts.earnings'), stroke: chartConfigs.line.stroke }]}
             nameKey="week"
             valueFormatter={(value) => formatCurrency(value)}
             tooltipFormatter={(value) => [formatCurrency(value), t('stats.charts.earnings')]}
@@ -94,10 +94,10 @@ const InteractiveCharts = () => {
           <BaseChart
             data={dailyData}
             chartType="area"
-            dataKeys={[{ key: 'hours', stroke: chartConfigs.area.stroke, fill: chartConfigs.area.fill }]}
+            dataKeys={[{ key: 'hours', name: t('stats.charts.hours'), stroke: chartConfigs.area.stroke, fill: chartConfigs.area.fill }]}
             nameKey="day"
             valueFormatter={(value) => `${value}h`}
-            tooltipFormatter={(value) => [`${value.toFixed(1)} hours`, t('stats.charts.hours')]}
+            tooltipFormatter={(value) => [`${value.toFixed(1)}h`, t('stats.charts.hours')]}
             config={{ area: chartConfigs.area, grid: chartConfigs.grid, axis: chartConfigs.axis, tooltip: chartConfigs.tooltip }}
           />
         );

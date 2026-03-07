@@ -53,6 +53,8 @@ export const ConfigProvider = ({ children }) => {
   const [holidayRegion, setHolidayRegion] = useState(null);
   const [useAutoHolidays, setUseAutoHolidays] = useState(false);
   const [geoDetectionDone, setGeoDetectionDone] = useState(false);
+  const [australia88VisaYear, setAustralia88VisaYear] = useState(1);
+  const [australia88ManualDays, setAustralia88ManualDays] = useState(0);
 
   // Load initial user configuration from Firebase
   useEffect(() => {
@@ -82,6 +84,8 @@ export const ConfigProvider = ({ children }) => {
             setHolidayCountry(settings.holidayCountry || null);
             setHolidayRegion(settings.holidayRegion || null);
             setUseAutoHolidays(settings.useAutoHolidays || false);
+            setAustralia88VisaYear(settings.australia88VisaYear ?? 1);
+            setAustralia88ManualDays(settings.australia88ManualDays ?? 0);
           }
         } catch (err) {
           logger.error("Error loading user configuration:", err);
@@ -151,6 +155,8 @@ export const ConfigProvider = ({ children }) => {
       if (preferences.holidayCountry !== undefined) setHolidayCountry(preferences.holidayCountry);
       if (preferences.holidayRegion !== undefined) setHolidayRegion(preferences.holidayRegion);
       if (preferences.useAutoHolidays !== undefined) setUseAutoHolidays(preferences.useAutoHolidays);
+      if (preferences.australia88VisaYear !== undefined) setAustralia88VisaYear(preferences.australia88VisaYear);
+      if (preferences.australia88ManualDays !== undefined) setAustralia88ManualDays(preferences.australia88ManualDays);
 
       await firebaseService.savePreferences(currentUser.uid, preferences);
     } catch (err) {
@@ -213,6 +219,8 @@ export const ConfigProvider = ({ children }) => {
     holidayCountry,
     holidayRegion,
     useAutoHolidays,
+    australia88VisaYear,
+    australia88ManualDays,
     thematicColors,
     savePreferences,
     requestAustraliaGeodetection,

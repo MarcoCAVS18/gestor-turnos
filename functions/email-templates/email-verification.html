@@ -1,94 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verify your email – Orary</title>
 </head>
-<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
 
-  <!-- Outer wrapper -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f1f5f9;padding:40px 16px;">
+<body
+  style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 16px;background:#f1f5f9;">
     <tr>
       <td align="center">
 
-        <!-- Card -->
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <table width="100%" cellpadding="0" cellspacing="0"
+          style="max-width:600px;background:#ffffff;border-radius:14px;border:1px solid #e2e8f0;overflow:hidden;">
 
-          <!-- Header -->
           <tr>
-            <td align="center" style="background:linear-gradient(135deg,#EC4899 0%,#db2777 100%);padding:36px 32px 28px;">
-              <img
-                src="https://orary.app/assets/images/logo4.png"
-                alt="Orary"
-                width="56"
-                style="display:block;margin:0 auto 12px;border-radius:50%;background:#fff;padding:6px;"
-              />
-              <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">Orary</h1>
-              <p style="margin:4px 0 0;font-size:13px;color:rgba(255,255,255,0.8);">Manage your work shifts easily</p>
+            <td align="center" style="background:linear-gradient(135deg,#EC4899,#db2777);padding:28px 32px;">
+              <img src="https://orary.app/assets/images/logo5.png" width="48"
+                style="display:block;margin:0 auto 10px;background:#fff;border-radius:50%;padding:6px;">
+              <h1 style="margin:0;font-size:22px;color:#ffffff;">Orary</h1>
             </td>
           </tr>
 
-          <!-- Body -->
           <tr>
-            <td style="padding:36px 36px 24px;">
-              <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#1e293b;">Verify your email address</h2>
+            <td style="padding:40px 40px 28px;">
+
+              <h2 style="margin:0 0 10px;font-size:20px;color:#1e293b;">Verify your email address</h2>
+
               <p style="margin:0 0 20px;font-size:15px;color:#475569;line-height:1.6;">
-                Hi <strong>%DISPLAY_NAME%</strong>,<br />
-                Thanks for signing up! Click the button below to confirm your email address and activate your account.
+                Hi <strong>%DISPLAY_NAME%</strong>,<br>
+                Thanks for signing up! Click the button below to confirm your email address.
               </p>
 
-              <!-- CTA Button -->
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+              <table width="100%">
                 <tr>
-                  <td align="center" style="padding:8px 0 24px;">
-                    <a
-                      href="%LINK%"
-                      style="display:inline-block;background:linear-gradient(135deg,#EC4899 0%,#db2777 100%);color:#ffffff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 36px;border-radius:10px;letter-spacing:0.2px;"
-                    >
-                      Verify email address
+                  <td align="center" style="padding:10px 0 24px;">
+                    <a href="%LINK%" target="_blank" rel="noopener"
+                      style="display:inline-block;background:linear-gradient(135deg,#EC4899,#db2777);color:#fff;text-decoration:none;font-size:15px;font-weight:600;padding:14px 32px;border-radius:8px;border:1px solid #db2777;">
+                      Verify email
                     </a>
                   </td>
                 </tr>
               </table>
 
-              <p style="margin:0 0 16px;font-size:13px;color:#94a3b8;line-height:1.6;">
-                If the button doesn't work, copy and paste this link into your browser:
+              <p style="margin:0 0 10px;font-size:13px;color:#64748b;">
+                If the button doesn't work, copy this link:
               </p>
-              <p style="margin:0 0 24px;font-size:12px;color:#64748b;word-break:break-all;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;">
+
+              <p
+                style="margin:0 0 24px;font-size:12px;color:#64748b;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;word-break:break-all;">
                 %LINK%
               </p>
 
-              <hr style="border:none;border-top:1px solid #f1f5f9;margin:0 0 20px;" />
-
-              <p style="margin:0;font-size:13px;color:#94a3b8;line-height:1.5;">
-                If you didn't create an account with Orary, you can safely ignore this email.
-                This link expires in <strong>24 hours</strong>.
+              <p style="margin:0;font-size:13px;color:#94a3b8;">
+                If you didn't create this account, you can safely ignore this email.
               </p>
+
             </td>
           </tr>
 
-          <!-- Footer -->
           <tr>
-            <td style="background-color:#f8fafc;border-top:1px solid #f1f5f9;padding:20px 36px;text-align:center;">
-              <p style="margin:0 0 6px;font-size:12px;color:#94a3b8;">
-                &copy; 2025 Orary &nbsp;·&nbsp;
-                <a href="https://orary.app/privacy" style="color:#EC4899;text-decoration:none;">Privacy Policy</a>
-                &nbsp;·&nbsp;
-                <a href="https://orary.app/terms" style="color:#EC4899;text-decoration:none;">Terms of Service</a>
-              </p>
-              <p style="margin:0;font-size:11px;color:#cbd5e1;">
-                You're receiving this because you signed up for Orary.
+            <td style="background:#f8fafc;border-top:1px solid #f1f5f9;padding:20px;text-align:center;">
+              <p style="margin:0;font-size:12px;color:#94a3b8;">
+                © 2026 Orary Inc. · Nelson, New Zealand
               </p>
             </td>
           </tr>
 
         </table>
-        <!-- /Card -->
-
       </td>
     </tr>
   </table>
 
 </body>
+
 </html>

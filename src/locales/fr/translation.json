@@ -40,12 +40,6 @@
     "shift": "quart",
     "shifts": "quarts",
     "work": "Travail",
-    "duration": "Durée",
-    "earnings": "Gains",
-    "hours": "heures",
-    "viewDetails": "Voir détails",
-    "time": "Heure",
-    "date": "Date",
     "hourlyRate": "Taux horaires",
     "day": "Jour",
     "afternoon": "Après-midi",
@@ -66,7 +60,6 @@
     "remove": "Supprimer",
     "confirmDeletion": "Confirmer la Suppression",
     "deleting": "Suppression...",
-    "hours": "Heures",
     "minutes": "Minutes",
     "seconds": "Secondes",
     "perHour": "h",
@@ -85,6 +78,15 @@
       "Friday": "Vendredi",
       "Saturday": "Samedi",
       "Sunday": "Dimanche"
+    },
+    "days": {
+      "Mon": "Lun",
+      "Tue": "Mar",
+      "Wed": "Mer",
+      "Thu": "Jeu",
+      "Fri": "Ven",
+      "Sat": "Sam",
+      "Sun": "Dim"
     }
   },
   "nav": {
@@ -101,7 +103,8 @@
     "newWork": "Nouveau travail",
     "shiftsDisabledTooltip": "Créez d'abord un travail pour ajouter des quarts",
     "paused": "En pause",
-    "liveMode": "Mode Live"
+    "liveMode": "Mode Live",
+    "share": "Partager"
   },
   "premium": {
     "title": "Premium",
@@ -150,7 +153,32 @@
       "defaultMethod": "Moyen de paiement par défaut",
       "totalInvested": "Total investi dans Premium",
       "invoices": "Factures",
-      "history": "Historique"
+      "history": "Historique",
+      "address": "Adresse",
+      "addressPlaceholder": "Votre adresse",
+      "billingDetails": "Informations de facturation",
+      "cardInputNotFound": "Formulaire de carte introuvable",
+      "cardNumber": "Numéro de carte",
+      "cardholderName": "Nom du titulaire",
+      "city": "Ville",
+      "cityPlaceholder": "Votre ville",
+      "country": "Pays",
+      "cvc": "CVC",
+      "expiryDate": "Date d'expiration",
+      "fullNameOnCard": "Nom complet sur la carte",
+      "noResponse": "Pas de réponse du serveur",
+      "postalCode": "Code postal",
+      "postalCodePlaceholder": "Votre code postal",
+      "processingFailed": "Erreur de traitement du paiement",
+      "securePayment": "Paiement sécurisé",
+      "settingUpTrial": "Configuration de la période d'essai...",
+      "startTrial": "Commencer l'essai gratuit",
+      "systemNotReady": "Système non disponible",
+      "testMode": "Mode test",
+      "testModeDateCvc": "Date : 12/34 | CVC : 123",
+      "testModeDesc": "Utilisez des données de test pour tester le paiement",
+      "trialNotice": "Aucun frais ne sera prélevé pendant 15 jours. Après votre essai, {{price}}/mois sera facturé à <strong>{{email}}</strong>. Annulez à tout moment.",
+      "unexpectedError": "Erreur inattendue"
     },
     "invoices": {
       "title": "Factures Récentes",
@@ -190,8 +218,8 @@
       "trialEnds": "L'essai se termine",
       "accessUntil": "Accès jusqu'au",
       "nextBilling": "Prochaine facturation",
-      "trialInfo": "Votre essai gratuit de 15 jours est actif. Votre carte sera débitée de {{price}} AUD le {date} à moins que vous ne résiliez avant.",
-      "cancellationInfo": "Votre abonnement se terminera le {date}. Vous garderez un accès complet jusqu'à cette date."
+      "trialInfo": "Votre essai gratuit de 15 jours est actif. Votre carte sera débitée de A${{price}} AUD/mois le {{date}} sauf si vous annulez avant.",
+      "cancellationInfo": "Votre abonnement se termine le {{date}}. Vous garderez un accès complet jusqu'à cette date."
     },
     "status": {
       "active": "Actif",
@@ -304,6 +332,7 @@
     "termsOfService": "Conditions d'utilisation"
   },
   "integrations": {
+    "title": "Intégrations",
     "subtitle": "Connectez des services externes et configurez les notifications",
     "backToSettings": "Retour aux Paramètres",
     "status": {
@@ -316,10 +345,14 @@
       "title": "Notifications du Navigateur",
       "description": "Recevez des notifications directement dans votre navigateur lors d'événements importants.",
       "enable": "Activer les notifications",
+      "enableNotifications": "Activer les notifications",
       "blocked": "Bloqué par le navigateur",
+      "blockedByBrowser": "Les notifications sont bloquées par le navigateur",
       "blockedHelp": "Les notifications sont bloquées. Veuillez les activer dans les paramètres de votre navigateur.",
       "enabledTitle": "Notifications activées !",
-      "enabledMessage": "Vous recevrez désormais des rappels de quarts de travail."
+      "enabledMessage": "Vous recevrez désormais des rappels de quarts de travail.",
+      "enabledSuccess": "Notifications activées",
+      "enabledSuccessDesc": "Vous recevrez des rappels de quarts"
     },
     "reminders": {
       "title": "Rappels de Quarts",
@@ -333,6 +366,7 @@
       "title": "Connexion Biométrique",
       "description": "Utilisez Touch ID, Face ID ou Windows Hello pour déverrouiller l'app rapidement lorsque vous revenez.",
       "active": "Actif sur cet appareil",
+      "activeOnDevice": "Actif sur cet appareil",
       "enable": "Activer biométrique",
       "enableForDevice": "Activer pour cet appareil",
       "notSupported": "Non pris en charge sur cet appareil ou navigateur."
@@ -349,11 +383,14 @@
       "title": "Abonnement au Calendrier",
       "description": "Abonnez-vous à vos quarts de travail dans n'importe quelle app de calendrier — Google Calendar, Apple Calendar, Outlook et plus. Se met à jour automatiquement toutes les quelques heures.",
       "subscribe": "S'abonner au Calendrier",
+      "subscribeButton": "S'abonner au calendrier",
       "opening": "Ouverture...",
       "copyLink": "Copier le lien (autres apps)",
       "copied": "Copié !",
       "error": "Impossible de générer le lien du calendrier. Veuillez réessayer.",
-      "note": "Aucune connexion requise · Fonctionne avec n'importe quelle app de calendrier"
+      "errorGenerate": "Erreur lors de la génération du calendrier",
+      "note": "Aucune connexion requise · Fonctionne avec n'importe quelle app de calendrier",
+      "noLoginRequired": "Aucune connexion requise"
     },
     "howItWorks": {
       "title": "Comment fonctionne l'abonnement au calendrier",
@@ -387,7 +424,52 @@
         "step3": "Appuyez sur <strong>\"Installer\"</strong> pour confirmer",
         "step3Note": "Orary apparaîtra sur votre écran d'accueil et dans votre tiroir d'apps."
       }
+    },
+    "mobileApp": {
+      "description": "Installez Orary comme app native sur votre appareil",
+      "iOSAndroid": "iOS et Android",
+      "title": "App mobile"
+    },
+    "pwa": {
+      "androidTab": "Android",
+      "iosTab": "iOS",
+      "subtitle": "Installez l'app sur votre appareil pour une meilleure expérience",
+      "title": "Installer l'app",
+      "android": {
+        "chromeBest": "Chrome est le meilleur navigateur",
+        "chromeBestDesc": "Nous recommandons Chrome pour installer sur Android",
+        "step1Title": "Ouvrez le menu du navigateur",
+        "step2Desc": "Appuyez sur 'Ajouter à l'écran d'accueil'",
+        "step2Title": "Ajouter à l'écran d'accueil",
+        "step3Desc": "L'app apparaîtra sur votre écran d'accueil",
+        "step3Title": "C'est fait"
+      },
+      "ios": {
+        "safariOnly": "Safari uniquement",
+        "safariOnlyDesc": "Sur iOS, vous ne pouvez installer que depuis Safari",
+        "step1Desc": "Appuyez sur le bouton Partager dans la barre inférieure",
+        "step1Title": "Ouvrez Safari",
+        "step2Title": "Appuyez sur le bouton Partager",
+        "step3Title": "Ajouter à l'écran d'accueil",
+        "step3Warning": "Fonctionne uniquement dans Safari",
+        "step4Desc": "L'app apparaîtra sur votre écran d'accueil",
+        "step4Title": "C'est fait"
+      }
+    },
+    "shiftReminders": {
+      "description": "Recevez des rappels avant vos quarts de travail",
+      "enableReminders": "Activer les rappels",
+      "hourBefore": "1 heure avant",
+      "minutesBefore": "minutes avant",
+      "minutesBefore_10": "10 minutes avant",
+      "minutesBefore_15": "15 minutes avant",
+      "minutesBefore_30": "30 minutes avant",
+      "remindMe": "Me rappeler",
+      "title": "Rappels de quarts"
     }
+  },
+  "deliveryVehicle": {
+    "helpText": "Sélectionnez votre véhicule principal pour calculer les frais de carburant"
   },
   "dashboard": {
     "subtitle": "Un aperçu de votre activité et de votre progression.",
@@ -470,7 +552,9 @@
       }
     },
     "common": {
-      "noDataYet": "Pas encore de données"
+      "noDataYet": "Pas encore de données",
+      "deletedWork": "Travail supprimé",
+      "view": "Voir"
     },
     "thisWeek": {
       "title": "Cette semaine",
@@ -518,7 +602,12 @@
       "shiftStarted": "Quart commencé",
       "startedAt": "Commencé à",
       "estimatedEnd": "Fin estimée",
-      "estimatedEarnings": "Gains estimés"
+      "estimatedEarnings": "Gains estimés",
+      "earned": "gagné",
+      "live": "En direct",
+      "quickClockIn": "Pointage rapide",
+      "readyToWork": "Prêt à travailler",
+      "startShift": "Démarrer le quart"
     },
     "quickStats": {
       "works": "Travaux",
@@ -560,7 +649,7 @@
     },
     "goals": {
       "title": "Objectifs Hebdomadaires",
-      "week": "semaine",
+      "week": "sem",
       "weekdays": "jours ouvrables",
       "partTime": "Mi-temps",
       "standard": "Standard",
@@ -692,6 +781,18 @@
       "title": "Intégrations",
       "description": "Configurez les alertes, Google Calendar et plus.",
       "button": "Configurer"
+    },
+    "australia88": {
+      "title": "Visa Vacances Travail",
+      "visaYear": "Année de visa",
+      "year1": "Année 1",
+      "year2": "Année 2",
+      "year1Complete": "Année 1 complète — 88 jours",
+      "manualDays": "Jours avant Orary",
+      "manualDaysY1Title": "Jours de l'Année 1 avant Orary",
+      "manualDaysDescY1": "Jours travaillés en Année 1 avant de suivre avec Orary",
+      "manualDaysY2Title": "Jours de l'Année 2 avant Orary",
+      "manualDaysDescY2": "Jours travaillés en Année 2 avant de suivre avec Orary"
     }
   },
   "shifts": {
@@ -771,7 +872,31 @@
     "holidayBonus": "Prime jour férié",
     "weeklySummary": "Résumé hebdomadaire",
     "shifts": "quarts",
-    "hours": "heures"
+    "hours": "heures",
+    "filters": {
+      "activeFilters": "Filtres actifs",
+      "allDays": "Tous les jours",
+      "allWorks": "Tous les travaux",
+      "clear": "Effacer",
+      "clearAll": "Tout effacer",
+      "daysLabel": "Jours",
+      "filteredBy": "Filtré par",
+      "of": "de",
+      "shiftTypeLabel": "Type",
+      "typeLabel": "Type",
+      "unknownWork": "Travail inconnu",
+      "workLabel": "Travail",
+      "shiftTypes": {
+        "afternoon": "Après-midi",
+        "all": "Tous",
+        "day": "Jour",
+        "delivery": "Livraison",
+        "mixed": "Mixte",
+        "night": "Nuit",
+        "saturday": "Samedi",
+        "sunday": "Dimanche"
+      }
+    }
   },
   "settingsOnboarding": {
     "title": "Bienvenue dans Paramètres",
@@ -815,6 +940,9 @@
     "addWork": "Ajouter un travail",
     "editWork": "Modifier le travail",
     "deleteWork": "Supprimer le travail",
+    "newDeliveryWork": "Nouveau travail de livraison",
+    "editDeliveryWork": "Modifier le travail de livraison",
+    "createWork": "Créer un travail",
     "noWorks": "Aucun travail pour l'instant",
     "name": "Nom",
     "baseRate": "Taux de base",
@@ -852,7 +980,31 @@
     "deliveryFeature3": "Contrôle des pourboires et dépenses de carburant",
     "notSureWhich": "Pas sûr de quel type choisir ?",
     "helpChoose": "Si vous avez des doutes sur le type à choisir, vous pouvez le modifier plus tard dans les paramètres du travail.",
-    "liveModeActiveError": "\"{{workName}}\" est actuellement actif en Mode Live. Arrêtez la session pour le modifier."
+    "liveModeActiveError": "\"{{workName}}\" est actuellement actif en Mode Live. Arrêtez la session pour le modifier.",
+    "filters": {
+      "allWorks": "Tous les travaux",
+      "clear": "Effacer",
+      "shiftTypes": {
+        "day": "Jour",
+        "afternoon": "Après-midi",
+        "night": "Nuit",
+        "saturday": "Samedi",
+        "sunday": "Dimanche",
+        "delivery": "Delivery",
+        "mixed": "Mixte",
+        "all": "Tous les types"
+      },
+      "shiftTypeLabel": "Type de quart",
+      "filteredBy": "Filtré par",
+      "activeFilters": "Filtres actifs",
+      "of": "de",
+      "clearAll": "Tout effacer",
+      "workLabel": "Travail",
+      "daysLabel": "Jours",
+      "allDays": "Tous",
+      "typeLabel": "Type",
+      "unknownWork": "Travail inconnu"
+    }
   },
   "statistics": {
     "title": "Statistiques",
@@ -904,7 +1056,25 @@
         "weeks": "semaines",
         "selectAtLeastOne": "Sélectionnez au moins un jour",
         "preview": "Aperçu",
+        "preview_one": "{{count}} quart à créer",
+        "preview_other": "{{count}} quarts à créer",
         "shiftsWillBeCreated": "quarts seront créés",
+        "shiftsWillBeCreated_one": "{{count}} quart sera créé",
+        "shiftsWillBeCreated_other": "{{count}} quarts seront créés",
+        "selectDates": "Sélectionner des dates",
+        "pressEnterHint": "Appuyez sur Entrée pour confirmer",
+        "selectedDates": "Dates sélectionnées",
+        "noDatesSelected": "Aucune date sélectionnée",
+        "addDatesHint": "Appuyez sur Entrée pour ajouter des dates",
+        "startDate": "Date de début",
+        "endDate": "Date de fin",
+        "skipWeekends": "Ignorer les week-ends",
+        "skipWeekendsDesc": "Ne pas créer de quarts le samedi et dimanche",
+        "fromToDate": "Du {{from}} au {{to}}",
+        "weekdaysOnly": "Jours ouvrables seulement",
+        "endDateAfterStart": "La date de fin doit être postérieure à la date de début",
+        "andMore": "et {{count}} de plus",
+        "workLabel": "Travail",
         "dayLabels": {
           "Mon": "Lun",
           "Tue": "Mar",
@@ -955,7 +1125,9 @@
       },
       "validation": {
         "nameRequired": "Le nom est obligatoire",
-        "baseRateRequired": "Le taux de base est obligatoire"
+        "baseRateRequired": "Le taux de base est obligatoire",
+        "selectPlatform": "Veuillez sélectionner une plateforme",
+        "selectVehicle": "Veuillez sélectionner un véhicule"
       }
     }
   },
@@ -1124,6 +1296,9 @@
     "somethingWentWrong": "Une erreur s'est produite"
   },
   "stats": {
+    "common": {
+      "emptyDescription": "Les données apparaîtront ici une fois enregistrées"
+    },
     "weeklyComparison": {
       "title": "Comparaison hebdomadaire",
       "vsLastWeek": "vs semaine dernière",
@@ -1190,7 +1365,7 @@
         "title": "Évolution hebdomadaire",
         "subtitle": "Progression des gains"
       },
-      "byWorks": {
+      "works": {
         "title": "Par travaux",
         "subtitle": "Distribution des gains"
       },
@@ -1221,6 +1396,15 @@
       "friday": "Vendredi",
       "saturday": "Samedi",
       "sunday": "Dimanche"
+    },
+    "daysFull": {
+      "Monday": "Lundi",
+      "Tuesday": "Mardi",
+      "Wednesday": "Mercredi",
+      "Thursday": "Jeudi",
+      "Friday": "Vendredi",
+      "Saturday": "Samedi",
+      "Sunday": "Dimanche"
     },
     "deliverySummary": {
       "title": "Résumé livraison",
@@ -1259,7 +1443,13 @@
       "costPerKm": "Coût par KM",
       "efficiency": "Efficacité",
       "kmPerDollar": "km/$",
-      "totalSpent": "Total dépensé"
+      "totalSpent": "Total dépensé",
+      "vehicles": {
+        "bicycle": "Vélo",
+        "motorbike": "Moto",
+        "car": "Voiture",
+        "on_foot": "À pied"
+      }
     },
     "fuelEfficiency": {
       "title": "Contrôle carburant",
@@ -1482,30 +1672,6 @@
       "redirectMessage": "Votre compte a été supprimé avec succès. Nous espérons vous revoir !"
     }
   },
-  "filters": {
-    "allWorks": "Tous les travaux",
-    "clear": "Effacer",
-    "shiftTypes": {
-      "day": "Jour",
-      "afternoon": "Après-midi",
-      "night": "Nuit",
-      "saturday": "Samedi",
-      "sunday": "Dimanche",
-      "delivery": "Delivery",
-      "mixed": "Mixte",
-      "all": "Tous les types"
-    },
-    "shiftTypeLabel": "Type de quart",
-    "filteredBy": "Filtré par",
-    "activeFilters": "Filtres actifs",
-    "of": "de",
-    "clearAll": "Tout effacer",
-    "workLabel": "Travail",
-    "daysLabel": "Jours",
-    "allDays": "Tous",
-    "typeLabel": "Type",
-    "unknownWork": "Travail inconnu"
-  },
   "footer": {
     "version": "Version 3.0.1",
     "developed": "Développé avec",
@@ -1513,6 +1679,6 @@
     "copyright": "© 2026 Orary. Tous droits réservés.",
     "terms": "Conditions",
     "privacy": "Confidentialité",
-    "about": "À propos"
+    "about": "À propos Orary"
   }
 }
