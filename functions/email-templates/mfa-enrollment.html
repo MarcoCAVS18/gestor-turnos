@@ -1,102 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Multi-factor authentication enabled – Orary</title>
-</head>
-<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
 
-  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f1f5f9;padding:40px 16px;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MFA enabled – Orary</title>
+</head>
+
+<body
+  style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 16px;background:#f1f5f9;">
     <tr>
       <td align="center">
 
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+        <table width="100%" cellpadding="0" cellspacing="0"
+          style="max-width:600px;background:#ffffff;border-radius:14px;border:1px solid #e2e8f0;overflow:hidden;">
 
-          <!-- Header -->
           <tr>
-            <td align="center" style="background:linear-gradient(135deg,#EC4899 0%,#db2777 100%);padding:36px 32px 28px;">
-              <img
-                src="https://orary.app/assets/images/logo4.png"
-                alt="Orary"
-                width="56"
-                style="display:block;margin:0 auto 12px;border-radius:50%;background:#fff;padding:6px;"
-              />
-              <h1 style="margin:0;font-size:24px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">Orary</h1>
-              <p style="margin:4px 0 0;font-size:13px;color:rgba(255,255,255,0.8);">Manage your work shifts easily</p>
+            <td align="center" style="background:linear-gradient(135deg,#EC4899,#db2777);padding:28px 32px;">
+              <img src="https://orary.app/assets/images/logo5.png" width="48"
+                style="display:block;margin:0 auto 10px;background:#fff;border-radius:50%;padding:6px;">
+              <h1 style="margin:0;font-size:22px;color:#ffffff;">Orary</h1>
             </td>
           </tr>
 
-          <!-- Shield icon -->
           <tr>
-            <td align="center" style="padding:28px 36px 0;">
-              <div style="display:inline-block;background:#fdf2f8;border-radius:50%;padding:16px;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 1L3 5v6c0 5.25 3.75 10.15 9 11.35C17.25 21.15 21 16.25 21 11V5L12 1z" fill="#EC4899" opacity="0.15"/>
-                  <path d="M12 1L3 5v6c0 5.25 3.75 10.15 9 11.35C17.25 21.15 21 16.25 21 11V5L12 1zm0 2.18l7 3.12V11c0 4.21-3.07 8.1-7 9.27-3.93-1.17-7-5.06-7-9.27V6.3l7-3.12z" fill="#EC4899"/>
-                  <path d="M10.5 13.09L8.41 11 7 12.41 10.5 15.91 17 9.41 15.59 8 10.5 13.09z" fill="#EC4899"/>
-                </svg>
-              </div>
-            </td>
-          </tr>
+            <td style="padding:40px;">
 
-          <!-- Body -->
-          <tr>
-            <td style="padding:20px 36px 24px;">
-              <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#1e293b;text-align:center;">
+              <h2 style="margin:0 0 10px;font-size:20px;color:#1e293b;text-align:center;">
                 Two-factor authentication enabled
               </h2>
-              <p style="margin:0 0 20px;font-size:15px;color:#475569;line-height:1.6;text-align:center;">
-                Hi <strong>%DISPLAY_NAME%</strong>,<br />
-                Multi-factor authentication (MFA) has been successfully enrolled on your Orary account.
-                Your account is now more secure.
+
+              <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.6;text-align:center;">
+                Hi <strong>%DISPLAY_NAME%</strong>,<br>
+                Multi-factor authentication is now active on your account.
               </p>
 
-              <!-- What this means -->
-              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;">
+              <table width="100%" style="margin-bottom:24px;">
                 <tr>
-                  <td style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 18px;">
-                    <p style="margin:0 0 10px;font-size:13px;font-weight:600;color:#166534;">What this means for you</p>
-                    <p style="margin:0 0 8px;font-size:13px;color:#166534;line-height:1.5;">
-                      ✅ &nbsp;Every sign-in will now require your second factor.
-                    </p>
-                    <p style="margin:0 0 8px;font-size:13px;color:#166534;line-height:1.5;">
-                      🔒 &nbsp;Even if someone gets your password, they cannot access your account.
-                    </p>
-                    <p style="margin:0;font-size:13px;color:#166534;line-height:1.5;">
-                      📱 &nbsp;Make sure to keep access to your authenticator app.
+                  <td style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px;">
+                    <p style="margin:0 0 8px;font-size:13px;color:#166534;">✅ Every sign-in requires a second factor</p>
+                    <p style="margin:0 0 8px;font-size:13px;color:#166534;">🔒 Your account is significantly safer</p>
+                    <p style="margin:0;font-size:13px;color:#166534;">📱 Keep access to your authenticator app</p>
+                  </td>
+                </tr>
+              </table>
+
+              <table width="100%">
+                <tr>
+                  <td style="background:#fff1f2;border:1px solid #fecdd3;border-radius:10px;padding:14px;">
+                    <p style="margin:0;font-size:13px;color:#9f1239;">
+                      <strong>Didn't enable MFA?</strong><br>
+                      Reset your password immediately or contact
+                      <a href="mailto:support@orary.app" style="color:#EC4899;">support@orary.app</a>
                     </p>
                   </td>
                 </tr>
               </table>
 
-              <!-- Security warning -->
-              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:0;">
-                <tr>
-                  <td style="background:#fff1f2;border:1px solid #fecdd3;border-radius:10px;padding:14px 16px;">
-                    <p style="margin:0;font-size:13px;color:#9f1239;line-height:1.5;">
-                      🔒 &nbsp;<strong>Didn't enable MFA?</strong><br />
-                      If you did not make this change, your account may be compromised.
-                      Please reset your password immediately or contact
-                      <a href="mailto:support@orary.app" style="color:#EC4899;">support@orary.app</a>.
-                    </p>
-                  </td>
-                </tr>
-              </table>
             </td>
           </tr>
 
-          <!-- Footer -->
           <tr>
-            <td style="background-color:#f8fafc;border-top:1px solid #f1f5f9;padding:20px 36px;text-align:center;">
-              <p style="margin:0 0 6px;font-size:12px;color:#94a3b8;">
-                &copy; 2025 Orary &nbsp;·&nbsp;
-                <a href="https://orary.app/privacy" style="color:#EC4899;text-decoration:none;">Privacy Policy</a>
-                &nbsp;·&nbsp;
-                <a href="https://orary.app/terms" style="color:#EC4899;text-decoration:none;">Terms of Service</a>
-              </p>
-              <p style="margin:0;font-size:11px;color:#cbd5e1;">
-                This security notification was sent to %EMAIL%.
+            <td style="background:#f8fafc;border-top:1px solid #f1f5f9;padding:20px;text-align:center;">
+              <p style="margin:0;font-size:12px;color:#94a3b8;">
+                © 2026 Orary Inc. · Nelson, New Zealand
               </p>
             </td>
           </tr>
@@ -108,4 +77,5 @@
   </table>
 
 </body>
+
 </html>

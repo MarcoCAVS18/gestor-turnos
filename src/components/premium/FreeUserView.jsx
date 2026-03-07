@@ -36,7 +36,7 @@ const FreeUserView = ({ onPaymentSuccess, onProcessingStart, onPaymentError }) =
         <CreditCard size={24} style={{ color: PREMIUM_COLORS.primary }} />
         <h2 className="text-lg font-semibold text-gray-900">{t('premium.paymentDetails')}</h2>
       </div>
-      <PaymentForm onSuccess={onPaymentSuccess} onProcessingStart={onProcessingStart} onPaymentError={onPaymentError} />
+      <PaymentForm onSuccess={onPaymentSuccess} onProcessingStart={onProcessingStart} onPaymentError={onPaymentError} localPrice={localPrice} />
     </Card>
   );
 

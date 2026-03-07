@@ -7,16 +7,22 @@ import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import Flex from '../../ui/Flex';
+import Australia88Section from '../Australia88Section';
 import logger from '../../../utils/logger';
 
 const DeliveryPlatformsSection = ({ onError, onSuccess, className }) => {
   const { t } = useTranslation();
-  const { deliveryPlatforms, defaultDeliveryPlatform, savePreferences } = useApp();
+  const { deliveryPlatforms, defaultDeliveryPlatform, savePreferences, holidayCountry } = useApp();
   const colors = useThemeColors();
 
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [newPlatformName, setNewPlatformName] = useState('');
   const [newPlatformColor, setNewPlatformColor] = useState('#6B7280');
+
+  // Orchestrator: if user is in Australia, show the AU visa settings instead
+  if (holidayCountry === 'AU') {
+    return <Australia88Section className={className} />;
+  }
 
   const handleSelectDefault = async (platformId) => {
     try {

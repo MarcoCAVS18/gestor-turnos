@@ -40,6 +40,7 @@ const ShiftTypeStats = ({ currentData, loading, className = '' }) => {
       loading={loading}
       empty={isEmpty}
       emptyMessage={t('stats.shiftTypeStats.emptyText')}
+      emptyDescription={t('stats.common.emptyDescription')}
       className={className}
     >
       {/* Grid fills the full height; each row gets an equal fraction via gridAutoRows 1fr */}

@@ -12,7 +12,7 @@ import Button from '../ui/Button';
 import { CARD_NUMBER_OPTIONS, CARD_EXPIRY_OPTIONS, CARD_CVC_OPTIONS, COUNTRIES } from './constants';
 import logger from '../../utils/logger';
 
-const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
+const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError, localPrice }) => {
   const { t } = useTranslation();
   const stripe = useStripe();
   const elements = useElements();
@@ -274,9 +274,15 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError }) => {
         style={{ backgroundColor: `${PREMIUM_COLORS.lighter}50` }}
       >
         <Receipt size={18} style={{ color: PREMIUM_COLORS.primary }} className="flex-shrink-0 mt-0.5" />
-        <p className="text-sm text-gray-600">
-          {t('premium.payment.trialNotice', { price: AUD_PRICE, email: currentUser?.email })}
-        </p>
+        <p
+          className="text-sm text-gray-600"
+          dangerouslySetInnerHTML={{
+            __html: t('premium.payment.trialNotice', {
+              price: localPrice ? `~${localPrice.symbol}${localPrice.amount} ${localPrice.currency}` : `A$${AUD_PRICE} AUD`,
+              email: currentUser?.email,
+            })
+          }}
+        />
       </div>
 
       {/* Submit Button */}

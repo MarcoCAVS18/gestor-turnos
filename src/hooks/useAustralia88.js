@@ -27,7 +27,7 @@ import { createSafeDate } from '../utils/time';
  * }}
  */
 export const useAustralia88 = () => {
-  const { holidayCountry } = useConfigContext();
+  const { holidayCountry, australia88VisaYear, australia88ManualDays } = useConfigContext();
   const { works, shifts } = useDataContext();
 
   // Australia mode is on when the user's location is set to Australia
@@ -76,27 +76,36 @@ export const useAustralia88 = () => {
     return getVisaDaysFromWeeklyHours(thisWeekHours);
   }, [hasEligibleWorks, shifts, works]);
 
+  // Apply visa year offset and manual pre-Orary days to the app-calculated total.
+  // - visaYear=1: totalVisaDays = appDays + manualDays (days in Y1 before Orary)
+  // - visaYear=2: Y1 is assumed complete (88-day offset) + appDays count toward Y2
+  //               totalVisaDays = 88 + manualDays + appDays (days in Y2 before Orary)
+  const y1BaseOffset = australia88VisaYear === 2 ? 88 : 0;
+  const totalVisaDays = y1BaseOffset + (australia88ManualDays || 0) + visaData.totalDays;
+
   // Year-based computed values — each visa extension requires 88 days.
   // Year 1: first 88 days. Year 2: next 88 days (89–176). No automatic Year 2 assumption.
-  const year1Complete = visaData.totalDays >= 88;
-  const year2Active   = visaData.totalDays > 88;   // user has days beyond Year 1
-  const year2Complete = visaData.totalDays >= 176;
-  const year2Days     = Math.max(0, Math.min(88, visaData.totalDays - 88));
+  const year1Complete = totalVisaDays >= 88;
+  const year2Active   = totalVisaDays > 88;
+  const year2Complete = totalVisaDays >= 176;
+  const year2Days     = Math.max(0, Math.min(88, totalVisaDays - 88));
 
   // Progress percent always relative to the current year's 88-day goal
   const progressPercent = useMemo(() => {
-    const total = visaData.totalDays;
     if (year2Complete) return 100;
     if (year2Active)   return Math.min(100, Math.round((year2Days / 88) * 100));
-    return Math.min(100, Math.round((total / 88) * 100));
-  }, [visaData.totalDays, year2Active, year2Complete, year2Days]);
+    return Math.min(100, Math.round((totalVisaDays / 88) * 100));
+  }, [totalVisaDays, year2Active, year2Complete, year2Days]);
+
+  // Milestone based on adjusted total
+  const milestone = totalVisaDays < 88 ? 88 : totalVisaDays < 176 ? 176 : 'complete';
 
   return {
     isAustraliaMode,
     hasEligibleWorks,
-    totalVisaDays: visaData.totalDays,
+    totalVisaDays,
     currentWeekVisaDays,
-    milestone: visaData.currentMilestone,
+    milestone,
     progressPercent,
     weeklyBreakdown: visaData.weeklyBreakdown,
     // Year-based helpers
@@ -104,5 +113,8 @@ export const useAustralia88 = () => {
     year2Active,
     year2Complete,
     year2Days,
+    // Settings
+    australia88VisaYear,
+    australia88ManualDays,
   };
 };

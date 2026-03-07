@@ -26,8 +26,9 @@ const WeeklyShiftsSection = ({
   thematicColors,
 }) => {
   const { t, i18n } = useTranslation();
+  // Sort dates chronologically (Monday → Sunday) within the week
   const dates = Object.keys(shifts || {}).sort((a, b) =>
-    new Date(b) - new Date(a)
+    new Date(a) - new Date(b)
   );
 
   if (!dates.length) return null;

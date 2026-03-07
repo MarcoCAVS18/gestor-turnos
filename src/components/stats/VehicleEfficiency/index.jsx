@@ -43,7 +43,7 @@ const VehicleEfficiency = ({ vehicleStats }) => {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Car className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                  <span className="font-medium text-gray-800 dark:text-gray-100">{vehicleName}</span>
+                  <span className="font-medium text-gray-800 dark:text-gray-100">{t(`stats.vehicleEfficiency.vehicles.${vehicleName?.toLowerCase()}`, vehicleName)}</span>
                 </div>
                 {isBest && <Zap className="w-4 h-4 text-green-500" />}
               </div>

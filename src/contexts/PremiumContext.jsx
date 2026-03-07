@@ -6,11 +6,11 @@ import { useAuth } from './AuthContext';
 import {
   loadSubscriptionAndUsage,
   upgradeToPremium as upgradeToPremiumService,
-  cancelSubscription as cancelSubscriptionService,
   canUseLiveMode,
   incrementLiveModeUsage,
   LIVE_MODE_FREE_LIMIT,
 } from '../services/premiumService';
+import { cancelSubscription as cancelStripeSubscription } from '../services/stripeService';
 import logger from '../utils/logger';
 
 // Create context
@@ -113,7 +113,8 @@ export const PremiumProvider = ({ children }) => {
     }
   }, [currentUser?.uid]);
 
-  // Cancel subscription
+  // Cancel subscription — calls cloud function so Stripe handles cancel_at_period_end.
+  // User keeps premium access until the trial/billing period ends (status: 'cancelling').
   const cancelSubscription = useCallback(async () => {
     if (!currentUser?.uid) {
       throw new Error('User not authenticated');
@@ -121,10 +122,10 @@ export const PremiumProvider = ({ children }) => {
 
     try {
       setError(null);
-      const cancelledSubscription = await cancelSubscriptionService(currentUser.uid);
-      setSubscription(cancelledSubscription);
-      setIsPremium(false);
-      return cancelledSubscription;
+      await cancelStripeSubscription();
+      // Keep isPremium true — 'cancelling' is still a valid premium status
+      setSubscription(prev => prev ? { ...prev, status: 'cancelling' } : prev);
+      return { status: 'cancelling' };
     } catch (err) {
       logger.error('Error cancelling subscription:', err);
       setError(err.message);

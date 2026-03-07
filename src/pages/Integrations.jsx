@@ -22,13 +22,14 @@ import Button from '../components/ui/Button';
 import { useConfigContext } from '../contexts/ConfigContext';
 import { useAuth } from '../contexts/AuthContext';
 import { doc, updateDoc } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 import {
   checkBiometricSupport,
   isBiometricEnabledOnDevice,
   registerBiometric,
   removeBiometricCredential,
 } from '../services/biometricService';
-import { db } from '../services/firebase';
+import { db, functions } from '../services/firebase';
 import {
   isNotificationSupported,
   checkNotificationPermission,
@@ -113,6 +114,18 @@ const Integrations = () => {
         await registerBiometric(currentUser.uid, currentUser.email);
         await updateDoc(doc(db, 'users', currentUser.uid), { biometricEnabled: true });
         setBiometric(prev => ({ ...prev, enabled: true, loading: false }));
+        
+        // Send MFA enrollment notification email
+        try {
+          const sendMFANotification = httpsCallable(functions, 'sendMFAEnrollmentNotification');
+          await sendMFANotification({
+            email: currentUser.email,
+            displayName: currentUser.displayName || currentUser.email
+          });
+        } catch (emailErr) {
+          // Silently fail - don't block UX if email fails
+          logger.warn('Failed to send MFA notification email:', emailErr);
+        }
       } else {
         removeBiometricCredential(currentUser.uid);
         await updateDoc(doc(db, 'users', currentUser.uid), { biometricEnabled: false });

@@ -71,6 +71,8 @@
     "sunday": "Sunday",
     "saveChanges": "Save Changes",
     "delivery": "Delivery",
+    "liveMode": "Live Mode",
+    "share": "Share",
     "daysFull": {
       "Monday": "Monday",
       "Tuesday": "Tuesday",
@@ -79,6 +81,15 @@
       "Friday": "Friday",
       "Saturday": "Saturday",
       "Sunday": "Sunday"
+    },
+    "days": {
+      "Mon": "Mon",
+      "Tue": "Tue",
+      "Wed": "Wed",
+      "Thu": "Thu",
+      "Fri": "Fri",
+      "Sat": "Sat",
+      "Sun": "Sun"
     }
   },
   "nav": {
@@ -161,7 +172,7 @@
       "cardNumber": "Card Number",
       "expiryDate": "Expiry Date",
       "cvc": "CVC",
-      "trialNotice": "Your card won't be charged for 15 days. After your trial, ${{price}} AUD/month is billed to <strong>{{email}}</strong>. Cancel anytime.",
+      "trialNotice": "Your card won't be charged for 15 days. After your trial, {{price}}/month is billed to <strong>{{email}}</strong>. Cancel anytime.",
       "settingUpTrial": "Setting up trial...",
       "startTrial": "Start 15-Day Free Trial",
       "securePayment": "Secure payment powered by Stripe"
@@ -195,6 +206,23 @@
       "nextWeek": "Next week",
       "inWeeks": "In {{count}} weeks",
       "weeksAgo": "{{count}} weeks ago"
+    },
+    "subscription": {
+      "title": "Subscription",
+      "planName": "Orary Premium",
+      "freeDuringTrial": "Free during trial",
+      "memberSince": "Member since",
+      "trialEnds": "Trial ends",
+      "accessUntil": "Access until",
+      "nextBilling": "Next billing",
+      "trialInfo": "Your free 15-day trial is active. Your card will be charged A${{price}} AUD/month on {{date}} unless you cancel before.",
+      "cancellationInfo": "Your subscription ends on {{date}}. You'll keep full access until then."
+    },
+    "status": {
+      "active": "Active",
+      "trialing": "Free trial",
+      "cancelling": "Cancelling",
+      "pastDue": "Past due"
     }
   },
   "notFound": {
@@ -212,6 +240,7 @@
     "support": "Error code: 500 | If this issue continues, please reach out to support."
   },
   "dashboard": {
+    "subtitle": "A summary of your activity and progress",
     "welcome": {
       "greeting_morning": "Good morning,",
       "greeting_afternoon": "Good afternoon,",
@@ -359,7 +388,10 @@
     "helpText": "Select the vehicle you will use for your deliveries"
   },
   "calendar": {
+    "subtitle": "View and manage your shifts by date",
     "today": "Today",
+    "todayDate": "Today, {{date}}",
+    "yesterdayDate": "Yesterday, {{date}}",
     "selectWork": "Select Work",
     "startTracking": "Start Tracking",
     "selectWorkDesc": "Select your work and start tracking your shift in real-time",
@@ -760,6 +792,18 @@
       "title": "Integrations",
       "description": "Set up alerts, Google Calendar and more.",
       "button": "Set up"
+    },
+    "australia88": {
+      "title": "Working Holiday Visa",
+      "visaYear": "Visa year",
+      "year1": "Year 1",
+      "year2": "Year 2",
+      "year1Complete": "Year 1 complete — 88 days",
+      "manualDays": "Days before Orary",
+      "manualDaysY1Title": "Year 1 days before Orary",
+      "manualDaysDescY1": "Days you worked in Year 1 before tracking with Orary",
+      "manualDaysY2Title": "Year 2 days before Orary",
+      "manualDaysDescY2": "Days you worked in Year 2 before tracking with Orary"
     }
   },
   "shifts": {
@@ -829,31 +873,31 @@
     "nightBonus": "Night bonus",
     "saturdayBonus": "Saturday bonus",
     "sundayBonus": "Sunday bonus",
-    "holidayBonus": "Holiday bonus",
-    "filters": {
-      "allWorks": "All works",
-      "clear": "Clear",
-      "shiftTypes": {
-        "day": "Day",
-        "afternoon": "Afternoon",
-        "night": "Night",
-        "saturday": "Saturday",
-        "sunday": "Sunday",
-        "delivery": "Delivery",
-        "mixed": "Mixed",
-        "all": "All types"
-      },
-      "shiftTypeLabel": "Shift type",
-      "filteredBy": "Filtered by",
-      "activeFilters": "Active filters",
-      "of": "of",
-      "clearAll": "Clear all",
-      "workLabel": "Work",
-      "daysLabel": "Days",
-      "allDays": "All",
-      "typeLabel": "Type",
-      "unknownWork": "Unknown work"
-    }
+    "holidayBonus": "Holiday bonus"
+  },
+  "filters": {
+    "allWorks": "All works",
+    "clear": "Clear",
+    "shiftTypes": {
+      "day": "Day",
+      "afternoon": "Afternoon",
+      "night": "Night",
+      "saturday": "Saturday",
+      "sunday": "Sunday",
+      "delivery": "Delivery",
+      "mixed": "Mixed",
+      "all": "All types"
+    },
+    "shiftTypeLabel": "Shift type",
+    "filteredBy": "Filtered by",
+    "activeFilters": "Active filters",
+    "of": "of",
+    "clearAll": "Clear all",
+    "workLabel": "Work",
+    "daysLabel": "Days",
+    "allDays": "All",
+    "typeLabel": "Type",
+    "unknownWork": "Unknown work"
   },
   "settingsOnboarding": {
     "title": "Welcome to Settings",
@@ -1223,7 +1267,16 @@
     "serverError": "Server error",
     "somethingWentWrong": "Something went wrong"
   },
+  "calendarDaySummary": {
+    "noShifts": "No shifts for",
+    "theDate": "{{date}}",
+    "thisDate": "this date",
+    "addShift": "Add shift"
+  },
   "stats": {
+    "common": {
+      "emptyDescription": "Data will appear here once recorded"
+    },
     "weeklyComparison": {
       "title": "Weekly Comparison",
       "vsLastWeek": "vs last week",
@@ -1290,7 +1343,7 @@
         "title": "Weekly Evolution",
         "subtitle": "Earnings progress"
       },
-      "byWorks": {
+      "works": {
         "title": "By Works",
         "subtitle": "Earnings distribution"
       },
@@ -1298,6 +1351,34 @@
         "title": "Daily Hours",
         "subtitle": "Weekly distribution"
       }
+    },
+    "months": {
+      "January": "Jan",
+      "February": "Feb",
+      "March": "Mar",
+      "April": "Apr",
+      "May": "May",
+      "June": "Jun",
+      "July": "Jul",
+      "August": "Aug",
+      "September": "Sep",
+      "October": "Oct",
+      "November": "Nov",
+      "December": "Dec"
+    },
+    "monthsFull": {
+      "January": "January",
+      "February": "February",
+      "March": "March",
+      "April": "April",
+      "May": "May",
+      "June": "June",
+      "July": "July",
+      "August": "August",
+      "September": "September",
+      "October": "October",
+      "November": "November",
+      "December": "December"
     },
     "days": {
       "Monday": "Mon",
@@ -1321,6 +1402,15 @@
       "friday": "Friday",
       "saturday": "Saturday",
       "sunday": "Sunday"
+    },
+    "daysFull": {
+      "Monday": "Monday",
+      "Tuesday": "Tuesday",
+      "Wednesday": "Wednesday",
+      "Thursday": "Thursday",
+      "Friday": "Friday",
+      "Saturday": "Saturday",
+      "Sunday": "Sunday"
     },
     "deliverySummary": {
       "title": "Delivery Summary",
@@ -1359,7 +1449,13 @@
       "costPerKm": "Cost per KM",
       "efficiency": "Efficiency",
       "kmPerDollar": "km/$",
-      "totalSpent": "Total Spent"
+      "totalSpent": "Total Spent",
+      "vehicles": {
+        "bicycle": "Bicycle",
+        "motorbike": "Motorbike",
+        "car": "Car",
+        "on_foot": "On foot"
+      }
     },
     "fuelEfficiency": {
       "title": "Fuel Control",
@@ -1513,6 +1609,6 @@
     "copyright": "© 2026 Orary. All rights reserved.",
     "terms": "Terms",
     "privacy": "Privacy",
-    "about": "About"
+    "about": "About Orary"
   }
 }

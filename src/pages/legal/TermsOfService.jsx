@@ -78,16 +78,28 @@ const TermsOfService = () => {
           Location data is processed locally on your device. Only the resulting country preference is saved to your account. We do not store your precise GPS coordinates or transmit them to our servers. You may deny location access at any time without affecting other app functionality.
         </p>
 
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">5. Premium Subscription</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">5. Premium Subscription & Free Trial</h2>
         <p>
-          Orary offers a Premium subscription with additional features. By subscribing:
+          Orary offers a Premium subscription with additional features. New subscribers are eligible for a <strong>15-day free trial</strong>.
         </p>
+        
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">5.1 Free Trial Terms</h3>
         <ul className="list-disc pl-5 space-y-2 mt-2">
-          <li>You agree to pay the recurring subscription fee ($2.99 AUD/month).</li>
+          <li>New subscribers receive a 15-day free trial period with full access to Premium features.</li>
+          <li>No charges will be made to your payment method during the trial period.</li>
+          <li>You may cancel your subscription at any time during the trial to avoid any charges.</li>
+          <li>At the end of the 15-day trial, your subscription automatically converts to a paid subscription and your payment method will be charged $2.99 AUD (or equivalent in your local currency).</li>
+          <li>If you cancel before the trial ends, you will continue to have Premium access until the end of the trial period, and no charges will be made.</li>
+          <li>We reserve the right to modify or terminate the free trial offer at any time.</li>
+        </ul>
+
+        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">5.2 Subscription Terms</h3>
+        <ul className="list-disc pl-5 space-y-2 mt-2">
+          <li>After the trial period (or immediately if no trial applies), you agree to pay the recurring subscription fee ($2.99 AUD/month).</li>
           <li>Payments are processed securely through Stripe.</li>
           <li>You can cancel your subscription at any time from the app settings.</li>
           <li>Cancellation takes effect at the end of your current billing period.</li>
-          <li>No refunds are provided for partial billing periods.</li>
+          <li>No refunds are provided for partial billing periods or unused trial days.</li>
         </ul>
 
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">6. Intellectual Property</h2>
