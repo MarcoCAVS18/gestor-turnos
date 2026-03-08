@@ -108,9 +108,10 @@ service cloud.firestore {
 
     // Trial usage records - server-managed (Cloud Functions only)
     // Persists across "Clear Everything" to prevent trial abuse.
-    // Client can NEVER read or write this collection.
+    // Client can read their own record to show correct UI, but can NEVER write.
     match /trial_records/{userId} {
-      allow read, write: if false;
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
     }
   }
 }
