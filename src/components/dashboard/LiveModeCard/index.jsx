@@ -27,7 +27,7 @@ import { useLiveMode } from '../../../hooks/useLiveMode';
 import { useDataContext } from '../../../contexts/DataContext';
 import LiveModeFinishConfirmModal from '../../modals/liveMode/LiveModeFinishConfirmModal';
 import { useConfigContext } from '../../../contexts/ConfigContext';
-import { PREMIUM_COLORS } from '../../../contexts/PremiumContext';
+import { PREMIUM_COLORS, usePremium } from '../../../contexts/PremiumContext';
 import logger from '../../../utils/logger';
 
 const LiveModeCard = ({ onClick, onShowActive, className }) => {
@@ -36,6 +36,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
   const navigate = useNavigate();
   const { works } = useDataContext();
   const { smokoEnabled, smokoMinutes } = useConfigContext();
+  const { hasUsedTrial, loading: premiumLoading } = usePremium();
   const {
     isActive,
     isPaused,
@@ -314,10 +315,10 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
       decorativeIcon={Timer}
     >
       <div className="relative z-10 p-6 sm:p-8 h-full">
-        {!liveModeUsage?.isPremium && (
+        {!liveModeUsage?.isPremium && !premiumLoading && !hasUsedTrial && (
           <button
             onClick={(e) => { e.stopPropagation(); navigate('/premium'); }}
-            className="absolute top-4 right-4 px-2.5 py-1 rounded-full text-xs font-semibold hover:opacity-80 transition-opacity"
+            className="absolute top-4 right-4 max-w-[160px] px-2.5 py-1 rounded-full text-[11px] leading-tight font-semibold hover:opacity-80 transition-opacity text-center"
             style={{ backgroundColor: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.35)', color: 'white' }}
           >
             {t('dashboard.liveMode.freeTrial')}
@@ -362,8 +363,8 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                     border: '1px solid rgba(251, 191, 36, 0.4)'
                   } : {}}
                 >
-                  <Crown size={16} style={{ color: PREMIUM_COLORS.gold }} />
-                  <span className="text-sm text-white">
+                  <Crown size={14} className="flex-shrink-0" style={{ color: PREMIUM_COLORS.gold }} />
+                  <span className="text-xs text-white leading-tight">
                     <span className="font-semibold">{liveModeUsage?.remaining ?? liveModeLimit}</span>
                     <span className="opacity-80">/{liveModeLimit} {t('dashboard.liveMode.sessionsThisMonth')}</span>
                   </span>
