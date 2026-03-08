@@ -57,11 +57,12 @@ const SmokoSection = ({ onError, onSuccess, className }) => {
   };
 
   return (
-    <SettingsSection
-      icon={Coffee}
-      title={t('settings.smoko.title')}
-      className={className}
-    >
+    <div id="smoko-section">
+      <SettingsSection
+        icon={Coffee}
+        title={t('settings.smoko.title')}
+        className={className}
+      >
       <div className="space-y-6">
         <div
           className="p-3 rounded-lg"
@@ -141,7 +142,8 @@ const SmokoSection = ({ onError, onSuccess, className }) => {
           </div>
         )}
       </div>
-    </SettingsSection>
+      </SettingsSection>
+    </div>
   );
 };
 

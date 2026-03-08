@@ -100,10 +100,13 @@ export const createSubscription = async (paymentMethodId, email, name, address) 
       return { status: 'trial', trialEnd: data.trialEnd, subscriptionId: data.subscriptionId };
     }
 
-    // Normal payment — ALWAYS confirm explicitly so:
-    // 1. The first invoice is actually charged
-    // 2. The card is authorized for future off-session renewals
-    if (data.clientSecret) {
+    // Payment already confirmed in backend (immediate success for non-trial)
+    if (data.status === 'success') {
+      return { status: 'success', subscriptionId: data.subscriptionId };
+    }
+
+    // 3D Secure or additional authentication required
+    if (data.status === 'requires_action' && data.clientSecret) {
       const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
         payment_method: paymentMethodId,
       });
@@ -120,7 +123,7 @@ export const createSubscription = async (paymentMethodId, email, name, address) 
       throw new Error(`Payment failed: ${paymentIntent.status}`);
     }
 
-    // Fallback for edge cases (e.g., status: 'success' with no clientSecret)
+    // Fallback for edge cases
     return { status: data.status || 'success', subscriptionId: data.subscriptionId };
   } catch (error) {
     logger.error('[Stripe] Error creating subscription:', error);
@@ -162,6 +165,8 @@ export const cancelSubscription = async () => {
 export const openBillingPortal = async () => {
   try {
     const token = await getAuthToken();
+    
+    logger.info('[Stripe] Opening billing portal...', { url: `${FUNCTIONS_BASE_URL}/createBillingPortalSession` });
 
     const response = await fetch(`${FUNCTIONS_BASE_URL}/createBillingPortalSession`, {
       method: 'POST',
@@ -169,12 +174,24 @@ export const openBillingPortal = async () => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      body: JSON.stringify({}), // Empty body required for some CORS configurations
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (parseError) {
+      logger.error('[Stripe] Failed to parse billing portal response:', parseError);
+      throw new Error('Invalid response from billing portal');
+    }
 
     if (!response.ok) {
-      throw new Error(data.error || 'Failed to open billing portal');
+      logger.error('[Stripe] Billing portal error response:', { status: response.status, data });
+      throw new Error(data.error || `Failed to open billing portal (${response.status})`);
+    }
+
+    if (!data.url) {
+      throw new Error('No portal URL returned from server');
     }
 
     // On Capacitor native, use Browser.open() (SFSafariViewController/Chrome Custom Tabs)
@@ -182,11 +199,20 @@ export const openBillingPortal = async () => {
     if (Capacitor.isNativePlatform()) {
       await Browser.open({ url: data.url });
     } else {
-      window.open(data.url, '_blank');
+      const newWindow = window.open(data.url, '_blank');
+      // Check if popup was blocked
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        logger.warn('[Stripe] Popup may have been blocked, falling back to same window');
+        window.location.href = data.url;
+      }
     }
     return data;
   } catch (error) {
-    logger.error('Error opening billing portal:', error);
+    logger.error('[Stripe] Error opening billing portal:', error);
+    // Provide more specific error messages
+    if (error.message === 'Failed to fetch') {
+      throw new Error('Network error: Unable to connect to billing portal. Please check your connection and try again.');
+    }
     throw error;
   }
 };

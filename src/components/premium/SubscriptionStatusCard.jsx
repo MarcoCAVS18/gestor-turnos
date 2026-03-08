@@ -9,7 +9,8 @@ import Card from '../ui/Card';
 import { formatDate, STATUS_CONFIG } from './constants';
 
 const SubscriptionStatusCard = ({ subscription }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { language } = i18n;
   const currentStatus = STATUS_CONFIG[subscription?.status] || STATUS_CONFIG.active;
   const isCancelling = subscription?.status === 'cancelling';
   const isTrialing = subscription?.status === 'trialing';
@@ -43,14 +44,14 @@ const SubscriptionStatusCard = ({ subscription }) => {
         <div className="space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-gray-500">{t('premium.subscription.memberSince')}</span>
-            <span className="font-medium text-gray-900">{formatDate(subscription?.startDate)}</span>
+            <span className="font-medium text-gray-900">{formatDate(subscription?.startDate, language)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">
               {isTrialing ? t('premium.subscription.trialEnds') : isCancelling ? t('premium.subscription.accessUntil') : t('premium.subscription.nextBilling')}
             </span>
             <span className={`font-medium ${isCancelling ? 'text-amber-600' : isTrialing ? 'text-blue-600' : 'text-gray-900'}`}>
-              {isTrialing ? formatDate(subscription?.trialEnd) : formatDate(subscription?.expiryDate)}
+              {isTrialing ? formatDate(subscription?.trialEnd, language) : formatDate(subscription?.expiryDate, language)}
             </span>
           </div>
         </div>
@@ -59,7 +60,7 @@ const SubscriptionStatusCard = ({ subscription }) => {
           <div className="flex items-start gap-2 p-3 rounded-xl bg-blue-50 border border-blue-200">
             <Clock size={16} className="text-blue-500 mt-0.5 flex-shrink-0" />
             <p className="text-xs text-blue-700">
-              {t('premium.subscription.trialInfo', { price: AUD_PRICE, date: formatDate(subscription?.trialEnd) })}
+              {t('premium.subscription.trialInfo', { price: AUD_PRICE, date: formatDate(subscription?.trialEnd, language) })}
             </p>
           </div>
         )}

@@ -82,12 +82,15 @@ export const initializeSubscription = async (userId) => {
 export const loadSubscriptionAndUsage = async (userId) => {
   try {
     const userDocRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userDocRef);
+    const trialDocRef = doc(db, 'trial_records', userId);
+    const [userDoc, trialDoc] = await Promise.all([getDoc(userDocRef), getDoc(trialDocRef)]);
+    const hasUsedTrial = trialDoc.exists();
 
     if (!userDoc.exists()) {
       return {
         subscription: DEFAULT_SUBSCRIPTION,
         liveModeUsage: DEFAULT_LIVE_MODE_USAGE,
+        hasUsedTrial,
       };
     }
 
@@ -125,6 +128,7 @@ export const loadSubscriptionAndUsage = async (userId) => {
     return {
       subscription: data.subscription || DEFAULT_SUBSCRIPTION,
       liveModeUsage,
+      hasUsedTrial,
     };
   } catch (error) {
     logger.error('Error loading subscription and usage:', error);

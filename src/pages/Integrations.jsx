@@ -373,7 +373,7 @@ const Integrations = () => {
           title={t('integrations.biometric.title')}
           description={t('integrations.biometric.description')}
           status={biometric.supported === null ? t('integrations.status.checking') : biometric.enabled ? t('integrations.status.active') : t('integrations.status.inactive')}
-          statusColor={biometric.enabled ? 'green' : 'gray'}
+          statusColor={biometric.enabled ? 'success' : 'default'}
         >
           {biometric.supported === false ? (
             <p className="text-sm text-amber-600">{t('integrations.biometric.notSupported')}</p>

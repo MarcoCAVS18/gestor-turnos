@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from './AuthContext';
+import { usePremium } from './PremiumContext';
 import * as firebaseService from '../services/firebaseService';
 import { generateColorVariations } from '../utils/colorUtils';
 import { DELIVERY_PLATFORMS_AUSTRALIA } from '../constants/delivery';
@@ -27,6 +28,7 @@ const getCachedValue = (key, fallback) => {
 
 export const ConfigProvider = ({ children }) => {
   const { currentUser } = useAuth();
+  const { isPremium, loading: premiumLoading } = usePremium();
 
   // Personalization preference and configuration states
   const [loading, setLoading] = useState(true);
@@ -114,10 +116,10 @@ export const ConfigProvider = ({ children }) => {
   }, [language]);
 
   // Apply theme mode to document body.
-  // Cleanup removes the dark class when ConfigProvider unmounts (user logs out),
-  // so the login page is always shown in light mode.
+  // Dark mode is a premium feature — only add the class when user is verified premium.
+  // Cleanup removes the dark class when ConfigProvider unmounts (user logs out).
   useEffect(() => {
-    if (themeMode === 'dark') {
+    if (isPremium && themeMode === 'dark') {
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
@@ -125,7 +127,21 @@ export const ConfigProvider = ({ children }) => {
     return () => {
       document.documentElement.classList.remove('dark');
     };
-  }, [themeMode]);
+  }, [themeMode, isPremium]);
+
+  // When premium is confirmed lost (subscription expired/cancelled), reset dark mode.
+  // Clears state, localStorage, and Firestore so it doesn't persist.
+  useEffect(() => {
+    if (premiumLoading) return;
+    if (!isPremium && themeMode === 'dark') {
+      setThemeMode('light');
+      try { localStorage.setItem('orary_themeMode', JSON.stringify('light')); } catch {}
+      if (currentUser) {
+        firebaseService.savePreferences(currentUser.uid, { themeMode: 'light' }).catch(() => {});
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPremium, premiumLoading]);
 
   // Generates color variations based on the primary color
   const thematicColors = useMemo(() => {
@@ -149,7 +165,9 @@ export const ConfigProvider = ({ children }) => {
       if (preferences.weeklyHoursGoal !== undefined) setWeeklyHoursGoal(preferences.weeklyHoursGoal);
       if (preferences.smokoEnabled !== undefined) setSmokoEnabled(preferences.smokoEnabled);
       if (preferences.smokoMinutes !== undefined) setSmokoMinutes(preferences.smokoMinutes);
-      if (preferences.themeMode !== undefined) setThemeMode(preferences.themeMode);
+      if (preferences.themeMode !== undefined && (preferences.themeMode !== 'dark' || isPremium)) {
+        setThemeMode(preferences.themeMode);
+      }
       if (preferences.deliveryPlatforms !== undefined) setDeliveryPlatforms(preferences.deliveryPlatforms);
       if (preferences.defaultDeliveryPlatform !== undefined) setDefaultDeliveryPlatform(preferences.defaultDeliveryPlatform);
       if (preferences.holidayCountry !== undefined) setHolidayCountry(preferences.holidayCountry);
@@ -158,14 +176,18 @@ export const ConfigProvider = ({ children }) => {
       if (preferences.australia88VisaYear !== undefined) setAustralia88VisaYear(preferences.australia88VisaYear);
       if (preferences.australia88ManualDays !== undefined) setAustralia88ManualDays(preferences.australia88ManualDays);
 
-      await firebaseService.savePreferences(currentUser.uid, preferences);
+      const safePreferences = { ...preferences };
+      if (safePreferences.themeMode === 'dark' && !isPremium) {
+        delete safePreferences.themeMode;
+      }
+      await firebaseService.savePreferences(currentUser.uid, safePreferences);
     } catch (err) {
       logger.error("Error saving preferences:", err);
       setError("Error saving preferences: " + err.message);
       // TODO: Implement rollback logic for optimistic update
       throw err;
     }
-  }, [currentUser]);
+  }, [currentUser, isPremium]);
 
   // Detects if user is in Australia via geolocation and sets holidayCountry = 'AU'.
   // Called once after the welcome demo is dismissed. Silently skipped if already set

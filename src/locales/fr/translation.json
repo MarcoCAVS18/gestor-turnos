@@ -99,8 +99,8 @@
     "integrations": "Intégrations",
     "calendar": "Calendrier",
     "tagline": "Votre gestionnaire de travail et de quarts",
-    "newShift": "Nouveau quart",
-    "newWork": "Nouveau travail",
+    "newShift": "Nouveau",
+    "newWork": "Nouveau",
     "shiftsDisabledTooltip": "Créez d'abord un travail pour ajouter des quarts",
     "paused": "En pause",
     "liveMode": "Mode Live",
@@ -115,7 +115,7 @@
     "manageSubscription": "Gérez votre abonnement",
     "account": "Compte",
     "profile": "Profil",
-    "freePlan": "Plan Gratuit",
+    "freePlan": "Free",
     "premiumFor": "Premium depuis {{duration}}",
     "lessThanMonth": "Moins d'un mois",
     "oneMonth": "1 mois",
@@ -129,7 +129,7 @@
     "openBillingPortal": "Ouvrir le Portail de Facturation",
     "cancellationScheduled": "Annulation programmée",
     "accessContinues": "L'accès continue jusqu'au {{date}}",
-    "keepAccess": "Vous garderez l'accès jusqu'au <strong>{{date}}</strong>. Après cela, votre plan reviendra à Gratuit.",
+    "keepAccess": "Vous garderez l'accès jusqu'au <strong>{{date}}</strong>. Après cela, votre plan reviendra à Free.",
     "confirm": "Confirmer",
     "cancelSubscription": "Annuler l'abonnement",
     "subtitle": "Débloquez l'accès illimité à toutes les fonctionnalités",
@@ -137,7 +137,8 @@
       "freeTrial": "15 jours d'essai gratuit",
       "unlockPremium": "Débloquer Premium",
       "month": "mois",
-      "trialDescription": "Essai gratuit de 15 jours, puis ${{price}} AUD/mois"
+      "trialDescription": "Essai gratuit de 15 jours, puis ${{price}} AUD/mois",
+      "noTrialDescription": "${{price}} AUD/mois — facturé immédiatement"
     },
     "celebration": {
       "trialStarted": "Essai Commencé !",
@@ -173,6 +174,8 @@
       "securePayment": "Paiement sécurisé",
       "settingUpTrial": "Configuration de la période d'essai...",
       "startTrial": "Commencer l'essai gratuit",
+      "processing": "Traitement en cours...",
+      "subscribe": "S'abonner maintenant",
       "systemNotReady": "Système non disponible",
       "testMode": "Mode test",
       "testModeDateCvc": "Date : 12/34 | CVC : 123",
@@ -226,6 +229,13 @@
       "trialing": "Essai gratuit",
       "cancelling": "Annulation en cours",
       "pastDue": "Paiement en retard"
+    },
+    "security": {
+      "title": "Garantie",
+      "cancelAnytime": "Annulez à tout moment, sans questions",
+      "keepAccess": "Accès maintenu jusqu'à la fin de la période",
+      "securePayment": "Paiement sécurisé via Stripe",
+      "invoiceNote": "Facture envoyée à votre email après chaque paiement"
     }
   },
   "auth": {
@@ -497,7 +507,7 @@
     },
     "quickActions": {
       "title": "Actions rapides",
-      "newShift": "Nouveau quart",
+      "newShift": "Nouveau",
       "newWork": "Nouveau travail"
     },
     "welcome": {
@@ -578,7 +588,7 @@
       "pause": "Pause",
       "finish": "Terminer",
       "moreInfo": "Plus d'infos",
-      "addWork": "Ajouter un travail",
+      "addWork": "Nouveau",
       "needsWork": "Pour utiliser le Mode Live, vous devez d'abord ajouter un travail traditionnel à votre profil.",
       "deliveryComingSoon": "Support des travaux de livraison bientôt disponible",
       "description": "Contrôle total de vos quarts en temps réel. Enregistrez, mettez en pause et surveillez vos gains instantanément.",
@@ -937,7 +947,7 @@
   "works": {
     "title": "Travaux",
     "subtitle": "Gérez vos différents emplois ou travaux.",
-    "addWork": "Ajouter un travail",
+    "addWork": "Nouveau",
     "editWork": "Modifier le travail",
     "deleteWork": "Supprimer le travail",
     "newDeliveryWork": "Nouveau travail de livraison",

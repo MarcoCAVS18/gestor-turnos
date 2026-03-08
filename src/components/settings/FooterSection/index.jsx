@@ -9,7 +9,15 @@ import { usePremium } from '../../../contexts/PremiumContext';
 const FooterSection = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { openPremiumModal } = usePremium();
+  const { openPremiumModal, isPremium } = usePremium();
+
+  const handlePremiumClick = () => {
+    if (isPremium) {
+      navigate('/premium');
+    } else {
+      openPremiumModal();
+    }
+  };
 
   return (
     <footer className="w-full py-2 px-4 mt-auto border-t border-gray-100 select-none">
@@ -18,7 +26,7 @@ const FooterSection = () => {
 
           <button
             className="group flex items-center gap-1 font-bold text-amber-500 hover:text-amber-600 transition-colors cursor-pointer"
-            onClick={openPremiumModal}
+            onClick={handlePremiumClick}
           >
             <Crown size={12} className="group-hover:scale-110 transition-transform fill-current" />
             <span>Premium</span>

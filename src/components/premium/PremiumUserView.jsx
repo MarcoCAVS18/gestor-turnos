@@ -22,6 +22,7 @@ const PremiumUserView = () => {
   const { currentUser, profilePhotoURL } = useAuth();
   const { subscription, cancelSubscription } = usePremium();
   const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError] = useState(null);
 
   const getMembershipDuration = () => {
     if (!subscription?.startDate) return null;
@@ -42,11 +43,14 @@ const PremiumUserView = () => {
 
   const handleOpenBillingPortal = async () => {
     setPortalLoading(true);
+    setPortalError(null);
     try {
       await openBillingPortal();
     } catch (error) {
       logger.error('Billing portal error:', error);
-      alert(`Billing portal error: ${error.message}`);
+      setPortalError(error.message || 'Failed to open billing portal');
+      // Clear error after 5 seconds
+      setTimeout(() => setPortalError(null), 5000);
     } finally {
       setPortalLoading(false);
     }
@@ -59,6 +63,19 @@ const PremiumUserView = () => {
         subtitle={t('premium.manageSubscription')}
         icon={Crown}
       />
+
+      {/* Error notification */}
+      {portalError && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm"
+        >
+          <p className="font-medium">{t('common.error')}</p>
+          <p>{portalError}</p>
+        </motion.div>
+      )}
 
       {/* DESKTOP: Asymmetric grid layout */}
       <div className="hidden lg:block space-y-6">
