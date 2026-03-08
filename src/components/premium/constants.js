@@ -98,8 +98,18 @@ export const STATUS_CONFIG = {
 };
 
 // Helper to format subscription dates
-export const formatDate = (dateField) => {
+// Uses the user's current i18n locale
+export const formatDate = (dateField, locale = 'en') => {
   if (!dateField) return '—';
   const date = dateField.toDate ? dateField.toDate() : new Date(dateField);
-  return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  
+  // Map common locale codes to full locales
+  const localeMap = {
+    'en': 'en-US',
+    'es': 'es-ES',
+    'fr': 'fr-FR'
+  };
+  
+  const fullLocale = localeMap[locale] || locale || 'en-US';
+  return date.toLocaleDateString(fullLocale, { month: 'long', day: 'numeric', year: 'numeric' });
 };

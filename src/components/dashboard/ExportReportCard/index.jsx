@@ -8,7 +8,6 @@ import {
   FileDown,
   Image,
   FileSpreadsheet,
-  Lock,
   Crown
 } from 'lucide-react';
 
@@ -49,60 +48,71 @@ const ExportReportCard = ({ onExport }) => {
   if (!isPremium) {
     return (
       <Card variant="transparent" className="relative overflow-hidden">
-        <button onClick={openPremiumModal} className="w-full text-left">
-          {/* Blur overlay */}
-          <div className="absolute inset-0 backdrop-blur-[2px] bg-white/60 z-10 rounded-xl" />
+        {/* Blur overlay */}
+        <div className="absolute inset-0 backdrop-blur-[3px] bg-white/70 dark:bg-slate-800/70 z-10 rounded-xl pointer-events-none" />
 
-          {/* Lock badge */}
-          <div
-            className="absolute top-4 right-4 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-full"
-            style={{ backgroundColor: `${PREMIUM_COLORS.gold}20` }}
-          >
-            <Crown size={14} style={{ color: PREMIUM_COLORS.gold }} />
-            <span className="text-sm font-medium" style={{ color: PREMIUM_COLORS.primary }}>
-              Premium
-            </span>
-          </div>
-
-          {/* Blurred content preview */}
-          <Flex variant="between" className="opacity-50">
+        {/* Blurred content preview */}
+        <div className="opacity-40 pointer-events-none select-none" aria-hidden="true">
+          <Flex variant="between" className="items-start gap-4">
             <div className="flex-1 pr-4">
               <Flex variant="start" className="gap-2 mb-2">
-                <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center"
-                  style={{ backgroundColor: colors.transparent10 }}
-                >
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center">
                   <FileDown size={18} style={{ color: colors.primary }} />
                 </div>
-
-                <h3 className="text-lg font-semibold text-gray-800">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
                   {t('dashboard.export.title')}
                 </h3>
               </Flex>
-
-              <p className="text-sm text-gray-700 mb-4">
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
                 {t('dashboard.export.description')}
               </p>
-
               <div className="flex gap-2 flex-wrap">
-                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-500">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 dark:bg-slate-700 text-gray-500">
                   <FileText size={16} />
                   <span className="text-sm font-medium">PDF</span>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-500">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 dark:bg-slate-700 text-gray-500">
                   <Image size={16} />
                   <span className="text-sm font-medium">PNG</span>
                 </div>
               </div>
             </div>
-
             <div className="flex-shrink-0">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-gray-300 text-gray-400">
-                <Lock size={24} />
-              </div>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-gray-300 dark:border-slate-600 text-gray-400" />
             </div>
           </Flex>
-        </button>
+        </div>
+
+        {/* CTA overlay — horizontal layout for wide card */}
+        <div className="absolute inset-0 z-20 flex items-center justify-between gap-4 px-6">
+          {/* Icon */}
+          <div
+            className="w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center shadow-lg"
+            style={{ background: `linear-gradient(135deg, ${PREMIUM_COLORS.gold}33, ${PREMIUM_COLORS.gold}66)` }}
+          >
+            <Crown size={24} style={{ color: PREMIUM_COLORS.gold }} />
+          </div>
+
+          {/* Text */}
+          <div className="flex-1 min-w-0">
+            <p className="text-base font-bold text-gray-800 dark:text-gray-100 mb-0.5">
+              {t('dashboard.export.title')}
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 leading-snug">
+              {t('dashboard.export.description')}
+            </p>
+          </div>
+
+          {/* Button */}
+          <button
+            onClick={openPremiumModal}
+            className="flex-shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold shadow-md transition-transform hover:scale-105 active:scale-95"
+            style={{ background: `linear-gradient(135deg, ${PREMIUM_COLORS.gold}, #f59e0b)`, color: '#1a1100' }}
+          >
+            <Crown size={15} />
+            {t('premium.hero.unlockPremium')}
+          </button>
+        </div>
       </Card>
     );
   }

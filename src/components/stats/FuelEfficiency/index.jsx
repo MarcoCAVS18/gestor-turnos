@@ -100,9 +100,9 @@ const FuelEfficiency = ({ deliveryStats, shifts = [], className = '' }) => {
           {t('stats.fuelEfficiency.title')}
         </h3>
         {expensesPercentage > 25 && (
-          <div className="flex items-center text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 rounded-full">
-            <AlertTriangle size={10} className="mr-1" />
-            {t('stats.fuelEfficiency.highConsumption')}
+          <div className="flex items-center text-[10px] sm:text-xs text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
+            <AlertTriangle size={10} className="mr-1 flex-shrink-0" />
+            <span className="truncate max-w-[100px] sm:max-w-none">{t('stats.fuelEfficiency.highConsumption')}</span>
           </div>
         )}
       </Flex>

@@ -759,12 +759,40 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         });
       }
 
+      // ========== NO TRIAL - PAYMENT REQUIRED IMMEDIATELY ==========
       const invoice = subscription.latest_invoice;
       const paymentIntent = invoice?.payment_intent;
 
-      // Edge case: no payment intent for a non-trial subscription
       if (!paymentIntent) {
+        // Edge case: no payment intent - cancel subscription and return error
         console.error('No payment intent found for non-trial subscription:', subscription.id);
+        await stripe.subscriptions.cancel(subscription.id);
+        throw new Error('Payment could not be processed. Please try again.');
+      }
+
+      // For non-trial subscriptions: CONFIRM PAYMENT SYNCHRONOUSLY
+      // This ensures payment succeeds BEFORE returning success to frontend
+      let confirmedPaymentIntent;
+      try {
+        confirmedPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id, {
+          payment_method: paymentMethodId,
+          off_session: false, // User is present during this flow
+          confirm: true,
+        });
+      } catch (confirmError) {
+        // Payment confirmation failed - cancel the subscription and clean up
+        console.error('Payment confirmation failed:', confirmError);
+        try {
+          await stripe.subscriptions.cancel(subscription.id);
+        } catch (cancelError) {
+          console.error('Failed to cancel subscription after payment failure:', cancelError);
+        }
+        throw new Error(confirmError.message || 'Payment failed. Please check your card details and try again.');
+      }
+
+      // Check payment status after confirmation
+      if (confirmedPaymentIntent.status === 'succeeded') {
+        // Payment successful - activate premium
         const periodEnd = subscription.current_period_end;
         const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
 
@@ -784,36 +812,26 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         return res.json({
           status: 'success',
           subscriptionId: subscription.id,
-          message: 'Subscription created successfully!',
+          message: 'Payment successful! Welcome to Premium.',
         });
-      }
-
-      // Fast path: update Firestore immediately if already succeeded
-      // The webhook (invoice.paid) will also update but may have a delay
-      if (paymentIntent.status === 'succeeded') {
-        const periodEnd = subscription.current_period_end;
-        const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-
-        await db.collection('users').doc(userId).update({
-          subscription: {
-            isPremium: true,
-            plan: 'premium',
-            status: 'active',
-            stripeCustomerId: customerId,
-            stripeSubscriptionId: subscription.id,
-            startDate: now,
-            expiryDate: Timestamp.fromMillis(expiryMillis),
-            paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
-          },
+      } else if (confirmedPaymentIntent.status === 'requires_action') {
+        // 3D Secure or additional authentication required
+        // Return client secret for frontend to handle
+        return res.json({
+          status: 'requires_action',
+          clientSecret: confirmedPaymentIntent.client_secret,
+          subscriptionId: subscription.id,
         });
+      } else {
+        // Payment did not succeed - cancel subscription
+        console.error('Payment did not succeed:', confirmedPaymentIntent.status);
+        try {
+          await stripe.subscriptions.cancel(subscription.id);
+        } catch (cancelError) {
+          console.error('Failed to cancel subscription after payment failure:', cancelError);
+        }
+        throw new Error(`Payment could not be completed. Status: ${confirmedPaymentIntent.status}`);
       }
-
-      // ALWAYS return clientSecret so the frontend explicitly confirms the payment.
-      // This ensures the card is properly authorized for future off-session renewals.
-      return res.json({
-        clientSecret: paymentIntent.client_secret,
-        subscriptionId: subscription.id,
-      });
       } finally {
         // Release lock
         await lockRef.delete();
@@ -871,10 +889,60 @@ exports.cancelSubscription = functions.https.onRequest((req, res) => {
         }
       }
 
-      // Cancel at period end (user keeps access until paid period ends)
-      await stripe.subscriptions.update(subscriptionId, {
-        cancel_at_period_end: true,
-      });
+      // Try to cancel the subscription in Stripe
+      try {
+        // First, check the subscription status in Stripe
+        const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
+        
+        // If already canceled, just update Firestore
+        if (stripeSubscription.status === 'canceled') {
+          await db.collection('users').doc(userId).update({
+            'subscription.status': 'canceled',
+            'subscription.isPremium': false,
+          });
+          return res.json({
+            status: 'success',
+            message: 'Subscription was already cancelled',
+          });
+        }
+        
+        // If already set to cancel at period end, just confirm
+        if (stripeSubscription.cancel_at_period_end) {
+          await db.collection('users').doc(userId).update({
+            'subscription.status': 'cancelling',
+          });
+          return res.json({
+            status: 'success',
+            message: 'Subscription will be cancelled at the end of the billing period',
+          });
+        }
+
+        // Cancel at period end (user keeps access until paid period ends)
+        await stripe.subscriptions.update(subscriptionId, {
+          cancel_at_period_end: true,
+        });
+      } catch (stripeError) {
+        // Handle cases where subscription is already gone or already canceled
+        const alreadyCanceled =
+          stripeError.code === 'resource_missing' ||
+          (stripeError.message && stripeError.message.toLowerCase().includes('canceled subscription'));
+
+        if (alreadyCanceled) {
+          await db.collection('users').doc(userId).update({
+            'subscription.status': 'canceled',
+            'subscription.isPremium': false,
+            'subscription.stripeSubscriptionId': null,
+          });
+          return res.json({
+            status: 'success',
+            message: 'Subscription was already cancelled',
+          });
+        }
+
+        // Log and re-throw other Stripe errors
+        console.error('Stripe error cancelling subscription:', stripeError);
+        throw new Error(`Stripe error: ${stripeError.message}`);
+      }
 
       // Update Firestore
       await db.collection('users').doc(userId).update({
@@ -887,7 +955,10 @@ exports.cancelSubscription = functions.https.onRequest((req, res) => {
       });
     } catch (error) {
       console.error('Error cancelling subscription:', error);
-      res.status(500).json({ error: 'Failed to cancel subscription' });
+      res.status(500).json({ 
+        error: error.message || 'Failed to cancel subscription',
+        code: error.code || 'UNKNOWN_ERROR'
+      });
     }
   });
 });

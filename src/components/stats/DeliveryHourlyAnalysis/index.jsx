@@ -265,13 +265,10 @@ const DeliveryHourlyAnalysis = ({ shifts = [], className = "" }) => {
                   <p className="font-bold text-gray-800 dark:text-gray-100 text-lg">
                     {t(`stats.daysFull.${bestMoment.day}`)} {bestMoment.hour}:00 - {bestMoment.hour + 1}:00
                   </p>
+                  <p className="text-sm text-green-600 font-medium">
+                    {formatCurrency(bestMoment.averageProfitPerHour)} {t('stats.deliveryHourlyAnalysis.perHour')}
+                  </p>
                 </div>
-              </div>
-              <div className="text-right">
-                <span className="text-2xl font-bold text-green-600">
-                  {formatCurrency(bestMoment.averageProfitPerHour)}
-                </span>
-                <p className="text-xs text-gray-400 dark:text-gray-500">{t('stats.deliveryHourlyAnalysis.perHour')}</p>
               </div>
             </Flex>
           </div>

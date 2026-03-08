@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ExternalLink, AlertTriangle, XCircle, Settings, CreditCard, FileText, ChevronRight } from 'lucide-react';
+import { ExternalLink, AlertTriangle, Settings, CreditCard, FileText, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeColors } from '../../hooks/useThemeColors';
 import Card from '../ui/Card';
@@ -11,7 +11,8 @@ import { formatDate } from './constants';
 import logger from '../../utils/logger';
 
 const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoading, onCancelSubscription }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { language } = i18n;
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
   const colors = useThemeColors();
@@ -55,7 +56,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
         >
           <Settings size={16} style={{ color: colors.primary }} />
         </div>
-        <h2 className="text-lg font-semibold text-gray-900">{t('common.manage')}</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t('common.manage')}</h2>
       </div>
 
       <div className="space-y-2 flex-1">
@@ -79,8 +80,8 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
               <action.icon size={16} style={{ color: colors.primary }} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-800">{action.label}</p>
-              <p className="text-xs text-gray-400 truncate">{action.description}</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{action.label}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 truncate">{action.description}</p>
             </div>
             <ChevronRight
               size={14}
@@ -113,7 +114,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
       </div>
 
       {/* Cancel section */}
-      <div className="border-t border-gray-100 pt-3 mt-4">
+      <div className="border-t border-gray-100 dark:border-slate-700 pt-3 mt-4">
         <AnimatePresence mode="wait">
           {isCancelling ? (
             <motion.div
@@ -121,13 +122,13 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50 border border-amber-200"
+              className="flex items-start gap-2.5 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50"
             >
-              <AlertTriangle size={16} className="text-amber-500 mt-0.5 flex-shrink-0" />
+              <AlertTriangle size={16} className="text-amber-500 dark:text-amber-400 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-xs font-semibold text-amber-700 mb-0.5">{t('premium.cancellationScheduled')}</p>
-                <p className="text-xs text-amber-600">
-                  {t('premium.accessContinues', { date: formatDate(subscription?.trialEnd || subscription?.expiryDate) })}
+                <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-0.5">{t('premium.cancellationScheduled')}</p>
+                <p className="text-xs text-amber-600 dark:text-amber-500">
+                  {t('premium.accessContinues', { date: formatDate(subscription?.trialEnd || subscription?.expiryDate, language) })}
                 </p>
               </div>
             </motion.div>
@@ -139,21 +140,20 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
               exit={{ opacity: 0, y: -5 }}
               className="space-y-2.5"
             >
-              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-red-50 border border-red-200">
-                <AlertTriangle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
-                <p className="text-xs text-red-700"
+              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700/50">
+                <AlertTriangle size={16} className="text-red-500 dark:text-red-400 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-red-700 dark:text-red-400"
                   dangerouslySetInnerHTML={{ 
-                    __html: t('premium.keepAccess', { date: formatDate(subscription?.trialEnd || subscription?.expiryDate) }) 
+                    __html: t('premium.keepAccess', { date: formatDate(subscription?.trialEnd || subscription?.expiryDate, language) }) 
                   }}
                 />
               </div>
               <div className="flex gap-2">
                 <Button
                   onClick={() => setShowCancelConfirm(false)}
-                  variant="outline"
+                  variant="cancel"
                   size="sm"
                   className="flex-1 justify-center"
-                  themeColor={colors.primary}
                 >
                   {t('common.keepPlan')}
                 </Button>
@@ -161,9 +161,10 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
                   onClick={handleCancelSubscription}
                   loading={cancelLoading}
                   loadingText="..."
+                  variant="solid"
                   size="sm"
-                  icon={XCircle}
-                  className="flex-1 justify-center bg-red-500 hover:bg-red-600 text-white"
+                  themeColor={colors.primary}
+                  className="flex-1 justify-center"
                 >
                   {t('common.confirm')}
                 </Button>
@@ -176,7 +177,7 @@ const ManageSubscriptionCard = ({ subscription, onOpenBillingPortal, portalLoadi
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowCancelConfirm(true)}
-              className="w-full text-xs text-gray-400 hover:text-red-500 transition-colors py-1.5 rounded-lg hover:bg-red-50"
+              className="w-full text-xs text-gray-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors py-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20"
             >
               {t('premium.cancelSubscription')}
             </motion.button>

@@ -50,11 +50,11 @@ const StatsProgressBar = ({ className = '', currentData, weeklyHoursGoal }) => {
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: 'spring', stiffness: 300, damping: 15 }}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
+              className="flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] sm:text-xs font-medium whitespace-nowrap flex-shrink-0"
               style={{ backgroundColor: `${milestone.color}15`, color: milestone.color }}
             >
-              <milestone.icon size={12} />
-              {milestone.text}
+              <milestone.icon size={12} className="flex-shrink-0" />
+              <span className="truncate max-w-[100px] sm:max-w-[140px]">{milestone.text}</span>
             </motion.div>
           )}
         </div>

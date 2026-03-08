@@ -1,7 +1,7 @@
 // src/components/stats/DeliverySummary/index.jsx
 
 import { useTranslation } from 'react-i18next';
-import { TrendingUp, Package } from 'lucide-react';
+import { Package } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency, formatHours } from '../../../utils/statsCalculations';
 import Card from '../../ui/Card';
@@ -19,11 +19,8 @@ const DeliverySummary = ({ deliveryStats }) => {
           <Package size={20} style={{ color: colors.primary }} />
           {t('stats.deliverySummary.title')}
         </h3>
-        <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-          <span className="flex items-center gap-1">
-            <TrendingUp className="w-4 h-4 text-green-500" />
-            <span>{t('stats.deliverySummary.totalEarnings')}</span>
-          </span>
+        <div className="flex flex-col items-end text-right">
+          <span className="text-xs text-gray-500 dark:text-gray-400">{t('stats.deliverySummary.totalEarnings')}</span>
           <span className="font-bold text-gray-900 dark:text-white">{formatCurrency(deliveryStats.totalEarned)}</span>
         </div>
       </div>

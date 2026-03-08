@@ -124,7 +124,7 @@ const CalendarView = () => {
           onClick: () => onNewShift(createSafeDate(selectedDate)),
           icon: Plus,
           label: t('nav.newShift'),
-          mobileLabel: t('calendar.new'),
+          mobileLabel: t('nav.newShift'),
           themeColor: colors.primary,
         }}
       />

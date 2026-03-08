@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { MapPin, Shield, Receipt } from 'lucide-react';
 import { CardNumberElement, CardExpiryElement, CardCvcElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useAuth } from '../../contexts/AuthContext';
-import { PREMIUM_COLORS } from '../../contexts/PremiumContext';
+import { PREMIUM_COLORS, usePremium } from '../../contexts/PremiumContext';
 import { createSubscription, isStripeTestMode } from '../../services/stripeService';
 import { AUD_PRICE } from '../../services/currencyService';
 import Button from '../ui/Button';
@@ -17,6 +17,7 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError, localPrice 
   const stripe = useStripe();
   const elements = useElements();
   const { currentUser } = useAuth();
+  const { hasUsedTrial } = usePremium();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [billingDetails, setBillingDetails] = useState({
@@ -268,22 +269,24 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError, localPrice 
         </div>
       )}
 
-      {/* Trial Notice */}
-      <div
-        className="flex items-start gap-3 p-3 rounded-lg mb-4"
-        style={{ backgroundColor: `${PREMIUM_COLORS.lighter}50` }}
-      >
-        <Receipt size={18} style={{ color: PREMIUM_COLORS.primary }} className="flex-shrink-0 mt-0.5" />
-        <p
-          className="text-sm text-gray-600"
-          dangerouslySetInnerHTML={{
-            __html: t('premium.payment.trialNotice', {
-              price: localPrice ? `~${localPrice.symbol}${localPrice.amount} ${localPrice.currency}` : `A$${AUD_PRICE} AUD`,
-              email: currentUser?.email,
-            })
-          }}
-        />
-      </div>
+      {/* Trial Notice — only shown if user hasn't used trial */}
+      {!hasUsedTrial && (
+        <div
+          className="flex items-start gap-3 p-3 rounded-lg mb-4"
+          style={{ backgroundColor: `${PREMIUM_COLORS.lighter}50` }}
+        >
+          <Receipt size={18} style={{ color: PREMIUM_COLORS.primary }} className="flex-shrink-0 mt-0.5" />
+          <p
+            className="text-sm text-gray-600"
+            dangerouslySetInnerHTML={{
+              __html: t('premium.payment.trialNotice', {
+                price: localPrice ? `~${localPrice.symbol}${localPrice.amount} ${localPrice.currency}` : `A$${AUD_PRICE} AUD`,
+                email: currentUser?.email,
+              })
+            }}
+          />
+        </div>
+      )}
 
       {/* Submit Button */}
       <Button
@@ -292,10 +295,10 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError, localPrice 
         className="w-full"
         size="lg"
         loading={loading}
-        loadingText={t('premium.payment.settingUpTrial')}
+        loadingText={hasUsedTrial ? t('premium.payment.processing') : t('premium.payment.settingUpTrial')}
         disabled={!stripe || loading}
       >
-        {t('premium.payment.startTrial')}
+        {hasUsedTrial ? t('premium.payment.subscribe') : t('premium.payment.startTrial')}
       </Button>
 
       {/* Security Note */}

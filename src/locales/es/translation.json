@@ -99,8 +99,8 @@
     "integrations": "Integraciones",
     "calendar": "Calendario",
     "tagline": "Tu gestor de trabajos y turnos",
-    "newShift": "Nuevo Turno",
-    "newWork": "Nuevo Trabajo",
+    "newShift": "Nuevo",
+    "newWork": "Nuevo",
     "shiftsDisabledTooltip": "Primero crea un trabajo para agregar turnos",
     "paused": "Pausado",
     "liveMode": "Modo Live",
@@ -115,7 +115,7 @@
     "manageSubscription": "Gestiona tu suscripción",
     "account": "Cuenta",
     "profile": "Perfil",
-    "freePlan": "Plan Gratuito",
+    "freePlan": "Free",
     "premiumFor": "Premium por {{duration}}",
     "lessThanMonth": "Menos de un mes",
     "oneMonth": "1 mes",
@@ -129,7 +129,7 @@
     "openBillingPortal": "Abrir Portal de Facturación",
     "cancellationScheduled": "Cancelación programada",
     "accessContinues": "El acceso continúa hasta {{date}}",
-    "keepAccess": "Mantendrás acceso hasta <strong>{{date}}</strong>. Después de eso, tu plan volverá a Gratuito.",
+    "keepAccess": "Mantendrás acceso hasta <strong>{{date}}</strong>. Después de eso, tu plan volverá a Free.",
     "confirm": "Confirmar",
     "cancelSubscription": "Cancelar suscripción",
     "subtitle": "Desbloquea acceso ilimitado a todas las funciones",
@@ -137,7 +137,8 @@
       "freeTrial": "15 días de prueba gratis",
       "unlockPremium": "Desbloquear Premium",
       "month": "mes",
-      "trialDescription": "Prueba gratis por 15 días, luego ${{price}} AUD/mes"
+      "trialDescription": "Prueba gratis por 15 días, luego ${{price}} AUD/mes",
+      "noTrialDescription": "${{price}} AUD/mes — se cobra de inmediato"
     },
     "celebration": {
       "trialStarted": "¡Prueba iniciada!",
@@ -173,6 +174,8 @@
       "securePayment": "Pago seguro",
       "settingUpTrial": "Configurando período de prueba...",
       "startTrial": "Comenzar prueba gratuita",
+      "processing": "Procesando...",
+      "subscribe": "Suscribirse ahora",
       "systemNotReady": "Sistema no disponible",
       "testMode": "Modo de prueba",
       "testModeDateCvc": "Fecha: 12/34 | CVC: 123",
@@ -226,6 +229,13 @@
       "trialing": "Prueba gratuita",
       "cancelling": "Cancelando",
       "pastDue": "Pago atrasado"
+    },
+    "security": {
+      "title": "Garantía",
+      "cancelAnytime": "Cancelá cuando quieras, sin preguntas",
+      "keepAccess": "Mantenés el acceso hasta el fin del período",
+      "securePayment": "Pago seguro a través de Stripe",
+      "invoiceNote": "Factura enviada a tu email después de cada pago"
     }
   },
   "auth": {
@@ -578,7 +588,7 @@
       "pause": "Pausar",
       "finish": "Finalizar",
       "moreInfo": "Más info",
-      "addWork": "Agregar trabajo",
+      "addWork": "Nuevo",
       "needsWork": "Para usar el Modo Live, primero debes agregar un trabajo tradicional a tu perfil.",
       "deliveryComingSoon": "Soporte para trabajos de delivery próximamente",
       "description": "Control total de tus turnos en tiempo real. Registra, pausa y monitorea tus ganancias al instante.",
@@ -930,7 +940,7 @@
   "works": {
     "title": "Trabajos",
     "subtitle": "Gestiona tus diferentes trabajos o empleos.",
-    "addWork": "Agregar Trabajo",
+    "addWork": "Nuevo",
     "editWork": "Editar Trabajo",
     "deleteWork": "Eliminar Trabajo",
     "newDeliveryWork": "Nuevo Trabajo de Delivery",

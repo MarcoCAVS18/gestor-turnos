@@ -42,6 +42,7 @@ export const PremiumProvider = ({ children }) => {
   // State
   const [subscription, setSubscription] = useState(null);
   const [isPremium, setIsPremium] = useState(false);
+  const [hasUsedTrial, setHasUsedTrial] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [liveModeUsage, setLiveModeUsage] = useState({
@@ -67,10 +68,11 @@ export const PremiumProvider = ({ children }) => {
         setError(null);
 
         // Single read: load subscription + live mode usage together
-        const { subscription: subscriptionData, liveModeUsage: usageData } =
+        const { subscription: subscriptionData, liveModeUsage: usageData, hasUsedTrial: trialUsed } =
           await loadSubscriptionAndUsage(currentUser.uid);
 
         setSubscription(subscriptionData);
+        setHasUsedTrial(trialUsed);
         // Grant premium access for active, cancelling (until period ends), and trialing statuses
         const VALID_PREMIUM_STATUSES = ['active', 'cancelling', 'trialing'];
         setIsPremium(
@@ -188,6 +190,7 @@ export const PremiumProvider = ({ children }) => {
     // Subscription state
     subscription,
     isPremium,
+    hasUsedTrial,
     loading,
     error,
 

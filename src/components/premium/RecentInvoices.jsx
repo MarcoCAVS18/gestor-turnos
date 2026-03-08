@@ -90,8 +90,11 @@ const RecentInvoices = () => {
       </div>
       <div className="space-y-2">
         {invoices.map((invoice, index) => (
-          <motion.div
+          <motion.a
             key={invoice.id}
+            href={invoice.hostedUrl || invoice.pdfUrl || '#'}
+            target="_blank"
+            rel="noopener noreferrer"
             initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
@@ -115,12 +118,13 @@ const RecentInvoices = () => {
               <span className="text-sm font-medium text-gray-900">
                 ${invoice.amount.toFixed(2)}
               </span>
-              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex gap-1">
                 {invoice.pdfUrl && (
                   <a
                     href={invoice.pdfUrl}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
                     className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
                     title={t('premium.invoices.downloadPdf')}
                   >
@@ -128,19 +132,11 @@ const RecentInvoices = () => {
                   </a>
                 )}
                 {invoice.hostedUrl && (
-                  <a
-                    href={invoice.hostedUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-200 transition-colors"
-                    title={t('premium.invoices.viewInvoice')}
-                  >
-                    <ExternalLink size={14} className="text-gray-500" />
-                  </a>
+                  <ExternalLink size={14} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
                 )}
               </div>
             </div>
-          </motion.div>
+          </motion.a>
         ))}
       </div>
     </Card>

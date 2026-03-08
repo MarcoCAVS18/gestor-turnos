@@ -3,11 +3,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Crown } from 'lucide-react';
-import { PREMIUM_COLORS } from '../../contexts/PremiumContext';
+import { PREMIUM_COLORS, usePremium } from '../../contexts/PremiumContext';
 import { AUD_PRICE } from '../../services/currencyService';
 
 const HeroCard = ({ localPrice }) => {
   const { t } = useTranslation();
+  const { hasUsedTrial } = usePremium();
   
   return (
     <div
@@ -29,9 +30,11 @@ const HeroCard = ({ localPrice }) => {
         >
           <Crown size={28} style={{ color: PREMIUM_COLORS.gold }} />
         </div>
-        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-2 text-xs font-semibold" style={{ backgroundColor: 'rgba(255,255,255,0.25)', color: PREMIUM_COLORS.text }}>
-          {t('premium.hero.freeTrial')}
-        </div>
+        {!hasUsedTrial && (
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full mb-2 text-xs font-semibold" style={{ backgroundColor: 'rgba(255,255,255,0.25)', color: PREMIUM_COLORS.text }}>
+            {t('premium.hero.freeTrial')}
+          </div>
+        )}
         <h1 className="text-2xl font-bold mb-1" style={{ color: PREMIUM_COLORS.text }}>
           {t('premium.hero.unlockPremium')}
         </h1>
@@ -60,7 +63,9 @@ const HeroCard = ({ localPrice }) => {
           )}
         </div>
         <p className="text-sm" style={{ color: `${PREMIUM_COLORS.text}cc` }}>
-          {t('premium.hero.trialDescription', { price: AUD_PRICE })}
+          {hasUsedTrial
+            ? t('premium.hero.noTrialDescription', { price: AUD_PRICE })
+            : t('premium.hero.trialDescription', { price: AUD_PRICE })}
         </p>
       </div>
     </div>

@@ -102,8 +102,8 @@
     "integrations": "Integrations",
     "calendar": "Calendar",
     "tagline": "Your work and shift manager",
-    "newShift": "New Shift",
-    "newWork": "New Work",
+    "newShift": "New",
+    "newWork": "New",
     "shiftsDisabledTooltip": "First create a job to add shifts",
     "paused": "Paused",
     "liveMode": "Live Mode",
@@ -118,7 +118,7 @@
     "manageSubscription": "Manage your subscription",
     "account": "Account",
     "profile": "Profile",
-    "freePlan": "Free Plan",
+    "freePlan": "Free",
     "premiumFor": "Premium for {{duration}}",
     "lessThanMonth": "Less than a month",
     "oneMonth": "1 month",
@@ -140,7 +140,8 @@
       "freeTrial": "15-day free trial",
       "unlockPremium": "Unlock Premium",
       "month": "month",
-      "trialDescription": "Try free for 15 days, then ${{price}} AUD/month"
+      "trialDescription": "Try free for 15 days, then ${{price}} AUD/month",
+      "noTrialDescription": "${{price}} AUD/month — billed immediately"
     },
     "celebration": {
       "trialStarted": "Trial Started!",
@@ -175,6 +176,8 @@
       "trialNotice": "Your card won't be charged for 15 days. After your trial, {{price}}/month is billed to <strong>{{email}}</strong>. Cancel anytime.",
       "settingUpTrial": "Setting up trial...",
       "startTrial": "Start 15-Day Free Trial",
+      "processing": "Processing...",
+      "subscribe": "Subscribe Now",
       "securePayment": "Secure payment powered by Stripe"
     },
     "invoices": {
@@ -223,6 +226,13 @@
       "trialing": "Free trial",
       "cancelling": "Cancelling",
       "pastDue": "Past due"
+    },
+    "security": {
+      "title": "Guarantee",
+      "cancelAnytime": "Cancel anytime, no questions asked",
+      "keepAccess": "Keep access until billing period ends",
+      "securePayment": "Secure payment via Stripe",
+      "invoiceNote": "Invoice sent to your email after each payment"
     }
   },
   "notFound": {
@@ -260,7 +270,7 @@
       "pause": "Pause",
       "finish": "Finish",
       "moreInfo": "More info",
-      "addWork": "Add Work",
+      "addWork": "New",
       "needsWork": "To use Live Mode, you need to add a traditional work to your profile first.",
       "deliveryComingSoon": "Delivery works support coming soon",
       "description": "Full control of your shifts in real time. Clock in, pause, and monitor your earnings instantly.",
@@ -938,7 +948,7 @@
   "works": {
     "title": "Works",
     "subtitle": "Manage your different jobs or employments.",
-    "addWork": "Add Work",
+    "addWork": "New",
     "editWork": "Edit Work",
     "deleteWork": "Delete Work",
     "newDeliveryWork": "New Delivery Work",
