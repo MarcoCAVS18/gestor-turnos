@@ -99,8 +99,8 @@
     "integrations": "Intégrations",
     "calendar": "Calendrier",
     "tagline": "Votre gestionnaire de travail et de quarts",
-    "newShift": "Nouveau",
-    "newWork": "Nouveau",
+    "newShift": "Nouveau quart",
+    "newWork": "Nouveau travail",
     "shiftsDisabledTooltip": "Créez d'abord un travail pour ajouter des quarts",
     "paused": "En pause",
     "liveMode": "Mode Live",
@@ -370,7 +370,12 @@
       "enable": "Activer les rappels",
       "remindMe": "Me rappeler",
       "minutes": "{{count}} minutes avant",
-      "hour": "1 heure avant"
+      "hour": "1 heure avant",
+      "nativeOnly": "Fonctionne dans l'app native iOS/Android",
+      "enableNotificationsFirst": "Activez d'abord les notifications",
+      "noUpcoming": "Aucun quart à venir trouvé",
+      "scheduled_one": "{{count}} rappel programmé",
+      "scheduled_other": "{{count}} rappels programmés"
     },
     "biometric": {
       "title": "Connexion Biométrique",
@@ -507,7 +512,7 @@
     },
     "quickActions": {
       "title": "Actions rapides",
-      "newShift": "Nouveau",
+      "newShift": "Nouveau quart",
       "newWork": "Nouveau travail"
     },
     "welcome": {
@@ -1142,6 +1147,19 @@
     }
   },
   "modals": {
+    "bulkShift": {
+      "title": "Créer des Quarts Multiples",
+      "subtitle": "Configurer le modèle pour : {{workName}}",
+      "repetitionPattern": "Modèle de Répétition",
+      "weekly": "Hebdomadaire",
+      "specificDates": "Dates Spécifiques",
+      "dateRange": "Plage de Dates",
+      "selectDay": "Sélectionnez au moins un jour pour créer des quarts",
+      "addDates": "Ajoutez des dates pour créer des quarts",
+      "selectDates": "Sélectionnez les dates de début et de fin",
+      "createShifts_one": "Créer {{count}} Quart",
+      "createShifts_other": "Créer {{count}} Quarts"
+    },
     "createMultipleShifts": "Créer des Quarts Multiples",
     "configurePattern": "Configurer le motif pour: {{workName}}",
     "repetitionPattern": "Motif de Répétition",

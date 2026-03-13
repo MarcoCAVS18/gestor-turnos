@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Crown, CreditCard } from 'lucide-react';
+import { Crown, CreditCard, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { PREMIUM_COLORS } from '../../contexts/PremiumContext';
 import { useApp } from '../../contexts/AppContext';
 import { getLocalPrice } from '../../services/currencyService';
 import { useIsMobile } from '../../hooks/useIsMobile';
+import { activateExistingSubscription } from '../../services/stripeService';
 import PageHeader from '../layout/PageHeader';
 import Card from '../ui/Card';
 import HeroCard from './HeroCard';
@@ -23,12 +24,27 @@ const FreeUserView = ({ onPaymentSuccess, onProcessingStart, onPaymentError }) =
   const { holidayCountry } = useApp();
   const isMobile = useIsMobile();
   const [localPrice, setLocalPrice] = useState(null);
+  const [restoring, setRestoring] = useState(false);
+  const [restoreError, setRestoreError] = useState(null);
 
   useEffect(() => {
     if (holidayCountry && holidayCountry !== 'AU') {
       getLocalPrice(holidayCountry).then(setLocalPrice).catch(() => {});
     }
   }, [holidayCountry]);
+
+  const handleRestoreSubscription = async () => {
+    setRestoring(true);
+    setRestoreError(null);
+    try {
+      await activateExistingSubscription();
+      onPaymentSuccess?.();
+    } catch (err) {
+      setRestoreError(err.message || t('premium.restoreError', 'No active subscription found.'));
+    } finally {
+      setRestoring(false);
+    }
+  };
 
   const PaymentFormCard = () => (
     <Card className="p-6 h-full">
@@ -37,6 +53,19 @@ const FreeUserView = ({ onPaymentSuccess, onProcessingStart, onPaymentError }) =
         <h2 className="text-lg font-semibold text-gray-900">{t('premium.paymentDetails')}</h2>
       </div>
       <PaymentForm onSuccess={onPaymentSuccess} onProcessingStart={onProcessingStart} onPaymentError={onPaymentError} localPrice={localPrice} />
+      <div className="mt-5 pt-4 border-t border-gray-100">
+        {restoreError && (
+          <p className="text-xs text-red-500 mb-2">{restoreError}</p>
+        )}
+        <button
+          onClick={handleRestoreSubscription}
+          disabled={restoring}
+          className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors disabled:opacity-50"
+        >
+          <RotateCcw size={12} className={restoring ? 'animate-spin' : ''} />
+          {restoring ? t('common.loading', 'Loading…') : t('premium.restoreAccess', 'Already subscribed? Restore access')}
+        </button>
+      </div>
     </Card>
   );
 

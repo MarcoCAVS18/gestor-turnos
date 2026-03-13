@@ -129,9 +129,28 @@ const sendMFAEnrollmentNotification = async ({ email, displayName }) => {
   });
 };
 
+/**
+ * Send subscription confirmation email.
+ * @param {{ email: string, displayName: string, amount: string, nextBillingDate: string, invoiceUrl: string }} params
+ */
+const sendSubscriptionConfirmationEmail = async ({ email, displayName, amount, nextBillingDate, invoiceUrl }) => {
+  const html = fillTemplate(loadTemplate('subscription-confirmation.html'), {
+    DISPLAY_NAME: displayName || 'there',
+    AMOUNT: amount,
+    NEXT_BILLING_DATE: nextBillingDate,
+    INVOICE_URL: invoiceUrl || 'https://orary.app',
+  });
+  return sendEmail({
+    to: email,
+    subject: '🎉 Welcome to Orary Premium!',
+    html,
+  });
+};
+
 module.exports = {
   sendVerificationEmail,
   sendPasswordResetEmail,
   sendEmailChangeNotification,
   sendMFAEnrollmentNotification,
+  sendSubscriptionConfirmationEmail,
 };

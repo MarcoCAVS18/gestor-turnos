@@ -99,8 +99,8 @@
     "integrations": "Integraciones",
     "calendar": "Calendario",
     "tagline": "Tu gestor de trabajos y turnos",
-    "newShift": "Nuevo",
-    "newWork": "Nuevo",
+    "newShift": "Nuevo turno",
+    "newWork": "Nuevo trabajo",
     "shiftsDisabledTooltip": "Primero crea un trabajo para agregar turnos",
     "paused": "Pausado",
     "liveMode": "Modo Live",
@@ -370,7 +370,12 @@
       "enable": "Activar recordatorios",
       "remindMe": "Recordarme",
       "minutes": "{{count}} minutos antes",
-      "hour": "1 hora antes"
+      "hour": "1 hora antes",
+      "nativeOnly": "Funciona en la app nativa iOS/Android",
+      "enableNotificationsFirst": "Activa las notificaciones primero",
+      "noUpcoming": "No hay turnos próximos",
+      "scheduled_one": "{{count}} recordatorio programado",
+      "scheduled_other": "{{count}} recordatorios programados"
     },
     "biometric": {
       "title": "Inicio Biométrico",
@@ -1133,6 +1138,19 @@
     }
   },
   "modals": {
+    "bulkShift": {
+      "title": "Crear Múltiples Turnos",
+      "subtitle": "Configurar patrón para: {{workName}}",
+      "repetitionPattern": "Patrón de Repetición",
+      "weekly": "Semanal",
+      "specificDates": "Fechas Específicas",
+      "dateRange": "Rango de Fechas",
+      "selectDay": "Selecciona al menos un día para crear turnos",
+      "addDates": "Agrega fechas para crear turnos",
+      "selectDates": "Selecciona fecha de inicio y fin",
+      "createShifts_one": "Crear {{count}} Turno",
+      "createShifts_other": "Crear {{count}} Turnos"
+    },
     "createMultipleShifts": "Crear Múltiples Turnos",
     "configurePattern": "Configurar patrón para: {{workName}}",
     "repetitionPattern": "Patrón de Repetición",

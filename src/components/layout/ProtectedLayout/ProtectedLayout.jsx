@@ -6,6 +6,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { AppProvider } from '../../../contexts/AppContext';
 import LoadingSpinner from '../../ui/LoadingSpinner/LoadingSpinner';
 import Flex from '../../ui/Flex';
+import ShiftReminderSync from '../../native/ShiftReminderSync';
 
 // NOTE: This component was copied from App.js.
 // For a future refactor, it could be moved to its own file inside /components/auth.
@@ -28,6 +29,7 @@ const ProtectedLayout = ({ children }) => {
   return (
     <PrivateRoute>
       <AppProvider>
+        <ShiftReminderSync />
         {children}
       </AppProvider>
     </PrivateRoute>

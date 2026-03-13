@@ -1,6 +1,6 @@
 // src/pages/Integrations.jsx
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Puzzle,
   Bell,
@@ -11,6 +11,7 @@ import {
   Link2,
   Check,
   Copy,
+  Smartphone as NativeIcon,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import BackLink from '../components/ui/BackLink';
@@ -21,7 +22,8 @@ import Switch from '../components/ui/Switch';
 import Button from '../components/ui/Button';
 import { useConfigContext } from '../contexts/ConfigContext';
 import { useAuth } from '../contexts/AuthContext';
-import { doc, updateDoc } from 'firebase/firestore';
+import { useDataContext } from '../contexts/DataContext';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import {
   checkBiometricSupport,
@@ -36,6 +38,10 @@ import {
   requestNotificationPermission,
   sendLocalNotification,
 } from '../services/native/nativeNotifications';
+import {
+  scheduleShiftReminders,
+  cancelShiftReminders,
+} from '../services/native/shiftReminderService';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
 import logger from '../utils/logger';
@@ -48,6 +54,16 @@ const Integrations = () => {
   const { t } = useTranslation();
   const { thematicColors } = useConfigContext();
   const { currentUser } = useAuth();
+  const { shifts, works } = useDataContext();
+
+  const isNative = Capacitor.isNativePlatform();
+
+  // Works as a map for quick lookup in scheduler
+  const worksMap = useMemo(
+    () => Object.fromEntries((works || []).map(w => [w.id, w])),
+    [works]
+  );
+
   // Integration states
   const [notifications, setNotifications] = useState({
     enabled: false,
@@ -55,7 +71,9 @@ const Integrations = () => {
   });
   const [shiftReminders, setShiftReminders] = useState({
     enabled: false,
-    minutesBefore: 15
+    minutesBefore: 15,
+    loading: true,   // true while loading from Firestore
+    scheduledCount: null,
   });
   const [calendarFeed, setCalendarFeed] = useState({
     loading: false,
@@ -70,7 +88,6 @@ const Integrations = () => {
   });
   const [pwaTab, setPwaTab] = useState('ios');
 
-
   // Check notification permission on mount and when tab becomes visible
   useEffect(() => {
     const checkPermissions = async () => {
@@ -81,19 +98,49 @@ const Integrations = () => {
         enabled: permission === 'granted'
       }));
     };
-    
+
     checkPermissions();
-    
-    // Re-check when tab becomes visible (after system prompts)
+
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        checkPermissions();
-      }
+      if (document.visibilityState === 'visible') checkPermissions();
     };
-    
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
+
+  // Load shift reminder preference from Firestore on mount
+  useEffect(() => {
+    if (!currentUser) return;
+    const load = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'users', currentUser.uid));
+        if (snap.exists()) {
+          const data = snap.data();
+          setShiftReminders(prev => ({
+            ...prev,
+            enabled: data.shiftRemindersEnabled || false,
+            minutesBefore: data.shiftReminderMinutes || 15,
+            loading: false,
+          }));
+        } else {
+          setShiftReminders(prev => ({ ...prev, loading: false }));
+        }
+      } catch (err) {
+        logger.warn('[Integrations] Failed to load reminder preference:', err);
+        setShiftReminders(prev => ({ ...prev, loading: false }));
+      }
+    };
+    load();
+  }, [currentUser]);
+
+  // Auto-reschedule when shifts change (if reminders are enabled and on native)
+  useEffect(() => {
+    if (!shiftReminders.enabled || shiftReminders.loading || !isNative) return;
+    scheduleShiftReminders(shifts, worksMap, shiftReminders.minutesBefore).then(({ scheduled }) => {
+      setShiftReminders(prev => ({ ...prev, scheduledCount: scheduled }));
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shifts, shiftReminders.enabled, shiftReminders.minutesBefore, shiftReminders.loading]);
 
   // Check biometric support and load device state on mount
   useEffect(() => {
@@ -161,14 +208,47 @@ const Integrations = () => {
     }
   };
 
-  // Handle shift reminders toggle
-  const handleShiftRemindersToggle = (value) => {
+  // Handle shift reminders toggle — persists to Firestore + schedules/cancels
+  const handleShiftRemindersToggle = async (value) => {
+    if (!currentUser) return;
+
+    // If enabling but notifications not granted, request first
     if (value && !notifications.enabled) {
-      handleNotificationToggle(true).then(() => {
-        setShiftReminders(prev => ({ ...prev, enabled: true }));
-      });
-    } else {
-      setShiftReminders(prev => ({ ...prev, enabled: value }));
+      const permission = await requestNotificationPermission();
+      setNotifications({ enabled: permission === 'granted', permission });
+      if (permission !== 'granted') return;
+    }
+
+    setShiftReminders(prev => ({ ...prev, enabled: value, scheduledCount: null }));
+
+    try {
+      await updateDoc(doc(db, 'users', currentUser.uid), { shiftRemindersEnabled: value });
+    } catch (err) {
+      logger.warn('[Integrations] Failed to save reminder preference:', err);
+    }
+
+    if (value && isNative) {
+      const { scheduled } = await scheduleShiftReminders(shifts, worksMap, shiftReminders.minutesBefore);
+      setShiftReminders(prev => ({ ...prev, scheduledCount: scheduled }));
+    } else if (!value) {
+      await cancelShiftReminders();
+      setShiftReminders(prev => ({ ...prev, scheduledCount: null }));
+    }
+  };
+
+  // Handle minutes change — persists + reschedules if active
+  const handleMinutesChange = async (minutes) => {
+    setShiftReminders(prev => ({ ...prev, minutesBefore: minutes, scheduledCount: null }));
+
+    try {
+      await updateDoc(doc(db, 'users', currentUser.uid), { shiftReminderMinutes: minutes });
+    } catch (err) {
+      logger.warn('[Integrations] Failed to save reminder minutes:', err);
+    }
+
+    if (shiftReminders.enabled && isNative) {
+      const { scheduled } = await scheduleShiftReminders(shifts, worksMap, minutes);
+      setShiftReminders(prev => ({ ...prev, scheduledCount: scheduled }));
     }
   };
 
@@ -333,28 +413,42 @@ const Integrations = () => {
           icon={Clock}
           title={t('integrations.reminders.title')}
           description={t('integrations.reminders.description')}
-          status={shiftReminders.enabled ? t('integrations.status.active') : t('integrations.status.inactive')}
+          status={shiftReminders.loading ? t('integrations.status.checking') : shiftReminders.enabled ? t('integrations.status.active') : t('integrations.status.inactive')}
           statusColor={shiftReminders.enabled ? 'success' : 'default'}
         >
           <div className="space-y-3">
+            {/* Native-only notice on web */}
+            {!isNative && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700">
+                <NativeIcon size={14} className="text-amber-500 flex-shrink-0" />
+                <p className="text-xs text-amber-700 dark:text-amber-400">
+                  {t('integrations.reminders.nativeOnly')}
+                </p>
+              </div>
+            )}
+
+            {/* Toggle row */}
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">{t('integrations.reminders.enable')}</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {t('integrations.reminders.enable')}
+              </span>
               <Switch
                 checked={shiftReminders.enabled}
                 onChange={handleShiftRemindersToggle}
+                disabled={shiftReminders.loading}
               />
             </div>
 
+            {/* Minutes selector (only when enabled) */}
             {shiftReminders.enabled && (
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-2 border-t border-gray-100">
-                <span className="text-sm text-gray-600">{t('integrations.reminders.remindMe')}</span>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pt-2 border-t border-gray-100 dark:border-slate-700">
+                <span className="text-sm text-gray-600 dark:text-gray-400">
+                  {t('integrations.reminders.remindMe')}
+                </span>
                 <select
                   value={shiftReminders.minutesBefore}
-                  onChange={(e) => setShiftReminders(prev => ({
-                    ...prev,
-                    minutesBefore: parseInt(e.target.value)
-                  }))}
-                  className="w-full sm:w-auto text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-500/20"
+                  onChange={(e) => handleMinutesChange(parseInt(e.target.value))}
+                  className="w-full sm:w-auto text-sm border border-gray-200 dark:border-slate-600 rounded-lg px-3 py-2 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-pink-500/20"
                 >
                   <option value={5}>{t('integrations.reminders.minutes', { count: 5 })}</option>
                   <option value={10}>{t('integrations.reminders.minutes', { count: 10 })}</option>
@@ -363,6 +457,15 @@ const Integrations = () => {
                   <option value={60}>{t('integrations.reminders.hour')}</option>
                 </select>
               </div>
+            )}
+
+            {/* Scheduled count feedback (native only) */}
+            {isNative && shiftReminders.enabled && shiftReminders.scheduledCount !== null && (
+              <p className="text-xs text-green-600 dark:text-green-400">
+                {shiftReminders.scheduledCount === 0
+                  ? t('integrations.reminders.noUpcoming')
+                  : t('integrations.reminders.scheduled', { count: shiftReminders.scheduledCount })}
+              </p>
             )}
           </div>
         </IntegrationCard>

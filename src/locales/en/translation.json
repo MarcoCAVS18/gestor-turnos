@@ -102,8 +102,8 @@
     "integrations": "Integrations",
     "calendar": "Calendar",
     "tagline": "Your work and shift manager",
-    "newShift": "New",
-    "newWork": "New",
+    "newShift": "New shift",
+    "newWork": "New work",
     "shiftsDisabledTooltip": "First create a job to add shifts",
     "paused": "Paused",
     "liveMode": "Live Mode",
@@ -448,7 +448,12 @@
       "enable": "Enable reminders",
       "remindMe": "Remind me",
       "minutes": "{{count}} minutes before",
-      "hour": "1 hour before"
+      "hour": "1 hour before",
+      "nativeOnly": "Works in the native iOS/Android app",
+      "enableNotificationsFirst": "Enable notifications first",
+      "noUpcoming": "No upcoming shifts found",
+      "scheduled_one": "{{count}} reminder scheduled",
+      "scheduled_other": "{{count}} reminders scheduled"
     },
     "shiftReminders": {
       "title": "Shift Reminders",
@@ -883,7 +888,31 @@
     "nightBonus": "Night bonus",
     "saturdayBonus": "Saturday bonus",
     "sundayBonus": "Sunday bonus",
-    "holidayBonus": "Holiday bonus"
+    "holidayBonus": "Holiday bonus",
+    "filters": {
+      "activeFilters": "Active filters",
+      "allDays": "All days",
+      "allWorks": "All works",
+      "clear": "Clear",
+      "clearAll": "Clear all",
+      "daysLabel": "Days",
+      "filteredBy": "Filtered by",
+      "of": "of",
+      "shiftTypeLabel": "Shift type",
+      "typeLabel": "Type",
+      "unknownWork": "Unknown work",
+      "workLabel": "Work",
+      "shiftTypes": {
+        "afternoon": "Afternoon",
+        "all": "All types",
+        "day": "Day",
+        "delivery": "Delivery",
+        "mixed": "Mixed",
+        "night": "Night",
+        "saturday": "Saturday",
+        "sunday": "Sunday"
+      }
+    }
   },
   "filters": {
     "allWorks": "All works",
@@ -1117,6 +1146,19 @@
     }
   },
   "modals": {
+    "bulkShift": {
+      "title": "Create Multiple Shifts",
+      "subtitle": "Configure pattern for: {{workName}}",
+      "repetitionPattern": "Repetition Pattern",
+      "weekly": "Weekly",
+      "specificDates": "Specific Dates",
+      "dateRange": "Date Range",
+      "selectDay": "Select at least one day to create shifts",
+      "addDates": "Add dates to create shifts",
+      "selectDates": "Select start and end dates",
+      "createShifts_one": "Create {{count}} Shift",
+      "createShifts_other": "Create {{count}} Shifts"
+    },
     "createMultipleShifts": "Create Multiple Shifts",
     "configurePattern": "Configure pattern for: {{workName}}",
     "repetitionPattern": "Repetition Pattern",

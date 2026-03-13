@@ -4,7 +4,12 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const { Timestamp, FieldValue } = require('firebase-admin/firestore');
 const emailService = require('./emailService');
-const { google } = require('googleapis');
+// Lazy-loaded to avoid slow startup that causes deployment timeout
+let _google = null;
+const getGoogle = () => {
+  if (!_google) _google = require('googleapis').google;
+  return _google;
+};
 const allowedOrigins = [
   'https://gestionturnos-7ec99.web.app',
   'https://gestionturnos-7ec99.firebaseapp.com',
@@ -106,7 +111,7 @@ const getAppUrl = () => {
 // Google OAuth2 Configuration
 // These values come from .env file
 const getOAuth2Client = () => {
-  return new google.auth.OAuth2(
+  return new (getGoogle()).auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
     process.env.GOOGLE_REDIRECT_URI
@@ -324,7 +329,7 @@ async function getCalendarClient(userId) {
       .collection('private').doc('googleCalendar').update(updateData);
   });
 
-  return google.calendar({ version: 'v3', auth: oauth2Client });
+  return getGoogle().calendar({ version: 'v3', auth: oauth2Client });
 }
 
 /**
@@ -705,16 +710,102 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         });
       }
 
+      const now = Timestamp.now();
+
+      // Check for existing active/trialing subscription — avoids duplicates when payment
+      // succeeded in Stripe but Firestore wasn't updated (e.g. server returned 500 mid-flow).
+      // Search across ALL Stripe customers for this Firebase user using two strategies:
+      // 1. metadata search (customers created with firebaseUserId metadata)
+      // 2. email search (fallback for customers created without metadata)
+      const [metadataCustomers, emailCustomers] = await Promise.all([
+        stripe.customers.search({
+          query: `metadata['firebaseUserId']:'${userId}'`,
+          limit: 10,
+        }),
+        stripe.customers.list({ email: email, limit: 10 }),
+      ]);
+      const seenIds = new Set();
+      const allCustomerIds = [customerId, ...metadataCustomers.data.map((c) => c.id), ...emailCustomers.data.map((c) => c.id)]
+        .filter((id) => {
+          if (!id || seenIds.has(id)) return false;
+          seenIds.add(id);
+          return true;
+        });
+      const customerIdsToCheck = allCustomerIds;
+
+      let resolvedSub = null;
+      let resolvedCustomerId = customerId;
+
+      for (const custId of customerIdsToCheck) {
+        const existingSubs = await stripe.subscriptions.list({
+          customer: custId,
+          price: priceId,
+          status: 'all',
+          limit: 10,
+        });
+
+        // First look for clearly active/trialing subs
+        let found = existingSubs.data.find(
+          (s) => s.status === 'active' || s.status === 'trialing'
+        );
+
+        // Also check incomplete subs — Stripe transitions incomplete→active asynchronously
+        // after invoice payment, so there can be a gap where the sub looks incomplete but IS paid.
+        if (!found) {
+          for (const sub of existingSubs.data.filter((s) => s.status === 'incomplete')) {
+            const invId = typeof sub.latest_invoice === 'string'
+              ? sub.latest_invoice
+              : sub.latest_invoice?.id;
+            if (invId) {
+              const inv = await stripe.invoices.retrieve(invId);
+              if (inv.paid || inv.status === 'paid') {
+                console.log('Incomplete sub with paid invoice found:', sub.id);
+                found = sub;
+                break;
+              }
+            }
+          }
+        }
+
+        if (found) {
+          resolvedSub = found;
+          resolvedCustomerId = custId;
+          break;
+        }
+      }
+
+      if (resolvedSub) {
+        console.log('Existing subscription found:', resolvedSub.id, resolvedSub.status, 'customer:', resolvedCustomerId);
+        const periodEnd = resolvedSub.current_period_end;
+        const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
+        await db.collection('users').doc(userId).update({
+          subscription: {
+            isPremium: true,
+            plan: 'premium',
+            status: 'active',
+            stripeCustomerId: resolvedCustomerId,
+            stripeSubscriptionId: resolvedSub.id,
+            startDate: now,
+            expiryDate: Timestamp.fromMillis(expiryMillis),
+            paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
+          },
+        });
+        return res.json({ status: 'success', subscriptionId: resolvedSub.id });
+      }
+
       // Check if this user has already used a free trial (survives "Clear Everything")
       const trialRecord = await db.collection('trial_records').doc(userId).get();
       const trialAlreadyUsed = trialRecord.exists;
 
-      // Create subscription — only offer trial to first-time users
+      // Create subscription — only offer trial to first-time users.
+      // For returning users: trial_end: 'now' overrides any trial period defined on the
+      // price object itself, forcing an immediate billable invoice with a payment_intent.
       const subscription = await stripe.subscriptions.create({
         customer: customerId,
         items: [{ price: priceId }],
-        ...(trialAlreadyUsed ? {} : { trial_period_days: 15 }),
+        ...(trialAlreadyUsed ? { trial_end: 'now' } : { trial_period_days: 15 }),
         payment_behavior: 'default_incomplete',
+        collection_method: 'charge_automatically',
         payment_settings: {
           payment_method_types: ['card'],
           save_default_payment_method: 'on_subscription',
@@ -724,8 +815,6 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
           firebaseUserId: userId,
         },
       });
-
-      const now = Timestamp.now();
 
       // Handle trial subscriptions — no payment needed yet, card saved for later
       if (subscription.status === 'trialing') {
@@ -760,42 +849,15 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
       }
 
       // ========== NO TRIAL - PAYMENT REQUIRED IMMEDIATELY ==========
-      const invoice = subscription.latest_invoice;
-      const paymentIntent = invoice?.payment_intent;
+      // Standard Stripe pattern: return clientSecret to frontend.
+      // Stripe.js (confirmCardPayment) handles all scenarios natively:
+      // direct payment, 3DS authentication, etc.
+      // After frontend confirms, verifyAndActivateSubscription updates Firestore.
 
-      if (!paymentIntent) {
-        // Edge case: no payment intent - cancel subscription and return error
-        console.error('No payment intent found for non-trial subscription:', subscription.id);
-        await stripe.subscriptions.cancel(subscription.id);
-        throw new Error('Payment could not be processed. Please try again.');
-      }
-
-      // For non-trial subscriptions: CONFIRM PAYMENT SYNCHRONOUSLY
-      // This ensures payment succeeds BEFORE returning success to frontend
-      let confirmedPaymentIntent;
-      try {
-        confirmedPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id, {
-          payment_method: paymentMethodId,
-          off_session: false, // User is present during this flow
-          confirm: true,
-        });
-      } catch (confirmError) {
-        // Payment confirmation failed - cancel the subscription and clean up
-        console.error('Payment confirmation failed:', confirmError);
-        try {
-          await stripe.subscriptions.cancel(subscription.id);
-        } catch (cancelError) {
-          console.error('Failed to cancel subscription after payment failure:', cancelError);
-        }
-        throw new Error(confirmError.message || 'Payment failed. Please check your card details and try again.');
-      }
-
-      // Check payment status after confirmation
-      if (confirmedPaymentIntent.status === 'succeeded') {
-        // Payment successful - activate premium
+      // Fast path: subscription already active (e.g. saved card auto-charged)
+      if (subscription.status === 'active') {
         const periodEnd = subscription.current_period_end;
         const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-
         await db.collection('users').doc(userId).update({
           subscription: {
             isPremium: true,
@@ -808,30 +870,150 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
             paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
           },
         });
-
-        return res.json({
-          status: 'success',
-          subscriptionId: subscription.id,
-          message: 'Payment successful! Welcome to Premium.',
-        });
-      } else if (confirmedPaymentIntent.status === 'requires_action') {
-        // 3D Secure or additional authentication required
-        // Return client secret for frontend to handle
-        return res.json({
-          status: 'requires_action',
-          clientSecret: confirmedPaymentIntent.client_secret,
-          subscriptionId: subscription.id,
-        });
-      } else {
-        // Payment did not succeed - cancel subscription
-        console.error('Payment did not succeed:', confirmedPaymentIntent.status);
-        try {
-          await stripe.subscriptions.cancel(subscription.id);
-        } catch (cancelError) {
-          console.error('Failed to cancel subscription after payment failure:', cancelError);
-        }
-        throw new Error(`Payment could not be completed. Status: ${confirmedPaymentIntent.status}`);
+        return res.json({ status: 'success', subscriptionId: subscription.id });
       }
+
+      // Get invoice ID from the subscription response
+      const rawInvoice = subscription.latest_invoice;
+      const invoiceId = typeof rawInvoice === 'string' ? rawInvoice : rawInvoice?.id;
+
+      if (!invoiceId) {
+        throw new Error('No invoice found for subscription');
+      }
+
+      // Fetch the invoice fresh to get accurate state
+      let invoice = await stripe.invoices.retrieve(invoiceId, {
+        expand: ['payment_intent'],
+      });
+
+      console.log('Invoice state after subscription create:', JSON.stringify({
+        id: invoice.id,
+        status: invoice.status,
+        amount_due: invoice.amount_due,
+        collection_method: invoice.collection_method,
+        paid: invoice.paid,
+        has_payment_intent: !!invoice.payment_intent,
+        payment_intent_id: typeof invoice.payment_intent === 'object'
+          ? invoice.payment_intent?.id
+          : invoice.payment_intent,
+        payment_intent_status: typeof invoice.payment_intent === 'object'
+          ? invoice.payment_intent?.status
+          : null,
+      }));
+
+      // Handle zero-amount or already-paid invoice (covered by credit balance, etc.)
+      if (invoice.amount_due === 0 || invoice.paid) {
+        console.log('Invoice zero/paid — checking subscription status');
+        const freshSub = await stripe.subscriptions.retrieve(subscription.id);
+        if (freshSub.status === 'active') {
+          const periodEnd = freshSub.current_period_end;
+          const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
+          await db.collection('users').doc(userId).update({
+            subscription: {
+              isPremium: true,
+              plan: 'premium',
+              status: 'active',
+              stripeCustomerId: customerId,
+              stripeSubscriptionId: freshSub.id,
+              startDate: now,
+              expiryDate: Timestamp.fromMillis(expiryMillis),
+              paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
+            },
+          });
+          return res.json({ status: 'success', subscriptionId: freshSub.id });
+        }
+      }
+
+      // Finalize draft invoice so Stripe creates the PaymentIntent
+      if (invoice.status === 'draft') {
+        console.log('Invoice is draft, finalizing:', invoiceId);
+        invoice = await stripe.invoices.finalizeInvoice(invoiceId, {
+          expand: ['payment_intent'],
+        });
+      }
+
+      // Check if PI already exists on the invoice (happy path)
+      let pi = typeof invoice.payment_intent === 'string'
+        ? await stripe.paymentIntents.retrieve(invoice.payment_intent)
+        : invoice.payment_intent;
+
+      // If no PI yet, explicitly trigger payment via invoices.pay().
+      // This is more reliable than waiting for Stripe to attach the PI asynchronously.
+      // off_session: false allows on-session 3DS authentication (PI goes to requires_action
+      // instead of throwing an error), so the frontend can handle it with confirmCardPayment.
+      if (!pi && invoice.status === 'open') {
+        console.log('No PI on invoice — calling invoices.pay() to trigger payment...');
+        try {
+          const paidInvoice = await stripe.invoices.pay(invoiceId, {
+            payment_method: paymentMethodId,
+            off_session: false,
+            expand: ['payment_intent'],
+          });
+
+          console.log('invoices.pay() result:', JSON.stringify({
+            paid: paidInvoice.paid,
+            status: paidInvoice.status,
+            pi_status: typeof paidInvoice.payment_intent === 'object'
+              ? paidInvoice.payment_intent?.status
+              : null,
+          }));
+
+          if (paidInvoice.paid || paidInvoice.status === 'paid') {
+            // Payment succeeded immediately (card charge or customer credit balance) — activate subscription
+            const freshSub = await stripe.subscriptions.retrieve(subscription.id);
+            const periodEnd = freshSub.current_period_end;
+            const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
+            await db.collection('users').doc(userId).update({
+              subscription: {
+                isPremium: true,
+                plan: 'premium',
+                status: 'active',
+                stripeCustomerId: customerId,
+                stripeSubscriptionId: freshSub.id,
+                startDate: now,
+                expiryDate: Timestamp.fromMillis(expiryMillis),
+                paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
+              },
+            });
+            return res.json({ status: 'success', subscriptionId: freshSub.id });
+          }
+
+          pi = typeof paidInvoice.payment_intent === 'string'
+            ? await stripe.paymentIntents.retrieve(paidInvoice.payment_intent)
+            : paidInvoice.payment_intent;
+        } catch (payErr) {
+          // invoices.pay() may throw even with off_session:false in some edge cases.
+          // Retrieve the PI from the invoice directly.
+          console.log('invoices.pay() threw:', payErr.code, payErr.message);
+          const freshInvoice = await stripe.invoices.retrieve(invoiceId, {
+            expand: ['payment_intent'],
+          });
+          pi = typeof freshInvoice.payment_intent === 'string'
+            ? await stripe.paymentIntents.retrieve(freshInvoice.payment_intent)
+            : freshInvoice.payment_intent;
+
+          if (!pi) throw payErr; // re-throw original if PI still not found
+        }
+      }
+
+      if (!pi) {
+        console.error('No payment intent found for subscription:', subscription.id, {
+          subscriptionStatus: subscription.status,
+          invoiceId,
+          invoiceStatus: invoice.status,
+        });
+        throw new Error('Could not initialize payment. Please try again.');
+      }
+
+      console.log('Returning clientSecret for PI:', pi.id, 'status:', pi.status);
+
+      // Return clientSecret to frontend — Stripe.js handles confirmation + 3DS natively.
+      // Frontend calls verifyAndActivateSubscription after stripe.confirmCardPayment succeeds.
+      return res.json({
+        status: 'requires_payment',
+        clientSecret: pi.client_secret,
+        subscriptionId: subscription.id,
+      });
       } finally {
         // Release lock
         await lockRef.delete();
@@ -843,6 +1025,92 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
       res.status(500).json({
         error: error.message || 'Failed to create subscription',
       });
+    }
+  });
+});
+
+/**
+ * Activate an existing Stripe subscription into Firestore.
+ * Safe to call multiple times — only updates if Stripe confirms the subscription is active.
+ * Used when payment succeeded in Stripe but Firestore was never updated.
+ */
+exports.activateExistingSubscription = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const idToken = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const userId = decodedToken.uid;
+      const email = decodedToken.email;
+
+      const priceId = process.env.STRIPE_PRICE_ID;
+      if (!priceId) {
+        return res.status(500).json({ error: 'Payment system not configured.' });
+      }
+
+      // Search by metadata AND email to find all customers for this user
+      const [metadataCustomers, emailCustomers] = await Promise.all([
+        stripe.customers.search({
+          query: `metadata['firebaseUserId']:'${userId}'`,
+          limit: 10,
+        }),
+        stripe.customers.list({ email, limit: 10 }),
+      ]);
+
+      const seenIds = new Set();
+      const customerIds = [...metadataCustomers.data.map((c) => c.id), ...emailCustomers.data.map((c) => c.id)]
+        .filter((id) => { if (seenIds.has(id)) return false; seenIds.add(id); return true; });
+
+      let activeSub = null;
+      let activeCustomerId = null;
+
+      for (const custId of customerIds) {
+        const subs = await stripe.subscriptions.list({
+          customer: custId,
+          status: 'all',
+          limit: 20,
+        });
+        const found = subs.data.find((s) => s.status === 'active' || s.status === 'trialing');
+        if (found) {
+          activeSub = found;
+          activeCustomerId = custId;
+          break;
+        }
+      }
+
+      if (!activeSub) {
+        return res.status(404).json({ error: 'No active subscription found in Stripe.' });
+      }
+
+      const now = Timestamp.now();
+      const periodEnd = activeSub.current_period_end;
+      const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
+
+      await db.collection('users').doc(userId).update({
+        subscription: {
+          isPremium: true,
+          plan: 'premium',
+          status: activeSub.status,
+          stripeCustomerId: activeCustomerId,
+          stripeSubscriptionId: activeSub.id,
+          startDate: now,
+          expiryDate: Timestamp.fromMillis(expiryMillis),
+        },
+      });
+
+      console.log(`activateExistingSubscription: activated ${activeSub.id} for user ${userId}`);
+      return res.json({ status: 'success', subscriptionId: activeSub.id, customerId: activeCustomerId });
+    } catch (error) {
+      console.error('Error activating subscription:', error);
+      res.status(500).json({ error: error.message || 'Failed to activate subscription' });
     }
   });
 });
@@ -959,6 +1227,73 @@ exports.cancelSubscription = functions.https.onRequest((req, res) => {
         error: error.message || 'Failed to cancel subscription',
         code: error.code || 'UNKNOWN_ERROR'
       });
+    }
+  });
+});
+
+/**
+ * Verify and activate a subscription after Stripe.js confirmCardPayment succeeds.
+ * Called by the frontend once stripe.confirmCardPayment() resolves with status='succeeded'.
+ * Retrieves the subscription from Stripe to confirm it's active, then updates Firestore.
+ */
+exports.verifyAndActivateSubscription = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const idToken = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const userId = decodedToken.uid;
+
+      const { subscriptionId } = req.body;
+      if (!subscriptionId) {
+        return res.status(400).json({ error: 'Missing subscriptionId' });
+      }
+
+      // Retrieve subscription from Stripe to get authoritative status
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+      // Security: ensure this subscription belongs to the requesting user
+      if (subscription.metadata?.firebaseUserId !== userId) {
+        return res.status(403).json({ error: 'Subscription does not belong to this user' });
+      }
+
+      if (!['active', 'trialing'].includes(subscription.status)) {
+        return res.status(400).json({
+          error: `Subscription payment not yet confirmed (status: ${subscription.status})`,
+        });
+      }
+
+      const now = Timestamp.now();
+      const periodEnd = subscription.current_period_end;
+      const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
+      const customerId = typeof subscription.customer === 'string'
+        ? subscription.customer
+        : subscription.customer?.id;
+
+      await db.collection('users').doc(userId).update({
+        subscription: {
+          isPremium: true,
+          plan: 'premium',
+          status: 'active',
+          stripeCustomerId: customerId,
+          stripeSubscriptionId: subscription.id,
+          startDate: now,
+          expiryDate: Timestamp.fromMillis(expiryMillis),
+        },
+      });
+
+      return res.json({ status: 'success', subscriptionId: subscription.id });
+    } catch (error) {
+      console.error('Error verifying subscription:', error);
+      return res.status(500).json({ error: error.message || 'Failed to verify subscription' });
     }
   });
 });
@@ -1127,6 +1462,7 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
 
       if (!usersSnapshot.empty) {
         const userDoc = usersSnapshot.docs[0];
+        const userData = userDoc.data() || {};
         const subscription = await stripe.subscriptions.retrieve(invoice.subscription);
 
         // Safely calculate expiry date
@@ -1140,6 +1476,26 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
         });
 
         console.log(`Invoice paid for user ${userDoc.id}`);
+
+        // Send payment confirmation email (fire-and-forget)
+        const userEmail = userData.email || (await admin.auth().getUser(userDoc.id)).email;
+        if (userEmail) {
+          const nextBillingDate = periodEnd
+            ? new Date(periodEnd * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+            : 'next month';
+          const priceAmount = invoice.amount_paid;
+          const currency = (invoice.currency || 'aud').toUpperCase();
+          const formattedAmount = priceAmount
+            ? `${(priceAmount / 100).toFixed(2)} ${currency} / month`
+            : 'Premium';
+          emailService.sendSubscriptionConfirmationEmail({
+            email: userEmail,
+            displayName: userData.displayName || userData.name || '',
+            amount: formattedAmount,
+            nextBillingDate,
+            invoiceUrl: invoice.hosted_invoice_url || null,
+          }).catch((err) => console.warn('Failed to send subscription confirmation email:', err.message));
+        }
       }
       break;
     }

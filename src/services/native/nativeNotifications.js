@@ -127,7 +127,6 @@ export const scheduleReengagementNotifications = async (referenceDate = new Date
         title,
         body,
         schedule: { at: fireAt },
-        smallIcon: 'ic_stat_orary',
         iconColor: '#EC4899',
       };
     });

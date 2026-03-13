@@ -105,8 +105,9 @@ export const createSubscription = async (paymentMethodId, email, name, address) 
       return { status: 'success', subscriptionId: data.subscriptionId };
     }
 
-    // 3D Secure or additional authentication required
-    if (data.status === 'requires_action' && data.clientSecret) {
+    // Non-trial: immediate payment via Stripe.js (handles direct + 3DS natively)
+    // Also handles legacy 'requires_action' from older backend responses
+    if ((data.status === 'requires_payment' || data.status === 'requires_action') && data.clientSecret) {
       const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
         payment_method: paymentMethodId,
       });
@@ -117,6 +118,8 @@ export const createSubscription = async (paymentMethodId, email, name, address) 
       }
 
       if (paymentIntent.status === 'succeeded' || paymentIntent.status === 'processing') {
+        // Verify with server and activate subscription in Firestore
+        await verifyAndActivateSubscription(data.subscriptionId);
         return { status: 'success', subscriptionId: data.subscriptionId };
       }
 
@@ -129,6 +132,56 @@ export const createSubscription = async (paymentMethodId, email, name, address) 
     logger.error('[Stripe] Error creating subscription:', error);
     throw error;
   }
+};
+
+/**
+ * Verify and activate a subscription after Stripe.js confirmCardPayment succeeds.
+ * @param {string} subscriptionId - Stripe Subscription ID
+ */
+const verifyAndActivateSubscription = async (subscriptionId) => {
+  const token = await getAuthToken();
+
+  const response = await fetch(`${FUNCTIONS_BASE_URL}/verifyAndActivateSubscription`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify({ subscriptionId }),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    logger.error('[Stripe] Subscription activation error:', data);
+    throw new Error(data.error || 'Failed to activate subscription');
+  }
+
+  return data;
+};
+
+/**
+ * Activate an existing Stripe subscription into Firestore.
+ * Used when payment succeeded in Stripe but Firestore was never updated.
+ */
+export const activateExistingSubscription = async () => {
+  const token = await getAuthToken();
+
+  const response = await fetch(`${FUNCTIONS_BASE_URL}/activateExistingSubscription`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || 'No active subscription found');
+  }
+
+  return data;
 };
 
 /**
