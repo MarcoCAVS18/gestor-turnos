@@ -1,6 +1,7 @@
 // src/pages/About.jsx
 
 import React, { useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../hooks/useThemeColors';
@@ -44,6 +45,10 @@ const About = () => {
 
   return (
     <div className="px-4 py-6 space-y-6 overflow-x-hidden">
+      <Helmet>
+        <title>About - Orary</title>
+        <meta name="description" content="Learn about Orary, send feedback, and get support for the shift management app." />
+      </Helmet>
       <BackLink to="/settings">{t('common.backToSettings')}</BackLink>
 
       {/* Hero - full width always */}

@@ -11,6 +11,7 @@ import { AUD_PRICE } from '../../services/currencyService';
 import Button from '../ui/Button';
 import { CARD_NUMBER_OPTIONS, CARD_EXPIRY_OPTIONS, CARD_CVC_OPTIONS, COUNTRIES } from './constants';
 import logger from '../../utils/logger';
+import { trackPremiumUpgradeClick } from '../../utils/analytics';
 
 const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError, localPrice }) => {
   const { t } = useTranslation();
@@ -47,6 +48,7 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError, localPrice 
       return;
     }
 
+    trackPremiumUpgradeClick();
     setLoading(true);
     setError(null);
 

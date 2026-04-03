@@ -3,19 +3,21 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { createSafeDate } from '../utils/time';
+import { formatCurrency as formatCurrencyUtil } from '../utils/currency';
+import { formatHoursDecimal } from '../utils/time/timeCalculations';
 
 export const useUtils = () => {
   const { i18n } = useTranslation();
   const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
   
-  // Currency formatting
-  const formatCurrency = useCallback((amount, currency = '$') => {
-    return `${currency}${amount.toFixed(2)}`;
+  // Currency formatting — delegates to canonical utils/currency.js
+  const formatCurrency = useCallback((amount) => {
+    return formatCurrencyUtil(amount);
   }, []);
 
-  // Hours formatting
+  // Hours formatting — delegates to canonical utils/time/timeCalculations.js
   const formatHours = useCallback((hours) => {
-    return `${hours.toFixed(1)}h`;
+    return formatHoursDecimal(hours);
   }, []);
 
   // Date formatting

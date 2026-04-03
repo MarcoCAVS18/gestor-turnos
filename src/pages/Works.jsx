@@ -1,6 +1,7 @@
 // src/pages/Works.jsx
 
 import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useWorks } from '../hooks/useWorks';
@@ -120,6 +121,10 @@ const Works = () => {
 
   return (
     <>
+      <Helmet>
+        <title>My Jobs - Orary</title>
+        <meta name="description" content="Manage your jobs and workplaces. Add, edit, and organize your work positions." />
+      </Helmet>
       <div className="px-4 py-6 pb-32 space-y-6">
         {/* Share messages */}
         <ShareMessages messages={messages} />

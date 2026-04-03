@@ -70,6 +70,7 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
       setLoading(false);
       setIsFormDirty(false);
       setIsBulkEnabled(false);
+      setShowBulkConfirm(false);
       setPendingShiftData(null);
     } else if (shift) {
       setSelectedWorkId(shift.workId || '');
@@ -172,7 +173,7 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
   if (!isOpen) return null;
 
   const title = shift ? t('shifts.editShift') : t('shifts.addShift');
-  const subtitle = formType === 'delivery' ? `• ${t('nav.delivery')}` : null;
+  const subtitle = formType === 'delivery' ? `• ${t('common.delivery')}` : null;
 
   let dateSubtitle = null;
   if (initialDate && !shift) {
@@ -209,6 +210,7 @@ const ShiftModal = ({ isOpen, onClose, shift, workId, initialDate }) => {
       maxWidth="md"
       showActions={true}
       onCancel={handleClose}
+      cancelText={t('common.cancel')}
       formId={formId}
       saveText={getSaveText()}
       isSaveDisabled={shift ? !isFormDirty : false}

@@ -1,6 +1,7 @@
 // src/pages/Settings.jsx
 
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Settings as SettingsIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../components/layout/PageHeader';
@@ -51,6 +52,10 @@ const Settings = () => {
 
   return (
     <div className="px-4 py-6 space-y-6">
+      <Helmet>
+        <title>Settings - Orary</title>
+        <meta name="description" content="Configure your Orary preferences, pay rates, currency, and account settings." />
+      </Helmet>
       <PageHeader
         title={t('nav.settings')}
         subtitle={t('settings.subtitle')}

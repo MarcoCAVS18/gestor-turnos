@@ -1,6 +1,6 @@
 // src/components/dashboard/RecentActivityCard/index.jsx
 
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Activity, ChevronRight } from 'lucide-react'; 
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +12,7 @@ import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 import Button from '../../ui/Button'; 
 
-const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) => {
+const RecentActivityCard = memo(({ stats, allWorks, allShifts, calculatePayment }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const navigate = useNavigate();
@@ -183,6 +183,7 @@ const RecentActivityCard = ({ stats, allWorks, allShifts, calculatePayment }) =>
       </div>
     </Card>
   );
-};
+});
 
+RecentActivityCard.displayName = 'RecentActivityCard';
 export default RecentActivityCard;

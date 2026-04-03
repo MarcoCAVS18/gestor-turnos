@@ -45,7 +45,7 @@ const getUserDocRef = (userUid) => {
 
 // Generic subscription helper that accepts any state setter name
 const createIncrementalSubscription = (query, stateSetter, errorCallback, sortComparator, dataTransform = (d) => d) => {
-  return onSnapshot(query, { includeMetadataChanges: true }, (snapshot) => {
+  return onSnapshot(query, (snapshot) => {
     stateSetter((currentData) => {
       let updatedData = [...(currentData || [])];
       snapshot.docChanges().forEach((change) => {

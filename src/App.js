@@ -1,6 +1,6 @@
 // src/App.js
 
-import React, { useEffect } from 'react';
+import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import { Capacitor } from '@capacitor/core';
 import { useAuth } from './contexts/AuthContext';
@@ -43,22 +43,24 @@ import ServerError from './pages/ServerError';
 // Main Components
 import Header from './components/layout/Header';
 import Navigation from './components/layout/Navigation';
-import Dashboard from './pages/Dashboard';
-import Works from './pages/Works';
-import Shifts from './pages/Shifts';
-import Statistics from './pages/Statistics';
-import CalendarView from './pages/CalendarView';
-import Settings from './pages/Settings';
-import Integrations from './pages/Integrations';
-import SharedWork from './pages/SharedWork';
-import Premium from './pages/Premium';
-import About from './pages/About';
 
 // Modals
 import WorkModal from './components/modals/work/WorkModal';
 import ShiftModal from './components/modals/shift/ShiftModal';
 import PremiumModal from './components/modals/premium/PremiumModal';
 import { usePremium } from './contexts/PremiumContext';
+
+// Lazy-loaded pages (route-based code splitting)
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Works = lazy(() => import('./pages/Works'));
+const Shifts = lazy(() => import('./pages/Shifts'));
+const Statistics = lazy(() => import('./pages/Statistics'));
+const CalendarView = lazy(() => import('./pages/CalendarView'));
+const Settings = lazy(() => import('./pages/Settings'));
+const Integrations = lazy(() => import('./pages/Integrations'));
+const SharedWork = lazy(() => import('./pages/SharedWork'));
+const Premium = lazy(() => import('./pages/Premium'));
+const About = lazy(() => import('./pages/About'));
 
 // Public route that allows access without authentication
 const PublicRoute = ({ children }) => {
@@ -173,6 +175,11 @@ function App() {
       ) : (
       <Router>
       <ScrollToTop />
+      <Suspense fallback={
+        <Flex variant="center" className="h-screen bg-slate-950">
+          <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
+        </Flex>
+      }>
       <Routes>
         {/* Authentication */}
         <Route path="/login" element={<Login />} />
@@ -231,6 +238,7 @@ function App() {
           }
         />
       </Routes>
+      </Suspense>
     </Router>
       )}
     </>

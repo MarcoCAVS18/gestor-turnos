@@ -1,6 +1,6 @@
 // src/components/dashboard/NextShiftCard/index.jsx
 
-import React from 'react';
+import React, { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Star, ChevronRight, CalendarX } from 'lucide-react';
@@ -10,7 +10,7 @@ import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 
-const NextShiftCard = ({ nextShift, formatDate }) => {
+const NextShiftCard = memo(({ nextShift, formatDate }) => {
   const { t } = useTranslation();
   const { works } = useApp();
   const colors = useThemeColors();
@@ -53,6 +53,7 @@ const NextShiftCard = ({ nextShift, formatDate }) => {
       )}
     </Card>
   );
-};
+});
 
+NextShiftCard.displayName = 'NextShiftCard';
 export default NextShiftCard;

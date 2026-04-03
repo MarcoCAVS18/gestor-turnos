@@ -1,6 +1,7 @@
 // src/pages/Dashboard.jsx
 
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -113,6 +114,10 @@ const Dashboard = () => {
 
   return (
     <div className="px-4 py-6 space-y-6">
+      <Helmet>
+        <title>Dashboard - Orary</title>
+        <meta name="description" content="View your shift summary, earnings overview, and quick stats at a glance." />
+      </Helmet>
       {/* Australia 88 — scrolling ticker, only visible when AU mode is active */}
       <Australia88Ticker />
 

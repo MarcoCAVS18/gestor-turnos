@@ -18,6 +18,7 @@
 //
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart3, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -32,7 +33,7 @@ import Flex from '../../ui/Flex';
 import ProgressBar from '../../ui/ProgressBar';
 import Australia88DashboardCard from '../../australia88/Australia88DashboardCard';
 
-const FavoriteWorksCard = ({ favoriteWorks }) => {
+const FavoriteWorksCard = memo(({ favoriteWorks }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const navigate = useNavigate();
@@ -171,6 +172,7 @@ const FavoriteWorksCard = ({ favoriteWorks }) => {
       </div>
     </Card>
   );
-};
+});
 
+FavoriteWorksCard.displayName = 'FavoriteWorksCard';
 export default FavoriteWorksCard;

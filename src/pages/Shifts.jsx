@@ -1,6 +1,7 @@
 // src/pages/Shifts.jsx
 
 import { useState, useMemo, useCallback } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../contexts/AppContext';
 import { useTurnManager } from '../hooks/useTurnManager';
@@ -168,6 +169,10 @@ const Shifts = () => {
 
   return (
     <div className="px-4 py-6 pb-32 space-y-4">
+      <Helmet>
+        <title>My Shifts - Orary</title>
+        <meta name="description" content="Track and manage all your work shifts. View earnings, hours worked, and shift history." />
+      </Helmet>
       <PageHeader
         title={t('nav.shifts')}
         subtitle={t('shifts.subtitle')}

@@ -1,5 +1,6 @@
 // src/components/dashboard/TopWorkCard/index.jsx
 
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Award } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -7,7 +8,7 @@ import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 
-const TopWorkCard = ({ mostProfitableWork }) => {
+const TopWorkCard = memo(({ mostProfitableWork }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
@@ -59,6 +60,7 @@ const TopWorkCard = ({ mostProfitableWork }) => {
       </Flex>
     </Card>
   );
-};
+});
 
+TopWorkCard.displayName = 'TopWorkCard';
 export default TopWorkCard;

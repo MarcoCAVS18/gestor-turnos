@@ -889,6 +889,22 @@
     "saturdayBonus": "Saturday bonus",
     "sundayBonus": "Sunday bonus",
     "holidayBonus": "Holiday bonus",
+    "selectWork": "Select work",
+    "deliveryWorksGroup": "Delivery works",
+    "traditionalWorksGroup": "Traditional works",
+    "earningsWithoutTips": "Base earnings",
+    "orderCount": "Order count",
+    "kilometers": "Kilometers driven",
+    "fuelExpenses": "Fuel expenses",
+    "notesOptional": "Notes (optional)",
+    "notesPlaceholder": "Additional notes about the shift...",
+    "errors": {
+      "workRequired": "Select a work",
+      "dateRequired": "Date is required",
+      "startTimeRequired": "Start time is required",
+      "endTimeRequired": "End time is required",
+      "earningsRequired": "Earnings are required and must be greater than 0"
+    },
     "filters": {
       "activeFilters": "Active filters",
       "allDays": "All days",

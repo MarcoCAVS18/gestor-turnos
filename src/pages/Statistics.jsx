@@ -1,6 +1,7 @@
 // src/pages/Statistics.jsx
 
 import { useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../components/layout/PageHeader';
 import { Bike, BarChart } from 'lucide-react';
@@ -80,6 +81,10 @@ const Statistics = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Statistics - Orary</title>
+        <meta name="description" content="Analyze your income trends, hours worked, and earnings breakdowns with detailed charts and reports." />
+      </Helmet>
       <div className="px-4 py-6 space-y-6">
         <PageHeader
           title={t('statistics.title')}

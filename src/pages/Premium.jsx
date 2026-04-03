@@ -2,9 +2,11 @@
 // Premium subscription page - orchestrator
 
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { usePremium } from '../contexts/PremiumContext';
+import { trackPurchase, trackTrialStart } from '../utils/analytics';
 import SuccessCelebration from '../components/premium/SuccessCelebration';
 import ProcessingPaymentOverlay from '../components/premium/ProcessingPaymentOverlay';
 import PremiumUserView from '../components/premium/PremiumUserView';
@@ -24,6 +26,9 @@ const PremiumContent = () => {
   const handlePaymentSuccess = (result) => {
     if (result?.status === 'trial') {
       setTrialEnd(result.trialEnd);
+      trackTrialStart();
+    } else {
+      trackPurchase('subscription');
     }
     setPaymentState('success');
     setTimeout(() => window.location.reload(), 6000);
@@ -45,11 +50,17 @@ const PremiumContent = () => {
   }
 
   return (
-    <FreeUserView
-      onPaymentSuccess={handlePaymentSuccess}
-      onProcessingStart={handleProcessingStart}
-      onPaymentError={handlePaymentError}
-    />
+    <>
+      <Helmet>
+        <title>Go Premium - Orary</title>
+        <meta name="description" content="Unlock advanced analytics, PDF/Excel exports, and premium features for $2.99 AUD/month." />
+      </Helmet>
+      <FreeUserView
+        onPaymentSuccess={handlePaymentSuccess}
+        onProcessingStart={handleProcessingStart}
+        onPaymentError={handlePaymentError}
+      />
+    </>
   );
 };
 

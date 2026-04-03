@@ -1,6 +1,7 @@
 // src/pages/CalendarView.jsx
 
 import React, { useState, useMemo, useCallback } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { CalendarDays, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -116,6 +117,10 @@ const CalendarView = () => {
 
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
+      <Helmet>
+        <title>Calendar - Orary</title>
+        <meta name="description" content="View your work shifts on a calendar. Plan upcoming shifts and track your schedule." />
+      </Helmet>
       <PageHeader
         title={t('nav.calendar')}
         subtitle={hasWorks ? t('calendar.subtitle') : null}

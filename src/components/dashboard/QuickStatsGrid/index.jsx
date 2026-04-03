@@ -1,6 +1,6 @@
 // src/components/dashboard/QuickStatsGrid/index.jsx
 
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Briefcase, Calendar, Clock, Target,
@@ -11,7 +11,7 @@ import {
 import { useApp } from '../../../contexts/AppContext';
 import QuickStatCard from '../QuickStatCard';
 
-const QuickStatsGrid = ({ stats, className }) => {
+const QuickStatsGrid = memo(({ stats, className }) => {
   const { t } = useTranslation();
   const { thematicColors, works, deliveryWork } = useApp();
 
@@ -98,6 +98,7 @@ const QuickStatsGrid = ({ stats, className }) => {
       ))}
     </div>
   );
-};
+});
 
+QuickStatsGrid.displayName = 'QuickStatsGrid';
 export default QuickStatsGrid;

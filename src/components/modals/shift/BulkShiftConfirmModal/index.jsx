@@ -1,6 +1,6 @@
 // src/components/modals/shift/BulkShiftConfirmModal/index.jsx
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Calendar, AlertCircle, LayoutGrid, CalendarDays, CalendarRange } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
@@ -46,6 +46,7 @@ const BulkShiftConfirmModal = ({
   const [skipWeekends, setSkipWeekends] = useState(true);
 
   const [isCreating, setIsCreating] = useState(false);
+  const isCreatingRef = useRef(false);
 
   // Generate shifts based on current tab and configuration
   const generatedShifts = useMemo(() => {
@@ -92,7 +93,7 @@ const BulkShiftConfirmModal = ({
   }, [baseShift, activeTab, selectedDays, weeks, selectedDatesList, fromDate, toDate, skipWeekends]);
 
   const handleConfirm = async () => {
-    if (generatedShifts.length === 0) return;
+    if (generatedShifts.length === 0 || isCreatingRef.current) return;
 
     // Check for duplicates
     const { duplicates, unique } = detectDuplicates(generatedShifts, existingShifts);
@@ -105,6 +106,7 @@ const BulkShiftConfirmModal = ({
     }
 
     // No duplicates, proceed with creation
+    isCreatingRef.current = true;
     setIsCreating(true);
     try {
       await onConfirm(generatedShifts);
@@ -112,13 +114,15 @@ const BulkShiftConfirmModal = ({
     } catch (error) {
       logger.error('Error creating bulk shifts:', error);
     } finally {
+      isCreatingRef.current = false;
       setIsCreating(false);
     }
   };
 
   const handleSkipDuplicates = async () => {
-    if (duplicateData.unique.length === 0) return;
+    if (duplicateData.unique.length === 0 || isCreatingRef.current) return;
 
+    isCreatingRef.current = true;
     setShowDuplicateWarning(false);
     setIsCreating(true);
     try {
@@ -127,6 +131,7 @@ const BulkShiftConfirmModal = ({
     } catch (error) {
       logger.error('Error creating bulk shifts:', error);
     } finally {
+      isCreatingRef.current = false;
       setIsCreating(false);
     }
   };

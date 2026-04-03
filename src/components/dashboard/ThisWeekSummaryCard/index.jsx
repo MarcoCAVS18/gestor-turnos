@@ -1,6 +1,6 @@
 // src/components/dashboard/ThisWeekSummaryCard/index.jsx
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Calendar, TrendingUp, Target, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +27,7 @@ const MOTIVATIONAL_PHRASES = [
   { good: 'dashboard.motivation.onTrack', excellent: 'dashboard.motivation.brilliant' },
 ];
 
-const ThisWeekSummaryCard = ({ stats, className }) => {
+const ThisWeekSummaryCard = memo(({ stats, className }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const navigate = useNavigate();
@@ -211,6 +211,7 @@ const ThisWeekSummaryCard = ({ stats, className }) => {
       </div>
     </Card>
   );
-};
+});
 
+ThisWeekSummaryCard.displayName = 'ThisWeekSummaryCard';
 export default ThisWeekSummaryCard;

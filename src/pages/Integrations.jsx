@@ -1,6 +1,7 @@
 // src/pages/Integrations.jsx
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {
   Puzzle,
   Bell,
@@ -370,6 +371,10 @@ const Integrations = () => {
 
   return (
     <div className="px-4 py-6 space-y-6">
+      <Helmet>
+        <title>Integrations - Orary</title>
+        <meta name="description" content="Connect Orary with notifications, calendar feeds, biometrics, and other integrations." />
+      </Helmet>
       <BackLink to="/settings">{t('integrations.backToSettings')}</BackLink>
 
       <PageHeader

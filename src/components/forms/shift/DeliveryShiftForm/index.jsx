@@ -1,6 +1,7 @@
 // src/components/forms/shift/DeliveryShiftForm/index.jsx
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Truck, Calendar, Clock, DollarSign, Package, Navigation, Fuel, Heart } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import BaseForm, { FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses } from '../../base/BaseForm';
@@ -16,6 +17,7 @@ const DeliveryShiftForm = ({
   isMobile = false,
   initialDate
 }) => {
+  const { t } = useTranslation();
   const colors = useThemeColors();
 
   const [initialFormData, setInitialFormData] = useState(null);
@@ -112,19 +114,19 @@ const DeliveryShiftForm = ({
     const newErrors = {};
 
     if (!formData.workId) {
-      newErrors.workId = 'Select a work';
+      newErrors.workId = t('shifts.errors.workRequired');
     }
     if (!formData.startDate) {
-      newErrors.startDate = 'Date is required';
+      newErrors.startDate = t('shifts.errors.dateRequired');
     }
     if (!formData.startTime) {
-      newErrors.startTime = 'Start time is required';
+      newErrors.startTime = t('shifts.errors.startTimeRequired');
     }
     if (!formData.endTime) {
-      newErrors.endTime = 'End time is required';
+      newErrors.endTime = t('shifts.errors.endTimeRequired');
     }
     if (!formData.baseEarnings || parseFloat(formData.baseEarnings) <= 0) {
-      newErrors.baseEarnings = 'Earnings (without tips) are required and must be greater than 0';
+      newErrors.baseEarnings = t('shifts.errors.earningsRequired');
     }
 
     setErrors(newErrors);
@@ -167,7 +169,7 @@ const DeliveryShiftForm = ({
       isMobile={isMobile}
     >
       <FormSection>
-        <FormLabel icon={Truck}>Work</FormLabel>
+        <FormLabel icon={Truck}>{t('shifts.work')}</FormLabel>
         <select
           value={formData.workId}
           onChange={(e) => handleInputChange('workId', e.target.value)}
@@ -175,10 +177,10 @@ const DeliveryShiftForm = ({
           style={{ '--tw-ring-color': colors.primary }}
           required
         >
-          <option value="">Select work</option>
+          <option value="">{t('shifts.selectWork')}</option>
 
           {deliveryWork.length > 0 && (
-            <optgroup label="Delivery Works">
+            <optgroup label={t('shifts.deliveryWorksGroup')}>
               {deliveryWork.map(work => (
                 <option key={work.id} value={work.id}>
                   {work.name} {work.vehicle ? `(${work.vehicle})` : ''}
@@ -188,7 +190,7 @@ const DeliveryShiftForm = ({
           )}
 
           {traditionalWorks.length > 0 && (
-            <optgroup label="Traditional Works">
+            <optgroup label={t('shifts.traditionalWorksGroup')}>
               {traditionalWorks.map(work => (
                 <option key={work.id} value={work.id}>
                   {work.name}
@@ -201,7 +203,7 @@ const DeliveryShiftForm = ({
       </FormSection>
 
       <FormSection>
-        <FormLabel icon={Calendar}>Shift date</FormLabel>
+        <FormLabel icon={Calendar}>{t('shifts.date')}</FormLabel>
         <input
           type="date"
           value={formData.startDate}
@@ -215,7 +217,7 @@ const DeliveryShiftForm = ({
 
       <FormGrid columns={2}>
         <FormField>
-          <FormLabel icon={Clock}>Start time</FormLabel>
+          <FormLabel icon={Clock}>{t('shifts.startTime')}</FormLabel>
           <input
             type="time"
             value={formData.startTime}
@@ -228,7 +230,7 @@ const DeliveryShiftForm = ({
         </FormField>
 
         <FormField>
-          <FormLabel icon={Clock}>End time</FormLabel>
+          <FormLabel icon={Clock}>{t('shifts.endTime')}</FormLabel>
           <input
             type="time"
             value={formData.endTime}
@@ -243,7 +245,7 @@ const DeliveryShiftForm = ({
 
       <FormGrid columns={2}>
         <FormField>
-          <FormLabel icon={DollarSign}>Earnings (without tips)</FormLabel>
+          <FormLabel icon={DollarSign}>{t('shifts.earningsWithoutTips')}</FormLabel>
           <input
             type="number"
             step="0.01"
@@ -258,7 +260,7 @@ const DeliveryShiftForm = ({
         </FormField>
 
         <FormField>
-          <FormLabel icon={Heart}>Tips</FormLabel>
+          <FormLabel icon={Heart}>{t('shifts.tips')}</FormLabel>
           <input
             type="number"
             step="0.01"
@@ -273,7 +275,7 @@ const DeliveryShiftForm = ({
 
       <FormGrid columns={2}>
         <FormField>
-          <FormLabel icon={Package}>Order count</FormLabel>
+          <FormLabel icon={Package}>{t('shifts.orderCount')}</FormLabel>
           <input
             type="number"
             value={formData.orderCount}
@@ -286,7 +288,7 @@ const DeliveryShiftForm = ({
         </FormField>
 
         <FormField>
-          <FormLabel icon={Navigation}>Kilometers driven</FormLabel>
+          <FormLabel icon={Navigation}>{t('shifts.kilometers')}</FormLabel>
           <input
             type="number"
             step="0.1"
@@ -302,7 +304,7 @@ const DeliveryShiftForm = ({
 
       {showFuel && (
         <FormSection>
-          <FormLabel icon={Fuel}>Fuel expenses</FormLabel>
+          <FormLabel icon={Fuel}>{t('shifts.fuelExpenses')}</FormLabel>
           <input
             type="number"
             step="0.01"
@@ -317,14 +319,14 @@ const DeliveryShiftForm = ({
       )}
 
       <FormSection>
-        <FormLabel>Notes (optional)</FormLabel>
+        <FormLabel>{t('shifts.notesOptional')}</FormLabel>
         <textarea
           value={formData.notes}
           onChange={(e) => handleInputChange('notes', e.target.value)}
           className={`${getInputClasses(isMobile)} resize-none border-gray-300`}
           style={{ '--tw-ring-color': colors.primary }}
           rows={isMobile ? "3" : "2"}
-          placeholder="Additional notes about the shift..."
+          placeholder={t('shifts.notesPlaceholder')}
         />
       </FormSection>
     </BaseForm>

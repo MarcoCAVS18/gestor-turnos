@@ -1,5 +1,6 @@
 // src/components/dashboard/ProjectionCard/index.jsx
 
+import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BarChart3, Briefcase, Timer, ArrowRight, Check } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -9,7 +10,7 @@ import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 import { useNavigate } from 'react-router-dom';
 
-const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
+const ProjectionCard = memo(({ monthlyProjection, hoursWorked, className }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const { calculateMonthlyStats, works, deliveryWork } = useApp();
@@ -158,6 +159,7 @@ const ProjectionCard = ({ monthlyProjection, hoursWorked, className }) => {
       </div>
     </Card>
   );
-};
+});
 
+ProjectionCard.displayName = 'ProjectionCard';
 export default ProjectionCard;

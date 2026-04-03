@@ -1,12 +1,12 @@
 // src/components/dashboard/WeeklyStatsCard/index.jsx
 
-import React from 'react';
+import React, { memo } from 'react';
 import { DollarSign, Clock, Target, Activity } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import Flex from '../../ui/Flex';
 
-const WeeklyStatsGrid = ({ data = {} }) => {
+const WeeklyStatsGrid = memo(({ data = {} }) => {
   const colors = useThemeColors();
 
   const safeData = {
@@ -61,6 +61,7 @@ const WeeklyStatsGrid = ({ data = {} }) => {
       })}
     </div>
   );
-};
+});
 
+WeeklyStatsGrid.displayName = 'WeeklyStatsGrid';
 export default WeeklyStatsGrid;
