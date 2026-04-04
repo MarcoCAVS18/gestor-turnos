@@ -450,6 +450,14 @@ export const AuthProvider = ({ children }) => {
 
   // Monitor authentication state changes
   useEffect(() => {
+    // During pre-rendering (scripts/prerender.js uses headless Chrome with this
+    // custom user agent), Firebase requests are blocked to prevent hangs.
+    // Skip auth loading immediately so the page renders its unauthenticated state.
+    if (navigator.userAgent === 'OraryPrerender') {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       loadProfilePhoto(user);

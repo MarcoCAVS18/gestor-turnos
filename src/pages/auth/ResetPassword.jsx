@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import { confirmPasswordReset } from 'firebase/auth';
 import { auth } from '../../services/firebase';
 import Button from '../../components/ui/Button';
@@ -92,7 +93,12 @@ const ResetPassword = () => {
   };
 
   return (
-    <AuthLayout title={t('auth.resetPassword.title')} subtitle={t('auth.resetPassword.subtitle')}>
+    <>
+      <Helmet>
+        <title>Reset Password - Orary</title>
+        <meta name="description" content="Set a new password for your Orary account." />
+      </Helmet>
+      <AuthLayout title={t('auth.resetPassword.title')} subtitle={t('auth.resetPassword.subtitle')}>
       {error && (
         <div className="mb-3 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
           {error}
@@ -175,6 +181,7 @@ const ResetPassword = () => {
         </button>
       </div>
     </AuthLayout>
+    </>
   );
 };
 

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../../contexts/AuthContext';
 import Button from '../../components/ui/Button';
 import AuthLayout from '../../components/layout/AuthLayout';
@@ -42,7 +43,12 @@ const ForgotPassword = () => {
   };
 
   return (
-    <AuthLayout title={t('auth.forgotPassword.title')} subtitle={t('auth.forgotPassword.subtitle')}>
+    <>
+      <Helmet>
+        <title>Forgot Password - Orary</title>
+        <meta name="description" content="Reset your Orary account password to regain access to your shift tracking data." />
+      </Helmet>
+      <AuthLayout title={t('auth.forgotPassword.title')} subtitle={t('auth.forgotPassword.subtitle')}>
       <p className="text-center text-gray-600 text-sm mb-4">
         {t('auth.forgotPassword.description')}
       </p>
@@ -87,6 +93,7 @@ const ForgotPassword = () => {
         </div>
       </form>
     </AuthLayout>
+    </>
   );
 };
 

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { hasProfanity } from '../../utils/profanityFilter';
@@ -133,7 +134,12 @@ const Register = () => {
   };
 
   return (
-    <AuthLayout title={t('auth.register.title')} subtitle={t('auth.register.subtitle')}>
+    <>
+      <Helmet>
+        <title>Create Account - Orary</title>
+        <meta name="description" content="Create your free Orary account to start tracking work shifts and calculating earnings automatically." />
+      </Helmet>
+      <AuthLayout title={t('auth.register.title')} subtitle={t('auth.register.subtitle')}>
       {error && (
         <div className="mb-3 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
           {error}
@@ -293,6 +299,7 @@ const Register = () => {
         </Link>
       </div>
     </AuthLayout>
+    </>
   );
 };
 

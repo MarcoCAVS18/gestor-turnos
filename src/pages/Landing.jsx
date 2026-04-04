@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { Clock, TrendingUp, Zap, ArrowRight, Bike } from 'lucide-react';
@@ -37,23 +38,27 @@ const Landing = () => {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-gray-900 flex items-center justify-center">
-        <div
-          className="w-8 h-8 border-4 border-t-transparent rounded-full animate-spin"
-          style={{ borderColor: `${PINK} transparent transparent transparent` }}
-        />
+      <div className="fixed inset-0 bg-slate-900 flex flex-col items-center justify-center gap-4">
+        <div className="bg-white rounded-full p-4 shadow-lg animate-pulse">
+          <img src="/assets/SVG/logo.svg" alt="Orary" className="h-14 w-14" />
+        </div>
+        <p className="text-white/50 text-sm font-medium tracking-wide">Orary</p>
       </div>
     );
   }
 
   return (
     <div className="fixed inset-0">
+      <Helmet>
+        <title>Orary - Shift Management &amp; Earnings Tracker</title>
+        <meta name="description" content="Track your work shifts, calculate earnings automatically, and analyze your income with detailed statistics. Free shift management app for workers in Australia and worldwide." />
+      </Helmet>
       {/* Background video — identical to AuthLayout */}
       <div className="absolute inset-0 z-0 bg-slate-900">
         <div className="absolute inset-0 bg-black opacity-50 z-10" />
         <video
           autoPlay loop muted playsInline
-          poster="/assets/images/logo2.png"
+          preload="none"
           onCanPlay={() => setVideoReady(true)}
           className={`absolute object-cover w-full h-full transition-opacity duration-700 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
         >
@@ -62,10 +67,10 @@ const Landing = () => {
       </div>
 
       {/* Content — same layout as AuthLayout */}
-      <div className="fixed inset-0 z-20 flex flex-col items-center justify-center p-4 py-6 md:py-10 overflow-y-auto">
+      <main className="fixed inset-0 z-20 flex flex-col items-center justify-center p-4 py-6 md:py-10 overflow-y-auto">
 
         {/* Logo & branding — identical structure to AuthLayout */}
-        <motion.div
+        <motion.header
           className="flex flex-col items-center mb-5 flex-shrink-0"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -76,21 +81,24 @@ const Landing = () => {
               src="/assets/SVG/logo.svg"
               alt="Orary"
               className="h-10 w-10 md:h-14 md:w-14"
+              fetchpriority="high"
             />
           </div>
           <h1 className="text-2xl md:text-4xl font-bold text-white mb-0.5">{t('landing.brandName')}</h1>
           <p className="text-sm md:text-base text-white/80 text-center">
             {t('landing.tagline')}
           </p>
-        </motion.div>
+        </motion.header>
 
         {/* Feature pills - Two rows */}
-        <motion.div
+        <motion.section
+          aria-label="Features"
           className="flex flex-col items-center gap-2 mb-5 flex-shrink-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
+          <h2 className="sr-only">Key features of Orary</h2>
           {/* Top row */}
           <div className="flex flex-wrap justify-center gap-2">
             {topFeatures.map((f) => (
@@ -104,7 +112,7 @@ const Landing = () => {
               </div>
             ))}
           </div>
-          
+
           {/* Bottom row */}
           <div className="flex flex-wrap justify-center gap-2">
             {bottomFeatures.map((f) => (
@@ -127,7 +135,7 @@ const Landing = () => {
               </div>
             ))}
           </div>
-        </motion.div>
+        </motion.section>
 
         {/* CTA card — same shape/shadow as the AuthLayout form card */}
         <motion.div
@@ -165,17 +173,17 @@ const Landing = () => {
           </p>
         </motion.div>
 
-        {/* Legal footer — identical to AuthLayout */}
-        <div className="mt-4 flex-shrink-0 text-center">
+        {/* Legal footer */}
+        <footer className="mt-4 flex-shrink-0 text-center">
           <p className="text-white/60 text-xs">
             {t('landing.legalAgreement')}{' '}
             <Link to="/privacy" className="text-white/90 underline hover:text-white">{t('landing.privacyPolicy')}</Link>
             {' '}{t('landing.and')}{' '}
             <Link to="/terms" className="text-white/90 underline hover:text-white">{t('landing.termsOfService')}</Link>
           </p>
-        </div>
+        </footer>
 
-      </div>
+      </main>
     </div>
   );
 };

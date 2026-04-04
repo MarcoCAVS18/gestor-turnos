@@ -23,6 +23,7 @@ import Register from './pages/auth/Register';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import ScrollToTop from './components/layout/ScrollToTop/index.jsx';
+import CookieConsent from './components/ui/CookieConsent';
 
 // Landing page
 import Landing from './pages/Landing';
@@ -167,6 +168,7 @@ function App() {
   return (
     <>
       <NativeSplash />
+      <CookieConsent />
       {loading ? (
         // Web: spinner visible. En nativo queda tapado bajo NativeSplash (z-9999).
         <Flex variant="center" className="h-screen bg-slate-950">

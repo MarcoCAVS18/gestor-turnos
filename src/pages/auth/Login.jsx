@@ -1,5 +1,6 @@
 // src/pages/auth/Login.jsx
 import React, { useState, useEffect, useRef } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
@@ -108,6 +109,10 @@ const Login = () => {
 
   return (
     <>
+      <Helmet>
+        <title>Sign In - Orary</title>
+        <meta name="description" content="Sign in to your Orary account to track your work shifts and earnings." />
+      </Helmet>
       <AuthLayout title={t('auth.login.title')} subtitle={t('auth.login.subtitle')}>
         {error && (
           <div className="mb-3 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
