@@ -84,6 +84,7 @@ const Statistics = () => {
       <Helmet>
         <title>Statistics - Orary</title>
         <meta name="description" content="Analyze your income trends, hours worked, and earnings breakdowns with detailed charts and reports." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <div className="px-4 py-6 space-y-6">
         <PageHeader

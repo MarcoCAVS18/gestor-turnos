@@ -124,6 +124,7 @@ const Works = () => {
       <Helmet>
         <title>My Jobs - Orary</title>
         <meta name="description" content="Manage your jobs and workplaces. Add, edit, and organize your work positions." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <div className="px-4 py-6 pb-32 space-y-6">
         {/* Share messages */}

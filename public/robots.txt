@@ -7,8 +7,6 @@ Allow: /
 
 # Block only internal/utility routes
 Disallow: /error
-Disallow: /static/js/
-Disallow: /static/css/
 
 # Crawl-delay for non-Google bots
 Crawl-delay: 2

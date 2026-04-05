@@ -138,6 +138,7 @@ const Register = () => {
       <Helmet>
         <title>Create Account - Orary</title>
         <meta name="description" content="Create your free Orary account to start tracking work shifts and calculating earnings automatically." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <AuthLayout title={t('auth.register.title')} subtitle={t('auth.register.subtitle')}>
       {error && (

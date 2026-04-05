@@ -172,6 +172,7 @@ const Shifts = () => {
       <Helmet>
         <title>My Shifts - Orary</title>
         <meta name="description" content="Track and manage all your work shifts. View earnings, hours worked, and shift history." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <PageHeader
         title={t('nav.shifts')}

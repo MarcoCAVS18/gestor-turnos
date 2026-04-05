@@ -55,6 +55,7 @@ const Settings = () => {
       <Helmet>
         <title>Settings - Orary</title>
         <meta name="description" content="Configure your Orary preferences, pay rates, currency, and account settings." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <PageHeader
         title={t('nav.settings')}

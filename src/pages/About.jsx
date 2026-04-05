@@ -48,6 +48,7 @@ const About = () => {
       <Helmet>
         <title>About - Orary</title>
         <meta name="description" content="Learn about Orary, send feedback, and get support for the shift management app." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <BackLink to="/settings">{t('common.backToSettings')}</BackLink>
 

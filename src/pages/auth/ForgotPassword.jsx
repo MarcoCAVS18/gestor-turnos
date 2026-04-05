@@ -47,6 +47,7 @@ const ForgotPassword = () => {
       <Helmet>
         <title>Forgot Password - Orary</title>
         <meta name="description" content="Reset your Orary account password to regain access to your shift tracking data." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <AuthLayout title={t('auth.forgotPassword.title')} subtitle={t('auth.forgotPassword.subtitle')}>
       <p className="text-center text-gray-600 text-sm mb-4">

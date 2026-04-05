@@ -117,6 +117,7 @@ const Dashboard = () => {
       <Helmet>
         <title>Dashboard - Orary</title>
         <meta name="description" content="View your shift summary, earnings overview, and quick stats at a glance." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       {/* Australia 88 — scrolling ticker, only visible when AU mode is active */}
       <Australia88Ticker />

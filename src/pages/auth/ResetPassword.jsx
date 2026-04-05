@@ -97,6 +97,7 @@ const ResetPassword = () => {
       <Helmet>
         <title>Reset Password - Orary</title>
         <meta name="description" content="Set a new password for your Orary account." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <AuthLayout title={t('auth.resetPassword.title')} subtitle={t('auth.resetPassword.subtitle')}>
       {error && (

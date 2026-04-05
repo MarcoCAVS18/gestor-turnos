@@ -54,6 +54,7 @@ const PremiumContent = () => {
       <Helmet>
         <title>Go Premium - Orary</title>
         <meta name="description" content="Unlock advanced analytics, PDF/Excel exports, and premium features for $2.99 AUD/month." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <FreeUserView
         onPaymentSuccess={handlePaymentSuccess}

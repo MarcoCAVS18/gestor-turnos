@@ -120,6 +120,7 @@ const CalendarView = () => {
       <Helmet>
         <title>Calendar - Orary</title>
         <meta name="description" content="View your work shifts on a calendar. Plan upcoming shifts and track your schedule." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <PageHeader
         title={t('nav.calendar')}

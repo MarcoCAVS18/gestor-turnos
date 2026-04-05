@@ -112,6 +112,7 @@ const Login = () => {
       <Helmet>
         <title>Sign In - Orary</title>
         <meta name="description" content="Sign in to your Orary account to track your work shifts and earnings." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <AuthLayout title={t('auth.login.title')} subtitle={t('auth.login.subtitle')}>
         {error && (

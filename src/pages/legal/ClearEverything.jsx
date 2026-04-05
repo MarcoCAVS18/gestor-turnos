@@ -1,6 +1,7 @@
 // src/pages/legal/ClearEverything.jsx
 
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -52,6 +53,7 @@ const ClearEverything = () => {
 
   return (
     <div className="px-4 py-6 space-y-6">
+      <Helmet><meta name="robots" content="noindex, nofollow" /></Helmet>
       <BackLink back />
 
       <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">

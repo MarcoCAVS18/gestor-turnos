@@ -374,6 +374,7 @@ const Integrations = () => {
       <Helmet>
         <title>Integrations - Orary</title>
         <meta name="description" content="Connect Orary with notifications, calendar feeds, biometrics, and other integrations." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <BackLink to="/settings">{t('integrations.backToSettings')}</BackLink>
 
