@@ -42,3 +42,9 @@ service-account.json
 # Firebase rules backup and secure files
 *.rules.BACKUP
 *.rules.SECURE
+
+# Sensitive — NEVER commit these
+*.jks
+*.keystore
+android/app/google-services.json
+ios/App/App/GoogleService-Info.plist
