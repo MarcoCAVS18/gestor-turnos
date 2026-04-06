@@ -12,13 +12,6 @@ import { AppProvider } from './contexts/AppContext';
 import { useConfigContext } from './contexts/ConfigContext';
 import ProtectedLayout from './components/layout/ProtectedLayout/ProtectedLayout';
 import Loader from './components/other/Loader';
-
-// Context-free fallback used before AppProvider mounts (Suspense, auth loading)
-const AppLoader = () => (
-  <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a' }}>
-    <img src="/assets/SVG/logo.svg" alt="Orary" style={{ width: 80, height: 80, opacity: 0.9 }} />
-  </div>
-);
 import useModalManager from './hooks/useModalManager';
 import './styles/animation.css';
 
@@ -67,6 +60,13 @@ const Integrations = lazy(() => import('./pages/Integrations'));
 const SharedWork = lazy(() => import('./pages/SharedWork'));
 const Premium = lazy(() => import('./pages/Premium'));
 const About = lazy(() => import('./pages/About'));
+
+// Context-free fallback used before AppProvider mounts (Suspense, auth loading)
+const AppLoader = () => (
+  <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a' }}>
+    <img src="/assets/SVG/logo.svg" alt="Orary" style={{ width: 80, height: 80, opacity: 0.9 }} />
+  </div>
+);
 
 // Public route that allows access without authentication
 const PublicRoute = ({ children }) => {
