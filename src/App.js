@@ -12,6 +12,13 @@ import { AppProvider } from './contexts/AppContext';
 import { useConfigContext } from './contexts/ConfigContext';
 import ProtectedLayout from './components/layout/ProtectedLayout/ProtectedLayout';
 import Loader from './components/other/Loader';
+
+// Context-free fallback used before AppProvider mounts (Suspense, auth loading)
+const AppLoader = () => (
+  <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a' }}>
+    <img src="/assets/SVG/logo.svg" alt="Orary" style={{ width: 80, height: 80, opacity: 0.9 }} />
+  </div>
+);
 import useModalManager from './hooks/useModalManager';
 import './styles/animation.css';
 
@@ -66,7 +73,7 @@ const PublicRoute = ({ children }) => {
   const { loading } = useAuth();
 
   if (loading) {
-    return <Loader fullScreen />;
+    return <AppLoader />;
   }
 
   return children;
@@ -165,11 +172,11 @@ function App() {
       <CookieConsent />
       {loading ? (
         // Web: loader visible. En nativo queda tapado bajo NativeSplash (z-9999).
-        <Loader fullScreen />
+        <AppLoader />
       ) : (
       <Router>
       <ScrollToTop />
-      <Suspense fallback={<Loader fullScreen />}>
+      <Suspense fallback={<AppLoader />}>
       <Routes>
         {/* Authentication */}
         <Route path="/login" element={<Login />} />
