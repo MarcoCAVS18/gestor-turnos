@@ -11,9 +11,7 @@ import {
 import { AppProvider } from './contexts/AppContext';
 import { useConfigContext } from './contexts/ConfigContext';
 import ProtectedLayout from './components/layout/ProtectedLayout/ProtectedLayout';
-import LoadingSpinner from './components/ui/LoadingSpinner/LoadingSpinner';
 import Loader from './components/other/Loader';
-import Flex from './components/ui/Flex';
 import useModalManager from './hooks/useModalManager';
 import './styles/animation.css';
 
@@ -68,11 +66,7 @@ const PublicRoute = ({ children }) => {
   const { loading } = useAuth();
 
   if (loading) {
-    return (
-      <Flex variant="center" className="h-screen">
-        <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
-      </Flex>
-    );
+    return <Loader fullScreen />;
   }
 
   return children;
@@ -170,18 +164,12 @@ function App() {
       <NativeSplash />
       <CookieConsent />
       {loading ? (
-        // Web: spinner visible. En nativo queda tapado bajo NativeSplash (z-9999).
-        <Flex variant="center" className="h-screen bg-slate-950">
-          <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
-        </Flex>
+        // Web: loader visible. En nativo queda tapado bajo NativeSplash (z-9999).
+        <Loader fullScreen />
       ) : (
       <Router>
       <ScrollToTop />
-      <Suspense fallback={
-        <Flex variant="center" className="h-screen bg-slate-950">
-          <LoadingSpinner size="h-12 w-12" color="border-pink-500" />
-        </Flex>
-      }>
+      <Suspense fallback={<Loader fullScreen />}>
       <Routes>
         {/* Authentication */}
         <Route path="/login" element={<Login />} />
