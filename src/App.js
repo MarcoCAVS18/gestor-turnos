@@ -60,6 +60,7 @@ const Integrations = lazy(() => import('./pages/Integrations'));
 const SharedWork = lazy(() => import('./pages/SharedWork'));
 const Premium = lazy(() => import('./pages/Premium'));
 const About = lazy(() => import('./pages/About'));
+const Support = lazy(() => import('./pages/Support'));
 
 // Context-free fallback used before AppProvider mounts (Suspense, auth loading)
 const AppLoader = () => (
@@ -216,6 +217,7 @@ function App() {
           <Route path="/integrations" element={<Integrations />} />
           <Route path="/premium" element={<Premium />} />
           <Route path="/about" element={<About />} />
+          <Route path="/support" element={<Support />} />
           {/* Legal Pages (also in settings) */}
           <Route path="/delete-account" element={<DeleteAccount />} />
           <Route path="/clear-everything" element={<ClearEverything />} />

@@ -1714,7 +1714,27 @@
     "copyright": "© 2026 Orary. Todos los derechos reservados.",
     "terms": "Términos",
     "privacy": "Privacidad",
-    "about": "Acerca de Orary"
+    "about": "Acerca de Orary",
+    "support": "Soporte"
+  },
+  "support": {
+    "title": "Contactar Soporte",
+    "subtitle": "Te responderemos lo antes posible.",
+    "premiumBadge": "Tu mensaje será atendido con prioridad.",
+    "formTitle": "Enviar un mensaje",
+    "subjectLabel": "Asunto",
+    "subjectPlaceholder": "¿En qué podemos ayudarte?",
+    "messageLabel": "Mensaje",
+    "messagePlaceholder": "Describí tu problema o consulta en detalle...",
+    "replyTo": "Responderemos a",
+    "send": "Enviar mensaje",
+    "sending": "Enviando...",
+    "successTitle": "¡Mensaje enviado!",
+    "successDesc": "Recibimos tu mensaje y responderemos en 2–3 días hábiles.",
+    "successDescPremium": "Recibimos tu mensaje. Como usuario Premium, responderemos en menos de 24 horas.",
+    "sendAnother": "Enviar otro mensaje",
+    "errorRateLimit": "Enviaste demasiados mensajes. Esperá un momento antes de intentar de nuevo.",
+    "errorGeneric": "Algo salió mal. Intentá nuevamente."
   },
   "filters": {
     "allWorks": "Todos los trabajos",

@@ -1720,7 +1720,27 @@
     "copyright": "© 2026 Orary. Tous droits réservés.",
     "terms": "Conditions",
     "privacy": "Confidentialité",
-    "about": "À propos Orary"
+    "about": "À propos Orary",
+    "support": "Support"
+  },
+  "support": {
+    "title": "Contacter le support",
+    "subtitle": "Nous vous répondrons dans les plus brefs délais.",
+    "premiumBadge": "Votre message sera traité en priorité.",
+    "formTitle": "Envoyer un message",
+    "subjectLabel": "Sujet",
+    "subjectPlaceholder": "Comment pouvons-nous vous aider ?",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Décrivez votre problème ou question en détail...",
+    "replyTo": "Nous répondrons à",
+    "send": "Envoyer le message",
+    "sending": "Envoi en cours...",
+    "successTitle": "Message envoyé !",
+    "successDesc": "Nous avons reçu votre message et répondrons sous 2–3 jours ouvrables.",
+    "successDescPremium": "Nous avons reçu votre message. En tant qu'utilisateur Premium, vous recevrez une réponse sous 24 heures.",
+    "sendAnother": "Envoyer un autre message",
+    "errorRateLimit": "Vous avez envoyé trop de messages. Veuillez attendre avant de réessayer.",
+    "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
   },
   "filters": {
     "allWorks": "Tous les travaux",

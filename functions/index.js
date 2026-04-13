@@ -1985,3 +1985,110 @@ exports.sendMFAEnrollmentNotification = functions.https.onCall(async (data, cont
     throw new functions.https.HttpsError('internal', 'Failed to send MFA notification.');
   }
 });
+
+/**
+ * sendSupportRequest
+ * Receives a support message from an authenticated user, verifies Premium status
+ * server-side, and sends a tagged email to support@orary.app.
+ * Rate limit: 3 requests per hour per user.
+ */
+exports.sendSupportRequest = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError('unauthenticated', 'Must be signed in.');
+  }
+
+  const uid = context.auth.uid;
+
+  // Rate limit: 3 support tickets per hour
+  const allowed = await checkRateLimit(uid, 'supportRequest', 3, 3600000);
+  if (!allowed) {
+    throw new functions.https.HttpsError('resource-exhausted', 'Too many requests. Please wait before sending another message.');
+  }
+
+  const { subject, message } = data;
+
+  if (!subject || typeof subject !== 'string' || subject.trim().length < 3) {
+    throw new functions.https.HttpsError('invalid-argument', 'Subject is required (min 3 characters).');
+  }
+  if (!message || typeof message !== 'string' || message.trim().length < 10) {
+    throw new functions.https.HttpsError('invalid-argument', 'Message is required (min 10 characters).');
+  }
+  if (subject.trim().length > 120) {
+    throw new functions.https.HttpsError('invalid-argument', 'Subject must be under 120 characters.');
+  }
+  if (message.trim().length > 3000) {
+    throw new functions.https.HttpsError('invalid-argument', 'Message must be under 3000 characters.');
+  }
+
+  // Verify Premium status server-side — never trust the client
+  let isPremium = false;
+  try {
+    const userDoc = await db.collection('users').doc(uid).get();
+    const userData = userDoc.data();
+    isPremium =
+      userData?.subscription?.status === 'active' ||
+      userData?.isPremiumTest === true;
+  } catch (err) {
+    console.error('sendSupportRequest: failed to read user doc:', err);
+    // Non-fatal — treat as free user if Firestore fails
+  }
+
+  const firebaseUser = await admin.auth().getUser(uid);
+  const userEmail = firebaseUser.email || 'unknown';
+  const displayName = firebaseUser.displayName || 'Unknown User';
+
+  const tag = isPremium ? '[PREMIUM]' : '[FREE]';
+  const emailSubject = `${tag} ${subject.trim()}`;
+
+  const html = `
+    <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:32px 16px;background:#f1f5f9;">
+      <div style="background:#ffffff;border-radius:14px;border:1px solid #e2e8f0;overflow:hidden;">
+        <div style="background:linear-gradient(135deg,#EC4899,#db2777);padding:24px 32px;text-align:center;">
+          <img src="https://orary.app/assets/images/logo5.png" width="44" style="display:block;margin:0 auto 8px;background:#fff;border-radius:50%;padding:5px;" />
+          <h1 style="margin:0;font-size:20px;color:#ffffff;font-weight:700;">Orary Support</h1>
+        </div>
+        <div style="padding:28px 32px;">
+          <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+            <tr>
+              <td style="padding:6px 0;font-size:13px;color:#64748b;width:90px;">From</td>
+              <td style="padding:6px 0;font-size:13px;color:#1e293b;font-weight:600;">${displayName} &lt;${userEmail}&gt;</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;font-size:13px;color:#64748b;">User ID</td>
+              <td style="padding:6px 0;font-size:13px;color:#1e293b;font-family:monospace;">${uid}</td>
+            </tr>
+            <tr>
+              <td style="padding:6px 0;font-size:13px;color:#64748b;">Plan</td>
+              <td style="padding:6px 0;">
+                ${isPremium
+                  ? '<span style="background:#FFF3CD;color:#D4A000;font-size:12px;font-weight:700;padding:2px 10px;border-radius:99px;">PREMIUM</span>'
+                  : '<span style="background:#f1f5f9;color:#64748b;font-size:12px;font-weight:600;padding:2px 10px;border-radius:99px;">FREE</span>'
+                }
+              </td>
+            </tr>
+          </table>
+          <hr style="border:none;border-top:1px solid #e2e8f0;margin:0 0 20px;" />
+          <h2 style="margin:0 0 12px;font-size:16px;color:#1e293b;">${subject.trim()}</h2>
+          <p style="margin:0;font-size:14px;color:#334155;line-height:1.7;white-space:pre-wrap;">${message.trim()}</p>
+        </div>
+        <div style="background:#f8fafc;padding:16px 32px;border-top:1px solid #e2e8f0;text-align:center;">
+          <p style="margin:0;font-size:12px;color:#94a3b8;">Reply directly to this email to respond to the user.</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  try {
+    await emailService.sendEmail({
+      to: 'support@orary.app',
+      subject: emailSubject,
+      html,
+      replyTo: userEmail,
+    });
+
+    return { success: true, isPremium };
+  } catch (err) {
+    console.error('sendSupportRequest: email send failed:', err);
+    throw new functions.https.HttpsError('internal', 'Failed to send support request.');
+  }
+});

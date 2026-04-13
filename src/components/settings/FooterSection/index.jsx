@@ -3,7 +3,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Crown, Info } from 'lucide-react';
+import { Crown, Info, HeadphonesIcon } from 'lucide-react';
 import { usePremium } from '../../../contexts/PremiumContext';
 
 const FooterSection = () => {
@@ -58,6 +58,16 @@ const FooterSection = () => {
           >
             <Info size={12} />
             <span>{t('footer.about')}</span>
+          </button>
+
+          <span className="text-gray-300">•</span>
+
+          <button
+            onClick={() => navigate('/support')}
+            className="flex items-center gap-1 hover:text-gray-800 transition-colors cursor-pointer whitespace-nowrap"
+          >
+            <HeadphonesIcon size={12} />
+            <span>{t('footer.support')}</span>
           </button>
         </div>
       </div>

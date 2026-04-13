@@ -1677,6 +1677,26 @@
     "copyright": "© 2026 Orary. All rights reserved.",
     "terms": "Terms",
     "privacy": "Privacy",
-    "about": "About Orary"
+    "about": "About Orary",
+    "support": "Support"
+  },
+  "support": {
+    "title": "Contact Support",
+    "subtitle": "We'll get back to you as soon as possible.",
+    "premiumBadge": "Your message will be handled with priority.",
+    "formTitle": "Send a message",
+    "subjectLabel": "Subject",
+    "subjectPlaceholder": "What can we help you with?",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Describe your issue or question in detail...",
+    "replyTo": "We'll reply to",
+    "send": "Send message",
+    "sending": "Sending...",
+    "successTitle": "Message sent!",
+    "successDesc": "We received your message and will reply within 2–3 business days.",
+    "successDescPremium": "We received your message. As a Premium user, you'll hear back within 24 hours.",
+    "sendAnother": "Send another message",
+    "errorRateLimit": "You've sent too many messages. Please wait before trying again.",
+    "errorGeneric": "Something went wrong. Please try again."
   }
 }

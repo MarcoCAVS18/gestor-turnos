@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Settings, BarChart3, Calendar } from 'lucide-react';
+import { Heart, Settings, BarChart3, Calendar, HeadphonesIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const AboutFooter = ({ colors }) => {
@@ -14,6 +14,7 @@ const AboutFooter = ({ colors }) => {
     { label: t('nav.settings'), path: '/settings', icon: Settings },
     { label: t('nav.statistics'), path: '/statistics', icon: BarChart3 },
     { label: t('nav.calendar'), path: '/calendar', icon: Calendar },
+    { label: t('footer.support'), path: '/support', icon: HeadphonesIcon },
   ];
 
   return (

@@ -37,11 +37,14 @@ const fillTemplate = (html, vars) => {
 
 /**
  * Send an HTML email via Resend REST API.
- * @param {{ to: string, subject: string, html: string }} options
+ * @param {{ to: string, subject: string, html: string, replyTo?: string }} options
  */
-const sendEmail = async ({ to, subject, html }) => {
+const sendEmail = async ({ to, subject, html, replyTo }) => {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) throw new Error('RESEND_API_KEY is not configured.');
+
+  const payload = { from: FROM, to: [to], subject, html };
+  if (replyTo) payload.reply_to = replyTo;
 
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -49,7 +52,7 @@ const sendEmail = async ({ to, subject, html }) => {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ from: FROM, to: [to], subject, html }),
+    body: JSON.stringify(payload),
   });
 
   if (!response.ok) {
