@@ -643,18 +643,19 @@
   },
   "landing": {
     "brandName": "Orary",
-    "tagline": "Work Shift Management & Earnings Tracker",
+    "tagline": "Shift Tracker & Earnings Calculator",
+    "description": "For shift workers in hospitality, construction, retail, delivery and working holiday visas — worldwide.",
     "features": {
-      "trackShifts": "Track Shifts",
-      "analytics": "Analytics",
-      "liveMode": "Live Mode",
-      "delivery": "Delivery Option",
-      "australia88": "88 days"
+      "trackShifts": "Shift tracking",
+      "analytics": "Earnings calculator",
+      "liveMode": "Live shift timer",
+      "delivery": "Delivery & gig",
+      "australia88": "88-day visa tracker"
     },
     "getStartedFree": "Get Started Free",
     "signIn": "Sign in",
     "alreadyHaveAccount": "already have an account?",
-    "freeWorldwide": "Free for all workers worldwide · No credit card required",
+    "freeWorldwide": "Free · No credit card required",
     "legalAgreement": "By using Orary you agree to our",
     "privacyPolicy": "Privacy Policy",
     "and": "and",
@@ -1698,5 +1699,86 @@
     "sendAnother": "Send another message",
     "errorRateLimit": "You've sent too many messages. Please wait before trying again.",
     "errorGeneric": "Something went wrong. Please try again."
+  },
+  "australia88Page": {
+    "hero": {
+      "badge": "Working Holiday Visa — Australia",
+      "title": "Track your 88 days. Secure your second year.",
+      "subtitle": "The 88-day regional work requirement for Australian Working Holiday Visas (subclass 417 & 462) is complex to track manually. Orary calculates it automatically from your real hours.",
+      "cta": "Track for free",
+      "ctaSecondary": "How it works"
+    },
+    "what": {
+      "title": "What are the 88 days?",
+      "body1": "To be eligible for a second-year Working Holiday Visa in Australia, you must complete 88 days of specified regional work during your first year. A third year requires an additional 88 days — 176 in total.",
+      "body2": "The detail most people miss: these are not calendar days spent at work. They are visa-accredited days calculated from the hours you work each week, using an official government formula."
+    },
+    "formula": {
+      "title": "How visa days are calculated",
+      "subtitle": "Each Monday–Sunday week earns a number of visa days based on total hours worked that week:",
+      "col1": "Hours worked in the week",
+      "col2": "Visa days earned",
+      "row1hours": "4 – 7.24 h",
+      "row2hours": "7.25 – 14.24 h",
+      "row3hours": "14.25 – 21.24 h",
+      "row4hours": "21.25 – 28.24 h",
+      "row5hours": "28.25 – 35.24 h",
+      "row6hours": "35.25 h or more",
+      "row1days": "1 day",
+      "row2days": "2 days",
+      "row3days": "3 days",
+      "row4days": "4 days",
+      "row5days": "5 days",
+      "row6days": "7 days",
+      "note": "Weeks run Monday to Sunday. Hours below 4 earn 0 visa days. Days accumulate across all your weeks of work."
+    },
+    "demo": {
+      "title": "Try the calculator",
+      "subtitle": "Enter your weekly hours to see how many visa days you earn. Add multiple weeks to watch your progress build.",
+      "weekLabel": "Week",
+      "hoursLabel": "Hours worked that week",
+      "addWeek": "Add another week",
+      "removeWeek": "Remove",
+      "totalDays": "Total visa days",
+      "milestone88": "88-day milestone — Year 2 eligibility",
+      "milestone176": "176-day milestone — Year 3 eligibility",
+      "progress88": "Progress to 88 days",
+      "progress176": "Progress to 176 days",
+      "hoursPlaceholder": "e.g. 32",
+      "visaDays": "visa day",
+      "visaDaysPlural": "visa days",
+      "notEnough": "Below minimum (under 4 h)"
+    },
+    "milestones": {
+      "title": "The two milestones",
+      "year2Title": "Year 2 extension",
+      "year2Days": "88 days",
+      "year2Desc": "Complete 88 visa-accredited days of regional work during your first WHV year to apply for a second 12-month visa.",
+      "year3Title": "Year 3 extension",
+      "year3Days": "176 days",
+      "year3Desc": "Complete an additional 88 days (176 total) of specified work to become eligible for a third year in Australia.",
+      "note": "Regional and specified work categories are defined by the Australian Department of Home Affairs. Always verify current requirements at the official immi.homeaffairs.gov.au website."
+    },
+    "howOrary": {
+      "title": "How Orary tracks it automatically",
+      "step1Title": "Log your shifts",
+      "step1Desc": "Record start and end time for each shift. Orary calculates the exact hours worked.",
+      "step2Title": "Weeks grouped automatically",
+      "step2Desc": "Orary groups shifts into Monday–Sunday weeks and applies the government formula to each one.",
+      "step3Title": "Cumulative visa days",
+      "step3Desc": "Your total visa-accredited days update in real time. You always know exactly where you stand.",
+      "step4Title": "Milestone tracking",
+      "step4Desc": "Your dashboard shows progress toward 88 and 176 days — no manual counting needed."
+    },
+    "cta": {
+      "title": "Stop counting manually.",
+      "subtitle": "Orary calculates your 88-day progress automatically. Free, no credit card required.",
+      "button": "Get started free"
+    },
+    "footer": {
+      "disclaimer": "This page is for informational purposes only. Visa conditions change — always verify requirements with the Australian Department of Home Affairs.",
+      "terms": "Terms",
+      "privacy": "Privacy"
+    }
   }
 }

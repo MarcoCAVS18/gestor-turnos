@@ -324,18 +324,19 @@
   },
   "landing": {
     "brandName": "Orary",
-    "tagline": "Gestion des Quarts de Travail et Suivi des Gains",
+    "tagline": "Suivi de quarts & calculateur de revenus",
+    "description": "Pour les travailleurs en hôtellerie, construction, retail, livraison et visa Working Holiday — dans le monde entier.",
     "features": {
       "trackShifts": "Suivi des quarts",
-      "analytics": "Analyses",
-      "liveMode": "Mode Live",
-      "delivery": "Option Delivery",
-      "australia88": "88 jours"
+      "analytics": "Calculateur de revenus",
+      "liveMode": "Chrono en direct",
+      "delivery": "Livraison & gig",
+      "australia88": "Tracker visa 88 jours"
     },
     "getStartedFree": "Commencer gratuitement",
     "signIn": "Se connecter",
     "alreadyHaveAccount": "vous avez déjà un compte ?",
-    "freeWorldwide": "Gratuit pour tous les travailleurs du monde · Aucune carte de crédit requise",
+    "freeWorldwide": "Gratuit · Aucune carte de crédit requise",
     "legalAgreement": "En utilisant Orary, vous acceptez notre",
     "privacyPolicy": "Politique de confidentialité",
     "and": "et",
@@ -1741,6 +1742,87 @@
     "sendAnother": "Envoyer un autre message",
     "errorRateLimit": "Vous avez envoyé trop de messages. Veuillez attendre avant de réessayer.",
     "errorGeneric": "Une erreur s'est produite. Veuillez réessayer."
+  },
+  "australia88Page": {
+    "hero": {
+      "badge": "Visa Vacances-Travail — Australie",
+      "title": "Suivez vos 88 jours. Sécurisez votre deuxième année.",
+      "subtitle": "L'exigence de 88 jours de travail régional pour le Visa Vacances-Travail australien (sous-classe 417 et 462) est complexe à calculer manuellement. Orary le fait automatiquement depuis vos heures réelles.",
+      "cta": "Commencer gratuitement",
+      "ctaSecondary": "Comment ça marche"
+    },
+    "what": {
+      "title": "Que sont les 88 jours ?",
+      "body1": "Pour être éligible à un Visa Vacances-Travail de deuxième année en Australie, vous devez effectuer 88 jours de travail régional spécifié durant votre première année. Une troisième année nécessite 88 jours supplémentaires — 176 au total.",
+      "body2": "Le détail que beaucoup ignorent : il ne s'agit pas de jours calendaires passés au travail. Ce sont des jours accrédités calculés à partir des heures travaillées chaque semaine, selon une formule officielle du gouvernement."
+    },
+    "formula": {
+      "title": "Comment les jours de visa sont calculés",
+      "subtitle": "Chaque semaine du lundi au dimanche vous rapporte un certain nombre de jours de visa selon le total d'heures travaillées cette semaine :",
+      "col1": "Heures travaillées dans la semaine",
+      "col2": "Jours de visa obtenus",
+      "row1hours": "4 – 7,24 h",
+      "row2hours": "7,25 – 14,24 h",
+      "row3hours": "14,25 – 21,24 h",
+      "row4hours": "21,25 – 28,24 h",
+      "row5hours": "28,25 – 35,24 h",
+      "row6hours": "35,25 h ou plus",
+      "row1days": "1 jour",
+      "row2days": "2 jours",
+      "row3days": "3 jours",
+      "row4days": "4 jours",
+      "row5days": "5 jours",
+      "row6days": "7 jours",
+      "note": "Les semaines vont du lundi au dimanche. Moins de 4 heures donne 0 jour de visa. Les jours s'accumulent sur toutes les semaines travaillées."
+    },
+    "demo": {
+      "title": "Essayez la calculatrice",
+      "subtitle": "Saisissez vos heures hebdomadaires pour voir combien de jours de visa vous obtenez. Ajoutez plusieurs semaines pour voir votre progression.",
+      "weekLabel": "Semaine",
+      "hoursLabel": "Heures travaillées cette semaine",
+      "addWeek": "Ajouter une semaine",
+      "removeWeek": "Supprimer",
+      "totalDays": "Total jours de visa",
+      "milestone88": "Palier 88 jours — éligibilité Année 2",
+      "milestone176": "Palier 176 jours — éligibilité Année 3",
+      "progress88": "Progression vers 88 jours",
+      "progress176": "Progression vers 176 jours",
+      "hoursPlaceholder": "ex. 32",
+      "visaDays": "jour de visa",
+      "visaDaysPlural": "jours de visa",
+      "notEnough": "En dessous du minimum (moins de 4 h)"
+    },
+    "milestones": {
+      "title": "Les deux paliers",
+      "year2Title": "Extension année 2",
+      "year2Days": "88 jours",
+      "year2Desc": "Complétez 88 jours de travail régional accrédités durant votre première année WHV pour demander un second visa de 12 mois.",
+      "year3Title": "Extension année 3",
+      "year3Days": "176 jours",
+      "year3Desc": "Complétez 88 jours supplémentaires (176 au total) de travail spécifié pour être éligible à une troisième année en Australie.",
+      "note": "Les catégories de travail régional et spécifié sont définies par le Département australien de l'Intérieur. Vérifiez toujours les exigences actuelles sur immi.homeaffairs.gov.au."
+    },
+    "howOrary": {
+      "title": "Comment Orary le suit automatiquement",
+      "step1Title": "Enregistrez vos quarts",
+      "step1Desc": "Saisissez l'heure de début et de fin de chaque quart. Orary calcule les heures exactes travaillées.",
+      "step2Title": "Semaines regroupées automatiquement",
+      "step2Desc": "Orary regroupe les quarts en semaines lundi–dimanche et applique la formule du gouvernement à chacune.",
+      "step3Title": "Jours de visa cumulés",
+      "step3Desc": "Votre total de jours accrédités se met à jour en temps réel. Vous savez toujours exactement où vous en êtes.",
+      "step4Title": "Suivi des paliers",
+      "step4Desc": "Votre tableau de bord affiche la progression vers 88 et 176 jours — sans comptage manuel."
+    },
+    "cta": {
+      "title": "Arrêtez de compter manuellement.",
+      "subtitle": "Orary calcule automatiquement votre progression des 88 jours. Gratuit, sans carte de crédit.",
+      "button": "Commencer gratuitement"
+    },
+    "footer": {
+      "disclaimer": "Cette page est fournie à titre informatif uniquement. Les conditions de visa évoluent — vérifiez toujours les exigences auprès du Département australien de l'Intérieur.",
+      "terms": "Conditions",
+      "privacy": "Confidentialité"
+    }
   },
   "filters": {
     "allWorks": "Tous les travaux",
