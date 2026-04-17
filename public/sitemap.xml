@@ -15,7 +15,7 @@
   <!-- Homepage / Landing -->
   <url>
     <loc>https://orary.app/</loc>
-    <lastmod>2026-04-05</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -26,19 +26,39 @@
   </url>
 
   <!-- ======================== -->
+  <!-- SEO LANDING PAGES        -->
+  <!-- ======================== -->
+
+  <!-- 88-day Working Holiday Visa tracker for Australia -->
+  <url>
+    <loc>https://orary.app/australia-88</loc>
+    <lastmod>2026-04-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- FAQ — Orary general + Australia 88-day WHV questions -->
+  <url>
+    <loc>https://orary.app/faq</loc>
+    <lastmod>2026-04-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ======================== -->
   <!-- LEGAL PAGES              -->
   <!-- ======================== -->
 
   <url>
     <loc>https://orary.app/privacy</loc>
-    <lastmod>2026-04-05</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <url>
     <loc>https://orary.app/terms</loc>
-    <lastmod>2026-04-05</lastmod>
+    <lastmod>2026-04-06</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

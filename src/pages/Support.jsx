@@ -78,7 +78,7 @@ const Support = () => {
         transition={{ duration: 0.5 }}
       >
         <motion.img
-          src="/assets/SVG/logo.svg"
+          src="/assets/SVG/logo-white.svg"
           alt="Orary"
           className="w-16 h-16 mx-auto mb-4"
           initial={{ scale: 0.8, opacity: 0 }}

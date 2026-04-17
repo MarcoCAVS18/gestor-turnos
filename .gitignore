@@ -48,3 +48,6 @@ service-account.json
 *.keystore
 android/app/google-services.json
 ios/App/App/GoogleService-Info.plist
+
+# GSC CLI token (contains OAuth credentials)
+scripts/.gsc-token.json

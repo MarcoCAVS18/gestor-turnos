@@ -3,6 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Heart, Settings, BarChart3, Calendar, HeadphonesIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
@@ -54,6 +55,17 @@ const AboutFooter = ({ colors }) => {
         </p>
         <p className="text-xs" style={{ color: colors.textSecondary, opacity: 0.5 }}>
           {t('about.footer.copyright')}
+        </p>
+
+        {/* Public SEO pages */}
+        <p className="text-xs pt-1" style={{ color: colors.textSecondary, opacity: 0.4 }}>
+          <Link to="/australia-88" className="hover:opacity-80 transition-opacity">
+            88-day visa tracker
+          </Link>
+          <span className="mx-2">·</span>
+          <Link to="/faq" className="hover:opacity-80 transition-opacity">
+            FAQ
+          </Link>
         </p>
       </div>
     </motion.footer>

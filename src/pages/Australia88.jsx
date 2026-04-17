@@ -258,6 +258,49 @@ const HOW_STEPS = [
   { icon: Bell, color: '#10B981', titleKey: 'step4Title', descKey: 'step4Desc' },
 ];
 
+// ── HowTo JSON-LD ───────────────────────────────────────────────────────────
+const HOWTO_JSON_LD = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'HowTo',
+  name: 'How to count 88 days for the Australian Working Holiday Visa extension',
+  description:
+    'Step-by-step guide to calculating visa-accredited days for the Australian Working Holiday Visa (subclass 417 & 462) second and third year extension using the official government formula.',
+  totalTime: 'PT5M',
+  estimatedCost: { '@type': 'MonetaryAmount', currency: 'USD', value: '0' },
+  step: [
+    {
+      '@type': 'HowToStep',
+      name: 'Work in a qualifying regional area',
+      text: 'Find specified work (farm work, harvesting, construction, mining, fishing, or approved hospitality) in a designated regional postcode of Australia. Keep all payslips and employment records.',
+      position: 1,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Track your hours each Monday–Sunday week',
+      text: 'Record your total hours worked in each Monday-to-Sunday week. The visa-day formula is applied per week, not per day or per month.',
+      position: 2,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Apply the government formula to each week',
+      text: 'Convert weekly hours to visa days: 4–7.24 h = 1 day, 7.25–14.24 h = 2 days, 14.25–21.24 h = 3 days, 21.25–28.24 h = 4 days, 28.25–35.24 h = 5 days, 35.25+ h = 7 days. Less than 4 hours earns 0 days.',
+      position: 3,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Accumulate days across all weeks',
+      text: 'Add the visa days from every qualifying week together. Days from different employers and regions all count toward your total as long as the work is in an approved category and area.',
+      position: 4,
+    },
+    {
+      '@type': 'HowToStep',
+      name: 'Reach 88 days to apply for a second year',
+      text: 'Once your total reaches 88 visa-accredited days, you are eligible to apply for a second-year Working Holiday Visa. For a third year, continue to 176 days total.',
+      position: 5,
+    },
+  ],
+});
+
 // ── Main component ──────────────────────────────────────────────────────────
 const Australia88 = () => {
   const { t } = useTranslation();
@@ -271,10 +314,21 @@ const Australia88 = () => {
           content="Track your 88 days for the Australian Working Holiday Visa (subclass 417 & 462). Understand the formula, use our free calculator, and let Orary count automatically from your real shift hours."
         />
         <link rel="canonical" href="https://orary.app/australia-88" />
-        <meta property="og:title" content="88 Day Tracker Australia — Working Holiday Visa | Orary" />
+
+        {/* hreflang — English primary, same URL serves ES/FR via language switcher */}
+        <link rel="alternate" hreflang="en"        href="https://orary.app/australia-88" />
+        <link rel="alternate" hreflang="es"        href="https://orary.app/australia-88" />
+        <link rel="alternate" hreflang="fr"        href="https://orary.app/australia-88" />
+        <link rel="alternate" hreflang="x-default" href="https://orary.app/australia-88" />
+
+        <meta property="og:title"       content="88 Day Tracker Australia — Working Holiday Visa | Orary" />
         <meta property="og:description" content="Track your 88 days for the Australian Working Holiday Visa automatically. Free calculator included." />
-        <meta property="og:url" content="https://orary.app/australia-88" />
-        <meta property="og:type" content="website" />
+        <meta property="og:url"         content="https://orary.app/australia-88" />
+        <meta property="og:type"        content="website" />
+        <meta property="og:image"       content="https://orary.app/assets/images/logo2.png" />
+
+        {/* HowTo structured data — enables rich results for "how to count 88 days australia" */}
+        <script type="application/ld+json">{HOWTO_JSON_LD}</script>
       </Helmet>
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
@@ -580,6 +634,9 @@ const Australia88 = () => {
             {t('australia88Page.footer.disclaimer')}
           </p>
           <div className="flex items-center gap-4 shrink-0">
+            <Link to="/faq" className="hover:text-slate-600 transition-colors">
+              FAQ
+            </Link>
             <Link to="/terms" className="hover:text-slate-600 transition-colors">
               {t('australia88Page.footer.terms')}
             </Link>

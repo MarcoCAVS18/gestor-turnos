@@ -25,7 +25,7 @@ const PORT = 3737;
 const PRERENDER_USER_AGENT = 'OraryPrerender';
 
 // Public routes to pre-render (never include protected/auth-required routes)
-const ROUTES = ['/', '/login', '/register', '/forgot-password'];
+const ROUTES = ['/', '/login', '/register', '/forgot-password', '/terms', '/privacy', '/australia-88', '/faq'];
 
 // Third-party domains to block (Firebase, Google APIs, analytics, payment)
 const BLOCKED_DOMAINS = [
@@ -75,13 +75,10 @@ function startServer() {
 
       let filePath = path.join(BUILD_DIR, pathname);
 
-      // If no extension → SPA route → serve index.html
+      // If no extension → SPA route → always serve main index.html so React
+      // renders a fresh page (pre-rendered .html files are output, not input)
       if (!path.extname(pathname)) {
-        // First check if a pre-rendered index.html exists for this route
-        const routeIndex = path.join(BUILD_DIR, pathname, 'index.html');
-        filePath = fs.existsSync(routeIndex)
-          ? routeIndex
-          : path.join(BUILD_DIR, 'index.html');
+        filePath = path.join(BUILD_DIR, 'index.html');
       }
 
       // Security: prevent directory traversal
@@ -114,6 +111,53 @@ function startServer() {
       resolve(server);
     });
   });
+}
+
+// ─── Head deduplication ────────────────────────────────────────────────────
+// react-helmet-async sometimes leaves stale tags in the snapshot when the auth
+// state resolves mid-render (base app Helmet fires first, then the page Helmet
+// fires but the old tags aren't removed from the DOM before Puppeteer captures).
+// We keep the LAST occurrence of each unique head tag so the page-specific
+// canonical/title/description always wins over any base/fallback values.
+
+function deduplicateHead(html) {
+  // <title> — keep last
+  const titles = [...html.matchAll(/<title>[^<]*<\/title>/g)];
+  for (let i = 0; i < titles.length - 1; i++) {
+    html = html.replace(titles[i][0], '');
+  }
+
+  // <link rel="canonical"> — keep last
+  const canonicals = [...html.matchAll(/<link rel="canonical"[^>]*>/g)];
+  for (let i = 0; i < canonicals.length - 1; i++) {
+    html = html.replace(canonicals[i][0], '');
+  }
+
+  // <meta name="description"> — keep last
+  const descriptions = [...html.matchAll(/<meta name="description"[^>]*>/g)];
+  for (let i = 0; i < descriptions.length - 1; i++) {
+    html = html.replace(descriptions[i][0], '');
+  }
+
+  // <meta property="og:title"> — keep last
+  const ogTitles = [...html.matchAll(/<meta property="og:title"[^>]*>/g)];
+  for (let i = 0; i < ogTitles.length - 1; i++) {
+    html = html.replace(ogTitles[i][0], '');
+  }
+
+  // <meta property="og:description"> — keep last
+  const ogDescs = [...html.matchAll(/<meta property="og:description"[^>]*>/g)];
+  for (let i = 0; i < ogDescs.length - 1; i++) {
+    html = html.replace(ogDescs[i][0], '');
+  }
+
+  // <meta property="og:url"> — keep last
+  const ogUrls = [...html.matchAll(/<meta property="og:url"[^>]*>/g)];
+  for (let i = 0; i < ogUrls.length - 1; i++) {
+    html = html.replace(ogUrls[i][0], '');
+  }
+
+  return html;
 }
 
 // ─── Main pre-render function ───────────────────────────────────────────────
@@ -209,16 +253,19 @@ async function prerender() {
       // Small stabilization delay for animations to settle
       await new Promise((r) => setTimeout(r, 300));
 
-      const html = await page.content();
+      const rawHtml = await page.content();
+      const html = deduplicateHead(rawHtml);
 
-      // Determine output path
+      // Determine output path.
+      // Root → build/index.html
+      // Other routes → build/<route>.html (flat file, not a directory).
+      // Firebase cleanUrls:true serves build/terms.html at /terms with 200 directly,
+      // avoiding the 301 trailing-slash redirect that a build/terms/ directory would cause.
       let outputPath;
       if (route === '/') {
         outputPath = path.join(BUILD_DIR, 'index.html');
       } else {
-        const dir = path.join(BUILD_DIR, route.replace(/^\//, ''));
-        fs.mkdirSync(dir, { recursive: true });
-        outputPath = path.join(dir, 'index.html');
+        outputPath = path.join(BUILD_DIR, route.replace(/^\//, '') + '.html');
       }
 
       fs.writeFileSync(outputPath, html, 'utf8');

@@ -11,8 +11,15 @@ import logger from '../utils/logger';
 const STRIPE_KEY = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
 export const isStripeTestMode = STRIPE_KEY?.startsWith('pk_test_');
 
-// Initialize Stripe with publishable key
-const stripePromise = loadStripe(STRIPE_KEY);
+// Lazy Stripe promise — only initializes when first called, so Stripe.js is not
+// fetched on pages that never open the payment form (landing, dashboard, etc.).
+let stripePromise = null;
+export const getStripe = () => {
+  if (!stripePromise) {
+    stripePromise = loadStripe(STRIPE_KEY);
+  }
+  return stripePromise;
+};
 
 // Cloud Functions base URL
 // In development: uses local emulator with test keys
@@ -21,11 +28,6 @@ const PROJECT_ID = process.env.REACT_APP_FIREBASE_PROJECT_ID || 'gestionturnos-7
 const FUNCTIONS_BASE_URL = process.env.REACT_APP_USE_EMULATOR === 'true'
   ? `http://localhost:5001/${PROJECT_ID}/us-central1`
   : `https://us-central1-${PROJECT_ID}.cloudfunctions.net`;
-
-/**
- * Get the Stripe instance
- */
-export const getStripe = () => stripePromise;
 
 /**
  * Get Firebase Auth token for API calls
@@ -81,7 +83,7 @@ export const createSubscription = async (paymentMethodId, email, name, address) 
       throw new Error(data.error || 'Failed to create subscription');
     }
 
-    const stripe = await stripePromise;
+    const stripe = await getStripe();
 
     // Trial with pending setup intent — save card for when trial converts to paid
     if (data.setupClientSecret) {

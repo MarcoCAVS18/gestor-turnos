@@ -65,6 +65,9 @@ const NavMainLinks = memo(({
             onMouseLeave={handleShiftsMouseLeave}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all"
             style={getActiveDesktopStyle('shifts')}
+            disabled={!hasWorks}
+            aria-disabled={!hasWorks}
+            aria-describedby={!hasWorks ? 'shifts-disabled-tooltip' : undefined}
             whileHover={hasWorks ? { scale: 1.02 } : {}}
             whileTap={hasWorks ? { scale: 0.98 } : {}}
           >
@@ -77,8 +80,12 @@ const NavMainLinks = memo(({
             )}
           </motion.button>
 
-          {showTooltip && !hasWorks && (
-            <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 z-50">
+          {!hasWorks && (
+            <div
+              id="shifts-disabled-tooltip"
+              role="tooltip"
+              className={`absolute left-full ml-2 top-1/2 transform -translate-y-1/2 z-50 transition-opacity ${showTooltip ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            >
               <div className="bg-gray-800 text-white text-sm px-3 py-2 rounded-lg shadow-lg whitespace-nowrap">
                 {t('nav.shiftsDisabledTooltip')}
                 <div className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-800"></div>

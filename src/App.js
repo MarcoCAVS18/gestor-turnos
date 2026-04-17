@@ -26,6 +26,10 @@ import CookieConsent from './components/ui/CookieConsent';
 // Landing page
 import Landing from './pages/Landing';
 
+// Public SEO pages
+import Australia88 from './pages/Australia88';
+import FAQ from './pages/FAQ';
+
 // Native
 import NativeSplash from './components/native/NativeSplash';
 
@@ -205,6 +209,10 @@ function App() {
         {/* Public legal pages — no auth required (accessible to Google/crawlers) */}
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/terms" element={<TermsOfService />} />
+
+        {/* Public SEO landing pages */}
+        <Route path="/australia-88" element={<Australia88 />} />
+        <Route path="/faq" element={<FAQ />} />
 
         {/* Protected routes */}
         <Route element={<ProtectedLayout><AppLayout /></ProtectedLayout>}>

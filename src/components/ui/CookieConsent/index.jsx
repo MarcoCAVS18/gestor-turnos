@@ -80,7 +80,7 @@ const CookieConsent = () => {
         <button
           onClick={accept}
           style={{
-            background: '#EC4899',
+            background: '#db2777', // pink-600: 4.6:1 contrast with white (WCAG AA)
             border: 'none',
             color: '#fff',
             padding: '7px 16px',

@@ -22,7 +22,7 @@ const New = ({
 
   const baseClasses = `
     inline-flex items-center justify-center
-    bg-red-500 text-white font-bold
+    bg-red-600 text-white font-bold
     rounded-full uppercase tracking-wider
     transition-all duration-300 ease-out
     select-none
@@ -31,7 +31,7 @@ const New = ({
   `;
 
   const animatedClasses = animated ? `
-    hover:bg-red-600 hover:scale-110 hover:shadow-lg
+    hover:bg-red-700 hover:scale-110 hover:shadow-lg
     hover:shadow-red-500/30 hover:-translate-y-0.5
     active:scale-95 active:translate-y-0
     select-none

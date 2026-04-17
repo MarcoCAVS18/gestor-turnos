@@ -52,6 +52,7 @@ const Header = () => {
       <Flex className="flex-1">
         <button
           onClick={handleLogoClick}
+          aria-label="Go to dashboard"
           className="flex items-center gap-3 hover:opacity-80 transition-opacity"
         >
           {/* Logo SVG - Premium or Regular */}
@@ -80,8 +81,8 @@ const Header = () => {
       <div className="flex gap-2">
         <button
           onClick={handleSettingsClick}
+          aria-label="Go to settings"
           className="rounded-full p-1 transition-all duration-200 hover:bg-white hover:bg-opacity-20"
-          title="Settings"
         >
           {!hasCustomPhoto ? (
             // If it is the default logo, show gear icon

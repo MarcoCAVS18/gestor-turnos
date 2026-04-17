@@ -1,7 +1,7 @@
 // src/components/modals/base/BaseModal/index.jsx
 // Unified base component for all modals
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
@@ -27,6 +27,7 @@ const BaseModal = ({
 }) => {
   const colors = useThemeColors();
   const isMobile = useIsMobile();
+  const modalRef = useRef(null);
 
   // Prevent body scroll when modal is open
   useEffect(() => {
@@ -40,6 +41,38 @@ const BaseModal = ({
       document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
+
+  // Focus trap + Escape key + restore focus on close
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const previousFocus = document.activeElement;
+    const modal = modalRef.current;
+    if (!modal) return;
+
+    const focusable = modal.querySelectorAll(
+      'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    first?.focus();
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key !== 'Tab') return;
+      if (e.shiftKey) {
+        if (document.activeElement === first) { last?.focus(); e.preventDefault(); }
+      } else {
+        if (document.activeElement === last) { first?.focus(); e.preventDefault(); }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      previousFocus?.focus();
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -67,8 +100,13 @@ const BaseModal = ({
     <Flex variant="center"
       className="fixed inset-0 bg-black bg-opacity-50 p-4"
       style={{ zIndex: 9999 }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="base-modal-title"
         className={`
           bg-white shadow-2xl w-full relative
           ${maxWidthClasses[maxWidth]} max-h-[90vh] rounded-2xl
@@ -86,6 +124,7 @@ const BaseModal = ({
               <div className="flex items-center">
                 {Icon && <Icon className="mr-2 h-5 w-5" style={{ color: colors.primary }} />}
                 <h2
+                  id="base-modal-title"
                   className={`font-semibold truncate ${isMobile ? 'text-lg' : 'text-xl'}`}
                   style={{ color: colors.primary }}
                 >
@@ -106,6 +145,7 @@ const BaseModal = ({
 
           <button
             onClick={onClose}
+            aria-label="Close"
             className="flex-shrink-0 p-2 rounded-lg transition-colors"
             style={{
               backgroundColor: 'transparent',

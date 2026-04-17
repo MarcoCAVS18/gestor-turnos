@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="./assets/images/logo1.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#EC4899" />
     <meta name="description" content="Track your work shifts, calculate earnings automatically, and analyze your income with detailed statistics. Free shift management app for workers in Australia and worldwide." />
     <meta name="keywords" content="shift management, work scheduler, earnings tracker, shift planner, time tracking, payroll calculator, work hours, roster app, shift calculator, delivery earnings, work schedule app, pay tracker" />
@@ -37,8 +37,11 @@
     <link rel="alternate" hreflang="x-default" href="https://orary.app/" />
 
     <link rel="apple-touch-icon" href="./assets/images/logo2.png" />
-    <link rel="canonical" href="https://orary.app/" />
+    <!-- Canonical is set per-page via react-helmet-async -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+
+    <!-- Preload LCP element -->
+    <link rel="preload" href="/assets/SVG/logo.svg" as="image" type="image/svg+xml" />
 
     <!-- Google Fonts preconnect + preload (replaces @import in CSS) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -97,32 +100,9 @@
     <!-- Google Analytics — loaded only after cookie consent -->
     <!-- Consent is stored in localStorage key "orary_cookie_consent" = "accepted" | "declined" -->
     <!-- The React CookieConsent component manages the banner and calls window.loadGA() -->
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('consent', 'default', {
-        analytics_storage: 'denied',
-        ad_storage: 'denied',
-        wait_for_update: 2000
-      });
-      window.loadGA = function() {
-        if (window._gaLoaded) return;
-        window._gaLoaded = true;
-        var s = document.createElement('script');
-        s.async = true;
-        s.src = 'https://www.googletagmanager.com/gtag/js?id=%REACT_APP_GA_ID%';
-        document.head.appendChild(s);
-        s.onload = function() {
-          gtag('js', new Date());
-          gtag('config', '%REACT_APP_GA_ID%');
-          gtag('consent', 'update', { analytics_storage: 'granted' });
-        };
-      };
-      // Auto-load GA if user already accepted consent in a previous session
-      if (localStorage.getItem('orary_cookie_consent') === 'accepted') {
-        window.loadGA();
-      }
-    </script>
+    <!-- GA ID is passed via meta tag so ga-consent.js can be a static file (no unsafe-inline needed) -->
+    <meta name="ga-id" content="%REACT_APP_GA_ID%" />
+    <script defer src="/ga-consent.js"></script>
   </head>
   <body>
     <noscript><style>*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,sans-serif}body{background:#f9fafb;color:#111827}.ns-wrap{max-width:640px;margin:60px auto;padding:40px 24px;text-align:center}.ns-logo{font-size:2.5rem;font-weight:800;color:#EC4899;margin-bottom:12px}.ns-h1{font-size:1.5rem;font-weight:700;margin-bottom:12px}.ns-p{color:#6b7280;line-height:1.6;margin-bottom:28px}.ns-cta{display:inline-block;background:#EC4899;color:#fff;padding:12px 28px;border-radius:10px;text-decoration:none;font-weight:700;font-size:1rem;margin-bottom:32px}.ns-foot{font-size:.875rem;color:#9ca3af}.ns-foot a{color:#EC4899}</style><div class="ns-wrap"><div class="ns-logo">Orary</div><h1 class="ns-h1">Work Shift Management &amp; Earnings Tracker</h1><p class="ns-p">Orary helps workers track their shifts, calculate earnings automatically, monitor delivery income, and analyze their income with detailed statistics. Free for all workers worldwide.</p><a href="/login" class="ns-cta">Get Started Free</a><div class="ns-foot"><p>JavaScript is required to run the full application.</p><p style="margin-top:8px"><a href="/privacy">Privacy Policy</a> &middot; <a href="/terms">Terms of Service</a></p></div></div></noscript>

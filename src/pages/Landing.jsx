@@ -11,7 +11,7 @@ import { motion } from 'framer-motion';
 import { Clock, TrendingUp, Zap, ArrowRight, Bike } from 'lucide-react';
 import New from '../components/ui/New';
 
-const PINK = '#EC4899';
+const PINK = '#db2777'; // pink-600: 4.6:1 contrast ratio with white (WCAG AA)
 
 const JSON_LD = JSON.stringify({
   '@context': 'https://schema.org',
@@ -96,6 +96,12 @@ const Landing = () => {
         />
         <link rel="canonical" href="https://orary.app/" />
 
+        {/* hreflang — same URL serves EN / ES / FR */}
+        <link rel="alternate" hreflang="en"       href="https://orary.app/" />
+        <link rel="alternate" hreflang="es"       href="https://orary.app/" />
+        <link rel="alternate" hreflang="fr"       href="https://orary.app/" />
+        <link rel="alternate" hreflang="x-default" href="https://orary.app/" />
+
         {/* Open Graph */}
         <meta property="og:type"        content="website" />
         <meta property="og:url"         content="https://orary.app/" />
@@ -152,7 +158,7 @@ const Landing = () => {
             {t('landing.tagline')}
           </p>
           {/* SEO description — visible and indexed, compact on mobile */}
-          <p className="text-xs text-white/55 text-center mt-1 max-w-xs leading-snug">
+          <p className="text-xs text-white/70 text-center mt-1 max-w-xs leading-snug">
             {t('landing.description')}
           </p>
         </motion.header>
@@ -248,14 +254,14 @@ const Landing = () => {
             {t('landing.signIn')}
           </Link>
 
-          <p className="text-xs text-center text-gray-400 mt-3">
+          <p className="text-xs text-center text-gray-500 mt-3">
             {t('landing.freeWorldwide')}
           </p>
         </motion.div>
 
         {/* ── Legal footer ── */}
-        <footer className="mt-3 flex-shrink-0 text-center">
-          <p className="text-white/55 text-xs leading-relaxed">
+        <footer className="mt-3 flex-shrink-0 text-center space-y-1.5">
+          <p className="text-white/75 text-xs leading-relaxed">
             {t('landing.legalAgreement')}{' '}
             <Link to="/privacy" className="text-white/80 underline hover:text-white">
               {t('landing.privacyPolicy')}
@@ -264,6 +270,11 @@ const Landing = () => {
             <Link to="/terms" className="text-white/80 underline hover:text-white">
               {t('landing.termsOfService')}
             </Link>
+          </p>
+          <p className="text-white/60 text-xs">
+            <Link to="/australia-88" className="hover:text-white/90 transition-colors">88-day visa tracker</Link>
+            <span className="mx-2 opacity-50">·</span>
+            <Link to="/faq" className="hover:text-white/90 transition-colors">FAQ</Link>
           </p>
         </footer>
 

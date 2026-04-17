@@ -151,6 +151,7 @@ const sendSubscriptionConfirmationEmail = async ({ email, displayName, amount, n
 };
 
 module.exports = {
+  sendEmail,
   sendVerificationEmail,
   sendPasswordResetEmail,
   sendEmailChangeNotification,

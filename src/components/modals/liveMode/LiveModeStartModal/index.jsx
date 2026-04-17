@@ -1,7 +1,7 @@
 // src/components/modals/liveMode/LiveModeStartModal/index.jsx
 // Modal to start a new Live Mode session - Styled like FeatureAnnouncementCard
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Play, Briefcase, AlertCircle, X, Timer, Sparkles, Crown, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,10 +21,18 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { works } = useDataContext();
-  const { startSession, isActive, loading, error, liveModeUsage, liveModeLimit } = useLiveMode();
+  const { startSession, isActive, loading, error, liveModeUsage, liveModeLimit, refreshLiveModeUsage } = useLiveMode();
 
   const [selectedWorkId, setSelectedWorkId] = useState('');
   const [localError, setLocalError] = useState(null);
+
+  // Refresh premium status from Firestore each time the modal opens,
+  // so Stripe webhook renewals are reflected without requiring a full reload.
+  useEffect(() => {
+    if (isOpen) {
+      refreshLiveModeUsage();
+    }
+  }, [isOpen, refreshLiveModeUsage]);
 
   // Check if user is premium
   const isPremium = liveModeUsage?.isPremium || false;

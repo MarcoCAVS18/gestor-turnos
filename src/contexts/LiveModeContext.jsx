@@ -304,32 +304,33 @@ export const LiveModeProvider = ({ children }) => {
     return () => unsubscribe();
   }, [currentUser?.uid]);
 
-  // Load Live Mode usage on mount
-  useEffect(() => {
-    const loadUsage = async () => {
-      if (!currentUser?.uid) {
-        setLiveModeUsage({
-          monthlyCount: 0,
-          remaining: premiumService.LIVE_MODE_FREE_LIMIT,
-          isPremium: false,
-        });
-        return;
-      }
+  // Load Live Mode usage - exposed as refreshable callback
+  const refreshLiveModeUsage = useCallback(async () => {
+    if (!currentUser?.uid) {
+      setLiveModeUsage({
+        monthlyCount: 0,
+        remaining: premiumService.LIVE_MODE_FREE_LIMIT,
+        isPremium: false,
+      });
+      return;
+    }
 
-      try {
-        const result = await premiumService.canUseLiveMode(currentUser.uid);
-        setLiveModeUsage({
-          monthlyCount: result.monthlyCount || 0,
-          remaining: result.remaining,
-          isPremium: result.isPremium,
-        });
-      } catch (err) {
-        logger.error('Error loading Live Mode usage:', err);
-      }
-    };
-
-    loadUsage();
+    try {
+      const result = await premiumService.canUseLiveMode(currentUser.uid);
+      setLiveModeUsage({
+        monthlyCount: result.monthlyCount || 0,
+        remaining: result.remaining,
+        isPremium: result.isPremium,
+      });
+    } catch (err) {
+      logger.error('Error loading Live Mode usage:', err);
+    }
   }, [currentUser?.uid]);
+
+  // Load Live Mode usage on mount / user change
+  useEffect(() => {
+    refreshLiveModeUsage();
+  }, [refreshLiveModeUsage]);
 
   // Start a new live session
   const startSession = useCallback(async (workId) => {
@@ -630,6 +631,7 @@ export const LiveModeProvider = ({ children }) => {
 
     // Utilities
     requestNotificationPermission: requestNotificationPermissionFn,
+    refreshLiveModeUsage,
   };
 
   return (
