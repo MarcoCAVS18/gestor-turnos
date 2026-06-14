@@ -1,10 +1,10 @@
 // src/services/firebase.js
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth, initializeAuth, indexedDBLocalPersistence } from 'firebase/auth';
-import { getStorage } from 'firebase/storage';
-import { getFunctions } from 'firebase/functions';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getAuth, initializeAuth, indexedDBLocalPersistence, connectAuthEmulator } from 'firebase/auth';
+import { getStorage, connectStorageEmulator } from 'firebase/storage';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { Capacitor } from '@capacitor/core';
 
 // Firebase configuration from environment variables only
@@ -31,6 +31,19 @@ const auth = Capacitor.isNativePlatform()
 
 const storage = getStorage(app);
 const functions = getFunctions(app, 'us-central1');
+
+// Local development: route everything to the Firebase Emulator Suite so the app
+// never touches production data. Enabled by REACT_APP_USE_EMULATOR=true (set by
+// the `dev` npm script). Web only — native devices can't reach the host's
+// localhost. See firebase.json "emulators" and `npm run dev` / `npm run seed`.
+if (process.env.REACT_APP_USE_EMULATOR === 'true' && !Capacitor.isNativePlatform()) {
+  connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+  connectStorageEmulator(storage, '127.0.0.1', 9199);
+  connectFunctionsEmulator(functions, '127.0.0.1', 5001);
+  // eslint-disable-next-line no-console
+  console.info('%c[firebase] Using local emulators (Auth · Firestore · Storage · Functions)', 'color:#6366F1;font-weight:bold');
+}
 
 export { db, auth, storage, functions };
 export default app;

@@ -54,7 +54,11 @@
     "prerender": "node scripts/prerender.js",
     "build:prod": "npm run gen:build-info && react-scripts build && node scripts/prerender.js",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev": "concurrently -k -n EMU,WEB -c blue,green \"npm:dev:emulators\" \"npm:dev:web\"",
+    "dev:emulators": "firebase emulators:start --only auth,firestore,functions,storage",
+    "dev:web": "npm run gen:build-info && REACT_APP_USE_EMULATOR=true react-scripts start",
+    "seed": "node scripts/seed-emulators.js"
   },
   "eslintConfig": {
     "extends": [
@@ -77,6 +81,8 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.7",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.0",
+    "firebase-admin": "^13.0.0",
     "postcss": "^8.5.3",
     "puppeteer": "^24.40.0",
     "tailwindcss": "^3.4.1",

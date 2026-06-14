@@ -42,6 +42,11 @@ service-account.json
 .firebase/
 ..bfg-report/
 
+# Firebase emulators (local test environment)
+*-debug.log
+.emulator-data/
+firebase-export-*/
+
 # Firebase rules backup and secure files
 *.rules.BACKUP
 *.rules.SECURE
