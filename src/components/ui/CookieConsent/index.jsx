@@ -13,11 +13,7 @@ const CookieConsent = () => {
 
   useEffect(() => {
     const stored = localStorage.getItem(CONSENT_KEY);
-    if (!stored) {
-      // Small delay so the banner doesn't flash on first paint
-      const t = setTimeout(() => setVisible(true), 1200);
-      return () => clearTimeout(t);
-    }
+    if (!stored) setVisible(true);
   }, []);
 
   const accept = () => {

@@ -1,6 +1,7 @@
 // src/services/export/pdf/PDFExporter.js
 
 import jsPDF from 'jspdf';
+import i18n from '../../../i18n';
 import { loadLogoForPDF, loadLogoWhite } from '../utils/LogoLoader';
 import { generateAllCharts } from '../utils/ChartRenderer';
 import { setupDocument, addPageFooter, COLORS } from './PDFStyles';
@@ -116,7 +117,7 @@ export class PDFExporter {
     let pageNumber = 1;
 
     // Short date string for footer
-    const generatedDate = new Date().toLocaleDateString('en-US', {
+    const generatedDate = new Date().toLocaleDateString(i18n.language || 'en', {
       month: 'short', day: 'numeric', year: 'numeric'
     });
 

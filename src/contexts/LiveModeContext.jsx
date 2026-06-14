@@ -31,7 +31,7 @@ const AUTO_CLOSE_MS = AUTO_CLOSE_HOURS * 60 * 60 * 1000;
 export const LiveModeProvider = ({ children }) => {
   const { currentUser } = useAuth();
   const { works } = useDataContext();
-  const { shiftRanges } = useConfigContext();
+  const { shiftRanges, primaryColor } = useConfigContext();
 
   // State
   const [liveSession, setLiveSession] = useState(null);
@@ -363,6 +363,7 @@ export const LiveModeProvider = ({ children }) => {
         startLiveActivity({
           workName: work.name,
           workColor: work.color || '#EC4899',
+          themeColor: primaryColor || '#EC4899',
           sessionStart,
         }).catch(() => {});
       }
@@ -388,7 +389,7 @@ export const LiveModeProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [currentUser?.uid, requestNotificationPermissionFn, liveModeUsage]);
+  }, [currentUser?.uid, requestNotificationPermissionFn, liveModeUsage, primaryColor]);
 
   // Pause the current session
   const pauseSession = useCallback(async () => {

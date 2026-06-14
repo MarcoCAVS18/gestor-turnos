@@ -5,7 +5,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useAuth } from './AuthContext';
 import {
   loadSubscriptionAndUsage,
-  upgradeToPremium as upgradeToPremiumService,
+  isSubscriptionValid,
   canUseLiveMode,
   incrementLiveModeUsage,
   LIVE_MODE_FREE_LIMIT,
@@ -73,12 +73,10 @@ export const PremiumProvider = ({ children }) => {
 
         setSubscription(subscriptionData);
         setHasUsedTrial(trialUsed);
-        // Grant premium access for active, cancelling (until period ends), and trialing statuses
-        const VALID_PREMIUM_STATUSES = ['active', 'cancelling', 'trialing'];
-        setIsPremium(
-          subscriptionData?.isPremium === true &&
-          VALID_PREMIUM_STATUSES.includes(subscriptionData?.status)
-        );
+        // Grant premium access for active, cancelling (until period ends), and
+        // trialing statuses — isSubscriptionValid also checks expiryDate/trialEnd
+        // so an expired subscription never keeps premium if a webhook was missed.
+        setIsPremium(isSubscriptionValid(subscriptionData));
 
         setLiveModeUsage({
           monthlyCount: usageData.monthlyCount || 0,
@@ -96,24 +94,9 @@ export const PremiumProvider = ({ children }) => {
     loadSubscriptionData();
   }, [currentUser?.uid]);
 
-  // Upgrade to premium
-  const upgradeToPremium = useCallback(async (paymentData) => {
-    if (!currentUser?.uid) {
-      throw new Error('User not authenticated');
-    }
-
-    try {
-      setError(null);
-      const newSubscription = await upgradeToPremiumService(currentUser.uid, paymentData);
-      setSubscription(newSubscription);
-      setIsPremium(true);
-      return newSubscription;
-    } catch (err) {
-      logger.error('Error upgrading to premium:', err);
-      setError(err.message);
-      throw err;
-    }
-  }, [currentUser?.uid]);
+  // NOTE: upgrades are handled by the Stripe payment flow (PaymentForm →
+  // stripeService.createSubscription → Cloud Functions). There is no
+  // client-side upgrade path — Firestore rules would reject it.
 
   // Cancel subscription — calls cloud function so Stripe handles cancel_at_period_end.
   // User keeps premium access until the trial/billing period ends (status: 'cancelling').
@@ -199,7 +182,6 @@ export const PremiumProvider = ({ children }) => {
     liveModeLimit: LIVE_MODE_FREE_LIMIT,
 
     // Actions
-    upgradeToPremium,
     cancelSubscription,
     checkLiveModeLimit,
     recordLiveModeUsage,

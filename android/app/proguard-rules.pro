@@ -19,3 +19,27 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep line numbers for readable crash reports (file names stay hidden)
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+
+# ── Capacitor ────────────────────────────────────────────────────────────────
+# The Capacitor bridge discovers plugins and their @PluginMethod entry points
+# via reflection — R8 must not strip or rename them.
+-keep public class * extends com.getcapacitor.Plugin
+-keep @com.getcapacitor.annotation.CapacitorPlugin public class * {
+    @com.getcapacitor.annotation.PermissionCallback <methods>;
+    @com.getcapacitor.annotation.ActivityCallback <methods>;
+    @com.getcapacitor.PluginMethod public <methods>;
+}
+-keep public class * extends com.getcapacitor.BridgeActivity
+-keep class com.getcapacitor.** { *; }
+-keep class org.apache.cordova.** { *; }
+
+# App's own Capacitor plugins (registered reflectively)
+-keep class app.orary.LiveModePlugin { *; }
+-keep class app.orary.LiveModeService { *; }
+
+# AndroidX core (FileProvider is referenced from the manifest)
+-keep class androidx.core.content.FileProvider { *; }

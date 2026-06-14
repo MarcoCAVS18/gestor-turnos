@@ -10,6 +10,7 @@ import { ChevronRight } from 'lucide-react';
 import ShiftCard from '../../cards/shift/ShiftCard';
 import DeliveryShiftCard from '../../cards/shift/DeliveryShiftCard';
 import { createSafeDate } from '../../../utils/time';
+import { getLocaleFromI18n } from '../../../utils/locale';
 
 const WeeklyShiftsSection = ({
   weekRange,
@@ -111,7 +112,7 @@ const WeeklyShiftsSection = ({
             <div className="border-t border-gray-100 dark:border-slate-700 bg-white dark:bg-slate-800">
               {dates.map((date, idx) => {
                 const dateObj = createSafeDate(date);
-                const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+                const locale = getLocaleFromI18n(i18n.language);
                 const dayLabel = dateObj.toLocaleDateString(locale, {
                   weekday: 'long',
                   day: 'numeric',

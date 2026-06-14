@@ -13,15 +13,41 @@ import New from '../components/ui/New';
 
 const PINK = '#db2777'; // pink-600: 4.6:1 contrast ratio with white (WCAG AA)
 
-const JSON_LD = JSON.stringify({
+// Localized SEO metadata — /es and /fr are separate indexable URLs so Google
+// can rank Orary for Spanish/French queries (same-URL hreflang is ignored).
+const SEO_META = {
+  en: {
+    url: 'https://orary.app/',
+    title: 'Orary — Free Shift Tracker & Earnings Calculator',
+    description: 'Free shift management app for workers worldwide. Track hours, calculate pay automatically, manage delivery shifts, and upload payslips to auto-load past shifts. No credit card required.',
+    ogDescription: 'Track work shifts, calculate earnings automatically, and manage delivery income. Free for workers everywhere — with Working Holiday Visa tracking for AU, NZ, CA, IE and more.',
+    jsonLdDescription: 'Free shift management and earnings tracking app for workers worldwide. Track work hours, calculate pay automatically, manage delivery shifts, auto-detect payslip data, and monitor Working Holiday Visa progress.',
+  },
+  es: {
+    url: 'https://orary.app/es',
+    title: 'Orary — Control de Turnos y Calculadora de Sueldo Gratis',
+    description: 'App gratuita para gestionar turnos de trabajo. Registra tus horas, calcula tu sueldo automáticamente, controla tus ganancias de delivery y los 88 días de la Working Holiday Visa de Australia. Sin tarjeta de crédito.',
+    ogDescription: 'Registra tus turnos, calcula tus ganancias automáticamente y controla los 88 días de tu Working Holiday Visa en Australia. Gratis para trabajadores de todo el mundo.',
+    jsonLdDescription: 'App gratuita de gestión de turnos y control de ganancias para trabajadores. Registra horas de trabajo, calcula el sueldo automáticamente, gestiona turnos de delivery y controla los 88 días de la Working Holiday Visa de Australia.',
+  },
+  fr: {
+    url: 'https://orary.app/fr',
+    title: 'Orary — Suivi des Horaires de Travail et Calcul de Salaire Gratuit',
+    description: 'Application gratuite de gestion des horaires de travail. Suivez vos heures, calculez votre salaire automatiquement, gérez vos gains de livraison et vos 88 jours de Working Holiday Visa en Australie. Sans carte bancaire.',
+    ogDescription: 'Suivez vos horaires de travail, calculez vos gains automatiquement et suivez vos 88 jours de Working Holiday Visa en Australie. Gratuit pour les travailleurs du monde entier.',
+    jsonLdDescription: 'Application gratuite de gestion des horaires et de suivi des revenus pour les travailleurs. Suivez vos heures de travail, calculez votre salaire automatiquement, gérez vos livraisons et suivez vos 88 jours de Working Holiday Visa en Australie.',
+  },
+};
+
+const buildJsonLd = (lang) => JSON.stringify({
   '@context': 'https://schema.org',
   '@type': 'SoftwareApplication',
   name: 'Orary',
   applicationCategory: 'BusinessApplication',
   operatingSystem: 'iOS, Android, Web',
-  url: 'https://orary.app',
-  description:
-    'Free shift management and earnings tracking app for workers worldwide. Track work hours, calculate pay automatically, manage delivery shifts, and monitor Australian Working Holiday Visa 88-day progress.',
+  url: SEO_META[lang].url,
+  inLanguage: lang,
+  description: SEO_META[lang].jsonLdDescription,
   offers: {
     '@type': 'Offer',
     price: '0',
@@ -40,8 +66,17 @@ const JSON_LD = JSON.stringify({
   screenshot: 'https://orary.app/assets/images/logo2.png',
 });
 
-const Landing = () => {
-  const { t } = useTranslation();
+const Landing = ({ lang }) => {
+  const { t, i18n } = useTranslation();
+
+  // Force the page language on /es and /fr so content and meta match the URL.
+  // Guarded so it only runs when needed — resources are bundled, so the switch
+  // resolves synchronously (important for prerendering).
+  if (lang && i18n.resolvedLanguage !== lang) {
+    i18n.changeLanguage(lang);
+  }
+
+  const meta = SEO_META[lang] || SEO_META.en;
   const { currentUser, loading } = useAuth();
   const navigate = useNavigate();
   const [videoReady, setVideoReady] = useState(false);
@@ -89,44 +124,48 @@ const Landing = () => {
   return (
     <div className="fixed inset-0">
       <Helmet>
-        <title>Orary — Free Shift Tracker &amp; Earnings Calculator</title>
-        <meta
-          name="description"
-          content="Free shift management app for workers worldwide. Track hours, calculate pay automatically, manage delivery shifts, and monitor your Australian 88-day Working Holiday Visa. No credit card required."
-        />
-        <link rel="canonical" href="https://orary.app/" />
+        <html lang={lang || 'en'} />
+        <title>{meta.title}</title>
+        <meta name="description" content={meta.description} />
+        <link rel="canonical" href={meta.url} />
 
-        {/* hreflang — same URL serves EN / ES / FR */}
-        <link rel="alternate" hreflang="en"       href="https://orary.app/" />
-        <link rel="alternate" hreflang="es"       href="https://orary.app/" />
-        <link rel="alternate" hreflang="fr"       href="https://orary.app/" />
+        {/* hreflang — each language has its own indexable URL */}
+        <link rel="alternate" hreflang="en"        href="https://orary.app/" />
+        <link rel="alternate" hreflang="es"        href="https://orary.app/es" />
+        <link rel="alternate" hreflang="fr"        href="https://orary.app/fr" />
         <link rel="alternate" hreflang="x-default" href="https://orary.app/" />
 
         {/* Open Graph */}
         <meta property="og:type"        content="website" />
-        <meta property="og:url"         content="https://orary.app/" />
-        <meta property="og:title"       content="Orary — Free Shift Tracker & Earnings Calculator" />
-        <meta property="og:description" content="Track work shifts, calculate earnings automatically, and monitor your Australian 88-day Working Holiday Visa. Free for workers in Australia, Canada, Ireland and worldwide." />
+        <meta property="og:url"         content={meta.url} />
+        <meta property="og:title"       content={meta.title} />
+        <meta property="og:description" content={meta.ogDescription} />
         <meta property="og:image"       content="https://orary.app/assets/images/logo2.png" />
         <meta property="og:site_name"   content="Orary" />
 
         {/* Twitter Card */}
         <meta name="twitter:card"        content="summary" />
-        <meta name="twitter:title"       content="Orary — Free Shift Tracker & Earnings Calculator" />
-        <meta name="twitter:description" content="Track shifts, calculate earnings, and monitor your Australian 88-day Working Holiday Visa. Free for workers worldwide." />
+        <meta name="twitter:title"       content={meta.title} />
+        <meta name="twitter:description" content={meta.ogDescription} />
         <meta name="twitter:image"       content="https://orary.app/assets/images/logo2.png" />
 
         {/* JSON-LD structured data */}
-        <script type="application/ld+json">{JSON_LD}</script>
+        <script type="application/ld+json">{buildJsonLd(lang || 'en')}</script>
       </Helmet>
 
       {/* Background video */}
       <div className="absolute inset-0 z-0 bg-slate-900">
         <div className="absolute inset-0 bg-black opacity-50 z-10" />
         <video
-          autoPlay loop muted playsInline
-          preload="none"
-          onCanPlay={() => setVideoReady(true)}
+          autoPlay
+          loop
+          muted
+          defaultMuted
+          playsInline
+          controls={false}
+          disablePictureInPicture
+          preload="auto"
+          onCanPlay={(e) => { setVideoReady(true); e.currentTarget.play().catch(() => {}); }}
           className={`absolute object-cover w-full h-full transition-opacity duration-700 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
         >
           <source src="/assets/videos/sample_0.mp4" type="video/mp4" />

@@ -25,7 +25,7 @@ const PORT = 3737;
 const PRERENDER_USER_AGENT = 'OraryPrerender';
 
 // Public routes to pre-render (never include protected/auth-required routes)
-const ROUTES = ['/', '/login', '/register', '/forgot-password', '/terms', '/privacy', '/australia-88', '/faq'];
+const ROUTES = ['/', '/es', '/fr', '/login', '/register', '/forgot-password', '/terms', '/privacy', '/australia-88', '/faq'];
 
 // Third-party domains to block (Firebase, Google APIs, analytics, payment)
 const BLOCKED_DOMAINS = [
@@ -121,8 +121,8 @@ function startServer() {
 // canonical/title/description always wins over any base/fallback values.
 
 function deduplicateHead(html) {
-  // <title> — keep last
-  const titles = [...html.matchAll(/<title>[^<]*<\/title>/g)];
+  // <title> — keep last (handles both plain <title> and <title data-rh="true">)
+  const titles = [...html.matchAll(/<title[^>]*>[^<]*<\/title>/g)];
   for (let i = 0; i < titles.length - 1; i++) {
     html = html.replace(titles[i][0], '');
   }
@@ -155,6 +155,15 @@ function deduplicateHead(html) {
   const ogUrls = [...html.matchAll(/<meta property="og:url"[^>]*>/g)];
   for (let i = 0; i < ogUrls.length - 1; i++) {
     html = html.replace(ogUrls[i][0], '');
+  }
+
+  // Sync <title> to the surviving og:title — fixes the race condition where
+  // react-helmet-async emits an early English title before i18next finishes
+  // switching language, causing the stale title to win the dedup above.
+  const ogTitleFinal = html.match(/<meta property="og:title" content="([^"]+)"/);
+  if (ogTitleFinal) {
+    html = html.replace(/<title[^>]*>[^<]*<\/title>/g, '');
+    html = html.replace('<head>', `<head><title>${ogTitleFinal[1]}</title>`);
   }
 
   return html;
@@ -214,11 +223,14 @@ async function prerender() {
       // Set the custom user agent — detected by AuthContext to skip Firebase
       await page.setUserAgent(PRERENDER_USER_AGENT);
 
-      // Force English so pre-rendered content matches the default locale
-      await page.setExtraHTTPHeaders({ 'Accept-Language': 'en-US,en;q=0.9' });
-      await page.evaluateOnNewDocument(() => {
-        localStorage.setItem('i18nextLng', 'en');
-      });
+      // Set the locale matching the route so i18next loads the right language
+      // before React renders — /es → es, /fr → fr, everything else → en.
+      const routeLang = route === '/es' ? 'es' : route === '/fr' ? 'fr' : 'en';
+      const acceptLang = routeLang === 'es' ? 'es-ES,es;q=0.9' : routeLang === 'fr' ? 'fr-FR,fr;q=0.9' : 'en-US,en;q=0.9';
+      await page.setExtraHTTPHeaders({ 'Accept-Language': acceptLang });
+      await page.evaluateOnNewDocument((lang) => {
+        localStorage.setItem('i18nextLng', lang);
+      }, routeLang);
 
       // Block third-party requests (Firebase, Analytics, Fonts, etc.)
       await page.setRequestInterception(true);

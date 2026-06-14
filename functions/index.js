@@ -185,7 +185,7 @@ exports.googleAuthCallback = functions.https.onRequest(async (req, res) => {
 
     // Validate state token against stored value (CSRF protection)
     const stateDoc = await db.collection('oauth_states').doc(stateToken).get();
-    if (!stateDoc.exists()) {
+    if (!stateDoc.exists) {
       return res.status(403).send('Invalid or expired state token');
     }
 
@@ -642,19 +642,22 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
         if (address.line1) billingAddress.line1 = address.line1;
       }
 
-      // Race condition protection: use Firestore transaction with lock
+      // Race condition protection: acquire lock atomically inside a transaction
+      // so two concurrent requests can never both pass the age check.
       const lockRef = db.collection('subscription_locks').doc(userId);
-      const lockDoc = await lockRef.get();
-      if (lockDoc.exists) {
-        const lockData = lockDoc.data();
-        const lockAge = Date.now() - (lockData.createdAt?.toMillis() || 0);
-        // If lock is less than 30 seconds old, reject (concurrent request)
-        if (lockAge < 30000) {
-          return res.status(409).json({ error: 'Subscription creation already in progress' });
+      const lockAcquired = await db.runTransaction(async (transaction) => {
+        const lockDoc = await transaction.get(lockRef);
+        if (lockDoc.exists) {
+          const lockAge = Date.now() - (lockDoc.data().createdAt?.toMillis() || 0);
+          // If lock is less than 30 seconds old, reject (concurrent request)
+          if (lockAge < 30000) return false;
         }
+        transaction.set(lockRef, { createdAt: FieldValue.serverTimestamp(), userId });
+        return true;
+      });
+      if (!lockAcquired) {
+        return res.status(409).json({ error: 'Subscription creation already in progress' });
       }
-      // Set lock
-      await lockRef.set({ createdAt: FieldValue.serverTimestamp(), userId });
 
       try {
       // Check if user already has a Stripe customer ID
@@ -1094,16 +1097,15 @@ exports.activateExistingSubscription = functions.https.onRequest((req, res) => {
       const periodEnd = activeSub.current_period_end;
       const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
 
+      // Dot-notation update preserves existing fields (paymentMethod, trialEnd, etc.)
       await db.collection('users').doc(userId).update({
-        subscription: {
-          isPremium: true,
-          plan: 'premium',
-          status: activeSub.status,
-          stripeCustomerId: activeCustomerId,
-          stripeSubscriptionId: activeSub.id,
-          startDate: now,
-          expiryDate: Timestamp.fromMillis(expiryMillis),
-        },
+        'subscription.isPremium': true,
+        'subscription.plan': 'premium',
+        'subscription.status': activeSub.status,
+        'subscription.stripeCustomerId': activeCustomerId,
+        'subscription.stripeSubscriptionId': activeSub.id,
+        'subscription.startDate': now,
+        'subscription.expiryDate': Timestamp.fromMillis(expiryMillis),
       });
 
       console.log(`activateExistingSubscription: activated ${activeSub.id} for user ${userId}`);
@@ -1165,7 +1167,7 @@ exports.cancelSubscription = functions.https.onRequest((req, res) => {
         // If already canceled, just update Firestore
         if (stripeSubscription.status === 'canceled') {
           await db.collection('users').doc(userId).update({
-            'subscription.status': 'canceled',
+            'subscription.status': 'cancelled',
             'subscription.isPremium': false,
           });
           return res.json({
@@ -1197,7 +1199,7 @@ exports.cancelSubscription = functions.https.onRequest((req, res) => {
 
         if (alreadyCanceled) {
           await db.collection('users').doc(userId).update({
-            'subscription.status': 'canceled',
+            'subscription.status': 'cancelled',
             'subscription.isPremium': false,
             'subscription.stripeSubscriptionId': null,
           });
@@ -1278,16 +1280,16 @@ exports.verifyAndActivateSubscription = functions.https.onRequest((req, res) => 
         ? subscription.customer
         : subscription.customer?.id;
 
+      // Dot-notation update: preserves existing fields (paymentMethod, trialEnd, etc.)
+      // and keeps Stripe's authoritative status instead of forcing 'active'.
       await db.collection('users').doc(userId).update({
-        subscription: {
-          isPremium: true,
-          plan: 'premium',
-          status: 'active',
-          stripeCustomerId: customerId,
-          stripeSubscriptionId: subscription.id,
-          startDate: now,
-          expiryDate: Timestamp.fromMillis(expiryMillis),
-        },
+        'subscription.isPremium': true,
+        'subscription.plan': 'premium',
+        'subscription.status': subscription.status === 'trialing' ? 'trialing' : 'active',
+        'subscription.stripeCustomerId': customerId,
+        'subscription.stripeSubscriptionId': subscription.id,
+        'subscription.startDate': now,
+        'subscription.expiryDate': Timestamp.fromMillis(expiryMillis),
       });
 
       return res.json({ status: 'success', subscriptionId: subscription.id });
@@ -1453,6 +1455,13 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
     case 'invoice.paid': {
       const invoice = event.data.object;
       const customerId = invoice.customer;
+
+      // Trial subscriptions generate a $0 invoice at creation — if we marked the user
+      // 'active' here we would wipe their 'trialing' status and trialEnd date.
+      if (invoice.billing_reason === 'subscription_create' && invoice.amount_paid === 0) {
+        console.log(`Skipping $0 subscription_create invoice for customer ${customerId} (trial start)`);
+        break;
+      }
 
       // Find user by Stripe customer ID
       const usersSnapshot = await db.collection('users')
@@ -1729,11 +1738,23 @@ exports.userCalendar = functions.https.onRequest(async (req, res) => {
   if (req.method !== 'GET') return res.status(405).send('Method not allowed');
 
   const { uid, token } = req.query;
-  if (!uid || !token) return res.status(400).send('Missing uid or token');
+  if (!uid || !token || typeof uid !== 'string' || typeof token !== 'string') {
+    return res.status(400).send('Missing uid or token');
+  }
 
-  // Validate token
+  // Light rate limit per uid — calendar apps poll every few hours, so 20/min
+  // is generous for legitimate use but slows down token brute-forcing.
+  const feedAllowed = await checkRateLimit(uid, 'userCalendar', 20, 60000);
+  if (!feedAllowed) return res.status(429).send('Too many requests');
+
+  // Validate token with a constant-time comparison over digests
   const userDoc = await db.collection('users').doc(uid).get();
-  if (!userDoc.exists || userDoc.data().calendarToken !== token) {
+  const storedToken = userDoc.exists ? userDoc.data().calendarToken : null;
+  const tokensMatch = typeof storedToken === 'string' && crypto.timingSafeEqual(
+    crypto.createHash('sha256').update(token).digest(),
+    crypto.createHash('sha256').update(storedToken).digest()
+  );
+  if (!tokensMatch) {
     return res.status(403).send('Forbidden');
   }
 
@@ -2020,13 +2041,14 @@ exports.sendSupportRequest = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('invalid-argument', 'Message must be under 3000 characters.');
   }
 
-  // Verify Premium status server-side — never trust the client
+  // Verify Premium status server-side — never trust the client.
+  // trialing/cancelling users still have premium access, tag them accordingly.
   let isPremium = false;
   try {
     const userDoc = await db.collection('users').doc(uid).get();
     const userData = userDoc.data();
     isPremium =
-      userData?.subscription?.status === 'active' ||
+      ['active', 'trialing', 'cancelling'].includes(userData?.subscription?.status) ||
       userData?.isPremiumTest === true;
   } catch (err) {
     console.error('sendSupportRequest: failed to read user doc:', err);
@@ -2040,6 +2062,19 @@ exports.sendSupportRequest = functions.https.onCall(async (data, context) => {
   const tag = isPremium ? '[PREMIUM]' : '[FREE]';
   const emailSubject = `${tag} ${subject.trim()}`;
 
+  // Escape user-controlled values before interpolating into the HTML email,
+  // otherwise a user could inject markup/links into the support inbox.
+  const escapeHtml = (str) => String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+  const safeSubject = escapeHtml(subject.trim());
+  const safeMessage = escapeHtml(message.trim());
+  const safeDisplayName = escapeHtml(displayName);
+  const safeEmail = escapeHtml(userEmail);
+
   const html = `
     <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;padding:32px 16px;background:#f1f5f9;">
       <div style="background:#ffffff;border-radius:14px;border:1px solid #e2e8f0;overflow:hidden;">
@@ -2051,7 +2086,7 @@ exports.sendSupportRequest = functions.https.onCall(async (data, context) => {
           <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
             <tr>
               <td style="padding:6px 0;font-size:13px;color:#64748b;width:90px;">From</td>
-              <td style="padding:6px 0;font-size:13px;color:#1e293b;font-weight:600;">${displayName} &lt;${userEmail}&gt;</td>
+              <td style="padding:6px 0;font-size:13px;color:#1e293b;font-weight:600;">${safeDisplayName} &lt;${safeEmail}&gt;</td>
             </tr>
             <tr>
               <td style="padding:6px 0;font-size:13px;color:#64748b;">User ID</td>
@@ -2068,8 +2103,8 @@ exports.sendSupportRequest = functions.https.onCall(async (data, context) => {
             </tr>
           </table>
           <hr style="border:none;border-top:1px solid #e2e8f0;margin:0 0 20px;" />
-          <h2 style="margin:0 0 12px;font-size:16px;color:#1e293b;">${subject.trim()}</h2>
-          <p style="margin:0;font-size:14px;color:#334155;line-height:1.7;white-space:pre-wrap;">${message.trim()}</p>
+          <h2 style="margin:0 0 12px;font-size:16px;color:#1e293b;">${safeSubject}</h2>
+          <p style="margin:0;font-size:14px;color:#334155;line-height:1.7;white-space:pre-wrap;">${safeMessage}</p>
         </div>
         <div style="background:#f8fafc;padding:16px 32px;border-top:1px solid #e2e8f0;text-align:center;">
           <p style="margin:0;font-size:12px;color:#94a3b8;">Reply directly to this email to respond to the user.</p>
@@ -2091,4 +2126,371 @@ exports.sendSupportRequest = functions.https.onCall(async (data, context) => {
     console.error('sendSupportRequest: email send failed:', err);
     throw new functions.https.HttpsError('internal', 'Failed to send support request.');
   }
+});
+
+// ============================================
+// PAYSLIP PDF PARSER
+// ============================================
+
+// Lazy load para evitar costo de cold start en otras funciones
+let _pdfParse = null;
+const getPdfParse = () => {
+  if (!_pdfParse) _pdfParse = require('pdf-parse');
+  return _pdfParse;
+};
+
+let _Busboy = null;
+const getBusboy = () => {
+  if (!_Busboy) _Busboy = require('busboy');
+  return _Busboy;
+};
+
+// ---------- Helpers para extraer campos del payslip ----------
+
+const MONTH_MAP = {
+  jan: 1, january: 1,
+  feb: 2, february: 2,
+  mar: 3, march: 3,
+  apr: 4, april: 4,
+  may: 5,
+  jun: 6, june: 6,
+  jul: 7, july: 7,
+  aug: 8, august: 8,
+  sep: 9, sept: 9, september: 9,
+  oct: 10, october: 10,
+  nov: 11, november: 11,
+  dec: 12, december: 12,
+};
+
+const toNumber = (str) => {
+  if (str === null || str === undefined) return null;
+  const cleaned = String(str).replace(/[,\s$]/g, '');
+  const n = parseFloat(cleaned);
+  return isNaN(n) ? null : n;
+};
+
+/**
+ * Normaliza fechas en formatos comunes a YYYY-MM-DD.
+ * Soporta: dd/mm/yyyy, dd-mm-yyyy, dd.mm.yyyy, yyyy-mm-dd,
+ * "1 Apr 2026", "April 1 2026", "1-Apr-2026".
+ */
+function normalizeDate(str) {
+  if (!str) return null;
+  const raw = String(str).trim();
+
+  // ISO directo
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) return raw;
+
+  // "1 Apr 2026" / "1-April-2026" / "01 Apr 26"
+  const monthNameRe = /^(\d{1,2})[\s\-./]+([A-Za-z]+)[\s\-./]+(\d{2,4})$/;
+  const monthFirstRe = /^([A-Za-z]+)[\s\-./]+(\d{1,2}),?[\s\-./]+(\d{2,4})$/;
+  let day, month, year;
+
+  let m = raw.match(monthNameRe);
+  if (m) {
+    day = parseInt(m[1], 10);
+    month = MONTH_MAP[m[2].toLowerCase().slice(0, 9)] || MONTH_MAP[m[2].toLowerCase().slice(0, 3)];
+    year = parseInt(m[3], 10);
+  } else if ((m = raw.match(monthFirstRe))) {
+    month = MONTH_MAP[m[1].toLowerCase().slice(0, 9)] || MONTH_MAP[m[1].toLowerCase().slice(0, 3)];
+    day = parseInt(m[2], 10);
+    year = parseInt(m[3], 10);
+  } else {
+    const parts = raw.split(/[/\-.]/);
+    if (parts.length !== 3) return null;
+    if (parts[0].length === 4) {
+      year = parseInt(parts[0], 10);
+      month = parseInt(parts[1], 10);
+      day = parseInt(parts[2], 10);
+    } else {
+      day = parseInt(parts[0], 10);
+      month = parseInt(parts[1], 10);
+      year = parseInt(parts[2], 10);
+    }
+  }
+
+  if (!day || !month || !year || isNaN(day) || isNaN(month) || isNaN(year)) return null;
+  if (year < 100) year += 2000;
+  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+
+  return `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+}
+
+/**
+ * Extrae *todas* las fechas de un texto (en cualquier formato soportado),
+ * normalizadas a YYYY-MM-DD. Mantiene el orden de aparición.
+ */
+function extractAllDates(text) {
+  const patterns = [
+    /\b\d{1,2}[/\-.]\d{1,2}[/\-.]\d{2,4}\b/g,
+    /\b\d{4}-\d{2}-\d{2}\b/g,
+    /\b\d{1,2}[\s\-]+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*[\s\-]+\d{2,4}\b/gi,
+    /\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*[\s\-]+\d{1,2},?[\s\-]+\d{2,4}\b/gi,
+  ];
+  const found = [];
+  for (const re of patterns) {
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      const norm = normalizeDate(m[0]);
+      if (norm) found.push({ date: norm, index: m.index });
+    }
+  }
+  // Orden por aparición y dedup conservando primera ocurrencia
+  found.sort((a, b) => a.index - b.index);
+  const seen = new Set();
+  return found.filter(({ date }) => {
+    if (seen.has(date)) return false;
+    seen.add(date);
+    return true;
+  });
+}
+
+/**
+ * Busca un monto cercano a una etiqueta. Devuelve el primer match con un
+ * número decimal en una ventana de ~80 chars después del label.
+ */
+function findAmountNear(text, labelRegex) {
+  const re = new RegExp(labelRegex.source + '[\\s:.\\-]*\\$?\\s*([\\d,]+\\.\\d{2})', labelRegex.flags.includes('i') ? 'i' : 'i');
+  const m = text.match(re);
+  return m ? toNumber(m[1]) : null;
+}
+
+/**
+ * Parsea el buffer del payslip e intenta extraer los campos relevantes.
+ * Soporta payslips de Australia (PAYG) y Nueva Zelanda (PAYE), entre otros.
+ *
+ * Estrategia:
+ *   1. Buscar gross/tax con etiquetas específicas, luego genéricas
+ *   2. Buscar período con dos fechas asociadas a "pay period"/"period ending"
+ *   3. Si solo hay una fecha, inferir el período según frecuencia detectada
+ *      ("weekly" / "fortnightly" / "monthly")
+ *   4. Buscar horas con etiquetas comunes
+ *
+ * Devuelve { gross, tax, periodStart, periodEnd, hours, frequency } o null.
+ */
+function extractPayslipFields(text) {
+  if (!text || typeof text !== 'string') return null;
+
+  const normalized = text.replace(/\r/g, '\n').replace(/[ \t]+/g, ' ');
+  const lower = normalized.toLowerCase();
+
+  // ----- GROSS -----
+  // Etiquetas en orden de prioridad (más específicas primero)
+  const grossLabels = [
+    /total\s*gross\s*(?:earnings|pay|wages)?/i,
+    /gross\s*(?:earnings|pay|wages|amount|income|salary)/i,
+    /gross\s*for\s*period/i,
+    /gross\s*ytd/i, // último recurso
+    /\bgross\b/i,
+    /\btotal\s*earnings\b/i,
+    /\btotal\s*pay\b/i,
+  ];
+  let gross = null;
+  for (const label of grossLabels) {
+    const v = findAmountNear(normalized, label);
+    if (v !== null) { gross = v; break; }
+  }
+
+  // ----- TAX -----
+  const taxLabels = [
+    /payg\s*withholding/i,
+    /\bpayg\b/i,
+    /\bpaye\b/i,
+    /tax\s*withheld/i,
+    /withholding\s*tax/i,
+    /income\s*tax/i,
+    /tax\s*deducted/i,
+    /\btax\b/i,
+  ];
+  let tax = null;
+  for (const label of taxLabels) {
+    const v = findAmountNear(normalized, label);
+    if (v !== null) { tax = v; break; }
+  }
+
+  // ----- HOURS -----
+  const hoursLabels = [
+    /total\s*hours\s*worked/i,
+    /total\s*hours/i,
+    /hours\s*worked/i,
+    /ordinary\s*hours/i,
+    /\bhours\b/i,
+  ];
+  let hours = null;
+  for (const label of hoursLabels) {
+    const re = new RegExp(label.source + '[\\s:.\\-]*([\\d]+(?:\\.\\d+)?)', 'i');
+    const m = normalized.match(re);
+    if (m) {
+      const v = parseFloat(m[1]);
+      // Filtro de sanidad: descartar valores irreales
+      if (!isNaN(v) && v > 0 && v < 1000) { hours = v; break; }
+    }
+  }
+
+  // ----- FRECUENCIA DEL PAGO -----
+  let frequency = null;
+  if (/\bweekly\b/i.test(lower)) frequency = 'weekly';
+  else if (/\bfortnightly\b|\bbi[-\s]?weekly\b/i.test(lower)) frequency = 'fortnightly';
+  else if (/\bmonthly\b/i.test(lower)) frequency = 'monthly';
+
+  // ----- PERÍODO -----
+  // Estrategia A: dos fechas en una misma línea cerca de etiquetas de período
+  let periodStart = null;
+  let periodEnd = null;
+
+  const periodLineRe = /(?:pay\s*period|period\s*(?:ending|end|from|covered|of)|for\s*period|from)[:\s]*([^\n]{3,120})/i;
+  const periodLine = normalized.match(periodLineRe);
+  if (periodLine) {
+    const datesInLine = extractAllDates(periodLine[1]);
+    if (datesInLine.length >= 2) {
+      const sorted = datesInLine.map(d => d.date).sort();
+      periodStart = sorted[0];
+      periodEnd = sorted[sorted.length - 1];
+    } else if (datesInLine.length === 1) {
+      // Una sola fecha en la línea de período: usar como fin y derivar inicio
+      periodEnd = datesInLine[0].date;
+    }
+  }
+
+  // Estrategia B: si seguimos sin período, mirar las primeras fechas del documento
+  if (!periodStart && !periodEnd) {
+    const allDates = extractAllDates(normalized);
+    if (allDates.length >= 2) {
+      // Tomar las dos primeras fechas y ordenarlas
+      const sorted = [allDates[0].date, allDates[1].date].sort();
+      periodStart = sorted[0];
+      periodEnd = sorted[1];
+    } else if (allDates.length === 1) {
+      periodEnd = allDates[0].date;
+    }
+  }
+
+  // Si tenemos solo periodEnd, derivar periodStart según frequency
+  if (periodEnd && !periodStart) {
+    const days = frequency === 'monthly' ? 30
+      : frequency === 'fortnightly' ? 14
+      : 7; // default semanal
+    const end = new Date(periodEnd + 'T00:00:00Z');
+    const start = new Date(end);
+    start.setUTCDate(end.getUTCDate() - (days - 1));
+    periodStart = start.toISOString().slice(0, 10);
+  }
+
+  // Validación de coherencia: periodStart no puede ser posterior a periodEnd
+  if (periodStart && periodEnd && periodStart > periodEnd) {
+    [periodStart, periodEnd] = [periodEnd, periodStart];
+  }
+
+  // Mínimo viable: gross y tax detectados
+  if (gross === null || tax === null) return null;
+
+  return { gross, tax, hours, periodStart, periodEnd, frequency };
+}
+
+/**
+ * Lee el body multipart y devuelve el primer archivo encontrado como Buffer.
+ */
+function parseMultipartFile(req) {
+  return new Promise((resolve, reject) => {
+    try {
+      const Busboy = getBusboy();
+      const bb = Busboy({
+        headers: req.headers,
+        limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+      });
+
+      let fileBuffer = null;
+      let mimeType = null;
+      let truncated = false;
+
+      bb.on('file', (_name, file, info) => {
+        mimeType = info?.mimeType || info?.mime || null;
+        const chunks = [];
+        file.on('data', (chunk) => chunks.push(chunk));
+        file.on('limit', () => { truncated = true; });
+        file.on('end', () => {
+          if (!truncated) fileBuffer = Buffer.concat(chunks);
+        });
+      });
+
+      bb.on('error', reject);
+      bb.on('finish', () => {
+        if (truncated) return reject(new Error('file-too-large'));
+        if (!fileBuffer) return reject(new Error('no-file'));
+        resolve({ buffer: fileBuffer, mimeType });
+      });
+
+      // En Cloud Functions, el body ya viene parseado como Buffer en req.rawBody
+      if (req.rawBody) {
+        bb.end(req.rawBody);
+      } else {
+        req.pipe(bb);
+      }
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+/**
+ * parsePDF
+ * Recibe un PDF de payslip via multipart/form-data y devuelve los campos extraídos.
+ * Si no se pueden extraer los mínimos (gross y tax), responde { success: false }
+ * para que el frontend muestre el formulario manual.
+ */
+exports.parsePDF = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
+
+      const idToken = authHeader.split('Bearer ')[1];
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const userId = decodedToken.uid;
+
+      // Rate limit: 10 parseos por minuto
+      const allowed = await checkRateLimit(userId, 'parsePDF', 10, 60000);
+      if (!allowed) {
+        return res.status(429).json({ error: 'Too many requests. Please try again later.' });
+      }
+
+      let parsed;
+      try {
+        parsed = await parseMultipartFile(req);
+      } catch (err) {
+        if (err.message === 'file-too-large') {
+          return res.status(413).json({ success: false, error: 'File too large' });
+        }
+        return res.status(400).json({ success: false, error: 'Invalid upload' });
+      }
+
+      if (parsed.mimeType && !parsed.mimeType.includes('pdf')) {
+        return res.status(400).json({ success: false, error: 'Invalid file type' });
+      }
+
+      let pdfData;
+      try {
+        const pdfParse = getPdfParse();
+        pdfData = await pdfParse(parsed.buffer);
+      } catch (err) {
+        return res.json({ success: false });
+      }
+
+      const fields = extractPayslipFields(pdfData?.text || '');
+      if (!fields) {
+        return res.json({ success: false });
+      }
+
+      return res.json({ success: true, data: fields });
+    } catch (error) {
+      console.error('parsePDF error:', error);
+      return res.status(500).json({ success: false, error: 'Internal error' });
+    }
+  });
 });

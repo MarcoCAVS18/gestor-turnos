@@ -1,57 +1,22 @@
 // src/pages/legal/TermsOfService.jsx
 
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { useAuth } from '../../contexts/AuthContext';
-import { AlertTriangle, ArrowLeft } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
+import LegalPageShell from './LegalPageShell';
+import buildInfo from '../../generated/buildInfo.json';
 
 const TermsOfService = () => {
-  const { t } = useTranslation();
-  const { currentUser } = useAuth();
-  const backTo = currentUser ? '/settings' : '/';
-  const backLabel = currentUser ? t('common.backToSettings') : t('common.back');
-
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
-      <Helmet>
-        <title>Terms of Service | Orary</title>
-        <meta name="description" content="Read Orary's Terms of Service. Understand your rights and responsibilities when using our shift management and earnings tracking application." />
-        <link rel="canonical" href="https://orary.app/terms" />
-      </Helmet>
-
-      {/* Public header */}
-      <header className="sticky top-0 z-10 bg-white/90 dark:bg-slate-950/90 backdrop-blur border-b border-gray-100 dark:border-gray-800">
-        <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <img src="/assets/SVG/logo.svg" alt="Orary" className="w-7 h-7" />
-            <span className="font-bold text-gray-900 dark:text-white text-lg leading-none">Orary.</span>
-          </Link>
-          <Link
-            to={backTo}
-            className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-          >
-            <ArrowLeft size={15} />
-            {backLabel}
-          </Link>
-        </div>
-      </header>
-
-      <div className="max-w-3xl mx-auto px-4 pb-12 space-y-6 pt-8">
-        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">Terms of Service</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Last updated: February 5, 2026</p>
-          </div>
-          <img
-            src="/assets/SVG/logo.svg"
-            alt="Orary"
-            className="w-32 h-32 sm:w-40 sm:h-40 opacity-10"
-            style={{ filter: 'grayscale(100%)' }}
-          />
-        </div>
-
-      <div className="prose prose-lg text-gray-700 dark:text-gray-300 dark:prose-invert max-w-none">
+    <LegalPageShell
+      seo={{
+        title: 'Terms of Service | Orary',
+        description: "Read Orary's Terms of Service. Understand your rights and responsibilities when using our shift management and earnings tracking application.",
+        canonical: 'https://orary.app/terms',
+      }}
+      badge={{ label: 'Legal · Terms', bg: 'rgba(236,72,153,0.2)', text: '#f9a8d4' }}
+      title="Terms of Service"
+      lastUpdated={buildInfo.legalDates.terms}
+      currentPath="/terms"
+    >
         <p>
           Welcome to <strong>Orary</strong>. By downloading, accessing, or using this application, you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of these terms, you must not access our service.
         </p>
@@ -165,15 +130,7 @@ const TermsOfService = () => {
           <a href="mailto:support@orary.app" className="text-pink-600 dark:text-pink-400 hover:underline">support@orary.app</a>.
         </p>
 
-        {/* Internal SEO links */}
-        <div className="mt-10 pt-6 border-t border-gray-100 dark:border-gray-800 flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-400 dark:text-gray-600">
-          <Link to="/faq"          className="hover:text-pink-500 transition-colors">FAQ</Link>
-          <Link to="/australia-88" className="hover:text-pink-500 transition-colors">88-day visa tracker</Link>
-          <Link to="/privacy"      className="hover:text-pink-500 transition-colors">Privacy Policy</Link>
-        </div>
-      </div>
-      </div>
-    </div>
+    </LegalPageShell>
   );
 };
 

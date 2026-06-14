@@ -26,6 +26,7 @@ import FuelEfficiency from '../components/stats/FuelEfficiency';
 import PlatformComparison from '../components/stats/PlatformComparison';
 import DeliveryHourlyAnalysis from '../components/stats/DeliveryHourlyAnalysis';
 
+
 const Statistics = () => {
   const { t } = useTranslation();
   const {

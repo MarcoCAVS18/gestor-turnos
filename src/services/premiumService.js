@@ -1,7 +1,7 @@
 // src/services/premiumService.js
 // Service for managing premium subscriptions and Live Mode usage
 
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from './firebase';
 import logger from '../utils/logger';
 
@@ -49,6 +49,8 @@ export const getSubscription = async (userId) => {
 
 /**
  * Initialize subscription fields for a user (if not exists)
+ * NOTE: lastResetDate must be serverTimestamp() — Firestore rules reject any
+ * liveModeUsage write whose lastResetDate is not the server time.
  */
 export const initializeSubscription = async (userId) => {
   try {
@@ -63,8 +65,8 @@ export const initializeSubscription = async (userId) => {
         await updateDoc(userDocRef, {
           subscription: DEFAULT_SUBSCRIPTION,
           liveModeUsage: {
-            ...DEFAULT_LIVE_MODE_USAGE,
-            lastResetDate: new Date(),
+            monthlyCount: 0,
+            lastResetDate: serverTimestamp(),
           },
         });
       }
@@ -98,17 +100,17 @@ export const loadSubscriptionAndUsage = async (userId) => {
 
     // Initialize subscription if missing (single write, no extra read)
     if (!data.subscription) {
-      const initData = {
+      await updateDoc(userDocRef, {
         subscription: DEFAULT_SUBSCRIPTION,
         liveModeUsage: {
-          ...DEFAULT_LIVE_MODE_USAGE,
-          lastResetDate: new Date(),
+          monthlyCount: 0,
+          lastResetDate: serverTimestamp(),
         },
-      };
-      await updateDoc(userDocRef, initData);
+      });
       return {
         subscription: DEFAULT_SUBSCRIPTION,
-        liveModeUsage: initData.liveModeUsage,
+        liveModeUsage: { monthlyCount: 0, lastResetDate: new Date() },
+        hasUsedTrial,
       };
     }
 
@@ -120,8 +122,10 @@ export const loadSubscriptionAndUsage = async (userId) => {
         : new Date(liveModeUsage.lastResetDate);
       const now = new Date();
       if (lastReset.getMonth() !== now.getMonth() || lastReset.getFullYear() !== now.getFullYear()) {
+        await updateDoc(userDocRef, {
+          liveModeUsage: { monthlyCount: 0, lastResetDate: serverTimestamp() },
+        });
         liveModeUsage = { monthlyCount: 0, lastResetDate: now };
-        await updateDoc(userDocRef, { liveModeUsage });
       }
     }
 
@@ -136,99 +140,50 @@ export const loadSubscriptionAndUsage = async (userId) => {
   }
 };
 
-/**
- * Update subscription to premium
- */
-export const upgradeToPremium = async (userId, paymentData) => {
-  try {
-    const userDocRef = doc(db, 'users', userId);
-    const now = new Date();
-
-    // Calculate expiry date (1 month from now)
-    const expiryDate = new Date(now);
-    expiryDate.setMonth(expiryDate.getMonth() + 1);
-
-    const subscription = {
-      isPremium: true,
-      plan: 'premium',
-      status: 'active',
-      startDate: now,
-      expiryDate: expiryDate,
-      paymentMethod: paymentData?.last4 || null,
-      stripeCustomerId: paymentData?.customerId || null,
-      stripeSubscriptionId: paymentData?.subscriptionId || null,
-    };
-
-    await updateDoc(userDocRef, { subscription });
-
-    return subscription;
-  } catch (error) {
-    logger.error('Error upgrading to premium:', error);
-    throw error;
-  }
-};
-
-/**
- * Cancel premium subscription
- */
-export const cancelSubscription = async (userId) => {
-  try {
-    const userDocRef = doc(db, 'users', userId);
-
-    const subscription = {
-      ...DEFAULT_SUBSCRIPTION,
-      status: 'cancelled',
-    };
-
-    await updateDoc(userDocRef, { subscription });
-
-    // TODO: Call Stripe API to cancel the subscription
-    // await stripe.subscriptions.del(stripeSubscriptionId);
-
-    return subscription;
-  } catch (error) {
-    logger.error('Error cancelling subscription:', error);
-    throw error;
-  }
-};
+// NOTE: subscription upgrades/cancellations are handled exclusively by Cloud
+// Functions (see stripeService.js) — Firestore rules block client-side writes
+// that set subscription.isPremium to true.
 
 // Statuses that allow premium access (user keeps access until their period ends)
 const PREMIUM_VALID_STATUSES = ['active', 'cancelling', 'trialing'];
 
 /**
- * Check if premium subscription is still valid
+ * Pure check: is this subscription object currently valid premium?
+ * Validates status AND expiry/trial dates — used by PremiumContext and
+ * canUseLiveMode so an expired subscription never grants access just because
+ * a webhook was missed.
+ */
+export const isSubscriptionValid = (subscription) => {
+  if (!subscription?.isPremium || !PREMIUM_VALID_STATUSES.includes(subscription.status)) {
+    return false;
+  }
+
+  const now = new Date();
+
+  // For trialing: check trialEnd date
+  if (subscription.status === 'trialing') {
+    if (!subscription.trialEnd) return true;
+    const trialEnd = subscription.trialEnd.toDate
+      ? subscription.trialEnd.toDate()
+      : new Date(subscription.trialEnd);
+    return trialEnd >= now;
+  }
+
+  // For active/cancelling: check expiryDate
+  if (!subscription.expiryDate) return true;
+  const expiryDate = subscription.expiryDate.toDate
+    ? subscription.expiryDate.toDate()
+    : new Date(subscription.expiryDate);
+  return expiryDate >= now;
+};
+
+/**
+ * Check if premium subscription is still valid (fetches from Firestore)
  */
 export const checkSubscriptionValidity = async (userId) => {
   try {
     const subscription = await getSubscription(userId);
-
-    if (!subscription.isPremium || !PREMIUM_VALID_STATUSES.includes(subscription.status)) {
-      return false;
-    }
-
-    // For trialing: check trialEnd date
-    if (subscription.status === 'trialing') {
-      if (subscription.trialEnd) {
-        const trialEnd = subscription.trialEnd.toDate
-          ? subscription.trialEnd.toDate()
-          : new Date(subscription.trialEnd);
-        if (trialEnd < new Date()) return false;
-      }
-      return true;
-    }
-
-    // For active/cancelling: check expiryDate
-    if (subscription.expiryDate) {
-      const expiryDate = subscription.expiryDate.toDate
-        ? subscription.expiryDate.toDate()
-        : new Date(subscription.expiryDate);
-
-      if (expiryDate < new Date()) {
-        return false;
-      }
-    }
-
-    return true;
+    return isSubscriptionValid(subscription);
   } catch (error) {
     logger.error('Error checking subscription validity:', error);
     return false;
@@ -260,13 +215,10 @@ export const getLiveModeUsage = async (userId) => {
           lastReset.getMonth() !== now.getMonth() ||
           lastReset.getFullYear() !== now.getFullYear()
         ) {
-          const resetUsage = {
-            monthlyCount: 0,
-            lastResetDate: now,
-          };
-
-          await updateDoc(userDocRef, { liveModeUsage: resetUsage });
-          return resetUsage;
+          await updateDoc(userDocRef, {
+            liveModeUsage: { monthlyCount: 0, lastResetDate: serverTimestamp() },
+          });
+          return { monthlyCount: 0, lastResetDate: now };
         }
       }
 
@@ -287,15 +239,14 @@ export const incrementLiveModeUsage = async (userId) => {
   try {
     const userDocRef = doc(db, 'users', userId);
     const usage = await getLiveModeUsage(userId);
+    const newCount = (usage.monthlyCount || 0) + 1;
 
-    const updatedUsage = {
-      monthlyCount: (usage.monthlyCount || 0) + 1,
-      lastResetDate: usage.lastResetDate || new Date(),
-    };
+    // Firestore rules only allow +1 increments with a server timestamp
+    await updateDoc(userDocRef, {
+      liveModeUsage: { monthlyCount: newCount, lastResetDate: serverTimestamp() },
+    });
 
-    await updateDoc(userDocRef, { liveModeUsage: updatedUsage });
-
-    return updatedUsage;
+    return { monthlyCount: newCount, lastResetDate: new Date() };
   } catch (error) {
     logger.error('Error incrementing Live Mode usage:', error);
     throw error;
@@ -312,23 +263,7 @@ export const canUseLiveMode = async (userId) => {
     const { subscription, liveModeUsage } = await loadSubscriptionAndUsage(userId);
 
     // Check premium validity: active, cancelling (access until period end), or trialing
-    const now = new Date();
-    const isValid = subscription.isPremium && PREMIUM_VALID_STATUSES.includes(subscription.status) && (() => {
-      if (subscription.status === 'trialing') {
-        if (!subscription.trialEnd) return true;
-        const trialEnd = subscription.trialEnd?.toDate
-          ? subscription.trialEnd.toDate()
-          : new Date(subscription.trialEnd);
-        return trialEnd >= now;
-      }
-      if (!subscription.expiryDate) return true;
-      const exp = subscription.expiryDate?.toDate
-        ? subscription.expiryDate.toDate()
-        : new Date(subscription.expiryDate);
-      return exp >= now;
-    })();
-
-    if (isValid) {
+    if (isSubscriptionValid(subscription)) {
       return { canUse: true, remaining: Infinity, isPremium: true };
     }
 
@@ -351,8 +286,7 @@ const premiumService = {
   getSubscription,
   initializeSubscription,
   loadSubscriptionAndUsage,
-  upgradeToPremium,
-  cancelSubscription,
+  isSubscriptionValid,
   checkSubscriptionValidity,
   getLiveModeUsage,
   incrementLiveModeUsage,

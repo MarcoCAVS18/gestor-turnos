@@ -1,6 +1,7 @@
 // src/services/export/utils/ExportCharts.jsx
 
 import React from 'react';
+import i18n from '../../../i18n';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   PieChart, Pie, Cell,
@@ -55,7 +56,7 @@ export const WeeklyEvolutionChart = ({ data, primaryColor = CHART_COLORS.primary
           axisLine={{ stroke: '#d1d5db' }}
         />
         <Tooltip
-          formatter={(value, name) => [formatCurrency(value), name === 'earnings' ? 'Earnings' : 'Hours']}
+          formatter={(value, name) => [formatCurrency(value), name === 'earnings' ? i18n.t('reports.table.earnings') : i18n.t('reports.table.hours')]}
           contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px' }}
         />
         <Line
@@ -99,7 +100,7 @@ export const WorkDistributionChart = ({ data, width = 400, height = 300 }) => (
           ))}
         </Pie>
         <Tooltip
-          formatter={(value) => [formatCurrency(value), 'Earnings']}
+          formatter={(value) => [formatCurrency(value), i18n.t('reports.table.earnings')]}
           contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px' }}
         />
       </PieChart>
@@ -138,7 +139,7 @@ export const DailyEarningsChart = ({ data, primaryColor = CHART_COLORS.primary, 
         <Tooltip
           formatter={(value, name) => [
             name === 'earnings' ? formatCurrency(value) : formatHours(value),
-            name === 'earnings' ? 'Earnings' : 'Hours'
+            name === 'earnings' ? i18n.t('reports.table.earnings') : i18n.t('reports.table.hours')
           ]}
           contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px' }}
         />
@@ -181,7 +182,7 @@ export const ShiftTypeChart = ({ data, width = 400, height = 300 }) => (
           width={50}
         />
         <Tooltip
-          formatter={(value) => [formatCurrency(value), 'Earnings']}
+          formatter={(value) => [formatCurrency(value), i18n.t('reports.table.earnings')]}
           contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px' }}
         />
         <Bar dataKey="value" radius={[0, 4, 4, 0]}>
@@ -219,12 +220,12 @@ export const PlatformComparisonChart = ({ data, width = 600, height = 250 }) => 
         <Tooltip
           formatter={(value, name) => [
             name === 'earnings' ? formatCurrency(value) : value,
-            name === 'earnings' ? 'Earnings' : 'Orders'
+            name === 'earnings' ? i18n.t('reports.table.earnings') : i18n.t('reports.table.orders')
           ]}
           contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px' }}
         />
         <Legend />
-        <Bar dataKey="earnings" name="Earnings" radius={[4, 4, 0, 0]}>
+        <Bar dataKey="earnings" name={i18n.t('reports.table.earnings')} radius={[4, 4, 0, 0]}>
           {data.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={entry.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length]} />
           ))}
@@ -267,7 +268,7 @@ export const MonthlyTrendChart = ({ data, primaryColor = CHART_COLORS.primary, s
         <Tooltip
           formatter={(value, name) => [
             name === 'earnings' ? formatCurrency(value) : formatHours(value),
-            name === 'earnings' ? 'Earnings' : 'Hours'
+            name === 'earnings' ? i18n.t('reports.table.earnings') : i18n.t('reports.table.hours')
           ]}
           contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '6px' }}
         />
@@ -276,7 +277,7 @@ export const MonthlyTrendChart = ({ data, primaryColor = CHART_COLORS.primary, s
           yAxisId="left"
           type="monotone"
           dataKey="earnings"
-          name="Earnings"
+          name={i18n.t('reports.table.earnings')}
           stroke={primaryColor}
           strokeWidth={2}
           dot={{ fill: primaryColor, r: 4 }}
@@ -285,7 +286,7 @@ export const MonthlyTrendChart = ({ data, primaryColor = CHART_COLORS.primary, s
           yAxisId="right"
           type="monotone"
           dataKey="hours"
-          name="Hours"
+          name={i18n.t('reports.table.hours')}
           stroke={secondaryColor}
           strokeWidth={2}
           dot={{ fill: secondaryColor, r: 4 }}

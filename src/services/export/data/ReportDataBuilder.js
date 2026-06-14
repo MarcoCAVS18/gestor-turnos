@@ -4,6 +4,8 @@ import { calculateWeeklyStats, calculateDeliveryStats } from '../../calculationS
 import { processMonthlyData } from './MonthlyDataProcessor';
 import { createSafeDate } from '../../../utils/time';
 import { getShiftGrossEarnings } from '../../../utils/shiftUtils';
+import { getMileageRate } from '../../../constants/mileageRates';
+import i18n from '../../../i18n';
 
 /**
  * Builds a comprehensive report data structure from shifts and works
@@ -163,7 +165,7 @@ export class ReportDataBuilder {
         weekOffset: -i
       });
 
-      const weekLabel = i === 0 ? 'This week' : i === 1 ? 'Last week' : `${i} weeks ago`;
+      const weekLabel = i === 0 ? i18n.t('reports.week.thisWeek') : i === 1 ? i18n.t('reports.week.lastWeek') : i18n.t('reports.weeksAgo', { count: i });
       weeklyEvolution.push({
         week: weekLabel,
         earnings: weekStats.totalEarned,
@@ -277,12 +279,12 @@ export class ReportDataBuilder {
    */
   buildByShiftType() {
     const types = {
-      day: { name: 'Day', shifts: 0, hours: 0, earnings: 0, color: '#FBBF24' },
-      afternoon: { name: 'Afternoon', shifts: 0, hours: 0, earnings: 0, color: '#F97316' },
-      night: { name: 'Night', shifts: 0, hours: 0, earnings: 0, color: '#6366F1' },
-      saturday: { name: 'Saturday', shifts: 0, hours: 0, earnings: 0, color: '#10B981' },
-      sunday: { name: 'Sunday', shifts: 0, hours: 0, earnings: 0, color: '#EC4899' },
-      delivery: { name: 'Delivery', shifts: 0, hours: 0, earnings: 0, color: '#8B5CF6' }
+      day: { name: i18n.t('filters.shiftTypes.day'), shifts: 0, hours: 0, earnings: 0, color: '#FBBF24' },
+      afternoon: { name: i18n.t('filters.shiftTypes.afternoon'), shifts: 0, hours: 0, earnings: 0, color: '#F97316' },
+      night: { name: i18n.t('filters.shiftTypes.night'), shifts: 0, hours: 0, earnings: 0, color: '#6366F1' },
+      saturday: { name: i18n.t('filters.shiftTypes.saturday'), shifts: 0, hours: 0, earnings: 0, color: '#10B981' },
+      sunday: { name: i18n.t('filters.shiftTypes.sunday'), shifts: 0, hours: 0, earnings: 0, color: '#EC4899' },
+      delivery: { name: i18n.t('filters.shiftTypes.delivery'), shifts: 0, hours: 0, earnings: 0, color: '#8B5CF6' }
     };
 
     // Process traditional shifts
@@ -346,10 +348,13 @@ export class ReportDataBuilder {
       return { enabled: false };
     }
 
+    const mileageConfig = getMileageRate(this.userSettings.holidayCountry);
+
     const stats = calculateDeliveryStats({
       deliveryWork: this.deliveryWorks,
       deliveryShifts: this.deliveryShifts,
-      period: 'year' // Get all data
+      period: 'year', // Get all data
+      mileageRate: mileageConfig?.ratePerKm || null
     });
 
     // Process by platform
@@ -389,6 +394,7 @@ export class ReportDataBuilder {
       totalKilometers: stats.totalKilometers,
       totalExpenses: stats.totalExpenses,
       netEarnings: stats.netEarnings,
+      mileageDeduction: stats.mileageDeduction,
       totalHours: stats.totalHours,
       averagePerOrder: stats.averagePerOrder,
       averagePerKilometer: stats.averagePerKilometer,

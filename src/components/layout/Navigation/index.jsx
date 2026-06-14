@@ -55,7 +55,7 @@ const Navigation = memo(({ openNewWorkModal, openNewShiftModal }) => {
     if (path === '/dashboard' || path === '/') return 'dashboard';
     if (path === '/works') return 'works';
     if (path === '/shifts') return 'shifts';
-    if (path === '/statistics') return 'statistics';
+    if (path.startsWith('/statistics')) return 'statistics';
     if (path === '/calendar') return 'calendar';
     if (path === '/settings') return 'settings';
     return 'dashboard';
@@ -68,7 +68,8 @@ const Navigation = memo(({ openNewWorkModal, openNewShiftModal }) => {
     if (view === 'shifts' && !hasWorks) return;
     const routes = {
       dashboard: '/dashboard', works: '/works', shifts: '/shifts',
-      statistics: '/statistics', calendar: '/calendar', settings: '/settings'
+      statistics: '/statistics', 'statistics/payslips': '/statistics/payslips',
+      calendar: '/calendar', settings: '/settings'
     };
     window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(routes[view]);
@@ -152,6 +153,7 @@ const Navigation = memo(({ openNewWorkModal, openNewShiftModal }) => {
         <NavMainLinks
           navigateToView={navigateToView}
           currentView={currentView}
+          currentPath={location.pathname}
           hasWorks={hasWorks}
           colors={colors}
           t={t}

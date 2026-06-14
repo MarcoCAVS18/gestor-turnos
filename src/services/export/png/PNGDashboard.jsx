@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Cell } from 'recharts';
+import i18n from '../../../i18n';
 
 /**
  * PNG Dashboard Component - Professional card-style dashboard for PNG export
@@ -93,7 +94,7 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
           {logo && logo.base64 && (
             <img
               src={logo.base64}
-              alt="Orary"
+              alt={i18n.t('reports.brand')}
               style={{ width: '52px', height: '52px', objectFit: 'contain', flexShrink: 0 }}
             />
           )}
@@ -106,10 +107,10 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
               letterSpacing: '3px',
               textTransform: 'uppercase'
             }}>
-              Orary
+              {i18n.t('reports.brand')}
             </p>
             <h1 style={{ margin: '5px 0 0 0', fontSize: '26px', fontWeight: '700', color: colors.white, lineHeight: 1.2 }}>
-              Activity Report
+              {i18n.t('reports.activityReport')}
             </h1>
             <p style={{ margin: '6px 0 0 0', fontSize: '14px', color: 'rgba(255,255,255,0.55)' }}>
               {metadata.startDate} — {metadata.endDate}
@@ -120,13 +121,13 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
         {/* Right: Generated date + shift count */}
         <div style={{ textAlign: 'right' }}>
           <p style={{ margin: 0, fontSize: '11px', color: 'rgba(255,255,255,0.45)', letterSpacing: '1px', textTransform: 'uppercase' }}>
-            Generated
+            {i18n.t('reports.generatedLabel')}
           </p>
           <p style={{ margin: '4px 0 0 0', fontSize: '15px', fontWeight: '600', color: colors.white }}>
             {metadata.generatedDate}
           </p>
           <p style={{ margin: '8px 0 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.45)' }}>
-            {metadata.totalShifts} shifts · {metadata.totalWorks} works
+            {i18n.t('reports.png.shiftsWorks', { shifts: metadata.totalShifts, works: metadata.totalWorks })}
           </p>
         </div>
       </div>
@@ -163,7 +164,7 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
                 {userInfo.name}
               </p>
               <p style={{ margin: '3px 0 0 0', fontSize: '12px', color: colors.gray }}>
-                {userInfo.email || 'Orary User'}
+                {userInfo.email || i18n.t('reports.oraryUser')}
               </p>
             </div>
           </div>
@@ -181,7 +182,7 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
                 color: userInfo.isPremium ? '#BE185D' : colors.gray,
                 letterSpacing: '0.3px'
               }}>
-                {userInfo.isPremium ? '★ Premium' : 'Free'}
+                {userInfo.isPremium ? `★ ${i18n.t('reports.premium')}` : i18n.t('reports.free')}
               </span>
             </div>
           </div>
@@ -190,10 +191,10 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
 
       {/* ─── KPI Cards ─── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
-        <KPICard label="Total Earned" value={formatCurrency(kpis.totalEarned)} accentColor={colors.brandAccent} />
-        <KPICard label="Total Hours" value={formatHours(kpis.totalHours)} accentColor={colors.secondary} />
-        <KPICard label="Total Shifts" value={String(kpis.totalShifts)} accentColor={colors.success} />
-        <KPICard label="Avg / Hour" value={formatCurrency(kpis.averagePerHour)} accentColor={colors.warning} />
+        <KPICard label={i18n.t('reports.kpi.totalEarned')} value={formatCurrency(kpis.totalEarned)} accentColor={colors.brandAccent} />
+        <KPICard label={i18n.t('reports.kpi.totalHours')} value={formatHours(kpis.totalHours)} accentColor={colors.secondary} />
+        <KPICard label={i18n.t('reports.kpi.totalShifts')} value={String(kpis.totalShifts)} accentColor={colors.success} />
+        <KPICard label={i18n.t('reports.kpi.avgPerHour')} value={formatCurrency(kpis.averagePerHour)} accentColor={colors.warning} />
       </div>
 
       {/* ─── Week Comparison ─── */}
@@ -201,7 +202,7 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <p style={{ margin: 0, fontSize: '11px', fontWeight: '600', color: colors.gray, textTransform: 'uppercase', letterSpacing: '1px' }}>
-              This Week
+              {i18n.t('reports.week.thisWeek')}
             </p>
             <p style={{ margin: '8px 0 0 0', fontSize: '30px', fontWeight: '700', color: colors.dark }}>
               {formatCurrency(weekComparison.current)}
@@ -223,7 +224,7 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
               </span>
             </div>
             <div>
-              <p style={{ margin: 0, fontSize: '11px', color: colors.gray }}>vs last week</p>
+              <p style={{ margin: 0, fontSize: '11px', color: colors.gray }}>{i18n.t('reports.kpi.vsLastWeek')}</p>
               <p style={{ margin: '3px 0 0 0', fontSize: '14px', fontWeight: '500', color: colors.dark }}>
                 {formatCurrency(weekComparison.previous)}
               </p>
@@ -237,9 +238,9 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
         {/* Weekly Evolution */}
         <div style={cardStyle}>
           <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: '700', color: colors.dark }}>
-            Weekly Earnings
+            {i18n.t('reports.png.weeklyEarnings')}
           </p>
-          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>Last 4 weeks</p>
+          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>{i18n.t('reports.png.last4Weeks')}</p>
           {weeklyData && weeklyData.length > 0 ? (
             <LineChart width={chartWidth} height={200} data={weeklyData}>
               <CartesianGrid strokeDasharray="3 3" stroke={colors.borderGray} />
@@ -247,13 +248,13 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
               <YAxis stroke={colors.gray} tick={{ fontSize: 10 }} tickFormatter={(v) => `$${Math.round(v)}`} />
               <Tooltip
                 contentStyle={{ backgroundColor: colors.white, border: `1px solid ${colors.borderGray}`, borderRadius: '8px', fontSize: '12px' }}
-                formatter={(v) => [`$${r2(v).toFixed(2)}`, 'Earnings']}
+                formatter={(v) => [`$${r2(v).toFixed(2)}`, i18n.t('reports.table.earnings')]}
               />
               <Line type="monotone" dataKey="earnings" stroke={colors.brandAccent} strokeWidth={2.5} dot={{ fill: colors.brandAccent, r: 4, strokeWidth: 0 }} />
             </LineChart>
           ) : (
             <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.gray, fontSize: '13px' }}>
-              No weekly data
+              {i18n.t('reports.png.noWeeklyData')}
             </div>
           )}
         </div>
@@ -261,9 +262,9 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
         {/* Shift Types */}
         <div style={cardStyle}>
           <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: '700', color: colors.dark }}>
-            Hours by Shift Type
+            {i18n.t('reports.png.hoursByShiftType')}
           </p>
-          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>Distribution overview</p>
+          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>{i18n.t('reports.png.distributionOverview')}</p>
           {shiftTypes && shiftTypes.length > 0 ? (
             <BarChart width={chartWidth} height={200} data={shiftTypes} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke={colors.borderGray} />
@@ -271,7 +272,7 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
               <YAxis type="category" dataKey="type" stroke={colors.gray} tick={{ fontSize: 10 }} width={75} />
               <Tooltip
                 contentStyle={{ backgroundColor: colors.white, border: `1px solid ${colors.borderGray}`, borderRadius: '8px', fontSize: '12px' }}
-                formatter={(v) => [`${r1(v).toFixed(1)}h`, 'Hours']}
+                formatter={(v) => [`${r1(v).toFixed(1)}h`, i18n.t('reports.table.hours')]}
               />
               <Bar dataKey="hours" radius={[0, 4, 4, 0]}>
                 {shiftTypes.map((entry, index) => (
@@ -281,7 +282,7 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
             </BarChart>
           ) : (
             <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.gray, fontSize: '13px' }}>
-              No shift data
+              {i18n.t('reports.png.noShiftData')}
             </div>
           )}
         </div>
@@ -292,9 +293,9 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
         {/* Top Works */}
         <div style={cardStyle}>
           <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: '700', color: colors.dark }}>
-            Top Works
+            {i18n.t('reports.png.topWorks')}
           </p>
-          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>Ranked by earnings</p>
+          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>{i18n.t('reports.png.rankedByEarnings')}</p>
           {topWorks && topWorks.length > 0 ? (
             <div>
               {topWorks.map((work, index) => (
@@ -328,7 +329,7 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
                         {work.name}
                       </p>
                       <p style={{ margin: '2px 0 0 0', fontSize: '11px', color: colors.gray }}>
-                        {formatHours(work.hours)} · {work.shifts} shifts
+                        {formatHours(work.hours)} · {i18n.t('reports.png.shiftsCount', { count: work.shifts })}
                       </p>
                     </div>
                   </div>
@@ -339,28 +340,28 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
               ))}
             </div>
           ) : (
-            <p style={{ margin: 0, fontSize: '13px', color: colors.gray }}>No work data</p>
+            <p style={{ margin: 0, fontSize: '13px', color: colors.gray }}>{i18n.t('reports.png.noWorkData')}</p>
           )}
         </div>
 
         {/* Summary */}
         <div style={cardStyle}>
           <p style={{ margin: '0 0 4px 0', fontSize: '13px', fontWeight: '700', color: colors.dark }}>
-            Summary
+            {i18n.t('reports.png.summary')}
           </p>
-          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>Key statistics</p>
+          <p style={{ margin: '0 0 16px 0', fontSize: '11px', color: colors.gray }}>{i18n.t('reports.png.keyStatistics')}</p>
 
           {/* Delivery Stats */}
           {delivery && (
             <div style={{ marginBottom: '20px', paddingBottom: '16px', borderBottom: `1px solid ${colors.borderGray}` }}>
               <p style={{ margin: '0 0 10px 0', fontSize: '10px', fontWeight: '700', color: colors.gray, textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Delivery
+                {i18n.t('reports.delivery')}
               </p>
-              <SummaryRow label="Earned" value={formatCurrency(delivery.totalEarned)} highlight />
-              <SummaryRow label="Orders" value={String(delivery.totalOrders)} />
-              <SummaryRow label="Avg / Order" value={formatCurrency(delivery.averagePerOrder)} />
+              <SummaryRow label={i18n.t('reports.kpi.earned')} value={formatCurrency(delivery.totalEarned)} highlight />
+              <SummaryRow label={i18n.t('reports.table.orders')} value={String(delivery.totalOrders)} />
+              <SummaryRow label={i18n.t('reports.kpi.avgPerOrder')} value={formatCurrency(delivery.averagePerOrder)} />
               {delivery.totalKilometers > 0 && (
-                <SummaryRow label="Distance" value={`${Math.round(delivery.totalKilometers)} km`} />
+                <SummaryRow label={i18n.t('reports.kpi.distance')} value={`${Math.round(delivery.totalKilometers)} km`} />
               )}
             </div>
           )}
@@ -368,20 +369,20 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
           {/* Projections */}
           <div style={{ marginBottom: '16px', paddingBottom: '16px', borderBottom: `1px solid ${colors.borderGray}` }}>
             <p style={{ margin: '0 0 10px 0', fontSize: '10px', fontWeight: '700', color: colors.gray, textTransform: 'uppercase', letterSpacing: '1px' }}>
-              Projections
+              {i18n.t('reports.png.projections')}
             </p>
-            <SummaryRow label="Monthly" value={formatCurrency(projections.monthlyProjection)} highlight bold />
-            <SummaryRow label="Weekly Avg" value={formatCurrency(projections.weeklyAverage)} />
-            <SummaryRow label="Hourly Rate" value={formatCurrency(projections.hourlyProjection)} />
+            <SummaryRow label={i18n.t('reports.kpi.monthly')} value={formatCurrency(projections.monthlyProjection)} highlight bold />
+            <SummaryRow label={i18n.t('reports.kpi.weeklyAvg')} value={formatCurrency(projections.weeklyAverage)} />
+            <SummaryRow label={i18n.t('reports.kpi.hourlyRate')} value={formatCurrency(projections.hourlyProjection)} />
           </div>
 
           {/* Averages */}
           <div>
             <p style={{ margin: '0 0 10px 0', fontSize: '10px', fontWeight: '700', color: colors.gray, textTransform: 'uppercase', letterSpacing: '1px' }}>
-              Averages
+              {i18n.t('reports.png.averages')}
             </p>
-            <SummaryRow label="Per Shift" value={formatCurrency(kpis.averagePerShift)} />
-            <SummaryRow label="Per Hour" value={formatCurrency(kpis.averagePerHour)} />
+            <SummaryRow label={i18n.t('reports.kpi.perShift')} value={formatCurrency(kpis.averagePerShift)} />
+            <SummaryRow label={i18n.t('reports.kpi.perHour')} value={formatCurrency(kpis.averagePerHour)} />
           </div>
         </div>
       </div>
@@ -397,7 +398,7 @@ export const PNGDashboard = ({ data, logo, width = 1200 }) => {
         gap: '8px'
       }}>
         <p style={{ margin: 0, fontSize: '11px', color: colors.gray }}>
-          Generated by <strong style={{ color: colors.dark }}>Orary</strong> · orary.app
+          {i18n.t('reports.png.generatedBy')} <strong style={{ color: colors.dark }}>{i18n.t('reports.brand')}</strong> · {i18n.t('reports.appUrl')}
         </p>
       </div>
     </div>

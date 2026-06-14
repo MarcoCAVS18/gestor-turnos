@@ -2,83 +2,70 @@
 
 import React, { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
-import { Capacitor } from '@capacitor/core';
-import { useAuth } from './contexts/AuthContext';
 import {
   scheduleReengagementNotifications,
   cancelReengagementNotifications,
 } from './services/native/nativeNotifications';
 import { AppProvider } from './contexts/AppContext';
-import { useConfigContext } from './contexts/ConfigContext';
 import ProtectedLayout from './components/layout/ProtectedLayout/ProtectedLayout';
-import Loader from './components/other/Loader';
+import { useAuth } from './contexts/AuthContext';
+import SplashLoader from './components/other/SplashLoader';
 import useModalManager from './hooks/useModalManager';
 import './styles/animation.css';
 
-// Auth Components
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import ResetPassword from './pages/auth/ResetPassword';
 import ScrollToTop from './components/layout/ScrollToTop/index.jsx';
 import CookieConsent from './components/ui/CookieConsent';
-
-// Landing page
-import Landing from './pages/Landing';
-
-// Public SEO pages
-import Australia88 from './pages/Australia88';
-import FAQ from './pages/FAQ';
-
-// Native
 import NativeSplash from './components/native/NativeSplash';
-
-// Legal Pages
-import PrivacyPolicy from './pages/legal/PrivacyPolicy';
-import TermsOfService from './pages/legal/TermsOfService';
-import DeleteAccount from './pages/legal/DeleteAccount';
-import ClearEverything from './pages/legal/ClearEverything';
-
-// Error Pages
-import NotFound from './pages/NotFound';
-import ServerError from './pages/ServerError';
-
-// Main Components
 import Header from './components/layout/Header';
 import Navigation from './components/layout/Navigation';
-
-// Modals
-import WorkModal from './components/modals/work/WorkModal';
-import ShiftModal from './components/modals/shift/ShiftModal';
-import PremiumModal from './components/modals/premium/PremiumModal';
 import { usePremium } from './contexts/PremiumContext';
 
-// Lazy-loaded pages (route-based code splitting)
-const Dashboard = lazy(() => import('./pages/Dashboard'));
-const Works = lazy(() => import('./pages/Works'));
-const Shifts = lazy(() => import('./pages/Shifts'));
-const Statistics = lazy(() => import('./pages/Statistics'));
-const CalendarView = lazy(() => import('./pages/CalendarView'));
-const Settings = lazy(() => import('./pages/Settings'));
-const Integrations = lazy(() => import('./pages/Integrations'));
-const SharedWork = lazy(() => import('./pages/SharedWork'));
-const Premium = lazy(() => import('./pages/Premium'));
-const About = lazy(() => import('./pages/About'));
-const Support = lazy(() => import('./pages/Support'));
+// Landing — eager: it's the first page PageSpeed and most visitors see
+import Landing from './pages/Landing';
 
-// Context-free fallback used before AppProvider mounts (Suspense, auth loading)
-const AppLoader = () => (
-  <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0f172a' }}>
-    <img src="/assets/SVG/logo.svg" alt="Orary" style={{ width: 80, height: 80, opacity: 0.9 }} />
-  </div>
-);
+// Everything else — lazy: only loaded when the user navigates to that route
+const Login           = lazy(() => import('./pages/auth/Login'));
+const Register        = lazy(() => import('./pages/auth/Register'));
+const ForgotPassword  = lazy(() => import('./pages/auth/ForgotPassword'));
+const ResetPassword   = lazy(() => import('./pages/auth/ResetPassword'));
+
+const Australia88     = lazy(() => import('./pages/Australia88'));
+const FAQ             = lazy(() => import('./pages/FAQ'));
+
+const PrivacyPolicy   = lazy(() => import('./pages/legal/PrivacyPolicy'));
+const TermsOfService  = lazy(() => import('./pages/legal/TermsOfService'));
+const DeleteAccount   = lazy(() => import('./pages/legal/DeleteAccount'));
+const ClearEverything = lazy(() => import('./pages/legal/ClearEverything'));
+
+const NotFound        = lazy(() => import('./pages/NotFound'));
+const ServerError     = lazy(() => import('./pages/ServerError'));
+
+// Modals — lazy: only loaded when user opens them for the first time
+const WorkModal       = lazy(() => import('./components/modals/work/WorkModal'));
+const ShiftModal      = lazy(() => import('./components/modals/shift/ShiftModal'));
+const PremiumModal    = lazy(() => import('./components/modals/premium/PremiumModal'));
+
+// Protected pages
+const Dashboard       = lazy(() => import('./pages/Dashboard'));
+const Works           = lazy(() => import('./pages/Works'));
+const Shifts          = lazy(() => import('./pages/Shifts'));
+const StatisticsLayout   = lazy(() => import('./pages/StatisticsLayout'));
+const Statistics         = lazy(() => import('./pages/Statistics'));
+const StatisticsPayslips = lazy(() => import('./pages/StatisticsPayslips'));
+const CalendarView    = lazy(() => import('./pages/CalendarView'));
+const Settings        = lazy(() => import('./pages/Settings'));
+const Integrations    = lazy(() => import('./pages/Integrations'));
+const SharedWork      = lazy(() => import('./pages/SharedWork'));
+const Premium         = lazy(() => import('./pages/Premium'));
+const About           = lazy(() => import('./pages/About'));
+const Support         = lazy(() => import('./pages/Support'));
 
 // Public route that allows access without authentication
 const PublicRoute = ({ children }) => {
   const { loading } = useAuth();
 
   if (loading) {
-    return <AppLoader />;
+    return <SplashLoader />;
   }
 
   return children;
@@ -86,8 +73,6 @@ const PublicRoute = ({ children }) => {
 
 // General app layout
 function AppLayout() {
-  const { loading: configLoading } = useConfigContext();
-
   // Re-engagement notifications: every time the authenticated user opens the app,
   // cancel any pending notifications and reschedule them starting from now.
   // This resets the 7-day clock so users only get notifications when truly inactive.
@@ -112,30 +97,25 @@ function AppLayout() {
     closeShiftModal,
   } = useModalManager();
 
-  // Show loader until user config (color, theme) is fully loaded.
-  // En nativo NativeSplash ya cubre este tiempo — no mostrar Loader duplicado.
-  if (configLoading) {
-    if (Capacitor.isNativePlatform()) return null;
-    return (
-      <div className="min-h-screen h-screen bg-gray-100 dark:bg-slate-950 flex items-center justify-center">
-        <Loader />
-      </div>
-    );
-  }
-
+  // min-h-dvh (dynamic viewport height) hace que el wrapper se ajuste cuando
+  // la URL bar del navegador móvil se oculta. En standalone/PWA dvh = vh, no
+  // afecta. Mantengo min-h-screen como fallback para browsers viejos.
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-slate-950 font-poppins transition-colors duration-300 md:flex md:h-screen">
+    <div className="min-h-screen min-h-dvh bg-gray-100 dark:bg-slate-950 font-poppins transition-colors duration-300 md:flex md:h-screen md:min-h-0">
       {/* Header only on mobile */}
       <div className="md:hidden">
         <Header />
       </div>
 
-      {/* Main content */}
+      {/* Main content — Suspense here so ProtectedLayout's SplashLoader is never inside
+          a Suspense boundary and never gets hidden when a lazy page chunk is loading */}
       <main
         className="max-w-md mx-auto px-4 md:max-w-none md:ml-72 md:px-6 md:pb-6 md:flex-1 md:overflow-y-auto md:h-screen"
         style={{ paddingBottom: 'calc(5rem + env(safe-area-inset-bottom))' }}
       >
-        <Outlet context={{ openEditWorkModal, openEditShiftModal }} />
+        <Suspense fallback={null}>
+          <Outlet context={{ openEditWorkModal, openEditShiftModal }} />
+        </Suspense>
       </main>
 
       {/* Navigation */}
@@ -144,50 +124,41 @@ function AppLayout() {
         openNewShiftModal={openNewShiftModal}
       />
 
-      <WorkModal
-        isOpen={isWorkModalOpen}
-        onClose={closeWorkModal}
-        work={selectedWork}
-      />
-
-      <ShiftModal
-        isOpen={isShiftModalOpen}
-        onClose={closeShiftModal}
-        shift={selectedShift}
-      />
-
-      {/* Global premium modal — triggered by LockedFeatureCard and other components */}
-      <PremiumModal
-        isOpen={isPremiumModalOpen}
-        onClose={closePremiumModal}
-      />
+      {/* Modals are lazy — chunk loads on first open, fallback null avoids flash */}
+      <Suspense fallback={null}>
+        <WorkModal
+          isOpen={isWorkModalOpen}
+          onClose={closeWorkModal}
+          work={selectedWork}
+        />
+        <ShiftModal
+          isOpen={isShiftModalOpen}
+          onClose={closeShiftModal}
+          shift={selectedShift}
+        />
+        <PremiumModal
+          isOpen={isPremiumModalOpen}
+          onClose={closePremiumModal}
+        />
+      </Suspense>
     </div>
   );
 }
 
 // Main App
 function App() {
-  const { loading } = useAuth();
-
-  // NativeSplash siempre monta primero (se descarta sola en web).
-  // En nativo cubre el spinner mientras auth/config cargan.
   return (
     <>
       <NativeSplash />
       <CookieConsent />
-      {loading ? (
-        // Web: loader visible. En nativo queda tapado bajo NativeSplash (z-9999).
-        <AppLoader />
-      ) : (
       <Router>
       <ScrollToTop />
-      <Suspense fallback={<AppLoader />}>
       <Routes>
         {/* Authentication */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/login" element={<Suspense fallback={<SplashLoader />}><Login /></Suspense>} />
+        <Route path="/register" element={<Suspense fallback={<SplashLoader />}><Register /></Suspense>} />
+        <Route path="/forgot-password" element={<Suspense fallback={<SplashLoader />}><ForgotPassword /></Suspense>} />
+        <Route path="/reset-password" element={<Suspense fallback={<SplashLoader />}><ResetPassword /></Suspense>} />
 
 
         {/* SPECIAL ROUTE for shared works - PUBLIC ACCESS */}
@@ -198,7 +169,9 @@ function App() {
               <AppProvider>
                 <div className="min-h-screen bg-gray-100 dark:bg-slate-950 font-poppins transition-colors duration-300">
                   <main className="max-w-md mx-auto">
-                    <SharedWork />
+                    <Suspense fallback={<SplashLoader />}>
+                      <SharedWork />
+                    </Suspense>
                   </main>
                 </div>
               </AppProvider>
@@ -207,19 +180,22 @@ function App() {
         />
 
         {/* Public legal pages — no auth required (accessible to Google/crawlers) */}
-        <Route path="/privacy" element={<PrivacyPolicy />} />
-        <Route path="/terms" element={<TermsOfService />} />
+        <Route path="/privacy" element={<Suspense fallback={<SplashLoader />}><PrivacyPolicy /></Suspense>} />
+        <Route path="/terms" element={<Suspense fallback={<SplashLoader />}><TermsOfService /></Suspense>} />
 
         {/* Public SEO landing pages */}
-        <Route path="/australia-88" element={<Australia88 />} />
-        <Route path="/faq" element={<FAQ />} />
+        <Route path="/australia-88" element={<Suspense fallback={<SplashLoader />}><Australia88 /></Suspense>} />
+        <Route path="/faq" element={<Suspense fallback={<SplashLoader />}><FAQ /></Suspense>} />
 
         {/* Protected routes */}
         <Route element={<ProtectedLayout><AppLayout /></ProtectedLayout>}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/works" element={<Works />} />
           <Route path="/shifts" element={<Shifts />} />
-          <Route path="/statistics" element={<Statistics />} />
+          <Route path="/statistics" element={<StatisticsLayout />}>
+            <Route index element={<Statistics />} />
+            <Route path="payslips" element={<StatisticsPayslips />} />
+          </Route>
           <Route path="/calendar" element={<CalendarView />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/integrations" element={<Integrations />} />
@@ -232,22 +208,23 @@ function App() {
         </Route>
 
         {/* Error Pages */}
-        <Route path="/error" element={<ServerError />} />
+        <Route path="/error" element={<Suspense fallback={null}><ServerError /></Suspense>} />
 
         {/* Landing page — public, replaces old redirect */}
         <Route path="/" element={<Landing />} />
+        {/* Localized landings — separate indexable URLs for international SEO */}
+        <Route path="/es" element={<Landing lang="es" />} />
+        <Route path="/fr" element={<Landing lang="fr" />} />
         <Route
           path="*"
           element={
             <AppProvider>
-              <NotFound />
+              <Suspense fallback={null}><NotFound /></Suspense>
             </AppProvider>
           }
         />
       </Routes>
-      </Suspense>
     </Router>
-      )}
     </>
   );
 }

@@ -6,10 +6,11 @@ import { useApp } from '../contexts/AppContext';
 import { formatRelativeDate } from '../utils/time';
 import { calculateShiftHours } from '../utils/time/timeCalculations';
 import logger from '../utils/logger';
+import { getLocaleFromI18n } from '../utils/locale';
 
 export const useDashboardStats = () => {
   const { t, i18n } = useTranslation();
-  const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+  const locale = getLocaleFromI18n(i18n.language);
   const { works, deliveryWork, shifts, deliveryShifts, calculatePayment } = useApp();
 
   // Function to get dates of the current week (Monday to Sunday)

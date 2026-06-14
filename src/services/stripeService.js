@@ -1,7 +1,9 @@
 // src/services/stripeService.js
 // Frontend service for Stripe payment integration
 
-import { loadStripe } from '@stripe/stripe-js';
+// /pure prevents @stripe/stripe-js from injecting stripe.js as a side effect on import.
+// Stripe.js is only fetched when getStripe() is first called (payment form opens).
+import { loadStripe } from '@stripe/stripe-js/pure';
 import { Capacitor } from '@capacitor/core';
 import { Browser } from '@capacitor/browser';
 import { auth } from './firebase';

@@ -16,6 +16,7 @@ import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 import { getShiftGrossEarnings } from '../../../utils/shiftUtils';
 import logger from '../../../utils/logger';
+import { getLocaleFromI18n } from '../../../utils/locale';
 
 const CalendarDaySummary = ({
   selectedDate,
@@ -75,7 +76,7 @@ const CalendarDaySummary = ({
         return t('calendar.yesterday');
     }
 
-    const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+    const locale = getLocaleFromI18n(i18n.language);
     const formatted = dateObj.toLocaleDateString(locale, {
       month: 'short',
       day: 'numeric'

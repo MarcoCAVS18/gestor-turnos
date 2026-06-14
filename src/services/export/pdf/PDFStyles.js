@@ -1,5 +1,7 @@
 // src/services/export/pdf/PDFStyles.js
 
+import i18n from '../../../i18n';
+
 /**
  * Professional PDF styles and layout configuration
  */
@@ -367,23 +369,23 @@ export const addPageFooter = (doc, pageNum, generatedDate) => {
   // Left: app name
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(COLORS.gray);
-  doc.text('Orary', x, y);
+  doc.text(i18n.t('reports.brand'), x, y);
 
   // Separator
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(COLORS.lightGray);
-  const oryWidth = doc.getTextWidth('Orary');
-  doc.text(' · orary.app', x + oryWidth, y);
+  const oryWidth = doc.getTextWidth(i18n.t('reports.brand'));
+  doc.text(` · ${i18n.t('reports.appUrl')}`, x + oryWidth, y);
 
   // Center: page number
-  const pageText = `Page ${pageNum}`;
+  const pageText = i18n.t('reports.page', { num: pageNum });
   const pageWidth = doc.getTextWidth(pageText);
   const centerX = x + LAYOUT.contentWidth / 2 - pageWidth / 2;
   doc.text(pageText, centerX, y);
 
   // Right: generation date
   if (generatedDate) {
-    const dateText = `Generated ${generatedDate}`;
+    const dateText = i18n.t('reports.generatedShort', { date: generatedDate });
     const dateWidth = doc.getTextWidth(dateText);
     doc.text(dateText, rightX - dateWidth, y);
   }

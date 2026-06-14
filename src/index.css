@@ -4,11 +4,11 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+html, body {
+  /* Frena el rebote de overscroll en iOS/Android — antes se veía una franja
+     del body por debajo del bottom nav cuando el usuario hacía pull-up */
+  overscroll-behavior-y: none;
+}
 
 body {
   font-family: 'Poppins', sans-serif;
@@ -59,14 +59,40 @@ textarea:focus {
 
 /* Para inputs de tiempo y fecha */
 input[type="time"],
-input[type="date"] {
+input[type="date"],
+input[type="datetime-local"],
+input[type="month"] {
   background-color: white !important;
   color: #374151; /* gray-700 */
+  /* iOS Safari le asigna a estos inputs un ancho intrínseco basado en el
+     placeholder nativo y rompe el contenedor. Forzamos box-sizing y un
+     ancho controlable por el layout padre. */
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 input[type="time"]:focus,
-input[type="date"]:focus {
+input[type="date"]:focus,
+input[type="datetime-local"]:focus,
+input[type="month"]:focus {
   background-color: white !important;
+}
+
+/* iOS también respeta -webkit-min-logical-width que por defecto es "auto" en
+   estos inputs y los hace expandirse. Lo bajamos a 0 para que el width: 100%
+   del padre tome control. */
+@supports (-webkit-touch-callout: none) {
+  input[type="time"],
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="month"] {
+    -webkit-min-logical-width: 0;
+    display: block;
+  }
 }
 
 /* Arreglar scroll horizontal en modales */
@@ -133,7 +159,10 @@ input[type="date"]:focus {
 @media (max-width: 767px) {
   .mobile-modal {
     border-radius: 0 !important;
+    /* dvh = dynamic viewport height: se ajusta cuando aparece/desaparece
+       la URL bar del navegador móvil. Fallback a vh para browsers viejos. */
     height: 100vh !important;
+    height: 100dvh !important;
     max-height: none !important;
     margin: 0 !important;
   }
@@ -265,9 +294,12 @@ input[type="date"]:focus {
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 }
 
-/* Global Dark Mode Styles */
+/* Global Dark Mode Styles
+   El body usa slate-950 (#020617) en lugar de --bg-primary (slate-900) para
+   que coincida con el wrapper de App.js (bg-slate-950). Si difieren se ve
+   una franja más clara/oscura al hacer overscroll en mobile. */
 .dark body {
-  background-color: var(--bg-primary);
+  background-color: #020617;
   color: var(--text-primary);
 }
 

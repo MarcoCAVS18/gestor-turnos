@@ -11,6 +11,7 @@ struct OraryLiveActivityAttributes: ActivityAttributes {
     var workName: String
     var workColor: String    // hex e.g. "#EC4899"
     var workInitial: String  // first letter of work name e.g. "J"
+    var themeColor: String   // user's primary theme color hex e.g. "#EC4899"
     var sessionStartDate: Date
 
     // Mutable: updated while session is running

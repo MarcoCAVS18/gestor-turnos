@@ -37,6 +37,7 @@ public class LiveActivityPlugin: CAPPlugin {
 
         let workName = call.getString("workName") ?? "Live Shift"
         let workColor = call.getString("workColor") ?? "#EC4899"
+        let themeColor = call.getString("themeColor") ?? workColor
         let workInitial = String(workName.prefix(1)).uppercased()
         let startDateStr = call.getString("sessionStartDate") ?? ""
 
@@ -48,6 +49,7 @@ public class LiveActivityPlugin: CAPPlugin {
             workName: workName,
             workColor: workColor,
             workInitial: workInitial,
+            themeColor: themeColor,
             sessionStartDate: sessionStartDate
         )
 

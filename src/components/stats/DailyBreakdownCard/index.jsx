@@ -8,6 +8,7 @@ import { formatCurrency } from '../../../utils/currency';
 import BaseStatsCard from '../../cards/base/BaseStatsCard';
 import { calculateShiftHours, calculateShiftEarnings } from '../../../utils/statsCalculations';
 import Flex from '../../ui/Flex';
+import { getLocaleFromI18n } from '../../../utils/locale';
 
 const DailyBreakdownCard = ({ shiftsByDay = {}, works = [] }) => {
   const { t, i18n } = useTranslation();
@@ -23,7 +24,7 @@ const DailyBreakdownCard = ({ shiftsByDay = {}, works = [] }) => {
   const formatDate = (date) => {
     try {
       const dateObj = new Date(date);
-      const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+      const locale = getLocaleFromI18n(i18n.language);
       return dateObj.toLocaleDateString(locale, {
         weekday: 'short',
         day: 'numeric',

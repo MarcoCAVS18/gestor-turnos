@@ -487,7 +487,7 @@ export const calculateWeeklyStats = ({
   };
 }
 
-export const calculateDeliveryStats = ({ deliveryWork, deliveryShifts, period = 'month' }) => {
+export const calculateDeliveryStats = ({ deliveryWork, deliveryShifts, period = 'month', mileageRate = null }) => {
   const validDeliveryWork = Array.isArray(deliveryWork) ? deliveryWork : [];
   const validDeliveryShifts = Array.isArray(deliveryShifts) ? deliveryShifts : [];
 
@@ -499,6 +499,7 @@ export const calculateDeliveryStats = ({ deliveryWork, deliveryShifts, period = 
       totalKilometers: 0,
       totalExpenses: 0,
       netEarnings: 0,
+      mileageDeduction: 0,
       averagePerOrder: 0,
       averagePerKilometer: 0,
       averagePerHour: 0,
@@ -690,6 +691,7 @@ export const calculateDeliveryStats = ({ deliveryWork, deliveryShifts, period = 
   });
 
   const netEarnings = totalEarned - totalExpenses;
+  const mileageDeduction = mileageRate ? totalKilometers * mileageRate : 0;
   const averagePerOrder = totalOrders > 0 ? totalEarned / totalOrders : 0;
   const averagePerKilometer = totalKilometers > 0 ? totalEarned / totalKilometers : 0;
   const averagePerHour = totalHours > 0 ? totalEarned / totalHours : 0;
@@ -704,6 +706,7 @@ export const calculateDeliveryStats = ({ deliveryWork, deliveryShifts, period = 
     totalKilometers,
     totalExpenses,
     netEarnings,
+    mileageDeduction,
     totalHours,
 
     averagePerOrder,

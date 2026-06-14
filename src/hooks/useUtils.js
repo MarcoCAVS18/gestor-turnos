@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { createSafeDate } from '../utils/time';
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency';
 import { formatHoursDecimal } from '../utils/time/timeCalculations';
+import { getLocaleFromI18n } from '../utils/locale';
 
 export const useUtils = () => {
   const { i18n } = useTranslation();
-  const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+  const locale = getLocaleFromI18n(i18n.language);
   
   // Currency formatting — delegates to canonical utils/currency.js
   const formatCurrency = useCallback((amount) => {

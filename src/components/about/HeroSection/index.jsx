@@ -68,8 +68,8 @@ const HeroSection = ({ colors }) => {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
       >
-        Gest
-        <span style={{ color: colors.primary }}>APP</span>
+        Or
+        <span style={{ color: colors.primary }}>ary</span>
       </motion.h1>
 
       <div className="h-8 flex items-center justify-center">

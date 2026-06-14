@@ -219,7 +219,9 @@ const Australia88Section = ({ className }) => {
                 transition={{ duration: 0.18 }}
                 className="px-3 py-3 space-y-3"
               >
-                <div className="flex items-center justify-between">
+                {/* Título arriba, status (saving / saved) en línea propia abajo
+                    para que no colapsen entre sí en pantallas chicas */}
+                <div className="flex flex-col gap-0.5">
                   <p className="text-xs font-medium text-gray-600 dark:text-gray-300">
                     {selectedYear === 1
                       ? t('settings.australia88.manualDaysY1Title')
@@ -228,7 +230,7 @@ const Australia88Section = ({ className }) => {
                   {saving ? (
                     <span className="text-[10px] text-gray-400">{t('common.saving')}</span>
                   ) : manualDays > 0 ? (
-                    <span className="flex items-center gap-1 text-[10px]" style={{ color: colors.primary }}>
+                    <span className="inline-flex items-center gap-1 text-[10px]" style={{ color: colors.primary }}>
                       <Check size={11} />
                       {t('common.saved')}
                     </span>

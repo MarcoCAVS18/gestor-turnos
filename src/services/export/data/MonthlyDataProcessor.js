@@ -2,6 +2,7 @@
 
 import { createSafeDate } from '../../../utils/time';
 import { getShiftGrossEarnings } from '../../../utils/shiftUtils';
+import i18n from '../../../i18n';
 
 /**
  * Groups shifts by month and year
@@ -34,7 +35,7 @@ const groupShiftsByMonth = (shifts) => {
 const formatMonthYear = (monthKey) => {
   const [year, month] = monthKey.split('-');
   const date = new Date(parseInt(year), parseInt(month) - 1, 1);
-  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  return date.toLocaleDateString(i18n.language || 'en', { month: 'long', year: 'numeric' });
 };
 
 /**
@@ -55,7 +56,7 @@ const getDayName = (date) => {
 const formatDate = (dateInput) => {
   const date = createSafeDate(dateInput);
   if (!date || isNaN(date.getTime())) return 'N/A';
-  return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+  return date.toLocaleDateString(i18n.language || 'en', { month: 'short', day: '2-digit', year: 'numeric' });
 };
 
 /**
@@ -77,7 +78,7 @@ const formatTimestamp = (timestamp) => {
   }
 
   if (isNaN(date.getTime())) return 'N/A';
-  return date.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  return date.toLocaleDateString(i18n.language || 'en', { month: 'short', day: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 };
 
 /**

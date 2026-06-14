@@ -20,6 +20,7 @@ import DeleteAlert from '../components/alerts/DeleteAlert';
 import Loader from '../components/other/Loader';
 import Flex from '../components/ui/Flex';
 import logger from '../utils/logger';
+import { getLocaleFromI18n } from '../utils/locale';
 
 const CalendarView = () => {
   const { t, i18n } = useTranslation();
@@ -66,7 +67,7 @@ const CalendarView = () => {
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
     
-    const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+    const locale = getLocaleFromI18n(i18n.language);
     const baseFormattedDate = date.toLocaleDateString(locale, {
       weekday: 'long',
       year: 'numeric',
@@ -129,8 +130,8 @@ const CalendarView = () => {
         action={hasWorks && selectedDate && {
           onClick: () => onNewShift(createSafeDate(selectedDate)),
           icon: Plus,
-          label: t('nav.newShift'),
-          mobileLabel: t('nav.newShift'),
+          label: t('common.new'),
+          mobileLabel: t('common.new'),
           themeColor: colors.primary,
         }}
       />

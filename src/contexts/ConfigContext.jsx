@@ -223,8 +223,38 @@ export const ConfigProvider = ({ children }) => {
     }
   }, [holidayCountry, geoDetectionDone, savePreferences]);
 
+  // Bundled view of the persisted user preferences. Mirrors the `settings.*`
+  // shape stored in Firestore (see firebaseService prefMap), so consumers like
+  // the export system can read a single `settings` object instead of pulling
+  // each field individually.
+  const settings = useMemo(() => ({
+    primaryColor,
+    language,
+    defaultDiscount,
+    taxesPerWork,
+    weeklyHoursGoal,
+    deliveryEnabled,
+    smokoEnabled,
+    smokoMinutes,
+    themeMode,
+    deliveryPlatforms,
+    defaultDeliveryPlatform,
+    shiftRanges,
+    holidayCountry,
+    holidayRegion,
+    useAutoHolidays,
+    australia88VisaYear,
+    australia88ManualDays,
+  }), [
+    primaryColor, language, defaultDiscount, taxesPerWork, weeklyHoursGoal,
+    deliveryEnabled, smokoEnabled, smokoMinutes, themeMode, deliveryPlatforms,
+    defaultDeliveryPlatform, shiftRanges, holidayCountry, holidayRegion,
+    useAutoHolidays, australia88VisaYear, australia88ManualDays,
+  ]);
+
   const value = {
     loading,
+    settings,
     error,
     primaryColor,
     language,

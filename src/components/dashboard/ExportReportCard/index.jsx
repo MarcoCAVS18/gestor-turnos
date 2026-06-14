@@ -29,11 +29,13 @@ const ExportReportCard = ({ onExport }) => {
   const colors = useThemeColors();
   const { isPremium, openPremiumModal } = usePremium();
 
-  const [selectedFormat, setSelectedFormat] = useState('pdf');
+  // Sin selección por defecto: el botón Exportar arranca inactivo y se
+  // habilita cuando el usuario elige un formato.
+  const [selectedFormat, setSelectedFormat] = useState(null);
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExport = async () => {
-    if (isExporting) return;
+    if (isExporting || !selectedFormat) return;
     setIsExporting(true);
     try {
       await onExport(selectedFormat);
@@ -102,9 +104,9 @@ const ExportReportCard = ({ onExport }) => {
         {t('dashboard.export.description')}
       </p>
 
-      {/* Format selector + export button */}
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Format chips */}
+      {/* Formatos: ocupan todo el ancho en grid de 3 columnas, pero con altura
+          compacta (chip horizontal). Sin selección por defecto. */}
+      <div className="grid grid-cols-3 gap-2 mb-3">
         {FORMATS.map(({ id, icon: Icon, labelKey }) => {
           const active = selectedFormat === id;
           return (
@@ -112,11 +114,19 @@ const ExportReportCard = ({ onExport }) => {
               key={id}
               onClick={() => setSelectedFormat(id)}
               disabled={isExporting}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all disabled:opacity-50"
+              className="flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg border text-xs font-medium transition-all duration-150 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed"
               style={
                 active
-                  ? { backgroundColor: colors.primary, color: '#fff', borderColor: colors.primary }
-                  : { backgroundColor: 'transparent', color: colors.textSecondary, borderColor: colors.border }
+                  ? {
+                      backgroundColor: `${colors.primary}15`,
+                      color: colors.primary,
+                      borderColor: colors.primary,
+                    }
+                  : {
+                      backgroundColor: 'transparent',
+                      color: colors.textSecondary,
+                      borderColor: colors.border,
+                    }
               }
             >
               <Icon size={13} />
@@ -124,43 +134,45 @@ const ExportReportCard = ({ onExport }) => {
             </button>
           );
         })}
-
-        {/* Spacer pushes button to the right on larger screens */}
-        <div className="flex-1 hidden sm:block" />
-
-        {/* Export button */}
-        <motion.button
-          onClick={handleExport}
-          disabled={isExporting}
-          className="flex items-center gap-2 px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-white transition-all disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto justify-center"
-          style={{ backgroundColor: colors.primary }}
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-        >
-          <AnimatePresence mode="wait" initial={false}>
-            {isExporting ? (
-              <motion.div
-                key="loading"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white"
-                style={{ animation: 'spin 0.7s linear infinite' }}
-              />
-            ) : (
-              <motion.div
-                key="icon"
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 4 }}
-              >
-                <Download size={14} />
-              </motion.div>
-            )}
-          </AnimatePresence>
-          {isExporting ? t('common.loading') : t('dashboard.export.title')}
-        </motion.button>
       </div>
+
+      {/* Botón Exportar — mismo tamaño que el Live Mode de QuickActions
+          (px-3 py-3 rounded-xl). Inactivo hasta que se elija un formato. */}
+      <motion.button
+        onClick={handleExport}
+        disabled={isExporting || !selectedFormat}
+        className="flex items-center justify-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+        style={{
+          background: selectedFormat
+            ? `linear-gradient(135deg, ${colors.primary}, ${colors.primary}cc)`
+            : '#9CA3AF',
+        }}
+        whileHover={selectedFormat && !isExporting ? { scale: 1.02 } : undefined}
+        whileTap={selectedFormat && !isExporting ? { scale: 0.98 } : undefined}
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {isExporting ? (
+            <motion.div
+              key="loading"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white"
+              style={{ animation: 'spin 0.7s linear infinite' }}
+            />
+          ) : (
+            <motion.div
+              key="icon"
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+            >
+              <Download size={15} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        {isExporting ? t('common.loading') : t('dashboard.export.title')}
+      </motion.button>
     </Card>
   );
 };

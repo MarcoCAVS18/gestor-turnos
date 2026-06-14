@@ -10,6 +10,7 @@ import { createSubscription, isStripeTestMode } from '../../services/stripeServi
 import { AUD_PRICE } from '../../services/currencyService';
 import Button from '../ui/Button';
 import { CARD_NUMBER_OPTIONS, CARD_EXPIRY_OPTIONS, CARD_CVC_OPTIONS, COUNTRIES } from './constants';
+import { useConfigContext } from '../../contexts/ConfigContext';
 import logger from '../../utils/logger';
 import { trackPremiumUpgradeClick } from '../../utils/analytics';
 
@@ -19,11 +20,14 @@ const PaymentForm = ({ onSuccess, onProcessingStart, onPaymentError, localPrice 
   const elements = useElements();
   const { currentUser } = useAuth();
   const { hasUsedTrial } = usePremium();
+  // holidayCountry es el país detectado/seleccionado por el usuario en Settings.
+  // Lo usamos como valor inicial del país de facturación para no asumir siempre 'AU'.
+  const { holidayCountry } = useConfigContext() || {};
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [billingDetails, setBillingDetails] = useState({
     name: '',
-    country: 'AU',
+    country: holidayCountry || 'AU',
     postalCode: '',
     city: '',
     address: '',

@@ -4,6 +4,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import { getLocaleFromI18n } from '../../../utils/locale';
 
 const CalendarHeader = ({
   currentMonth,
@@ -16,7 +17,7 @@ const CalendarHeader = ({
   const colors = useThemeColors();
 
   const getMonthName = () => {
-    const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+    const locale = getLocaleFromI18n(i18n.language);
     return new Date(currentYear, currentMonth, 1).toLocaleDateString(locale, { month: 'long' });
   };
 
@@ -31,7 +32,7 @@ const CalendarHeader = ({
     const [year, month, day] = selectedDay.split('-').map(Number);
     const selectedDate = new Date(year, month - 1, day);
 
-    const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+    const locale = getLocaleFromI18n(i18n.language);
     return selectedDate.toLocaleDateString(locale, {
       weekday: 'short',
       day: 'numeric',

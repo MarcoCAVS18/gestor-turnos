@@ -6,20 +6,23 @@ import { X, Briefcase, Truck } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { getAvailableShiftTypes } from '../../../utils/shiftTypesConfig';
+import { getLocaleFromI18n } from '../../../utils/locale';
 
 const ShiftFilters = ({ onFiltersChange, activeFilters = {} }) => {
   const { t, i18n } = useTranslation();
   const colors = useThemeColors();
   const { works, deliveryWork, shiftsByDate, shiftRanges } = useApp();
 
-  // Get translated day labels based on current language
+  // Etiquetas de días usando Intl.DateTimeFormat — funciona para cualquier locale/región.
+  // Usamos un lunes de referencia (06-ene-2025) y generamos 7 días consecutivos.
   const getDayLabels = () => {
-    if (i18n.language === 'es') {
-      return ['L', 'M', 'M', 'J', 'V', 'S', 'D']; // Spanish: Lunes, Martes, Miércoles, Jueves, Viernes, Sábado, Domingo
-    } else if (i18n.language === 'fr') {
-      return ['L', 'M', 'M', 'J', 'V', 'S', 'D']; // French: Lundi, Mardi, Mercredi, Jeudi, Vendredi, Samedi, Dimanche
-    }
-    return ['M', 'T', 'W', 'T', 'F', 'S', 'S']; // English: Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday
+    const locale = getLocaleFromI18n(i18n.language);
+    const monday = new Date(2025, 0, 6); // Lunes fijo de referencia
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + i);
+      return new Intl.DateTimeFormat(locale, { weekday: 'narrow' }).format(date);
+    });
   };
 
   const DAYS = [

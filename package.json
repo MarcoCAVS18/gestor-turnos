@@ -1,6 +1,6 @@
 {
   "name": "gestion-turnos",
-  "version": "0.1.0",
+  "version": "3.2.1",
   "private": true,
   "dependencies": {
     "@capacitor/android": "8.1.0",
@@ -23,11 +23,9 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
     "bad-words": "^4.0.0",
-    "claude": "^0.1.1",
     "date-holidays": "^3.26.8",
     "firebase": "^11.7.3",
     "framer-motion": "^12.12.1",
-    "git-filter-repo": "^0.0.30",
     "gsap": "^3.13.0",
     "html2canvas": "^1.4.1",
     "i18next": "^25.8.13",
@@ -45,14 +43,16 @@
     "react-transition-group": "^4.4.5",
     "recharts": "^3.1.2",
     "web-vitals": "^2.1.4",
-    "xlsx": "^0.18.5",
     "xlsx-js-style": "^1.2.0"
   },
   "scripts": {
+    "gen:build-info": "node scripts/gen-build-info.js",
+    "prestart": "npm run gen:build-info",
     "start": "react-scripts start",
+    "prebuild": "npm run gen:build-info",
     "build": "react-scripts build",
     "prerender": "node scripts/prerender.js",
-    "build:prod": "react-scripts build && node scripts/prerender.js",
+    "build:prod": "npm run gen:build-info && react-scripts build && node scripts/prerender.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

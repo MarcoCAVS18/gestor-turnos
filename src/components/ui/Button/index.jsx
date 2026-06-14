@@ -3,14 +3,12 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Premium button colors (imported inline to avoid circular deps)
 const PREMIUM_BTN_COLORS = {
   primary: '#D4A000',
   light: '#F5C518',
   lighter: '#FFF3CD',
   text: '#1a1a1a',
 };
-
 
 const Button = ({
   children,
@@ -22,6 +20,7 @@ const Button = ({
   variant = 'primary',
   size = 'md',
   collapsed = false,
+  expandedWidth,
   disabled = false,
   loading = false,
   loadingText,
@@ -53,7 +52,6 @@ const Button = ({
   let isPremiumGradient = false;
 
   if (isPremium) {
-    // Premium variant with gold gradient
     isPremiumGradient = true;
     currentTextColor = PREMIUM_BTN_COLORS.text;
     currentBorder = 'none';
@@ -69,43 +67,67 @@ const Button = ({
     currentTextColor = '#4B5563';
     currentBorder = `1px solid #E5E7EB`;
   } else if (isCancel) {
-    // Cancel variant - transparent background, dark gray text (like ghost but gray)
     currentBgColor = 'transparent';
     currentTextColor = '#4B5563';
     currentBorder = 'none';
   }
 
-  const dynamicStyles = {
+  const pad = size === 'sm' ? '0 0.75rem' : '0 1rem';
+  const padPx = size === 'sm' ? 12 : 16;
+  const gap = size === 'sm' ? '0.25rem' : '0.5rem';
+
+  // When expandedWidth is provided, we animate width/padding directly (no FLIP distortion).
+  // Otherwise, fall back to legacy layout="size" behaviour for non-collapsing buttons.
+  const useExplicitWidth = Boolean(expandedWidth);
+
+  const staticStyles = {
     ...style,
     height: currentHeight,
     backgroundColor: isPremiumGradient ? undefined : (bgColor || currentBgColor),
     color: textColor || currentTextColor,
     border: currentBorder,
-    minWidth: collapsed ? currentHeight : 'auto',
-    padding: collapsed ? 0 : (size === 'sm' ? '0 0.75rem' : '0 1rem'),
-    borderRadius: collapsed ? '9999px' : '0.75rem',
-    // Premium gradient styles (no animation - solid gradient)
+    overflow: useExplicitWidth ? 'hidden' : undefined,
+    // Legacy path: instant padding/minWidth via style prop
+    ...(useExplicitWidth ? {} : {
+      padding: collapsed ? 0 : pad,
+      minWidth: collapsed ? currentHeight : undefined,
+    }),
     ...(isPremiumGradient && {
-      background: `linear-gradient(
-        135deg,
-        ${PREMIUM_BTN_COLORS.primary} 0%,
-        ${PREMIUM_BTN_COLORS.light} 50%,
-        ${PREMIUM_BTN_COLORS.primary} 100%
-      )`,
+      background: `linear-gradient(135deg, ${PREMIUM_BTN_COLORS.primary} 0%, ${PREMIUM_BTN_COLORS.light} 50%, ${PREMIUM_BTN_COLORS.primary} 100%)`,
       boxShadow: '0 4px 14px rgba(212, 160, 0, 0.4)',
     }),
   };
 
+  const collapseEase = [0.4, 0, 0.2, 1];
+  const collapseDuration = 0.26;
+
+  const animateProps = {
+    borderRadius: collapsed ? '9999px' : '0.75rem',
+    ...(useExplicitWidth && {
+      width: collapsed ? currentHeight : expandedWidth,
+      paddingLeft: collapsed ? 0 : padPx,
+      paddingRight: collapsed ? 0 : padPx,
+    }),
+  };
+
+  const transitionProps = useExplicitWidth
+    ? {
+        // Small delay on collapse so text fades before button shrinks
+        width:        { type: 'tween', duration: collapseDuration, ease: collapseEase, delay: collapsed ? 0.1 : 0 },
+        paddingLeft:  { type: 'tween', duration: collapseDuration, ease: collapseEase, delay: collapsed ? 0.1 : 0 },
+        paddingRight: { type: 'tween', duration: collapseDuration, ease: collapseEase, delay: collapsed ? 0.1 : 0 },
+        borderRadius: { type: 'tween', duration: collapseDuration, ease: collapseEase, delay: collapsed ? 0.1 : 0 },
+      }
+    : {
+        layout: { type: 'spring', stiffness: 280, damping: 32 },
+        borderRadius: { delay: collapsed ? 0.2 : 0, duration: 0.3, ease: collapseEase },
+      };
+
   const renderIcon = (isForLoading = false) => (
     <motion.div
-      className="flex items-center justify-center"
+      className="flex items-center justify-center flex-shrink-0"
       animate={shouldAnimateIcon && !loading ? { x: [0, 3, 0] } : {}}
-      transition={shouldAnimateIcon && !loading ? { 
-        duration: 1.5, 
-        repeat: Infinity, 
-        ease: "easeInOut",
-        repeatDelay: 0.5 
-      } : {}}
+      transition={shouldAnimateIcon && !loading ? { duration: 1.5, repeat: Infinity, ease: 'easeInOut', repeatDelay: 0.5 } : {}}
     >
       {isForLoading ? (
         <svg className="animate-spin" width={size === 'sm' ? 14 : 20} height={size === 'sm' ? 14 : 20} viewBox="0 0 24 24">
@@ -119,49 +141,59 @@ const Button = ({
   );
 
   return (
-      <motion.button
-        layout
-        onClick={onClick}
-        disabled={disabled || loading}
-        initial={false}
-        className={`relative flex items-center justify-center transition-all
-          ${!collapsed ? 'overflow-hidden' : ''}
-          ${currentFontSize} font-medium
-          ${(isGhost || isCancel) ? 'hover:bg-gray-500/10' : 'shadow-sm hover:shadow-md'}
-          ${isPremium ? 'hover:scale-[1.02] hover:shadow-lg font-semibold' : ''}
-          ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''}
-          ${className}`}
-        style={dynamicStyles}
-        transition={{ layout: { duration: 0.4, type: "spring", bounce: 0, stiffness: 300, damping: 30 } }}
-        {...props}
-      >
-      <div
-        className="flex items-center justify-center"
-        style={{ gap: collapsed ? 0 : (size === 'sm' ? '0.25rem' : '0.5rem') }}
-      >
+    <motion.button
+      layout={useExplicitWidth ? false : 'size'}
+      onClick={onClick}
+      disabled={disabled || loading}
+      initial={false}
+      animate={animateProps}
+      transition={transitionProps}
+      className={`relative flex items-center justify-center overflow-hidden
+        ${currentFontSize} font-medium
+        ${(isGhost || isCancel) ? 'hover:bg-gray-500/10' : 'shadow-sm hover:shadow-md'}
+        ${isPremium ? 'hover:scale-[1.02] hover:shadow-lg font-semibold' : ''}
+        ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''}
+        ${className}`}
+      style={staticStyles}
+      {...props}
+    >
+      <div className="flex items-center justify-center" style={{ gap }}>
         <AnimatePresence mode="wait">
           <motion.div
             key={loading ? 'loading' : 'default'}
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.2 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.18 }}
             className="flex items-center"
-            style={{ gap: collapsed ? 0 : (size === 'sm' ? '0.25rem' : '0.5rem') }}
+            style={{ gap }}
           >
             {loading ? (
               <>
                 {renderIcon(true)}
-                {!collapsed && loadingText && (
-                  <span className="whitespace-nowrap">{loadingText}</span>
-                )}
+                {!collapsed && loadingText && <span className="whitespace-nowrap">{loadingText}</span>}
               </>
             ) : (
               <>
                 {iconPosition === 'left' && Icon && renderIcon()}
-                {!collapsed && children && (
-                  <span className="whitespace-nowrap">{children}</span>
-                )}
+                <AnimatePresence>
+                  {!collapsed && children && (
+                    <motion.span
+                      key="label"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{
+                        duration: 0.18,
+                        // On expand, wait for button to open before fading text in
+                        delay: useExplicitWidth ? 0.14 : 0,
+                      }}
+                      className="whitespace-nowrap"
+                    >
+                      {children}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
                 {iconPosition === 'right' && Icon && renderIcon()}
               </>
             )}

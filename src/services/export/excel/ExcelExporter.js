@@ -1,6 +1,7 @@
 // src/services/export/excel/ExcelExporter.js
 
 import * as XLSX from 'xlsx-js-style';
+import i18n from '../../../i18n';
 import { createAllSheets } from './ExcelSheets';
 import { loadLogoForExcel } from '../utils/LogoLoader';
 import logger from '../../../utils/logger';
@@ -66,9 +67,9 @@ export class ExcelExporter {
 
     // Set workbook properties
     workbook.Props = {
-      Title: 'Activity Report',
-      Subject: 'Shift Management Report',
-      Author: 'Shift Tracker',
+      Title: i18n.t('reports.activityReport'),
+      Subject: i18n.t('reports.shiftManagementReport'),
+      Author: i18n.t('reports.shiftTracker'),
       CreatedDate: new Date()
     };
 

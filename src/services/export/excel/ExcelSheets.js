@@ -1,6 +1,7 @@
 // src/services/export/excel/ExcelSheets.js
 
 import { styles, setColumnWidths, mergeCells, getRowStyle } from './ExcelStyles';
+import i18n from '../../../i18n';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -29,53 +30,53 @@ export const createOverviewSheet = (reportData) => {
   const { executive, weeklyStats, byWork, byShiftType, metadata, projections } = reportData;
 
   // ─── Brand Header (rows 1-2) ───
-  const generatedStr = metadata.generatedAt.toLocaleDateString('en-US', {
+  const generatedStr = metadata.generatedAt.toLocaleDateString(i18n.language || 'en', {
     month: 'long', day: 'numeric', year: 'numeric'
   });
 
-  ws['A' + row] = createCell('Orary — Activity Report', styles.brandHeader);
+  ws['A' + row] = createCell(i18n.t('reports.titleActivityReport'), styles.brandHeader);
   mergeCells(ws, `A${row}:E${row}`);
   ws['F' + row] = createCell(`Generated: ${generatedStr}`, styles.brandRight);
   row++;
 
-  ws['A' + row] = createCell('orary.app — Professional Shift Management', styles.brandSubtitle);
+  ws['A' + row] = createCell(i18n.t('reports.brandTagline'), styles.brandSubtitle);
   mergeCells(ws, `A${row}:F${row}`);
   row += 2;
 
   // ─── Executive Summary ───
-  ws['A' + row] = createCell('EXECUTIVE SUMMARY', styles.sectionHeader);
+  ws['A' + row] = createCell(i18n.t('reports.sections.executiveSummary'), styles.sectionHeader);
   mergeCells(ws, `A${row}:F${row}`);
   row++;
 
   // KPI Row 1
-  ws['A' + row] = createCell('Total Earned', styles.kpiLabel);
+  ws['A' + row] = createCell(i18n.t('reports.kpi.totalEarned'), styles.kpiLabel);
   ws['B' + row] = { v: r2(executive.totalEarned), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
-  ws['C' + row] = createCell('Net Earnings', styles.kpiLabel);
+  ws['C' + row] = createCell(i18n.t('reports.kpi.netEarnings'), styles.kpiLabel);
   ws['D' + row] = { v: r2(executive.netEarnings), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
-  ws['E' + row] = createCell('Total Expenses', styles.kpiLabel);
+  ws['E' + row] = createCell(i18n.t('reports.kpi.totalExpenses'), styles.kpiLabel);
   ws['F' + row] = { v: r2(executive.totalExpenses), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
   row++;
 
   // KPI Row 2
-  ws['A' + row] = createCell('Hours Worked', styles.kpiLabel);
+  ws['A' + row] = createCell(i18n.t('reports.kpi.hoursWorked'), styles.kpiLabel);
   ws['B' + row] = { v: r1(executive.totalHours), t: 'n', s: styles.kpiValue, z: '#,##0.0' };
-  ws['C' + row] = createCell('Total Shifts', styles.kpiLabel);
+  ws['C' + row] = createCell(i18n.t('reports.kpi.totalShifts'), styles.kpiLabel);
   ws['D' + row] = { v: executive.totalShifts, t: 'n', s: styles.kpiValue, z: '#,##0' };
-  ws['E' + row] = createCell('Avg Per Hour', styles.kpiLabel);
+  ws['E' + row] = createCell(i18n.t('reports.kpi.avgPerHourLong'), styles.kpiLabel);
   ws['F' + row] = { v: r2(executive.averagePerHour), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
   row += 2;
 
   // ─── This Week ───
-  ws['A' + row] = createCell('THIS WEEK PERFORMANCE', styles.sectionHeaderBlue);
+  ws['A' + row] = createCell(i18n.t('reports.sections.thisWeekPerformance'), styles.sectionHeaderBlue);
   mergeCells(ws, `A${row}:F${row}`);
   row++;
 
   const current = weeklyStats.current;
   const comparison = weeklyStats.comparison;
 
-  ws['A' + row] = createCell('Earnings', styles.label);
+  ws['A' + row] = createCell(i18n.t('reports.table.earnings'), styles.label);
   ws['B' + row] = { v: r2(current.earnings), t: 'n', s: styles.currencyBold, z: '$#,##0.00' };
-  ws['C' + row] = createCell('vs Last Week', styles.label);
+  ws['C' + row] = createCell(i18n.t('reports.kpi.vsLastWeek'), styles.label);
   const earningsChangeStyle = comparison.earningsChange >= 0 ? styles.changePositive : styles.changeNegative;
   ws['D' + row] = createCell(
     `${comparison.earningsChange >= 0 ? '+' : ''}${r1(comparison.earningsChange).toFixed(1)}%`,
@@ -83,46 +84,46 @@ export const createOverviewSheet = (reportData) => {
   );
   row++;
 
-  ws['A' + row] = createCell('Hours', styles.label);
+  ws['A' + row] = createCell(i18n.t('reports.table.hours'), styles.label);
   ws['B' + row] = { v: r1(current.hours), t: 'n', s: styles.valueBold, z: '#,##0.0' };
-  ws['C' + row] = createCell('Shifts', styles.label);
+  ws['C' + row] = createCell(i18n.t('reports.table.shifts'), styles.label);
   ws['D' + row] = createCell(current.shifts, styles.valueBold, 'n');
-  ws['E' + row] = createCell('Days Worked', styles.label);
+  ws['E' + row] = createCell(i18n.t('reports.kpi.daysWorked'), styles.label);
   ws['F' + row] = createCell(current.daysWorked, styles.valueBold, 'n');
   row++;
 
-  ws['A' + row] = createCell('Most Productive Day', styles.label);
-  ws['B' + row] = createCell(current.mostProductiveDay?.day || 'N/A', styles.value);
-  ws['C' + row] = createCell('Earnings', styles.label);
+  ws['A' + row] = createCell(i18n.t('reports.kpi.mostProductiveDay'), styles.label);
+  ws['B' + row] = createCell(current.mostProductiveDay?.day || i18n.t('reports.naValue'), styles.value);
+  ws['C' + row] = createCell(i18n.t('reports.table.earnings'), styles.label);
   ws['D' + row] = { v: r2(current.mostProductiveDay?.earnings || 0), t: 'n', s: styles.currencyBold, z: '$#,##0.00' };
   row += 2;
 
   // ─── Monthly Projection ───
-  ws['A' + row] = createCell('MONTHLY PROJECTION', styles.sectionHeaderGreen);
+  ws['A' + row] = createCell(i18n.t('reports.sections.monthlyProjection'), styles.sectionHeaderGreen);
   mergeCells(ws, `A${row}:F${row}`);
   row++;
 
-  ws['A' + row] = createCell('Based on current 4-week pace', styles.small);
+  ws['A' + row] = createCell(i18n.t('reports.kpi.basedOnPace'), styles.small);
   mergeCells(ws, `A${row}:F${row}`);
   row++;
 
-  ws['A' + row] = createCell('Projected Earnings', styles.label);
+  ws['A' + row] = createCell(i18n.t('reports.kpi.projectedEarnings'), styles.label);
   ws['B' + row] = { v: r2(projections.monthlyProjection), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
-  ws['C' + row] = createCell('Weekly Average', styles.label);
+  ws['C' + row] = createCell(i18n.t('reports.kpi.weeklyAverage'), styles.label);
   ws['D' + row] = { v: r2(projections.weeklyAverage), t: 'n', s: styles.currencyBold, z: '$#,##0.00' };
   row += 2;
 
   // ─── Top Works ───
-  ws['A' + row] = createCell('TOP WORKS BY EARNINGS', styles.sectionHeader);
+  ws['A' + row] = createCell(i18n.t('reports.sections.topWorksByEarnings'), styles.sectionHeader);
   mergeCells(ws, `A${row}:F${row}`);
   row++;
 
   ws['A' + row] = createCell('#', styles.tableHeader);
-  ws['B' + row] = createCell('Work Name', styles.tableHeader);
-  ws['C' + row] = createCell('Earnings', styles.tableHeader);
-  ws['D' + row] = createCell('Hours', styles.tableHeader);
-  ws['E' + row] = createCell('Shifts', styles.tableHeader);
-  ws['F' + row] = createCell('Avg / Hour', styles.tableHeader);
+  ws['B' + row] = createCell(i18n.t('reports.table.workName'), styles.tableHeader);
+  ws['C' + row] = createCell(i18n.t('reports.table.earnings'), styles.tableHeader);
+  ws['D' + row] = createCell(i18n.t('reports.table.hours'), styles.tableHeader);
+  ws['E' + row] = createCell(i18n.t('reports.table.shifts'), styles.tableHeader);
+  ws['F' + row] = createCell(i18n.t('reports.kpi.avgPerHour'), styles.tableHeader);
   row++;
 
   byWork.slice(0, 5).forEach((work, index) => {
@@ -142,15 +143,15 @@ export const createOverviewSheet = (reportData) => {
   row++;
 
   // ─── Shift Type Breakdown ───
-  ws['A' + row] = createCell('SHIFT TYPE BREAKDOWN', styles.sectionHeaderBlue);
+  ws['A' + row] = createCell(i18n.t('reports.sections.shiftTypeBreakdown'), styles.sectionHeaderBlue);
   mergeCells(ws, `A${row}:F${row}`);
   row++;
 
-  ws['A' + row] = createCell('Type', styles.tableHeader);
-  ws['B' + row] = createCell('Shifts', styles.tableHeader);
-  ws['C' + row] = createCell('Hours', styles.tableHeader);
-  ws['D' + row] = createCell('Earnings', styles.tableHeader);
-  ws['E' + row] = createCell('Avg / Hour', styles.tableHeader);
+  ws['A' + row] = createCell(i18n.t('reports.table.type'), styles.tableHeader);
+  ws['B' + row] = createCell(i18n.t('reports.table.shifts'), styles.tableHeader);
+  ws['C' + row] = createCell(i18n.t('reports.table.hours'), styles.tableHeader);
+  ws['D' + row] = createCell(i18n.t('reports.table.earnings'), styles.tableHeader);
+  ws['E' + row] = createCell(i18n.t('reports.kpi.avgPerHour'), styles.tableHeader);
   ws['F' + row] = createCell('%', styles.tableHeader);
   row++;
 
@@ -196,50 +197,58 @@ export const createDeliverySheet = (reportData) => {
   let row = 1;
 
   // Brand header
-  ws['A' + row] = createCell('Orary — Delivery Performance', styles.brandHeader);
+  ws['A' + row] = createCell(i18n.t('reports.titleDeliveryPerformance'), styles.brandHeader);
   mergeCells(ws, `A${row}:H${row}`);
   row += 2;
 
   // Summary Section
-  ws['A' + row] = createCell('DELIVERY SUMMARY', styles.sectionHeader);
+  ws['A' + row] = createCell(i18n.t('reports.sections.deliverySummary'), styles.sectionHeader);
   mergeCells(ws, `A${row}:H${row}`);
   row++;
 
   // KPI Row 1
-  ws['A' + row] = createCell('Total Earned', styles.kpiLabel);
+  ws['A' + row] = createCell(i18n.t('reports.kpi.totalEarned'), styles.kpiLabel);
   ws['B' + row] = { v: r2(delivery.totalEarned), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
-  ws['C' + row] = createCell('Net Earnings', styles.kpiLabel);
+  ws['C' + row] = createCell(i18n.t('reports.kpi.netEarnings'), styles.kpiLabel);
   ws['D' + row] = { v: r2(delivery.netEarnings), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
-  ws['E' + row] = createCell('Total Tips', styles.kpiLabel);
+  ws['E' + row] = createCell(i18n.t('reports.kpi.totalTips'), styles.kpiLabel);
   ws['F' + row] = { v: r2(delivery.totalTips), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
-  ws['G' + row] = createCell('Total Orders', styles.kpiLabel);
+  ws['G' + row] = createCell(i18n.t('reports.kpi.totalOrders'), styles.kpiLabel);
   ws['H' + row] = createCell(delivery.totalOrders, styles.kpiValue, 'n');
   row++;
 
   // KPI Row 2
-  ws['A' + row] = createCell('Total Km', styles.kpiLabel);
+  ws['A' + row] = createCell(i18n.t('reports.kpi.totalKm'), styles.kpiLabel);
   ws['B' + row] = { v: r1(delivery.totalKilometers), t: 'n', s: styles.kpiValue, z: '#,##0.0' };
-  ws['C' + row] = createCell('Fuel Expense', styles.kpiLabel);
+  ws['C' + row] = createCell(i18n.t('reports.kpi.fuelExpense'), styles.kpiLabel);
   ws['D' + row] = { v: r2(delivery.totalExpenses), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
-  ws['E' + row] = createCell('Avg / Order', styles.kpiLabel);
+  ws['E' + row] = createCell(i18n.t('reports.kpi.avgPerOrder'), styles.kpiLabel);
   ws['F' + row] = { v: r2(delivery.averagePerOrder), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
-  ws['G' + row] = createCell('Avg / Hour', styles.kpiLabel);
+  ws['G' + row] = createCell(i18n.t('reports.kpi.avgPerHour'), styles.kpiLabel);
   ws['H' + row] = { v: r2(delivery.averagePerHour), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
-  row += 2;
+  row++;
+
+  // Estimated tax deduction (only when a country mileage rate applied)
+  if (delivery.mileageDeduction > 0) {
+    ws['A' + row] = createCell(i18n.t('stats.deliverySummary.mileageDeduction'), styles.kpiLabel);
+    ws['B' + row] = { v: r2(delivery.mileageDeduction), t: 'n', s: styles.kpiValue, z: '$#,##0.00' };
+    row++;
+  }
+  row++;
 
   // By Platform
-  ws['A' + row] = createCell('BY PLATFORM', styles.sectionHeaderBlue);
+  ws['A' + row] = createCell(i18n.t('reports.sections.byPlatform'), styles.sectionHeaderBlue);
   mergeCells(ws, `A${row}:H${row}`);
   row++;
 
-  ws['A' + row] = createCell('Platform', styles.tableHeader);
-  ws['B' + row] = createCell('Earnings', styles.tableHeader);
-  ws['C' + row] = createCell('Orders', styles.tableHeader);
-  ws['D' + row] = createCell('Tips', styles.tableHeader);
-  ws['E' + row] = createCell('Hours', styles.tableHeader);
-  ws['F' + row] = createCell('Km', styles.tableHeader);
-  ws['G' + row] = createCell('Expenses', styles.tableHeader);
-  ws['H' + row] = createCell('Avg / Hr', styles.tableHeader);
+  ws['A' + row] = createCell(i18n.t('reports.table.platform'), styles.tableHeader);
+  ws['B' + row] = createCell(i18n.t('reports.table.earnings'), styles.tableHeader);
+  ws['C' + row] = createCell(i18n.t('reports.table.orders'), styles.tableHeader);
+  ws['D' + row] = createCell(i18n.t('reports.table.tips'), styles.tableHeader);
+  ws['E' + row] = createCell(i18n.t('reports.table.hours'), styles.tableHeader);
+  ws['F' + row] = createCell(i18n.t('reports.table.km'), styles.tableHeader);
+  ws['G' + row] = createCell(i18n.t('reports.table.expenses'), styles.tableHeader);
+  ws['H' + row] = createCell(i18n.t('reports.kpi.avgPerHr'), styles.tableHeader);
   row++;
 
   (delivery.byPlatform || []).forEach((platform, index) => {
@@ -261,18 +270,18 @@ export const createDeliverySheet = (reportData) => {
   row++;
 
   // By Vehicle
-  ws['A' + row] = createCell('BY VEHICLE', styles.sectionHeader);
+  ws['A' + row] = createCell(i18n.t('reports.sections.byVehicle'), styles.sectionHeader);
   mergeCells(ws, `A${row}:H${row}`);
   row++;
 
-  ws['A' + row] = createCell('Vehicle', styles.tableHeader);
-  ws['B' + row] = createCell('Earnings', styles.tableHeader);
-  ws['C' + row] = createCell('Orders', styles.tableHeader);
-  ws['D' + row] = createCell('Km', styles.tableHeader);
-  ws['E' + row] = createCell('Expenses', styles.tableHeader);
-  ws['F' + row] = createCell('Efficiency', styles.tableHeader);
-  ws['G' + row] = createCell('Cost / Km', styles.tableHeader);
-  ws['H' + row] = createCell('Shifts', styles.tableHeader);
+  ws['A' + row] = createCell(i18n.t('reports.table.vehicle'), styles.tableHeader);
+  ws['B' + row] = createCell(i18n.t('reports.table.earnings'), styles.tableHeader);
+  ws['C' + row] = createCell(i18n.t('reports.table.orders'), styles.tableHeader);
+  ws['D' + row] = createCell(i18n.t('reports.table.km'), styles.tableHeader);
+  ws['E' + row] = createCell(i18n.t('reports.table.expenses'), styles.tableHeader);
+  ws['F' + row] = createCell(i18n.t('reports.kpi.efficiency'), styles.tableHeader);
+  ws['G' + row] = createCell(i18n.t('reports.kpi.costPerKm'), styles.tableHeader);
+  ws['H' + row] = createCell(i18n.t('reports.table.shifts'), styles.tableHeader);
   row++;
 
   (delivery.byVehicle || []).forEach((vehicle, index) => {
@@ -313,29 +322,29 @@ export const createMonthlySheet = (monthData) => {
   row += 2;
 
   // Summary Section
-  ws['A' + row] = createCell('MONTH SUMMARY', styles.sectionHeader);
+  ws['A' + row] = createCell(i18n.t('reports.sections.monthSummary'), styles.sectionHeader);
   mergeCells(ws, `A${row}:H${row}`);
   row++;
 
   // Summary Row 1
-  ws['A' + row] = createCell('Total Shifts', styles.label);
+  ws['A' + row] = createCell(i18n.t('reports.kpi.totalShifts'), styles.label);
   ws['B' + row] = createCell(summary.totalShifts, styles.valueBold, 'n');
-  ws['C' + row] = createCell('Traditional', styles.label);
+  ws['C' + row] = createCell(i18n.t('reports.traditional'), styles.label);
   ws['D' + row] = createCell(summary.traditionalShifts, styles.value, 'n');
-  ws['E' + row] = createCell('Delivery', styles.label);
+  ws['E' + row] = createCell(i18n.t('reports.delivery'), styles.label);
   ws['F' + row] = createCell(summary.deliveryShifts, styles.value, 'n');
-  ws['G' + row] = createCell('Total Hours', styles.label);
+  ws['G' + row] = createCell(i18n.t('reports.kpi.totalHours'), styles.label);
   ws['H' + row] = { v: r1(summary.totalHours), t: 'n', s: styles.valueBold, z: '#,##0.0' };
   row++;
 
   // Summary Row 2
-  ws['A' + row] = createCell('Total Earned', styles.label);
+  ws['A' + row] = createCell(i18n.t('reports.kpi.totalEarned'), styles.label);
   ws['B' + row] = { v: r2(summary.totalEarned), t: 'n', s: styles.currencyBold, z: '$#,##0.00' };
-  ws['C' + row] = createCell('Net Earnings', styles.label);
+  ws['C' + row] = createCell(i18n.t('reports.kpi.netEarnings'), styles.label);
   ws['D' + row] = { v: r2(summary.netEarnings), t: 'n', s: styles.currencyBold, z: '$#,##0.00' };
-  ws['E' + row] = createCell('Avg / Shift', styles.label);
+  ws['E' + row] = createCell(i18n.t('reports.kpi.avgPerShift'), styles.label);
   ws['F' + row] = { v: r2(summary.averagePerShift), t: 'n', s: styles.currencyBold, z: '$#,##0.00' };
-  ws['G' + row] = createCell('Avg / Hour', styles.label);
+  ws['G' + row] = createCell(i18n.t('reports.kpi.avgPerHour'), styles.label);
   ws['H' + row] = { v: r2(summary.averagePerHour), t: 'n', s: styles.currencyBold, z: '$#,##0.00' };
   row += 2;
 
@@ -345,7 +354,7 @@ export const createMonthlySheet = (monthData) => {
     mergeCells(ws, `A${row}:P${row}`);
     row++;
 
-    const headers = ['ID', 'Date', 'Day', 'Work', 'Start', 'End', 'Hours', 'Cross', 'Rate', 'Total', 'Day', 'Aftn', 'Night', 'Sat', 'Sun', 'Notes'];
+    const headers = [i18n.t('reports.table.id'), i18n.t('reports.table.date'), i18n.t('reports.table.day'), i18n.t('reports.table.work'), i18n.t('reports.table.start'), i18n.t('reports.table.end'), i18n.t('reports.table.hours'), i18n.t('reports.table.cross'), i18n.t('reports.table.rate'), i18n.t('reports.table.total'), i18n.t('reports.table.day'), i18n.t('reports.shiftTypeAbbr.afternoon'), i18n.t('reports.shiftTypeAbbr.night'), i18n.t('reports.shiftTypeAbbr.saturday'), i18n.t('reports.shiftTypeAbbr.sunday'), i18n.t('reports.table.notes')];
     headers.forEach((header, index) => {
       const col = String.fromCharCode(65 + index);
       ws[col + row] = createCell(header, styles.tableHeader);
@@ -367,7 +376,7 @@ export const createMonthlySheet = (monthData) => {
       ws['E' + row] = createCell(shift.startTime, centerStyle);
       ws['F' + row] = createCell(shift.endTime, centerStyle);
       ws['G' + row] = { v: r1(shift.hoursWorked), t: 'n', s: hoursStyle, z: '#,##0.0' };
-      ws['H' + row] = createCell(shift.crossesMidnight ? 'Yes' : 'No', centerStyle);
+      ws['H' + row] = createCell(shift.crossesMidnight ? i18n.t('common.yes') : i18n.t('common.no'), centerStyle);
       ws['I' + row] = { v: r2(shift.rate), t: 'n', s: currStyle, z: '$#,##0.00' };
       ws['J' + row] = { v: r2(shift.earningsWithDiscount), t: 'n', s: currStyle, z: '$#,##0.00' };
       ws['K' + row] = { v: r2(shift.breakdown.day), t: 'n', s: currStyle, z: '$#,##0.00' };
@@ -387,7 +396,7 @@ export const createMonthlySheet = (monthData) => {
     mergeCells(ws, `A${row}:P${row}`);
     row++;
 
-    const headers = ['ID', 'Date', 'Day', 'Work', 'Platform', 'Vehicle', 'Start', 'End', 'Hours', 'Orders', 'Base', 'Tips', 'Total', 'Km', 'Fuel', 'Net'];
+    const headers = [i18n.t('reports.table.id'), i18n.t('reports.table.date'), i18n.t('reports.table.day'), i18n.t('reports.table.work'), i18n.t('reports.table.platform'), i18n.t('reports.table.vehicle'), i18n.t('reports.table.start'), i18n.t('reports.table.end'), i18n.t('reports.table.hours'), i18n.t('reports.table.orders'), i18n.t('reports.table.base'), i18n.t('reports.table.tips'), i18n.t('reports.table.total'), i18n.t('reports.table.km'), i18n.t('reports.table.fuel'), i18n.t('reports.table.net')];
     headers.forEach((header, index) => {
       const col = String.fromCharCode(65 + index);
       ws[col + row] = createCell(header, styles.tableHeaderGreen);
@@ -436,13 +445,13 @@ export const createAllSheets = (reportData, options = {}) => {
   const sheets = {};
 
   // Overview sheet (always first)
-  sheets['Overview'] = createOverviewSheet(reportData, options.logo);
+  sheets[i18n.t('reports.sheetOverview')] = createOverviewSheet(reportData, options.logo);
 
   // Delivery stats sheet (if applicable)
   if (reportData.delivery && reportData.delivery.enabled) {
     const deliverySheet = createDeliverySheet(reportData);
     if (deliverySheet) {
-      sheets['Delivery Stats'] = deliverySheet;
+      sheets[i18n.t('reports.sheetDeliveryStats')] = deliverySheet;
     }
   }
 

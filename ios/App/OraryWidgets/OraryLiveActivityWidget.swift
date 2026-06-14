@@ -2,11 +2,12 @@
 // The Dynamic Island + Lock Screen UI for Live Mode.
 // Add this file to the OraryWidgets target ONLY.
 //
-// Design:
-//   Compact leading:  Work avatar circle with initial
-//   Compact trailing: Timer (auto-updates every second via Date.style.timer)
-//   Minimal:          Work avatar dot
-//   Expanded:         Avatar + Name + full timer + earnings
+// Lock Screen: gradient background with theme color, Orary logo, status badge,
+//              large timer, earnings — mirrors the dashboard LiveModeCard.
+// Dynamic Island compact/minimal: work color avatar (space-constrained).
+//
+// ⚠️ XCODE SETUP: Add "OraryLogo" image to OraryWidgets/Assets.xcassets.
+//    Use a white/transparent PNG so it renders correctly over the gradient.
 
 import ActivityKit
 import SwiftUI
@@ -29,7 +30,7 @@ extension Color {
     }
 }
 
-// MARK: - Work Avatar
+// MARK: - Work Avatar (compact/minimal only)
 
 struct WorkAvatar: View {
     let initial: String
@@ -52,19 +53,15 @@ struct WorkAvatar: View {
 
 // MARK: - Timer helpers
 
-/// Returns the "adjusted start" date that SwiftUI's .timer style should count from,
-/// factoring in accumulated pauses. When paused, returns nil.
 private func adjustedStartDate(
     sessionStart: Date,
     totalPausedSeconds: Int,
-    pausedSince: Date?,
     isPaused: Bool
 ) -> Date? {
     guard !isPaused else { return nil }
     return sessionStart.addingTimeInterval(TimeInterval(totalPausedSeconds))
 }
 
-/// Elapsed time at the moment of pause (to show as a frozen string)
 private func frozenElapsedSeconds(
     sessionStart: Date,
     totalPausedSeconds: Int,
@@ -88,41 +85,83 @@ private func formatSecondsShort(_ s: Int) -> String {
     return String(format: "%02dm", m)
 }
 
-// MARK: - Lock Screen / Notification Banner view
+// MARK: - Lock Screen / Notification Banner
 
 struct OraryLockScreenView: View {
     let context: ActivityViewContext<OraryLiveActivityAttributes>
 
+    private var themeColor: Color {
+        Color(hex: context.attributes.themeColor) ?? Color(hex: "#EC4899") ?? .pink
+    }
+
     var body: some View {
-        HStack(spacing: 14) {
-            WorkAvatar(
-                initial: context.attributes.workInitial,
-                colorHex: context.attributes.workColor,
-                size: 44
+        ZStack {
+            // Gradient background mirroring LiveModeCard
+            LinearGradient(
+                colors: [
+                    themeColor.opacity(0.75),
+                    themeColor,
+                    themeColor.opacity(0.9)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
             )
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text(context.attributes.workName)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                Text(context.state.isPaused ? "Paused" : "Live Mode Active")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+            HStack(spacing: 16) {
+                // Left: logo + work name + status badge
+                VStack(alignment: .leading, spacing: 5) {
+                    // Status badge (pill like the dashboard card)
+                    HStack(spacing: 5) {
+                        Circle()
+                            .fill(context.state.isPaused ? Color.yellow : Color.red)
+                            .frame(width: 6, height: 6)
+                            .shadow(color: context.state.isPaused ? .yellow : .red, radius: 2)
+                        Text(context.state.isPaused ? "PAUSED" : "LIVE")
+                            .font(.system(size: 9, weight: .black))
+                            .foregroundColor(.white)
+                            .kerning(0.8)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(.white.opacity(0.2))
+                    .clipShape(Capsule())
+
+                    // Logo + work name
+                    HStack(spacing: 6) {
+                        Image("OraryLogo")
+                            .resizable()
+                            .renderingMode(.template)
+                            .foregroundColor(.white)
+                            .frame(width: 18, height: 18)
+                            .opacity(0.95)
+
+                        Text(context.attributes.workName)
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(.white.opacity(0.9))
+                            .lineLimit(1)
+                    }
+                }
+
+                Spacer()
+
+                // Right: timer + earnings
+                VStack(alignment: .trailing, spacing: 4) {
+                    timerView
+                        .font(.system(.title3, design: .monospaced).bold())
+                        .foregroundColor(.white)
+
+                    HStack(spacing: 3) {
+                        Image(systemName: "dollarsign")
+                            .font(.system(size: 10, weight: .semibold))
+                        Text(context.state.earningsFormatted.replacingOccurrences(of: "$", with: ""))
+                            .font(.caption.bold())
+                    }
+                    .foregroundColor(.white.opacity(0.85))
+                }
             }
-
-            Spacer()
-
-            VStack(alignment: .trailing, spacing: 2) {
-                // Timer — auto-updates when active, frozen when paused
-                timerView
-                    .font(.system(.title3, design: .monospaced).bold())
-
-                Text(context.state.earningsFormatted)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
         }
-        .padding()
     }
 
     @ViewBuilder
@@ -140,7 +179,6 @@ struct OraryLockScreenView: View {
                     .addingTimeInterval(TimeInterval(context.state.totalPausedSeconds)),
                 style: .timer
             )
-            .foregroundColor(.red)
         }
     }
 }
@@ -150,14 +188,12 @@ struct OraryLockScreenView: View {
 struct OraryLiveActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: OraryLiveActivityAttributes.self) { context in
-            // Lock Screen / Notification banner
             OraryLockScreenView(context: context)
-                .background(.background)
 
         } dynamicIsland: { context in
             DynamicIsland {
 
-                // ── Expanded (user long-presses) ──────────────────────────
+                // ── Expanded ──────────────────────────────────────────────
                 DynamicIslandExpandedRegion(.leading) {
                     HStack(spacing: 8) {
                         WorkAvatar(
@@ -210,13 +246,13 @@ struct OraryLiveActivityWidget: Widget {
                 )
 
             } compactTrailing: {
-                // ── Compact right: timer (auto-updating) ──────────────────
+                // ── Compact right: timer ──────────────────────────────────
                 compactTimerView(context: context)
                     .font(.caption.monospacedDigit().bold())
                     .foregroundColor(context.state.isPaused ? .yellow : .red)
 
             } minimal: {
-                // ── Minimal (single dot on island edge) ───────────────────
+                // ── Minimal: single dot on island edge ────────────────────
                 WorkAvatar(
                     initial: context.attributes.workInitial,
                     colorHex: context.attributes.workColor,
@@ -226,7 +262,6 @@ struct OraryLiveActivityWidget: Widget {
         }
     }
 
-    // Auto-updating timer for expanded view
     @ViewBuilder
     private func expandedTimerView(context: ActivityViewContext<OraryLiveActivityAttributes>) -> some View {
         if context.state.isPaused, let pausedAt = context.state.pausedSince {
@@ -244,7 +279,6 @@ struct OraryLiveActivityWidget: Widget {
         }
     }
 
-    // Compact trailing timer (HH:MM or MMm)
     @ViewBuilder
     private func compactTimerView(context: ActivityViewContext<OraryLiveActivityAttributes>) -> some View {
         if context.state.isPaused, let pausedAt = context.state.pausedSince {

@@ -18,6 +18,7 @@ import WeeklyShiftsSection from '../components/shifts/WeeklyShiftsSection';
 import { generateShiftDetails } from '../utils/shiftDetailsUtils';
 import Flex from '../components/ui/Flex';
 import logger from '../utils/logger';
+import { getLocaleFromI18n } from '../utils/locale';
 
 const Shifts = () => {
   const { t, i18n } = useTranslation();
@@ -90,7 +91,7 @@ const Shifts = () => {
       const monday = createSafeDate(mondayDate);
       const sunday = new Date(monday);
       sunday.setDate(monday.getDate() + 6);
-      const locale = i18n.language === 'es' ? 'es-ES' : i18n.language === 'fr' ? 'fr-FR' : 'en-US';
+      const locale = getLocaleFromI18n(i18n.language);
       const mondayStr = monday.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short' });
       const sundayStr = sunday.toLocaleDateString(locale, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
       return `${mondayStr} – ${sundayStr}`;
@@ -181,8 +182,8 @@ const Shifts = () => {
         action={{
           onClick: openNewModal,
           icon: Plus,
-          label: t('nav.newShift'),
-          mobileLabel: t('nav.newShift'),
+          label: t('common.new'),
+          mobileLabel: t('common.new'),
           themeColor: thematicColors?.base,
         }}
       />

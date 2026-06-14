@@ -1,57 +1,22 @@
 // src/pages/legal/PrivacyPolicy.jsx
 
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { useAuth } from '../../contexts/AuthContext';
-import { Shield, CreditCard, Database, Lock, Globe, Cookie, Bell, MapPin, ArrowLeft } from 'lucide-react';
+import { Shield, CreditCard, Database, Lock, Globe, Cookie, Bell, MapPin } from 'lucide-react';
+import LegalPageShell from './LegalPageShell';
+import buildInfo from '../../generated/buildInfo.json';
 
 const PrivacyPolicy = () => {
-  const { t } = useTranslation();
-  const { currentUser } = useAuth();
-  const backTo = currentUser ? '/settings' : '/';
-  const backLabel = currentUser ? t('common.backToSettings') : t('common.back');
-
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
-      <Helmet>
-        <title>Privacy Policy | Orary</title>
-        <meta name="description" content="Read Orary's Privacy Policy. Learn how we collect, use, store, and protect your data in our shift management and earnings tracking application." />
-        <link rel="canonical" href="https://orary.app/privacy" />
-      </Helmet>
-
-      {/* Public header */}
-      <header className="sticky top-0 z-10 bg-white/90 dark:bg-slate-950/90 backdrop-blur border-b border-gray-100 dark:border-gray-800">
-        <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <img src="/assets/SVG/logo.svg" alt="Orary" className="w-7 h-7" />
-            <span className="font-bold text-gray-900 dark:text-white text-lg leading-none">Orary.</span>
-          </Link>
-          <Link
-            to={backTo}
-            className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-          >
-            <ArrowLeft size={15} />
-            {backLabel}
-          </Link>
-        </div>
-      </header>
-
-      <div className="max-w-3xl mx-auto px-4 pb-12 space-y-6 pt-8">
-        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 dark:border-gray-700 pb-4 gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-1">Privacy Policy</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Last updated: February 5, 2026</p>
-          </div>
-          <img
-            src="/assets/SVG/logo.svg"
-            alt="Orary"
-            className="w-32 h-32 sm:w-40 sm:h-40 opacity-10"
-            style={{ filter: 'grayscale(100%)' }}
-          />
-        </div>
-
-      <div className="prose prose-lg text-gray-700 dark:text-gray-300 dark:prose-invert max-w-none">
+    <LegalPageShell
+      seo={{
+        title: 'Privacy Policy | Orary',
+        description: "Read Orary's Privacy Policy. Learn how we collect, use, store, and protect your data in our shift management and earnings tracking application.",
+        canonical: 'https://orary.app/privacy',
+      }}
+      badge={{ label: 'Legal · Privacy', bg: 'rgba(99,102,241,0.2)', text: '#a5b4fc' }}
+      title="Privacy Policy"
+      lastUpdated={buildInfo.legalDates.privacy}
+      currentPath="/privacy"
+    >
         <p>
           At <strong>Orary</strong>, we take your privacy seriously. This Privacy Policy explains how we collect, use, store, and protect your information when you use our shift management application. By using Orary, you consent to the data practices described in this policy.
         </p>
@@ -316,7 +281,7 @@ const PrivacyPolicy = () => {
           <li><strong>View/Edit Data:</strong> Access and modify your data through Settings.</li>
           <li><strong>Clear Data:</strong> Use "Clear Everything" to erase all work and shift data while keeping your account.</li>
           <li><strong>Delete Account:</strong> Use "Delete Account" to permanently remove your account and all data.</li>
-          <li><strong>Export Data:</strong> Use the export feature (coming soon) to download your data.</li>
+          <li><strong>Export Data:</strong> Export your complete shift and earnings history to PDF or Excel directly from the app (available with Orary Premium).</li>
           <li><strong>Revoke Location Permission:</strong> Deny or revoke location access in your browser settings at any time.</li>
         </ul>
         <p className="mt-4">
@@ -376,15 +341,7 @@ const PrivacyPolicy = () => {
           We aim to respond to all privacy inquiries within 30 days.
         </p>
 
-        {/* Internal SEO links */}
-        <div className="mt-10 pt-6 border-t border-gray-100 dark:border-gray-800 flex flex-wrap gap-x-6 gap-y-2 text-sm text-gray-400 dark:text-gray-600">
-          <Link to="/faq"          className="hover:text-pink-500 transition-colors">FAQ</Link>
-          <Link to="/australia-88" className="hover:text-pink-500 transition-colors">88-day visa tracker</Link>
-          <Link to="/terms"        className="hover:text-pink-500 transition-colors">Terms of Service</Link>
-        </div>
-      </div>
-      </div>
-    </div>
+    </LegalPageShell>
   );
 };
 

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { Heart, Settings, BarChart3, Calendar, HeadphonesIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import buildInfo from '../../../generated/buildInfo.json';
 
 const AboutFooter = ({ colors }) => {
   const { t } = useTranslation();
@@ -48,13 +49,13 @@ const AboutFooter = ({ colors }) => {
       {/* Version & Credits */}
       <div className="text-center space-y-2">
         <p className="text-sm font-medium" style={{ color: colors.textSecondary }}>
-          {t('about.footer.version')}
+          {t('about.footer.version', { version: buildInfo.version })}
         </p>
         <p className="text-xs flex items-center justify-center gap-1" style={{ color: colors.textSecondary, opacity: 0.7 }}>
           {t('about.footer.developed')} <Heart size={12} className="text-red-400 fill-red-400" /> {t('about.footer.by')}
         </p>
         <p className="text-xs" style={{ color: colors.textSecondary, opacity: 0.5 }}>
-          {t('about.footer.copyright')}
+          {t('about.footer.copyright', { year: new Date().getFullYear() })}
         </p>
 
         {/* Public SEO pages */}

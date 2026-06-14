@@ -6,6 +6,7 @@
 import { Capacitor } from '@capacitor/core';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
+import i18n from '../../../i18n';
 import logger from '../../../utils/logger';
 
 /**
@@ -48,7 +49,7 @@ export const nativeSave = async (blob, filename) => {
     await Share.share({
       title: filename,
       url: result.uri,
-      dialogTitle: 'Save or share your report'
+      dialogTitle: i18n.t('reports.shareDialogTitle')
     });
   } catch (error) {
     logger.error('nativeSave failed:', error);

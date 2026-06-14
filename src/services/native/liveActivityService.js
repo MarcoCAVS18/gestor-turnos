@@ -1,28 +1,36 @@
 // src/services/native/liveActivityService.js
-// Bridge to iOS Live Activities (Dynamic Island) via the custom LiveActivityPlugin.
-// On web / Android: all calls are no-ops that resolve immediately.
+// Bridge to iOS Live Activities (Dynamic Island) and Android Foreground Service
+// via the custom LiveActivityPlugin.
+// On web: all calls are no-ops that resolve immediately.
 
 import { registerPlugin, Capacitor } from '@capacitor/core';
 
-// Register the native plugin. Web fallback is a no-op object.
+// Same plugin name resolves to LiveActivityPlugin.swift on iOS
+// and LiveModePlugin.java (@CapacitorPlugin name="LiveActivityPlugin") on Android.
 const LiveActivityPlugin = registerPlugin('LiveActivityPlugin', {
   web: {
-    isSupported:     async () => ({ supported: false }),
-    startActivity:   async () => ({ activityId: '' }),
-    updateActivity:  async () => {},
-    endActivity:     async () => {},
+    isSupported:    async () => ({ supported: false }),
+    startActivity:  async () => ({ activityId: '' }),
+    updateActivity: async () => {},
+    endActivity:    async () => {},
   },
 });
 
 const isNativeIOS = () =>
   Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios';
 
+const isNativeAndroid = () =>
+  Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android';
+
+const isNativeMobile = () => isNativeIOS() || isNativeAndroid();
+
 /**
- * Returns true if Live Activities are available and enabled on this device.
- * Requires iOS 16.2+ and iPhone with Dynamic Island or Lock Screen support.
+ * Returns true if live notifications are supported on this device.
+ * iOS: requires iOS 16.2+ with Live Activities enabled.
+ * Android: always supported (API 24+).
  */
 export const isLiveActivitySupported = async () => {
-  if (!isNativeIOS()) return false;
+  if (!isNativeMobile()) return false;
   try {
     const { supported } = await LiveActivityPlugin.isSupported();
     return !!supported;
@@ -32,19 +40,21 @@ export const isLiveActivitySupported = async () => {
 };
 
 /**
- * Start a Live Activity for an active Live Mode session.
+ * Start a Live Activity (iOS) or persistent foreground notification (Android).
  * @param {object} params
- * @param {string} params.workName       - Name of the job/work
- * @param {string} params.workColor      - Hex color e.g. "#EC4899"
- * @param {Date}   params.sessionStart   - JS Date when the session started
+ * @param {string} params.workName      - Name of the job/work
+ * @param {string} params.workColor     - Hex color of the work e.g. "#EC4899"
+ * @param {string} params.themeColor    - User's primary theme color e.g. "#EC4899"
+ * @param {Date}   params.sessionStart  - JS Date when the session started
  * @returns {Promise<string>} activityId (empty string if unsupported)
  */
-export const startLiveActivity = async ({ workName, workColor, sessionStart }) => {
-  if (!isNativeIOS()) return '';
+export const startLiveActivity = async ({ workName, workColor, themeColor, sessionStart }) => {
+  if (!isNativeMobile()) return '';
   try {
     const { activityId } = await LiveActivityPlugin.startActivity({
       workName,
       workColor,
+      themeColor: themeColor || workColor || '#EC4899',
       sessionStartDate: sessionStart instanceof Date
         ? sessionStart.toISOString()
         : new Date(sessionStart).toISOString(),
@@ -57,7 +67,9 @@ export const startLiveActivity = async ({ workName, workColor, sessionStart }) =
 };
 
 /**
- * Update the Live Activity state (call on pause/resume and every ~30s for earnings).
+ * Update the live notification state.
+ * iOS: updates Live Activity every ~30s.
+ * Android: updates the foreground service notification immediately.
  * @param {object} params
  * @param {number}      params.totalPausedSeconds  - Accumulated pause time in seconds
  * @param {Date|null}   params.pausedSince         - When current pause started (null if active)
@@ -70,7 +82,7 @@ export const updateLiveActivity = async ({
   earningsFormatted,
   isPaused,
 }) => {
-  if (!isNativeIOS()) return;
+  if (!isNativeMobile()) return;
   try {
     await LiveActivityPlugin.updateActivity({
       totalPausedSeconds: Math.floor(totalPausedSeconds || 0),
@@ -86,10 +98,10 @@ export const updateLiveActivity = async ({
 };
 
 /**
- * End the Live Activity (call when session finishes or is cancelled).
+ * End the live notification (call when session finishes or is cancelled).
  */
 export const endLiveActivity = async () => {
-  if (!isNativeIOS()) return;
+  if (!isNativeMobile()) return;
   try {
     await LiveActivityPlugin.endActivity();
   } catch {

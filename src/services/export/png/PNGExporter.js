@@ -1,5 +1,6 @@
 // src/services/export/png/PNGExporter.js
 
+import i18n from '../../../i18n';
 import { loadLogoWhite } from '../utils/LogoLoader';
 import { renderComponentToImage } from '../utils/ChartRenderer';
 import { PNGDashboard } from './PNGDashboard';
@@ -78,7 +79,7 @@ export class PNGExporter {
     const formatDate = (d) => {
       if (!d) return '';
       const date = d instanceof Date ? d : new Date(d);
-      return date.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
+      return date.toLocaleDateString(i18n.language || 'en', { day: '2-digit', month: 'short', year: 'numeric' });
     };
 
     const dateRange = metadata.dateRange || {};
@@ -125,7 +126,7 @@ export class PNGExporter {
       metadata: {
         startDate: formatDate(dateRange.start),
         endDate: formatDate(dateRange.end),
-        generatedDate: new Date().toLocaleDateString('en-AU', {
+        generatedDate: new Date().toLocaleDateString(i18n.language || 'en', {
           day: '2-digit',
           month: 'short',
           year: 'numeric'

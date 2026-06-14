@@ -32,6 +32,7 @@ const getCollections = () => {
     shiftsRef: collection(db, 'shifts'),
     statsRef: collection(db, 'stats'),
     feedbackRef: collection(db, 'feedback'),
+    payslipsRef: collection(db, 'payslips'),
   };
 };
 
@@ -490,6 +491,107 @@ export const deleteShift = async (userUid, id, isDelivery = false) => {
 };
 
 // ============================================================================
+// PAYSLIPS — recibos cargados por el usuario (datos extraídos, no el PDF)
+// ============================================================================
+
+/**
+ * Suscripción en tiempo real a los payslips del usuario.
+ * IMPORTANTE: NO usamos orderBy en la query porque Firestore excluye
+ * documentos cuyo campo de orderBy sea null/undefined. Como periodEnd puede
+ * ser null (manual entry incompleto), ordenamos en cliente.
+ */
+export const subscribeToPayslips = (userUid, { setPayslips, setError }) => {
+  const { payslipsRef } = getCollections();
+  if (!userUid) return () => {};
+
+  const q = query(
+    payslipsRef,
+    where('userId', '==', userUid),
+    limit(200)
+  );
+
+  return createIncrementalSubscription(
+    q,
+    setPayslips,
+    (error) => setError && setError(error),
+    // Sort: primero los que tienen periodEnd (más recientes arriba),
+    // después los sin periodEnd (incompletos) ordenados por createdAt desc.
+    (a, b) => {
+      if (a.periodEnd && b.periodEnd) return b.periodEnd.localeCompare(a.periodEnd);
+      if (a.periodEnd && !b.periodEnd) return -1;
+      if (!a.periodEnd && b.periodEnd) return 1;
+      const aTime = a.createdAt?.toMillis?.() || 0;
+      const bTime = b.createdAt?.toMillis?.() || 0;
+      return bTime - aTime;
+    }
+  );
+};
+
+/**
+ * Crea un payslip en Firestore. Devuelve el doc con su id.
+ */
+export const addPayslip = async (userUid, payslipData) => {
+  const { payslipsRef } = getCollections();
+  const data = {
+    userId: userUid,
+    periodStart: payslipData.periodStart || null,
+    periodEnd: payslipData.periodEnd || null,
+    hours: Number(payslipData.hours) || 0,
+    gross: Number(payslipData.gross) || 0,
+    tax: Number(payslipData.tax) || 0,
+    source: payslipData.source || 'manual',
+    fileName: payslipData.fileName || null,
+    parseStatus: payslipData.parseStatus || null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+  const docRef = await addDoc(payslipsRef, data);
+  return { ...data, id: docRef.id };
+};
+
+/**
+ * Actualiza un payslip existente. Devuelve el doc actualizado.
+ */
+export const updatePayslip = async (userUid, payslipId, updates) => {
+  const { payslipsRef } = getCollections();
+  const ref = doc(payslipsRef, payslipId);
+  const data = {
+    ...updates,
+    updatedAt: new Date(),
+  };
+  // Coerción defensiva de los campos numéricos (igual que en addPayslip)
+  if (updates.gross !== undefined) data.gross = Number(updates.gross) || 0;
+  if (updates.tax !== undefined) data.tax = Number(updates.tax) || 0;
+  if (updates.hours !== undefined) data.hours = Number(updates.hours) || 0;
+  await updateDoc(ref, data);
+  return { id: payslipId, ...data };
+};
+
+/**
+ * Elimina un payslip por id.
+ */
+export const deletePayslip = async (userUid, payslipId) => {
+  const { payslipsRef } = getCollections();
+  const ref = doc(payslipsRef, payslipId);
+  return deleteDoc(ref);
+};
+
+/**
+ * Borra todos los payslips del usuario (para el botón Limpiar de la card).
+ */
+export const clearAllPayslips = async (userUid) => {
+  const { payslipsRef } = getCollections();
+  const q = query(payslipsRef, where('userId', '==', userUid));
+  const snap = await getDocs(q);
+  if (snap.empty) return 0;
+
+  const batch = writeBatch(db);
+  snap.docs.forEach((d) => batch.delete(d.ref));
+  await batch.commit();
+  return snap.size;
+};
+
+// ============================================================================
 // ACCOUNT MANAGEMENT
 // ============================================================================
 
@@ -498,17 +600,20 @@ export const clearUserData = async (userUid) => {
     throw new Error('User ID is required');
   }
 
-  const { worksRef, shiftsRef } = getCollections();
+  const { worksRef, shiftsRef, payslipsRef } = getCollections();
 
-  // Get all shifts and works for this user
+  // Get all shifts, works and payslips for this user
   const shiftsQuery = query(shiftsRef, where('userId', '==', userUid));
   const shiftsSnapshot = await getDocs(shiftsQuery);
 
   const worksQuery = query(worksRef, where('userId', '==', userUid));
   const worksSnapshot = await getDocs(worksQuery);
 
-  // Delete all shifts and works using batch (max 500 operations per batch)
-  const totalDocs = shiftsSnapshot.size + worksSnapshot.size;
+  const payslipsQuery = query(payslipsRef, where('userId', '==', userUid));
+  const payslipsSnapshot = await getDocs(payslipsQuery);
+
+  // Delete all shifts, works and payslips using batch (max 500 operations per batch)
+  const totalDocs = shiftsSnapshot.size + worksSnapshot.size + payslipsSnapshot.size;
   const MAX_BATCH_SIZE = 500;
 
   if (totalDocs <= MAX_BATCH_SIZE) {
@@ -516,6 +621,7 @@ export const clearUserData = async (userUid) => {
     const batch = writeBatch(db);
     shiftsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
     worksSnapshot.docs.forEach(doc => batch.delete(doc.ref));
+    payslipsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
     await batch.commit();
   } else {
     // Multiple batches if over limit
@@ -534,6 +640,17 @@ export const clearUserData = async (userUid) => {
     }
 
     for (const doc of worksSnapshot.docs) {
+      batch.delete(doc.ref);
+      operationCount++;
+
+      if (operationCount === MAX_BATCH_SIZE) {
+        await batch.commit();
+        batch = writeBatch(db);
+        operationCount = 0;
+      }
+    }
+
+    for (const doc of payslipsSnapshot.docs) {
       batch.delete(doc.ref);
       operationCount++;
 

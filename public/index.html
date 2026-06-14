@@ -5,7 +5,7 @@
     <link rel="icon" href="./assets/images/logo1.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#EC4899" />
-    <meta name="description" content="Track your work shifts, calculate earnings automatically, and analyze your income with detailed statistics. Free shift management app for workers in Australia and worldwide." />
+    <meta name="description" content="Track your work shifts, calculate earnings automatically, and analyze your income with detailed statistics. Free shift management app for workers worldwide." />
     <meta name="keywords" content="shift management, work scheduler, earnings tracker, shift planner, time tracking, payroll calculator, work hours, roster app, shift calculator, delivery earnings, work schedule app, pay tracker" />
     <meta name="author" content="Orary" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:0" />
@@ -40,14 +40,27 @@
     <!-- Canonical is set per-page via react-helmet-async -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
+    <!-- Preconnect to critical third-party origins -->
+    <link rel="preconnect" href="https://gestionturnos-7ec99.firebaseapp.com" crossorigin />
+    <link rel="preconnect" href="https://apis.google.com" crossorigin />
+
     <!-- Preload LCP element -->
     <link rel="preload" href="/assets/SVG/logo.svg" as="image" type="image/svg+xml" />
 
-    <!-- Google Fonts preconnect + preload (replaces @import in CSS) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" /></noscript>
+    <!-- Preload the two most-used Poppins weights only — avoids bandwidth contention -->
+    <link rel="preload" href="/assets/fonts/poppins/Poppins-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/assets/fonts/poppins/Poppins-SemiBold.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- @font-face inlined — no extra CSS request, browser knows the fonts immediately.
+         WOFF2 first (all modern browsers), TTF fallback for older ones. -->
+    <style>
+      @font-face{font-family:'Poppins';src:url('/assets/fonts/poppins/Poppins-Light.woff2') format('woff2'),url('/assets/fonts/poppins/Poppins-Light.ttf') format('truetype');font-weight:300;font-style:normal;font-display:swap}
+      @font-face{font-family:'Poppins';src:url('/assets/fonts/poppins/Poppins-Regular.woff2') format('woff2'),url('/assets/fonts/poppins/Poppins-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+      @font-face{font-family:'Poppins';src:url('/assets/fonts/poppins/Poppins-Italic.woff2') format('woff2'),url('/assets/fonts/poppins/Poppins-Italic.ttf') format('truetype');font-weight:400;font-style:italic;font-display:swap}
+      @font-face{font-family:'Poppins';src:url('/assets/fonts/poppins/Poppins-Medium.woff2') format('woff2'),url('/assets/fonts/poppins/Poppins-Medium.ttf') format('truetype');font-weight:500;font-style:normal;font-display:swap}
+      @font-face{font-family:'Poppins';src:url('/assets/fonts/poppins/Poppins-SemiBold.woff2') format('woff2'),url('/assets/fonts/poppins/Poppins-SemiBold.ttf') format('truetype');font-weight:600;font-style:normal;font-display:swap}
+      @font-face{font-family:'Poppins';src:url('/assets/fonts/poppins/Poppins-Bold.woff2') format('woff2'),url('/assets/fonts/poppins/Poppins-Bold.ttf') format('truetype');font-weight:700;font-style:normal;font-display:swap}
+    </style>
 
     <!-- Structured Data - WebApplication -->
     <script type="application/ld+json">
@@ -66,26 +79,26 @@
         "@type": "AggregateOffer",
         "lowPrice": "0",
         "highPrice": "2.99",
-        "priceCurrency": "AUD",
+        "priceCurrency": "USD",
         "offerCount": "2",
         "offers": [
           {
             "@type": "Offer",
             "name": "Free Plan",
             "price": "0",
-            "priceCurrency": "AUD",
+            "priceCurrency": "USD",
             "description": "Core shift tracking and earnings calculation features"
           },
           {
             "@type": "Offer",
             "name": "Premium Plan",
             "price": "2.99",
-            "priceCurrency": "AUD",
+            "priceCurrency": "USD",
             "description": "Advanced analytics, exports, and premium features"
           }
         ]
       },
-      "featureList": "Shift scheduling, Earnings calculation, Delivery tracking, Statistics dashboard, PDF/Excel export, Live mode timer",
+      "featureList": "Shift scheduling, Earnings calculation, Delivery tracking, Statistics dashboard, PDF/Excel export, Live mode timer, Working Holiday Visa tracker, Payslip auto-detection",
       "image": "https://orary.app/assets/images/logo2.png",
       "author": {
         "@type": "Organization",
@@ -95,7 +108,7 @@
     }
     </script>
 
-    <title>Orary - Shift Management & Earnings Tracker</title>
+    <!-- Title managed per-page by react-helmet-async -->
 
     <!-- Google Analytics — loaded only after cookie consent -->
     <!-- Consent is stored in localStorage key "orary_cookie_consent" = "accepted" | "declined" -->

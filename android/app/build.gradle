@@ -16,9 +16,19 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            storeFile     file(System.getenv("ORARY_KEYSTORE_PATH") ?: "${System.getProperty('user.home')}/orary-release.keystore")
+            storePassword System.getenv("ORARY_STORE_PASSWORD") ?: ""
+            keyAlias      "orary"
+            keyPassword   System.getenv("ORARY_KEY_PASSWORD") ?: ""
+        }
+    }
     buildTypes {
         release {
-            minifyEnabled false
+            signingConfig   signingConfigs.release
+            minifyEnabled   true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

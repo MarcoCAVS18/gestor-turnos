@@ -1,12 +1,13 @@
 // src/components/layout/Navigation/NavMainLinks.jsx
 
 import React, { memo } from 'react';
-import { Home, Briefcase, Calendar, BarChart2, CalendarDays } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Home, Briefcase, Calendar, BarChart2, CalendarDays, FileText } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const NavMainLinks = memo(({
   navigateToView,
   currentView,
+  currentPath,
   hasWorks,
   colors,
   t,
@@ -15,6 +16,17 @@ const NavMainLinks = memo(({
   handleShiftsMouseLeave,
   getActiveDesktopStyle,
 }) => {
+  const isStatisticsActive = currentView === 'statistics';
+
+  // Estilo para sub-ítems del sidebar (menores, indentados)
+  const getSubItemStyle = (path) => {
+    const isActive = currentPath === path;
+    return {
+      color: isActive ? colors.primary : '#6B7280',
+      backgroundColor: isActive ? `${colors.primary}15` : 'transparent',
+    };
+  };
+
   return (
     <nav className="flex-1 p-4">
       <div className="space-y-2">
@@ -94,16 +106,53 @@ const NavMainLinks = memo(({
           )}
         </div>
 
-        <motion.button
-          onClick={() => navigateToView('statistics')}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
-          style={getActiveDesktopStyle('statistics')}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <BarChart2 size={20} />
-          <span>{t('nav.statistics')}</span>
-        </motion.button>
+        {/* Statistics + sub-menú expandible */}
+        <div>
+          <motion.button
+            onClick={() => navigateToView('statistics')}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all hover:shadow-md"
+            style={getActiveDesktopStyle('statistics')}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <BarChart2 size={20} />
+            <span>{t('nav.statistics')}</span>
+          </motion.button>
+
+          {/* Sub-ítems — aparecen solo cuando Statistics está activo */}
+          <AnimatePresence>
+            {isStatisticsActive && (
+              <motion.div
+                key="stats-submenu"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className="overflow-hidden"
+              >
+                <div className="mt-1 ml-3 pl-3 border-l-2 border-gray-200 dark:border-slate-700 space-y-1">
+                  <button
+                    onClick={() => navigateToView('statistics')}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
+                    style={getSubItemStyle('/statistics')}
+                  >
+                    <BarChart2 size={15} />
+                    <span>{t('nav.statistics')}</span>
+                  </button>
+
+                  <button
+                    onClick={() => navigateToView('statistics/payslips')}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
+                    style={getSubItemStyle('/statistics/payslips')}
+                  >
+                    <FileText size={15} />
+                    <span>{t('payslip.title')}</span>
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </nav>
   );

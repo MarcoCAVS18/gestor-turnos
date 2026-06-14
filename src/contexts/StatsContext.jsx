@@ -6,6 +6,7 @@ import { useDataContext } from './DataContext';
 import { useDeliveryContext } from './DeliveryContext';
 import { useConfigContext } from './ConfigContext';
 import * as calculationService from '../services/calculationService';
+import { getMileageRate } from '../constants/mileageRates';
 import { createSafeDate } from '../utils/time';
 
 const StatsContext = createContext();
@@ -85,12 +86,14 @@ export const StatsProvider = ({ children }) => {
 
   // Calculate delivery statistics
   const deliveryStats = useMemo(() => {
+    const mileageConfig = getMileageRate(holidayCountry);
     return calculationService.calculateDeliveryStats({
       deliveryWork,
       deliveryShifts,
-      period: 'month' // Hardcoded to 'month' as it was in Stats.jsx
+      period: 'month', // Hardcoded to 'month' as it was in Stats.jsx
+      mileageRate: mileageConfig?.ratePerKm || null
     });
-  }, [deliveryWork, deliveryShifts]);
+  }, [deliveryWork, deliveryShifts, holidayCountry]);
 
   // NEW: Calculate data for weekly evolution chart
   const weeklyEvolutionData = useMemo(() => {

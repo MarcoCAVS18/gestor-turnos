@@ -14,7 +14,6 @@ export { default as ProgressBar } from './ui/ProgressBar';
 export { default as Header } from './layout/Header';
 export { default as Navigation } from './layout/Navegacion';
 export { default as PageHeader } from './layout/PageHeader';
-export { default as LoadingWrapper } from './layout/LoadingWrapper';
 
 // Card Components
 export { default as StatCard } from './cards/StatCard';
@@ -95,5 +94,3 @@ export { default as DebugPanel } from './other/DebugPanel';
 // Legacy Components
 export { default as DynamicButton } from './DynamicButton';
 
-// Auth Components
-export { default as PrivateRoute } from './auth/PrivateRoute';

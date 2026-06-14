@@ -11,6 +11,7 @@ import {
   drawTable,
   addPageIfNeeded
 } from './PDFStyles';
+import i18n from '../../../i18n';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -57,8 +58,8 @@ export const addCoverPage = (doc, logo, metadata) => {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(16);
   doc.setTextColor(COLORS.white);
-  const appNameW = doc.getTextWidth('Orary');
-  doc.text('Orary', centerX - appNameW / 2, 57);
+  const appNameW = doc.getTextWidth(i18n.t('reports.brand'));
+  doc.text(i18n.t('reports.brand'), centerX - appNameW / 2, 57);
 
   // ── White area below band ──
 
@@ -66,7 +67,7 @@ export const addCoverPage = (doc, logo, metadata) => {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(28);
   doc.setTextColor(COLORS.primary);
-  const titleText = 'Activity Report';
+  const titleText = i18n.t('reports.activityReport');
   const titleW = doc.getTextWidth(titleText);
   doc.text(titleText, centerX - titleW / 2, 100);
 
@@ -75,8 +76,8 @@ export const addCoverPage = (doc, logo, metadata) => {
   doc.rect(centerX - 20, 104, 40, 1.5, 'F');
 
   // Date range
-  const startDate = metadata.dateRange.start.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  const endDate = metadata.dateRange.end.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const startDate = metadata.dateRange.start.toLocaleDateString(i18n.language || 'en', { month: 'long', year: 'numeric' });
+  const endDate = metadata.dateRange.end.toLocaleDateString(i18n.language || 'en', { month: 'long', year: 'numeric' });
   const dateText = startDate === endDate ? startDate : `${startDate} – ${endDate}`;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(13);
@@ -92,9 +93,9 @@ export const addCoverPage = (doc, logo, metadata) => {
   // ── Stats row ──
   const statsY = 148;
   const statCols = [
-    { label: 'Total Shifts', value: String(metadata.totalShiftsCount || 0) },
-    { label: 'Total Works', value: String(metadata.totalWorksCount || 0) },
-    { label: 'Report Period', value: dateText.length > 25 ? startDate : dateText }
+    { label: i18n.t('reports.kpi.totalShifts'), value: String(metadata.totalShiftsCount || 0) },
+    { label: i18n.t('reports.kpi.totalWorks'), value: String(metadata.totalWorksCount || 0) },
+    { label: i18n.t('reports.reportPeriod'), value: dateText.length > 25 ? startDate : dateText }
   ];
   const colW = LAYOUT.contentWidth / statCols.length;
 
@@ -120,9 +121,10 @@ export const addCoverPage = (doc, logo, metadata) => {
   doc.rect(0, bottomY, LAYOUT.pageWidth, 45, 'F');
 
   // Generation info
-  const genText = `Generated on ${metadata.generatedAt.toLocaleDateString('en-US', {
+  const genDate = metadata.generatedAt.toLocaleDateString(i18n.language || 'en', {
     weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-  })}`;
+  });
+  const genText = i18n.t('reports.generatedOn', { date: genDate });
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(FONTS.body.size);
   doc.setTextColor(COLORS.lightGray);
@@ -133,7 +135,7 @@ export const addCoverPage = (doc, logo, metadata) => {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(FONTS.body.size);
   doc.setTextColor(COLORS.primary);
-  const urlText = 'orary.app';
+  const urlText = i18n.t('reports.appUrl');
   const urlW = doc.getTextWidth(urlText);
   doc.text(urlText, centerX - urlW / 2, bottomY + 24);
 
@@ -146,7 +148,7 @@ export const addCoverPage = (doc, logo, metadata) => {
  * Adds the executive summary page
  */
 export const addExecutiveSummary = (doc, logo, reportData) => {
-  let y = addPageHeader(doc, logo, 'EXECUTIVE SUMMARY');
+  let y = addPageHeader(doc, logo, i18n.t('reports.sections.executiveSummary'));
   y += 4;
 
   const { executive, weeklyStats, projections } = reportData;
@@ -156,40 +158,40 @@ export const addExecutiveSummary = (doc, logo, reportData) => {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(FONTS.heading3.size);
   doc.setTextColor(COLORS.darkGray);
-  doc.text('Key Metrics', x, y);
+  doc.text(i18n.t('reports.keyMetrics'), x, y);
   y += 7;
 
   const cardSpacing = LAYOUT.kpiCard.spacing;
   const cardWidth = LAYOUT.kpiCard.width;
 
-  drawKPICard(doc, x, y, 'Total Earned', fCurrency(executive.totalEarned), COLORS.primary);
-  drawKPICard(doc, x + cardWidth + cardSpacing, y, 'Hours Worked', fHours(executive.totalHours), COLORS.secondary);
-  drawKPICard(doc, x + (cardWidth + cardSpacing) * 2, y, 'Total Shifts', String(executive.totalShifts), COLORS.primary);
-  drawKPICard(doc, x + (cardWidth + cardSpacing) * 3, y, 'Avg Per Hour', fCurrency(executive.averagePerHour), COLORS.secondary);
+  drawKPICard(doc, x, y, i18n.t('reports.kpi.totalEarned'), fCurrency(executive.totalEarned), COLORS.primary);
+  drawKPICard(doc, x + cardWidth + cardSpacing, y, i18n.t('reports.kpi.hoursWorked'), fHours(executive.totalHours), COLORS.secondary);
+  drawKPICard(doc, x + (cardWidth + cardSpacing) * 2, y, i18n.t('reports.kpi.totalShifts'), String(executive.totalShifts), COLORS.primary);
+  drawKPICard(doc, x + (cardWidth + cardSpacing) * 3, y, i18n.t('reports.kpi.avgPerHourLong'), fCurrency(executive.averagePerHour), COLORS.secondary);
 
   y += LAYOUT.kpiCard.height + 12;
 
   // ── This Week ──
-  y = addSectionHeader(doc, 'THIS WEEK', y, COLORS.primary);
+  y = addSectionHeader(doc, i18n.t('reports.sections.thisWeek'), y, COLORS.primary);
 
   const current = weeklyStats.current;
 
   drawComparisonWidget(doc, x, y, {
-    label: 'Earnings',
+    label: i18n.t('reports.table.earnings'),
     current: current.earnings,
     previous: weeklyStats.previous.earnings,
     format: 'currency'
   }, COLORS.primary);
 
   drawComparisonWidget(doc, x + 52, y, {
-    label: 'Hours',
+    label: i18n.t('reports.table.hours'),
     current: current.hours,
     previous: weeklyStats.previous.hours,
     format: 'hours'
   }, COLORS.secondary);
 
   drawComparisonWidget(doc, x + 104, y, {
-    label: 'Shifts',
+    label: i18n.t('reports.table.shifts'),
     current: current.shifts,
     previous: weeklyStats.previous.shifts,
     format: 'number'
@@ -201,12 +203,12 @@ export const addExecutiveSummary = (doc, logo, reportData) => {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(FONTS.body.size);
   doc.setTextColor(COLORS.gray);
-  doc.text('Most Productive Day:', x, y);
+  doc.text(`${i18n.t('reports.kpi.mostProductiveDay')}:`, x, y);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(COLORS.darkGray);
   const mpDay = current.mostProductiveDay;
   doc.text(
-    `${mpDay?.day || 'N/A'}  (${fCurrency(mpDay?.earnings || 0)})`,
+    `${mpDay?.day || i18n.t('reports.naValue')}  (${fCurrency(mpDay?.earnings || 0)})`,
     x + 38,
     y
   );
@@ -215,17 +217,17 @@ export const addExecutiveSummary = (doc, logo, reportData) => {
 
   // ── Monthly Projection ──
   y = addPageIfNeeded(doc, y, 35);
-  y = addSectionHeader(doc, 'MONTHLY PROJECTION', y, COLORS.secondary);
+  y = addSectionHeader(doc, i18n.t('reports.sections.monthlyProjection'), y, COLORS.secondary);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(FONTS.body.size);
   doc.setTextColor(COLORS.gray);
-  doc.text('Estimated based on current 4-week pace:', x, y);
+  doc.text(`${i18n.t('reports.projectionNote')}:`, x, y);
   y += 7;
 
-  drawKPICard(doc, x, y, 'Projected Monthly', fCurrency(projections.monthlyProjection), COLORS.primary);
-  drawKPICard(doc, x + cardWidth + cardSpacing, y, 'Weekly Average', fCurrency(projections.weeklyAverage), COLORS.secondary);
-  drawKPICard(doc, x + (cardWidth + cardSpacing) * 2, y, 'Hourly Rate', fCurrency(projections.hourlyProjection), COLORS.primary);
+  drawKPICard(doc, x, y, i18n.t('reports.kpi.projectedMonthly'), fCurrency(projections.monthlyProjection), COLORS.primary);
+  drawKPICard(doc, x + cardWidth + cardSpacing, y, i18n.t('reports.kpi.weeklyAverage'), fCurrency(projections.weeklyAverage), COLORS.secondary);
+  drawKPICard(doc, x + (cardWidth + cardSpacing) * 2, y, i18n.t('reports.kpi.hourlyRate'), fCurrency(projections.hourlyProjection), COLORS.primary);
 
   y += LAYOUT.kpiCard.height + 5;
 
@@ -239,7 +241,7 @@ export const addExecutiveSummary = (doc, logo, reportData) => {
  * Adds the analytics page with chart images
  */
 export const addAnalyticsPage = (doc, logo, charts) => {
-  let y = addPageHeader(doc, logo, 'ANALYTICS & CHARTS');
+  let y = addPageHeader(doc, logo, i18n.t('reports.sections.analyticsCharts'));
   y += 4;
 
   const x = LAYOUT.margin.left;
@@ -283,15 +285,15 @@ export const addAnalyticsPage = (doc, logo, charts) => {
  * Adds the earnings by work page
  */
 export const addWorkDetailsPage = (doc, logo, reportData) => {
-  let y = addPageHeader(doc, logo, 'EARNINGS BY WORK');
+  let y = addPageHeader(doc, logo, i18n.t('reports.sections.earningsByWork'));
   y += 4;
 
   const { byWork, byShiftType } = reportData;
 
   // Top Works table
-  y = addSectionHeader(doc, 'TOP WORKS', y, COLORS.primary);
+  y = addSectionHeader(doc, i18n.t('reports.sections.topWorks'), y, COLORS.primary);
 
-  const workHeaders = ['Work Name', 'Earnings', 'Hours', 'Shifts', 'Avg / Hr'];
+  const workHeaders = [i18n.t('reports.table.workName'), i18n.t('reports.table.earnings'), i18n.t('reports.table.hours'), i18n.t('reports.table.shifts'), i18n.t('reports.kpi.avgPerHr')];
   const workData = byWork.slice(0, 10).map(w => [
     w.name.substring(0, 22),
     fCurrency(w.earnings),
@@ -306,9 +308,9 @@ export const addWorkDetailsPage = (doc, logo, reportData) => {
 
   // Shift Type Breakdown
   y = addPageIfNeeded(doc, y, 40);
-  y = addSectionHeader(doc, 'SHIFT TYPE BREAKDOWN', y, COLORS.secondary);
+  y = addSectionHeader(doc, i18n.t('reports.sections.shiftTypeBreakdown'), y, COLORS.secondary);
 
-  const typeHeaders = ['Type', 'Shifts', 'Hours', 'Earnings', 'Avg / Hr', '%'];
+  const typeHeaders = [i18n.t('reports.table.type'), i18n.t('reports.table.shifts'), i18n.t('reports.table.hours'), i18n.t('reports.table.earnings'), i18n.t('reports.kpi.avgPerHr'), '%'];
   const typeData = byShiftType.map(t => [
     t.name,
     String(t.shifts),
@@ -336,7 +338,7 @@ export const addDeliveryPage = (doc, logo, reportData, charts) => {
     return LAYOUT.margin.top;
   }
 
-  let y = addPageHeader(doc, logo, 'DELIVERY PERFORMANCE');
+  let y = addPageHeader(doc, logo, i18n.t('reports.sections.deliveryPerformance'));
   y += 4;
 
   const x = LAYOUT.margin.left;
@@ -344,27 +346,35 @@ export const addDeliveryPage = (doc, logo, reportData, charts) => {
   const cardWidth = LAYOUT.kpiCard.width;
 
   // KPI Row 1
-  y = addSectionHeader(doc, 'SUMMARY', y, COLORS.primary);
+  y = addSectionHeader(doc, i18n.t('reports.sections.summary'), y, COLORS.primary);
 
-  drawKPICard(doc, x, y, 'Total Earned', fCurrency(delivery.totalEarned), COLORS.primary);
-  drawKPICard(doc, x + cardWidth + cardSpacing, y, 'Net Earnings', fCurrency(delivery.netEarnings), COLORS.secondary);
-  drawKPICard(doc, x + (cardWidth + cardSpacing) * 2, y, 'Total Orders', String(delivery.totalOrders), COLORS.primary);
-  drawKPICard(doc, x + (cardWidth + cardSpacing) * 3, y, 'Total Tips', fCurrency(delivery.totalTips), COLORS.secondary);
+  drawKPICard(doc, x, y, i18n.t('reports.kpi.totalEarned'), fCurrency(delivery.totalEarned), COLORS.primary);
+  drawKPICard(doc, x + cardWidth + cardSpacing, y, i18n.t('reports.kpi.netEarnings'), fCurrency(delivery.netEarnings), COLORS.secondary);
+  drawKPICard(doc, x + (cardWidth + cardSpacing) * 2, y, i18n.t('reports.kpi.totalOrders'), String(delivery.totalOrders), COLORS.primary);
+  drawKPICard(doc, x + (cardWidth + cardSpacing) * 3, y, i18n.t('reports.kpi.totalTips'), fCurrency(delivery.totalTips), COLORS.secondary);
 
   y += LAYOUT.kpiCard.height + 8;
 
   // KPI Row 2
-  drawKPICard(doc, x, y, 'Total Km', `${Math.round(delivery.totalKilometers)} km`, COLORS.secondary);
-  drawKPICard(doc, x + cardWidth + cardSpacing, y, 'Fuel Expense', fCurrency(delivery.totalExpenses), COLORS.secondary);
-  drawKPICard(doc, x + (cardWidth + cardSpacing) * 2, y, 'Avg / Order', fCurrency(delivery.averagePerOrder), COLORS.primary);
-  drawKPICard(doc, x + (cardWidth + cardSpacing) * 3, y, 'Avg / Hour', fCurrency(delivery.averagePerHour), COLORS.primary);
+  drawKPICard(doc, x, y, i18n.t('reports.kpi.totalKm'), `${Math.round(delivery.totalKilometers)} km`, COLORS.secondary);
+  drawKPICard(doc, x + cardWidth + cardSpacing, y, i18n.t('reports.kpi.fuelExpense'), fCurrency(delivery.totalExpenses), COLORS.secondary);
+  drawKPICard(doc, x + (cardWidth + cardSpacing) * 2, y, i18n.t('reports.kpi.avgPerOrder'), fCurrency(delivery.averagePerOrder), COLORS.primary);
+  drawKPICard(doc, x + (cardWidth + cardSpacing) * 3, y, i18n.t('reports.kpi.avgPerHour'), fCurrency(delivery.averagePerHour), COLORS.primary);
 
-  y += LAYOUT.kpiCard.height + 14;
+  y += LAYOUT.kpiCard.height + 8;
+
+  // KPI Row 3 — estimated tax deduction (only when a country mileage rate applied)
+  if (delivery.mileageDeduction > 0) {
+    drawKPICard(doc, x, y, i18n.t('stats.deliverySummary.mileageDeduction'), fCurrency(delivery.mileageDeduction), COLORS.secondary);
+    y += LAYOUT.kpiCard.height + 8;
+  }
+
+  y += 6;
 
   // Platform chart
   if (charts && charts.platformComparison) {
     y = addPageIfNeeded(doc, y, 60);
-    y = addSectionHeader(doc, 'PLATFORM COMPARISON', y, COLORS.secondary);
+    y = addSectionHeader(doc, i18n.t('reports.sections.platformComparison'), y, COLORS.secondary);
     const chartWidth = LAYOUT.contentWidth;
     const chartHeight = 44;
     doc.addImage(charts.platformComparison.base64, 'PNG', x, y, chartWidth, chartHeight);
@@ -373,9 +383,9 @@ export const addDeliveryPage = (doc, logo, reportData, charts) => {
 
   // Platform details table
   y = addPageIfNeeded(doc, y, 40);
-  y = addSectionHeader(doc, 'BY PLATFORM', y, COLORS.primary);
+  y = addSectionHeader(doc, i18n.t('reports.sections.byPlatform'), y, COLORS.primary);
 
-  const platformHeaders = ['Platform', 'Earnings', 'Orders', 'Tips', 'Hours', 'Avg / Hr'];
+  const platformHeaders = [i18n.t('reports.table.platform'), i18n.t('reports.table.earnings'), i18n.t('reports.table.orders'), i18n.t('reports.table.tips'), i18n.t('reports.table.hours'), i18n.t('reports.kpi.avgPerHr')];
   const platformData = (delivery.byPlatform || []).slice(0, 5).map(p => [
     p.name.substring(0, 16),
     fCurrency(p.earnings),
@@ -409,15 +419,15 @@ export const addMonthlyDetailPages = (doc, logo, monthlyData) => {
     const x = LAYOUT.margin.left;
 
     // ── Month KPI summary ──
-    y = addSectionHeader(doc, 'MONTH SUMMARY', y, COLORS.primary);
+    y = addSectionHeader(doc, i18n.t('reports.sections.monthSummary'), y, COLORS.primary);
 
     const cardSpacing = LAYOUT.kpiCard.spacing;
     const cardWidth = LAYOUT.kpiCard.width;
 
-    drawKPICard(doc, x, y, 'Total Earned', fCurrency(summary.totalEarned), COLORS.primary);
-    drawKPICard(doc, x + cardWidth + cardSpacing, y, 'Net Earnings', fCurrency(summary.netEarnings), COLORS.secondary);
-    drawKPICard(doc, x + (cardWidth + cardSpacing) * 2, y, 'Total Hours', fHours(summary.totalHours), COLORS.primary);
-    drawKPICard(doc, x + (cardWidth + cardSpacing) * 3, y, 'Total Shifts', String(summary.totalShifts), COLORS.secondary);
+    drawKPICard(doc, x, y, i18n.t('reports.kpi.totalEarned'), fCurrency(summary.totalEarned), COLORS.primary);
+    drawKPICard(doc, x + cardWidth + cardSpacing, y, i18n.t('reports.kpi.netEarnings'), fCurrency(summary.netEarnings), COLORS.secondary);
+    drawKPICard(doc, x + (cardWidth + cardSpacing) * 2, y, i18n.t('reports.kpi.totalHours'), fHours(summary.totalHours), COLORS.primary);
+    drawKPICard(doc, x + (cardWidth + cardSpacing) * 3, y, i18n.t('reports.kpi.totalShifts'), String(summary.totalShifts), COLORS.secondary);
 
     y += LAYOUT.kpiCard.height + 8;
 
@@ -427,10 +437,10 @@ export const addMonthlyDetailPages = (doc, logo, monthlyData) => {
     doc.setTextColor(COLORS.gray);
 
     const statsLine = [
-      `Traditional: ${summary.traditionalShifts}`,
-      `Delivery: ${summary.deliveryShifts}`,
-      `Avg / Shift: ${fCurrency(summary.averagePerShift)}`,
-      `Avg / Hour: ${fCurrency(summary.averagePerHour)}`
+      `${i18n.t('reports.traditional')}: ${summary.traditionalShifts}`,
+      `${i18n.t('reports.delivery')}: ${summary.deliveryShifts}`,
+      `${i18n.t('reports.kpi.avgPerShift')}: ${fCurrency(summary.averagePerShift)}`,
+      `${i18n.t('reports.kpi.avgPerHour')}: ${fCurrency(summary.averagePerHour)}`
     ].join('   ·   ');
     doc.text(statsLine, x, y);
 
@@ -439,9 +449,9 @@ export const addMonthlyDetailPages = (doc, logo, monthlyData) => {
     // ── Traditional Shifts ──
     if (traditionalShifts && traditionalShifts.length > 0) {
       y = addPageIfNeeded(doc, y, 30);
-      y = addSectionHeader(doc, `TRADITIONAL SHIFTS  (${traditionalShifts.length})`, y, COLORS.primary);
+      y = addSectionHeader(doc, i18n.t('reports.countLabel', { label: i18n.t('reports.sections.traditionalShifts'), count: traditionalShifts.length }), y, COLORS.primary);
 
-      const headers = ['Date', 'Work', 'Hours', 'Earnings', 'Day', 'Aftn', 'Night', 'Sat', 'Sun'];
+      const headers = [i18n.t('reports.table.date'), i18n.t('reports.table.work'), i18n.t('reports.table.hours'), i18n.t('reports.table.earnings'), i18n.t('filters.shiftTypes.day'), i18n.t('reports.shiftTypeAbbr.afternoon'), i18n.t('reports.shiftTypeAbbr.night'), i18n.t('reports.shiftTypeAbbr.saturday'), i18n.t('reports.shiftTypeAbbr.sunday')];
       const data = traditionalShifts.slice(0, 20).map(s => [
         s.date,
         s.workName.substring(0, 18),
@@ -461,7 +471,7 @@ export const addMonthlyDetailPages = (doc, logo, monthlyData) => {
         doc.setFont('helvetica', 'italic');
         doc.setFontSize(FONTS.small.size);
         doc.setTextColor(COLORS.lightGray);
-        doc.text(`… and ${traditionalShifts.length - 20} more shifts. See the XLSX export for full detail.`, x, y);
+        doc.text(i18n.t('reports.moreShiftsFull', { count: traditionalShifts.length - 20 }), x, y);
         y += 5;
       }
       doc.setTextColor(COLORS.darkGray);
@@ -472,9 +482,9 @@ export const addMonthlyDetailPages = (doc, logo, monthlyData) => {
     // ── Delivery Shifts ──
     if (deliveryShifts && deliveryShifts.length > 0) {
       y = addPageIfNeeded(doc, y, 30);
-      y = addSectionHeader(doc, `DELIVERY SHIFTS  (${deliveryShifts.length})`, y, COLORS.secondary);
+      y = addSectionHeader(doc, i18n.t('reports.countLabel', { label: i18n.t('reports.sections.deliveryShifts'), count: deliveryShifts.length }), y, COLORS.secondary);
 
-      const headers = ['Date', 'Platform', 'Orders', 'Earnings', 'Tips', 'Net', 'Hours'];
+      const headers = [i18n.t('reports.table.date'), i18n.t('reports.table.platform'), i18n.t('reports.table.orders'), i18n.t('reports.table.earnings'), i18n.t('reports.table.tips'), i18n.t('reports.table.net'), i18n.t('reports.table.hours')];
       const data = deliveryShifts.slice(0, 20).map(s => [
         s.date,
         s.platform.substring(0, 14),
@@ -492,7 +502,7 @@ export const addMonthlyDetailPages = (doc, logo, monthlyData) => {
         doc.setFont('helvetica', 'italic');
         doc.setFontSize(FONTS.small.size);
         doc.setTextColor(COLORS.lightGray);
-        doc.text(`… and ${deliveryShifts.length - 20} more shifts.`, x, y);
+        doc.text(i18n.t('reports.moreShifts', { count: deliveryShifts.length - 20 }), x, y);
         doc.setTextColor(COLORS.darkGray);
       }
     }

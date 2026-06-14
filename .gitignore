@@ -11,6 +11,9 @@
 # production
 /build
 
+# generated at build time (version + legal dates) — see scripts/gen-build-info.js
+/src/generated/
+
 # misc
 .DS_Store
 .env
@@ -51,3 +54,7 @@ ios/App/App/GoogleService-Info.plist
 
 # GSC CLI token (contains OAuth credentials)
 scripts/.gsc-token.json
+
+# Internal strategy docs — do NOT push
+ORARY_AUDIT.md
+/docs/

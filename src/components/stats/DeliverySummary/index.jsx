@@ -51,6 +51,16 @@ const DeliverySummary = ({ deliveryStats }) => {
           <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(deliveryStats.netEarnings)}</span>
         </div>
       </div>
+
+      {deliveryStats.mileageDeduction > 0 && (
+        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-slate-700">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600 dark:text-gray-400">{t('stats.deliverySummary.mileageDeduction')}</span>
+            <span className="font-semibold text-green-600 dark:text-green-400">{formatCurrency(deliveryStats.mileageDeduction)}</span>
+          </div>
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{t('stats.deliverySummary.mileageDeductionDisclaimer')}</p>
+        </div>
+      )}
     </Card>
   );
 };

@@ -5,22 +5,62 @@ service cloud.firestore {
     // Users collection - SECURED
     // Each user can only read/write their own profile
     // CRITICAL: subscription field is protected from client-side manipulation
-    // Only Cloud Functions (admin SDK) can set isPremium: true
+    // Only Cloud Functions (admin SDK) can set isPremium: true.
+    // liveModeUsage is constrained so free users cannot reset their monthly counter:
+    // every write must use serverTimestamp() for lastResetDate (prevents backdating),
+    // and monthlyCount can only be incremented by 1 or reset to 0 on a real month change.
     match /users/{userId} {
+
+      function isValidLiveModeUsageChange() {
+        let newUsage = request.resource.data.liveModeUsage;
+        return newUsage.monthlyCount is int
+          && newUsage.lastResetDate == request.time
+          && (
+            // First write (field didn't exist yet): init (0) or first session (1)
+            (!('liveModeUsage' in resource.data)
+              && newUsage.monthlyCount >= 0 && newUsage.monthlyCount <= 1)
+            ||
+            // Increment by exactly 1
+            ('liveModeUsage' in resource.data
+              && newUsage.monthlyCount == resource.data.liveModeUsage.monthlyCount + 1)
+            ||
+            // Monthly reset: only to 0, and only when the stored timestamp is from
+            // a different month/year (or missing/invalid)
+            ('liveModeUsage' in resource.data
+              && newUsage.monthlyCount == 0
+              && (
+                !(resource.data.liveModeUsage.lastResetDate is timestamp)
+                || resource.data.liveModeUsage.lastResetDate.month() != request.time.month()
+                || resource.data.liveModeUsage.lastResetDate.year() != request.time.year()
+              ))
+          );
+      }
+
       allow read: if request.auth != null && request.auth.uid == userId;
 
-      // Create: allow but subscription must NOT be premium
+      // Create: subscription must NOT be premium, usage counter must start at 0,
+      // and server-managed flags cannot be set by the client
       allow create: if request.auth != null
                     && request.auth.uid == userId
                     && (!('subscription' in request.resource.data)
-                        || request.resource.data.subscription.isPremium == false);
+                        || request.resource.data.subscription.isPremium == false)
+                    && (!('liveModeUsage' in request.resource.data)
+                        || request.resource.data.liveModeUsage.monthlyCount == 0)
+                    && !request.resource.data.keys().hasAny(['isPremiumTest', 'calendarToken']);
 
-      // Update: block subscription changes unless setting isPremium to false
+      // Update: block subscription changes unless setting isPremium to false,
+      // block server-managed flags, and constrain liveModeUsage changes
       allow update: if request.auth != null
                     && request.auth.uid == userId
+                    && !request.resource.data.diff(resource.data).affectedKeys()
+                        .hasAny(['isPremiumTest', 'calendarToken'])
                     && (
                       !request.resource.data.diff(resource.data).affectedKeys().hasAny(['subscription'])
                       || request.resource.data.subscription.isPremium == false
+                    )
+                    && (
+                      !request.resource.data.diff(resource.data).affectedKeys().hasAny(['liveModeUsage'])
+                      || isValidLiveModeUsageChange()
                     );
 
       // Delete: only own account
@@ -42,6 +82,13 @@ service cloud.firestore {
 
     // Shifts collection
     match /shifts/{shiftId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
+
+    // Payslips collection (datos extraídos de recibos cargados por el usuario)
+    match /payslips/{payslipId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
       allow read: if request.auth != null && resource.data.userId == request.auth.uid;
       allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
