@@ -14,28 +14,16 @@
     <meta name="author" content="Orary" />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:0" />
 
-    <!-- Open Graph / Social Media -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Orary - Shift Management & Earnings Tracker" />
-    <meta property="og:description" content="Track your work shifts, calculate earnings automatically, and analyze your income with detailed statistics." />
-    <meta property="og:image" content="https://orary.app/assets/images/logo2.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Orary - Shift Management & Earnings Tracker" />
-    <meta property="og:url" content="https://orary.app/" />
+    <!-- Social meta (og:title/description/url/image/type, twitter:*) is set
+         per-route by react-helmet-async. It is intentionally NOT hardcoded here:
+         the prerender de-dupes <title>/description/og:title/og:description, but NOT
+         og:type/og:url/twitter:*, so a static copy would leave duplicate/stale tags
+         (e.g. og:url pinned to the homepage, og:type "website" on article pages).
+         Pages are pre-rendered, so crawlers see the per-route tags in the served HTML. -->
     <meta property="og:site_name" content="Orary" />
-
-    <!-- Open Graph locale -->
     <meta property="og:locale" content="en_US" />
     <meta property="og:locale:alternate" content="es_ES" />
     <meta property="og:locale:alternate" content="fr_FR" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Orary - Shift Management & Earnings Tracker" />
-    <meta name="twitter:description" content="Track your work shifts, calculate earnings automatically, and analyze your income." />
-    <meta name="twitter:image" content="https://orary.app/assets/images/logo2.png" />
-    <meta name="twitter:image:alt" content="Orary - Shift Management & Earnings Tracker" />
 
     <!-- hreflang: single URL for all languages, x-default only -->
     <link rel="alternate" hreflang="x-default" href="https://orary.app/" />
