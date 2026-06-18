@@ -20,6 +20,9 @@ Disallow: /clear-everything
 Disallow: /share/
 Disallow: /error
 
+# Decorative background video — not real content; keep it out of video indexing
+Disallow: /assets/videos/
+
 # Crawl-delay for non-Google bots
 Crawl-delay: 2
 
@@ -40,6 +43,9 @@ Disallow: /delete-account
 Disallow: /clear-everything
 Disallow: /share/
 Disallow: /error
+
+# Decorative background video — not real content; keep it out of video indexing
+Disallow: /assets/videos/
 
 # Sitemap location
 Sitemap: https://orary.app/sitemap.xml

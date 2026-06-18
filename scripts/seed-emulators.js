@@ -72,10 +72,16 @@ async function grantPremium(uid) {
   console.log('• Premium granted until', expiry.toISOString().slice(0, 10));
 }
 
+async function grantAdmin(uid) {
+  await auth.setCustomUserClaims(uid, { admin: true });
+  console.log('• Admin custom claim set');
+}
+
 (async () => {
   try {
     const user = await ensureUser();
     await grantPremium(user.uid);
+    await grantAdmin(user.uid);
     console.log('\n✅ Seed complete.');
     console.log('   Email:    ' + TEST_EMAIL);
     console.log('   Password: ' + TEST_PASSWORD);

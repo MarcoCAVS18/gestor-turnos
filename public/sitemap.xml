@@ -75,6 +75,95 @@
   </url>
 
   <!-- ======================== -->
+  <!-- BLOG                     -->
+  <!-- ======================== -->
+
+  <url>
+    <loc>https://orary.app/blog</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://orary.app/blog/track-88-days-working-holiday-visa</loc>
+    <lastmod>2026-06-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://orary.app/blog/working-holiday-visa-days-calculator</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://orary.app/blog/best-apps-casual-workers-2026</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://orary.app/blog/working-holiday-maker-tax-refund-australia</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://orary.app/blog/is-delivery-driving-worth-it</loc>
+    <lastmod>2026-06-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url><loc>https://orary.app/blog/specified-work-eligible-postcodes-australia</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/working-holiday-visa-evidence-payslips</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/working-holiday-visa-mistakes</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/how-to-calculate-your-pay</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/understand-australian-payslip</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/tax-delivery-gig-workers-australia</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/mileage-deduction-delivery-riders</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/track-delivery-earnings-multiple-apps</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/how-to-track-work-shifts</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/working-holiday-visa-new-zealand-guide</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/canada-iec-working-holiday-guide</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/uk-ireland-tax-working-holiday</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/new-zealand-ird-tax-backpackers</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/penalty-rates-australia-explained</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/casual-vs-part-time-pay-australia</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/am-i-being-underpaid-australia</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/best-vehicle-for-delivery</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/delivery-rider-tax-deductions</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/budgeting-irregular-income</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/how-orary-calculates-earnings</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/orary-vs-spreadsheet-shift-tracking</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/export-shift-data-tax-time</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Localized blog (ES / FR) -->
+  <url><loc>https://orary.app/es/blog</loc><lastmod>2026-06-15</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://orary.app/fr/blog</loc><lastmod>2026-06-15</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://orary.app/es/blog/track-88-days-working-holiday-visa</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/track-88-days-working-holiday-visa</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/es/blog/working-holiday-visa-days-calculator</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/working-holiday-visa-days-calculator</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/es/blog/working-holiday-maker-tax-refund-australia</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/working-holiday-maker-tax-refund-australia</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/es/blog/working-holiday-visa-evidence-payslips</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/working-holiday-visa-evidence-payslips</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/es/blog/how-to-calculate-your-pay</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/how-to-calculate-your-pay</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/es/blog/mileage-deduction-delivery-riders</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/mileage-deduction-delivery-riders</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/es/blog/track-delivery-earnings-multiple-apps</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/track-delivery-earnings-multiple-apps</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/es/blog/how-to-track-work-shifts</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/how-to-track-work-shifts</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- ======================== -->
   <!-- LEGAL PAGES              -->
   <!-- ======================== -->
 

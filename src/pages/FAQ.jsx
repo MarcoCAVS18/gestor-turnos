@@ -46,8 +46,16 @@ const GENERAL_FAQS = [
     a: 'Yes — with Orary Premium. Export complete shift history to Excel (XLSX) with monthly breakdowns, or to PDF with charts and analytics. Useful for tax returns, Working Holiday Visa applications, or personal financial records.',
   },
   {
+    q: 'Can Orary estimate my income tax and refund?',
+    a: 'Yes — with Orary Premium. Upload a payslip PDF and Orary reads your gross pay and tax, then estimates your annual income tax and any potential refund using the official tax brackets for Australia (ATO), New Zealand (IRD), the United Kingdom (HMRC) and Ireland (Revenue). Estimates cover income tax only — not Medicare or ACC levies, National Insurance, USC, PRSI or other deductions — so always confirm with the official tax office (myTax, myIR, your HMRC Personal Tax Account or Revenue myAccount).',
+  },
+  {
     q: 'Does Orary work on iPhone and Android?',
     a: 'Yes. Orary runs as a web app at orary.app and as a native app for iOS (iPhone and iPad) and Android. Native apps include home screen shortcuts and system notifications.',
+  },
+  {
+    q: 'Does Orary send reminders and notifications?',
+    a: 'Yes, on the iOS and Android apps. Orary can send an optional daily reminder to log your shifts (you choose the time in Settings), a heads-up before each upcoming shift, and milestone alerts as you approach your Australian Working Holiday Visa 88-day goal. All notifications are opt-in and managed from Settings.',
   },
 ];
 
@@ -367,6 +375,7 @@ const FAQ = () => {
           </p>
           <div className="flex items-center gap-4 shrink-0">
             <Link to="/australia-88" className="hover:text-slate-600 transition-colors">88-day tracker</Link>
+            <Link to="/blog"         className="hover:text-slate-600 transition-colors">Blog</Link>
             <Link to="/terms"        className="hover:text-slate-600 transition-colors">Terms</Link>
             <Link to="/privacy"      className="hover:text-slate-600 transition-colors">Privacy</Link>
           </div>

@@ -32,6 +32,7 @@ export const useAuth = () => {
 // Context provider
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [profilePhotoURL, setProfilePhotoURL] = useState(getDefaultProfilePhoto());
@@ -458,9 +459,21 @@ export const AuthProvider = ({ children }) => {
       return;
     }
 
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       loadProfilePhoto(user);
+      // Read the `admin` custom claim (set server-side via Admin SDK) to gate
+      // the admin panel. Claims can't be forged by the client.
+      if (user) {
+        try {
+          const tokenResult = await user.getIdTokenResult();
+          setIsAdmin(tokenResult.claims.admin === true);
+        } catch {
+          setIsAdmin(false);
+        }
+      } else {
+        setIsAdmin(false);
+      }
       setLoading(false);
     });
 
@@ -469,6 +482,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     currentUser,
+    isAdmin,
     loading,
     error,
     profilePhotoURL,

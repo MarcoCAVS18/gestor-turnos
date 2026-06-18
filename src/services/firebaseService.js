@@ -17,6 +17,7 @@ import {
   writeBatch,
   serverTimestamp,
   limit,
+  getCountFromServer,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { createSafeDate } from '../utils/time';
@@ -84,6 +85,8 @@ export const ensureUserDocument = async (user) => {
     deliveryEnabled: false,
     smokoEnabled: false,
     smokoMinutes: 30,
+    dailyReminderEnabled: false,
+    dailyReminderTime: '19:00',
     themeMode: 'light', // 'light' or 'dark' (dark is premium only)
     shiftRanges: {
       dayStart: 6,
@@ -127,6 +130,8 @@ export const savePreferences = async (userUid, preferences) => {
     weeklyHoursGoal: 'settings.weeklyHoursGoal',
     smokoEnabled: 'settings.smokoEnabled',
     smokoMinutes: 'settings.smokoMinutes',
+    dailyReminderEnabled: 'settings.dailyReminderEnabled',
+    dailyReminderTime: 'settings.dailyReminderTime',
     themeMode: 'settings.themeMode',
     holidayCountry: 'settings.holidayCountry',
     holidayRegion: 'settings.holidayRegion',
@@ -754,4 +759,113 @@ export const getFeedbackReviews = async () => {
   };
 
   return seededShuffle(allReviews, daySeed).slice(0, 10);
+};
+
+// ─── Admin panel: moderation & usage ─────────────────────────────────────────
+// All functions below are admin-only; firestore.rules enforces the access.
+
+// Every review (any status) for the moderation panel.
+export const getAllFeedback = async () => {
+  const { feedbackRef } = getCollections();
+  const q = query(feedbackRef, orderBy('createdAt', 'desc'), limit(200));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((d) => ({
+    id: d.id,
+    ...d.data(),
+    createdAt: d.data().createdAt?.toDate?.() || null,
+  }));
+};
+
+// Approve / reject a review (status: 'approved' | 'rejected' | 'pending').
+export const updateFeedbackStatus = async (feedbackId, status) => {
+  await updateDoc(doc(db, 'feedback', feedbackId), { status });
+};
+
+// Basic user list for the admin panel.
+export const getAllUsers = async (max = 100) => {
+  const { usersRef } = getCollections();
+  const snapshot = await getDocs(query(usersRef, limit(max)));
+  return snapshot.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      email: data.email || '',
+      displayName: data.displayName || '',
+      isPremium: data.subscription?.isPremium === true,
+      plan: data.subscription?.plan || 'free',
+      createdAt: data.createdAt?.toDate?.() || data.createdAt || null,
+    };
+  });
+};
+
+// On-demand usage counts for the cost dashboard. Uses count() aggregation —
+// each count is ONE read regardless of collection size, so this stays cheap.
+export const getUsageStats = async () => {
+  const { usersRef, shiftsRef, worksRef, feedbackRef } = getCollections();
+  const liveSessionsRef = collection(db, 'liveSessions');
+
+  const days30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+  const safeCount = async (q) => {
+    try {
+      const snap = await getCountFromServer(q);
+      return snap.data().count;
+    } catch {
+      return null; // e.g. missing composite index — fail soft, the UI shows "—"
+    }
+  };
+
+  const [
+    totalUsers, newUsers30d,
+    totalShifts, shifts30d,
+    totalWorks,
+    totalFeedback, pendingFeedback,
+    totalLiveSessions,
+  ] = await Promise.all([
+    safeCount(usersRef),
+    safeCount(query(usersRef, where('createdAt', '>=', days30))),
+    safeCount(shiftsRef),
+    safeCount(query(shiftsRef, where('createdAt', '>=', days30))),
+    safeCount(worksRef),
+    safeCount(feedbackRef),
+    safeCount(query(feedbackRef, where('status', '==', 'pending'))),
+    safeCount(liveSessionsRef),
+  ]);
+
+  return {
+    totalUsers, newUsers30d,
+    totalShifts, shifts30d,
+    totalWorks,
+    totalFeedback, pendingFeedback,
+    totalLiveSessions,
+  };
+};
+
+// Subscription & trial funnel for the admin panel. On-demand count() queries
+// (~1 read each). trialsStarted = users who ever started the trial (trial_records
+// is a one-time record per user). Conversion/churn are derived in the UI.
+export const getSubscriptionMetrics = async () => {
+  const { usersRef } = getCollections();
+  const trialRecordsRef = collection(db, 'trial_records');
+
+  const safeCount = async (q) => {
+    try {
+      const snap = await getCountFromServer(q);
+      return snap.data().count;
+    } catch {
+      return null;
+    }
+  };
+  const byStatus = (s) => safeCount(query(usersRef, where('subscription.status', '==', s)));
+
+  const [trialsStarted, trialing, activePaid, cancelling, cancelled, pastDue] = await Promise.all([
+    safeCount(trialRecordsRef),
+    byStatus('trialing'),
+    byStatus('active'),
+    byStatus('cancelling'),
+    byStatus('cancelled'),
+    byStatus('past_due'),
+  ]);
+
+  return { trialsStarted, trialing, activePaid, cancelling, cancelled, pastDue };
 };

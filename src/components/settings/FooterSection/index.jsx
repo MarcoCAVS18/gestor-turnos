@@ -3,13 +3,15 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Crown, Info, HeadphonesIcon } from 'lucide-react';
+import { Crown, Info, HeadphonesIcon, Shield } from 'lucide-react';
 import { usePremium } from '../../../contexts/PremiumContext';
+import { useAuth } from '../../../contexts/AuthContext';
 
 const FooterSection = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { openPremiumModal, isPremium } = usePremium();
+  const { isAdmin } = useAuth();
 
   const handlePremiumClick = () => {
     if (isPremium) {
@@ -69,6 +71,19 @@ const FooterSection = () => {
             <HeadphonesIcon size={12} />
             <span>{t('footer.support')}</span>
           </button>
+
+          {isAdmin && (
+            <>
+              <span className="text-gray-300">•</span>
+              <button
+                onClick={() => navigate('/admin')}
+                className="flex items-center gap-1 font-semibold text-indigo-500 hover:text-indigo-600 transition-colors cursor-pointer whitespace-nowrap"
+              >
+                <Shield size={12} />
+                <span>{t('admin.title')}</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
     </footer>

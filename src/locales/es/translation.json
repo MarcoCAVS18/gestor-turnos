@@ -325,8 +325,8 @@
   },
   "landing": {
     "brandName": "Orary",
-    "tagline": "Registro de Turnos y Calculadora de Ganancias",
-    "description": "Para trabajadores de gastronomía, construcción, retail, delivery y visas Working Holiday — en todo el mundo.",
+    "tagline": "Sabé exactamente cuánto ganaste",
+    "description": "Hecho para laburantes casuales, de delivery y Working Holiday. Cargá un turno y mirá tu sueldo real — y contá tus 88 días.",
     "features": {
       "trackShifts": "Registro de turnos",
       "analytics": "Calculadora de ganancias",
@@ -558,7 +558,16 @@
       "moreThanLast": "{{amount}} más que el mes pasado (+{{percent}}%)",
       "lessThanLast": "{{amount}} menos que el mes pasado (-{{percent}}%)",
       "sameAsLast": "Igual que el mes pasado",
-      "keepPace": "Si mantienes este ritmo durante el mes"
+      "keepPace": "Si mantienes este ritmo durante el mes",
+      "lostHelp": "¿No sabés ni por dónde empezar?",
+      "lostHelpLink": "Conocé más sobre el proyecto"
+    },
+    "updates": {
+      "title": "Novedades",
+      "upcomingTitle": "Próximamente",
+      "badge": "Nuevo",
+      "seeUpcoming": "Mirá lo que se viene",
+      "back": "Volver a novedades"
     },
     "export": {
       "title": "Exportar reporte",
@@ -707,6 +716,12 @@
       "currentProfile": "Foto de perfil actual",
       "defaultLogo": "Logo por defecto",
       "deletePhotoConfirm": "¿Estás seguro de que quieres eliminar tu foto de perfil? Será reemplazada por el logo por defecto."
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "dailyReminder": "Recordatorio diario de turnos",
+      "dailyReminderDesc": "Un aviso diario para registrar tus turnos y mantener tus ganancias al día.",
+      "time": "Hora del recordatorio"
     },
     "smoko": {
       "title": "Smoko (Descansos)",
@@ -1870,6 +1885,8 @@
     "country": "País del empleador",
     "countryAU": "Australia",
     "countryNZ": "Nueva Zelanda",
+    "countryGB": "Reino Unido",
+    "countryIE": "Irlanda",
     "unsupportedCountry": "La estimación de devolución solo está disponible para Australia y Nueva Zelanda por ahora.",
     "missingFields": "Completá ingreso bruto e impuesto retenido.",
     "disclaimer": "Esta es una estimación informal. Verificá siempre con tu autoridad fiscal.",
@@ -1952,11 +1969,86 @@
       "disclaimerAU": "Estimación solo de ingresos. NO incluye deducciones laborales, offsets (LITO/LMITO), Medicare levy, HECS-HELP ni tasas de Working Holiday Maker.",
       "disclaimerNZ": "Estimación solo de ingresos. NO incluye deducciones laborales, KiwiSaver, ACC levies ni el Independent Earner Tax Credit.",
       "linkAU": "Abrir myTax para la liquidación real",
-      "linkNZ": "Abrir myIR para la liquidación real"
+      "linkNZ": "Abrir myIR para la liquidación real",
+      "disclaimerGB": "Estimación solo del impuesto a la renta (Inglaterra, Gales e Irlanda del Norte). NO incluye National Insurance, préstamos estudiantiles ni las tasas de Escocia. Verificá tu HMRC Personal Tax Account para los números reales.",
+      "disclaimerIE": "Estimación solo del impuesto a la renta, tras los tax credits personal + employee estándar. NO incluye USC, PRSI ni otros créditos o desgravaciones. Verificá Revenue myAccount para los números reales.",
+      "linkGB": "Abrir tu HMRC Personal Tax Account",
+      "linkIE": "Abrir Revenue myAccount"
     },
     "twoLectures": {
       "informal": "Estimación informal",
       "fyView": "Vista por año fiscal"
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "subtitle": "Moderación y consumo",
+    "error": "Ocurrió un error al cargar los datos de admin.",
+    "usage": {
+      "title": "Consumo y drivers de costo",
+      "note": "Conteos on-demand. El costo exacto está en la consola de Firebase.",
+      "refresh": "Actualizar",
+      "totalUsers": "Usuarios totales",
+      "newUsers30d": "Nuevos usuarios (30d)",
+      "totalShifts": "Turnos totales",
+      "shifts30d": "Turnos (30d)",
+      "totalWorks": "Trabajos totales",
+      "totalLiveSessions": "Sesiones Live Mode",
+      "totalFeedback": "Opiniones totales",
+      "pendingFeedback": "Opiniones pendientes"
+    },
+    "metrics": {
+      "title": "Suscripciones y conversión",
+      "note": "Aproximado, según los estados de suscripción actuales.",
+      "premiumTotal": "Premium (activos)",
+      "trialsStarted": "Trials iniciados",
+      "trialing": "En trial ahora",
+      "activePaid": "Activos (pagos)",
+      "cancelling": "Cancelando",
+      "cancelled": "Cancelados",
+      "conversion": "Trial → pago",
+      "churn": "Churn"
+    },
+    "moderation": {
+      "title": "Moderación de comentarios",
+      "empty": "Aún no hay opiniones.",
+      "pending": "Pendiente",
+      "approved": "Aprobado",
+      "rejected": "Rechazado",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "anonymous": "Anónimo",
+      "noComment": "(sin comentario)"
+    },
+    "users": {
+      "title": "Usuarios",
+      "empty": "Sin usuarios.",
+      "premium": "Premium",
+      "free": "Gratis"
+    }
+  },
+  "notifications": {
+    "shiftReminder": {
+      "title": "Tu turno empieza pronto{{work}}",
+      "body": "Tu turno empieza a las {{time}} (aviso {{minutes}} min antes)."
+    },
+    "reengagement": {
+      "title7": "¡Te extrañamos! 👋",
+      "body7": "Hace un tiempo que no registrás un turno. ¿Volvemos a la rutina?",
+      "title14": "¿De vacaciones? 🏖️",
+      "body14": "¡Acá estaremos cuando vuelvas! Tus turnos te esperan.",
+      "title21": "Tus estadísticas te esperan 📊",
+      "body21": "Registrá tus turnos recientes para mantener tu historial al día.",
+      "title30": "¡Tanto tiempo! ⏰",
+      "body30": "No pierdas el registro de tu trabajo. Abrí Orary y agregá tus últimos turnos."
+    },
+    "australia88": {
+      "title": "Working Holiday Visa 🇦🇺",
+      "body": "¡Llegaste a {{days}} días de visa — solo te faltan {{remaining}} para tu meta de {{milestone}} días!"
+    },
+    "dailyReminder": {
+      "title": "Registrá el turno de hoy ⏱️",
+      "body": "No te olvides de registrar tus turnos en Orary para mantener tus ganancias al día."
     }
   },
   "reports": {

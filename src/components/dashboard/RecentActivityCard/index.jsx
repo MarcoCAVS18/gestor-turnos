@@ -112,28 +112,31 @@ const RecentActivityCard = memo(({ stats, allWorks, allShifts, calculatePayment 
 
   return (
     <Card className="h-full flex flex-col">
-      <Flex variant="between" className="mb-4 flex-nowrap gap-3">
-        <h3 className="text-base font-semibold flex items-center text-gray-800 truncate">
+      {/* On wide screens the column is full width (title + button on one row);
+          on lg+ the column is narrow, so the button drops below the title. */}
+      <div className="mb-4 flex flex-row items-center justify-between gap-2 lg:flex-col lg:items-start">
+        <h3 className="text-base font-semibold flex items-center text-gray-800 dark:text-gray-100 min-w-0">
           <Activity size={20} style={{ color: colors.primary }} className="mr-2 flex-shrink-0" />
           <span className="truncate">{t('dashboard.recentActivity.title')}</span>
         </h3>
-        
+
         <Button
           onClick={() => navigate('/shifts')}
           size="sm"
-          variant="ghost" 
-          animatedChevron 
+          variant="ghost"
+          animatedChevron
           collapsed={isMobile}
-          className="flex-shrink-0 whitespace-nowrap text-gray-400 hover:text-gray-600"
+          className="flex-shrink-0 whitespace-nowrap text-gray-400 hover:text-gray-600 -ml-2 lg:ml-0"
           themeColor={colors.primary}
           icon={ChevronRight}
           iconPosition="right"
         >
           {t('dashboard.recentActivity.viewAll')}
         </Button>
-      </Flex>
+      </div>
 
-      <div className="space-y-3 flex-grow">
+      {/* ~3 shifts visible; the rest scroll within the card */}
+      <div className="space-y-3 overflow-y-auto pr-1 max-h-48">
         {recentShifts.map((shift, index) => {
           const work = getWork(shift.workId);
           const earnings = calculateShiftEarnings(shift);

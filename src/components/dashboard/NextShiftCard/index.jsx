@@ -10,7 +10,7 @@ import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 
-const NextShiftCard = memo(({ nextShift, formatDate }) => {
+const NextShiftCard = memo(({ nextShift, formatDate, className = '' }) => {
   const { t } = useTranslation();
   const { works } = useApp();
   const colors = useThemeColors();
@@ -19,7 +19,7 @@ const NextShiftCard = memo(({ nextShift, formatDate }) => {
   const work = nextShift ? works.find(t => t.id === nextShift.workId) : null;
 
   return (
-    <Card>
+    <Card className={className}>
       <h3 className="text-lg font-semibold mb-4 flex items-center">
         <Star size={20} style={{ color: colors.primary }} className="mr-2" />
         {t('dashboard.nextShift.title')}

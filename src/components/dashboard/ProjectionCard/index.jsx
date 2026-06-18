@@ -8,7 +8,7 @@ import { formatCurrency } from '../../../utils/currency';
 import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const ProjectionCard = memo(({ monthlyProjection, hoursWorked, className }) => {
   const { t } = useTranslation();
@@ -107,6 +107,18 @@ const ProjectionCard = memo(({ monthlyProjection, hoursWorked, className }) => {
               </div>
             )}
           </div>
+
+          {/* Helper for users who don't know where to start → Blogary */}
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-4 text-center">
+            {t('dashboard.projection.lostHelp')}{' '}
+            <Link
+              to="/blog"
+              className="font-medium hover:underline"
+              style={{ color: colors.primary }}
+            >
+              {t('dashboard.projection.lostHelpLink')}
+            </Link>
+          </p>
         </div>
       );
     }

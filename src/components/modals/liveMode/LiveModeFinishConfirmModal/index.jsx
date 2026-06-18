@@ -2,6 +2,7 @@
 // Modal to confirm finishing a Live Mode session - Styled like FeatureAnnouncementCard
 
 import React, { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { CheckCircle, Clock, DollarSign, Briefcase, AlertCircle, X, Timer, Coffee } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -47,7 +48,7 @@ const LiveModeFinishConfirmModal = ({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <Flex
       variant="center"
       className="fixed inset-0 bg-black/70 backdrop-blur-sm p-4"
@@ -206,7 +207,8 @@ const LiveModeFinishConfirmModal = ({
           </div>
         </div>
       </motion.div>
-    </Flex>
+    </Flex>,
+    document.body
   );
 };
 

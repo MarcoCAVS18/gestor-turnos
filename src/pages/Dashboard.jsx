@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +23,7 @@ import FavoriteWorksCard from '../components/dashboard/FavoriteWorksCard';
 import ProjectionCard from '../components/dashboard/ProjectionCard';
 import QuickActionsCard from '../components/dashboard/QuickActionsCard';
 import ExportReportCard from '../components/dashboard/ExportReportCard';
+import NovedadesCard from '../components/dashboard/NovedadesCard';
 import FooterSection from '../components/settings/FooterSection';
 
 import LiveModeCard from '../components/dashboard/LiveModeCard';
@@ -170,84 +171,83 @@ const Dashboard = () => {
         </div>
 
         {/* --- BOTTOM ROW (Common) --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:items-start">
-          {/* Recent Activity */}
-          <div className="lg:col-span-1 h-full">
-            <RecentActivityCard
-              stats={stats}
-              allWorks={stats.allWorks}
-              allShifts={stats.allShifts}
-              calculatePayment={calculatePayment}
-            />
-          </div>
+        {/*
+          lg layout (per design sketch):
+            ┌──────────┬───────────────────────┐
+            │ Activity │ Working Holiday Visa   │   (WHV spans the 2 middle cols)
+            │ Recent   ├───────────┬───────────┤
+            │ (rows    │ Top work  │ Enjoying  │   (Suggested is tall: rows 2-3)
+            ├──────────┴───────────┤  Orary?   │
+            │ Next shift (cols 1-2)│           │
+            └──────────────────────┴───────────┘   + right column (utilities) untouched
+          Left region is a 3-col / 3-row grid; the right column keeps the utility
+          cards unchanged.
+        */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-          {/* Data Grids */}
-          <div className="lg:col-span-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-6 flex flex-col">
-                <FavoriteWorksCard favoriteWorks={stats.favoriteWorks} />
-                {/* Desktop: animated layout */}
-                <LayoutGroup>
-                  <div className={`hidden md:grid gap-6 ${showSuggestion ? 'grid-cols-2' : 'grid-cols-1'}`}>
-                    <motion.div layout transition={{ duration: 0.4, ease: 'easeInOut' }} className="flex flex-col gap-6">
-                      <motion.div layout transition={{ duration: 0.4, ease: 'easeInOut' }}>
-                        <TopWorkCard mostProfitableWork={stats.mostProfitableWork} />
-                      </motion.div>
-                      <motion.div layout transition={{ duration: 0.4, ease: 'easeInOut' }}>
-                        <NextShiftCard
-                          nextShift={stats.nextShift}
-                          formatDate={stats.formatDate}
-                        />
-                      </motion.div>
-                    </motion.div>
-                    <AnimatePresence>
-                      {showSuggestion && (
-                        <motion.div
-                          layout
-                          initial={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ duration: 0.3, ease: 'easeInOut' }}
-                          className="h-full"
-                        >
-                          <SuggestedActionCard onClose={() => setShowSuggestion(false)} className="h-full" />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </LayoutGroup>
+          {/* LEFT region — 2D grid of the five content cards */}
+          <div className="lg:col-span-3 grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-[auto_auto_1fr] gap-6">
 
-                {/* Mobile: stacked */}
-                <div className="md:hidden space-y-6">
-                  <TopWorkCard mostProfitableWork={stats.mostProfitableWork} />
-                  <NextShiftCard
-                    nextShift={stats.nextShift}
-                    formatDate={stats.formatDate}
-                  />
-                  <AnimatePresence>
-                    {showSuggestion && (
-                      <motion.div
-                        initial={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden"
-                      >
-                        <SuggestedActionCard onClose={() => setShowSuggestion(false)} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </div>
-              <div className="space-y-6 flex flex-col">
-                  <ProjectionCard
-                  monthlyProjection={stats.monthlyProjection}
-                  hoursWorked={stats.hoursWorked}
-                  className="flex-grow"
-                />
-                <ExportReportCard onExport={handleExport} />
-                <QuickActionsCard className="flex-grow" onOpenLiveMode={handleOpenLiveMode} />
-              </div>
+            {/* Actividad reciente — col 1, spans the top two rows so it matches the
+                bottom of the WHV + Top-work stack (Trabajo más rentable). */}
+            <div className="lg:col-start-1 lg:row-start-1 lg:row-span-2">
+              <RecentActivityCard
+                stats={stats}
+                allWorks={stats.allWorks}
+                allShifts={stats.allShifts}
+                calculatePayment={calculatePayment}
+              />
             </div>
+
+            {/* Working Holiday Visa / favorite works — row 1, spans cols 2-3 */}
+            <div className="lg:col-start-2 lg:row-start-1 lg:col-span-2 lg:self-start">
+              <FavoriteWorksCard favoriteWorks={stats.favoriteWorks} />
+            </div>
+
+            {/* Trabajo más rentable — col 2, row 2 */}
+            <div className="lg:col-start-2 lg:row-start-2 lg:self-start">
+              <TopWorkCard mostProfitableWork={stats.mostProfitableWork} />
+            </div>
+
+            {/* ¿Disfrutando Orary? — col 3, spans rows 2-3 (tall) */}
+            <AnimatePresence>
+              {showSuggestion && (
+                <motion.div
+                  initial={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="lg:col-start-3 lg:row-start-2 lg:row-span-2"
+                >
+                  <SuggestedActionCard onClose={() => setShowSuggestion(false)} className="h-full" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Próximo turno — row 3, spans cols 1-2; grows to the bottom */}
+            <div className="lg:col-start-1 lg:row-start-3 lg:col-span-2 flex">
+              <NextShiftCard
+                nextShift={stats.nextShift}
+                formatDate={stats.formatDate}
+                className="w-full h-full"
+              />
+            </div>
+
           </div>
+
+          {/* RIGHT region — utilities */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            <ProjectionCard
+              monthlyProjection={stats.monthlyProjection}
+              hoursWorked={stats.hoursWorked}
+            />
+            <ExportReportCard onExport={handleExport} />
+            {/* Novedades — solid white, flips to "Próximamente" on click; fills the
+                remaining height on desktop so the column ends level with the left region */}
+            <NovedadesCard className="lg:flex-grow" />
+            {/* Quick actions only on mobile/tablet — hidden on desktop */}
+            <QuickActionsCard className="lg:hidden" onOpenLiveMode={handleOpenLiveMode} />
+          </div>
+
         </div>
       </div>
 

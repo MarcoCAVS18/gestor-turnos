@@ -58,7 +58,8 @@
     "dev": "concurrently -k -n EMU,WEB -c blue,green \"npm:dev:emulators\" \"npm:dev:web\"",
     "dev:emulators": "firebase emulators:start --only auth,firestore,functions,storage",
     "dev:web": "npm run gen:build-info && REACT_APP_USE_EMULATOR=true react-scripts start",
-    "seed": "node scripts/seed-emulators.js"
+    "seed": "node scripts/seed-emulators.js",
+    "set-admin": "node scripts/set-admin.js"
   },
   "eslintConfig": {
     "extends": [

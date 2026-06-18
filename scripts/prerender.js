@@ -25,7 +25,17 @@ const PORT = 3737;
 const PRERENDER_USER_AGENT = 'OraryPrerender';
 
 // Public routes to pre-render (never include protected/auth-required routes)
-const ROUTES = ['/', '/es', '/fr', '/login', '/register', '/forgot-password', '/terms', '/privacy', '/australia-88', '/faq'];
+const ROUTES = ['/', '/es', '/fr', '/login', '/register', '/forgot-password', '/terms', '/privacy', '/australia-88', '/faq', '/blog', '/blog/track-88-days-working-holiday-visa', '/blog/working-holiday-visa-days-calculator', '/blog/best-apps-casual-workers-2026', '/blog/working-holiday-maker-tax-refund-australia', '/blog/is-delivery-driving-worth-it', '/blog/specified-work-eligible-postcodes-australia', '/blog/working-holiday-visa-evidence-payslips', '/blog/working-holiday-visa-mistakes', '/blog/how-to-calculate-your-pay', '/blog/understand-australian-payslip', '/blog/tax-delivery-gig-workers-australia', '/blog/mileage-deduction-delivery-riders', '/blog/track-delivery-earnings-multiple-apps', '/blog/how-to-track-work-shifts', '/blog/working-holiday-visa-new-zealand-guide', '/blog/canada-iec-working-holiday-guide', '/blog/uk-ireland-tax-working-holiday', '/blog/new-zealand-ird-tax-backpackers', '/blog/penalty-rates-australia-explained', '/blog/casual-vs-part-time-pay-australia', '/blog/am-i-being-underpaid-australia', '/blog/best-vehicle-for-delivery', '/blog/delivery-rider-tax-deductions', '/blog/budgeting-irregular-income', '/blog/how-orary-calculates-earnings', '/blog/orary-vs-spreadsheet-shift-tracking', '/blog/export-shift-data-tax-time',
+  // Localized blog (add a post's /es|/fr route here when you add its translation)
+  '/es/blog', '/fr/blog',
+  '/es/blog/track-88-days-working-holiday-visa', '/fr/blog/track-88-days-working-holiday-visa',
+  '/es/blog/working-holiday-visa-days-calculator', '/fr/blog/working-holiday-visa-days-calculator',
+  '/es/blog/working-holiday-maker-tax-refund-australia', '/fr/blog/working-holiday-maker-tax-refund-australia',
+  '/es/blog/working-holiday-visa-evidence-payslips', '/fr/blog/working-holiday-visa-evidence-payslips',
+  '/es/blog/how-to-calculate-your-pay', '/fr/blog/how-to-calculate-your-pay',
+  '/es/blog/mileage-deduction-delivery-riders', '/fr/blog/mileage-deduction-delivery-riders',
+  '/es/blog/track-delivery-earnings-multiple-apps', '/fr/blog/track-delivery-earnings-multiple-apps',
+  '/es/blog/how-to-track-work-shifts', '/fr/blog/how-to-track-work-shifts'];
 
 // Third-party domains to block (Firebase, Google APIs, analytics, payment)
 const BLOCKED_DOMAINS = [
@@ -280,6 +290,8 @@ async function prerender() {
         outputPath = path.join(BUILD_DIR, route.replace(/^\//, '') + '.html');
       }
 
+      // Ensure nested directories exist (e.g. build/blog/ for /blog/<slug>).
+      fs.mkdirSync(path.dirname(outputPath), { recursive: true });
       fs.writeFileSync(outputPath, html, 'utf8');
       const sizeKb = Math.round(Buffer.byteLength(html, 'utf8') / 1024);
       console.log(`✅  saved (${sizeKb} KB)`);

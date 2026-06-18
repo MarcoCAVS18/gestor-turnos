@@ -20,6 +20,7 @@ import { Globe, ChevronRight, CalendarDays, Target, CheckCircle2 } from 'lucide-
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useAustralia88 } from '../../../hooks/useAustralia88';
+import { checkVisaMilestone } from '../../../services/native/nativeNotifications';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
@@ -47,6 +48,13 @@ const Australia88DashboardCard = () => {
     setViewYear(year2Active ? 2 : 1);
   }, [year2Active]);
 
+  // Fire a one-time milestone notification when crossing 70/80/85 (or the 176
+  // equivalents). Native-only; no-op on web. This card only renders for AU users.
+  React.useEffect(() => {
+    const goal = totalVisaDays < 88 ? 88 : totalVisaDays < 176 ? 176 : null;
+    if (goal) checkVisaMilestone(totalVisaDays, goal);
+  }, [totalVisaDays]);
+
   const showYearToggle = year2Active;
 
   // Derived display values based on which year is being viewed
@@ -68,7 +76,7 @@ const Australia88DashboardCard = () => {
   const isComplete = year2Complete;
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden">
+    <Card className="flex flex-col overflow-hidden">
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <Flex variant="between" className="mb-3 flex-nowrap gap-2">
@@ -115,27 +123,23 @@ const Australia88DashboardCard = () => {
       </Flex>
 
       {/* ── Body: split on desktop, stacked on mobile ──────────────────────── */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:gap-5 flex-grow min-h-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:gap-5">
 
         {/* Left / Top — accumulated days + progress bar */}
-        <div className="sm:flex-1 text-center mb-3 sm:mb-0">
+        <div className="sm:flex-1 text-center mb-4 sm:mb-0">
           <p
-            className="text-4xl font-extrabold tabular-nums leading-none"
+            className="text-6xl sm:text-7xl font-extrabold tabular-nums leading-none"
             style={{ color: colors.primary }}
           >
             {displayDays}
           </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
             {goalLabel}
           </p>
 
           {showProgressBar && (
             <div className="mt-3">
               <ProgressBar value={progressPercent} color={colors.primary} height="6px" />
-              <Flex variant="between" className="mt-1">
-                <span className="text-[10px] text-gray-400">0</span>
-                <span className="text-[10px] text-gray-400">{yearGoal}</span>
-              </Flex>
             </div>
           )}
 
@@ -153,8 +157,8 @@ const Australia88DashboardCard = () => {
         {/* Divider — only on desktop */}
         <div className="hidden sm:block w-px self-stretch bg-gray-100 dark:bg-gray-700" />
 
-        {/* Right / Bottom — stats */}
-        <div className="grid grid-cols-2 gap-2 sm:flex-1">
+        {/* Right / Bottom — stats stacked one below the other */}
+        <div className="flex flex-col gap-2 sm:flex-1">
 
           {/* This week */}
           <div

@@ -5,6 +5,7 @@
 // On web this is a no-op — the web Notification API has no persistent scheduling.
 
 import { Capacitor } from '@capacitor/core';
+import i18n from '../../i18n';
 
 const isNative = () => Capacitor.isNativePlatform();
 
@@ -61,8 +62,8 @@ export const scheduleShiftReminders = async (shifts, worksMap, minutesBefore = 1
       const workSuffix = work?.name ? ` — ${work.name}` : '';
       return {
         id: REMINDER_ID_BASE + i,
-        title: `Shift starting soon${workSuffix}`,
-        body: `Your shift starts at ${shift.startTime} (${minutesBefore} min reminder).`,
+        title: i18n.t('notifications.shiftReminder.title', { work: workSuffix }),
+        body: i18n.t('notifications.shiftReminder.body', { time: shift.startTime, minutes: minutesBefore }),
         schedule: { at: fireAt },
         iconColor: '#EC4899',
       };

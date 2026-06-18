@@ -41,6 +41,8 @@ export const ConfigProvider = ({ children }) => {
   const [deliveryEnabled, setDeliveryEnabled] = useState(false);
   const [smokoEnabled, setSmokoEnabled] = useState(false);
   const [smokoMinutes, setSmokoMinutes] = useState(30);
+  const [dailyReminderEnabled, setDailyReminderEnabled] = useState(false);
+  const [dailyReminderTime, setDailyReminderTime] = useState('19:00');
   const [themeMode, setThemeMode] = useState(() => getCachedValue('orary_themeMode', 'light'));
   const [deliveryPlatforms, setDeliveryPlatforms] = useState(DELIVERY_PLATFORMS_AUSTRALIA);
   const [defaultDeliveryPlatform, setDefaultDeliveryPlatform] = useState(null);
@@ -76,6 +78,8 @@ export const ConfigProvider = ({ children }) => {
             setDeliveryEnabled(settings.deliveryEnabled);
             setSmokoEnabled(settings.smokoEnabled || false);
             setSmokoMinutes(settings.smokoMinutes || 30);
+            setDailyReminderEnabled(settings.dailyReminderEnabled || false);
+            setDailyReminderTime(settings.dailyReminderTime || '19:00');
             setDeliveryPlatforms(settings.deliveryPlatforms?.length > 0 ? settings.deliveryPlatforms : DELIVERY_PLATFORMS_AUSTRALIA);
             setDefaultDeliveryPlatform(settings.defaultDeliveryPlatform || null);
             // Firebase wins over localStorage so that theme syncs across devices.
@@ -165,6 +169,8 @@ export const ConfigProvider = ({ children }) => {
       if (preferences.weeklyHoursGoal !== undefined) setWeeklyHoursGoal(preferences.weeklyHoursGoal);
       if (preferences.smokoEnabled !== undefined) setSmokoEnabled(preferences.smokoEnabled);
       if (preferences.smokoMinutes !== undefined) setSmokoMinutes(preferences.smokoMinutes);
+      if (preferences.dailyReminderEnabled !== undefined) setDailyReminderEnabled(preferences.dailyReminderEnabled);
+      if (preferences.dailyReminderTime !== undefined) setDailyReminderTime(preferences.dailyReminderTime);
       if (preferences.themeMode !== undefined && (preferences.themeMode !== 'dark' || isPremium)) {
         setThemeMode(preferences.themeMode);
       }
@@ -236,6 +242,8 @@ export const ConfigProvider = ({ children }) => {
     deliveryEnabled,
     smokoEnabled,
     smokoMinutes,
+    dailyReminderEnabled,
+    dailyReminderTime,
     themeMode,
     deliveryPlatforms,
     defaultDeliveryPlatform,
@@ -247,7 +255,8 @@ export const ConfigProvider = ({ children }) => {
     australia88ManualDays,
   }), [
     primaryColor, language, defaultDiscount, taxesPerWork, weeklyHoursGoal,
-    deliveryEnabled, smokoEnabled, smokoMinutes, themeMode, deliveryPlatforms,
+    deliveryEnabled, smokoEnabled, smokoMinutes, dailyReminderEnabled, dailyReminderTime,
+    themeMode, deliveryPlatforms,
     defaultDeliveryPlatform, shiftRanges, holidayCountry, holidayRegion,
     useAutoHolidays, australia88VisaYear, australia88ManualDays,
   ]);
@@ -264,6 +273,8 @@ export const ConfigProvider = ({ children }) => {
     deliveryEnabled,
     smokoEnabled,
     smokoMinutes,
+    dailyReminderEnabled,
+    dailyReminderTime,
     themeMode,
     deliveryPlatforms,
     defaultDeliveryPlatform,

@@ -36,28 +36,30 @@ const TopWorkCard = memo(({ mostProfitableWork }) => {
         <Award size={20} style={{ color: colors.primary }} className="mr-2" />
         {t('dashboard.topWork.title')}
       </h3>
-      <Flex variant="between">
-        <div className="flex items-center">
-          <div 
-            className="w-4 h-4 rounded-full mr-3"
+      {/* Row on full-width screens; stacks (earnings below) when the column is
+          narrow on lg+ so nothing looks cramped. */}
+      <div className="flex flex-row items-center justify-between gap-2 lg:flex-col lg:items-start lg:gap-2">
+        <div className="flex items-center min-w-0">
+          <div
+            className="w-4 h-4 rounded-full mr-3 flex-shrink-0"
             style={{ backgroundColor: mostProfitableWork.work.color }}
           />
-          <div>
-            <p className="font-semibold text-gray-800">
+          <div className="min-w-0">
+            <p className="font-semibold text-gray-800 dark:text-gray-100 truncate">
               {mostProfitableWork.work.name}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               {mostProfitableWork.shifts} {t('common.shifts').toLowerCase()} • {mostProfitableWork.hours.toFixed(1)}h
             </p>
           </div>
         </div>
-        <p 
-          className="text-xl font-bold" 
+        <p
+          className="text-xl font-bold flex-shrink-0"
           style={{ color: colors.primary }}
         >
           {formatCurrency(mostProfitableWork.earnings)}
         </p>
-      </Flex>
+      </div>
     </Card>
   );
 });

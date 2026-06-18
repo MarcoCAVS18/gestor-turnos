@@ -2,6 +2,7 @@
 // Modal displaying active Live Mode session - Styled like FeatureAnnouncementCard
 
 import React, { useState, useMemo, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Play,
@@ -137,7 +138,7 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <>
       <Flex
         variant="center"
@@ -319,7 +320,8 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
           workName: selectedWork?.name,
         }}
       />
-    </>
+    </>,
+    document.body
   );
 };
 

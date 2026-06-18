@@ -5,6 +5,7 @@
 // On web: uses window.Notification API — web behavior is COMPLETELY UNCHANGED.
 
 import { Capacitor } from '@capacitor/core';
+import i18n from '../../i18n';
 
 const isNative = () => Capacitor.isNativePlatform();
 
@@ -73,27 +74,12 @@ export const sendLocalNotification = async (title, body) => {
 // ─── Re-engagement notification IDs (reserved range 9000–9099) ──────────────
 const REENGAGEMENT_IDS = [9001, 9002, 9003, 9004];
 
-const REENGAGEMENT_MESSAGES = [
-  {
-    title: "We miss you! 👋",
-    body: "You haven't logged a shift in a while. Ready to get back on track?",
-    daysOffset: 7,
-  },
-  {
-    title: "On vacation? 🏖️",
-    body: "We'll be here whenever you're back! Your shifts are waiting for you.",
-    daysOffset: 14,
-  },
-  {
-    title: "Your stats are waiting 📊",
-    body: "Log your recent shifts to keep your earnings history up to date.",
-    daysOffset: 21,
-  },
-  {
-    title: "Long time no see! ⏰",
-    body: "Don't lose track of your work. Open Orary and add your latest shifts.",
-    daysOffset: 30,
-  },
+// Strings are resolved from i18n at schedule time (see notifications.reengagement).
+const REENGAGEMENT_DEFS = [
+  { daysOffset: 7, key: '7' },
+  { daysOffset: 14, key: '14' },
+  { daysOffset: 21, key: '21' },
+  { daysOffset: 30, key: '30' },
 ];
 
 /**
@@ -117,15 +103,15 @@ export const scheduleReengagementNotifications = async (referenceDate = new Date
     // Cancel any previously scheduled re-engagement notifications
     await LocalNotifications.cancel({ notifications: REENGAGEMENT_IDS.map(id => ({ id })) });
 
-    const notifications = REENGAGEMENT_MESSAGES.map(({ title, body, daysOffset }, i) => {
+    const notifications = REENGAGEMENT_DEFS.map(({ daysOffset, key }, i) => {
       const fireAt = new Date(referenceDate);
       fireAt.setDate(fireAt.getDate() + daysOffset);
       // Always fire at 10:00 local time on that day
       fireAt.setHours(10, 0, 0, 0);
       return {
         id: REENGAGEMENT_IDS[i],
-        title,
-        body,
+        title: i18n.t(`notifications.reengagement.title${key}`),
+        body: i18n.t(`notifications.reengagement.body${key}`),
         schedule: { at: fireAt },
         iconColor: '#EC4899',
       };
@@ -150,4 +136,78 @@ export const cancelReengagementNotifications = async () => {
   } catch {
     // ignore
   }
+};
+
+// ─── Working Holiday Visa milestone alerts ──────────────────────────────────
+const VISA_NOTIFIED_KEY = 'orary_visa_milestones_notified';
+
+/**
+ * Fire a one-time local notification when the user crosses a visa-day milestone
+ * (~80/91/97% of the current goal — i.e. 70/80/85 for the 88-day goal). Tracks
+ * which milestones were already notified (per goal) in localStorage so it never
+ * repeats. Native-only. Pass the displayed total and the current goal (88 | 176).
+ *
+ * @param {number} totalDays - Current accumulated visa days (as shown to the user).
+ * @param {number} milestone - Current goal: 88 or 176.
+ */
+export const checkVisaMilestone = async (totalDays, milestone) => {
+  if (!isNative() || typeof milestone !== 'number' || totalDays <= 0) return;
+  try {
+    const thresholds = [0.8, 0.91, 0.97].map((f) => Math.round(f * milestone));
+    const store = JSON.parse(localStorage.getItem(VISA_NOTIFIED_KEY) || '{}');
+    const done = store[milestone] || [];
+    const reached = thresholds.filter((th) => totalDays >= th && totalDays < milestone && !done.includes(th));
+    if (reached.length === 0) return;
+
+    const remaining = Math.max(0, milestone - totalDays);
+    await sendLocalNotification(
+      i18n.t('notifications.australia88.title'),
+      i18n.t('notifications.australia88.body', { days: totalDays, remaining, milestone })
+    );
+    store[milestone] = [...new Set([...done, ...reached])];
+    localStorage.setItem(VISA_NOTIFIED_KEY, JSON.stringify(store));
+  } catch (err) {
+    console.warn('[nativeNotifications] checkVisaMilestone error:', err);
+  }
+};
+
+// ─── Daily "log your shift" reminder (reserved ID 3000) ─────────────────────
+const DAILY_REMINDER_ID = 3000;
+
+/**
+ * Schedule a repeating daily reminder at the given local time ("HH:MM").
+ * Replaces any existing one. Native-only; repeating schedules persist across
+ * app restarts, so this only needs to run when the user enables it or changes
+ * the time. No-op if permission isn't granted.
+ */
+export const scheduleDailyReminder = async (time = '19:00') => {
+  if (!isNative()) return;
+  try {
+    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    const { display } = await LocalNotifications.checkPermissions();
+    if (display !== 'granted') return;
+
+    const [h, m] = String(time).split(':').map(Number);
+    await LocalNotifications.cancel({ notifications: [{ id: DAILY_REMINDER_ID }] });
+    await LocalNotifications.schedule({
+      notifications: [{
+        id: DAILY_REMINDER_ID,
+        title: i18n.t('notifications.dailyReminder.title'),
+        body: i18n.t('notifications.dailyReminder.body'),
+        schedule: { on: { hour: Number.isFinite(h) ? h : 19, minute: Number.isFinite(m) ? m : 0 }, allowWhileIdle: true },
+        iconColor: '#EC4899',
+      }],
+    });
+  } catch (err) {
+    console.warn('[nativeNotifications] scheduleDailyReminder error:', err);
+  }
+};
+
+/** Cancel the daily reminder. */
+export const cancelDailyReminder = async () => {
+  if (!isNative()) return;
+  try {
+    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    await LocalNotifications.cancel({ notifications: [{ id: DAILY_REMINDER_ID }] });
+  } catch { /* ignore */ }
 };

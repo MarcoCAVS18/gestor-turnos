@@ -1,7 +1,8 @@
 // src/services/payslipService.js
 // Servicio frontend para parseo de payslips y cálculo de devolución de impuestos.
 // Llama a la Cloud Function parsePDF y calcula el refund según los tramos
-// impositivos de Australia (ATO) y Nueva Zelanda (IRD).
+// impositivos de Australia (ATO), Nueva Zelanda (IRD), Reino Unido (HMRC) e
+// Irlanda (Revenue). Solo impuesto a la renta; no incluye NI/USC/PRSI/levies.
 
 import { auth } from './firebase';
 import logger from '../utils/logger';
@@ -28,6 +29,25 @@ export const TAX_BRACKETS = {
     { upTo: 180000, rate: 0.37 },
     { upTo: null, rate: 0.45 },
   ],
+  // UK 2025/26 (England, Wales & NI — Scotland differs). Income tax only.
+  GB: [
+    { upTo: 12570, rate: 0 },     // Personal Allowance
+    { upTo: 50270, rate: 0.20 },  // Basic rate
+    { upTo: 125140, rate: 0.40 }, // Higher rate
+    { upTo: null, rate: 0.45 },   // Additional rate
+  ],
+  // Ireland 2025 (single). Income tax only; tax credits applied below.
+  IE: [
+    { upTo: 44000, rate: 0.20 },  // Standard rate band
+    { upTo: null, rate: 0.40 },   // Higher rate
+  ],
+};
+
+// Flat tax credits subtracted from the computed annual income tax (floored at 0).
+// Ireland's system is credit-based, so ignoring these would massively overestimate
+// tax for low earners. Others have no credit (UK uses a 0% Personal Allowance band).
+export const TAX_CREDITS = {
+  IE: 4000, // 2025 single: personal €2,000 + employee (PAYE) €2,000
 };
 
 export const SUPPORTED_COUNTRIES = Object.keys(TAX_BRACKETS);
@@ -55,7 +75,9 @@ export function calculateAnnualTax(annualGross, country) {
     if (annualGross <= limit) break;
   }
 
-  return tax;
+  // Apply flat tax credits (e.g. Ireland), never below zero.
+  const credit = TAX_CREDITS[country] || 0;
+  return Math.max(0, tax - credit);
 }
 
 /**
@@ -192,6 +214,8 @@ export function calculateAggregateRefund(payslips, country) {
 const FY_DEFS = {
   AU: { startMonth: 7, startDay: 1 }, // julio (1-indexed)
   NZ: { startMonth: 4, startDay: 1 }, // abril
+  GB: { startMonth: 4, startDay: 6 }, // UK tax year: 6 abril → 5 abril
+  IE: { startMonth: 1, startDay: 1, calendarYear: true }, // año calendario
 };
 
 /**
@@ -222,8 +246,9 @@ export function getFiscalYearForDate(date, country) {
   endDateObj.setUTCDate(endDateObj.getUTCDate() - 1);
   const endDate = endDateObj.toISOString().slice(0, 10);
 
+  // Calendar-year countries (e.g. Ireland) are labelled by the single year.
   const yyShort = String((startYear + 1) % 100).padStart(2, '0');
-  const label = `FY ${startYear}-${yyShort}`;
+  const label = def.calendarYear ? `${startYear}` : `FY ${startYear}-${yyShort}`;
 
   return { startDate, endDate, label, startYear };
 }

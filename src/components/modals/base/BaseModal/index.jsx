@@ -2,6 +2,7 @@
 // Unified base component for all modals
 
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
@@ -96,7 +97,7 @@ const BaseModal = ({
     xl: 'max-w-xl'
   };
 
-  return (
+  return createPortal(
     <Flex variant="center"
       className="fixed inset-0 bg-black bg-opacity-50 p-4"
       style={{ zIndex: 9999 }}
@@ -198,7 +199,8 @@ const BaseModal = ({
           </div>
         )}
       </div>
-    </Flex>
+    </Flex>,
+    document.body
   );
 };
 

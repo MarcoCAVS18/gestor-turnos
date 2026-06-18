@@ -2,6 +2,12 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Admin role via custom claim (set server-side with the Admin SDK; the
+    // client cannot forge it). Gates the moderation/admin panel.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
     // Users collection - SECURED
     // Each user can only read/write their own profile
     // CRITICAL: subscription field is protected from client-side manipulation
@@ -36,7 +42,7 @@ service cloud.firestore {
           );
       }
 
-      allow read: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
 
       // Create: subscription must NOT be premium, usage counter must start at 0,
       // and server-managed flags cannot be set by the client
@@ -76,14 +82,14 @@ service cloud.firestore {
     // Works collection
     match /works/{workId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
       allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
 
     // Shifts collection
     match /shifts/{shiftId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
       allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
 
@@ -98,7 +104,7 @@ service cloud.firestore {
     // read allows null resource so that transactions can check the lock doc before it exists
     match /liveSessions/{sessionId} {
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read: if request.auth != null && (resource == null || resource.data.userId == request.auth.uid);
+      allow read: if request.auth != null && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
       allow update, delete: if request.auth != null && resource.data.userId == request.auth.uid;
     }
 
@@ -128,6 +134,8 @@ service cloud.firestore {
       allow read: if resource.data.status == 'approved';
       // Authenticated users can read their own feedback (any status)
       allow read: if request.auth != null && feedbackId == request.auth.uid;
+      // Admins can read every review (moderation panel) and change its status
+      allow read, update: if isAdmin();
       // Users can only create/update their own feedback
       allow create, update: if request.auth != null && feedbackId == request.auth.uid;
       allow delete: if false;
@@ -157,7 +165,7 @@ service cloud.firestore {
     // Persists across "Clear Everything" to prevent trial abuse.
     // Client can read their own record to show correct UI, but can NEVER write.
     match /trial_records/{userId} {
-      allow read: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
       allow write: if false;
     }
   }

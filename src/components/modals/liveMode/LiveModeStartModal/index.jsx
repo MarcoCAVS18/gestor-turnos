@@ -2,6 +2,7 @@
 // Modal to start a new Live Mode session - Styled like FeatureAnnouncementCard
 
 import React, { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Play, Briefcase, AlertCircle, X, Timer, Sparkles, Crown, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -92,7 +93,7 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <Flex
       variant="center"
       className="fixed inset-0 bg-black/60 backdrop-blur-sm p-4"
@@ -363,7 +364,8 @@ const LiveModeStartModal = ({ isOpen, onClose }) => {
           </div>
         </div>
       </motion.div>
-    </Flex>
+    </Flex>,
+    document.body
   );
 };
 

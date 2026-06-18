@@ -338,7 +338,16 @@
       "moreThanLast": "{{amount}} more than last month (+{{percent}}%)",
       "lessThanLast": "{{amount}} less than last month (-{{percent}}%)",
       "sameAsLast": "Same as last month",
-      "keepPace": "If you keep this pace throughout the month"
+      "keepPace": "If you keep this pace throughout the month",
+      "lostHelp": "Not sure where to even start?",
+      "lostHelpLink": "Learn more about the project"
+    },
+    "updates": {
+      "title": "What's new",
+      "upcomingTitle": "Coming soon",
+      "badge": "New",
+      "seeUpcoming": "See what's coming",
+      "back": "Back to updates"
     },
     "nextShift": {
       "title": "Next shift"
@@ -657,8 +666,8 @@
   },
   "landing": {
     "brandName": "Orary",
-    "tagline": "Shift Tracker & Earnings Calculator",
-    "description": "For shift workers in hospitality, construction, retail, delivery and working holiday visas — worldwide.",
+    "tagline": "Know exactly what you earned",
+    "description": "Built for casual, gig and working-holiday workers. Log a shift, see your real pay — and count your 88 days.",
     "features": {
       "trackShifts": "Shift tracking",
       "analytics": "Earnings calculator",
@@ -730,6 +739,12 @@
       "currentProfile": "Current Profile Photo",
       "defaultLogo": "Default Logo",
       "deletePhotoConfirm": "Are you sure you want to delete your profile photo? It will be replaced by the default logo."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "dailyReminder": "Daily shift reminder",
+      "dailyReminderDesc": "A daily nudge to log your shifts so your earnings stay up to date.",
+      "time": "Reminder time"
     },
     "smoko": {
       "title": "Smoko (Breaks)",
@@ -1823,6 +1838,8 @@
     "country": "Employer country",
     "countryAU": "Australia",
     "countryNZ": "New Zealand",
+    "countryGB": "United Kingdom",
+    "countryIE": "Ireland",
     "unsupportedCountry": "Refund estimates are currently available for Australia and New Zealand only.",
     "missingFields": "Please fill in gross earnings and tax withheld.",
     "disclaimer": "This is an informal estimate. Always verify with your tax authority.",
@@ -1905,11 +1922,86 @@
       "disclaimerAU": "Estimate of income only. Does NOT include work deductions, tax offsets (LITO/LMITO), Medicare levy, HECS-HELP, or Working Holiday Maker rates.",
       "disclaimerNZ": "Estimate of income only. Does NOT include work deductions, KiwiSaver, ACC levies or the Independent Earner Tax Credit.",
       "linkAU": "Open myTax for the actual return",
-      "linkNZ": "Open myIR for the actual return"
+      "linkNZ": "Open myIR for the actual return",
+      "disclaimerGB": "Income tax estimate only (England, Wales & NI). Does NOT include National Insurance, student loan repayments or Scottish rates. Check your HMRC Personal Tax Account for the actual figures.",
+      "disclaimerIE": "Income tax estimate only, after standard personal + employee tax credits. Does NOT include USC, PRSI or other credits and reliefs. Check Revenue myAccount for the actual figures.",
+      "linkGB": "Open your HMRC Personal Tax Account",
+      "linkIE": "Open Revenue myAccount"
     },
     "twoLectures": {
       "informal": "Informal estimate",
       "fyView": "Fiscal year view"
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "subtitle": "Moderation & usage",
+    "error": "Something went wrong loading admin data.",
+    "usage": {
+      "title": "Usage & cost drivers",
+      "note": "On-demand counts. Exact billing lives in the Firebase console.",
+      "refresh": "Refresh",
+      "totalUsers": "Total users",
+      "newUsers30d": "New users (30d)",
+      "totalShifts": "Total shifts",
+      "shifts30d": "Shifts (30d)",
+      "totalWorks": "Total works",
+      "totalLiveSessions": "Live Mode sessions",
+      "totalFeedback": "Total reviews",
+      "pendingFeedback": "Pending reviews"
+    },
+    "metrics": {
+      "title": "Subscriptions & conversion",
+      "note": "Approximate, from current subscription states.",
+      "premiumTotal": "Premium (active)",
+      "trialsStarted": "Trials started",
+      "trialing": "Trialing now",
+      "activePaid": "Active (paid)",
+      "cancelling": "Cancelling",
+      "cancelled": "Cancelled",
+      "conversion": "Trial → paid",
+      "churn": "Churn"
+    },
+    "moderation": {
+      "title": "Comment moderation",
+      "empty": "No reviews yet.",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "approve": "Approve",
+      "reject": "Reject",
+      "anonymous": "Anonymous",
+      "noComment": "(no comment)"
+    },
+    "users": {
+      "title": "Users",
+      "empty": "No users.",
+      "premium": "Premium",
+      "free": "Free"
+    }
+  },
+  "notifications": {
+    "shiftReminder": {
+      "title": "Shift starting soon{{work}}",
+      "body": "Your shift starts at {{time}} ({{minutes}} min reminder)."
+    },
+    "reengagement": {
+      "title7": "We miss you! 👋",
+      "body7": "You haven't logged a shift in a while. Ready to get back on track?",
+      "title14": "On vacation? 🏖️",
+      "body14": "We'll be here whenever you're back! Your shifts are waiting for you.",
+      "title21": "Your stats are waiting 📊",
+      "body21": "Log your recent shifts to keep your earnings history up to date.",
+      "title30": "Long time no see! ⏰",
+      "body30": "Don't lose track of your work. Open Orary and add your latest shifts."
+    },
+    "australia88": {
+      "title": "Working Holiday Visa 🇦🇺",
+      "body": "You've reached {{days}} visa days — only {{remaining}} to go to your {{milestone}}-day goal!"
+    },
+    "dailyReminder": {
+      "title": "Log today's shift ⏱️",
+      "body": "Don't forget to record your shifts in Orary to keep your earnings up to date."
     }
   },
   "reports": {

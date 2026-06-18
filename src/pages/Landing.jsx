@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
-import { Clock, TrendingUp, Zap, ArrowRight, Bike } from 'lucide-react';
+import { TrendingUp, Zap, ArrowRight } from 'lucide-react';
 import New from '../components/ui/New';
 
 const PINK = '#db2777'; // pink-600: 4.6:1 contrast ratio with white (WCAG AA)
@@ -81,19 +81,15 @@ const Landing = ({ lang }) => {
   const navigate = useNavigate();
   const [videoReady, setVideoReady] = useState(false);
 
+  // Just the three real differentiators — earnings calculator, live timer and
+  // the 88-day visa tracker (the moat). The full feature list stays in the
+  // sr-only <h2> below so SEO keyword coverage is unaffected.
   const topFeatures = [
-    { icon: Clock,       label: t('landing.features.trackShifts'), color: '#F59E0B' },
     { icon: TrendingUp,  label: t('landing.features.analytics'),   color: '#6366F1' },
     { icon: Zap,         label: t('landing.features.liveMode'),     color: PINK },
   ];
 
   const bottomFeatures = [
-    {
-      icon: Bike,
-      label: t('landing.features.delivery'),
-      color: '#10B981',
-      isEmoji: false,
-    },
     {
       icon: () => <span className="text-xs leading-none">AU</span>,
       label: t('landing.features.australia88'),
@@ -312,6 +308,8 @@ const Landing = ({ lang }) => {
           </p>
           <p className="text-white/60 text-xs">
             <Link to="/australia-88" className="hover:text-white/90 transition-colors">88-day visa tracker</Link>
+            <span className="mx-2 opacity-50">·</span>
+            <Link to="/blog" className="hover:text-white/90 transition-colors">Blog</Link>
             <span className="mx-2 opacity-50">·</span>
             <Link to="/faq" className="hover:text-white/90 transition-colors">FAQ</Link>
           </p>

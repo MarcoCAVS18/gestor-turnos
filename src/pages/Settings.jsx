@@ -16,6 +16,7 @@ import FooterSection from '../components/settings/FooterSection';
 import DeliverySection from '../components/settings/DeliverySection';
 import DeliveryPlatformsSection from '../components/settings/DeliveryPlatformsSection';
 import SmokoSection from '../components/settings/SmokoSection';
+import NotificationsSection from '../components/settings/NotificationsSection';
 import HolidaySettingsSection from '../components/settings/HolidaySettingsSection';
 import IntegrationsBanner from '../components/settings/IntegrationsBanner';
 import SettingsOnboardingModal from '../components/modals/SettingsOnboardingModal';
@@ -94,6 +95,7 @@ const Settings = () => {
                 <IntegrationsBanner className="flex-grow" />
                 <CustomizationSection className="flex-grow" />
                 <SmokoSection className="flex-grow" />
+                <NotificationsSection className="flex-grow" />
                 <SessionSection
                   className="flex-grow"
                 />
@@ -131,6 +133,8 @@ const Settings = () => {
             </div>
 
             <SmokoSection />
+
+            <NotificationsSection />
 
             <GoalsSection />
 

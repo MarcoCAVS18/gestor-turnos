@@ -31,6 +31,8 @@ const ResetPassword   = lazy(() => import('./pages/auth/ResetPassword'));
 
 const Australia88     = lazy(() => import('./pages/Australia88'));
 const FAQ             = lazy(() => import('./pages/FAQ'));
+const Blog            = lazy(() => import('./pages/Blog'));
+const BlogPost        = lazy(() => import('./pages/BlogPost'));
 
 const PrivacyPolicy   = lazy(() => import('./pages/legal/PrivacyPolicy'));
 const TermsOfService  = lazy(() => import('./pages/legal/TermsOfService'));
@@ -54,6 +56,7 @@ const Statistics         = lazy(() => import('./pages/Statistics'));
 const StatisticsPayslips = lazy(() => import('./pages/StatisticsPayslips'));
 const CalendarView    = lazy(() => import('./pages/CalendarView'));
 const Settings        = lazy(() => import('./pages/Settings'));
+const Admin           = lazy(() => import('./pages/Admin'));
 const Integrations    = lazy(() => import('./pages/Integrations'));
 const SharedWork      = lazy(() => import('./pages/SharedWork'));
 const Premium         = lazy(() => import('./pages/Premium'));
@@ -186,6 +189,12 @@ function App() {
         {/* Public SEO landing pages */}
         <Route path="/australia-88" element={<Suspense fallback={<SplashLoader />}><Australia88 /></Suspense>} />
         <Route path="/faq" element={<Suspense fallback={<SplashLoader />}><FAQ /></Suspense>} />
+        <Route path="/blog" element={<Suspense fallback={<SplashLoader />}><Blog /></Suspense>} />
+        <Route path="/blog/:slug" element={<Suspense fallback={<SplashLoader />}><BlogPost /></Suspense>} />
+        <Route path="/es/blog" element={<Suspense fallback={<SplashLoader />}><Blog lang="es" /></Suspense>} />
+        <Route path="/es/blog/:slug" element={<Suspense fallback={<SplashLoader />}><BlogPost lang="es" /></Suspense>} />
+        <Route path="/fr/blog" element={<Suspense fallback={<SplashLoader />}><Blog lang="fr" /></Suspense>} />
+        <Route path="/fr/blog/:slug" element={<Suspense fallback={<SplashLoader />}><BlogPost lang="fr" /></Suspense>} />
 
         {/* Protected routes */}
         <Route element={<ProtectedLayout><AppLayout /></ProtectedLayout>}>
@@ -198,6 +207,7 @@ function App() {
           </Route>
           <Route path="/calendar" element={<CalendarView />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/integrations" element={<Integrations />} />
           <Route path="/premium" element={<Premium />} />
           <Route path="/about" element={<About />} />

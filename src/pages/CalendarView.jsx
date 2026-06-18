@@ -24,7 +24,14 @@ import { getLocaleFromI18n } from '../utils/locale';
 
 const CalendarView = () => {
   const { t, i18n } = useTranslation();
-  const { shiftsByDate, allWorks, thematicColors, loading, deleteShift } = useApp();
+  const { shiftsByDate, allWorks, thematicColors, loading, deleteShift, deleteDeliveryShift } = useApp();
+
+  // useDeleteManager calls this with the full shift object; pass the id (and route
+  // delivery shifts to the right collection) — mirrors Shifts.jsx.
+  const handleDeleteShift = useCallback(
+    (shift) => (shift?.type === 'delivery' ? deleteDeliveryShift(shift.id) : deleteShift(shift.id)),
+    [deleteDeliveryShift, deleteShift]
+  );
   const colors = useThemeColors();
   
   const hasWorks = allWorks && allWorks.length > 0;
@@ -52,7 +59,7 @@ const CalendarView = () => {
     startDeletion,
     cancelDeletion,
     confirmDeletion
-  } = useDeleteManager(deleteShift);
+  } = useDeleteManager(handleDeleteShift);
   
   const formatDate = useCallback((dateStr) => {
     const date = createSafeDate(dateStr);

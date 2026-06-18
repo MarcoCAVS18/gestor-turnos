@@ -325,8 +325,8 @@
   },
   "landing": {
     "brandName": "Orary",
-    "tagline": "Suivi de quarts & calculateur de revenus",
-    "description": "Pour les travailleurs en hôtellerie, construction, retail, livraison et visa Working Holiday — dans le monde entier.",
+    "tagline": "Sache exactement combien tu as gagné",
+    "description": "Conçu pour les travailleurs occasionnels, en livraison et en Working Holiday. Enregistre un quart et vois ta vraie paie — et compte tes 88 jours.",
     "features": {
       "trackShifts": "Suivi des quarts",
       "analytics": "Calculateur de revenus",
@@ -558,7 +558,16 @@
       "moreThanLast": "{{amount}} de plus que le mois dernier (+{{percent}}%)",
       "lessThanLast": "{{amount}} de moins que le mois dernier (-{{percent}}%)",
       "sameAsLast": "Identique au mois dernier",
-      "keepPace": "Si vous maintenez ce rythme tout au long du mois"
+      "keepPace": "Si vous maintenez ce rythme tout au long du mois",
+      "lostHelp": "Tu ne sais pas par où commencer ?",
+      "lostHelpLink": "En savoir plus sur le projet"
+    },
+    "updates": {
+      "title": "Nouveautés",
+      "upcomingTitle": "À venir",
+      "badge": "Nouveau",
+      "seeUpcoming": "Voir ce qui arrive",
+      "back": "Retour aux nouveautés"
     },
     "export": {
       "title": "Exporter le rapport",
@@ -707,6 +716,12 @@
       "currentProfile": "Photo de profil actuelle",
       "defaultLogo": "Logo par défaut",
       "deletePhotoConfirm": "Êtes-vous sûr de vouloir supprimer votre photo de profil? Elle sera remplacée par le logo par défaut."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "dailyReminder": "Rappel quotidien des quarts",
+      "dailyReminderDesc": "Un rappel quotidien pour enregistrer tes quarts et garder tes gains à jour.",
+      "time": "Heure du rappel"
     },
     "smoko": {
       "title": "Smoko (Pauses)",
@@ -1875,6 +1890,8 @@
     "country": "Pays de l'employeur",
     "countryAU": "Australie",
     "countryNZ": "Nouvelle-Zélande",
+    "countryGB": "Royaume-Uni",
+    "countryIE": "Irlande",
     "unsupportedCountry": "L'estimation du remboursement est disponible uniquement pour l'Australie et la Nouvelle-Zélande pour l'instant.",
     "missingFields": "Veuillez remplir le revenu brut et l'impôt retenu.",
     "disclaimer": "Ceci est une estimation informelle. Vérifiez toujours auprès de votre autorité fiscale.",
@@ -1957,11 +1974,86 @@
       "disclaimerAU": "Estimation des revenus uniquement. N'inclut PAS les déductions professionnelles, offsets (LITO/LMITO), Medicare levy, HECS-HELP ni les taux Working Holiday Maker.",
       "disclaimerNZ": "Estimation des revenus uniquement. N'inclut PAS les déductions professionnelles, KiwiSaver, ACC levies ni l'Independent Earner Tax Credit.",
       "linkAU": "Ouvrir myTax pour la déclaration réelle",
-      "linkNZ": "Ouvrir myIR pour la déclaration réelle"
+      "linkNZ": "Ouvrir myIR pour la déclaration réelle",
+      "disclaimerGB": "Estimation de l'impôt sur le revenu uniquement (Angleterre, Pays de Galles et Irlande du Nord). N'inclut PAS la National Insurance, le remboursement de prêt étudiant ni les taux écossais. Vérifiez votre HMRC Personal Tax Account pour les chiffres réels.",
+      "disclaimerIE": "Estimation de l'impôt sur le revenu uniquement, après les crédits d'impôt personnel + employé standard. N'inclut PAS l'USC, la PRSI ni d'autres crédits et déductions. Vérifiez Revenue myAccount pour les chiffres réels.",
+      "linkGB": "Ouvrir votre HMRC Personal Tax Account",
+      "linkIE": "Ouvrir Revenue myAccount"
     },
     "twoLectures": {
       "informal": "Estimation informelle",
       "fyView": "Vue par année fiscale"
+    }
+  },
+  "admin": {
+    "title": "Admin",
+    "subtitle": "Modération et consommation",
+    "error": "Une erreur est survenue lors du chargement des données admin.",
+    "usage": {
+      "title": "Consommation et facteurs de coût",
+      "note": "Comptes à la demande. La facturation exacte est dans la console Firebase.",
+      "refresh": "Actualiser",
+      "totalUsers": "Utilisateurs totaux",
+      "newUsers30d": "Nouveaux utilisateurs (30j)",
+      "totalShifts": "Quarts totaux",
+      "shifts30d": "Quarts (30j)",
+      "totalWorks": "Travaux totaux",
+      "totalLiveSessions": "Sessions Live Mode",
+      "totalFeedback": "Avis totaux",
+      "pendingFeedback": "Avis en attente"
+    },
+    "metrics": {
+      "title": "Abonnements et conversion",
+      "note": "Approximatif, selon les états d'abonnement actuels.",
+      "premiumTotal": "Premium (actifs)",
+      "trialsStarted": "Essais commencés",
+      "trialing": "En essai maintenant",
+      "activePaid": "Actifs (payants)",
+      "cancelling": "En annulation",
+      "cancelled": "Annulés",
+      "conversion": "Essai → payant",
+      "churn": "Churn"
+    },
+    "moderation": {
+      "title": "Modération des commentaires",
+      "empty": "Aucun avis pour le moment.",
+      "pending": "En attente",
+      "approved": "Approuvé",
+      "rejected": "Rejeté",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "anonymous": "Anonyme",
+      "noComment": "(aucun commentaire)"
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "empty": "Aucun utilisateur.",
+      "premium": "Premium",
+      "free": "Gratuit"
+    }
+  },
+  "notifications": {
+    "shiftReminder": {
+      "title": "Quart bientôt{{work}}",
+      "body": "Ton quart commence à {{time}} (rappel {{minutes}} min avant)."
+    },
+    "reengagement": {
+      "title7": "Tu nous manques ! 👋",
+      "body7": "Tu n'as pas enregistré de quart depuis un moment. Prêt à reprendre ?",
+      "title14": "En vacances ? 🏖️",
+      "body14": "On sera là à ton retour ! Tes quarts t'attendent.",
+      "title21": "Tes statistiques t'attendent 📊",
+      "body21": "Enregistre tes quarts récents pour garder ton historique à jour.",
+      "title30": "Ça fait longtemps ! ⏰",
+      "body30": "Ne perds pas le fil de ton travail. Ouvre Orary et ajoute tes derniers quarts."
+    },
+    "australia88": {
+      "title": "Working Holiday Visa 🇦🇺",
+      "body": "Tu as atteint {{days}} jours de visa — plus que {{remaining}} pour ton objectif de {{milestone}} jours !"
+    },
+    "dailyReminder": {
+      "title": "Enregistre le quart d'aujourd'hui ⏱️",
+      "body": "N'oublie pas d'enregistrer tes quarts dans Orary pour garder tes gains à jour."
     }
   },
   "reports": {

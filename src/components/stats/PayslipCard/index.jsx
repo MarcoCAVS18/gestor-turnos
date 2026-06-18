@@ -130,7 +130,7 @@ const PayslipCard = ({ className = '' }) => {
     [works]
   );
 
-  const currencyCode = country === 'NZ' ? 'NZD' : 'AUD';
+  const currencyCode = { AU: 'AUD', NZ: 'NZD', GB: 'GBP', IE: 'EUR' }[country] || 'AUD';
   const formatMoney = useCallback((amount) => {
     try {
       return new Intl.NumberFormat(undefined, {
@@ -624,20 +624,21 @@ const PayslipCard = ({ className = '' }) => {
                     {/* Disclaimer del país + link a herramienta oficial */}
                     <div className="space-y-1.5 pt-1">
                       <p className="text-[11px] text-gray-400 dark:text-gray-500 italic leading-relaxed">
-                        {t(country === 'NZ' ? 'payslip.fy.disclaimerNZ' : 'payslip.fy.disclaimerAU')}
+                        {t(`payslip.fy.disclaimer${country}`)}
                       </p>
                       <a
-                        href={
-                          country === 'NZ'
-                            ? 'https://www.ird.govt.nz/myir'
-                            : 'https://www.ato.gov.au/individuals-and-families/your-tax-return/lodge-your-tax-return-online-with-mytax'
-                        }
+                        href={{
+                          AU: 'https://www.ato.gov.au/individuals-and-families/your-tax-return/how-to-lodge-your-tax-return/lodge-your-tax-return-online-with-mytax',
+                          NZ: 'https://www.ird.govt.nz/myir',
+                          GB: 'https://www.gov.uk/personal-tax-account',
+                          IE: 'https://www.revenue.ie/en/online-services/index.aspx',
+                        }[country]}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-xs font-medium hover:underline transition-colors"
                         style={{ color: colors.primary }}
                       >
-                        {t(country === 'NZ' ? 'payslip.fy.linkNZ' : 'payslip.fy.linkAU')}
+                        {t(`payslip.fy.link${country}`)}
                         <ExternalLink size={12} />
                       </a>
                     </div>
