@@ -8,11 +8,14 @@
  *   Add  http://localhost:3333  to "Authorized redirect URIs"
  *
  * USAGE:
- *   node scripts/gsc-check.js           → inspect key URLs + list sitemaps
- *   node scripts/gsc-check.js check     → same as above
- *   node scripts/gsc-check.js sitemaps  → list sitemaps only
- *   node scripts/gsc-check.js submit    → submit sitemap.xml
- *   node scripts/gsc-check.js logout    → clear saved token
+ *   node scripts/gsc-check.js                → inspect ALL sitemap URLs + list sitemaps
+ *   node scripts/gsc-check.js check          → same as above (+ summary of what's NOT indexed)
+ *   node scripts/gsc-check.js check <url>    → inspect a single URL
+ *   node scripts/gsc-check.js sitemaps       → list sitemaps only
+ *   node scripts/gsc-check.js submit         → submit sitemap.xml
+ *   node scripts/gsc-check.js sites          → list verified GSC properties
+ *   node scripts/gsc-check.js indexnow       → ping Bing/Yandex via IndexNow
+ *   node scripts/gsc-check.js logout         → clear saved token
  */
 
 const path  = require('path');
@@ -31,13 +34,26 @@ const SCOPES      = [
   'https://www.googleapis.com/auth/webmasters',
   'https://www.googleapis.com/auth/webmasters.readonly',
 ];
-const URLS_TO_CHECK = [
+// By default we inspect EVERY URL in public/sitemap.xml, so this stays in sync as
+// the sitemap grows. Falls back to a short static list if the sitemap can't be read.
+const FALLBACK_URLS = [
   'https://orary.app/',
-  'https://orary.app/terms',
-  'https://orary.app/privacy',
   'https://orary.app/australia-88',
   'https://orary.app/faq',
+  'https://orary.app/blog',
 ];
+
+function loadSitemapUrls() {
+  try {
+    const xml = fs.readFileSync(path.join(__dirname, '../public/sitemap.xml'), 'utf-8');
+    const urls = [...xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((m) => m[1].trim());
+    return urls.length ? urls : FALLBACK_URLS;
+  } catch {
+    return FALLBACK_URLS;
+  }
+}
+
+const URLS_TO_CHECK = loadSitemapUrls();
 
 // ─── Read credentials from functions/.env ────────────────────────────────────
 
@@ -156,12 +172,15 @@ async function authenticate() {
 
 // ─── GSC operations ───────────────────────────────────────────────────────────
 
-async function inspectUrls() {
+async function inspectUrls(urls = URLS_TO_CHECK) {
   const sc  = google.searchconsole({ version: 'v1', auth: oauth2Client });
 
-  console.log('═══ URL Inspection ════════════════════════════════════════════\n');
+  console.log(`═══ URL Inspection (${urls.length} URLs) ═══════════════════════════════\n`);
 
-  for (const inspectionUrl of URLS_TO_CHECK) {
+  let indexed = 0;
+  const notIndexed = []; // { url, state }
+
+  for (const inspectionUrl of urls) {
     try {
       const res = await sc.urlInspection.index.inspect({
         requestBody: { inspectionUrl, siteUrl: SITE_URL },
@@ -169,11 +188,15 @@ async function inspectUrls() {
 
       const idx = res.data.inspectionResult?.indexStatusResult;
       const verdict = idx?.verdict ?? 'UNKNOWN';
+      const coverage = idx?.coverageState ?? 'N/A';
       const icon = verdict === 'PASS' ? '✅' : verdict === 'NEUTRAL' ? '⚠️ ' : '❌';
+
+      if (verdict === 'PASS') indexed++;
+      else notIndexed.push({ url: inspectionUrl, state: coverage });
 
       console.log(`${icon}  ${inspectionUrl}`);
       console.log(`    Verdict:            ${verdict}`);
-      console.log(`    Coverage state:     ${idx?.coverageState ?? 'N/A'}`);
+      console.log(`    Coverage state:     ${coverage}`);
       console.log(`    Google canonical:   ${idx?.googleCanonical ?? 'N/A'}`);
       console.log(`    User canonical:     ${idx?.userCanonical ?? 'N/A'}`);
       console.log(`    Last crawl:         ${idx?.lastCrawlTime ?? 'Not yet crawled'}`);
@@ -181,10 +204,23 @@ async function inspectUrls() {
       if (idx?.indexingState)  console.log(`    Indexing state:     ${idx.indexingState}`);
       console.log();
     } catch (err) {
+      notIndexed.push({ url: inspectionUrl, state: `ERROR: ${err.message}` });
       console.log(`❌  ${inspectionUrl}`);
       console.log(`    Error: ${err.message}\n`);
     }
   }
+
+  // Summary — what's NOT indexed (what the user usually wants to see)
+  console.log('═══ Summary ════════════════════════════════════════════════════');
+  console.log(`✅  Indexed:      ${indexed}/${urls.length}`);
+  console.log(`⚠️   Not indexed:  ${notIndexed.length}/${urls.length}`);
+  if (notIndexed.length) {
+    console.log('\n   URLs not indexed yet:');
+    for (const { url, state } of notIndexed) {
+      console.log(`   • ${url}\n       → ${state}`);
+    }
+  }
+  console.log();
 }
 
 async function listSitemaps() {
@@ -317,6 +353,7 @@ async function listSites() {
 
 async function main() {
   const cmd = process.argv[2] ?? 'check';
+  const arg = process.argv[3]; // optional: a single URL to inspect
 
   if (cmd === 'logout') { await logout(); return; }
 
@@ -324,8 +361,8 @@ async function main() {
 
   switch (cmd) {
     case 'check':
-      await inspectUrls();
-      await listSitemaps();
+      await inspectUrls(arg ? [arg] : URLS_TO_CHECK);
+      if (!arg) await listSitemaps();
       break;
     case 'sitemaps':
       await listSitemaps();
