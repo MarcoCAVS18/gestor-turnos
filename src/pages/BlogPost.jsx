@@ -2,10 +2,10 @@
 // Public SEO blog article at /blog/:slug (and localized /es|/fr/blog/:slug).
 // Pre-rendered for Google. Content comes from src/data/blogPosts.js.
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ArrowLeft, Clock } from 'lucide-react';
 import { getPost, getLocalizedPost, postLangs } from '../data/blogPosts';
 
@@ -22,18 +22,89 @@ const UI = {
 
 const blogPath = (lang, slug = '') => `${lang === 'en' ? '' : `/${lang}`}/blog${slug ? `/${slug}` : ''}`;
 
-// Render **bold** spans inside a plain-text block.
-const renderText = (text) =>
-  text.split('**').map((part, i) => (i % 2 === 1 ? <strong key={i}>{part}</strong> : <React.Fragment key={i}>{part}</React.Fragment>));
+const LINK_CLS = 'font-semibold text-pink-600 hover:text-pink-700 underline underline-offset-2';
 
-const Block = ({ block, accent }) => {
+// Pull the post slug out of an internal blog href like /es/blog/<slug>.
+const slugFromHref = (href) => {
+  const m = href.match(/\/blog\/([^/?#]+)/);
+  return m ? m[1] : null;
+};
+
+// Internal blog link that shows a small localized preview card on hover.
+const BlogLink = ({ href, label, lang }) => {
+  const slug = slugFromHref(href);
+  const target = slug ? getLocalizedPost(slug, lang) : null;
+  const [open, setOpen] = useState(false);
+
+  if (!target) return <Link to={href} className={LINK_CLS}>{label}</Link>;
+
+  return (
+    <span
+      className="relative inline-block"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <Link to={href} className={LINK_CLS}>{label}</Link>
+      <AnimatePresence>
+        {open && (
+          <motion.span
+            initial={{ opacity: 0, y: 6, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 6, scale: 0.96 }}
+            transition={{ duration: 0.18 }}
+            className="absolute left-0 top-full z-20 mt-2 block w-72 max-w-[80vw] rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-xl pointer-events-none"
+            style={{ borderTopColor: target.accent, borderTopWidth: 3 }}
+          >
+            <span
+              className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold mb-2 not-italic align-middle"
+              style={{ backgroundColor: `${target.accent}1a`, color: target.accent }}
+            >
+              {target.tag}
+            </span>
+            <span className="block text-sm font-bold text-slate-800 leading-snug">{target.title}</span>
+            <span className="block text-xs text-slate-500 leading-relaxed mt-1 line-clamp-3">{target.description}</span>
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </span>
+  );
+};
+
+// Render **bold** spans and [label](url) links inside a plain-text block.
+// Internal paths (starting with "/") become preview-card blog links; anything
+// else renders as a normal anchor.
+const renderText = (text, lang = 'en') => {
+  const nodes = [];
+  const regex = /\*\*(.+?)\*\*|\[(.+?)\]\((.+?)\)/g;
+  let last = 0;
+  let match;
+  let key = 0;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > last) nodes.push(text.slice(last, match.index));
+    if (match[1] !== undefined) {
+      nodes.push(<strong key={key++}>{match[1]}</strong>);
+    } else {
+      const [, , label, href] = match;
+      nodes.push(
+        href.startsWith('/')
+          ? <BlogLink key={key++} href={href} label={label} lang={lang} />
+          : <a key={key++} href={href} target="_blank" rel="noopener noreferrer" className={LINK_CLS}>{label}</a>
+      );
+    }
+    last = match.index + match[0].length;
+  }
+  if (last < text.length) nodes.push(text.slice(last));
+  return nodes;
+};
+
+const Block = ({ block, accent, lang }) => {
   switch (block.type) {
     case 'h2':
       return <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mt-8 mb-3">{block.text}</h2>;
     case 'ul':
       return (
         <ul className="list-disc pl-5 space-y-1.5 my-3 text-slate-600">
-          {block.items.map((it, i) => <li key={i}>{renderText(it)}</li>)}
+          {block.items.map((it, i) => <li key={i}>{renderText(it, lang)}</li>)}
         </ul>
       );
     case 'table':
@@ -50,17 +121,48 @@ const Block = ({ block, accent }) => {
             <tbody>
               {block.rows.map((r, ri) => (
                 <tr key={ri} className="border-b border-slate-100">
-                  {r.map((c, ci) => <td key={ci} className="px-3 py-2 text-slate-600 align-top">{renderText(c)}</td>)}
+                  {r.map((c, ci) => <td key={ci} className="px-3 py-2 text-slate-600 align-top">{renderText(c, lang)}</td>)}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       );
+    case 'steps':
+      return (
+        <div className="my-6">
+          {block.items.map((step, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, x: -12 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.35, delay: i * 0.05 }}
+              className="flex gap-4"
+            >
+              <div className="flex flex-col items-center">
+                <div
+                  className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold text-white"
+                  style={{ backgroundColor: accent }}
+                >
+                  {i + 1}
+                </div>
+                {i < block.items.length - 1 && (
+                  <div className="w-0.5 flex-1 my-1" style={{ backgroundColor: `${accent}33` }} />
+                )}
+              </div>
+              <div className="pb-5">
+                <p className="font-semibold text-slate-800">{step.title}</p>
+                <p className="text-slate-600 text-sm leading-relaxed mt-1">{renderText(step.text, lang)}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      );
     case 'note':
       return (
         <div className="my-5 rounded-xl border-l-4 bg-slate-50 px-4 py-3 text-sm text-slate-600" style={{ borderColor: accent }}>
-          {renderText(block.text)}
+          {renderText(block.text, lang)}
         </div>
       );
     case 'cta':
@@ -154,9 +256,28 @@ const BlogPost = ({ lang = 'en' }) => {
             <img src="/assets/SVG/logo-white.svg" alt="Orary" className="w-7 h-7" />
             <span className="text-white font-bold text-base">Orary</span>
           </Link>
-          <Link to={blogPath(lang)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-colors">
-            <ArrowLeft size={14} /> Blog
-          </Link>
+          <div className="flex items-center gap-2">
+            {langs.length > 1 && (
+              <div className="flex items-center gap-0.5 rounded-xl bg-white/10 p-0.5">
+                {langs.map((l) => (
+                  <Link
+                    key={l}
+                    to={blogPath(l, slug)}
+                    hrefLang={l}
+                    aria-current={l === lang ? 'true' : undefined}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-semibold uppercase transition-colors ${
+                      l === lang ? 'bg-white text-slate-900' : 'text-white/60 hover:text-white'
+                    }`}
+                  >
+                    {l}
+                  </Link>
+                ))}
+              </div>
+            )}
+            <Link to={blogPath(lang)} className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white/80 hover:text-white hover:bg-white/10 transition-colors">
+              <ArrowLeft size={14} /> Blog
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -187,7 +308,7 @@ const BlogPost = ({ lang = 'en' }) => {
           transition={{ duration: 0.35, delay: 0.05 }}
           className="-mt-20 relative bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-9"
         >
-          {L.content.map((block, i) => <Block key={i} block={block} accent={post.accent} />)}
+          {L.content.map((block, i) => <Block key={i} block={block} accent={post.accent} lang={lang} />)}
         </motion.article>
 
         {relatedPosts.length > 0 && (

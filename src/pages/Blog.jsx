@@ -87,13 +87,30 @@ const Blog = ({ lang = 'en' }) => {
             <img src="/assets/SVG/logo-white.svg" alt="Orary" className="w-7 h-7" />
             <span className="text-white font-bold text-base">Orary</span>
           </Link>
-          <Link
-            to="/register"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white transition-opacity hover:opacity-80"
-            style={{ backgroundColor: PINK }}
-          >
-            {ui.getStarted} <ArrowRight size={13} />
-          </Link>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-0.5 rounded-xl bg-white/10 p-0.5">
+              {LANGS.map((l) => (
+                <Link
+                  key={l}
+                  to={blogPath(l)}
+                  hrefLang={l}
+                  aria-current={l === lang ? 'true' : undefined}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold uppercase transition-colors ${
+                    l === lang ? 'bg-white text-slate-900' : 'text-white/60 hover:text-white'
+                  }`}
+                >
+                  {l}
+                </Link>
+              ))}
+            </div>
+            <Link
+              to="/register"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white transition-opacity hover:opacity-80"
+              style={{ backgroundColor: PINK }}
+            >
+              {ui.getStarted} <ArrowRight size={13} />
+            </Link>
+          </div>
         </div>
       </div>
 

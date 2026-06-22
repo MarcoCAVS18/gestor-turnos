@@ -12,8 +12,383 @@
 //   { type: 'ul',   items: [] }             → bullet list
 //   { type: 'note', text }                  → highlighted callout
 //   { type: 'cta',  text, label, to }       → call-to-action block
+//   { type: 'steps', items: [{ title, text }] } → animated numbered step timeline
 
 export const BLOG_POSTS = [
+  {
+    slug: 'second-third-working-holiday-visa-application-guide',
+    title: 'How to Apply for Your Second or Third Working Holiday Visa in Australia: A Step-by-Step Guide',
+    description:
+      'A clear, section-by-section walkthrough of the second- and third-year Working Holiday visa application (subclass 417 and 462) — how many specified-work days each one needs, what to have ready, exactly what to enter in each part of the ImmiAccount form, what it costs and what happens after you submit.',
+    date: '2026-06-22',
+    readingTime: 8,
+    tag: 'Working Holiday Visa',
+    accent: '#0EA5E9',
+    content: [
+      {
+        type: 'p',
+        text: "You've ground out your specified work, kept every payslip, and now the big one is in front of you: the actual application for your second — or third — year Working Holiday visa. The good news is the form is essentially the same both times. What changes is how many days you have to prove and when you did them. Here's exactly what to put in each section.",
+      },
+      { type: 'h2', text: 'Second or third year: how many days do you need?' },
+      {
+        type: 'p',
+        text: 'You can extend your Working Holiday stay twice — once to a **second year** and once to a **third year**. You apply with the same online form each time; the difference is the amount of specified work you have to prove and which visa year you completed it in.',
+      },
+      {
+        type: 'table',
+        headers: ['', 'Second-year visa', 'Third-year visa'],
+        rows: [
+          ['Specified work needed', '88 days', '6 months (around 179 days)'],
+          ['When you must complete it', 'During your first-year visa', 'During your second-year visa'],
+          ['Visa you link to', 'Your first Working Holiday visa', 'Your second Working Holiday visa'],
+        ],
+      },
+      {
+        type: 'p',
+        text: 'Those aren’t calendar days — they’re **visa-accredited days** worked out from your weekly hours, so a full-time week can count for more than the days you actually clocked in. We break that calculation down in our 88-day guide. You also need to be under the age limit (usually 30, or 35 for some countries) when you apply, and hold or have held the relevant earlier visa.',
+      },
+      {
+        type: 'note',
+        text: 'UK passport holders no longer need to do specified work for a second or third subclass 417 visa — but you still have to meet the other requirements and apply through the same form.',
+      },
+      { type: 'h2', text: 'Step 1: Get your evidence ready' },
+      {
+        type: 'p',
+        text: 'Before you open the form, gather everything that proves your specified work. Immigration wants consistent, matching records — dates, location and hours that line up across every document.',
+      },
+      {
+        type: 'ul',
+        items: [
+          '**Payslips** for every week of specified work, showing the employer, dates and hours.',
+          "**Form 1263** — the official 'Working holiday visa employment verification' declaration, signed by each employer.",
+          '**Bank statements** showing your wages landing, matching the payslips.',
+          '**Payment summary / income statement** (or PAYG details) from your employer(s).',
+          'Your **passport** — the same one, or the details of any new one if you renewed.',
+          'Your **first visa grant number**, from your original grant letter.',
+        ],
+      },
+      { type: 'h2', text: 'The application, section by section' },
+      {
+        type: 'p',
+        text: "You apply online through ImmiAccount while you're still in Australia — the same process whether it's your second or third year. Here's what each part asks for and exactly what to enter.",
+      },
+      {
+        type: 'steps',
+        items: [
+          {
+            title: 'Create or log into ImmiAccount',
+            text: 'Go to **online.immi.gov.au**, create an ImmiAccount (or log into the one you used for your first visa), then choose **New application → Working Holiday** and pick the **same subclass** as your first year — 417 or 462.',
+          },
+          {
+            title: 'Application context',
+            text: 'The first questions ask **where you are** and confirm this is a Working Holiday application. Answer honestly — being in Australia is what lets you get a bridging visa to stay lawfully while the application is processed.',
+          },
+          {
+            title: 'Passport & identity details',
+            text: 'Enter your passport exactly as printed: number, country, issue and expiry dates, and your name in the same order as the document. If you renewed your passport since your first visa, use the new one and keep the old number handy.',
+          },
+          {
+            title: 'Contact & residential address',
+            text: 'Give your current Australian address, email and phone. This is where your grant notification goes — use an email you actually check, not the one from three backpacker hostels ago.',
+          },
+          {
+            title: 'Visa history',
+            text: 'Declare your current/previous visa and enter the **grant number of the visa you’re extending from** — your first Working Holiday visa for a second year, or your second visa for a third year. This links the applications and tells the system which year you’re applying for.',
+          },
+          {
+            title: 'Declare your specified work',
+            text: 'The section that matters most. For each job, enter the **employer name and ABN**, the **address and postcode** (it must be an [eligible regional postcode](/blog/specified-work-eligible-postcodes-australia)), the **type of work**, and the **exact start and finish dates**. Use the **Add** button to list several employers, and enter the **total days you actually worked — including any paid leave**. Make every detail match your payslips and Form 1263, to the day.',
+          },
+          {
+            title: 'Health & character declarations',
+            text: 'Answer the standard questions about your health and any criminal history truthfully — a false declaration can get a visa refused or cancelled. Most backpackers won’t need a medical, but you may be asked for a police certificate.',
+          },
+          {
+            title: 'Attach your evidence',
+            text: 'Upload the documents from Step 1 — payslips, Form 1263, bank statements and your passport photo page. Use clear PDFs or photos, name them sensibly, and leave no gaps in your work dates.',
+          },
+          {
+            title: 'Pay & submit',
+            text: 'Pay the application charge by card, review every section once more, and submit. You’ll get a confirmation and, because you applied onshore, usually an automatic **bridging visa** that keeps you lawful while you wait.',
+          },
+        ],
+      },
+      { type: 'h2', text: 'What it costs and what happens next' },
+      {
+        type: 'p',
+        text: 'The Working Holiday visa application charge is **AUD 670**, charged again for each year — a second and a third visa are separate payments. After you submit, you’re typically granted a **Bridging Visa A**, which lets you stay and keep working on the same conditions until a decision is made. Many applications are decided within days, though some take longer — the department aims to finish most within a couple of months.',
+      },
+      {
+        type: 'note',
+        text: 'Don’t book flights out of Australia until your visa is granted. Leaving while on a Bridging Visa A can affect your status — you’d need a **Bridging Visa B** to leave and re-enter.',
+      },
+      {
+        type: 'note',
+        text: 'You can also apply from **outside Australia**, but then you must be offshore when it’s granted and show proof of funds (around **AUD 6,200**). Applying onshore is usually simpler — you get a bridging visa and keep working while you wait. Made a mistake after submitting? Correct it with **Form 1023 (Notification of Incorrect Answers)** in ImmiAccount as soon as you spot it.',
+      },
+      {
+        type: 'p',
+        text: 'The single biggest reason these applications stall is messy evidence — dates that don’t match between your payslips, the form and Form 1263. If you logged every shift in Orary, you already have a clean, week-by-week record of hours, dates and employers to copy straight into the specified-work section and to cross-check your uploads against.',
+      },
+      {
+        type: 'cta',
+        text: 'Keep a clean record of every shift, so your visa evidence matches to the day.',
+        label: 'Start tracking free',
+        to: '/register',
+      },
+      {
+        type: 'note',
+        text: 'This article is general guidance only and not migration advice. Visa requirements, fees and forms change — always confirm current details at immi.homeaffairs.gov.au or with a registered migration agent before you apply.',
+      },
+    ],
+    related: ['working-holiday-visa-evidence-payslips', 'working-holiday-visa-mistakes', 'track-88-days-working-holiday-visa'],
+    translations: {
+      es: {
+        title: 'Cómo solicitar tu segunda o tercera Working Holiday Visa en Australia: guía paso a paso',
+        description:
+          'Una guía clara, sección por sección, de la solicitud de la Working Holiday Visa de segundo y tercer año (subclase 417 y 462): cuántos días de trabajo especificado necesita cada una, qué tener listo, qué poner exactamente en cada parte del formulario de ImmiAccount, cuánto cuesta y qué pasa después de enviarla.',
+        content: [
+          {
+            type: 'p',
+            text: 'Ya te rompiste el lomo con el trabajo especificado, guardaste cada payslip, y ahora tenés enfrente la parte grande: la solicitud real de tu segundo — o tercer — año de Working Holiday Visa. La buena noticia es que el formulario es prácticamente el mismo las dos veces. Lo que cambia es cuántos días tenés que probar y cuándo los hiciste. Acá tenés exactamente qué poner en cada sección.',
+          },
+          { type: 'h2', text: 'Segundo o tercer año: ¿cuántos días necesitás?' },
+          {
+            type: 'p',
+            text: 'Podés extender tu estadía de Working Holiday dos veces — una a un **segundo año** y otra a un **tercer año**. Solicitás con el mismo formulario online cada vez; la diferencia es la cantidad de trabajo especificado que tenés que probar y en qué año de visa lo completaste.',
+          },
+          {
+            type: 'table',
+            headers: ['', 'Visa de 2º año', 'Visa de 3er año'],
+            rows: [
+              ['Trabajo especificado requerido', '88 días', '6 meses (unos 179 días)'],
+              ['Cuándo lo tenés que completar', 'Durante tu visa de 1er año', 'Durante tu visa de 2º año'],
+              ['Visa que vinculás', 'Tu primera Working Holiday Visa', 'Tu segunda Working Holiday Visa'],
+            ],
+          },
+          {
+            type: 'p',
+            text: 'No son días de calendario — son **días acreditados de visa** calculados a partir de tus horas semanales, así que una semana full-time puede contar más que los días que realmente trabajaste. Desglosamos ese cálculo en nuestra guía de los 88 días. También tenés que estar por debajo del límite de edad (normalmente 30, o 35 para algunos países) al momento de solicitar, y tener o haber tenido la visa anterior correspondiente.',
+          },
+          {
+            type: 'note',
+            text: 'Los titulares de pasaporte del Reino Unido ya no necesitan hacer trabajo especificado para una segunda o tercera visa subclase 417 — pero igual tenés que cumplir los demás requisitos y solicitar con el mismo formulario.',
+          },
+          { type: 'h2', text: 'Paso 1: prepará tu evidencia' },
+          {
+            type: 'p',
+            text: 'Antes de abrir el formulario, juntá todo lo que prueba tu trabajo especificado. Inmigración quiere registros consistentes y que coincidan — fechas, lugar y horas que cuadren entre todos los documentos.',
+          },
+          {
+            type: 'ul',
+            items: [
+              '**Payslips** de cada semana de trabajo especificado, mostrando empleador, fechas y horas.',
+              "**Form 1263** — la declaración oficial 'Working holiday visa employment verification', firmada por cada empleador.",
+              '**Extractos bancarios** que muestren el ingreso de tu sueldo, coincidiendo con los payslips.',
+              '**Payment summary / income statement** (o datos PAYG) de tu(s) empleador(es).',
+              'Tu **pasaporte** — el mismo, o los datos del nuevo si lo renovaste.',
+              'Tu **número de grant de la primera visa**, que está en tu carta de aprobación original.',
+            ],
+          },
+          { type: 'h2', text: 'La solicitud, sección por sección' },
+          {
+            type: 'p',
+            text: 'Solicitás online a través de ImmiAccount mientras estás en Australia — el mismo proceso ya sea tu segundo o tercer año. Acá tenés qué pide cada parte y exactamente qué poner.',
+          },
+          {
+            type: 'steps',
+            items: [
+              {
+                title: 'Creá o ingresá a ImmiAccount',
+                text: 'Entrá a **online.immi.gov.au**, creá una ImmiAccount (o ingresá a la que usaste para tu primera visa), elegí **New application → Working Holiday** y seleccioná la **misma subclase** que tu primer año — 417 o 462.',
+              },
+              {
+                title: 'Contexto de la solicitud',
+                text: 'Las primeras preguntas son **dónde estás** y confirman que es una solicitud de Working Holiday. Respondé con la verdad — estar en Australia es lo que te permite obtener una bridging visa para quedarte legalmente mientras se procesa.',
+              },
+              {
+                title: 'Pasaporte e identidad',
+                text: 'Cargá tu pasaporte tal cual está impreso: número, país, fechas de emisión y vencimiento, y tu nombre en el mismo orden que el documento. Si lo renovaste desde tu primera visa, usá el nuevo y tené a mano el número viejo.',
+              },
+              {
+                title: 'Contacto y domicilio',
+                text: 'Poné tu dirección actual en Australia, email y teléfono. Ahí llega la notificación de aprobación — usá un email que realmente revises, no uno de hace tres hostels.',
+              },
+              {
+                title: 'Historial de visas',
+                text: 'Declará tu visa actual/anterior e ingresá el **número de grant de la visa desde la que extendés** — tu primera Working Holiday Visa para un segundo año, o tu segunda visa para un tercer año. Esto vincula las solicitudes y le dice al sistema qué año estás pidiendo.',
+              },
+              {
+                title: 'Declará tu trabajo especificado',
+                text: 'La sección más importante. Por cada trabajo, cargá el **nombre y ABN del empleador**, la **dirección y código postal** (tiene que ser un [código postal regional elegible](/es/blog/specified-work-eligible-postcodes-australia)), el **tipo de trabajo** y las **fechas exactas de inicio y fin**. Usá el botón **Add** para listar varios empleadores, e ingresá el **total de días que realmente trabajaste — incluyendo licencias pagas**. Que todo coincida con tus payslips y el Form 1263, al día.',
+              },
+              {
+                title: 'Declaraciones de salud y carácter',
+                text: 'Respondé con la verdad las preguntas estándar sobre tu salud y antecedentes — una declaración falsa puede hacer que te rechacen o cancelen la visa. La mayoría de los backpackers no necesita examen médico, pero puede que te pidan un certificado policial.',
+              },
+              {
+                title: 'Adjuntá tu evidencia',
+                text: 'Subí los documentos del Paso 1 — payslips, Form 1263, extractos bancarios y la hoja de datos de tu pasaporte. Usá PDFs o fotos claras, nombralos de forma sensata y no dejes huecos en tus fechas de trabajo.',
+              },
+              {
+                title: 'Pagá y enviá',
+                text: 'Pagá la tasa con tarjeta, revisá cada sección una vez más y enviá. Vas a recibir una confirmación y, como solicitaste estando en Australia, normalmente una **bridging visa** automática que te mantiene legal mientras esperás.',
+              },
+            ],
+          },
+          { type: 'h2', text: 'Cuánto cuesta y qué pasa después' },
+          {
+            type: 'p',
+            text: 'La tasa de la Working Holiday Visa es de **AUD 670**, cobrada de nuevo por cada año — la segunda y la tercera visa son pagos separados. Después de enviar, normalmente te otorgan una **Bridging Visa A**, que te deja quedarte y seguir trabajando con las mismas condiciones hasta que haya una decisión. Muchas solicitudes se resuelven en días, aunque algunas tardan más — el departamento apunta a terminar la mayoría en un par de meses.',
+          },
+          {
+            type: 'note',
+            text: 'No reserves vuelos para salir de Australia hasta que te otorguen la visa. Salir con una Bridging Visa A puede afectar tu situación — necesitarías una **Bridging Visa B** para salir y volver a entrar.',
+          },
+          {
+            type: 'note',
+            text: 'También podés solicitar desde **fuera de Australia**, pero entonces tenés que estar offshore cuando te la otorguen y mostrar prueba de fondos (unos **AUD 6.200**). Hacerlo estando en Australia suele ser más simple — obtenés una bridging visa y seguís trabajando mientras esperás. ¿Te equivocaste después de enviar? Corregilo con el **Form 1023 (Notification of Incorrect Answers)** en ImmiAccount apenas lo detectes.',
+          },
+          {
+            type: 'p',
+            text: 'La razón número uno por la que estas solicitudes se traban es la evidencia desprolija — fechas que no coinciden entre tus payslips, el formulario y el Form 1263. Si registraste cada turno en Orary, ya tenés un registro limpio, semana por semana, de horas, fechas y empleadores para copiar directo en la sección de trabajo especificado y contrastar con tus archivos subidos.',
+          },
+          {
+            type: 'cta',
+            text: 'Mantené un registro limpio de cada turno, para que tu evidencia de visa coincida al día.',
+            label: 'Empezá gratis',
+            to: '/register',
+          },
+          {
+            type: 'note',
+            text: 'Esto es solo orientación general y no es asesoramiento migratorio. Los requisitos, tasas y formularios de visa cambian — verificá siempre los detalles vigentes en immi.homeaffairs.gov.au o con un agente de migración registrado antes de solicitar.',
+          },
+        ],
+      },
+      fr: {
+        title: 'Comment demander ton deuxième ou troisième Working Holiday Visa en Australie : guide étape par étape',
+        description:
+          'Un guide clair, section par section, de la demande de Working Holiday Visa de deuxième et troisième année (sous-classe 417 et 462) : combien de jours de travail spécifié chacune exige, quoi préparer, quoi saisir exactement dans chaque partie du formulaire ImmiAccount, le coût et ce qui se passe après l’envoi.',
+        content: [
+          {
+            type: 'p',
+            text: "Tu as enchaîné ton travail spécifié, gardé chaque fiche de paie, et maintenant tu as devant toi le gros morceau : la vraie demande de ton deuxième — ou troisième — Working Holiday Visa. Bonne nouvelle : le formulaire est quasiment le même les deux fois. Ce qui change, c'est le nombre de jours à prouver et quand tu les as faits. Voici exactement quoi mettre dans chaque section.",
+          },
+          { type: 'h2', text: 'Deuxième ou troisième année : combien de jours te faut-il ?' },
+          {
+            type: 'p',
+            text: 'Tu peux prolonger ton séjour Working Holiday deux fois — une vers une **deuxième année** et une vers une **troisième année**. Tu fais la demande avec le même formulaire en ligne à chaque fois ; la différence, c’est la quantité de travail spécifié à prouver et l’année de visa pendant laquelle tu l’as effectué.',
+          },
+          {
+            type: 'table',
+            headers: ['', 'Visa 2e année', 'Visa 3e année'],
+            rows: [
+              ['Travail spécifié requis', '88 jours', '6 mois (environ 179 jours)'],
+              ['Quand le réaliser', 'Pendant ton visa de 1re année', 'Pendant ton visa de 2e année'],
+              ['Visa à relier', 'Ton premier Working Holiday Visa', 'Ton deuxième Working Holiday Visa'],
+            ],
+          },
+          {
+            type: 'p',
+            text: "Ce ne sont pas des jours de calendrier — ce sont des **jours accrédités de visa** calculés à partir de tes heures hebdomadaires, donc une semaine à temps plein peut compter pour plus que les jours réellement travaillés. On détaille ce calcul dans notre guide des 88 jours. Tu dois aussi être sous la limite d'âge (en général 30 ans, ou 35 pour certains pays) au moment de la demande, et détenir ou avoir détenu le visa précédent correspondant.",
+          },
+          {
+            type: 'note',
+            text: 'Les titulaires d’un passeport britannique n’ont plus besoin de faire du travail spécifié pour un deuxième ou troisième visa de sous-classe 417 — mais tu dois quand même remplir les autres conditions et passer par le même formulaire.',
+          },
+          { type: 'h2', text: 'Étape 1 : prépare tes preuves' },
+          {
+            type: 'p',
+            text: 'Avant d’ouvrir le formulaire, rassemble tout ce qui prouve ton travail spécifié. L’immigration veut des justificatifs cohérents qui concordent — des dates, un lieu et des heures qui correspondent d’un document à l’autre.',
+          },
+          {
+            type: 'ul',
+            items: [
+              '**Fiches de paie** pour chaque semaine de travail spécifié, indiquant l’employeur, les dates et les heures.',
+              "**Form 1263** — la déclaration officielle 'Working holiday visa employment verification', signée par chaque employeur.",
+              '**Relevés bancaires** montrant l’arrivée de ton salaire, correspondant aux fiches de paie.',
+              '**Payment summary / income statement** (ou données PAYG) de ton/tes employeur(s).',
+              'Ton **passeport** — le même, ou les détails du nouveau si tu l’as renouvelé.',
+              'Ton **numéro de grant du premier visa**, qui figure sur ta lettre d’octroi d’origine.',
+            ],
+          },
+          { type: 'h2', text: 'La demande, section par section' },
+          {
+            type: 'p',
+            text: 'Tu fais la demande en ligne via ImmiAccount pendant que tu es en Australie — le même processus que ce soit ta deuxième ou ta troisième année. Voici ce que demande chaque partie et exactement quoi saisir.',
+          },
+          {
+            type: 'steps',
+            items: [
+              {
+                title: 'Crée ou connecte-toi à ImmiAccount',
+                text: 'Va sur **online.immi.gov.au**, crée un ImmiAccount (ou connecte-toi à celui de ton premier visa), choisis **New application → Working Holiday** et sélectionne la **même sous-classe** que ta première année — 417 ou 462.',
+              },
+              {
+                title: 'Contexte de la demande',
+                text: 'Les premières questions demandent **où tu es** et confirment qu’il s’agit d’une demande Working Holiday. Réponds honnêtement — être en Australie est ce qui te permet d’obtenir un bridging visa pour rester légalement pendant le traitement.',
+              },
+              {
+                title: 'Passeport et identité',
+                text: 'Saisis ton passeport exactement comme imprimé : numéro, pays, dates d’émission et d’expiration, et ton nom dans le même ordre que le document. Si tu l’as renouvelé depuis ton premier visa, utilise le nouveau et garde l’ancien numéro à portée.',
+              },
+              {
+                title: 'Contact et adresse',
+                text: 'Indique ton adresse actuelle en Australie, ton email et ton téléphone. C’est là qu’arrive la notification d’octroi — utilise un email que tu consultes vraiment, pas celui d’il y a trois auberges.',
+              },
+              {
+                title: 'Historique des visas',
+                text: 'Déclare ton visa actuel/précédent et saisis le **numéro de grant du visa que tu prolonges** — ton premier Working Holiday Visa pour une deuxième année, ou ton deuxième visa pour une troisième année. Cela relie les demandes et indique au système quelle année tu demandes.',
+              },
+              {
+                title: 'Déclare ton travail spécifié',
+                text: 'La section la plus importante. Pour chaque emploi, saisis le **nom et l’ABN de l’employeur**, l’**adresse et le code postal** (il doit s’agir d’un [code postal régional éligible](/fr/blog/specified-work-eligible-postcodes-australia)), le **type de travail** et les **dates exactes de début et de fin**. Utilise le bouton **Add** pour lister plusieurs employeurs, et saisis le **nombre total de jours réellement travaillés — congés payés inclus**. Que tout corresponde à tes fiches de paie et au Form 1263, au jour près.',
+              },
+              {
+                title: 'Déclarations de santé et de moralité',
+                text: 'Réponds honnêtement aux questions standard sur ta santé et tes antécédents — une fausse déclaration peut faire refuser ou annuler un visa. La plupart des backpackers n’auront pas besoin de visite médicale, mais on peut te demander un certificat de police.',
+              },
+              {
+                title: 'Joins tes preuves',
+                text: 'Téléverse les documents de l’Étape 1 — fiches de paie, Form 1263, relevés bancaires et la page photo de ton passeport. Utilise des PDF ou photos nets, nomme-les clairement et ne laisse aucun trou dans tes dates de travail.',
+              },
+              {
+                title: 'Paie et envoie',
+                text: 'Paie les frais par carte, revois chaque section une dernière fois, puis envoie. Tu recevras une confirmation et, comme tu as fait la demande sur place, généralement un **bridging visa** automatique qui te garde en règle pendant l’attente.',
+              },
+            ],
+          },
+          { type: 'h2', text: 'Le coût et ce qui se passe ensuite' },
+          {
+            type: 'p',
+            text: 'Les frais de Working Holiday Visa sont de **670 AUD**, facturés à nouveau pour chaque année — le deuxième et le troisième visa sont des paiements distincts. Après l’envoi, on t’accorde généralement un **Bridging Visa A**, qui te permet de rester et de continuer à travailler aux mêmes conditions jusqu’à une décision. Beaucoup de demandes sont tranchées en quelques jours, même si certaines prennent plus longtemps — le département vise à finir la plupart en deux mois environ.',
+          },
+          {
+            type: 'note',
+            text: 'Ne réserve pas de vol pour quitter l’Australie avant l’octroi de ton visa. Partir avec un Bridging Visa A peut affecter ta situation — il te faudrait un **Bridging Visa B** pour sortir et revenir.',
+          },
+          {
+            type: 'note',
+            text: 'Tu peux aussi faire la demande depuis **hors d’Australie**, mais tu dois alors être à l’étranger au moment de l’octroi et présenter une preuve de fonds (environ **6 200 AUD**). Faire la demande sur place est en général plus simple — tu obtiens un bridging visa et continues à travailler en attendant. Une erreur après l’envoi ? Corrige-la avec le **Form 1023 (Notification of Incorrect Answers)** dans ImmiAccount dès que tu la repères.',
+          },
+          {
+            type: 'p',
+            text: 'La première raison qui bloque ces demandes, c’est des preuves brouillonnes — des dates qui ne concordent pas entre tes fiches de paie, le formulaire et le Form 1263. Si tu as noté chaque quart dans Orary, tu as déjà un relevé propre, semaine par semaine, des heures, dates et employeurs à recopier directement dans la section travail spécifié et à recouper avec tes téléversements.',
+          },
+          {
+            type: 'cta',
+            text: 'Garde un relevé propre de chaque quart, pour que tes preuves de visa concordent au jour près.',
+            label: 'Commence gratuitement',
+            to: '/register',
+          },
+          {
+            type: 'note',
+            text: 'Cet article est une information générale et non un conseil en immigration. Les conditions, frais et formulaires de visa changent — vérifie toujours les détails à jour sur immi.homeaffairs.gov.au ou auprès d’un agent de migration agréé avant de faire ta demande.',
+          },
+        ],
+      },
+    },
+  },
   {
     slug: 'track-88-days-working-holiday-visa',
     title: 'How to Track Your 88 Days for the Australian Working Holiday Visa',
@@ -781,6 +1156,84 @@ export const BLOG_POSTS = [
       },
     ],
     related: ['track-88-days-working-holiday-visa', 'working-holiday-visa-evidence-payslips'],
+    translations: {
+      es: {
+        title: 'Trabajo especificado y códigos postales elegibles para tu visa de segundo año',
+        description:
+          'No todo el trabajo cuenta para tus 88 días, y un código postal equivocado significa cero progreso. Acá tenés qué califica como trabajo especificado, qué regiones cuentan y cómo chequear un trabajo antes de aceptarlo.',
+        content: [
+          { type: 'p', text: 'Podés trabajar 88 días seguidos y aun así no calificar para un segundo año — si el **tipo de trabajo** o el **código postal** no cuentan. Tienen que cumplirse dos cosas al mismo tiempo: el trabajo tiene que ser una categoría elegible de **trabajo especificado**, y tiene que estar en una **zona regional** elegible. Si te equivocás en cualquiera de las dos, esos días valen cero.' },
+          { type: 'h2', text: 'Qué cuenta como trabajo especificado' },
+          { type: 'ul', items: [
+            'Cultivo de plantas y animales — cosecha de fruta, recolección, poda, plantación, trabajo de campo en general.',
+            'Pesca y perlería.',
+            'Silvicultura y tala de árboles.',
+            'Minería.',
+            'Construcción.',
+            'Trabajo de recuperación tras incendios e inundaciones.',
+            'Desde 2023, cierto trabajo de turismo y hostelería en zonas regionales elegibles.',
+          ] },
+          { type: 'h2', text: 'Qué normalmente NO cuenta' },
+          { type: 'p', text: 'Hostelería o retail en una **ciudad grande**, trabajo de oficina/administrativo, roles de au pair o domésticos, y "voluntariado" no pago a cambio de alojamiento normalmente no califican. Ejemplo: ser camarera en el centro de Sídney = no. El mismo trabajo de camarera en un pueblo regional elegible (bajo las reglas de hostelería post-2023) = potencialmente sí. El puesto solo nunca te lo dice — lo definen la **categoría más la ubicación**.' },
+          { type: 'h2', text: 'Qué regiones cuentan' },
+          { type: 'table', headers: ['Estado / Territorio', 'Zona elegible'], rows: [
+            ['Northern Territory', 'Todo'],
+            ['South Australia', 'Todo'],
+            ['Tasmania', 'Todo'],
+            ['Queensland', 'Regional — excluye Greater Brisbane'],
+            ['Western Australia', 'Regional — excluye el área metro de Perth'],
+            ['New South Wales', 'Regional — excluye Sídney, Newcastle, Wollongong'],
+            ['Victoria', 'Regional — excluye Melbourne'],
+          ] },
+          { type: 'h2', text: 'Cómo chequear antes de aceptar un trabajo' },
+          { type: 'ul', items: [
+            'Confirmá que la **categoría del trabajo** esté en la lista vigente de trabajo especificado.',
+            'Chequeá el **código postal** del lugar de trabajo contra la lista de elegibles publicada por Home Affairs.',
+            'Preguntale al empleador si puede darte **payslips** y firmar un **Form 1263** — sin evidencia, no hay días.',
+          ] },
+          { type: 'cta', text: 'Registrá cada turno que califica y mirá cómo se arma tu total de 88 días automáticamente.', label: 'Empezá gratis', to: '/register' },
+          { type: 'note', text: 'Las categorías y los códigos postales cambian. Confirmá siempre las listas vigentes en immi.homeaffairs.gov.au antes de empezar a trabajar.' },
+        ],
+      },
+      fr: {
+        title: 'Travail spécifié et codes postaux éligibles pour ton visa de deuxième année',
+        description:
+          'Tout le travail ne compte pas pour tes 88 jours, et un mauvais code postal signifie zéro progression. Voici ce qui compte comme travail spécifié, quelles régions comptent et comment vérifier un emploi avant de l’accepter.',
+        content: [
+          { type: 'p', text: "Tu peux travailler 88 jours d'affilée et ne toujours pas être éligible pour une deuxième année — si le **type d'emploi** ou le **code postal** ne comptent pas. Deux conditions doivent être réunies en même temps : le travail doit relever d'une catégorie éligible de **travail spécifié**, et se situer dans une **zone régionale** éligible. Si l'un des deux est faux, ces jours valent zéro." },
+          { type: 'h2', text: 'Ce qui compte comme travail spécifié' },
+          { type: 'ul', items: [
+            'Culture de plantes et d’animaux — cueillette de fruits, récolte, taille, plantation, travail agricole en général.',
+            'Pêche et perliculture.',
+            'Sylviculture et abattage d’arbres.',
+            'Exploitation minière.',
+            'Construction.',
+            'Travaux de reconstruction après incendies et inondations.',
+            'Depuis 2023, certains emplois du tourisme et de l’hôtellerie dans des zones régionales éligibles.',
+          ] },
+          { type: 'h2', text: 'Ce qui ne compte généralement PAS' },
+          { type: 'p', text: "L'hôtellerie ou le commerce de détail dans une **grande ville**, le travail de bureau/administratif, les rôles d'au pair ou domestiques, et le « bénévolat » non rémunéré contre logement ne sont généralement pas éligibles. Exemple : serveuse dans le centre de Sydney = non. Le même poste de serveuse dans une ville régionale éligible (selon les règles d'hôtellerie post-2023) = potentiellement oui. L'intitulé seul ne te dit jamais rien — c'est la **catégorie plus le lieu** qui décident." },
+          { type: 'h2', text: 'Quelles régions comptent' },
+          { type: 'table', headers: ['État / Territoire', 'Zone éligible'], rows: [
+            ['Northern Territory', 'Tout le territoire'],
+            ['South Australia', 'Tout l’État'],
+            ['Tasmania', 'Toute l’île'],
+            ['Queensland', 'Régional — hors Greater Brisbane'],
+            ['Western Australia', 'Régional — hors zone métro de Perth'],
+            ['New South Wales', 'Régional — hors Sydney, Newcastle, Wollongong'],
+            ['Victoria', 'Régional — hors Melbourne'],
+          ] },
+          { type: 'h2', text: 'Comment vérifier avant d’accepter un emploi' },
+          { type: 'ul', items: [
+            'Confirme que la **catégorie d’emploi** figure sur la liste actuelle de travail spécifié.',
+            'Vérifie le **code postal** du lieu de travail dans la liste des éligibles publiée par Home Affairs.',
+            'Demande à l’employeur s’il peut fournir des **fiches de paie** et signer un **Form 1263** — pas de preuve, pas de jours.',
+          ] },
+          { type: 'cta', text: 'Enregistre chaque quart éligible et regarde ton total de 88 jours se construire automatiquement.', label: 'Commence gratuitement', to: '/register' },
+          { type: 'note', text: 'Les catégories et les codes postaux changent. Confirme toujours les listes à jour sur immi.homeaffairs.gov.au avant de commencer à travailler.' },
+        ],
+      },
+    },
   },
 
   {
