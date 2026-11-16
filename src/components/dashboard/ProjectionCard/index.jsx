@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BarChart3, Briefcase, Timer, ArrowRight, Check } from 'lucide-react';
+import { BarChart3, Briefcase, Timer, ArrowRight, Check, CalendarClock } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { formatCurrency } from '../../../utils/currency';
 import { useApp } from '../../../contexts/AppContext';
@@ -10,7 +10,7 @@ import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 import { useNavigate, Link } from 'react-router-dom';
 
-const ProjectionCard = memo(({ monthlyProjection, hoursWorked, className }) => {
+const ProjectionCard = memo(({ monthlyProjection, hoursWorked, hasLoggedShifts = true, className }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const { calculateMonthlyStats, works, deliveryWork } = useApp();
@@ -19,8 +19,33 @@ const ProjectionCard = memo(({ monthlyProjection, hoursWorked, className }) => {
   // Check if user has any works
   const hasWorks = (works?.length > 0) || (deliveryWork?.length > 0);
 
+  // True first-time onboarding: no works yet, or works but never a single
+  // shift logged ever. A returning user who simply hasn't logged anything
+  // THIS calendar month yet (monthlyProjection resets every month) is a
+  // different, quieter case — see the "quiet month" branch below.
+  const isOnboarding = !hasWorks || !hasLoggedShifts;
+
   const renderContent = () => {
     if (!monthlyProjection || monthlyProjection <= 0) {
+      if (!isOnboarding) {
+        return (
+          <div className="w-full text-center">
+            <CalendarClock size={28} className="mx-auto mb-2 text-gray-300 dark:text-slate-600" />
+            <p className="text-sm font-medium text-gray-600 dark:text-gray-300">
+              {t('dashboard.projection.quietMonth')}
+            </p>
+            <Link
+              to="/shifts"
+              className="inline-flex items-center gap-1 text-xs font-medium mt-2 hover:underline"
+              style={{ color: colors.primary }}
+            >
+              {t('dashboard.projection.quietMonthLink')}
+              <ArrowRight size={12} />
+            </Link>
+          </div>
+        );
+      }
+
       return (
         <div className="w-full">
           <div className="grid grid-cols-2 gap-4">
@@ -131,8 +156,8 @@ const ProjectionCard = memo(({ monthlyProjection, hoursWorked, className }) => {
         return t('dashboard.projection.firstMonth');
       }
 
-      const diff = monthlyProjection - previousMonthStats.totalEarnings;
-      const percent = ((diff / previousMonthStats.totalEarnings) * 100).toFixed(1);
+      const diff = monthlyProjection - previousMonthStats.netEarnings;
+      const percent = ((diff / previousMonthStats.netEarnings) * 100).toFixed(1);
 
       if (diff > 0) {
         return t('dashboard.projection.moreThanLast', { amount: formatCurrency(Math.abs(diff)), percent });
@@ -171,9 +196,10 @@ const ProjectionCard = memo(({ monthlyProjection, hoursWorked, className }) => {
     );
   };
 
-  // Cuando todavía no hay proyección (onboarding), el título "Projection" no
-  // tiene sentido — usamos un título de setup. Ícono también cambia.
-  const showSetupMode = !monthlyProjection || monthlyProjection <= 0;
+  // Cuando todavía no hay proyección Y es onboarding real, el título
+  // "Projection" no tiene sentido — usamos un título de setup. Un mes
+  // tranquilo de un usuario con historial mantiene el título normal.
+  const showSetupMode = (!monthlyProjection || monthlyProjection <= 0) && isOnboarding;
   const HeaderIcon = showSetupMode ? Briefcase : BarChart3;
   const headerTitle = showSetupMode
     ? t('dashboard.projection.setupTitle')

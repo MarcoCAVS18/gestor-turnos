@@ -25,6 +25,14 @@ export const emptyPayslip = () => ({
   //              'failed' -> el PDF no se pudo leer / no tenía datos mínimos
   //              null     -> no aplica (entrada manual)
   parseStatus: null,
+  // true cuando el parseo fue de baja confianza (OCR o Cloud Function) y conviene
+  // que el usuario verifique los montos. Se limpia al confirmar el formulario.
+  lowConfidence: false,
+  // Nombre del empleador detectado en el membrete (para "Agregar trabajo").
+  employer: null,
+  // Datos best-effort solo para mostrar en el resumen.
+  employee: null,  // nombre de la persona
+  location: null,  // ubicación / sucursal del trabajo
 });
 
 // Convierte un payslip al shape numérico que usan los cálculos
@@ -41,6 +49,21 @@ export const isComplete = (p) =>
   Number(p.tax) >= 0 &&
   p.periodStart &&
   p.periodEnd;
+
+// Formato corto de un solo día: "lun. 24 feb." Usa el locale del browser.
+export const formatDayShort = (dateStr) => {
+  if (!dateStr) return '—';
+  try {
+    // 'YYYY-MM-DD' interpretado en horario local, evitando el corrimiento de
+    // un día que causa `new Date('YYYY-MM-DD')` (lo parsea como UTC medianoche).
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const date = new Date(y, m - 1, d);
+    if (isNaN(date.getTime())) return dateStr;
+    return new Intl.DateTimeFormat(undefined, { weekday: 'short', day: 'numeric', month: 'short' }).format(date);
+  } catch {
+    return dateStr;
+  }
+};
 
 // Formato corto de un rango de período: "24 feb. → 2 mar." (sin año si los
 // dos extremos caen en el mismo año). Usa el locale del browser.

@@ -15,6 +15,8 @@ const PayslipList = ({
   payslips,
   countryLabel,
   formatMoney,
+  selectedId,     // id del recibo seleccionado (muestra su resumen al lado)
+  onSelect,       // (id) => void al clickear un recibo
   onEdit,
   onRemove,
   onManualAdd,
@@ -27,8 +29,8 @@ const PayslipList = ({
   const colors = useThemeColors();
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-2">
+    <div className="flex flex-col lg:h-full lg:min-h-0">
+      <div className="flex items-center justify-between mb-2 shrink-0">
         <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
           {t('payslip.list.title')}
         </p>
@@ -43,17 +45,25 @@ const PayslipList = ({
         )}
       </div>
 
-      {/* Cada item mide ~52px con padding/border. Limitamos visualmente a ~3
-          items (max-h-[12rem]) y habilitamos scroll para que la lista no
-          empuje al resto del layout cuando se cargan muchos recibos.
-          pr-1 evita que la scrollbar tape el border-right de los items. */}
-      <ul className="space-y-2 max-h-48 overflow-y-auto pr-1">
+      {/* La lista ocupa el alto disponible de la card (flex-1) y scrollea
+          internamente cuando hay muchos recibos, sin empujar el layout.
+          pr-1 evita que la scrollbar tape el border-right de los items.
+          Cada item es seleccionable: al clickearlo se muestra su resumen
+          en la card vecina (los botones editar/eliminar no propagan). */}
+      <ul className="space-y-2 overflow-y-auto pr-1 max-h-72 lg:max-h-none lg:flex-1 lg:min-h-0">
         {payslips.map((p) => {
           const complete = isComplete(p);
+          const selected = p.id === selectedId;
           return (
             <li
               key={p.id}
-              className="flex items-center justify-between gap-3 p-2 rounded-lg border border-gray-200 dark:border-slate-700"
+              onClick={() => onSelect?.(p.id)}
+              className={`flex items-center justify-between gap-3 p-2 rounded-lg border cursor-pointer transition-colors ${
+                selected
+                  ? ''
+                  : 'border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/40'
+              }`}
+              style={selected ? { borderColor: colors.primary, backgroundColor: colors.transparent10 } : undefined}
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white truncate">
@@ -78,7 +88,7 @@ const PayslipList = ({
               <div className="flex items-center gap-1 flex-shrink-0">
                 <button
                   type="button"
-                  onClick={() => onEdit(p.id)}
+                  onClick={(e) => { e.stopPropagation(); onEdit(p.id); }}
                   className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-500"
                   aria-label={t('payslip.list.edit')}
                 >
@@ -86,7 +96,7 @@ const PayslipList = ({
                 </button>
                 <button
                   type="button"
-                  onClick={() => onRemove(p.id)}
+                  onClick={(e) => { e.stopPropagation(); onRemove(p.id); }}
                   className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-500"
                   aria-label={t('payslip.list.remove')}
                 >
@@ -102,7 +112,7 @@ const PayslipList = ({
           El botón "Manual" se transforma en "Volver" cuando el form manual
           está abierto, para que el usuario pueda cerrarlo sin perder de vista
           el bloque que está editando. */}
-      <div className="mt-3 grid grid-cols-2 gap-2">
+      <div className="mt-3 grid grid-cols-2 gap-2 shrink-0">
         <PayslipDropZone compact onClick={onPickFiles} onFiles={onFilesDropped} />
         {isManualOpen ? (
           <button

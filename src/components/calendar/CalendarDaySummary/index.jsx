@@ -147,7 +147,7 @@ const CalendarDaySummary = ({
           </div>
         </Card>
       ) : (
-        <Card className="text-center py-6">
+        <Card variant={hasWorks ? 'default' : 'transparent'} className="text-center py-6">
           {hasWorks ? (
             <>
               <SearchX size={48} className="mx-auto mb-4 text-gray-300" />
@@ -177,7 +177,7 @@ const CalendarDaySummary = ({
             /* No works available - show dotted card to add work */
             <button
               onClick={() => navigate('/works')}
-              className="w-full max-w-xs mx-auto aspect-[4/3] border-2 border-dashed border-gray-300 rounded-xl hover:border-gray-400 hover:bg-gray-50 transition-all flex flex-col items-center justify-center gap-3 group"
+              className="w-full max-w-xs mx-auto aspect-[4/3] border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-xl hover:border-gray-400 dark:hover:border-slate-500 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-all flex flex-col items-center justify-center gap-3 group"
             >
               <div
                 className="w-14 h-14 rounded-full flex items-center justify-center transition-colors"
@@ -186,8 +186,8 @@ const CalendarDaySummary = ({
                 <Plus size={28} style={{ color: thematicColors?.base }} className="group-hover:scale-110 transition-transform" />
               </div>
               <div className="text-center">
-                <p className="font-medium text-gray-700 group-hover:text-gray-900">{t('works.addFirstJob')}</p>
-                <p className="text-sm text-gray-500">{t('works.createToTrack')}</p>
+                <p className="font-medium text-gray-700 dark:text-gray-200 group-hover:text-gray-900 dark:group-hover:text-white">{t('works.addFirstJob')}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{t('works.createToTrack')}</p>
               </div>
               <Briefcase size={16} className="text-gray-400" />
             </button>

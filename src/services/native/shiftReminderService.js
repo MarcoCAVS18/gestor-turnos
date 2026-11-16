@@ -6,6 +6,7 @@
 
 import { Capacitor } from '@capacitor/core';
 import i18n from '../../i18n';
+import logger from '../../utils/logger';
 
 const isNative = () => Capacitor.isNativePlatform();
 
@@ -72,7 +73,7 @@ export const scheduleShiftReminders = async (shifts, worksMap, minutesBefore = 1
     await LocalNotifications.schedule({ notifications });
     return { scheduled: upcoming.length };
   } catch (err) {
-    console.warn('[shiftReminderService] scheduleShiftReminders error:', err);
+    logger.warn('[shiftReminderService] scheduleShiftReminders error:', err);
     return { scheduled: 0 };
   }
 };

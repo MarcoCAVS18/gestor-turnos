@@ -18,6 +18,8 @@ const About = () => {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const location = useLocation();
+  // Desde el hub móvil "Más" el back vuelve ahí; desde cualquier otro lado, a Ajustes
+  const cameFromMore = location.state?.from === '/more';
 
   // Scroll to hash anchor (e.g. /about#feedback)
   useEffect(() => {
@@ -46,11 +48,13 @@ const About = () => {
   return (
     <div className="px-4 py-6 space-y-6 overflow-x-hidden">
       <Helmet>
-        <title>About - Orary</title>
+        <title>{t('footer.about')}</title>
         <meta name="description" content="Learn about Orary, send feedback, and get support for the shift management app." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
-      <BackLink to="/settings">{t('common.backToSettings')}</BackLink>
+      <BackLink to={cameFromMore ? '/more' : '/settings'}>
+        {cameFromMore ? t('common.back') : t('common.backToSettings')}
+      </BackLink>
 
       {/* Hero - full width always */}
       <HeroSection colors={colors} />

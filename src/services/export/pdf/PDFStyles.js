@@ -6,6 +6,14 @@ import i18n from '../../../i18n';
  * Professional PDF styles and layout configuration
  */
 
+// Convert hex to RGB for jsPDF, falling back to the primary navy
+const hexToRgb = (hex) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
+    : { r: 31, g: 78, b: 121 };
+};
+
 // Color palette — limited to 2-3 accent colors for a polished look
 export const COLORS = {
   // Primary brand color (dark navy — professional and readable)
@@ -159,14 +167,6 @@ export const addSectionHeader = (doc, text, y, color = COLORS.primary) => {
   const width = LAYOUT.contentWidth;
   const height = 7;
 
-  // Convert hex to RGB for jsPDF
-  const hexToRgb = (hex) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result
-      ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
-      : { r: 31, g: 78, b: 121 };
-  };
-
   const rgb = hexToRgb(color);
   doc.setFillColor(rgb.r, rgb.g, rgb.b);
   doc.rect(x, y, width, height, 'F');
@@ -186,14 +186,6 @@ export const addSectionHeader = (doc, text, y, color = COLORS.primary) => {
  */
 export const drawKPICard = (doc, x, y, label, value, color = COLORS.primary) => {
   const { width, height } = LAYOUT.kpiCard;
-
-  // Subtle light fill
-  const hexToRgb = (hex) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result
-      ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
-      : { r: 31, g: 78, b: 121 };
-  };
 
   const rgb = hexToRgb(color);
 
@@ -280,13 +272,6 @@ export const drawTable = (doc, x, y, headers, data, columnWidths, options = {}) 
     alternateRows = true,
     fontSize = FONTS.body.size
   } = options;
-
-  const hexToRgb = (hex) => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result
-      ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
-      : { r: 31, g: 78, b: 121 };
-  };
 
   const totalWidth = columnWidths.reduce((a, b) => a + b, 0);
   let currentY = y;

@@ -2,6 +2,7 @@
 // Premium subscription page - orchestrator
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { Elements } from '@stripe/react-stripe-js';
 import { usePremium } from '../contexts/PremiumContext';
@@ -13,6 +14,7 @@ import PremiumUserView from '../components/premium/PremiumUserView';
 import FreeUserView from '../components/premium/FreeUserView';
 
 const PremiumContent = () => {
+  const { t } = useTranslation();
   const { isPremium } = usePremium();
   // 'idle' | 'processing' | 'success'
   const [paymentState, setPaymentState] = useState('idle');
@@ -49,7 +51,7 @@ const PremiumContent = () => {
   return (
     <>
       <Helmet>
-        <title>Go Premium - Orary</title>
+        <title>{`${t('premium.title')} - Orary`}</title>
         <meta name="description" content="Unlock advanced analytics, PDF/Excel exports, and premium features for $2.99 AUD/month." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>

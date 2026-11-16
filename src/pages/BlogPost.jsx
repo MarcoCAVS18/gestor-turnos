@@ -6,8 +6,17 @@ import React, { useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, ArrowLeft, Clock } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Clock, Check, X, ExternalLink } from 'lucide-react';
 import { getPost, getLocalizedPost, postLangs } from '../data/blogPosts';
+import NZWorkingHolidayFinder from '../components/blog/NZWorkingHolidayFinder';
+import AURegionExplorer from '../components/blog/AURegionExplorer';
+import Accordion from '../components/ui/Accordion';
+
+// Interactive components that posts can embed via { type: 'embed', component: '<key>' }.
+const EMBEDS = {
+  nzWorkingHolidayFinder: NZWorkingHolidayFinder,
+  auRegionExplorer: AURegionExplorer,
+};
 
 const GRADIENT = 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)';
 const PINK = '#EC4899';
@@ -15,9 +24,9 @@ const BASE = 'https://orary.app';
 
 // Localized chrome strings (the article body comes from the post data).
 const UI = {
-  en: { minRead: 'min read', keepReading: 'Keep reading', allArticles: '← All articles', tracker: '88-day visa tracker' },
-  es: { minRead: 'min de lectura', keepReading: 'Seguí leyendo', allArticles: '← Todos los artículos', tracker: 'Tracker visa 88 días' },
-  fr: { minRead: 'min de lecture', keepReading: 'À lire ensuite', allArticles: '← Tous les articles', tracker: 'Suivi visa 88 jours' },
+  en: { updated: 'Updated', minRead: 'min read', keepReading: 'Keep reading', allArticles: '← All articles', tracker: '88-day visa tracker' },
+  es: { updated: 'Actualizado', minRead: 'min de lectura', keepReading: 'Seguí leyendo', allArticles: '← Todos los artículos', tracker: 'Tracker visa 88 días' },
+  fr: { updated: 'Mis à jour', minRead: 'min de lecture', keepReading: 'À lire ensuite', allArticles: '← Tous les articles', tracker: 'Suivi visa 88 jours' },
 };
 
 const blogPath = (lang, slug = '') => `${lang === 'en' ? '' : `/${lang}`}/blog${slug ? `/${slug}` : ''}`;
@@ -97,6 +106,15 @@ const renderText = (text, lang = 'en') => {
   return nodes;
 };
 
+// Table cells can carry yes/no markers — rendered as icons, never emoji.
+// Use '✓' for yes and '✗' for no (optionally wrapped in ** for bold styling).
+const renderCell = (cell, lang) => {
+  const bare = cell.replace(/\*\*/g, '').trim();
+  if (bare === '✓') return <Check size={17} className="text-emerald-500" aria-label="yes" />;
+  if (bare === '✗') return <X size={17} className="text-rose-400" aria-label="no" />;
+  return renderText(cell, lang);
+};
+
 const Block = ({ block, accent, lang }) => {
   switch (block.type) {
     case 'h2':
@@ -121,7 +139,7 @@ const Block = ({ block, accent, lang }) => {
             <tbody>
               {block.rows.map((r, ri) => (
                 <tr key={ri} className="border-b border-slate-100">
-                  {r.map((c, ci) => <td key={ci} className="px-3 py-2 text-slate-600 align-top">{renderText(c, lang)}</td>)}
+                  {r.map((c, ci) => <td key={ci} className="px-3 py-2 text-slate-600 align-top">{renderCell(c, lang)}</td>)}
                 </tr>
               ))}
             </tbody>
@@ -157,6 +175,66 @@ const Block = ({ block, accent, lang }) => {
               </div>
             </motion.div>
           ))}
+        </div>
+      );
+    case 'bars': {
+      const max = Math.max(...block.items.map((it) => it.value), 0) || 1;
+      return (
+        <div className="my-6 space-y-3.5">
+          {block.items.map((it, i) => (
+            <div key={i}>
+              <div className="flex items-baseline justify-between text-sm mb-1.5">
+                <span className="font-medium text-slate-700">{it.label}</span>
+                <span className="font-bold text-slate-800">{it.display}</span>
+              </div>
+              <div className="h-3 rounded-full bg-slate-100 overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  whileInView={{ width: `${(it.value / max) * 100}%` }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.7, delay: i * 0.08, ease: 'easeOut' }}
+                  className="h-full rounded-full"
+                  style={{ backgroundColor: it.color || accent }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    case 'faq':
+      return (
+        <div className="my-6 space-y-3">
+          {block.items.map((it, i) => (
+            <Accordion key={i} title={it.q} accentColor={accent}>
+              {renderText(it.a, lang)}
+            </Accordion>
+          ))}
+        </div>
+      );
+    case 'embed': {
+      const Embedded = EMBEDS[block.component];
+      return Embedded ? <Embedded lang={lang} /> : null;
+    }
+    case 'sources':
+      return (
+        <div className="my-6 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">{block.title}</p>
+          <ul className="space-y-1.5">
+            {block.items.map((s, i) => (
+              <li key={i}>
+                <a
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-start gap-1.5 text-sm text-slate-600 hover:text-pink-600 transition-colors"
+                >
+                  <ExternalLink size={13} className="flex-shrink-0 mt-1 text-slate-400" />
+                  <span>{s.label}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       );
     case 'note':
@@ -207,7 +285,7 @@ const BlogPost = ({ lang = 'en' }) => {
     headline: L.title,
     description: L.description,
     datePublished: post.date,
-    dateModified: post.date,
+    dateModified: post.updated || post.date,
     inLanguage: lang,
     mainEntityOfPage: url,
     url,
@@ -219,6 +297,20 @@ const BlogPost = ({ lang = 'en' }) => {
     },
     image: 'https://orary.app/assets/images/logo2.png',
   });
+  // Strip inline markdown (**bold**, [label](url)) so schema text stays plain.
+  const plain = (s) => s.replace(/\*\*(.+?)\*\*/g, '$1').replace(/\[(.+?)\]\((.+?)\)/g, '$1');
+  const faqItems = L.content.filter((b) => b.type === 'faq').flatMap((b) => b.items);
+  const faqJsonLd = faqItems.length
+    ? JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqItems.map((it) => ({
+          '@type': 'Question',
+          name: plain(it.q),
+          acceptedAnswer: { '@type': 'Answer', text: plain(it.a) },
+        })),
+      })
+    : null;
   const breadcrumbJsonLd = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -234,6 +326,8 @@ const BlogPost = ({ lang = 'en' }) => {
         <html lang={lang} />
         <title>{`${L.title} | Orary`}</title>
         <meta name="description" content={L.description} />
+        <link rel="icon" href="/assets/images/logo1.ico" />
+        <link rel="apple-touch-icon" href="/assets/images/logo2.png" />
         <link rel="canonical" href={url} />
         {langs.map((l) => (
           <link key={l} rel="alternate" hrefLang={l} href={`${BASE}${blogPath(l, slug)}`} />
@@ -245,8 +339,10 @@ const BlogPost = ({ lang = 'en' }) => {
         <meta property="og:description" content={L.description} />
         <meta property="og:image" content="https://orary.app/assets/images/logo2.png" />
         <meta property="article:published_time" content={post.date} />
+        <meta property="article:modified_time" content={post.updated || post.date} />
         <script type="application/ld+json">{articleJsonLd}</script>
         <script type="application/ld+json">{breadcrumbJsonLd}</script>
+        {faqJsonLd && <script type="application/ld+json">{faqJsonLd}</script>}
       </Helmet>
 
       {/* Top bar */}
@@ -294,6 +390,9 @@ const BlogPost = ({ lang = 'en' }) => {
             <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight">{L.title}</h1>
             <div className="flex items-center gap-3 mt-4 text-xs text-slate-400">
               <span>{new Date(post.date).toLocaleDateString(dateLocale, { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+              {post.updated && (
+                <span>{ui.updated} {new Date(post.updated).toLocaleDateString(dateLocale, { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+              )}
               <span className="flex items-center gap-1"><Clock size={12} /> {post.readingTime} {ui.minRead}</span>
             </div>
           </motion.div>

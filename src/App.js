@@ -1,7 +1,7 @@
 // src/App.js
 
 import React, { useEffect, lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import {
   scheduleReengagementNotifications,
   cancelReengagementNotifications,
@@ -51,9 +51,13 @@ const PremiumModal    = lazy(() => import('./components/modals/premium/PremiumMo
 const Dashboard       = lazy(() => import('./pages/Dashboard'));
 const Works           = lazy(() => import('./pages/Works'));
 const Shifts          = lazy(() => import('./pages/Shifts'));
-const StatisticsLayout   = lazy(() => import('./pages/StatisticsLayout'));
-const Statistics         = lazy(() => import('./pages/Statistics'));
+const StatisticsWeekly   = lazy(() => import('./pages/StatisticsWeekly'));
+const StatisticsHours    = lazy(() => import('./pages/StatisticsHours'));
+const StatisticsMonthly  = lazy(() => import('./pages/StatisticsMonthly'));
 const StatisticsPayslips = lazy(() => import('./pages/StatisticsPayslips'));
+const StatisticsPayslipsCalculations = lazy(() => import('./pages/StatisticsPayslipsCalculations'));
+const StatisticsDelivery = lazy(() => import('./pages/StatisticsDelivery'));
+const StatisticsAustralia88 = lazy(() => import('./pages/StatisticsAustralia88'));
 const CalendarView    = lazy(() => import('./pages/CalendarView'));
 const Settings        = lazy(() => import('./pages/Settings'));
 const Admin           = lazy(() => import('./pages/Admin'));
@@ -62,6 +66,7 @@ const SharedWork      = lazy(() => import('./pages/SharedWork'));
 const Premium         = lazy(() => import('./pages/Premium'));
 const About           = lazy(() => import('./pages/About'));
 const Support         = lazy(() => import('./pages/Support'));
+const More            = lazy(() => import('./pages/More'));
 
 // Public route that allows access without authentication
 const PublicRoute = ({ children }) => {
@@ -201,11 +206,18 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/works" element={<Works />} />
           <Route path="/shifts" element={<Shifts />} />
-          <Route path="/statistics" element={<StatisticsLayout />}>
-            <Route index element={<Statistics />} />
-            <Route path="payslips" element={<StatisticsPayslips />} />
-          </Route>
+          {/* /statistics ya no es página: los accesos viven en Más (móvil,
+              grupos expandibles) y en el sidebar (desktop). Redirect al semanal. */}
+          <Route path="/statistics" element={<Navigate to="/statistics/weekly" replace />} />
+          <Route path="/statistics/hours" element={<StatisticsHours />} />
+          <Route path="/statistics/weekly" element={<StatisticsWeekly />} />
+          <Route path="/statistics/monthly" element={<StatisticsMonthly />} />
+          <Route path="/statistics/payslips" element={<StatisticsPayslips />} />
+          <Route path="/statistics/payslips/calculations" element={<StatisticsPayslipsCalculations />} />
+          <Route path="/statistics/delivery" element={<StatisticsDelivery />} />
+          <Route path="/statistics/australia88" element={<StatisticsAustralia88 />} />
           <Route path="/calendar" element={<CalendarView />} />
+          <Route path="/more" element={<More />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/integrations" element={<Integrations />} />

@@ -19,6 +19,7 @@ export const CalculationsProvider = ({ children }) => {
   const {
     shiftRanges,
     defaultDiscount,
+    taxesPerWork,
     smokoEnabled,
     smokoMinutes,
     holidayCountry,
@@ -36,6 +37,7 @@ export const CalculationsProvider = ({ children }) => {
       allJobs,
       shiftRanges,
       defaultDiscount,
+      taxesPerWork,
       smokoEnabled,
       smokoMinutes,
       {
@@ -44,7 +46,7 @@ export const CalculationsProvider = ({ children }) => {
         useAutoHolidays
       }
     );
-  }, [allJobs, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes, holidayCountry, holidayRegion, useAutoHolidays]);
+  }, [allJobs, shiftRanges, defaultDiscount, taxesPerWork, smokoEnabled, smokoMinutes, holidayCountry, holidayRegion, useAutoHolidays]);
 
   const calculateDailyTotal = useCallback((dailyShifts) => {
     const calculatePaymentForDailyTotal = (shift) => calculatePayment(shift);

@@ -11,6 +11,7 @@ import PageHeader from '../components/layout/PageHeader';
 import { useDashboardStats } from '../hooks/useDashboardStats';
 import { useApp } from '../contexts/AppContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useConfigContext } from '../contexts/ConfigContext';
 import { exportReport, preloadExportResources } from '../services/export';
 import Loader from '../components/other/Loader';
 import WelcomeCard from '../components/dashboard/WelcomeCard';
@@ -42,6 +43,7 @@ const Dashboard = () => {
   const { loading, calculatePayment, shiftRanges, settings, isPremium, premium } = useApp();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const { requestAustraliaGeodetection } = useConfigContext() || {};
   const stats = useDashboardStats();
   const { isActive } = useLiveMode();
 
@@ -116,7 +118,7 @@ const Dashboard = () => {
   return (
     <div className="px-4 py-6 space-y-6">
       <Helmet>
-        <title>Dashboard - Orary</title>
+        <title>{`${t('nav.dashboard')} - Orary`}</title>
         <meta name="description" content="View your shift summary, earnings overview, and quick stats at a glance." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
@@ -239,6 +241,7 @@ const Dashboard = () => {
             <ProjectionCard
               monthlyProjection={stats.monthlyProjection}
               hoursWorked={stats.hoursWorked}
+              hasLoggedShifts={(stats.totalShifts || 0) > 0}
             />
             <ExportReportCard onExport={handleExport} />
             {/* Novedades — solid white, flips to "Próximamente" on click; fills the
@@ -255,8 +258,10 @@ const Dashboard = () => {
         <FooterSection />
       </Flex>
 
-      {/* Welcome Demo — shown once after first login */}
-      <DemoModal onComplete={() => { navigate('/settings'); }} />
+      {/* Welcome Demo — shown once after first login. Triggers the (silent,
+          permission-gated) holiday-country geodetection right after onboarding,
+          before the user lands on Settings to review/confirm it. */}
+      <DemoModal onComplete={() => { requestAustraliaGeodetection?.(); navigate('/settings'); }} />
 
       {/* Live Mode Modals */}
       <LiveModeStartModal

@@ -10,6 +10,48 @@
 
 export const RECENT_UPDATES = [
   {
+    id: 'per-job-taxes',
+    date: '2026-09-02',
+    title: {
+      en: 'Different tax rates per job',
+      es: 'Impuestos distintos por trabajo',
+      fr: 'Taux d’imposition différents par emploi',
+    },
+    description: {
+      en: 'Set your own tax rate for each job in Settings. Upload a payslip and Orary can suggest the right rate automatically.',
+      es: 'Configurá una tasa de impuestos propia para cada trabajo en Ajustes. Subí un recibo y Orary te puede sugerir el valor correcto automáticamente.',
+      fr: 'Définis ton propre taux d’imposition pour chaque emploi dans les Paramètres. Télécharge un bulletin de paie et Orary peut suggérer le bon taux automatiquement.',
+    },
+  },
+  {
+    id: 'whv-year-tracker',
+    date: '2026-08-31',
+    title: {
+      en: 'Working Holiday Visa, year by year',
+      es: 'Working Holiday Visa, año por año',
+      fr: 'Working Holiday Visa, année par année',
+    },
+    description: {
+      en: 'A dedicated page for your 88-day tracker: weekly and monthly breakdowns, plus one tap to switch to Year 2 once it’s approved.',
+      es: 'Una página dedicada para tu contador de 88 días: desglose semanal y mensual, y un botón para pasar al Año 2 apenas te lo aprueben.',
+      fr: 'Une page dédiée à ton compteur de 88 jours : détail hebdomadaire et mensuel, et un bouton pour passer à l’Année 2 dès son approbation.',
+    },
+  },
+  {
+    id: 'shift-reminders',
+    date: '2026-06-18',
+    title: {
+      en: 'Shift reminders',
+      es: 'Recordatorios de turnos',
+      fr: 'Rappels de quarts',
+    },
+    description: {
+      en: 'Get notified before your next shift starts, plus an optional daily reminder to log your day.',
+      es: 'Recibí un aviso antes de tu próximo turno, más un recordatorio diario opcional para registrar tu día.',
+      fr: 'Reçois une alerte avant ton prochain quart, plus un rappel quotidien optionnel pour noter ta journée.',
+    },
+  },
+  {
     id: 'dashboard-redesign',
     date: '2026-06-17',
     title: {
@@ -78,19 +120,6 @@ export const UPCOMING_UPDATES = [
       en: 'New charts and insights to understand your earnings.',
       es: 'Nuevos gráficos y análisis para entender tus ganancias.',
       fr: 'De nouveaux graphiques et analyses pour comprendre tes revenus.',
-    },
-  },
-  {
-    id: 'shift-reminders',
-    title: {
-      en: 'Shift reminders',
-      es: 'Recordatorios de turnos',
-      fr: 'Rappels de quarts',
-    },
-    description: {
-      en: 'Get notified before your next shift starts.',
-      es: 'Recibí un aviso antes de que empiece tu próximo turno.',
-      fr: 'Reçois une alerte avant le début de ton prochain quart.',
     },
   },
 ];

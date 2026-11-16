@@ -7,6 +7,7 @@ import { Star, UserX, Send, Heart, User, EyeOff, MessageSquare, PenLine, Clock, 
 import { useAuth } from '../../../contexts/AuthContext';
 import { submitFeedback, getFeedbackReviews, getUserFeedback } from '../../../services/firebaseService';
 import { hasProfanity } from '../../../utils/profanityFilter';
+import logger from '../../../utils/logger';
 import Button from '../../ui/Button';
 import Card from '../../ui/Card';
 
@@ -51,13 +52,10 @@ const FeedbackSection = ({ colors }) => {
     let cancelled = false;
     const init = async () => {
       try {
-        console.log('Current user UID:', currentUser?.uid);
         const [fetchedReviews, existingFeedback] = await Promise.all([
           getFeedbackReviews(),
           currentUser ? getUserFeedback(currentUser.uid) : null,
         ]);
-        console.log('Fetched reviews:', fetchedReviews);
-        console.log('Existing feedback:', existingFeedback);
         if (cancelled) return;
         setReviews(fetchedReviews);
         if (existingFeedback) {
@@ -70,7 +68,7 @@ const FeedbackSection = ({ colors }) => {
           setView('form');
         }
       } catch (error) {
-        console.error('Error loading feedback:', error);
+        logger.error('Error loading feedback:', error);
         if (!cancelled) {
           setReviews([]);
           setView('form');

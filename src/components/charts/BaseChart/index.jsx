@@ -1,5 +1,6 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts';
+import { useTranslation } from 'react-i18next';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area, BarChart, Bar, RadialBarChart, RadialBar } from 'recharts';
 import Flex from '../../ui/Flex';
 import { getRechartsConfig, PIE_CHART_COLORS } from '../../../config/chartConfig';
 import { useThemeColors } from '../../../hooks/useThemeColors';
@@ -18,6 +19,7 @@ const BaseChart = ({
   showLegend = true,
   margin = { top: 5, right: 20, left: -10, bottom: 5 }
 }) => {
+  const { t } = useTranslation();
   const thematicColors = useThemeColors();
   const baseConfig = getRechartsConfig(thematicColors);
 
@@ -34,7 +36,7 @@ const BaseChart = ({
     // This empty state is simple; more complex empty states can be handled by the parent component
     return (
       <Flex variant="center" className="h-full text-gray-500">
-        <p>No data available for the chart.</p>
+        <p>{t('stats.charts.noData')}</p>
       </Flex>
     );
   }
@@ -119,14 +121,72 @@ const BaseChart = ({
             />
           </PieChart>
         );
-      // case 'bar': // Add bar chart logic if needed
-      //   return (
-      //     <BarChart ... > ... </BarChart>
-      //   );
+      case 'bar':
+        return (
+          <BarChart data={data} margin={margin}>
+            <CartesianGrid {...chartConfig.grid} vertical={false} />
+            <XAxis dataKey={nameKey} tick={chartConfig.axis.tick} />
+            <YAxis tickFormatter={valueFormatter} tick={chartConfig.axis.tick} allowDecimals={false} />
+            {showLegend && dataKeys.length > 1 && <Legend {...chartConfig.legend} />}
+            <Tooltip
+              cursor={{ fill: 'rgba(148, 163, 184, 0.1)' }}
+              formatter={tooltipFormatter}
+              content={customTooltipContent || chartConfig.customTooltip}
+              {...chartConfig.tooltip}
+            />
+            {dataKeys.map((item, index) => {
+              const barColor = item.fill || thematicColors.primary || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length];
+              return (
+                <Bar
+                  key={item.key}
+                  dataKey={item.key}
+                  name={item.name || item.key}
+                  fill={barColor}
+                  radius={[4, 4, 0, 0]}
+                  maxBarSize={24}
+                  isAnimationActive
+                  animationDuration={500}
+                  animationEasing="ease-out"
+                  activeBar={{ fill: barColor, stroke: barColor, strokeWidth: 1, fillOpacity: 0.75 }}
+                />
+              );
+            })}
+          </BarChart>
+        );
+      case 'radialBar':
+        return (
+          <RadialBarChart
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius="20%"
+            outerRadius="100%"
+            startAngle={90}
+            endAngle={-270}
+          >
+            <RadialBar
+              dataKey={dataKeys} // Single value field, like pie
+              cornerRadius={6}
+              background={{ fill: 'rgba(148, 163, 184, 0.12)' }}
+              isAnimationActive
+              animationDuration={800}
+              animationEasing="ease-out"
+            >
+              {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color || thematicColors.primary || PIE_CHART_COLORS[index % PIE_CHART_COLORS.length]} />
+              ))}
+            </RadialBar>
+            <Tooltip
+              formatter={tooltipFormatter}
+              content={customTooltipContent || chartConfig.customTooltip}
+              {...chartConfig.tooltip}
+            />
+          </RadialBarChart>
+        );
       default:
         return (
           <Flex variant="center" className="h-full text-gray-500">
-            <p>Unsupported chart type.</p>
+            <p>{t('errors.somethingWentWrong')}</p>
           </Flex>
         );
     }

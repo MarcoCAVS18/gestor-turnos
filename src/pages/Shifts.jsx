@@ -171,7 +171,7 @@ const Shifts = () => {
   return (
     <div className="px-4 py-6 pb-32 space-y-4">
       <Helmet>
-        <title>My Shifts - Orary</title>
+        <title>{`${t('nav.shifts')} - Orary`}</title>
         <meta name="description" content="Track and manage all your work shifts. View earnings, hours worked, and shift history." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
@@ -199,7 +199,11 @@ const Shifts = () => {
       {/* Content */}
       <div className="space-y-3">
         {!hasShifts && !hasActiveFilters ? (
-          <ShiftsEmptyState />
+          <ShiftsEmptyState
+            allJobs={allJobs}
+            onNewShift={openNewModal}
+            thematicColors={thematicColors}
+          />
         ) : !hasShifts && hasActiveFilters ? (
           <Flex variant="center" className="py-16">
             <div className="text-center">

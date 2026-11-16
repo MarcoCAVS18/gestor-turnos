@@ -46,6 +46,7 @@ const PrivacyPolicy = () => {
           <li><strong>Delivery Work Data:</strong> Platform information (e.g., DoorDash, Uber Eats), vehicle type, delivery earnings, tips, and kilometer/mileage tracking.</li>
           <li><strong>Earnings Calculations:</strong> Computed earnings based on your configured rates (these are estimates only).</li>
           <li><strong>Tax and Deduction Settings:</strong> Tax rates, superannuation percentages, and custom deductions you configure.</li>
+          <li><strong>Payslip Data:</strong> If you use the payslip feature, the payslip file (PDF or image) you upload is transmitted securely to our processing service solely to extract its figures. The extracted data — pay period, employer name, gross pay, tax withheld, and net pay — is stored in your account so you can review it, generate matching shifts, and see tax estimates. You can delete any stored payslip record at any time from the app.</li>
         </ul>
 
         <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">1.3 Live Mode Data</h3>
@@ -188,6 +189,7 @@ const PrivacyPolicy = () => {
           <li><strong>Data Isolation:</strong> Each user's data is strictly isolated and accessible only to that user.</li>
           <li><strong>Secure API Calls:</strong> All communication between the app and our servers is encrypted.</li>
           <li><strong>No Plain Text Storage:</strong> Sensitive data is never stored in plain text.</li>
+          <li><strong>Biometric Login:</strong> On the native iOS and Android apps you can optionally enable Face ID / fingerprint unlock. Biometric data is handled entirely by your device's operating system and never leaves your device — Orary only receives a success or failure signal.</li>
         </ul>
 
         {/* Section 5: Data Sharing */}
@@ -217,7 +219,7 @@ const PrivacyPolicy = () => {
           When you use the "Share Work" feature, a temporary share link is created containing your work configuration (name, rates, settings). This data:
         </p>
         <ul className="list-disc pl-5 space-y-2 mt-2">
-          <li>Expires automatically after 7 days</li>
+          <li>Expires automatically after 48 hours</li>
           <li>Has a maximum of 10 uses</li>
           <li>Does not include your personal information or shift history</li>
           <li>Can be deactivated by you at any time</li>
@@ -246,9 +248,10 @@ const PrivacyPolicy = () => {
           <li><strong>Authentication Cookies:</strong> To keep you logged in securely.</li>
           <li><strong>Local Storage:</strong> To cache your preferences and improve performance.</li>
           <li><strong>IndexedDB:</strong> For offline functionality and data caching.</li>
+          <li><strong>Analytics Cookies (optional):</strong> With your consent, we use Google Analytics to understand aggregate feature usage and improve the app. Analytics cookies are only set after you accept them through the consent banner, and you can decline or withdraw consent at any time without affecting functionality.</li>
         </ul>
         <p className="mt-4">
-          We do not use advertising cookies or tracking cookies for marketing purposes. All cookies are essential for the application to function properly.
+          We do not use advertising cookies or tracking cookies for marketing purposes. Apart from optional analytics, all cookies are essential for the application to function properly.
         </p>
 
         {/* Section 7: Your Rights */}

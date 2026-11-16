@@ -135,8 +135,11 @@ const InteractiveCharts = () => {
       </Flex>
       <div className="flex-1 bg-gray-50 rounded-lg p-2 min-h-0">
         {isEmptyOverall ? (
-          <Flex variant="center" className="h-full text-gray-500">
-            <p>{t('stats.charts.noData')}</p>
+          <Flex variant="center" className="h-full text-gray-400">
+            <div className="text-center">
+              <CurrentIcon size={32} className="mx-auto mb-2 opacity-50" />
+              <p className="text-sm">{t('stats.charts.noData')}</p>
+            </div>
           </Flex>
         ) : renderChart()}
       </div>

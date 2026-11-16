@@ -45,7 +45,7 @@ const ForgotPassword = () => {
   return (
     <>
       <Helmet>
-        <title>Forgot Password - Orary</title>
+        <title>{`${t('auth.forgotPassword.subtitle')} - Orary`}</title>
         <meta name="description" content="Reset your Orary account password to regain access to your shift tracking data." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>

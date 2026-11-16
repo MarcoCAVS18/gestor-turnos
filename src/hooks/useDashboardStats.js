@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useApp } from '../contexts/AppContext';
 import { formatRelativeDate } from '../utils/time';
 import { calculateShiftHours } from '../utils/time/timeCalculations';
+import { getShiftNetEarnings } from '../utils/deliveryUtils';
 import logger from '../utils/logger';
 import { getLocaleFromI18n } from '../utils/locale';
 
@@ -86,13 +87,23 @@ export const useDashboardStats = () => {
       const { weekStart, weekEnd, monthStart, monthEnd } = timeRanges;
 
       allShifts.forEach(shift => {
-        const work = allWork.find(t => t.id === shift.workId);
-        if (!work) return;
+        const isDelivery = shift.type === 'delivery';
+        const foundWork = allWork.find(t => t.id === shift.workId);
+        // Delivery shifts carry their own earnings, so an orphaned one (deleted
+        // work) still counts; traditional shifts need their work to be priced.
+        if (!foundWork && !isDelivery) return;
+        const work = foundWork || {
+          id: shift.workId || 'deleted-delivery',
+          name: shift.platform || 'Delivery',
+          type: 'delivery',
+          avatarColor: '#10B981',
+        };
 
         // 1. Calculate Earnings
         let earnings = 0;
-        if (shift.type === 'delivery' || work.type === 'delivery') {
-          earnings = parseFloat(shift.totalEarnings || 0);
+        if (isDelivery || work.type === 'delivery') {
+          // Net of fuel, via gross helper (handles legacy tips correctly).
+          earnings = getShiftNetEarnings(shift);
         } else if (typeof calculatePayment === 'function') {
           const result = calculatePayment(shift);
           earnings = result.totalWithDiscount || 0;

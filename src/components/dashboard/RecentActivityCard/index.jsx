@@ -173,8 +173,8 @@ const RecentActivityCard = memo(({ stats, allWorks, allShifts, calculatePayment 
         })}
       </div>
 
-      {/* Simple total */}
-      <div className="mt-4 pt-3 border-t border-gray-200">
+      {/* Simple total — pinned to the bottom of the card */}
+      <div className="mt-auto pt-3 border-t border-gray-200 dark:border-slate-700">
         <Flex variant="between">
           <span className="text-sm text-gray-600">{t('dashboard.recentActivity.totalRecent')}:</span>
           <span className="text-lg font-bold" style={{ color: colors.primary }}>

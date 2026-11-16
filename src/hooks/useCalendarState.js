@@ -8,11 +8,16 @@ import {
 } from '../utils/calendarUtils';
 import { createSafeDate } from '../utils/time';
 
-export const useCalendarState = (shifts, onSelectedDay) => {
+// `initialDate` (opcional) abre el calendario directo en ese mes/día — usado
+// por deep links como /calendar?date=... (ej. desde el detector de cobertura
+// de payslips). `currentDate` sigue representando "ahora real" (para el
+// resaltado de "hoy" y el efecto de refresco de abajo); solo el mes/año/día
+// VISTOS se siembran desde initialDate, para no interferir con ese efecto.
+export const useCalendarState = (shifts, onSelectedDay, initialDate = null) => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [currentMonth, setCurrentMonth] = useState(currentDate.getMonth());
-  const [currentYear, setCurrentYear] = useState(currentDate.getFullYear());
-  const [selectedDay, setSelectedDay] = useState(null);
+  const [currentMonth, setCurrentMonth] = useState((initialDate || currentDate).getMonth());
+  const [currentYear, setCurrentYear] = useState((initialDate || currentDate).getFullYear());
+  const [selectedDay, setSelectedDay] = useState(initialDate ? localDateToISO(initialDate) : null);
 
   // Update current date every minute
   useEffect(() => {

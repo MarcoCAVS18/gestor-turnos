@@ -7,6 +7,7 @@ import { useApp } from '../../../../contexts/AppContext';
 import { useConfigContext } from '../../../../contexts/ConfigContext';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
+import { vehicleNeedsFuel } from '../../../../utils/deliveryUtils';
 import BaseModal from '../../base/BaseModal';
 import PlatformSelector from '../../../delivery/PlatformSelector';
 import VehicleSelector from '../../../delivery/VehicleSelector';
@@ -94,12 +95,6 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
 
-  // Function to determine if vehicle needs fuel
-  const vehicleNeedsFuel = (vehicle) => {
-    const vehicleLower = vehicle.toLowerCase();
-    return vehicleLower.includes('motorbike') ||
-           vehicleLower.includes('car');
-  };
 
   useEffect(() => {
     if (work) {
@@ -269,7 +264,7 @@ const DeliveryWorkFormContent = ({ work, onSubmit, onCancel, thematicColors, isM
 
         {/* Informational message for vehicles without fuel */}
         {!showFuelOption && formData.vehicle && (
-          <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded border border-blue-200">
+          <div className="text-xs text-gray-500 dark:text-gray-300 bg-blue-50 dark:bg-blue-900/20 p-2 rounded border border-blue-200 dark:border-blue-800/40">
             {t('modals.work.noFuelNeeded')}
           </div>
         )}

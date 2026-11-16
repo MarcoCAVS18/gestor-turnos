@@ -15,7 +15,6 @@ const Header = () => {
   const { profilePhotoURL } = useAuth();
   const { isPremium } = usePremium();
   const navigate = useNavigate();
-  const [showSettingsIcon, setShowSettingsIcon] = useState(false);
   // Track de error de carga: si la foto del usuario falla, caemos al ícono
   // de Settings para que nunca aparezca el placeholder de imagen rota.
   const [imageError, setImageError] = useState(false);
@@ -27,21 +26,6 @@ const Header = () => {
 
   const hasCustomPhoto =
     profilePhotoURL && !profilePhotoURL.includes('logo.svg') && !imageError;
-
-  // Animation: periodically show settings icon instead of profile photo
-  useEffect(() => {
-    if (!hasCustomPhoto) return;
-
-    const interval = setInterval(() => {
-      setShowSettingsIcon(true);
-      // Show gear icon for 2 seconds, then return to photo
-      setTimeout(() => {
-        setShowSettingsIcon(false);
-      }, 2000);
-    }, 12000); // Every 12 seconds
-
-    return () => clearInterval(interval);
-  }, [hasCustomPhoto]);
 
   const handleSettingsClick = () => {
     navigate('/settings');
@@ -121,24 +105,14 @@ const Header = () => {
             </Flex>
           ) : (
             // Con foto: ring sutil en lugar de border-2, sombra suave
-            <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-white/40 shadow-md relative">
+            <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-white/40 shadow-md">
               <img
                 src={profilePhotoURL}
                 alt="Profile"
                 referrerPolicy="no-referrer"
-                className={`w-full h-full object-cover absolute inset-0 transition-opacity duration-500 ${
-                  showSettingsIcon ? 'opacity-0' : 'opacity-100'
-                }`}
+                className="w-full h-full object-cover"
                 onError={() => setImageError(true)}
               />
-              <Flex
-                variant="center"
-                className={`w-full h-full absolute inset-0 bg-white/20 backdrop-blur-sm transition-opacity duration-500 ${
-                  showSettingsIcon ? 'opacity-100' : 'opacity-0'
-                }`}
-              >
-                <Settings className="h-5 w-5 text-white" />
-              </Flex>
             </div>
           )}
         </button>

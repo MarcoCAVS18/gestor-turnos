@@ -136,7 +136,7 @@ const Register = () => {
   return (
     <>
       <Helmet>
-        <title>Create Account - Orary</title>
+        <title>{`${t('auth.register.subtitle')} - Orary`}</title>
         <meta name="description" content="Create your free Orary account to start tracking work shifts and calculating earnings automatically." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>

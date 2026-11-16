@@ -19,12 +19,12 @@ const NextShiftCard = memo(({ nextShift, formatDate, className = '' }) => {
   const work = nextShift ? works.find(t => t.id === nextShift.workId) : null;
 
   return (
-    <Card className={className}>
-      <h3 className="text-lg font-semibold mb-4 flex items-center">
+    <Card className={`flex flex-col ${className}`}>
+      <h3 className="text-lg font-semibold mb-4 flex items-center flex-shrink-0">
         <Star size={20} style={{ color: colors.primary }} className="mr-2" />
         {t('dashboard.nextShift.title')}
       </h3>
-      
+
       {nextShift && work ? (
         <Flex variant="between">
           <div>
@@ -44,7 +44,7 @@ const NextShiftCard = memo(({ nextShift, formatDate, className = '' }) => {
           </Button>
         </Flex>
       ) : (
-        <Flex variant="center" className="py-4">
+        <Flex variant="center" className="flex-grow py-4">
           <div className="text-center text-gray-400">
             <CalendarX size={32} className="mx-auto mb-2 opacity-50" />
             <p className="text-sm">{t('dashboard.common.noDataYet')}</p>

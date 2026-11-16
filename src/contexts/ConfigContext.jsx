@@ -59,6 +59,10 @@ export const ConfigProvider = ({ children }) => {
   const [geoDetectionDone, setGeoDetectionDone] = useState(false);
   const [australia88VisaYear, setAustralia88VisaYear] = useState(1);
   const [australia88ManualDays, setAustralia88ManualDays] = useState(0);
+  // ISO date string (YYYY-MM-DD) — set the moment the user declares Year 2, so
+  // shifts can be split into "before"/"after" for separate Year 1/Year 2 totals.
+  // null while still in Year 1 (or if the user has never declared Year 2).
+  const [australia88Year2StartDate, setAustralia88Year2StartDate] = useState(null);
 
   // Load initial user configuration from Firebase
   useEffect(() => {
@@ -92,6 +96,7 @@ export const ConfigProvider = ({ children }) => {
             setUseAutoHolidays(settings.useAutoHolidays || false);
             setAustralia88VisaYear(settings.australia88VisaYear ?? 1);
             setAustralia88ManualDays(settings.australia88ManualDays ?? 0);
+            setAustralia88Year2StartDate(settings.australia88Year2StartDate ?? null);
           }
         } catch (err) {
           logger.error("Error loading user configuration:", err);
@@ -155,32 +160,47 @@ export const ConfigProvider = ({ children }) => {
   // Save user preferences
   const savePreferences = useCallback(async (preferences) => {
     if (!currentUser) throw new Error("Unauthenticated user");
+
+    // Setter per preference key. The optimistic update snapshots the previous
+    // value through a functional update so it can be rolled back on failure.
+    const setters = {
+      primaryColor: setPrimaryColor,
+      language: setLanguage,
+      defaultDiscount: setDefaultDiscount,
+      taxesPerWork: setTaxesPerWork,
+      shiftRanges: setShiftRanges,
+      deliveryEnabled: setDeliveryEnabled,
+      weeklyHoursGoal: setWeeklyHoursGoal,
+      smokoEnabled: setSmokoEnabled,
+      smokoMinutes: setSmokoMinutes,
+      dailyReminderEnabled: setDailyReminderEnabled,
+      dailyReminderTime: setDailyReminderTime,
+      themeMode: setThemeMode,
+      deliveryPlatforms: setDeliveryPlatforms,
+      defaultDeliveryPlatform: setDefaultDeliveryPlatform,
+      holidayCountry: setHolidayCountry,
+      holidayRegion: setHolidayRegion,
+      useAutoHolidays: setUseAutoHolidays,
+      australia88VisaYear: setAustralia88VisaYear,
+      australia88ManualDays: setAustralia88ManualDays,
+      australia88Year2StartDate: setAustralia88Year2StartDate,
+    };
+
+    const applied = new Map(); // key -> previous value, for rollback
+    const applyOptimistic = (key, value) => {
+      setters[key]((prev) => {
+        if (!applied.has(key)) applied.set(key, prev);
+        return value;
+      });
+    };
+
     try {
-      // Optimistic update
-      if (preferences.primaryColor !== undefined) setPrimaryColor(preferences.primaryColor);
-      if (preferences.language !== undefined) {
-        setLanguage(preferences.language);
-        i18n.changeLanguage(preferences.language);
+      for (const [key, value] of Object.entries(preferences)) {
+        if (value === undefined || !setters[key]) continue;
+        if (key === 'themeMode' && value === 'dark' && !isPremium) continue;
+        applyOptimistic(key, value);
+        if (key === 'language') i18n.changeLanguage(value);
       }
-      if (preferences.defaultDiscount !== undefined) setDefaultDiscount(preferences.defaultDiscount);
-      if (preferences.taxesPerWork !== undefined) setTaxesPerWork(preferences.taxesPerWork);
-      if (preferences.shiftRanges !== undefined) setShiftRanges(preferences.shiftRanges);
-      if (preferences.deliveryEnabled !== undefined) setDeliveryEnabled(preferences.deliveryEnabled);
-      if (preferences.weeklyHoursGoal !== undefined) setWeeklyHoursGoal(preferences.weeklyHoursGoal);
-      if (preferences.smokoEnabled !== undefined) setSmokoEnabled(preferences.smokoEnabled);
-      if (preferences.smokoMinutes !== undefined) setSmokoMinutes(preferences.smokoMinutes);
-      if (preferences.dailyReminderEnabled !== undefined) setDailyReminderEnabled(preferences.dailyReminderEnabled);
-      if (preferences.dailyReminderTime !== undefined) setDailyReminderTime(preferences.dailyReminderTime);
-      if (preferences.themeMode !== undefined && (preferences.themeMode !== 'dark' || isPremium)) {
-        setThemeMode(preferences.themeMode);
-      }
-      if (preferences.deliveryPlatforms !== undefined) setDeliveryPlatforms(preferences.deliveryPlatforms);
-      if (preferences.defaultDeliveryPlatform !== undefined) setDefaultDeliveryPlatform(preferences.defaultDeliveryPlatform);
-      if (preferences.holidayCountry !== undefined) setHolidayCountry(preferences.holidayCountry);
-      if (preferences.holidayRegion !== undefined) setHolidayRegion(preferences.holidayRegion);
-      if (preferences.useAutoHolidays !== undefined) setUseAutoHolidays(preferences.useAutoHolidays);
-      if (preferences.australia88VisaYear !== undefined) setAustralia88VisaYear(preferences.australia88VisaYear);
-      if (preferences.australia88ManualDays !== undefined) setAustralia88ManualDays(preferences.australia88ManualDays);
 
       const safePreferences = { ...preferences };
       if (safePreferences.themeMode === 'dark' && !isPremium) {
@@ -188,9 +208,13 @@ export const ConfigProvider = ({ children }) => {
       }
       await firebaseService.savePreferences(currentUser.uid, safePreferences);
     } catch (err) {
+      // Roll back the optimistic update so the UI matches the persisted state
+      for (const [key, prevValue] of applied) {
+        setters[key](prevValue);
+        if (key === 'language') i18n.changeLanguage(prevValue);
+      }
       logger.error("Error saving preferences:", err);
       setError("Error saving preferences: " + err.message);
-      // TODO: Implement rollback logic for optimistic update
       throw err;
     }
   }, [currentUser, isPremium]);
@@ -253,12 +277,13 @@ export const ConfigProvider = ({ children }) => {
     useAutoHolidays,
     australia88VisaYear,
     australia88ManualDays,
+    australia88Year2StartDate,
   }), [
     primaryColor, language, defaultDiscount, taxesPerWork, weeklyHoursGoal,
     deliveryEnabled, smokoEnabled, smokoMinutes, dailyReminderEnabled, dailyReminderTime,
     themeMode, deliveryPlatforms,
     defaultDeliveryPlatform, shiftRanges, holidayCountry, holidayRegion,
-    useAutoHolidays, australia88VisaYear, australia88ManualDays,
+    useAutoHolidays, australia88VisaYear, australia88ManualDays, australia88Year2StartDate,
   ]);
 
   const value = {
@@ -284,6 +309,7 @@ export const ConfigProvider = ({ children }) => {
     useAutoHolidays,
     australia88VisaYear,
     australia88ManualDays,
+    australia88Year2StartDate,
     thematicColors,
     savePreferences,
     requestAustraliaGeodetection,

@@ -25,11 +25,13 @@ const PORT = 3737;
 const PRERENDER_USER_AGENT = 'OraryPrerender';
 
 // Public routes to pre-render (never include protected/auth-required routes)
-const ROUTES = ['/', '/es', '/fr', '/login', '/register', '/forgot-password', '/terms', '/privacy', '/australia-88', '/faq', '/blog', '/blog/second-third-working-holiday-visa-application-guide', '/blog/track-88-days-working-holiday-visa', '/blog/working-holiday-visa-days-calculator', '/blog/best-apps-casual-workers-2026', '/blog/working-holiday-maker-tax-refund-australia', '/blog/is-delivery-driving-worth-it', '/blog/specified-work-eligible-postcodes-australia', '/blog/working-holiday-visa-evidence-payslips', '/blog/working-holiday-visa-mistakes', '/blog/how-to-calculate-your-pay', '/blog/understand-australian-payslip', '/blog/tax-delivery-gig-workers-australia', '/blog/mileage-deduction-delivery-riders', '/blog/track-delivery-earnings-multiple-apps', '/blog/how-to-track-work-shifts', '/blog/working-holiday-visa-new-zealand-guide', '/blog/canada-iec-working-holiday-guide', '/blog/uk-ireland-tax-working-holiday', '/blog/new-zealand-ird-tax-backpackers', '/blog/penalty-rates-australia-explained', '/blog/casual-vs-part-time-pay-australia', '/blog/am-i-being-underpaid-australia', '/blog/best-vehicle-for-delivery', '/blog/delivery-rider-tax-deductions', '/blog/budgeting-irregular-income', '/blog/how-orary-calculates-earnings', '/blog/orary-vs-spreadsheet-shift-tracking', '/blog/export-shift-data-tax-time',
+const ROUTES = ['/', '/es', '/fr', '/login', '/register', '/forgot-password', '/terms', '/privacy', '/australia-88', '/faq', '/blog', '/blog/working-holiday-visa-ballot-second-third-year', '/blog/second-third-working-holiday-visa-application-guide', '/blog/track-88-days-working-holiday-visa', '/blog/working-holiday-visa-days-calculator', '/blog/best-apps-casual-workers-2026', '/blog/working-holiday-maker-tax-refund-australia', '/blog/is-delivery-driving-worth-it', '/blog/specified-work-eligible-postcodes-australia', '/blog/subclass-417-vs-462-working-holiday', '/blog/working-holiday-visa-evidence-payslips', '/blog/working-holiday-visa-mistakes', '/blog/how-to-calculate-your-pay', '/blog/understand-australian-payslip', '/blog/tax-delivery-gig-workers-australia', '/blog/mileage-deduction-delivery-riders', '/blog/track-delivery-earnings-multiple-apps', '/blog/how-to-track-work-shifts', '/blog/working-holiday-visa-new-zealand-guide', '/blog/canada-iec-working-holiday-guide', '/blog/uk-ireland-tax-working-holiday', '/blog/new-zealand-ird-tax-backpackers', '/blog/penalty-rates-australia-explained', '/blog/casual-vs-part-time-pay-australia', '/blog/am-i-being-underpaid-australia', '/blog/best-vehicle-for-delivery', '/blog/delivery-rider-tax-deductions', '/blog/budgeting-irregular-income', '/blog/how-orary-calculates-earnings', '/blog/orary-vs-spreadsheet-shift-tracking', '/blog/export-shift-data-tax-time',
   // Localized blog (add a post's /es|/fr route here when you add its translation)
   '/es/blog', '/fr/blog',
+  '/es/blog/working-holiday-visa-ballot-second-third-year', '/fr/blog/working-holiday-visa-ballot-second-third-year',
   '/es/blog/second-third-working-holiday-visa-application-guide', '/fr/blog/second-third-working-holiday-visa-application-guide',
   '/es/blog/specified-work-eligible-postcodes-australia', '/fr/blog/specified-work-eligible-postcodes-australia',
+  '/es/blog/subclass-417-vs-462-working-holiday', '/fr/blog/subclass-417-vs-462-working-holiday',
   '/es/blog/track-88-days-working-holiday-visa', '/fr/blog/track-88-days-working-holiday-visa',
   '/es/blog/working-holiday-visa-days-calculator', '/fr/blog/working-holiday-visa-days-calculator',
   '/es/blog/working-holiday-maker-tax-refund-australia', '/fr/blog/working-holiday-maker-tax-refund-australia',
@@ -37,7 +39,8 @@ const ROUTES = ['/', '/es', '/fr', '/login', '/register', '/forgot-password', '/
   '/es/blog/how-to-calculate-your-pay', '/fr/blog/how-to-calculate-your-pay',
   '/es/blog/mileage-deduction-delivery-riders', '/fr/blog/mileage-deduction-delivery-riders',
   '/es/blog/track-delivery-earnings-multiple-apps', '/fr/blog/track-delivery-earnings-multiple-apps',
-  '/es/blog/how-to-track-work-shifts', '/fr/blog/how-to-track-work-shifts'];
+  '/es/blog/how-to-track-work-shifts', '/fr/blog/how-to-track-work-shifts',
+  '/es/blog/working-holiday-visa-new-zealand-guide', '/fr/blog/working-holiday-visa-new-zealand-guide'];
 
 // Third-party domains to block (Firebase, Google APIs, analytics, payment)
 const BLOCKED_DOMAINS = [
@@ -264,13 +267,24 @@ async function prerender() {
       const pageUrl = `http://localhost:${PORT}${route}`;
       process.stdout.write(`  📄  ${route.padEnd(25)}`);
 
-      await page.goto(pageUrl, {
-        waitUntil: 'networkidle0',
-        timeout: 10000,
-      });
+      // Navigate with retries. 'load' is more reliable than 'networkidle0',
+      // which can flap forever under request interception / slow machines and
+      // caused intermittent "Navigation timeout" failures on heavier posts.
+      let navErr = null;
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          await page.goto(pageUrl, { waitUntil: 'load', timeout: 45000 });
+          navErr = null;
+          break;
+        } catch (e) {
+          navErr = e;
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      }
+      if (navErr) throw navErr;
 
       // Wait for React to render something inside #root
-      await page.waitForSelector('#root > *', { timeout: 6000 }).catch(() => {
+      await page.waitForSelector('#root > *', { timeout: 15000 }).catch(() => {
         // #root might still be empty if auth/loading blocks render
       });
 

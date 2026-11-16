@@ -7,7 +7,7 @@ import Card from '../../ui/Card';
 import CalendarHeader from '../CalendarHeader';
 import CalendarGrid from '../CalendarGrid';
 
-const Calendar = ({ onSelectedDay }) => {
+const Calendar = ({ onSelectedDay, initialDate = null }) => {
   const { shiftsByDate, allJobs, thematicColors } = useApp();
   
   // Get all combined shifts from context
@@ -33,7 +33,7 @@ const Calendar = ({ onSelectedDay }) => {
     changeMonth,
     goToToday,
     goToDay
-  } = useCalendarState(allShifts, onSelectedDay);
+  } = useCalendarState(allShifts, onSelectedDay, initialDate);
 
   const days = getDaysOfMonth();
 

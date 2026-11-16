@@ -3,7 +3,6 @@
 import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useApp } from '../../../contexts/AppContext';
-import Flex from '../../ui/Flex';
 
 const PlatformSelector = ({ selectedPlatform, onPlatformSelect }) => {
   const { t } = useTranslation();
@@ -33,25 +32,6 @@ const PlatformSelector = ({ selectedPlatform, onPlatformSelect }) => {
           </option>
         ))}
       </select>
-
-      {/* Visual indicator of the selected platform */}
-      {selectedPlatform && (
-        <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-          <Flex variant="center"
-            className="w-6 h-6 rounded-full mr-3"
-            style={{
-              backgroundColor: deliveryPlatforms.find(p => p.name === selectedPlatform)?.color || '#6B7280'
-            }}
-          >
-            <span className="text-white font-bold text-xs">
-              {selectedPlatform.charAt(0)}
-            </span>
-          </Flex>
-          <span className="text-sm text-gray-700 font-medium">
-            {selectedPlatform}
-          </span>
-        </div>
-      )}
     </div>
   );
 };

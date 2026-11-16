@@ -42,6 +42,8 @@ const TermsOfService = () => {
                 <li>• Your actual paycheck may include additional values not tracked by this application, such as bonuses, penalties, superannuation contributions, tax withholdings, or other payroll adjustments.</li>
                 <li>• The values shown are <strong>not official</strong> and should not be used as legal or tax documents.</li>
                 <li>• Always verify your actual earnings with your official payslips and employer records.</li>
+                <li>• Figures extracted automatically from uploaded payslips may contain reading errors — always check them against the original document.</li>
+                <li>• Income tax and refund estimates are approximations based on published income tax brackets only. They do not include levies (e.g. Medicare, ACC), National Insurance, USC, PRSI, offsets, or your personal circumstances, and are not tax advice. Always confirm with your official tax office or a registered tax agent before lodging.</li>
                 <li>• Orary is not responsible for any discrepancies between the estimated values and your actual received payment.</li>
               </ul>
             </div>

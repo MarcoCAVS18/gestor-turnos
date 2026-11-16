@@ -8,6 +8,8 @@ import {
   Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
 import { formatCurrency } from '../../../utils/currency';
+import { getShiftFuelExpense } from '../../../utils/deliveryUtils';
+import { getShiftGrossEarnings } from '../../../utils/shiftUtils';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 
@@ -56,7 +58,7 @@ const CustomTooltip = ({ active, payload }) => {
         )}
         {d.km > 0 && (
           <div className="flex justify-between gap-4">
-            <span className="text-gray-500 dark:text-gray-400">{t('stats.vehicleEfficiency.kmPerDollar')}</span>
+            <span className="text-gray-500 dark:text-gray-400">{t('shifts.kilometers')}</span>
             <span className="font-medium text-gray-700 dark:text-gray-300">{d.km} km</span>
           </div>
         )}
@@ -80,8 +82,8 @@ const FuelEfficiency = ({ deliveryStats, shifts = [], className = '' }) => {
     return (shifts || [])
       .filter(s => s.type === 'delivery')
       .map(s => ({
-        earnings: parseFloat(s.baseEarnings ?? s.totalEarnings ?? s.earnings) || 0,
-        expenses: parseFloat(s.fuelExpense ?? s.expenses) || 0,
+        earnings: getShiftGrossEarnings(s),
+        expenses: getShiftFuelExpense(s),
         km: parseFloat(s.kilometers) || 0,
         date: s.date || '',
         platform: s.platform || '',

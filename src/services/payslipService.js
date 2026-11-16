@@ -6,6 +6,8 @@
 
 import { auth } from './firebase';
 import logger from '../utils/logger';
+import { createSafeDate, calculateShiftHours } from '../utils/time';
+import { localDateToISO } from '../utils/calendarUtils';
 
 const PROJECT_ID = process.env.REACT_APP_FIREBASE_PROJECT_ID || 'gestionturnos-7ec99';
 const FUNCTIONS_BASE_URL = process.env.REACT_APP_USE_EMULATOR === 'true'
@@ -445,6 +447,85 @@ export function hasShiftsInPeriod(shifts, periodStart, periodEnd) {
     const date = s.startDate || s.date;
     if (!date) return false;
     return date >= periodStart && date <= periodEnd;
+  });
+}
+
+/**
+ * Compara, día por día, los turnos existentes contra el período de un payslip.
+ * Los payslips no guardan workId (no hay vínculo con un empleador puntual), así
+ * que se comparan contra TODOS los turnos regulares (no delivery) del período —
+ * misma asunción que hasShiftsInPeriod.
+ * @param {Array} shifts - Turnos existentes (de DataContext)
+ * @param {{ periodStart: string, periodEnd: string, hours: number|string }} payslip
+ * @returns {{
+ *   days: Array<{ date: string, shifts: Array, hasShift: boolean, hours: number }>,
+ *   totalDays: number,
+ *   daysWithShifts: number,
+ *   daysMissing: number,
+ *   missingDates: string[],
+ *   loggedHours: number,
+ *   payslipHours: number,
+ *   hoursDelta: number,
+ *   status: 'empty' | 'partial' | 'full',
+ * } | null}
+ */
+export function getPayslipShiftCoverage(shifts, payslip) {
+  const { periodStart, periodEnd, hours } = payslip || {};
+  if (!periodStart || !periodEnd) return null;
+
+  const start = createSafeDate(periodStart);
+  const end = createSafeDate(periodEnd);
+  if (!start || !end || start > end) return null;
+
+  const regularShifts = Array.isArray(shifts)
+    ? shifts.filter((s) => s.type !== 'delivery')
+    : [];
+
+  const days = [];
+  const cursor = new Date(start);
+  while (cursor <= end) {
+    const dateStr = localDateToISO(cursor);
+    const dayShifts = regularShifts.filter((s) => (s.startDate || s.date) === dateStr);
+    const dayHours = dayShifts.reduce(
+      (sum, s) => sum + calculateShiftHours(s.startTime, s.endTime),
+      0
+    );
+    days.push({ date: dateStr, shifts: dayShifts, hasShift: dayShifts.length > 0, hours: dayHours });
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  const daysWithShifts = days.filter((d) => d.hasShift).length;
+  const missingDates = days.filter((d) => !d.hasShift).map((d) => d.date);
+  const loggedHours = days.reduce((sum, d) => sum + d.hours, 0);
+  const payslipHours = Number(hours) || 0;
+
+  return {
+    days,
+    totalDays: days.length,
+    daysWithShifts,
+    daysMissing: missingDates.length,
+    missingDates,
+    loggedHours: Math.round(loggedHours * 100) / 100,
+    payslipHours,
+    hoursDelta: Math.round((payslipHours - loggedHours) * 100) / 100,
+    status: daysWithShifts === 0 ? 'empty' : missingDates.length === 0 ? 'full' : 'partial',
+  };
+}
+
+/**
+ * Devuelve los payslips cuyo período se superpone (aunque sea parcialmente)
+ * con un rango de fechas dado. Usado para mostrar payslips como "evidencia"
+ * de una semana del tracker de 88 días (Australia88StatsCard).
+ * @param {Array} payslips - Payslips completos (de usePayslipsData)
+ * @param {string} rangeStart - 'YYYY-MM-DD'
+ * @param {string} rangeEnd - 'YYYY-MM-DD'
+ * @returns {Array}
+ */
+export function getPayslipsOverlappingRange(payslips, rangeStart, rangeEnd) {
+  if (!Array.isArray(payslips) || !rangeStart || !rangeEnd) return [];
+  return payslips.filter((p) => {
+    if (!p.periodStart || !p.periodEnd) return false;
+    return p.periodStart <= rangeEnd && p.periodEnd >= rangeStart;
   });
 }
 

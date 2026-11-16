@@ -9,8 +9,12 @@
 //   Mobile  → stacked: day count → progress bar → stats row
 //   Desktop → split:   left = day count + progress bar | right = stats
 //
-// WHV logic: counts in 88-day blocks (Year 1 then Year 2).
-// Once Year 1 is complete the counter resets to 0 for Year 2 — no 176-day target shown.
+// WHV logic: Year 1 view shows the running total capped at 88 (0–88) — extra
+// days beyond 88 stay shown as Year 1, they don't auto-promote to Year 2.
+// Year 2 only appears once the user declares it in Settings (after their
+// Year 2 visa is approved); its counter resets to 0 and counts up to 179 (6 months)
+// (the Year 3 extension needs ~6 months of fresh work during Year 2 — see
+// the app's second/third-year application guide blog post).
 // ─────────────────────────────────────────────────────────────────────────────
 
 import React, { useState } from 'react';
@@ -25,6 +29,8 @@ import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 import ProgressBar from '../../ui/ProgressBar';
+import Australia88ActivateYear2 from '../Australia88ActivateYear2';
+import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS } from '../../../services/australia88Service';
 
 const Australia88DashboardCard = () => {
   const { t } = useTranslation();
@@ -48,19 +54,24 @@ const Australia88DashboardCard = () => {
     setViewYear(year2Active ? 2 : 1);
   }, [year2Active]);
 
-  // Fire a one-time milestone notification when crossing 70/80/85 (or the 176
-  // equivalents). Native-only; no-op on web. This card only renders for AU users.
+  // Fire a one-time milestone notification when crossing 70/80/85 of the
+  // active year's goal (88 for Year 1, 179 for Year 2). Native-only; no-op
+  // on web. This card only renders for AU users. Before Year 2 is declared,
+  // extra days beyond 88 don't trigger a phantom Year 2 alert.
   React.useEffect(() => {
-    const goal = totalVisaDays < 88 ? 88 : totalVisaDays < 176 ? 176 : null;
-    if (goal) checkVisaMilestone(totalVisaDays, goal);
-  }, [totalVisaDays]);
+    if (year2Active) {
+      if (year2Days < YEAR2_TARGET_DAYS) checkVisaMilestone(year2Days, YEAR2_TARGET_DAYS);
+    } else if (totalVisaDays < 88) {
+      checkVisaMilestone(totalVisaDays, 88);
+    }
+  }, [totalVisaDays, year2Active, year2Days]);
 
   const showYearToggle = year2Active;
 
   // Derived display values based on which year is being viewed
   const y1Days = Math.min(totalVisaDays, 88);
   const displayDays = viewYear === 2 ? year2Days : y1Days;
-  const yearGoal = viewYear === 2 ? 176 : 88;
+  const yearGoal = viewYear === 2 ? YEAR2_TARGET_DAYS : YEAR1_TARGET_DAYS; // Year 2's goal is 6 months, not 88; see header note
   const daysRemaining = yearGoal - displayDays;
   const progressPercent = Math.min(100, Math.round((displayDays / yearGoal) * 100));
   const isCompleteForView = viewYear === 2 ? year2Complete : year1Complete;
@@ -75,6 +86,10 @@ const Australia88DashboardCard = () => {
 
   const isComplete = year2Complete;
 
+  // Year 1 is done and Year 2 hasn't been declared yet — offer the switch
+  // right in the "Complete" stat box instead of its checkmark icon.
+  const canActivateYear2 = viewYear === 1 && year1Complete && !year2Active;
+
   return (
     <Card className="flex flex-col overflow-hidden">
 
@@ -82,7 +97,7 @@ const Australia88DashboardCard = () => {
       <Flex variant="between" className="mb-3 flex-nowrap gap-2">
         <h3 className="text-sm font-semibold flex items-center gap-2 text-gray-800 dark:text-gray-100 truncate">
           <Globe size={16} className="flex-shrink-0" style={{ color: colors.primary }} />
-          <span className="truncate">{isMobile ? 'WHV' : 'Working Holiday Visa'}</span>
+          <span className="truncate">{isMobile ? t('australia88.visaTitleShort') : t('australia88.visaTitle')}</span>
         </h3>
 
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -107,7 +122,7 @@ const Australia88DashboardCard = () => {
           )}
 
           <Button
-            onClick={() => navigate('/statistics')}
+            onClick={() => navigate('/statistics/australia88')}
             size="sm"
             variant="ghost"
             animatedChevron
@@ -140,16 +155,6 @@ const Australia88DashboardCard = () => {
           {showProgressBar && (
             <div className="mt-3">
               <ProgressBar value={progressPercent} color={colors.primary} height="6px" />
-            </div>
-          )}
-
-          {/* Year complete badge */}
-          {isCompleteForView && (
-            <div className="mt-3 flex items-center justify-center gap-1.5">
-              <CheckCircle2 size={14} style={{ color: colors.primary }} />
-              <span className="text-xs font-semibold" style={{ color: colors.primary }}>
-                {t('australia88.yearComplete', { year: viewYear })}
-              </span>
             </div>
           )}
         </div>
@@ -198,11 +203,15 @@ const Australia88DashboardCard = () => {
                     {t('australia88.complete')}
                   </p>
                 </div>
-                <CheckCircle2
-                  size={18}
-                  className="mx-auto mt-0.5"
-                  style={{ color: colors.primary }}
-                />
+                {canActivateYear2 ? (
+                  <Australia88ActivateYear2 className="mt-0.5" />
+                ) : (
+                  <CheckCircle2
+                    size={18}
+                    className="mx-auto mt-0.5"
+                    style={{ color: colors.primary }}
+                  />
+                )}
               </>
             ) : (
               <>

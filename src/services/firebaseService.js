@@ -19,7 +19,8 @@ import {
   limit,
   getCountFromServer,
 } from 'firebase/firestore';
-import { db } from './firebase';
+import { httpsCallable } from 'firebase/functions';
+import { db, functions } from './firebase';
 import { createSafeDate } from '../utils/time';
 
 // ============================================================================
@@ -81,6 +82,7 @@ export const ensureUserDocument = async (user) => {
     primaryColor: '#EC4899',
     language: 'en',
     defaultDiscount: 15,
+    taxesPerWork: {},
     weeklyHoursGoal: null,
     deliveryEnabled: false,
     smokoEnabled: false,
@@ -100,6 +102,7 @@ export const ensureUserDocument = async (user) => {
     useAutoHolidays: false,
     australia88VisaYear: 1,
     australia88ManualDays: 0,
+    australia88Year2StartDate: null,
   };
 
   if (userDocSnapshot.exists()) {
@@ -125,6 +128,7 @@ export const savePreferences = async (userUid, preferences) => {
     primaryColor: 'settings.primaryColor',
     language: 'settings.language',
     defaultDiscount: 'settings.defaultDiscount',
+    taxesPerWork: 'settings.taxesPerWork',
     shiftRanges: 'settings.shiftRanges',
     deliveryEnabled: 'settings.deliveryEnabled',
     weeklyHoursGoal: 'settings.weeklyHoursGoal',
@@ -138,6 +142,7 @@ export const savePreferences = async (userUid, preferences) => {
     useAutoHolidays: 'settings.useAutoHolidays',
     australia88VisaYear: 'settings.australia88VisaYear',
     australia88ManualDays: 'settings.australia88ManualDays',
+    australia88Year2StartDate: 'settings.australia88Year2StartDate',
   };
 
   for (const key in preferences) {
@@ -781,6 +786,16 @@ export const updateFeedbackStatus = async (feedbackId, status) => {
   await updateDoc(doc(db, 'feedback', feedbackId), { status });
 };
 
+// Manually grant/revoke Premium for a user, bypassing Stripe entirely.
+// Firestore rules block clients from ever setting subscription.isPremium to
+// true directly, so this must go through the adminSetPremiumStatus Cloud
+// Function (Admin SDK, gated by the `admin` custom claim server-side).
+export const setUserPremiumStatus = async (targetUserId, grant) => {
+  const fn = httpsCallable(functions, 'adminSetPremiumStatus');
+  const result = await fn({ targetUserId, grant });
+  return result.data;
+};
+
 // Basic user list for the admin panel.
 export const getAllUsers = async (max = 100) => {
   const { usersRef } = getCollections();
@@ -793,9 +808,23 @@ export const getAllUsers = async (max = 100) => {
       displayName: data.displayName || '',
       isPremium: data.subscription?.isPremium === true,
       plan: data.subscription?.plan || 'free',
+      manualGrant: data.subscription?.manualGrant === true,
+      hasStripeSubscription: !!data.subscription?.stripeSubscriptionId,
       createdAt: data.createdAt?.toDate?.() || data.createdAt || null,
     };
   });
+};
+
+// count() that fails soft (UI shows "—") but records WHY in `errors`, so the
+// admin panel can surface it instead of silently rendering an empty dashboard.
+const makeSafeCount = (errors) => async (label, q) => {
+  try {
+    const snap = await getCountFromServer(q);
+    return snap.data().count;
+  } catch (err) {
+    errors.push(`${label}: ${err?.code || err?.message || 'unknown'}`);
+    return null;
+  }
 };
 
 // On-demand usage counts for the cost dashboard. Uses count() aggregation —
@@ -806,14 +835,8 @@ export const getUsageStats = async () => {
 
   const days30 = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-  const safeCount = async (q) => {
-    try {
-      const snap = await getCountFromServer(q);
-      return snap.data().count;
-    } catch {
-      return null; // e.g. missing composite index — fail soft, the UI shows "—"
-    }
-  };
+  const errors = [];
+  const safeCount = makeSafeCount(errors);
 
   const [
     totalUsers, newUsers30d,
@@ -822,14 +845,14 @@ export const getUsageStats = async () => {
     totalFeedback, pendingFeedback,
     totalLiveSessions,
   ] = await Promise.all([
-    safeCount(usersRef),
-    safeCount(query(usersRef, where('createdAt', '>=', days30))),
-    safeCount(shiftsRef),
-    safeCount(query(shiftsRef, where('createdAt', '>=', days30))),
-    safeCount(worksRef),
-    safeCount(feedbackRef),
-    safeCount(query(feedbackRef, where('status', '==', 'pending'))),
-    safeCount(liveSessionsRef),
+    safeCount('totalUsers', usersRef),
+    safeCount('newUsers30d', query(usersRef, where('createdAt', '>=', days30))),
+    safeCount('totalShifts', shiftsRef),
+    safeCount('shifts30d', query(shiftsRef, where('createdAt', '>=', days30))),
+    safeCount('totalWorks', worksRef),
+    safeCount('totalFeedback', feedbackRef),
+    safeCount('pendingFeedback', query(feedbackRef, where('status', '==', 'pending'))),
+    safeCount('totalLiveSessions', liveSessionsRef),
   ]);
 
   return {
@@ -838,6 +861,7 @@ export const getUsageStats = async () => {
     totalWorks,
     totalFeedback, pendingFeedback,
     totalLiveSessions,
+    errors,
   };
 };
 
@@ -848,18 +872,12 @@ export const getSubscriptionMetrics = async () => {
   const { usersRef } = getCollections();
   const trialRecordsRef = collection(db, 'trial_records');
 
-  const safeCount = async (q) => {
-    try {
-      const snap = await getCountFromServer(q);
-      return snap.data().count;
-    } catch {
-      return null;
-    }
-  };
-  const byStatus = (s) => safeCount(query(usersRef, where('subscription.status', '==', s)));
+  const errors = [];
+  const safeCount = makeSafeCount(errors);
+  const byStatus = (s) => safeCount(s, query(usersRef, where('subscription.status', '==', s)));
 
   const [trialsStarted, trialing, activePaid, cancelling, cancelled, pastDue] = await Promise.all([
-    safeCount(trialRecordsRef),
+    safeCount('trialsStarted', trialRecordsRef),
     byStatus('trialing'),
     byStatus('active'),
     byStatus('cancelling'),
@@ -867,5 +885,5 @@ export const getSubscriptionMetrics = async () => {
     byStatus('past_due'),
   ]);
 
-  return { trialsStarted, trialing, activePaid, cancelling, cancelled, pastDue };
+  return { trialsStarted, trialing, activePaid, cancelling, cancelled, pastDue, errors };
 };

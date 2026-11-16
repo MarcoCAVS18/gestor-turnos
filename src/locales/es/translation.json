@@ -105,7 +105,68 @@
     "shiftsDisabledTooltip": "Primero crea un trabajo para agregar turnos",
     "paused": "Pausado",
     "liveMode": "Modo Live",
-    "share": "Compartir"
+    "share": "Compartir",
+    "more": "Más"
+  },
+  "more": {
+    "title": "Más",
+    "subtitle": "Todo lo demás, en un solo lugar",
+    "sections": {
+      "account": "Cuenta",
+      "app": "Aplicación"
+    },
+    "manageAccount": "Gestionar cuenta",
+    "needHelp": "¿Necesitas ayuda?",
+    "faq": "Preguntas frecuentes",
+    "about": "Acerca de Orary",
+    "backToApp": "Volver a la app"
+  },
+  "statsHub": {
+    "title": "Resúmenes",
+    "subtitle": "Tu trabajo, por período",
+    "weekly": "Resumen semanal",
+    "monthly": "Resumen mensual",
+    "unlockPremium": "Desbloquea Premium"
+  },
+  "payslipNav": {
+    "documents": "Documentos",
+    "calculations": "Cálculos",
+    "calculationsSubtitle": "Desglose y proyecciones de año fiscal de tus recibos",
+    "empty": "Agrega recibos en Documentos para ver sus cálculos aquí.",
+    "rateFromPayslip": "La tarifa base se estimará del recibo: ~{{rate}}/h",
+    "newWorkPremium": "Agregar un segundo trabajo requiere Premium"
+  },
+  "yourHours": {
+    "title": "Tus horas",
+    "subtitle": "Horas del mes frente a tu meta",
+    "totalLabel": "Horas trabajadas",
+    "prevMonth": "Horas del mes anterior",
+    "difference": "Diferencia de horas",
+    "note": "Las horas reflejan los turnos registrados en el período seleccionado y pueden cambiar al agregar o editar turnos.",
+    "goalLabel": "Meta mensual",
+    "goalMet": "Meta cumplida",
+    "goalNotMet": "Por debajo de la meta",
+    "noGoal": "Configura una meta semanal de horas para seguir tu progreso mensual en",
+    "weeks": "Semanas del mes",
+    "partial": "Semana parcial"
+  },
+  "monthlySummary": {
+    "title": "Resumen mensual",
+    "subtitle": "Tu mes de un vistazo",
+    "hours": "Horas",
+    "earnings": "Ganancias",
+    "shifts": "Turnos",
+    "perHour": "Por hora",
+    "vsPrevious": "vs mes anterior",
+    "trend": "Últimos 6 meses",
+    "premiumTitle": "El resumen mensual es Premium",
+    "premiumDesc": "Desbloquea totales mensuales, comparaciones y tendencias",
+    "premiumCta": "Ver Premium"
+  },
+  "monthNavigator": {
+    "thisMonth": "Este mes",
+    "lastMonth": "Mes pasado",
+    "monthsAgo": "Hace {{count}} meses"
   },
   "premium": {
     "title": "Premium",
@@ -393,9 +454,6 @@
       "description": "Recibe notificaciones push y gestiona tus turnos sobre la marcha con nuestra app móvil.",
       "platforms": "iOS y Android"
     },
-    "deliveryVehicle": {
-      "helpText": "Selecciona el vehículo que usarás para tus deliveries"
-    },
     "calendar": {
       "title": "Suscripción al Calendario",
       "description": "Suscríbete a tus turnos en cualquier app de calendario — Google Calendar, Apple Calendar, Outlook y más. Se actualiza automáticamente cada pocas horas.",
@@ -541,13 +599,14 @@
     },
     "recentActivity": {
       "title": "Actividad reciente",
-      "empty": "Sin actividad reciente",
       "viewAll": "Ver todos",
       "totalRecent": "Total reciente"
     },
     "projection": {
       "title": "Proyección",
       "setupTitle": "Empezá acá",
+      "quietMonth": "Todavía no registraste turnos este mes.",
+      "quietMonthLink": "Registrar uno ahora",
       "worksAdded": "Trabajos agregados",
       "stepCompleted": "Paso completado",
       "addWorks": "Agregar trabajos",
@@ -585,9 +644,6 @@
     },
     "thisWeek": {
       "title": "Esta semana",
-      "shifts": "turnos",
-      "hours": "horas",
-      "earnings": "ganancias",
       "totalEarned": "Total ganado",
       "progress": "Progreso",
       "goal": "meta",
@@ -613,28 +669,7 @@
       "unlimitedSessions": "Sesiones ilimitadas",
       "sessionsThisMonth": "usos este mes",
       "tryNow": "Probar ahora",
-      "startSession": "Iniciar sesión",
-      "active": "Live activo",
-      "tapToView": "Toca para ver detalles",
-      "startRecording": "Iniciar grabación",
-      "trackRealTime": "Registra tu turno en tiempo real",
-      "freePlan": "Plan gratuito",
-      "usesThisMonth": "usos este mes",
-      "upgradeForUnlimited": "Mejora a Premium para Live ilimitado"
-    },
-    "clockIn": {
-      "title": "Registro de entrada",
-      "noShiftsToday": "No hay turnos hoy",
-      "addShift": "Agregar turno",
-      "shiftStarted": "Turno iniciado",
-      "startedAt": "Iniciado a las",
-      "estimatedEnd": "Final estimado",
-      "estimatedEarnings": "Ganancias estimadas",
-      "earned": "ganado",
-      "live": "En vivo",
-      "quickClockIn": "Entrada rápida",
-      "readyToWork": "Listo para trabajar",
-      "startShift": "Iniciar turno"
+      "startSession": "Iniciar sesión"
     },
     "quickStats": {
       "works": "Trabajos",
@@ -808,7 +843,8 @@
       "deleteAccount": "Eliminar Cuenta",
       "logout": "Cerrar sesión",
       "managePremium": "Gestionar Premium",
-      "upgradePremium": "Mejorar a Premium"
+      "upgradePremium": "Mejorar a Premium",
+      "more": "Más opciones"
     },
     "integrationsBanner": {
       "title": "Integraciones",
@@ -816,7 +852,7 @@
       "button": "Configurar"
     },
     "australia88": {
-      "title": "Visa de Vacaciones Trabajadas",
+      "title": "Visa de Holiday Trabajadas",
       "visaYear": "Año de visa",
       "year1": "Año 1",
       "year2": "Año 2",
@@ -912,8 +948,6 @@
       "endTimeRequired": "La hora de fin es requerida",
       "earningsRequired": "Las ganancias son requeridas y deben ser mayores a 0"
     },
-    "weeklySummary": "Resumen semanal",
-    "shifts": "turnos",
     "hours": "horas",
     "filters": {
       "activeFilters": "Filtros activos",
@@ -1022,33 +1056,14 @@
     "deliveryFeature3": "Control de propinas y gastos de combustible",
     "notSureWhich": "¿No estás seguro cuál elegir?",
     "helpChoose": "Si tienes dudas sobre qué tipo elegir, puedes cambiarlo más tarde en la configuración del trabajo.",
-    "liveModeActiveError": "\"{{workName}}\" está activo en Modo Live. Detén la sesión para editarlo.",
-    "filters": {
-      "allWorks": "Todos los trabajos",
-      "clear": "Limpiar",
-      "shiftTypes": {
-        "day": "Día",
-        "afternoon": "Tarde",
-        "night": "Noche",
-        "saturday": "Sábado",
-        "sunday": "Domingo",
-        "delivery": "Delivery",
-        "mixed": "Mixto",
-        "all": "Todos los tipos"
-      },
-      "shiftTypeLabel": "Tipo de turno",
-      "filteredBy": "Filtrado por",
-      "activeFilters": "Filtros activos",
-      "of": "de",
-      "clearAll": "Limpiar todo",
-      "workLabel": "Trabajo",
-      "daysLabel": "Días",
-      "allDays": "Todos",
-      "typeLabel": "Tipo",
-      "unknownWork": "Trabajo desconocido"
-    }
+    "liveModeActiveError": "\"{{workName}}\" está activo en Modo Live. Detén la sesión para editarlo."
   },
   "statistics": {
+    "tabs": {
+      "overview": "Resumen",
+      "payslips": "Recibos",
+      "delivery": "Delivery"
+    },
     "title": "Estadísticas",
     "subtitle": "Analiza tu rendimiento y proyecciones",
     "totalEarned": "Total ganado",
@@ -1060,6 +1075,19 @@
     "daily": "Diario",
     "deliveryTitle": "Estadísticas de Delivery",
     "deliverySubtitle": "Analiza tus ganancias y eficiencia en delivery",
+    "delivery": {
+      "tab": "Delivery",
+      "title": "Estadísticas de Delivery",
+      "subtitle": "Tus ganancias, KPIs y eficiencia de delivery por período",
+      "empty": "Todavía no registraste turnos de delivery. Agregá uno para ver tus estadísticas acá.",
+      "emptyPeriod": "No hay turnos de delivery en este período. Probá uno más largo.",
+      "periods": {
+        "today": "Hoy",
+        "week": "Esta semana",
+        "days90": "90 días",
+        "year": "Este año"
+      }
+    },
     "shiftTypes": "Tipos de turno"
   },
   "forms": {
@@ -1140,6 +1168,8 @@
       "namePlaceholder": "ej. Mi Trabajo",
       "baseRate": "Tarifa Base",
       "baseRatePlaceholder": "0.00",
+      "differentTaxHint": "¿Este trabajo tiene una tasa de impuestos distinta a tus otros trabajos?",
+      "differentTaxHintLink": "Configurala por trabajo en Ajustes",
       "currency": "Moneda",
       "selectCurrency": "Seleccionar moneda",
       "rates": {
@@ -1219,6 +1249,10 @@
     "clearing": "Borrando...",
     "deleteAccountConfirm": "Eliminar Cuenta",
     "deletingAccount": "Eliminando...",
+    "adminReauthTitle": "Confirmá tu identidad",
+    "adminReauthDesc": "Por seguridad, confirmá que sos vos antes de entrar al panel de administración.",
+    "adminReauthConfirm": "Continuar",
+    "adminReauthLoading": "Verificando...",
     "selectWorkFirst": "Por favor selecciona un trabajo primero",
     "activeSession": "Ya hay una sesión en vivo activa",
     "work": {
@@ -1235,9 +1269,7 @@
       "baseEarnings": "Ganancias base",
       "fuelExpense": "Gasto de combustible",
       "avgPerOrder": "Prom. por pedido",
-      "fuel": "Combustible",
-      "tips": "Propinas",
-      "totalEarnings": "Ganancias totales"
+      "fuel": "Combustible"
     },
     "work": {
       "baseRate": "Tarifa base:",
@@ -1254,6 +1286,11 @@
   },
   "australia88": {
     "visaTitle": "Working Holiday Visa",
+    "visaTitleShort": "WHV Australia",
+    "activateYear2": "¿Pasamos al Año 2?",
+    "activateYear2Confirm": "¿Ya tenés la visa del segundo año? Esto arranca un contador nuevo para los 6 meses (179 días) que necesitás para el tercer año. Los días del primer año no se suman. Podés cambiarlo después en Ajustes.",
+    "year2CelebrationTitle": "¡Bienvenido al Año 2!",
+    "year2CelebrationDesc": "El contador volvió a 0. Para el tercer año necesitás 6 meses de trabajo específico (179 días) hechos con esta visa.",
     "details": "Detalles",
     "complete": "Completo",
     "remaining": "Restante",
@@ -1265,7 +1302,26 @@
     "qualifiesDescription": "Califica para extensión de Working Holiday Visa",
     "regionalWork": "Trabajo en áreas regionales o críticas de Australia",
     "notSure": "¿No estás seguro si tu trabajo califica?",
-    "checkHomeAffairs": "Verificar en Home Affairs"
+    "checkHomeAffairs": "Verificar en Home Affairs",
+    "evidenceTooltip": "Hay un recibo cargado para esta semana — tocá para verlo como evidencia",
+    "stats": {
+      "pageSubtitle": "Seguí tu progreso hacia la extensión de tu Working Holiday Visa",
+      "year1Label": "Año 1",
+      "weeklyTitle": "Días por semana",
+      "weeklySubtitle": "Últimas {{count}} semanas",
+      "monthlyTitle": "Días por mes",
+      "monthlySubtitle": "Historial completo",
+      "daysShort": "Días",
+      "empty": "Todavía no hay datos — registrá un turno para empezar a contar tus días de visa.",
+      "allComplete": "179 días completos. Ya tenés tus 6 meses para el tercer año. Revisá las reglas vigentes en Home Affairs antes de aplicar.",
+      "daysToGoal": "Te faltan {{days}} días",
+      "learnTitle": "Más información",
+      "learnTrackTitle": "Cómo se cuentan tus 88 días",
+      "learnTrackDesc": "Entendé el método oficial detrás de este contador.",
+      "learnApplyTitle": "¿Listo para aplicar a tu próxima visa?",
+      "learnApplyDesc": "Guía paso a paso para tu Segunda o Tercera Working Holiday Visa.",
+      "readArticle": "Leer el artículo"
+    }
   },
   "about": {
     "hero": {
@@ -1602,7 +1658,6 @@
   },
   "calendar": {
     "subtitle": "Visualiza y gestiona tus turnos por fecha",
-    "new": "Nuevo",
     "noWorksMessage": "Para usar el calendario, primero necesitas crear al menos un trabajo en la sección \"Trabajos\".",
     "todayDate": "Hoy, {{date}}",
     "yesterdayDate": "Ayer, {{date}}",
@@ -1767,7 +1822,7 @@
     },
     "what": {
       "title": "¿Qué son los 88 días?",
-      "body1": "Para ser elegible para una visa Working Holiday de segundo año en Australia, debés completar 88 días de trabajo regional específico durante tu primer año. Un tercer año requiere 88 días adicionales — 176 en total.",
+      "body1": "Para la visa Working Holiday de segundo año necesitás 88 días de trabajo específico hechos con tu primera visa. Para el tercer año, 6 meses (179 días) hechos con la segunda. Son dos cuentas separadas: los días del primer año no se arrastran.",
       "body2": "El detalle que más gente pasa por alto: no son días calendario en el trabajo. Son días acreditados para la visa, calculados a partir de las horas que trabajás cada semana usando una fórmula oficial del gobierno."
     },
     "formula": {
@@ -1798,9 +1853,9 @@
       "removeWeek": "Eliminar",
       "totalDays": "Total días de visa",
       "milestone88": "Hito de 88 días — elegibilidad Año 2",
-      "milestone176": "Hito de 176 días — elegibilidad Año 3",
+      "milestone176": "179 días: requisito del tercer año",
       "progress88": "Progreso hacia 88 días",
-      "progress176": "Progreso hacia 176 días",
+      "progress176": "Progreso hacia 179 días",
       "hoursPlaceholder": "ej. 32",
       "visaDays": "día de visa",
       "visaDaysPlural": "días de visa",
@@ -1812,8 +1867,8 @@
       "year2Days": "88 días",
       "year2Desc": "Completá 88 días de trabajo regional acreditados durante tu primer año WHV para solicitar una segunda visa de 12 meses.",
       "year3Title": "Extensión año 3",
-      "year3Days": "176 días",
-      "year3Desc": "Completá 88 días adicionales (176 en total) de trabajo específico para ser elegible a un tercer año en Australia.",
+      "year3Days": "179 días",
+      "year3Desc": "6 meses de trabajo específico hechos con tu segunda visa. Es una cuenta nueva, los días del primer año no suman.",
       "note": "Las categorías de trabajo regional y específico son definidas por el Departamento de Asuntos Internos de Australia. Verificá siempre los requisitos vigentes en immi.homeaffairs.gov.au."
     },
     "howOrary": {
@@ -1825,7 +1880,7 @@
       "step3Title": "Días de visa acumulados",
       "step3Desc": "Tu total de días acreditados se actualiza en tiempo real. Siempre sabés exactamente dónde estás.",
       "step4Title": "Seguimiento de hitos",
-      "step4Desc": "Tu panel muestra el progreso hacia los 88 y 176 días — sin contar manualmente."
+      "step4Desc": "Tu panel te muestra cuánto te falta para los 88 días (segundo año) o los 179 días (tercer año). Sin contar a mano."
     },
     "cta": {
       "title": "Dejá de contar a mano.",
@@ -1863,11 +1918,25 @@
     }
   },
   "payslip": {
+    "editTitle": "Editar recibo",
+    "newTitle": "Nuevo recibo",
     "title": "Recibos y Registros",
     "subtitle": "Detectá datos de tus recibos y cargá turnos pasados automáticamente",
     "upload": "Subir recibo en PDF",
     "uploadHint": "Vamos a intentar leer tu recibo automáticamente. Si no se puede, podés cargar los valores manualmente.",
     "parsing": "Leyendo recibo…",
+    "verifyingTitle": "Un momento",
+    "verifyingText": "Estamos verificando los datos de tu nómina.",
+    "verifyingTitle2": "Ya casi lo tenemos",
+    "verifyingText2": "Estamos leyendo tu recibo…",
+    "verifyingTitle3": "Solo un poco más",
+    "verifyingText3": "Casi listo…",
+    "reviewHint": "Revisá los campos resaltados antes de confirmar.",
+    "checkField": "Verificá este dato",
+    "taxSuggestion": {
+      "message": "Este recibo indica una tasa de descuento del {{implied}}%, pero tenés configurado {{configured}}%.",
+      "apply": "Actualizar a {{rate}}%"
+    },
     "parseError": "No pudimos leer este PDF. Cargá los valores manualmente abajo.",
     "manualEntry": "Carga manual",
     "previewTitle": "Valores detectados — revisá y confirmá",
@@ -1881,13 +1950,18 @@
     "periodEnd": "Fecha de fin",
     "hours": "Horas trabajadas",
     "gross": "Ingreso bruto",
+    "net": "Neto",
     "tax": "Impuesto retenido",
+    "employer": "Empleador",
+    "employee": "Empleado",
+    "location": "Ubicación",
     "country": "País del empleador",
     "countryAU": "Australia",
     "countryNZ": "Nueva Zelanda",
     "countryGB": "Reino Unido",
     "countryIE": "Irlanda",
     "unsupportedCountry": "La estimación de devolución solo está disponible para Australia y Nueva Zelanda por ahora.",
+    "techNote": "Usamos diferentes tecnologías para leer tus recibos — a veces falla, pero trabajamos cada día para mejorarla.",
     "missingFields": "Completá ingreso bruto e impuesto retenido.",
     "disclaimer": "Esta es una estimación informal. Verificá siempre con tu autoridad fiscal.",
     "annualised": "Bruto anualizado",
@@ -1905,10 +1979,35 @@
       "modeDetail": "Último recibo",
       "tapToToggle": "Tocá para cambiar vista"
     },
+    "coverage": {
+      "title": "Turnos vs. recibo",
+      "status": {
+        "full": "Todo registrado",
+        "partial": "Faltan algunos días",
+        "empty": "Sin turnos registrados"
+      },
+      "full": "Todos los días de este período ya tienen un turno registrado.",
+      "partial": "Faltan turnos en {{count}} día(s) de este período.",
+      "empty": "Todavía no hay turnos registrados en este período.",
+      "loggedHours": "Horas registradas",
+      "payslipHours": "Horas del recibo",
+      "hoursMismatch": "Las horas no coinciden exactamente (diferencia de {{delta}}h).",
+      "dayByDay": "Día por día",
+      "viewDetail": "Ver detalle día por día",
+      "noShiftThisDay": "Sin turno",
+      "addMissing": "Agregar turnos faltantes",
+      "goToDocuments": "Gestionar en Documentos"
+    },
+    "fillGapsTitle": "Completar turnos faltantes",
+    "fillGapsHint": "Se van a completar solo los {{count}} día(s) faltantes, usando el mismo patrón de días y horario de abajo.",
     "generateShifts": "Generar turnos desde este recibo",
     "shiftsExist": "Ya hay turnos cargados en este período — generación omitida.",
     "selectWork": "Seleccioná un trabajo",
     "noWorks": "Creá primero un trabajo para poder generar turnos.",
+    "createWork": "Crear trabajo nuevo",
+    "addWorkNamed": "Agregar trabajo: {{name}}",
+    "workNamePlaceholder": "Nombre del trabajo / empleador",
+    "workNameRequired": "Ingresá un nombre para el trabajo nuevo.",
     "workDays": "Días trabajados",
     "weekdays": {
       "mon": "Lun",
@@ -1984,6 +2083,12 @@
     "title": "Admin",
     "subtitle": "Moderación y consumo",
     "error": "Ocurrió un error al cargar los datos de admin.",
+    "reauth": {
+      "wrongPassword": "Contraseña incorrecta.",
+      "popupClosed": "Se canceló la confirmación con Google.",
+      "popupBlocked": "El navegador bloqueó la ventana emergente. Permitila e intentá de nuevo.",
+      "genericError": "No se pudo verificar tu identidad. Intentá de nuevo."
+    },
     "usage": {
       "title": "Consumo y drivers de costo",
       "note": "Conteos on-demand. El costo exacto está en la consola de Firebase.",
@@ -2024,7 +2129,14 @@
       "title": "Usuarios",
       "empty": "Sin usuarios.",
       "premium": "Premium",
-      "free": "Gratis"
+      "free": "Gratis",
+      "grant": "Dar Premium",
+      "revoke": "Quitar Premium",
+      "manualGrant": "Otorgado manualmente",
+      "stripeManaged": "Suscripción Stripe",
+      "confirmGrant": "¿Dar acceso Premium a {{name}}? Esto no afecta Stripe ni genera ningún cobro.",
+      "confirmRevoke": "¿Quitar el acceso Premium a {{name}}? Esto no afecta Stripe.",
+      "actionError": "Algo salió mal. Intentá de nuevo."
     }
   },
   "notifications": {

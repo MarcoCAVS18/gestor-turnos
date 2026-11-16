@@ -23,6 +23,7 @@ export const StatsProvider = ({ children }) => {
   const {
     shiftRanges,
     defaultDiscount,
+    taxesPerWork,
     smokoEnabled,
     smokoMinutes,
     deliveryEnabled,
@@ -51,6 +52,7 @@ export const StatsProvider = ({ children }) => {
       allWork,
       shiftRanges,
       defaultDiscount,
+      taxesPerWork,
       smokoEnabled,
       smokoMinutes,
       {
@@ -59,7 +61,7 @@ export const StatsProvider = ({ children }) => {
         useAutoHolidays
       }
     );
-  }, [allWork, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes, holidayCountry, holidayRegion, useAutoHolidays]);
+  }, [allWork, shiftRanges, defaultDiscount, taxesPerWork, smokoEnabled, smokoMinutes, holidayCountry, holidayRegion, useAutoHolidays]);
 
   // Calculate weekly statistics for the current and previous week
   const currentData = useMemo(() => {

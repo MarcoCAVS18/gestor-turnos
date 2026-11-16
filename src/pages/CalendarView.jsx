@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CalendarDays, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -35,8 +36,18 @@ const CalendarView = () => {
   const colors = useThemeColors();
   
   const hasWorks = allWorks && allWorks.length > 0;
-  
-  const [selectedDate, setSelectedDate] = useState(localDateToISO(createSafeDate(new Date())));
+
+  // Deep link opcional (?date=YYYY-MM-DD), usado por ej. desde el detector de
+  // cobertura de payslips ("sin turno este día" → /calendar?date=...). Solo se
+  // lee al montar; después el usuario navega el calendario normalmente.
+  const [searchParams] = useSearchParams();
+  const dateParam = searchParams.get('date');
+  const deepLinkDate = dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)
+    ? createSafeDate(dateParam)
+    : null;
+  const [selectedDate, setSelectedDate] = useState(
+    deepLinkDate ? localDateToISO(deepLinkDate) : localDateToISO(createSafeDate(new Date()))
+  );
 
   const selectedShifts = useMemo(() => 
     selectedDate ? (shiftsByDate[selectedDate] || []) : [], 
@@ -126,7 +137,7 @@ const CalendarView = () => {
   return (
     <div className="px-4 py-6 pb-32 space-y-6">
       <Helmet>
-        <title>Calendar - Orary</title>
+        <title>{`${t('nav.calendar')} - Orary`}</title>
         <meta name="description" content="View your work shifts on a calendar. Plan upcoming shifts and track your schedule." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
@@ -164,7 +175,7 @@ const CalendarView = () => {
         initial="hidden"
         animate="visible"
       >
-        <Calendario onSelectedDay={selectDay} />
+        <Calendario onSelectedDay={selectDay} initialDate={deepLinkDate} />
       </motion.div>
       
       <motion.div

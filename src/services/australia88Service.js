@@ -5,6 +5,13 @@
 import { calculateShiftHours } from '../utils/time';
 import { createSafeDate } from '../utils/time';
 
+// Official Home Affairs definitions: "three months" of specified work = 88
+// calendar days (needed for a 2nd WHM visa, done during the 1st), and "six
+// months" = 179 calendar days (needed for a 3rd visa, done during the 2nd).
+// Single source of truth — never hardcode these numbers elsewhere.
+export const YEAR1_TARGET_DAYS = 88;
+export const YEAR2_TARGET_DAYS = 179;
+
 /**
  * Maps weekly hours worked to visa days earned.
  * Based on unofficial reference table for WHV extension calculation.
@@ -59,7 +66,7 @@ const getWeekKey = (date) => {
  * @returns {{
  *   totalDays: number,
  *   weeklyBreakdown: Array<{ weekKey, weekStart, weekEnd, hours, visaDays }>,
- *   currentMilestone: 88 | 176 | 'complete'
+ *   currentMilestone: 88 | 179 | 'complete'
  * }}
  */
 export const calculateTotalVisaDays = (shifts, works) => {
@@ -115,9 +122,58 @@ export const calculateTotalVisaDays = (shifts, works) => {
   const totalDays = weeklyBreakdown.reduce((sum, w) => sum + w.visaDays, 0);
 
   let currentMilestone;
-  if (totalDays < 88)       currentMilestone = 88;
-  else if (totalDays < 176) currentMilestone = 176;
-  else                      currentMilestone = 'complete';
+  if (totalDays < YEAR1_TARGET_DAYS)      currentMilestone = YEAR1_TARGET_DAYS;
+  else if (totalDays < YEAR2_TARGET_DAYS) currentMilestone = YEAR2_TARGET_DAYS;
+  else                                    currentMilestone = 'complete';
 
   return { totalDays, weeklyBreakdown, currentMilestone };
+};
+
+/**
+ * Formats a week's date range compactly for display, using the browser's
+ * locale-aware month name.
+ * Same month: "Nov 4–10". Different months: "Oct 28 – Nov 3".
+ *
+ * @param {Date} weekStart
+ * @param {Date} weekEnd
+ * @param {string} [locale] - BCP 47 locale tag (e.g. i18n.language). Defaults to 'en'.
+ */
+export const formatWeekRange = (weekStart, weekEnd, locale = 'en') => {
+  const startMonth = weekStart.toLocaleDateString(locale, { month: 'short' });
+  const startDay = weekStart.getDate();
+  const endDay = weekEnd.getDate();
+
+  if (weekStart.getMonth() === weekEnd.getMonth()) {
+    return `${startMonth} ${startDay}–${endDay}`;
+  }
+
+  const endMonth = weekEnd.toLocaleDateString(locale, { month: 'short' });
+  return `${startMonth} ${startDay} – ${endMonth} ${endDay}`;
+};
+
+/**
+ * Aggregates a weekly breakdown (see calculateTotalVisaDays) into calendar months.
+ * A week is attributed to the month its Monday falls in — the same week is never
+ * split across two months, keeping the sum of monthly totals equal to the sum
+ * of weekly totals.
+ *
+ * @param {Array} weeklyBreakdown - Output of calculateTotalVisaDays
+ * @returns {Array<{ monthKey, monthStart, hours, visaDays }>} Chronological order
+ */
+export const getMonthlyBreakdown = (weeklyBreakdown) => {
+  const monthMap = new Map();
+
+  weeklyBreakdown.forEach((week) => {
+    const monthStart = new Date(week.weekStart.getFullYear(), week.weekStart.getMonth(), 1);
+    const monthKey = `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}`;
+
+    if (!monthMap.has(monthKey)) {
+      monthMap.set(monthKey, { monthKey, monthStart, hours: 0, visaDays: 0 });
+    }
+    const entry = monthMap.get(monthKey);
+    entry.hours += week.hours;
+    entry.visaDays += week.visaDays;
+  });
+
+  return Array.from(monthMap.values()).sort((a, b) => a.monthStart - b.monthStart);
 };

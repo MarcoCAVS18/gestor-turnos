@@ -110,7 +110,7 @@ const Login = () => {
   return (
     <>
       <Helmet>
-        <title>Sign In - Orary</title>
+        <title>{`${t('landing.signIn')} - Orary`}</title>
         <meta name="description" content="Sign in to your Orary account to track your work shifts and earnings." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>

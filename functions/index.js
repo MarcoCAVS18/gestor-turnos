@@ -1360,6 +1360,92 @@ exports.createBillingPortalSession = functions.https.onRequest((req, res) => {
 });
 
 /**
+ * adminSetPremiumStatus
+ * Lets an admin (custom claim `admin: true`) manually grant or revoke Premium
+ * access for a user, entirely outside Stripe — for support/goodwill upgrades.
+ * Only touches subscription.isPremium/plan/status/manualGrant/grantedBy —
+ * stripeCustomerId/stripeSubscriptionId are never written, so Stripe webhooks
+ * (which look users up by those two fields) can never find or overwrite a
+ * manually-granted account. Refuses to touch any user who already has a real
+ * Stripe subscription, so it can't be used to clobber Stripe-managed state.
+ */
+const RECENT_LOGIN_WINDOW_SECONDS = 30 * 60; // 30 minutes
+
+exports.adminSetPremiumStatus = functions.https.onCall(async (data, context) => {
+  if (!context.auth || context.auth.token.admin !== true) {
+    throw new functions.https.HttpsError('permission-denied', 'Admin access required.');
+  }
+
+  // Defense in depth: even if the client-side re-auth gate were bypassed,
+  // the ID token itself must be backed by a sign-in from the last 30 minutes
+  // (auth_time is set by Firebase Auth at login/reauthentication and cannot
+  // be forged by the client) before this sensitive action is allowed.
+  const authAgeSeconds = Date.now() / 1000 - context.auth.token.auth_time;
+  if (authAgeSeconds > RECENT_LOGIN_WINDOW_SECONDS) {
+    throw new functions.https.HttpsError(
+      'failed-precondition',
+      'Recent authentication required. Please sign in again before performing this action.'
+    );
+  }
+
+  const adminUid = context.auth.uid;
+  const { targetUserId, grant } = data || {};
+
+  if (!targetUserId || typeof targetUserId !== 'string') {
+    throw new functions.https.HttpsError('invalid-argument', 'targetUserId is required.');
+  }
+  if (typeof grant !== 'boolean') {
+    throw new functions.https.HttpsError('invalid-argument', 'grant must be a boolean.');
+  }
+
+  const allowed = await checkRateLimit(adminUid, 'adminSetPremiumStatus', 20, 60000);
+  if (!allowed) {
+    throw new functions.https.HttpsError('resource-exhausted', 'Too many requests. Please slow down.');
+  }
+
+  const userRef = db.collection('users').doc(targetUserId);
+  const userDoc = await userRef.get();
+  if (!userDoc.exists) {
+    throw new functions.https.HttpsError('not-found', 'User not found.');
+  }
+
+  const existingSubscription = userDoc.data().subscription || {};
+  if (existingSubscription.stripeSubscriptionId) {
+    throw new functions.https.HttpsError(
+      'failed-precondition',
+      'This user has a Stripe-managed subscription. Use the billing/cancellation flow instead of a manual grant.'
+    );
+  }
+
+  const now = Timestamp.now();
+
+  if (grant) {
+    await userRef.update({
+      'subscription.isPremium': true,
+      'subscription.plan': 'premium',
+      'subscription.status': 'active',
+      'subscription.startDate': now,
+      'subscription.expiryDate': null,
+      'subscription.manualGrant': true,
+      'subscription.grantedBy': adminUid,
+      'subscription.grantedAt': now,
+    });
+  } else {
+    await userRef.update({
+      'subscription.isPremium': false,
+      'subscription.plan': 'free',
+      'subscription.status': 'cancelled',
+      'subscription.manualGrant': false,
+      'subscription.revokedBy': adminUid,
+      'subscription.revokedAt': now,
+    });
+  }
+
+  console.log(`adminSetPremiumStatus: admin ${adminUid} (${context.auth.token.email || 'unknown'}) set grant=${grant} for user ${targetUserId}`);
+  return { success: true, targetUserId, grant };
+});
+
+/**
  * Get recent invoices for the current user
  * Returns the last 5 invoices from Stripe
  */
@@ -1806,8 +1892,41 @@ exports.userCalendar = functions.https.onRequest(async (req, res) => {
 // ============================================
 
 /**
+ * Deletes shared_works documents past their 48h expiration (expiresAt field).
+ * Shared by the HTTP endpoint below and the scheduled function so there is a
+ * single implementation of the cleanup logic.
+ * @returns {Promise<number>} total documents deleted
+ */
+async function cleanupExpiredShares() {
+  const now = admin.firestore.Timestamp.now();
+  const expiredQuery = db.collection('shared_works')
+    .where('expiresAt', '<', now)
+    .limit(500);
+
+  let totalDeleted = 0;
+  let snapshot = await expiredQuery.get();
+
+  while (!snapshot.empty) {
+    const batch = db.batch();
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+    await batch.commit();
+    totalDeleted += snapshot.size;
+
+    if (snapshot.size < 500) break;
+    snapshot = await expiredQuery.get();
+  }
+
+  return totalDeleted;
+}
+
+/**
  * HTTP-triggered cleanup function for expired shared_works documents.
- * Shared works have a 48-hour expiration (expiresAt field).
+ * Kept for manual/external invocation (e.g. one-off runs while debugging).
+ * The recurring cleanup is now handled automatically by
+ * `scheduledCleanExpiredShares` below — this endpoint is no longer required
+ * for normal operation.
  *
  * Secured with CRON_SECRET env variable — call from external cron service
  * or Cloud Scheduler with header: Authorization: Bearer <CRON_SECRET>
@@ -1824,26 +1943,7 @@ exports.cleanExpiredShares = functions.https.onRequest(async (req, res) => {
   }
 
   try {
-    const now = admin.firestore.Timestamp.now();
-    const expiredQuery = db.collection('shared_works')
-      .where('expiresAt', '<', now)
-      .limit(500);
-
-    let totalDeleted = 0;
-    let snapshot = await expiredQuery.get();
-
-    while (!snapshot.empty) {
-      const batch = db.batch();
-      snapshot.docs.forEach((doc) => {
-        batch.delete(doc.ref);
-      });
-      await batch.commit();
-      totalDeleted += snapshot.size;
-
-      if (snapshot.size < 500) break;
-      snapshot = await expiredQuery.get();
-    }
-
+    const totalDeleted = await cleanupExpiredShares();
     console.log(`Cleanup: deleted ${totalDeleted} expired shared works`);
     res.json({ success: true, deleted: totalDeleted });
   } catch (error) {
@@ -1851,6 +1951,24 @@ exports.cleanExpiredShares = functions.https.onRequest(async (req, res) => {
     res.status(500).json({ error: 'Cleanup failed' });
   }
 });
+
+/**
+ * Scheduled cleanup — runs automatically every 24 hours so expired shares
+ * don't accumulate indefinitely. First scheduled (pubsub) function in this
+ * project; requires the Blaze plan (already in use for outbound network
+ * calls elsewhere) and the Cloud Scheduler API enabled on first deploy.
+ */
+exports.scheduledCleanExpiredShares = functions.pubsub
+  .schedule('every 24 hours')
+  .onRun(async () => {
+    try {
+      const totalDeleted = await cleanupExpiredShares();
+      console.log(`Scheduled cleanup: deleted ${totalDeleted} expired shared works`);
+    } catch (error) {
+      console.error('Scheduled cleanup error:', error.message);
+    }
+    return null;
+  });
 
 
 // ============================================

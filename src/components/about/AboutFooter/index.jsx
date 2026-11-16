@@ -64,6 +64,10 @@ const AboutFooter = ({ colors }) => {
             88-day visa tracker
           </Link>
           <span className="mx-2">·</span>
+          <Link to="/blog" className="hover:opacity-80 transition-opacity">
+            Blogary
+          </Link>
+          <span className="mx-2">·</span>
           <Link to="/faq" className="hover:opacity-80 transition-opacity">
             FAQ
           </Link>

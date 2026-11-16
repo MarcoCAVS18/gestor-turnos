@@ -9,6 +9,7 @@ import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, CheckCircle, ArrowRight, Clock, Calendar, BarChart3, Bell } from 'lucide-react';
+import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS } from '../services/australia88Service';
 
 const PINK = '#EC4899';
 
@@ -111,8 +112,11 @@ function DemoCalculator() {
     return sum + (isNaN(h) ? 0 : getVisaDaysFromHours(h));
   }, 0);
 
-  const reachedYear2 = totalDays >= 88;
-  const reachedYear3 = totalDays >= 176;
+  const reachedYear2 = totalDays >= YEAR1_TARGET_DAYS;
+  // Third-year days are a separate count done on the 2nd visa, so the demo
+  // only credits days beyond the first 88 toward it (never cumulative).
+  const year3Days = Math.max(0, totalDays - YEAR1_TARGET_DAYS);
+  const reachedYear3 = year3Days >= YEAR2_TARGET_DAYS;
 
   return (
     <div className="space-y-5">
@@ -223,14 +227,14 @@ function DemoCalculator() {
             )}
           </div>
 
-          {/* Progress to 176 — revealed only after reaching the 88-day milestone */}
+          {/* Progress to the third-year goal, revealed only after the 88-day milestone */}
           {totalDays >= 88 && (
             <div>
               <div className="flex justify-between text-xs text-slate-500 mb-1.5">
                 <span>{t('australia88Page.demo.progress176')}</span>
-                <span>{Math.min(totalDays, 176)} / 176</span>
+                <span>{Math.min(year3Days, YEAR2_TARGET_DAYS)} / {YEAR2_TARGET_DAYS}</span>
               </div>
-              <ProgressBar value={totalDays} max={176} color={reachedYear3 ? '#10B981' : '#6366F1'} />
+              <ProgressBar value={year3Days} max={YEAR2_TARGET_DAYS} color={reachedYear3 ? '#10B981' : '#6366F1'} />
               {reachedYear3 && (
                 <motion.p
                   initial={{ opacity: 0 }}
@@ -295,7 +299,7 @@ const HOWTO_JSON_LD = JSON.stringify({
     {
       '@type': 'HowToStep',
       name: 'Reach 88 days to apply for a second year',
-      text: 'Once your total reaches 88 visa-accredited days, you are eligible to apply for a second-year Working Holiday Visa. For a third year, continue to 176 days total.',
+      text: 'Once your total reaches 88 visa-accredited days, you are eligible to apply for a second-year Working Holiday Visa. For a third year you need a separate 6 months (179 days) of specified work done on your second visa.',
       position: 5,
     },
   ],
@@ -634,6 +638,9 @@ const Australia88 = () => {
             {t('australia88Page.footer.disclaimer')}
           </p>
           <div className="flex items-center gap-4 shrink-0">
+            <Link to="/blog" className="hover:text-slate-600 transition-colors">
+              Blogary
+            </Link>
             <Link to="/faq" className="hover:text-slate-600 transition-colors">
               FAQ
             </Link>

@@ -1,7 +1,7 @@
 // src/components/layout/Navigation/NavMobileBar.jsx
 
 import React, { memo } from 'react';
-import { Home, Briefcase, Calendar, BarChart2, CalendarDays } from 'lucide-react';
+import { Home, Briefcase, Calendar, CalendarDays, MoreHorizontal } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const NavMobileBar = memo(({ navigateToView, currentView, colors, t, calendarButtonStyle, getActiveTextStyle }) => {
@@ -54,12 +54,12 @@ const NavMobileBar = memo(({ navigateToView, currentView, colors, t, calendarBut
         </button>
 
         <button
-          onClick={() => navigateToView('statistics')}
+          onClick={() => navigateToView('more')}
           className="flex flex-col items-center justify-center transition-colors duration-200"
-          style={getActiveTextStyle('statistics')}
+          style={getActiveTextStyle('more')}
         >
-          <BarChart2 size={20} />
-          <span className="text-xs mt-1">{t('nav.statistics')}</span>
+          <MoreHorizontal size={20} />
+          <span className="text-xs mt-1">{t('nav.more')}</span>
         </button>
       </div>
     </nav>

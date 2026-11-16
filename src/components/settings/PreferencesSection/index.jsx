@@ -30,7 +30,7 @@ const PreferencesSection = ({ onError, onSuccess, className }) => {
   const [hasChanges, setHasChanges] = useState(false);
 
   const traditionalWorks = useMemo(() =>
-    (allWorks || []).filter(w => w.type === 'tradicional'),
+    (allWorks || []).filter(w => w.type === 'regular'),
     [allWorks]
   );
 

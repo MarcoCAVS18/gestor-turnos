@@ -6,6 +6,7 @@
 
 import { Capacitor } from '@capacitor/core';
 import i18n from '../../i18n';
+import logger from '../../utils/logger';
 
 const isNative = () => Capacitor.isNativePlatform();
 
@@ -120,7 +121,7 @@ export const scheduleReengagementNotifications = async (referenceDate = new Date
     await LocalNotifications.schedule({ notifications });
   } catch (err) {
     // Non-critical — swallow silently so app startup is never blocked
-    console.warn('[nativeNotifications] scheduleReengagementNotifications error:', err);
+    logger.warn('[nativeNotifications] scheduleReengagementNotifications error:', err);
   }
 };
 
@@ -145,10 +146,10 @@ const VISA_NOTIFIED_KEY = 'orary_visa_milestones_notified';
  * Fire a one-time local notification when the user crosses a visa-day milestone
  * (~80/91/97% of the current goal — i.e. 70/80/85 for the 88-day goal). Tracks
  * which milestones were already notified (per goal) in localStorage so it never
- * repeats. Native-only. Pass the displayed total and the current goal (88 | 176).
+ * repeats. Native-only. Pass the displayed total and the current goal (88 | 179).
  *
  * @param {number} totalDays - Current accumulated visa days (as shown to the user).
- * @param {number} milestone - Current goal: 88 or 176.
+ * @param {number} milestone - Current goal: 88 or 179.
  */
 export const checkVisaMilestone = async (totalDays, milestone) => {
   if (!isNative() || typeof milestone !== 'number' || totalDays <= 0) return;
@@ -167,7 +168,7 @@ export const checkVisaMilestone = async (totalDays, milestone) => {
     store[milestone] = [...new Set([...done, ...reached])];
     localStorage.setItem(VISA_NOTIFIED_KEY, JSON.stringify(store));
   } catch (err) {
-    console.warn('[nativeNotifications] checkVisaMilestone error:', err);
+    logger.warn('[nativeNotifications] checkVisaMilestone error:', err);
   }
 };
 
@@ -199,7 +200,7 @@ export const scheduleDailyReminder = async (time = '19:00') => {
       }],
     });
   } catch (err) {
-    console.warn('[nativeNotifications] scheduleDailyReminder error:', err);
+    logger.warn('[nativeNotifications] scheduleDailyReminder error:', err);
   }
 };
 

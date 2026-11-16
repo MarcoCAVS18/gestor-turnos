@@ -10,6 +10,7 @@ import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import logger from '../../../utils/logger';
+import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS } from '../../../services/australia88Service';
 
 const Australia88Section = ({ className }) => {
   const { t } = useTranslation();
@@ -38,10 +39,19 @@ const Australia88Section = ({ className }) => {
 
       try {
         setSaving(true);
-        await savePreferences({
+        const payload = {
           australia88VisaYear: selectedYear,
           australia88ManualDays: manualDays,
-        });
+        };
+        // Record/clear the Year 2 cutover date only when the year itself
+        // changes — this is what lets the app split shifts logged before vs
+        // after the switch into separate Year 1 / Year 2 totals.
+        if (yearChanged) {
+          payload.australia88Year2StartDate = selectedYear === 2
+            ? new Date().toISOString().split('T')[0]
+            : null;
+        }
+        await savePreferences(payload);
       } catch (err) {
         logger.error('Error saving Australia88 settings:', err);
       } finally {
@@ -75,7 +85,7 @@ const Australia88Section = ({ className }) => {
   return (
     <SettingsSection
       icon={Globe}
-      title="🇦🇺 Working Holiday Visa"
+      title={t('australia88.visaTitle')}
       className={className}
     >
       <div className="space-y-4">
@@ -87,9 +97,11 @@ const Australia88Section = ({ className }) => {
             const isY1DoneByY2 = year === 1 && selectedYear === 2;
 
             // Goal display key — drives AnimatePresence swap
-            // Year 1 goal = 88 days, Year 2 goal = 176 days
-            const goalKey = year === 2 ? '176' : isY1DoneByY2 ? 'done' : '88';
-            const goalText = year === 2 ? '176 d' : isY1DoneByY2 ? '88 / 88' : '88 d';
+            // Year 1 goal = 88 days, Year 2 goal = 179 days (6 months)
+            const goalKey = year === 2 ? 'y2' : isY1DoneByY2 ? 'done' : 'y1';
+            const goalText = year === 2
+              ? `${YEAR2_TARGET_DAYS} d`
+              : isY1DoneByY2 ? `${YEAR1_TARGET_DAYS} / ${YEAR1_TARGET_DAYS}` : `${YEAR1_TARGET_DAYS} d`;
 
             return (
               <button

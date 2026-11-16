@@ -5,11 +5,13 @@
 // Hardcoded English — i18n to be added later.
 // Pre-rendered by scripts/prerender.js for Google indexing.
 
-import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import Accordion from '../components/ui/Accordion';
 
 const PINK   = '#EC4899';
 const INDIGO = '#6366F1';
@@ -34,6 +36,10 @@ const GENERAL_FAQS = [
     a: 'Enter a start time, end time, and hourly rate for each shift. Orary calculates gross earnings automatically. Define multiple jobs (Works) each with their own rate, assign any shift to any job, and watch totals accumulate across days, weeks, and months.',
   },
   {
+    q: 'Can I set a different tax rate for each job?',
+    a: "Yes. In Settings, under Payment and Tax Configuration, set a default discount percentage applied to all shifts, or expand \"Configure per job\" to give any job its own rate — useful when your jobs withhold tax differently, or when you have both a casual and a full-time job. If you upload a payslip, Orary also compares the tax rate it implies against what you have configured and offers to update it with one tap when they don't match.",
+  },
+  {
     q: 'What is Live Mode?',
     a: "Live Mode is Orary's real-time shift timer. Tap Start when your shift begins — Orary tracks elapsed hours and live earnings updating every second. Tap Stop when you finish and the shift saves automatically. Ideal for casual workers who don't know in advance when their shift will end.",
   },
@@ -47,11 +53,31 @@ const GENERAL_FAQS = [
   },
   {
     q: 'Can Orary estimate my income tax and refund?',
-    a: 'Yes — with Orary Premium. Upload a payslip PDF and Orary reads your gross pay and tax, then estimates your annual income tax and any potential refund using the official tax brackets for Australia (ATO), New Zealand (IRD), the United Kingdom (HMRC) and Ireland (Revenue). Estimates cover income tax only — not Medicare or ACC levies, National Insurance, USC, PRSI or other deductions — so always confirm with the official tax office (myTax, myIR, your HMRC Personal Tax Account or Revenue myAccount).',
+    a: 'Yes. Upload a payslip PDF and Orary reads your gross pay and tax, then estimates your annual income tax and any potential refund using the official tax brackets for Australia (ATO), New Zealand (IRD), the United Kingdom (HMRC) and Ireland (Revenue). Estimates cover income tax only — not Medicare or ACC levies, National Insurance, USC, PRSI or other deductions — so always confirm with the official tax office (myTax, myIR, your HMRC Personal Tax Account or Revenue myAccount).',
+  },
+  {
+    q: 'Does Orary calculate mileage deductions for delivery work?',
+    a: 'Yes. Log the kilometres you ride or drive in each delivery session and Orary estimates your mileage tax deduction using the official per-kilometre rates for Australia (ATO), New Zealand (IRD), the United Kingdom (HMRC), Canada (CRA), the United States (IRS), and Ireland (Revenue). The estimate appears in your delivery statistics so you can keep a running total for tax time. Rates are indicative — confirm the current figures with your tax office.',
   },
   {
     q: 'Does Orary work on iPhone and Android?',
     a: 'Yes. Orary runs as a web app at orary.app and as a native app for iOS (iPhone and iPad) and Android. Native apps include home screen shortcuts and system notifications.',
+  },
+  {
+    q: 'Where do I find Payslips, Delivery stats, and Settings on mobile?',
+    a: 'Tap the More tab in the bottom navigation bar. It groups everything beyond your daily flow: Statistics (summaries, payslips, and delivery analytics), your account (settings, subscription, and integrations), and help resources. On desktop, the sidebar shows all sections directly.',
+  },
+  {
+    q: 'What summaries does Orary provide?',
+    a: 'Under Statistics you get three summaries: Your hours shows total hours worked each month against a monthly target derived from your weekly goal, with week-by-week compliance; the weekly summary includes charts, comparisons, and daily distribution; and the Premium monthly summary adds monthly totals, month-over-month comparison, and a six-month earnings trend. On mobile they live under the More tab; on desktop, in the sidebar.',
+  },
+  {
+    q: 'How are payslips organized?',
+    a: 'Payslips are split into two views. Documents is where you upload PDF payslips (or add them manually), edit detected values, and generate shifts from pay periods. Calculations is a read-only view with each payslip summary, the per-period breakdown, and fiscal-year projections for your estimated tax refund.',
+  },
+  {
+    q: 'Does Orary check my payslip against my logged shifts?',
+    a: "Yes. Whenever a payslip has a valid pay period, Orary compares it day by day against your logged shifts and shows a coverage status — fully logged, some days missing, or none logged yet — plus a check on whether the total hours match. If some days are missing, you can fill just those gaps with one click, using the same weekday-and-time pattern as the existing 'generate shifts from payslip' tool, instead of the whole period.",
   },
   {
     q: 'Does Orary send reminders and notifications?',
@@ -62,7 +88,7 @@ const GENERAL_FAQS = [
 const AUSTRALIA_FAQS = [
   {
     q: 'What is the 88-day rule in Australia?',
-    a: 'Working Holiday Visa holders (subclass 417 and 462) must complete 88 days of specified work in a regional area during their first visa year to apply for a second-year extension. A third-year extension requires a further 88 days — 176 total — completed during the second visa year.',
+    a: 'Working Holiday Visa holders (subclass 417 and 462) must complete 88 days of specified work in a regional area during their first visa year to apply for a second-year extension. A third year is a separate count: 6 months (179 days) of specified work done during your second visa. First-year days don\'t carry over.',
   },
   {
     q: 'Are the 88 days calendar days or working days?',
@@ -86,11 +112,15 @@ const AUSTRALIA_FAQS = [
   },
   {
     q: 'Subclass 417 vs subclass 462 — what is the difference?',
-    a: "Subclass 417 is for passport holders from the UK, Ireland, Canada, France, Germany, Italy, Netherlands, South Korea, Japan, and others. Subclass 462 is for the USA, China, India, Vietnam, Thailand, Argentina, Chile, and others. Both require 88 days of specified regional work for a second year and 176 days total for a third year, but eligible work categories and age limits may vary by country.",
+    a: "Subclass 417 is for passport holders from the UK, Ireland, Canada, France, Germany, Italy, Netherlands, South Korea, Japan, and others. Subclass 462 is for the USA, China, India, Vietnam, Thailand, Argentina, Chile, and others. Both need 88 days of specified work for a second year and 6 months (179 days, done on the second visa) for a third, but eligible work categories and age limits vary by country.",
   },
   {
     q: 'How many days do I need for a third year in Australia?',
-    a: "After completing your first 88 days (second-year extension), complete a further 88 days of specified work — 176 days total — during your second visa year to become eligible for a third-year Working Holiday Visa. The same weekly formula applies throughout.",
+    a: "6 months of specified work, which Home Affairs counts as 179 days, done while you're on your second visa. It's a fresh count: the 88 days from your first year don't add to it. The same weekly formula applies.",
+  },
+  {
+    q: 'Are second and third year visas going to a ballot?',
+    a: "It's been announced, not passed. In September 2026 the government said second and third visas would move to a capped ballot (45,000 places for year two, 5,000 for year three). It needs legislation and there's no start date, so for now you apply as usual. You'll still need your 88 days or 6 months to enter the ballot.",
   },
   {
     q: 'What is the minimum to earn any visa days at all?',
@@ -98,7 +128,7 @@ const AUSTRALIA_FAQS = [
   },
   {
     q: 'Does Orary automatically track my 88-day progress?',
-    a: "Yes. Orary groups your logged shifts into Monday–Sunday weeks, applies the government visa-day formula to each week, and accumulates your total. Your dashboard shows a real-time progress bar toward 88 days (second-year eligibility) and 176 days (third-year eligibility). No manual counting needed.",
+    a: "Yes. Orary groups your logged shifts into Monday–Sunday weeks, applies the government visa-day formula to each week, and accumulates your total. Your dashboard shows a real-time progress bar toward 88 days (second year) or, once you switch to year two, 179 days (third year). No manual counting needed.",
   },
   {
     q: 'Can casual or part-time farm work count toward the 88 days?',
@@ -122,59 +152,6 @@ const FAQ_JSON_LD = JSON.stringify({
   })),
 });
 
-// ── FAQ card ─────────────────────────────────────────────────────────────────
-// Answer is always in the DOM (height: 0 when closed) so Puppeteer pre-render
-// captures the full text and Google indexes all content.
-
-function FAQCard({ question, answer, accentColor }) {
-  const [open, setOpen] = useState(false);
-  const answerRef = useRef(null);
-
-  return (
-    <div
-      className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden cursor-pointer transition-shadow hover:shadow-md"
-      onClick={() => setOpen(o => !o)}
-    >
-      {/* Accent bar */}
-      <div
-        className="h-0.5 w-full transition-colors duration-200"
-        style={{ backgroundColor: open ? accentColor : '#e2e8f0' }}
-      />
-
-      <div className="p-5">
-        {/* Question row */}
-        <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-semibold text-slate-800 leading-snug flex-1">
-            {question}
-          </p>
-          <motion.div
-            animate={{ rotate: open ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
-            className="shrink-0 mt-0.5"
-          >
-            <ChevronDown size={15} style={{ color: open ? accentColor : '#94a3b8' }} />
-          </motion.div>
-        </div>
-
-        {/* Answer — always in DOM, height animated via CSS grid trick */}
-        <div
-          className="grid transition-all duration-200 ease-in-out"
-          style={{ gridTemplateRows: open ? '1fr' : '0fr' }}
-        >
-          <div className="overflow-hidden">
-            <p
-              ref={answerRef}
-              className="text-sm text-slate-500 leading-relaxed mt-3 pt-3 border-t border-slate-100"
-            >
-              {answer}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Tab definitions ──────────────────────────────────────────────────────────
 
 const TABS = [
@@ -187,6 +164,12 @@ const TABS = [
 const FAQ = () => {
   const [activeTab, setActiveTab] = useState('orary');
   const currentTab = TABS.find(t => t.id === activeTab);
+  const location = useLocation();
+  const { t: tApp } = useTranslation();
+  // Visita interna desde el hub móvil "Más": el CTA de registro se reemplaza
+  // por un retorno a la app. En el prerender no hay location.state, así que
+  // la versión indexada por Google no cambia.
+  const fromApp = location.state?.fromApp === true;
 
   return (
     <div className="min-h-screen bg-slate-50 font-poppins">
@@ -215,13 +198,23 @@ const FAQ = () => {
             <img src="/assets/SVG/logo-white.svg" alt="Orary" className="w-7 h-7" />
             <span className="text-white font-bold text-base">Orary</span>
           </Link>
-          <Link
-            to="/register"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white transition-opacity hover:opacity-80"
-            style={{ backgroundColor: PINK }}
-          >
-            Get started free <ArrowRight size={13} />
-          </Link>
+          {fromApp ? (
+            <Link
+              to="/more"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white transition-opacity hover:opacity-80"
+              style={{ backgroundColor: PINK }}
+            >
+              <ArrowLeft size={13} /> {tApp('more.backToApp')}
+            </Link>
+          ) : (
+            <Link
+              to="/register"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white transition-opacity hover:opacity-80"
+              style={{ backgroundColor: PINK }}
+            >
+              Get started free <ArrowRight size={13} />
+            </Link>
+          )}
         </div>
       </div>
 
@@ -308,11 +301,9 @@ const FAQ = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.25, delay: i * 0.03 }}
                 >
-                  <FAQCard
-                    question={item.q}
-                    answer={item.a}
-                    accentColor={currentTab.color}
-                  />
+                  <Accordion title={item.q} accentColor={currentTab.color}>
+                    {item.a}
+                  </Accordion>
                 </motion.div>
               ))}
             </div>
@@ -375,7 +366,7 @@ const FAQ = () => {
           </p>
           <div className="flex items-center gap-4 shrink-0">
             <Link to="/australia-88" className="hover:text-slate-600 transition-colors">88-day tracker</Link>
-            <Link to="/blog"         className="hover:text-slate-600 transition-colors">Blog</Link>
+            <Link to="/blog"         className="hover:text-slate-600 transition-colors">Blogary</Link>
             <Link to="/terms"        className="hover:text-slate-600 transition-colors">Terms</Link>
             <Link to="/privacy"      className="hover:text-slate-600 transition-colors">Privacy</Link>
           </div>

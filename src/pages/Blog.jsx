@@ -67,6 +67,8 @@ const Blog = ({ lang = 'en' }) => {
         <html lang={lang} />
         <title>{ui.seoTitle}</title>
         <meta name="description" content={ui.seoDesc} />
+        <link rel="icon" href="/assets/images/logo1.ico" />
+        <link rel="apple-touch-icon" href="/assets/images/logo2.png" />
         <link rel="canonical" href={url} />
         {LANGS.map((l) => (
           <link key={l} rel="alternate" hrefLang={l} href={`${BASE}${blogPath(l)}`} />

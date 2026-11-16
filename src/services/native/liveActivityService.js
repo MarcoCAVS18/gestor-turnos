@@ -4,6 +4,7 @@
 // On web: all calls are no-ops that resolve immediately.
 
 import { registerPlugin, Capacitor } from '@capacitor/core';
+import logger from '../../utils/logger';
 
 // Same plugin name resolves to LiveActivityPlugin.swift on iOS
 // and LiveModePlugin.java (@CapacitorPlugin name="LiveActivityPlugin") on Android.
@@ -61,7 +62,7 @@ export const startLiveActivity = async ({ workName, workColor, themeColor, sessi
     });
     return activityId || '';
   } catch (err) {
-    console.warn('[LiveActivity] startActivity failed:', err);
+    logger.warn('[LiveActivity] startActivity failed:', err);
     return '';
   }
 };

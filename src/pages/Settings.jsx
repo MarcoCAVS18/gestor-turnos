@@ -54,7 +54,7 @@ const Settings = () => {
   return (
     <div className="px-4 py-6 space-y-6">
       <Helmet>
-        <title>Settings - Orary</title>
+        <title>{`${t('nav.settings')} - Orary`}</title>
         <meta name="description" content="Configure your Orary preferences, pay rates, currency, and account settings." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
@@ -115,7 +115,9 @@ const Settings = () => {
 
           {/* MOBILE: Vertical stack */}
           <div className="block lg:hidden space-y-6">
-            <IntegrationsBanner />
+            {/* Oculto bajo md: ahí Integraciones ya tiene fila en el hub "Más".
+                Entre md y lg (tablet con sidebar) el banner sigue siendo la única entrada. */}
+            <IntegrationsBanner className="hidden md:block" />
             <ProfilePhotoSection
             />
 

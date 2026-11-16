@@ -36,10 +36,10 @@ const TopWorkCard = memo(({ mostProfitableWork }) => {
         <Award size={20} style={{ color: colors.primary }} className="mr-2" />
         {t('dashboard.topWork.title')}
       </h3>
-      {/* Row on full-width screens; stacks (earnings below) when the column is
-          narrow on lg+ so nothing looks cramped. */}
-      <div className="flex flex-row items-center justify-between gap-2 lg:flex-col lg:items-start lg:gap-2">
-        <div className="flex items-center min-w-0">
+      {/* Always a single row: the name truncates so a long work name never
+          wraps and pushes the earnings figure below it. */}
+      <div className="flex flex-row items-center justify-between gap-3">
+        <div className="flex items-center min-w-0 flex-1">
           <div
             className="w-4 h-4 rounded-full mr-3 flex-shrink-0"
             style={{ backgroundColor: mostProfitableWork.work.color }}
@@ -48,13 +48,13 @@ const TopWorkCard = memo(({ mostProfitableWork }) => {
             <p className="font-semibold text-gray-800 dark:text-gray-100 truncate">
               {mostProfitableWork.work.name}
             </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
               {mostProfitableWork.shifts} {t('common.shifts').toLowerCase()} • {mostProfitableWork.hours.toFixed(1)}h
             </p>
           </div>
         </div>
         <p
-          className="text-xl font-bold flex-shrink-0"
+          className="text-xl font-bold flex-shrink-0 whitespace-nowrap"
           style={{ color: colors.primary }}
         >
           {formatCurrency(mostProfitableWork.earnings)}

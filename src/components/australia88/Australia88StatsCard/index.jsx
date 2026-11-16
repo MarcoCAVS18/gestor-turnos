@@ -14,59 +14,24 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import React, { useState } from 'react';
-import { Globe, CalendarDays, Target, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Globe, CalendarDays, Target, CheckCircle2, FileCheck } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useAustralia88 } from '../../../hooks/useAustralia88';
+import { usePayslipsData } from '../../../hooks/usePayslipsData';
+import { getPayslipsOverlappingRange } from '../../../services/payslipService';
+import { formatWeekRange } from '../../../services/australia88Service';
+import { localDateToISO } from '../../../utils/calendarUtils';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
+import VisaDots from '../VisaDots';
+import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS } from '../../../services/australia88Service';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const MAX_VISA_DAYS_PER_WEEK = 7;
 const WEEKS_TO_SHOW = 3; // How many recent weeks to list in the ledger
-
-// ── Sub-components ───────────────────────────────────────────────────────────
-
-/**
- * Renders up to 7 small dots representing visa days in one week.
- * Filled dots (colored) = earned. Empty dots (gray) = not earned.
- */
-const VisaDots = ({ days, color }) => (
-  <div className="flex items-center gap-[3px]">
-    {Array.from({ length: MAX_VISA_DAYS_PER_WEEK }).map((_, i) =>
-      i < days ? (
-        <div
-          key={i}
-          className="w-2 h-2 rounded-full flex-shrink-0"
-          style={{ backgroundColor: color }}
-        />
-      ) : (
-        <div
-          key={i}
-          className="w-2 h-2 rounded-full flex-shrink-0 bg-gray-200 dark:bg-gray-700"
-        />
-      )
-    )}
-  </div>
-);
-
-/**
- * Formats the week date range compactly.
- * Same month: "Nov 4–10". Different months: "Oct 28 – Nov 3".
- */
-const formatWeekShort = (weekStart, weekEnd) => {
-  const startMonth = weekStart.toLocaleDateString('en-AU', { month: 'short' });
-  const startDay = weekStart.getDate();
-  const endDay = weekEnd.getDate();
-
-  if (weekStart.getMonth() === weekEnd.getMonth()) {
-    return `${startMonth} ${startDay}–${endDay}`;
-  }
-
-  const endMonth = weekEnd.toLocaleDateString('en-AU', { month: 'short' });
-  return `${startMonth} ${startDay} – ${endMonth} ${endDay}`;
-};
 
 /**
  * One stat box in the 3-stat row.
@@ -103,6 +68,7 @@ const StatBox = ({ icon: Icon, label, value, suffix, color, highlight }) => (
 // ── Main component ────────────────────────────────────────────────────────────
 
 const Australia88StatsCard = ({ className = '' }) => {
+  const { t, i18n } = useTranslation();
   const colors = useThemeColors();
   const isMobile = useIsMobile();
   const {
@@ -114,6 +80,10 @@ const Australia88StatsCard = ({ className = '' }) => {
     year2Complete,
     year2Days,
   } = useAustralia88();
+  // Payslips as evidence: this card only renders in Australia mode (gated
+  // upstream by MostProductiveDay), so cross-referencing payslip periods
+  // against visa weeks here is inherently AU-only.
+  const { completePayslips } = usePayslipsData();
 
   // Local toggle: only shown when user has Year 2 data
   const [viewYear, setViewYear] = useState(year2Active ? 2 : 1);
@@ -122,7 +92,7 @@ const Australia88StatsCard = ({ className = '' }) => {
   const showYearToggle = year2Active;
   const y1Days = Math.min(totalVisaDays, 88);
   const displayDays    = viewYear === 2 ? year2Days : y1Days;
-  const yearGoal       = viewYear === 2 ? 176 : 88;
+  const yearGoal       = viewYear === 2 ? YEAR2_TARGET_DAYS : YEAR1_TARGET_DAYS; // Year 2's goal is 6 months, not 88
   const daysRemaining  = yearGoal - displayDays;
   const isComplete     = viewYear === 2 ? year2Complete : year1Complete;
 
@@ -138,7 +108,7 @@ const Australia88StatsCard = ({ className = '' }) => {
       <Flex variant="between" className="mb-4 flex-nowrap gap-2">
         <h3 className="text-base font-semibold flex items-center gap-2 text-gray-800 dark:text-gray-100 truncate">
           <Globe size={18} className="flex-shrink-0" style={{ color: colors.primary }} />
-          <span className="truncate">{isMobile ? 'WHV' : 'Working Holiday Visa'}</span>
+          <span className="truncate">{isMobile ? t('australia88.visaTitleShort') : t('australia88.visaTitle')}</span>
         </h3>
 
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -212,33 +182,51 @@ const Australia88StatsCard = ({ className = '' }) => {
 
           {/* One row per week */}
           <div className="space-y-1.5">
-            {recentWeeks.map(week => (
-              <div
-                key={week.weekKey}
-                className="flex items-center gap-2 px-1 py-1 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors"
-              >
-                {/* Week date range */}
-                <span className="text-xs text-gray-500 dark:text-gray-400 w-24 flex-shrink-0 tabular-nums">
-                  {formatWeekShort(week.weekStart, week.weekEnd)}
-                </span>
+            {recentWeeks.map(week => {
+              const weekStartISO = localDateToISO(week.weekStart);
+              const weekEndISO = localDateToISO(week.weekEnd);
+              const evidencePayslips = getPayslipsOverlappingRange(completePayslips, weekStartISO, weekEndISO);
 
-                {/* Hours worked */}
-                <span className="text-xs font-medium text-gray-600 dark:text-gray-300 w-12 flex-shrink-0 tabular-nums">
-                  {week.hours.toFixed(1)}h
-                </span>
-
-                {/* Dot grid — the visual centerpiece of the ledger */}
-                <VisaDots days={week.visaDays} color={colors.primary} />
-
-                {/* Day count number */}
-                <span
-                  className="text-xs font-bold ml-auto flex-shrink-0 tabular-nums"
-                  style={{ color: week.visaDays > 0 ? colors.primary : colors.textSecondary }}
+              return (
+                <div
+                  key={week.weekKey}
+                  className="flex items-center gap-2 px-1 py-1 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/40 transition-colors"
                 >
-                  {week.visaDays}d
-                </span>
-              </div>
-            ))}
+                  {/* Week date range */}
+                  <span className="text-xs text-gray-500 dark:text-gray-400 w-24 flex-shrink-0 tabular-nums">
+                    {formatWeekRange(week.weekStart, week.weekEnd, i18n.language)}
+                  </span>
+
+                  {/* Hours worked */}
+                  <span className="text-xs font-medium text-gray-600 dark:text-gray-300 w-12 flex-shrink-0 tabular-nums">
+                    {week.hours.toFixed(1)}h
+                  </span>
+
+                  {/* Dot grid — the visual centerpiece of the ledger */}
+                  <VisaDots days={week.visaDays} color={colors.primary} />
+
+                  {/* Payslip evidence indicator — links to Payslips (Documents)
+                      when a payslip's period overlaps this visa week. */}
+                  {evidencePayslips.length > 0 && (
+                    <Link
+                      to="/statistics/payslips"
+                      title={t('australia88.evidenceTooltip')}
+                      className="flex-shrink-0 text-emerald-500 dark:text-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-300 transition-colors"
+                    >
+                      <FileCheck size={13} />
+                    </Link>
+                  )}
+
+                  {/* Day count number */}
+                  <span
+                    className="text-xs font-bold ml-auto flex-shrink-0 tabular-nums"
+                    style={{ color: week.visaDays > 0 ? colors.primary : colors.textSecondary }}
+                  >
+                    {week.visaDays}d
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

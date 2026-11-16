@@ -37,7 +37,12 @@ const ShiftCard = (props) => {
 
     // Calculate base amount from breakdown (sum of all rate types)
     const baseCalc = shiftData.total || 0;
-    const discountAmount = baseCalc * (defaultDiscount / 100);
+    // Uses the work-specific rate calculatePayment actually applied (falls
+    // back to the global default internally) — not the raw global value,
+    // so this breakdown matches shiftData.totalWithDiscount exactly even
+    // when this work has its own "Impuestos por Trabajo" override.
+    const effectiveDiscount = shiftData.appliedDiscount ?? defaultDiscount;
+    const discountAmount = baseCalc * (effectiveDiscount / 100);
 
     // Build display items for each rate type that was applied
     const rateItems = [];
@@ -61,7 +66,7 @@ const ShiftCard = (props) => {
     return {
       baseCalc,
       discountAmount,
-      discountPercent: defaultDiscount,
+      discountPercent: effectiveDiscount,
       rateItems,
       final: shiftData.totalWithDiscount
     };

@@ -49,17 +49,22 @@ const PayslipDropZone = ({ compact = false, onFiles, onClick }) => {
   return (
     <div
       {...sharedHandlers}
-      className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors"
+      className="border-2 border-dashed rounded-3xl px-8 py-20 text-center cursor-pointer transition-colors"
       style={{
         borderColor: dragActive ? colors.primary : undefined,
         backgroundColor: dragActive ? colors.transparent10 : 'transparent',
       }}
     >
-      <Upload size={28} className="mx-auto mb-2" style={{ color: colors.primary }} />
-      <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+      <div
+        className="mx-auto mb-5 flex items-center justify-center w-24 h-24 rounded-3xl"
+        style={{ backgroundColor: colors.transparent10 }}
+      >
+        <Upload size={42} style={{ color: colors.primary }} />
+      </div>
+      <p className="text-base font-semibold text-gray-800 dark:text-gray-200">
         {t('payslip.dropzone.title')}
       </p>
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
         {t('payslip.dropzone.subtitle')}
       </p>
     </div>

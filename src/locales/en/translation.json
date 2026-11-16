@@ -17,8 +17,8 @@
     "backToSettings": "Back to Settings",
     "close": "Close",
     "locale": "en-US",
-    "hours": "hours",
-    "earnings": "earnings",
+    "hours": "Hours",
+    "earnings": "Earnings",
     "viewDetails": "View details",
     "time": "Time",
     "duration": "Duration",
@@ -41,8 +41,6 @@
     "shift": "shift",
     "shifts": "shifts",
     "work": "Work",
-    "duration": "Duration",
-    "earnings": "Earnings",
     "hourlyRate": "Hourly rates",
     "day": "Day",
     "afternoon": "Afternoon",
@@ -63,7 +61,6 @@
     "remove": "Remove",
     "confirmDeletion": "Confirm Deletion",
     "deleting": "Deleting...",
-    "hours": "Hours",
     "minutes": "Minutes",
     "seconds": "Seconds",
     "perHour": "hr",
@@ -108,7 +105,68 @@
     "shiftsDisabledTooltip": "First create a job to add shifts",
     "paused": "Paused",
     "liveMode": "Live Mode",
-    "share": "Share"
+    "share": "Share",
+    "more": "More"
+  },
+  "more": {
+    "title": "More",
+    "subtitle": "Everything else, in one place",
+    "sections": {
+      "account": "Account",
+      "app": "Application"
+    },
+    "manageAccount": "Manage account",
+    "needHelp": "Need help?",
+    "faq": "FAQs",
+    "about": "About Orary",
+    "backToApp": "Back to the app"
+  },
+  "statsHub": {
+    "title": "Summaries",
+    "subtitle": "Your work, by period",
+    "weekly": "Weekly summary",
+    "monthly": "Monthly summary",
+    "unlockPremium": "Unlock Premium"
+  },
+  "payslipNav": {
+    "documents": "Documents",
+    "calculations": "Calculations",
+    "calculationsSubtitle": "Breakdown and fiscal-year projections of your payslips",
+    "empty": "Add payslips in Documents to see their calculations here.",
+    "rateFromPayslip": "Base rate will be estimated from the payslip: ~{{rate}}/h",
+    "newWorkPremium": "Adding a second job requires Premium"
+  },
+  "yourHours": {
+    "title": "Your hours",
+    "subtitle": "Monthly hours vs your goal",
+    "totalLabel": "Hours worked",
+    "prevMonth": "Previous month hours",
+    "difference": "Hours difference",
+    "note": "Hours reflect the shifts logged in the selected period and may change as you add or edit shifts.",
+    "goalLabel": "Monthly goal",
+    "goalMet": "Goal met",
+    "goalNotMet": "Below goal",
+    "noGoal": "Set a weekly hours goal to track your monthly progress in",
+    "weeks": "Weeks of the month",
+    "partial": "Partial week"
+  },
+  "monthlySummary": {
+    "title": "Monthly summary",
+    "subtitle": "Your month at a glance",
+    "hours": "Hours",
+    "earnings": "Earnings",
+    "shifts": "Shifts",
+    "perHour": "Per hour",
+    "vsPrevious": "vs previous month",
+    "trend": "Last 6 months",
+    "premiumTitle": "Monthly summary is Premium",
+    "premiumDesc": "Unlock monthly totals, comparisons and trends",
+    "premiumCta": "See Premium"
+  },
+  "monthNavigator": {
+    "thisMonth": "This month",
+    "lastMonth": "Last month",
+    "monthsAgo": "{{count}} months ago"
   },
   "premium": {
     "title": "Premium",
@@ -318,16 +376,11 @@
       "title": "Enjoying Orary?",
       "description": "Share your experience and help us improve"
     },
-    "clockIn": {
-      "startShift": "Start Shift",
-      "readyToWork": "Ready to work?",
-      "quickClockIn": "Quick clock-in available",
-      "live": "LIVE",
-      "earned": "earned"
-    },
     "projection": {
       "title": "Monthly projection",
       "setupTitle": "Get started",
+      "quietMonth": "No shifts logged this month yet.",
+      "quietMonthLink": "Log one now",
       "worksAdded": "Works added",
       "stepCompleted": "Step completed",
       "addWorks": "Add your works",
@@ -831,7 +884,8 @@
       "deleteAccount": "Delete Account",
       "logout": "Log out",
       "managePremium": "Manage Premium",
-      "upgradePremium": "Upgrade to Premium"
+      "upgradePremium": "Upgrade to Premium",
+      "more": "More options"
     },
     "integrationsBanner": {
       "title": "Integrations",
@@ -1070,6 +1124,11 @@
     "liveModeActiveError": "\"{{workName}}\" is currently active in Live Mode. Stop the session to edit it."
   },
   "statistics": {
+    "tabs": {
+      "overview": "Overview",
+      "payslips": "Payslips",
+      "delivery": "Delivery"
+    },
     "title": "Statistics",
     "subtitle": "Analyze your performance and projections",
     "totalEarned": "Total earned",
@@ -1081,7 +1140,20 @@
     "monthly": "Monthly",
     "daily": "Daily",
     "deliveryTitle": "Delivery Statistics",
-    "deliverySubtitle": "Analyze your delivery earnings and efficiency"
+    "deliverySubtitle": "Analyze your delivery earnings and efficiency",
+    "delivery": {
+      "tab": "Delivery",
+      "title": "Delivery Statistics",
+      "subtitle": "Your delivery earnings, KPIs and efficiency by period",
+      "empty": "No delivery shifts logged yet. Add a delivery shift to see your stats here.",
+      "emptyPeriod": "No delivery shifts in this period. Try a longer one.",
+      "periods": {
+        "today": "Today",
+        "week": "This week",
+        "days90": "90 days",
+        "year": "This year"
+      }
+    }
   },
   "forms": {
     "shift": {
@@ -1161,6 +1233,8 @@
       "namePlaceholder": "e.g. My Job",
       "baseRate": "Base Rate",
       "baseRatePlaceholder": "0.00",
+      "differentTaxHint": "Does this job have a different tax rate than your other ones?",
+      "differentTaxHintLink": "Set it up per job in Settings",
       "currency": "Currency",
       "selectCurrency": "Select currency",
       "rates": {
@@ -1240,6 +1314,10 @@
     "clearing": "Clearing...",
     "deleteAccountConfirm": "Delete Account",
     "deletingAccount": "Deleting...",
+    "adminReauthTitle": "Confirm your identity",
+    "adminReauthDesc": "For security, please confirm it's you before entering the admin panel.",
+    "adminReauthConfirm": "Continue",
+    "adminReauthLoading": "Verifying...",
     "selectWorkFirst": "Please select a work first",
     "activeSession": "There is already an active live session",
     "work": {
@@ -1273,6 +1351,11 @@
   },
   "australia88": {
     "visaTitle": "Working Holiday Visa",
+    "visaTitleShort": "WHV Australia",
+    "activateYear2": "Move to Year 2?",
+    "activateYear2Confirm": "Got your second-year visa? This starts a fresh counter for the 6 months (179 days) you need for a third year. Days from your first year don't carry over. You can change this later in Settings.",
+    "year2CelebrationTitle": "Welcome to Year 2!",
+    "year2CelebrationDesc": "Counter's back at 0. For a third year you need 6 months of specified work (179 days) done on this visa.",
     "details": "Details",
     "complete": "Complete",
     "remaining": "Remaining",
@@ -1284,7 +1367,26 @@
     "qualifiesDescription": "Qualifies for Working Holiday Visa extension",
     "regionalWork": "Work in regional or critical areas of Australia",
     "notSure": "Not sure if your work qualifies?",
-    "checkHomeAffairs": "Check on Home Affairs"
+    "checkHomeAffairs": "Check on Home Affairs",
+    "evidenceTooltip": "Payslip on file for this week — tap to view it as evidence",
+    "stats": {
+      "pageSubtitle": "Track your progress toward your Working Holiday Visa extension",
+      "year1Label": "Year 1",
+      "weeklyTitle": "Days per week",
+      "weeklySubtitle": "Last {{count}} weeks",
+      "monthlyTitle": "Days per month",
+      "monthlySubtitle": "Full history",
+      "daysShort": "Days",
+      "empty": "No data yet — log a shift to start tracking your visa days.",
+      "allComplete": "179 days done. That's your 6 months for a third year. Check the current rules on Home Affairs before you apply.",
+      "daysToGoal": "{{days}} days to go",
+      "learnTitle": "Learn more",
+      "learnTrackTitle": "How your 88 days are counted",
+      "learnTrackDesc": "Understand the official method behind this tracker.",
+      "learnApplyTitle": "Ready to apply for your next visa?",
+      "learnApplyDesc": "A step-by-step guide for your Second or Third Working Holiday Visa.",
+      "readArticle": "Read the article"
+    }
   },
   "about": {
     "hero": {
@@ -1744,7 +1846,7 @@
     },
     "what": {
       "title": "What are the 88 days?",
-      "body1": "To be eligible for a second-year Working Holiday Visa in Australia, you must complete 88 days of specified regional work during your first year. A third year requires an additional 88 days — 176 in total.",
+      "body1": "For a second-year Working Holiday visa you need 88 days of specified work done on your first visa. For a third year you need 6 months (179 days) done on your second visa. They're two separate counts: days from year one don't carry over.",
       "body2": "The detail most people miss: these are not calendar days spent at work. They are visa-accredited days calculated from the hours you work each week, using an official government formula."
     },
     "formula": {
@@ -1775,9 +1877,9 @@
       "removeWeek": "Remove",
       "totalDays": "Total visa days",
       "milestone88": "88-day milestone — Year 2 eligibility",
-      "milestone176": "176-day milestone — Year 3 eligibility",
+      "milestone176": "179 days: third-year requirement",
       "progress88": "Progress to 88 days",
-      "progress176": "Progress to 176 days",
+      "progress176": "Progress to 179 days",
       "hoursPlaceholder": "e.g. 32",
       "visaDays": "visa day",
       "visaDaysPlural": "visa days",
@@ -1789,8 +1891,8 @@
       "year2Days": "88 days",
       "year2Desc": "Complete 88 visa-accredited days of regional work during your first WHV year to apply for a second 12-month visa.",
       "year3Title": "Year 3 extension",
-      "year3Days": "176 days",
-      "year3Desc": "Complete an additional 88 days (176 total) of specified work to become eligible for a third year in Australia.",
+      "year3Days": "179 days",
+      "year3Desc": "6 months of specified work done on your second visa. It's a new count, your first-year days don't add to it.",
       "note": "Regional and specified work categories are defined by the Australian Department of Home Affairs. Always verify current requirements at the official immi.homeaffairs.gov.au website."
     },
     "howOrary": {
@@ -1802,7 +1904,7 @@
       "step3Title": "Cumulative visa days",
       "step3Desc": "Your total visa-accredited days update in real time. You always know exactly where you stand.",
       "step4Title": "Milestone tracking",
-      "step4Desc": "Your dashboard shows progress toward 88 and 176 days — no manual counting needed."
+      "step4Desc": "Your dashboard shows how close you are to 88 days (second year) or 179 days (third year). No counting by hand."
     },
     "cta": {
       "title": "Stop counting manually.",
@@ -1816,11 +1918,25 @@
     }
   },
   "payslip": {
+    "editTitle": "Edit payslip",
+    "newTitle": "New payslip",
     "title": "Payslips & Records",
     "subtitle": "Auto-detect data from your payslips and log past shifts",
     "upload": "Upload payslip PDF",
     "uploadHint": "We will try to read your payslip automatically. If we can't, you can enter the values manually.",
     "parsing": "Reading payslip…",
+    "verifyingTitle": "One moment",
+    "verifyingText": "We're checking your payslip details.",
+    "verifyingTitle2": "Almost there",
+    "verifyingText2": "Reading your payslip…",
+    "verifyingTitle3": "Just a little more",
+    "verifyingText3": "Nearly done…",
+    "reviewHint": "Please review the highlighted fields before confirming.",
+    "checkField": "Check this value",
+    "taxSuggestion": {
+      "message": "This payslip implies a {{implied}}% tax rate, but you have {{configured}}% configured.",
+      "apply": "Update to {{rate}}%"
+    },
     "parseError": "We couldn't read this PDF. Please enter the values manually below.",
     "manualEntry": "Manual entry",
     "previewTitle": "Detected values — review and confirm",
@@ -1834,13 +1950,18 @@
     "periodEnd": "End date",
     "hours": "Hours worked",
     "gross": "Gross earnings",
+    "net": "Net pay",
     "tax": "Tax withheld",
+    "employer": "Employer",
+    "employee": "Employee",
+    "location": "Location",
     "country": "Employer country",
     "countryAU": "Australia",
     "countryNZ": "New Zealand",
     "countryGB": "United Kingdom",
     "countryIE": "Ireland",
     "unsupportedCountry": "Refund estimates are currently available for Australia and New Zealand only.",
+    "techNote": "We use several technologies to read your payslips — sometimes it misses, but we keep improving it every day.",
     "missingFields": "Please fill in gross earnings and tax withheld.",
     "disclaimer": "This is an informal estimate. Always verify with your tax authority.",
     "annualised": "Annualised gross",
@@ -1858,10 +1979,35 @@
       "modeDetail": "Latest payslip",
       "tapToToggle": "Tap to switch view"
     },
+    "coverage": {
+      "title": "Shifts vs. payslip",
+      "status": {
+        "full": "Fully logged",
+        "partial": "Some days missing",
+        "empty": "No shifts logged"
+      },
+      "full": "Every day in this period already has a shift logged.",
+      "partial": "{{count}} day(s) in this period don't have a shift logged yet.",
+      "empty": "No shifts are logged for this period yet.",
+      "loggedHours": "Logged hours",
+      "payslipHours": "Payslip hours",
+      "hoursMismatch": "Hours don't match exactly ({{delta}}h difference).",
+      "dayByDay": "Day by day",
+      "viewDetail": "View day-by-day detail",
+      "noShiftThisDay": "No shift",
+      "addMissing": "Add missing shifts",
+      "goToDocuments": "Manage in Documents"
+    },
+    "fillGapsTitle": "Fill missing shifts",
+    "fillGapsHint": "Only the {{count}} missing day(s) will be filled, using the same weekday pattern and time below.",
     "generateShifts": "Generate shifts from this payslip",
     "shiftsExist": "You already have shifts logged in this period — generation skipped.",
     "selectWork": "Select a job",
     "noWorks": "Create a job first to generate shifts.",
+    "createWork": "Create new work",
+    "addWorkNamed": "Add work: {{name}}",
+    "workNamePlaceholder": "Work / employer name",
+    "workNameRequired": "Enter a name for the new work.",
     "workDays": "Working days",
     "weekdays": {
       "mon": "Mon",
@@ -1937,6 +2083,12 @@
     "title": "Admin",
     "subtitle": "Moderation & usage",
     "error": "Something went wrong loading admin data.",
+    "reauth": {
+      "wrongPassword": "Incorrect password.",
+      "popupClosed": "Google confirmation was cancelled.",
+      "popupBlocked": "Popup blocked by the browser. Please allow popups and try again.",
+      "genericError": "Could not verify your identity. Please try again."
+    },
     "usage": {
       "title": "Usage & cost drivers",
       "note": "On-demand counts. Exact billing lives in the Firebase console.",
@@ -1977,7 +2129,14 @@
       "title": "Users",
       "empty": "No users.",
       "premium": "Premium",
-      "free": "Free"
+      "free": "Free",
+      "grant": "Grant Premium",
+      "revoke": "Revoke Premium",
+      "manualGrant": "Manually granted",
+      "stripeManaged": "Stripe subscription",
+      "confirmGrant": "Grant Premium access to {{name}}? This does not touch Stripe or create any charge.",
+      "confirmRevoke": "Revoke Premium access from {{name}}? This does not touch Stripe.",
+      "actionError": "Something went wrong. Please try again."
     }
   },
   "notifications": {

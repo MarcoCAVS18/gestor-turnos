@@ -112,7 +112,7 @@ const BaseWorkCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       whileHover={{ y: -4 }}
-      className="h-full"
+      className="h-full min-h-[280px]"
     >
       <Card
         className={`h-full flex flex-col overflow-hidden border-2 transition-all duration-300 hover:shadow-xl ${
@@ -190,8 +190,10 @@ const BaseWorkCard = ({
           </div>
         </div>
 
-        {/* Footer - description or platform */}
-        <div className="px-6 pb-6 mt-4">
+        {/* Footer - description or platform. Fixed min-height so a 1-line
+            footer (e.g. "No description") and a 2-line one ("Platform / name")
+            keep the card the exact same height across traditional/delivery. */}
+        <div className="px-6 pb-6 mt-4 min-h-[72px] flex flex-col justify-center">
           {type === 'delivery' && work.platform ? (
             <div className="text-center">
               <p className="text-xs text-gray-500 mb-1">{t('works.platform')}</p>

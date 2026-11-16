@@ -10,6 +10,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useLiveModeContext } from '../../../contexts/LiveModeContext';
 import { usePremium } from '../../../contexts/PremiumContext';
+import { useAustralia88 } from '../../../hooks/useAustralia88';
 import LiveModeActiveModal from '../../modals/liveMode/LiveModeActiveModal';
 import PremiumModal from '../../modals/premium/PremiumModal';
 import logger from '../../../utils/logger';
@@ -26,11 +27,13 @@ const Navigation = memo(({ openNewWorkModal, openNewShiftModal }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const { works, deliveryWork } = useApp();
+  const { works, deliveryWork, deliveryEnabled } = useApp();
   const { profilePhotoURL, updateProfilePhoto } = useAuth();
   const colors = useThemeColors();
   const { isActive: isLiveModeActive, formattedTime, isPaused, selectedWork: liveWork } = useLiveModeContext();
   const { isPremium } = usePremium();
+  const { isAustraliaMode, hasEligibleWorks } = useAustralia88();
+  const australia88Enabled = isAustraliaMode && hasEligibleWorks;
 
   const [isPhotoLoading, setIsPhotoLoading] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
@@ -61,6 +64,19 @@ const Navigation = memo(({ openNewWorkModal, openNewShiftModal }) => {
     return 'dashboard';
   })();
 
+  // Vista activa para la barra móvil: el tab "Más" queda encendido en el hub
+  // y en todas sus páginas hijas (stats, ajustes, cuenta, etc.). El sidebar
+  // desktop sigue usando currentView sin cambios.
+  const mobileView = (() => {
+    const path = location.pathname;
+    if (
+      path === '/more' ||
+      path.startsWith('/statistics') ||
+      ['/settings', '/integrations', '/premium', '/support', '/about'].includes(path)
+    ) return 'more';
+    return currentView;
+  })();
+
   const totalWorks = (works?.length || 0) + (deliveryWork?.length || 0);
   const hasWorks = totalWorks > 0;
 
@@ -68,16 +84,25 @@ const Navigation = memo(({ openNewWorkModal, openNewShiftModal }) => {
     if (view === 'shifts' && !hasWorks) return;
     const routes = {
       dashboard: '/dashboard', works: '/works', shifts: '/shifts',
-      statistics: '/statistics', 'statistics/payslips': '/statistics/payslips',
-      calendar: '/calendar', settings: '/settings'
+      // El botón principal de Estadísticas (solo desktop) abre el semanal:
+      // es la vista por defecto de escritorio; el hub /statistics es de móvil.
+      statistics: '/statistics/weekly',
+      'statistics/hours': '/statistics/hours',
+      'statistics/weekly': '/statistics/weekly',
+      'statistics/monthly': '/statistics/monthly',
+      'statistics/payslips': '/statistics/payslips',
+      'statistics/payslips/calculations': '/statistics/payslips/calculations',
+      'statistics/delivery': '/statistics/delivery',
+      'statistics/australia88': '/statistics/australia88',
+      calendar: '/calendar', settings: '/settings', more: '/more', premium: '/premium'
     };
     window.scrollTo({ top: 0, behavior: 'smooth' });
     navigate(routes[view]);
   }, [navigate, hasWorks]);
 
   const getActiveTextStyle = useCallback((view) => (
-    currentView === view ? { color: colors.primary } : { color: '#6B7280' }
-  ), [currentView, colors.primary]);
+    mobileView === view ? { color: colors.primary } : { color: '#6B7280' }
+  ), [mobileView, colors.primary]);
 
   const getActiveDesktopStyle = useCallback((view) => {
     if (view === 'shifts' && !hasWorks) {
@@ -155,6 +180,9 @@ const Navigation = memo(({ openNewWorkModal, openNewShiftModal }) => {
           currentView={currentView}
           currentPath={location.pathname}
           hasWorks={hasWorks}
+          deliveryEnabled={deliveryEnabled}
+          australia88Enabled={australia88Enabled}
+          isPremium={isPremium}
           colors={colors}
           t={t}
           showTooltip={showTooltip}

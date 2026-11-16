@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Plus, Briefcase, ArrowRight, Clock, Zap } from 'lucide-react';
+import { Calendar, Briefcase, ArrowRight, Clock, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../ui/Card';
 
@@ -13,7 +13,7 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
   // No jobs - need to create a work first
   if (!allJobs || allJobs.length === 0) {
     return (
-      <Card className="p-8 sm:p-12">
+      <Card variant="transparent" className="p-8 sm:p-12">
         <div className="max-w-md mx-auto text-center">
           {/* Icon */}
           <div
@@ -27,10 +27,10 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
           </div>
 
           {/* Text */}
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
             {t('shifts.firstAddWork')}
           </h3>
-          <p className="text-gray-500 mb-8">
+          <p className="text-gray-500 dark:text-gray-400 mb-8">
             {t('shifts.needWorkDesc')}
           </p>
 
@@ -51,8 +51,8 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
 
   // Has jobs but no shifts
   return (
-    <Card className="p-8 sm:p-12">
-      <div className="max-w-lg mx-auto">
+    <Card variant="transparent" className="p-8 sm:p-12 min-h-[60vh] flex items-center justify-center">
+      <div className="max-w-lg mx-auto w-full">
         {/* Header */}
         <div className="text-center mb-8">
           <div
@@ -64,10 +64,10 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
               style={{ color: thematicColors?.base }}
             />
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
             {t('shifts.noShiftsYet')}
           </h3>
-          <p className="text-gray-500">
+          <p className="text-gray-500 dark:text-gray-400">
             {t('shifts.startTrackingDesc')}
           </p>
         </div>
@@ -77,7 +77,7 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
           {/* Manual option */}
           <button
             onClick={onNewShift}
-            className="p-4 rounded-xl border-2 border-dashed border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all text-left group"
+            className="p-4 rounded-xl border-2 border-dashed border-gray-200 dark:border-slate-600 hover:border-gray-300 dark:hover:border-slate-500 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-all text-left group"
           >
             <div className="flex items-center gap-3 mb-2">
               <div
@@ -86,9 +86,9 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
               >
                 <Clock size={20} style={{ color: thematicColors?.base }} />
               </div>
-              <span className="font-medium text-gray-900">{t('shifts.addManually')}</span>
+              <span className="font-medium text-gray-900 dark:text-gray-100">{t('shifts.addManually')}</span>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               {t('shifts.enterShiftDetails')}
             </p>
           </button>
@@ -96,29 +96,17 @@ function ShiftsEmptyState({ allJobs, onNewShift, thematicColors }) {
           {/* Live Mode option */}
           <button
             onClick={() => navigate('/live')}
-            className="p-4 rounded-xl border-2 border-dashed border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all text-left group"
+            className="p-4 rounded-xl border-2 border-dashed border-gray-200 dark:border-slate-600 hover:border-gray-300 dark:hover:border-slate-500 hover:bg-gray-50 dark:hover:bg-slate-800/50 transition-all text-left group"
           >
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-green-100">
-                <Zap size={20} className="text-green-600" />
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-green-100 dark:bg-green-900/30">
+                <Zap size={20} className="text-green-600 dark:text-green-400" />
               </div>
-              <span className="font-medium text-gray-900">{t('shifts.useLiveMode')}</span>
+              <span className="font-medium text-gray-900 dark:text-gray-100">{t('shifts.useLiveMode')}</span>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               {t('shifts.liveModeDesc')}
             </p>
-          </button>
-        </div>
-
-        {/* Primary action */}
-        <div className="text-center">
-          <button
-            onClick={onNewShift}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-medium transition-all hover:shadow-lg hover:scale-105"
-            style={{ backgroundColor: thematicColors?.base }}
-          >
-            <Plus size={18} />
-            <span>{t('shifts.addFirstShift')}</span>
           </button>
         </div>
       </div>

@@ -7,7 +7,7 @@
 
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Clock, CheckSquare, Sparkles, AlertCircle } from 'lucide-react';
+import { Calendar, Clock, CheckSquare, Sparkles, AlertCircle, Crown } from 'lucide-react';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import { useThemeColors } from '../../hooks/useThemeColors';
@@ -41,9 +41,12 @@ const computeAdjustedEnd = (start, hours) => {
 
 /**
  * Genera turnos para un único período aplicando el patrón.
+ * `onlyDates` (Set opcional de 'YYYY-MM-DD') restringe los turnos generados
+ * a esas fechas puntuales — usado para completar solo los días faltantes de
+ * un payslip parcialmente cubierto, en vez del período completo.
  * Devuelve los turnos generados + flags de ajuste.
  */
-const buildShiftsForPeriod = ({ periodStart, periodEnd, selectedDays, startTime, endTime, totalHours, workId }) => {
+const buildShiftsForPeriod = ({ periodStart, periodEnd, selectedDays, startTime, endTime, totalHours, workId, onlyDates = null }) => {
   const start = createSafeDate(periodStart);
   const end = createSafeDate(periodEnd);
   if (!start || !end || start > end) return { shifts: [], hoursPerShift: 0, lastHours: 0, adjusted: false };
@@ -51,7 +54,7 @@ const buildShiftsForPeriod = ({ periodStart, periodEnd, selectedDays, startTime,
   const matchingDates = [];
   const cursor = new Date(start);
   while (cursor <= end) {
-    if (selectedDays.includes(cursor.getDay())) {
+    if (selectedDays.includes(cursor.getDay()) && (!onlyDates || onlyDates.has(formatDate(cursor)))) {
       matchingDates.push(new Date(cursor));
     }
     cursor.setDate(cursor.getDate() + 1);
@@ -96,6 +99,13 @@ const PayslipShiftGenerator = ({
   periods = [],
   works = [],
   showAustralia88 = false,
+  // Gate premium: free con >=1 trabajo tradicional no puede crear otro
+  canCreateWork = true,
+  // Tarifa efectiva del recibo (formateada) con la que se precargará el trabajo nuevo
+  estimatedRateLabel = null,
+  // Fechas puntuales ('YYYY-MM-DD') a completar — modo "solo huecos" del
+  // detector de cobertura (PayslipShiftCoverage). undefined/[] = período completo.
+  restrictToDates = null,
   onCancel,
   onConfirm,
   loading = false,
@@ -103,12 +113,21 @@ const PayslipShiftGenerator = ({
   const { t } = useTranslation();
   const colors = useThemeColors();
 
+  const onlyDatesSet = useMemo(
+    () => (restrictToDates && restrictToDates.length > 0 ? new Set(restrictToDates) : null),
+    [restrictToDates]
+  );
+
   const [selectedDays, setSelectedDays] = useState([1, 2, 3, 4, 5]); // L–V por defecto
   const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('17:00');
-  const [workId, setWorkId] = useState(works[0]?.id || '');
+  // '__new__' = create a brand-new work (reuses the app's addJob via onConfirm).
+  const [workId, setWorkId] = useState(works[0]?.id || '__new__');
+  const [newWorkName, setNewWorkName] = useState('');
   const [australia88, setAustralia88] = useState(showAustralia88 ? null : false);
   const [error, setError] = useState(null);
+
+  const creatingNew = workId === '__new__';
 
   const toggleDay = (dayIndex) => {
     setSelectedDays((prev) =>
@@ -133,7 +152,8 @@ const PayslipShiftGenerator = ({
         startTime,
         endTime,
         totalHours: p.hours,
-        workId,
+        workId: creatingNew ? null : workId,
+        onlyDates: onlyDatesSet,
       });
       if (r.shifts.length > 0) {
         validPeriods += 1;
@@ -147,7 +167,7 @@ const PayslipShiftGenerator = ({
       periodCount: validPeriods,
       anyAdjusted,
     };
-  }, [periods, selectedDays, startTime, endTime, workId]);
+  }, [periods, selectedDays, startTime, endTime, workId, creatingNew, onlyDatesSet]);
 
   const skippedCount = periods.filter((p) => !p.periodStart || !p.periodEnd).length;
 
@@ -160,7 +180,15 @@ const PayslipShiftGenerator = ({
       setError(t('payslip.shiftsPreviewEmpty'));
       return;
     }
-    if (!workId) {
+    if (creatingNew && !canCreateWork) {
+      setError(t('payslipNav.newWorkPremium'));
+      return;
+    }
+    if (creatingNew && !newWorkName.trim()) {
+      setError(t('payslip.workNameRequired'));
+      return;
+    }
+    if (!creatingNew && !workId) {
       setError(t('payslip.noWorks'));
       return;
     }
@@ -172,12 +200,11 @@ const PayslipShiftGenerator = ({
     setError(null);
     onConfirm({
       shifts: preview.allShifts,
-      workId,
+      workId: creatingNew ? null : workId,
+      newWorkName: creatingNew ? newWorkName.trim() : null,
       australia88: showAustralia88 ? Boolean(australia88) : false,
     });
   };
-
-  const hasWorks = works.length > 0;
 
   return (
     // min-w-0 evita overflow horizontal en grids hijos
@@ -187,23 +214,55 @@ const PayslipShiftGenerator = ({
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
           {t('payslip.selectWork')}
         </label>
-        {hasWorks ? (
-          <select
-            value={workId}
-            onChange={(e) => setWorkId(e.target.value)}
-            className="block w-full max-w-full px-3 py-2 border rounded-lg shadow-sm border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-offset-0"
-            style={{ '--tw-ring-color': colors.primary }}
-          >
-            {works.map((w) => (
-              <option key={w.id} value={w.id}>{w.name}</option>
-            ))}
-          </select>
-        ) : (
-          <p className="text-sm text-orange-600 dark:text-orange-400 flex items-center gap-2">
-            <AlertCircle size={16} /> {t('payslip.noWorks')}
+        <select
+          value={workId}
+          onChange={(e) => setWorkId(e.target.value)}
+          className="block w-full max-w-full px-3 py-2 border rounded-lg shadow-sm border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-offset-0"
+          style={{ '--tw-ring-color': colors.primary }}
+        >
+          {works.map((w) => (
+            <option key={w.id} value={w.id}>{w.name}</option>
+          ))}
+          <option value="__new__" disabled={!canCreateWork}>
+            + {t('payslip.createWork')}{!canCreateWork ? ` (${t('premium.badge')})` : ''}
+          </option>
+        </select>
+        {!canCreateWork && (
+          <p className="mt-1.5 flex items-center gap-1.5 text-xs text-gray-500 dark:text-slate-400">
+            <Crown size={12} style={{ color: '#F59E0B' }} className="flex-shrink-0" />
+            {t('payslipNav.newWorkPremium')}
           </p>
         )}
+        {creatingNew && canCreateWork && (
+          <>
+            <input
+              type="text"
+              value={newWorkName}
+              onChange={(e) => setNewWorkName(e.target.value)}
+              placeholder={t('payslip.workNamePlaceholder')}
+              className="mt-2 block w-full max-w-full px-3 py-2 border rounded-lg shadow-sm border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-offset-0"
+              style={{ '--tw-ring-color': colors.primary }}
+            />
+            {estimatedRateLabel && (
+              <p className="mt-1.5 flex items-center gap-1.5 text-xs text-gray-500 dark:text-slate-400">
+                <Sparkles size={12} className="flex-shrink-0" style={{ color: colors.primary }} />
+                {t('payslipNav.rateFromPayslip', { rate: estimatedRateLabel })}
+              </p>
+            )}
+          </>
+        )}
       </div>
+
+      {/* Aviso de modo "solo huecos" (completar días faltantes) */}
+      {onlyDatesSet && (
+        <div
+          className="flex items-start gap-2 p-3 rounded-lg text-xs"
+          style={{ backgroundColor: colors.transparent10, color: colors.primary }}
+        >
+          <Sparkles size={14} className="flex-shrink-0 mt-0.5" />
+          <span>{t('payslip.fillGapsHint', { count: onlyDatesSet.size })}</span>
+        </div>
+      )}
 
       {/* Días de la semana */}
       <div>
@@ -332,7 +391,7 @@ const PayslipShiftGenerator = ({
           themeColor={colors.primary}
           loading={loading}
           loadingText={t('payslip.generating')}
-          disabled={!hasWorks || preview.totalShifts === 0 || (showAustralia88 && australia88 === null)}
+          disabled={(creatingNew ? !newWorkName.trim() : !workId) || preview.totalShifts === 0 || (showAustralia88 && australia88 === null)}
         >
           {t('payslip.confirmGenerate')}
         </Button>

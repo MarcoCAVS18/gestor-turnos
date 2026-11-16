@@ -122,7 +122,7 @@ const Works = () => {
   return (
     <>
       <Helmet>
-        <title>My Jobs - Orary</title>
+        <title>{`${t('nav.works')} - Orary`}</title>
         <meta name="description" content="Manage your jobs and workplaces. Add, edit, and organize your work positions." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>

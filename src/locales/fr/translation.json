@@ -105,7 +105,68 @@
     "shiftsDisabledTooltip": "Créez d'abord un travail pour ajouter des quarts",
     "paused": "En pause",
     "liveMode": "Mode Live",
-    "share": "Partager"
+    "share": "Partager",
+    "more": "Plus"
+  },
+  "more": {
+    "title": "Plus",
+    "subtitle": "Tout le reste, au même endroit",
+    "sections": {
+      "account": "Compte",
+      "app": "Application"
+    },
+    "manageAccount": "Gérer le compte",
+    "needHelp": "Besoin d'aide ?",
+    "faq": "Questions fréquentes",
+    "about": "À propos d'Orary",
+    "backToApp": "Retour à l'application"
+  },
+  "statsHub": {
+    "title": "Résumés",
+    "subtitle": "Votre travail, par période",
+    "weekly": "Résumé hebdomadaire",
+    "monthly": "Résumé mensuel",
+    "unlockPremium": "Débloquez Premium"
+  },
+  "payslipNav": {
+    "documents": "Documents",
+    "calculations": "Calculs",
+    "calculationsSubtitle": "Détail et projections d'année fiscale de vos bulletins",
+    "empty": "Ajoutez des bulletins dans Documents pour voir leurs calculs ici.",
+    "rateFromPayslip": "Le taux de base sera estimé à partir du bulletin : ~{{rate}}/h",
+    "newWorkPremium": "Ajouter un deuxième travail nécessite Premium"
+  },
+  "yourHours": {
+    "title": "Vos heures",
+    "subtitle": "Heures du mois face à votre objectif",
+    "totalLabel": "Heures travaillées",
+    "prevMonth": "Heures du mois précédent",
+    "difference": "Différence d'heures",
+    "note": "Les heures reflètent les quarts enregistrés dans la période sélectionnée et peuvent changer si vous ajoutez ou modifiez des quarts.",
+    "goalLabel": "Objectif mensuel",
+    "goalMet": "Objectif atteint",
+    "goalNotMet": "Sous l'objectif",
+    "noGoal": "Définissez un objectif d'heures hebdomadaire pour suivre votre progression mensuelle dans",
+    "weeks": "Semaines du mois",
+    "partial": "Semaine partielle"
+  },
+  "monthlySummary": {
+    "title": "Résumé mensuel",
+    "subtitle": "Votre mois en un coup d'œil",
+    "hours": "Heures",
+    "earnings": "Gains",
+    "shifts": "Quarts",
+    "perHour": "Par heure",
+    "vsPrevious": "vs mois précédent",
+    "trend": "6 derniers mois",
+    "premiumTitle": "Le résumé mensuel est Premium",
+    "premiumDesc": "Débloquez totaux mensuels, comparaisons et tendances",
+    "premiumCta": "Voir Premium"
+  },
+  "monthNavigator": {
+    "thisMonth": "Ce mois-ci",
+    "lastMonth": "Mois dernier",
+    "monthsAgo": "Il y a {{count}} mois"
   },
   "premium": {
     "title": "Premium",
@@ -393,9 +454,6 @@
       "description": "Recevez des notifications push et gérez vos quarts de travail en déplacement avec notre app mobile.",
       "platforms": "iOS et Android"
     },
-    "deliveryVehicle": {
-      "helpText": "Sélectionnez le véhicule que vous utiliserez pour vos livraisons"
-    },
     "calendar": {
       "title": "Abonnement au Calendrier",
       "description": "Abonnez-vous à vos quarts de travail dans n'importe quelle app de calendrier — Google Calendar, Apple Calendar, Outlook et plus. Se met à jour automatiquement toutes les quelques heures.",
@@ -541,13 +599,14 @@
     },
     "recentActivity": {
       "title": "Activité récente",
-      "empty": "Aucune activité récente",
       "viewAll": "Voir tous",
       "totalRecent": "Total récent"
     },
     "projection": {
       "title": "Projection",
       "setupTitle": "Commencez ici",
+      "quietMonth": "Aucun quart enregistré ce mois-ci pour l'instant.",
+      "quietMonthLink": "En enregistrer un",
       "worksAdded": "Travaux ajoutés",
       "stepCompleted": "Étape terminée",
       "addWorks": "Ajouter des travaux",
@@ -585,9 +644,6 @@
     },
     "thisWeek": {
       "title": "Cette semaine",
-      "shifts": "quarts",
-      "hours": "heures",
-      "earnings": "gains",
       "totalEarned": "Total gagné",
       "progress": "Progrès",
       "goal": "objectif",
@@ -613,28 +669,7 @@
       "unlimitedSessions": "Sessions illimitées",
       "sessionsThisMonth": "utilisations ce mois",
       "tryNow": "Essayer maintenant",
-      "startSession": "Démarrer la session",
-      "active": "Live actif",
-      "tapToView": "Appuyez pour voir les détails",
-      "startRecording": "Démarrer l'enregistrement",
-      "trackRealTime": "Enregistrez votre quart en temps réel",
-      "freePlan": "Plan gratuit",
-      "usesThisMonth": "utilisations ce mois",
-      "upgradeForUnlimited": "Passez à Premium pour du Live illimité"
-    },
-    "clockIn": {
-      "title": "Pointage",
-      "noShiftsToday": "Pas de quarts aujourd'hui",
-      "addShift": "Ajouter un quart",
-      "shiftStarted": "Quart commencé",
-      "startedAt": "Commencé à",
-      "estimatedEnd": "Fin estimée",
-      "estimatedEarnings": "Gains estimés",
-      "earned": "gagné",
-      "live": "En direct",
-      "quickClockIn": "Pointage rapide",
-      "readyToWork": "Prêt à travailler",
-      "startShift": "Démarrer le quart"
+      "startSession": "Démarrer la session"
     },
     "quickStats": {
       "works": "Travaux",
@@ -769,7 +804,7 @@
     },
     "holidays": {
       "title": "Localisation",
-      "description": "Sélectionnez votre localisation pour détecter automatiquement les jours fériés et activer le suivi des jours du visa vacances-travail (Australie).",
+      "description": "Sélectionnez votre localisation pour détecter automatiquement les jours fériés et activer le suivi des jours du visa holidays (Australie).",
       "detectingLocation": "Détection de la localisation...",
       "useLocation": "Utiliser ma localisation",
       "country": "Pays",
@@ -808,7 +843,8 @@
       "deleteAccount": "Supprimer le compte",
       "logout": "Se déconnecter",
       "managePremium": "Gérer Premium",
-      "upgradePremium": "Passer à Premium"
+      "upgradePremium": "Passer à Premium",
+      "more": "Plus d'options"
     },
     "integrationsBanner": {
       "title": "Intégrations",
@@ -816,7 +852,7 @@
       "button": "Configurer"
     },
     "australia88": {
-      "title": "Visa Vacances Travail",
+      "title": "Visa Holiday Travail",
       "visaYear": "Année de visa",
       "year1": "Année 1",
       "year2": "Année 2",
@@ -834,12 +870,8 @@
     "addShift": "Ajouter un Quart",
     "editShift": "Modifier le Quart",
     "deleteShift": "Supprimer le Quart",
-    "deliveryTitle": "Quart de Livraison",
-    "earningsDetails": "Détails des gains",
-    "totalEarnings": "Gains totaux",
     "tips": "Pourboires",
     "orderCount": "Nombre de commandes",
-    "additionalData": "Données additionnelles (optionnel)",
     "kilometers": "Kilomètres parcourus",
     "fuelExpenses": "Dépenses de carburant",
     "noShifts": "Aucun quart pour l'instant",
@@ -916,8 +948,6 @@
       "endTimeRequired": "L'heure de fin est requise",
       "earningsRequired": "Les gains sont requis et doivent être supérieurs à 0"
     },
-    "weeklySummary": "Résumé hebdomadaire",
-    "shifts": "quarts",
     "hours": "heures",
     "filters": {
       "activeFilters": "Filtres actifs",
@@ -1026,33 +1056,14 @@
     "deliveryFeature3": "Contrôle des pourboires et dépenses de carburant",
     "notSureWhich": "Pas sûr de quel type choisir ?",
     "helpChoose": "Si vous avez des doutes sur le type à choisir, vous pouvez le modifier plus tard dans les paramètres du travail.",
-    "liveModeActiveError": "\"{{workName}}\" est actuellement actif en Mode Live. Arrêtez la session pour le modifier.",
-    "filters": {
-      "allWorks": "Tous les travaux",
-      "clear": "Effacer",
-      "shiftTypes": {
-        "day": "Jour",
-        "afternoon": "Après-midi",
-        "night": "Nuit",
-        "saturday": "Samedi",
-        "sunday": "Dimanche",
-        "delivery": "Delivery",
-        "mixed": "Mixte",
-        "all": "Tous les types"
-      },
-      "shiftTypeLabel": "Type de quart",
-      "filteredBy": "Filtré par",
-      "activeFilters": "Filtres actifs",
-      "of": "de",
-      "clearAll": "Tout effacer",
-      "workLabel": "Travail",
-      "daysLabel": "Jours",
-      "allDays": "Tous",
-      "typeLabel": "Type",
-      "unknownWork": "Travail inconnu"
-    }
+    "liveModeActiveError": "\"{{workName}}\" est actuellement actif en Mode Live. Arrêtez la session pour le modifier."
   },
   "statistics": {
+    "tabs": {
+      "overview": "Aperçu",
+      "payslips": "Bulletins",
+      "delivery": "Livraison"
+    },
     "title": "Statistiques",
     "subtitle": "Analysez vos performances et projections",
     "totalEarned": "Total gagné",
@@ -1064,6 +1075,19 @@
     "daily": "Quotidien",
     "deliveryTitle": "Statistiques de livraison",
     "deliverySubtitle": "Analysez vos gains et votre efficacité en livraison",
+    "delivery": {
+      "tab": "Livraison",
+      "title": "Statistiques de livraison",
+      "subtitle": "Vos gains, KPIs et efficacité de livraison par période",
+      "empty": "Aucun quart de livraison enregistré pour l'instant. Ajoutes-en un pour voir tes stats ici.",
+      "emptyPeriod": "Aucun quart de livraison sur cette période. Essaie une période plus longue.",
+      "periods": {
+        "today": "Aujourd'hui",
+        "week": "Cette semaine",
+        "days90": "90 jours",
+        "year": "Cette année"
+      }
+    },
     "shiftTypes": "Types de quart"
   },
   "forms": {
@@ -1144,6 +1168,8 @@
       "namePlaceholder": "ex. Mon Travail",
       "baseRate": "Taux de base",
       "baseRatePlaceholder": "0.00",
+      "differentTaxHint": "Ce travail a-t-il un taux d'imposition différent de vos autres emplois ?",
+      "differentTaxHintLink": "Configurez-le par emploi dans les Paramètres",
       "currency": "Devise",
       "selectCurrency": "Sélectionner la devise",
       "rates": {
@@ -1161,7 +1187,6 @@
         "selectPlatformWithDefault": "Sélectionner (par défaut: {{defaultPlatform}})",
         "vehicle": "Véhicule",
         "selectVehicle": "Sélectionnez votre véhicule",
-        "perOrderRate": "Taux par commande",
         "vehicles": {
           "bicycle": "Vélo",
           "motorbike": "Moto",
@@ -1224,6 +1249,10 @@
     "clearing": "Effacement...",
     "deleteAccountConfirm": "Supprimer le Compte",
     "deletingAccount": "Suppression...",
+    "adminReauthTitle": "Confirmez votre identité",
+    "adminReauthDesc": "Pour votre sécurité, veuillez confirmer votre identité avant d'accéder au panneau d'administration.",
+    "adminReauthConfirm": "Continuer",
+    "adminReauthLoading": "Vérification...",
     "selectWorkFirst": "Veuillez d'abord sélectionner un travail",
     "activeSession": "Il y a déjà une session en direct active",
     "work": {
@@ -1240,9 +1269,7 @@
       "baseEarnings": "Gains de base",
       "fuelExpense": "Dépense de carburant",
       "avgPerOrder": "Moy. par commande",
-      "fuel": "Carburant",
-      "tips": "Pourboires",
-      "totalEarnings": "Gains totaux"
+      "fuel": "Carburant"
     },
     "work": {
       "baseRate": "Taux de base:",
@@ -1258,7 +1285,12 @@
     }
   },
   "australia88": {
-    "visaTitle": "Visa Vacances-Travail",
+    "visaTitle": "Visa Holiday Travail",
+    "visaTitleShort": "WHV Australie",
+    "activateYear2": "Passer à l'Année 2 ?",
+    "activateYear2Confirm": "Vous avez obtenu votre visa de deuxième année ? Un nouveau compteur démarre pour les 6 mois (179 jours) nécessaires à la troisième année. Les jours de la première année ne sont pas reportés. Vous pourrez modifier cela dans les Paramètres.",
+    "year2CelebrationTitle": "Bienvenue en Année 2 !",
+    "year2CelebrationDesc": "Compteur remis à 0. Pour une troisième année, il faut 6 mois de travail spécifié (179 jours) effectués avec ce visa.",
     "details": "Détails",
     "complete": "Complet",
     "remaining": "Restant",
@@ -1266,11 +1298,30 @@
     "yearComplete": "Année {{year}} complète !",
     "yearGoal": "Année {{year}} · jours · objectif {{goal}}",
     "daysUnit": "j",
-    "formLabel": "Visa Vacances-Travail (88 jours)",
-    "qualifiesDescription": "Éligible pour l'extension du Visa Vacances-Travail",
+    "formLabel": "Visa Holiday Travail (88 jours)",
+    "qualifiesDescription": "Éligible pour l'extension du Visa Holiday Travail",
     "regionalWork": "Travail dans des zones régionales ou critiques d'Australie",
     "notSure": "Pas sûr que votre travail soit éligible ?",
-    "checkHomeAffairs": "Vérifier sur Home Affairs"
+    "checkHomeAffairs": "Vérifier sur Home Affairs",
+    "evidenceTooltip": "Bulletin de paie enregistré pour cette semaine — touchez pour le voir comme preuve",
+    "stats": {
+      "pageSubtitle": "Suivez votre progression vers l'extension de votre Working Holiday Visa",
+      "year1Label": "Année 1",
+      "weeklyTitle": "Jours par semaine",
+      "weeklySubtitle": "{{count}} dernières semaines",
+      "monthlyTitle": "Jours par mois",
+      "monthlySubtitle": "Historique complet",
+      "daysShort": "Jours",
+      "empty": "Pas encore de données — enregistrez un horaire pour commencer à suivre vos jours de visa.",
+      "allComplete": "179 jours effectués. Vous avez vos 6 mois pour la troisième année. Vérifiez les règles en vigueur sur le site de Home Affairs avant de déposer votre demande.",
+      "daysToGoal": "Il vous reste {{days}} jours",
+      "learnTitle": "En savoir plus",
+      "learnTrackTitle": "Comment vos 88 jours sont comptés",
+      "learnTrackDesc": "Comprenez la méthode officielle derrière ce suivi.",
+      "learnApplyTitle": "Prêt à demander votre prochain visa ?",
+      "learnApplyDesc": "Un guide étape par étape pour votre Deuxième ou Troisième Working Holiday Visa.",
+      "readArticle": "Lire l'article"
+    }
   },
   "about": {
     "hero": {
@@ -1607,7 +1658,6 @@
   },
   "calendar": {
     "subtitle": "Visualisez et gérez vos quarts de travail par date",
-    "new": "Nouveau",
     "noWorksMessage": "Pour utiliser le calendrier, vous devez d'abord créer au moins un travail dans la section \"Travaux\".",
     "todayDate": "Aujourd'hui, {{date}}",
     "yesterdayDate": "Hier, {{date}}",
@@ -1764,15 +1814,15 @@
   },
   "australia88Page": {
     "hero": {
-      "badge": "Visa Vacances-Travail — Australie",
+      "badge": "Visa Holiday-Travail — Australie",
       "title": "Suivez vos 88 jours. Sécurisez votre deuxième année.",
-      "subtitle": "L'exigence de 88 jours de travail régional pour le Visa Vacances-Travail australien (sous-classe 417 et 462) est complexe à calculer manuellement. Orary le fait automatiquement depuis vos heures réelles.",
+      "subtitle": "L'exigence de 88 jours de travail régional pour le Visa Holiday-Travail australien (sous-classe 417 et 462) est complexe à calculer manuellement. Orary le fait automatiquement depuis vos heures réelles.",
       "cta": "Commencer gratuitement",
       "ctaSecondary": "Comment ça marche"
     },
     "what": {
       "title": "Que sont les 88 jours ?",
-      "body1": "Pour être éligible à un Visa Vacances-Travail de deuxième année en Australie, vous devez effectuer 88 jours de travail régional spécifié durant votre première année. Une troisième année nécessite 88 jours supplémentaires — 176 au total.",
+      "body1": "Pour un visa Working Holiday de deuxième année, il faut 88 jours de travail spécifié effectués avec votre premier visa. Pour une troisième année, 6 mois (179 jours) effectués avec le deuxième. Ce sont deux comptes séparés : les jours de la première année ne sont pas reportés.",
       "body2": "Le détail que beaucoup ignorent : il ne s'agit pas de jours calendaires passés au travail. Ce sont des jours accrédités calculés à partir des heures travaillées chaque semaine, selon une formule officielle du gouvernement."
     },
     "formula": {
@@ -1803,9 +1853,9 @@
       "removeWeek": "Supprimer",
       "totalDays": "Total jours de visa",
       "milestone88": "Palier 88 jours — éligibilité Année 2",
-      "milestone176": "Palier 176 jours — éligibilité Année 3",
+      "milestone176": "179 jours : condition de la troisième année",
       "progress88": "Progression vers 88 jours",
-      "progress176": "Progression vers 176 jours",
+      "progress176": "Progression vers 179 jours",
       "hoursPlaceholder": "ex. 32",
       "visaDays": "jour de visa",
       "visaDaysPlural": "jours de visa",
@@ -1817,8 +1867,8 @@
       "year2Days": "88 jours",
       "year2Desc": "Complétez 88 jours de travail régional accrédités durant votre première année WHV pour demander un second visa de 12 mois.",
       "year3Title": "Extension année 3",
-      "year3Days": "176 jours",
-      "year3Desc": "Complétez 88 jours supplémentaires (176 au total) de travail spécifié pour être éligible à une troisième année en Australie.",
+      "year3Days": "179 jours",
+      "year3Desc": "6 mois de travail spécifié effectués avec votre deuxième visa. C'est un nouveau compte, vos jours de première année ne s'y ajoutent pas.",
       "note": "Les catégories de travail régional et spécifié sont définies par le Département australien de l'Intérieur. Vérifiez toujours les exigences actuelles sur immi.homeaffairs.gov.au."
     },
     "howOrary": {
@@ -1830,7 +1880,7 @@
       "step3Title": "Jours de visa cumulés",
       "step3Desc": "Votre total de jours accrédités se met à jour en temps réel. Vous savez toujours exactement où vous en êtes.",
       "step4Title": "Suivi des paliers",
-      "step4Desc": "Votre tableau de bord affiche la progression vers 88 et 176 jours — sans comptage manuel."
+      "step4Desc": "Votre tableau de bord montre où vous en êtes vers 88 jours (deuxième année) ou 179 jours (troisième année). Plus besoin de compter à la main."
     },
     "cta": {
       "title": "Arrêtez de compter manuellement.",
@@ -1868,11 +1918,25 @@
     }
   },
   "payslip": {
+    "editTitle": "Modifier le bulletin",
+    "newTitle": "Nouveau bulletin",
     "title": "Bulletins et Registres",
     "subtitle": "Détectez les données de vos bulletins et enregistrez les shifts passés",
     "upload": "Téléverser le bulletin PDF",
     "uploadHint": "Nous essaierons de lire votre bulletin automatiquement. Sinon, vous pourrez saisir les valeurs manuellement.",
     "parsing": "Lecture du bulletin…",
+    "verifyingTitle": "Un instant",
+    "verifyingText": "Nous vérifions les données de ta fiche de paie.",
+    "verifyingTitle2": "On y est presque",
+    "verifyingText2": "Nous lisons ta fiche de paie…",
+    "verifyingTitle3": "Encore un petit peu",
+    "verifyingText3": "Presque terminé…",
+    "reviewHint": "Vérifie les champs surlignés avant de confirmer.",
+    "checkField": "Vérifie cette valeur",
+    "taxSuggestion": {
+      "message": "Ce bulletin de paie indique un taux de {{implied}}%, mais vous avez {{configured}}% configuré.",
+      "apply": "Mettre à jour à {{rate}}%"
+    },
     "parseError": "Impossible de lire ce PDF. Veuillez saisir les valeurs manuellement ci-dessous.",
     "manualEntry": "Saisie manuelle",
     "previewTitle": "Valeurs détectées — vérifiez et confirmez",
@@ -1886,13 +1950,18 @@
     "periodEnd": "Date de fin",
     "hours": "Heures travaillées",
     "gross": "Revenu brut",
+    "net": "Net",
     "tax": "Impôt retenu",
+    "employer": "Employeur",
+    "employee": "Employé",
+    "location": "Lieu",
     "country": "Pays de l'employeur",
     "countryAU": "Australie",
     "countryNZ": "Nouvelle-Zélande",
     "countryGB": "Royaume-Uni",
     "countryIE": "Irlande",
     "unsupportedCountry": "L'estimation du remboursement est disponible uniquement pour l'Australie et la Nouvelle-Zélande pour l'instant.",
+    "techNote": "Nous utilisons plusieurs technologies pour lire tes fiches de paie — parfois ça échoue, mais nous l'améliorons chaque jour.",
     "missingFields": "Veuillez remplir le revenu brut et l'impôt retenu.",
     "disclaimer": "Ceci est une estimation informelle. Vérifiez toujours auprès de votre autorité fiscale.",
     "annualised": "Brut annualisé",
@@ -1910,10 +1979,35 @@
       "modeDetail": "Dernier bulletin",
       "tapToToggle": "Touchez pour changer de vue"
     },
+    "coverage": {
+      "title": "Shifts vs. bulletin",
+      "status": {
+        "full": "Tout enregistré",
+        "partial": "Quelques jours manquants",
+        "empty": "Aucun shift enregistré"
+      },
+      "full": "Tous les jours de cette période ont déjà un shift enregistré.",
+      "partial": "{{count}} jour(s) de cette période n'ont pas encore de shift enregistré.",
+      "empty": "Aucun shift n'est encore enregistré pour cette période.",
+      "loggedHours": "Heures enregistrées",
+      "payslipHours": "Heures du bulletin",
+      "hoursMismatch": "Les heures ne correspondent pas exactement (écart de {{delta}}h).",
+      "dayByDay": "Jour par jour",
+      "viewDetail": "Voir le détail jour par jour",
+      "noShiftThisDay": "Aucun shift",
+      "addMissing": "Ajouter les shifts manquants",
+      "goToDocuments": "Gérer dans Documents"
+    },
+    "fillGapsTitle": "Compléter les shifts manquants",
+    "fillGapsHint": "Seuls les {{count}} jour(s) manquant(s) seront complétés, avec le même horaire et jours de la semaine ci-dessous.",
     "generateShifts": "Générer des shifts à partir de ce bulletin",
     "shiftsExist": "Des shifts existent déjà sur cette période — génération ignorée.",
     "selectWork": "Sélectionnez un emploi",
     "noWorks": "Créez d'abord un emploi pour générer des shifts.",
+    "createWork": "Créer un nouveau travail",
+    "addWorkNamed": "Ajouter le travail : {{name}}",
+    "workNamePlaceholder": "Nom du travail / employeur",
+    "workNameRequired": "Saisis un nom pour le nouveau travail.",
     "workDays": "Jours travaillés",
     "weekdays": {
       "mon": "Lun",
@@ -1989,6 +2083,12 @@
     "title": "Admin",
     "subtitle": "Modération et consommation",
     "error": "Une erreur est survenue lors du chargement des données admin.",
+    "reauth": {
+      "wrongPassword": "Mot de passe incorrect.",
+      "popupClosed": "La confirmation Google a été annulée.",
+      "popupBlocked": "Fenêtre bloquée par le navigateur. Veuillez l'autoriser et réessayer.",
+      "genericError": "Impossible de vérifier votre identité. Veuillez réessayer."
+    },
     "usage": {
       "title": "Consommation et facteurs de coût",
       "note": "Comptes à la demande. La facturation exacte est dans la console Firebase.",
@@ -2029,7 +2129,14 @@
       "title": "Utilisateurs",
       "empty": "Aucun utilisateur.",
       "premium": "Premium",
-      "free": "Gratuit"
+      "free": "Gratuit",
+      "grant": "Accorder Premium",
+      "revoke": "Retirer Premium",
+      "manualGrant": "Accordé manuellement",
+      "stripeManaged": "Abonnement Stripe",
+      "confirmGrant": "Accorder l'accès Premium à {{name}} ? Ceci n'affecte pas Stripe et ne génère aucun paiement.",
+      "confirmRevoke": "Retirer l'accès Premium à {{name}} ? Ceci n'affecte pas Stripe.",
+      "actionError": "Une erreur est survenue. Veuillez réessayer."
     }
   },
   "notifications": {

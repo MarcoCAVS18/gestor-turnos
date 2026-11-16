@@ -64,14 +64,19 @@ const SmokoSection = ({ onError, onSuccess, className }) => {
         className={className}
       >
       <div className="space-y-6">
-        <div
-          className="p-3 rounded-lg"
-          style={{ backgroundColor: colors.transparent5 }}
-        >
-          <p className="text-sm" style={{ color: colors.primary }}>
-            <strong>{t('settings.smoko.whatIsThis')}</strong> {t('settings.smoko.description')}
-          </p>
-        </div>
+        {/* Help text only while the feature is off — once enabled the duration
+            options take its place, so the section height stays stable and the
+            sibling columns don't get stretched. */}
+        {!enabled && (
+          <div
+            className="p-3 rounded-lg"
+            style={{ backgroundColor: colors.transparent5 }}
+          >
+            <p className="text-sm" style={{ color: colors.primary }}>
+              <strong>{t('settings.smoko.whatIsThis')}</strong> {t('settings.smoko.description')}
+            </p>
+          </div>
+        )}
 
         <Flex variant="between">
           <div className="flex-1 pr-4">

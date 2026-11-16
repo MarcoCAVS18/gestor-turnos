@@ -4,17 +4,27 @@
 // the data access server-side. Non-admins are redirected away.
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Shield, Check, X, RefreshCw, Star, Clock } from 'lucide-react';
+import {
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
+  EmailAuthProvider,
+  GoogleAuthProvider,
+} from 'firebase/auth';
+import { auth } from '../services/firebase';
+import logger from '../utils/logger';
 import { useAuth } from '../contexts/AuthContext';
 import PageHeader from '../components/layout/PageHeader';
+import ConfirmActionModal from '../components/modals/ConfirmActionModal';
 import {
   getUsageStats,
   getSubscriptionMetrics,
   getAllFeedback,
   getAllUsers,
   updateFeedbackStatus,
+  setUserPremiumStatus,
 } from '../services/firebaseService';
 
 const fmt = (n) => (n === null || n === undefined ? '—' : n.toLocaleString());
@@ -41,7 +51,16 @@ const StatusPill = ({ status, t }) => {
 
 const Admin = () => {
   const { t } = useTranslation();
-  const { isAdmin, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const { isAdmin, loading: authLoading, currentUser } = useAuth();
+
+  // Require a fresh sign-in every time this page is entered, even though the
+  // user already has an active session — the panel can grant Premium and
+  // manage users, so it gets its own step-up auth on top of the `admin`
+  // custom claim check below.
+  const [reauthed, setReauthed] = useState(false);
+  const [reAuthBusy, setReAuthBusy] = useState(false);
+  const [reAuthError, setReAuthError] = useState(null);
 
   const [stats, setStats] = useState(null);
   const [metrics, setMetrics] = useState(null);
@@ -50,44 +69,124 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [busyId, setBusyId] = useState(null);
+  const [busyUserId, setBusyUserId] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(false);
-    try {
-      const [s, m, f, u] = await Promise.all([
-        getUsageStats(),
-        getSubscriptionMetrics(),
-        getAllFeedback(),
-        getAllUsers(),
-      ]);
-      setStats(s);
-      setMetrics(m);
-      setFeedback(f);
-      setUsers(u);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
+    // allSettled (not all): one failing section must not blank the whole panel.
+    // Failed sections are surfaced with their Firebase error code so the cause
+    // is visible instead of an empty dashboard.
+    const sections = [
+      ['usage', getUsageStats, setStats],
+      ['metrics', getSubscriptionMetrics, setMetrics],
+      ['feedback', getAllFeedback, setFeedback],
+      ['users', getAllUsers, setUsers],
+    ];
+    const results = await Promise.allSettled(sections.map(([, fn]) => fn()));
+    const failures = [];
+    results.forEach((r, i) => {
+      const [name, , setter] = sections[i];
+      if (r.status === 'fulfilled') {
+        setter(r.value);
+        // Count sections fail soft per-metric; collect those too.
+        (r.value?.errors || []).forEach((e) => failures.push(`${name}.${e}`));
+      } else {
+        logger.error(`[admin] ${name} failed`, r.reason);
+        failures.push(`${name}: ${r.reason?.code || r.reason?.message || 'unknown'}`);
+      }
+    });
+    setError(failures.length ? failures.join(' · ') : false);
+    setLoading(false);
   }, []);
 
   useEffect(() => {
-    if (isAdmin) load();
-  }, [isAdmin, load]);
+    if (isAdmin && reauthed) load();
+  }, [isAdmin, reauthed, load]);
 
   // Redirect non-admins once auth has resolved.
   if (!authLoading && !isAdmin) return <Navigate to="/dashboard" replace />;
+
+  const handleAdminReauth = async (e, reAuthData) => {
+    e.preventDefault();
+    if (!currentUser) return;
+
+    setReAuthBusy(true);
+    setReAuthError(null);
+    try {
+      if (reAuthData?.isGoogleUser) {
+        await reauthenticateWithPopup(auth.currentUser, new GoogleAuthProvider());
+      } else {
+        const credential = EmailAuthProvider.credential(currentUser.email, reAuthData?.password || '');
+        await reauthenticateWithCredential(auth.currentUser, credential);
+      }
+      // Force a fresh ID token so auth_time is current server-side too —
+      // the Cloud Function re-checks it independently of this client gate.
+      await auth.currentUser.getIdToken(true);
+      setReauthed(true);
+    } catch (err) {
+      if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        setReAuthError(t('admin.reauth.wrongPassword'));
+      } else if (err.code === 'auth/popup-closed-by-user') {
+        setReAuthError(t('admin.reauth.popupClosed'));
+      } else if (err.code === 'auth/popup-blocked') {
+        setReAuthError(t('admin.reauth.popupBlocked'));
+      } else {
+        setReAuthError(err.message || t('admin.reauth.genericError'));
+      }
+    } finally {
+      setReAuthBusy(false);
+    }
+  };
+
+  // Block all admin content — including the data fetch above — until the
+  // user re-proves their identity for this visit.
+  if (!authLoading && isAdmin && !reauthed) {
+    return (
+      <div className="px-4 py-6">
+        <ConfirmActionModal
+          isOpen
+          onClose={() => navigate('/dashboard', { replace: true })}
+          onConfirm={handleAdminReauth}
+          loading={reAuthBusy}
+          variant="admin-reauth"
+          reAuthError={reAuthError}
+        />
+      </div>
+    );
+  }
 
   const moderate = async (id, status) => {
     setBusyId(id);
     try {
       await updateFeedbackStatus(id, status);
       setFeedback((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
-    } catch {
-      setError(true);
+    } catch (err) {
+      setError(`moderation: ${err?.code || err?.message || 'unknown'}`);
     } finally {
       setBusyId(null);
+    }
+  };
+
+  const togglePremium = async (u) => {
+    const grant = !u.isPremium;
+    const confirmMsg = grant
+      ? t('admin.users.confirmGrant', { name: u.displayName || u.email || u.id })
+      : t('admin.users.confirmRevoke', { name: u.displayName || u.email || u.id });
+    if (!window.confirm(confirmMsg)) return;
+
+    setBusyUserId(u.id);
+    try {
+      await setUserPremiumStatus(u.id, grant);
+      setUsers((prev) =>
+        prev.map((row) =>
+          row.id === u.id ? { ...row, isPremium: grant, plan: grant ? 'premium' : 'free', manualGrant: grant } : row
+        )
+      );
+    } catch (err) {
+      window.alert(err?.message || t('admin.users.actionError'));
+    } finally {
+      setBusyUserId(null);
     }
   };
 
@@ -116,6 +215,9 @@ const Admin = () => {
       {error && (
         <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-sm">
           {t('admin.error')}
+          {typeof error === 'string' && (
+            <span className="block mt-1 font-mono text-xs opacity-80">{error}</span>
+          )}
         </div>
       )}
 
@@ -232,17 +334,36 @@ const Admin = () => {
                   <p className="text-xs text-gray-400 dark:text-gray-500 truncate flex items-center gap-1">
                     <Clock size={10} />
                     {u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '—'}
+                    {u.manualGrant ? ` · ${t('admin.users.manualGrant')}` : ''}
                   </p>
                 </div>
-                <span
-                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 ${
-                    u.isPremium
-                      ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400'
-                      : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
-                  }`}
-                >
-                  {u.isPremium ? t('admin.users.premium') : t('admin.users.free')}
-                </span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span
+                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                      u.isPremium
+                        ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400'
+                        : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'
+                    }`}
+                  >
+                    {u.isPremium ? t('admin.users.premium') : t('admin.users.free')}
+                  </span>
+                  {u.hasStripeSubscription ? (
+                    <span className="text-[10px] text-gray-400 dark:text-gray-500">{t('admin.users.stripeManaged')}</span>
+                  ) : (
+                    <button
+                      onClick={() => togglePremium(u)}
+                      disabled={busyUserId === u.id}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold transition-colors disabled:opacity-40 ${
+                        u.isPremium
+                          ? 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600'
+                          : 'bg-pink-600 text-white hover:bg-pink-700'
+                      }`}
+                    >
+                      <Star size={12} />
+                      {u.isPremium ? t('admin.users.revoke') : t('admin.users.grant')}
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>

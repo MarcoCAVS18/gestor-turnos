@@ -1,14 +1,18 @@
 // src/components/layout/Navigation/NavMainLinks.jsx
 
 import React, { memo } from 'react';
-import { Home, Briefcase, Calendar, BarChart2, CalendarDays, FileText } from 'lucide-react';
+import { Home, Briefcase, Calendar, BarChart2, CalendarDays, FileText, Bike, Crown, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PREMIUM_COLORS } from '../../../contexts/PremiumContext';
 
 const NavMainLinks = memo(({
   navigateToView,
   currentView,
   currentPath,
   hasWorks,
+  deliveryEnabled,
+  australia88Enabled,
+  isPremium,
   colors,
   t,
   showTooltip,
@@ -18,9 +22,13 @@ const NavMainLinks = memo(({
 }) => {
   const isStatisticsActive = currentView === 'statistics';
 
-  // Estilo para sub-ítems del sidebar (menores, indentados)
+  // Estilo para sub-ítems del sidebar (menores, indentados).
+  // "/statistics" sin sufijo solo puede verse un instante antes del redirect
+  // desktop al semanal, así que el semanal lo cubre también.
   const getSubItemStyle = (path) => {
-    const isActive = currentPath === path;
+    const isActive = path === '/statistics/weekly'
+      ? (currentPath === '/statistics/weekly' || currentPath === '/statistics')
+      : currentPath === path;
     return {
       color: isActive ? colors.primary : '#6B7280',
       backgroundColor: isActive ? `${colors.primary}15` : 'transparent',
@@ -28,7 +36,7 @@ const NavMainLinks = memo(({
   };
 
   return (
-    <nav className="flex-1 p-4">
+    <nav className="flex-1 min-h-0 overflow-y-auto p-4">
       <div className="space-y-2">
         <motion.button
           onClick={() => navigateToView('dashboard')}
@@ -131,23 +139,103 @@ const NavMainLinks = memo(({
                 className="overflow-hidden"
               >
                 <div className="mt-1 ml-3 pl-3 border-l-2 border-gray-200 dark:border-slate-700 space-y-1">
+                  {/* Resúmenes: mismo estilo que sus hermanos (Recibos/Delivery) */}
                   <button
-                    onClick={() => navigateToView('statistics')}
+                    onClick={() => navigateToView('statistics/weekly')}
                     className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
                     style={getSubItemStyle('/statistics')}
                   >
                     <BarChart2 size={15} />
-                    <span>{t('nav.statistics')}</span>
+                    <span>{t('statsHub.title')}</span>
                   </button>
 
+                  {/* Subclases: sin icono, con un tab extra para diferenciarse del padre */}
+                  <div className="ml-5 space-y-0.5">
+                    <button
+                      onClick={() => navigateToView('statistics/hours')}
+                      className="w-full flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
+                      style={getSubItemStyle('/statistics/hours')}
+                    >
+                      <span>{t('yourHours.title')}</span>
+                    </button>
+
+                    <button
+                      onClick={() => navigateToView('statistics/weekly')}
+                      className="w-full flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
+                      style={getSubItemStyle('/statistics/weekly')}
+                    >
+                      <span>{t('statsHub.weekly')}</span>
+                    </button>
+
+                    {/* Mensual: corona pequeña a la derecha (solo free) con hover
+                        "Desbloquea Premium"; free navega a gestión de cuenta */}
+                    <button
+                      onClick={() => navigateToView(isPremium ? 'statistics/monthly' : 'premium')}
+                      className="group/crown w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-sm font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
+                      style={getSubItemStyle('/statistics/monthly')}
+                    >
+                      <span>{t('statsHub.monthly')}</span>
+                      {!isPremium && (
+                        <span className="relative flex items-center">
+                          <Crown size={12} style={{ color: PREMIUM_COLORS.gold }} />
+                          <span className="absolute right-full mr-2 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-md bg-gray-800 text-white text-xs px-2 py-1 opacity-0 group-hover/crown:opacity-100 transition-opacity pointer-events-none z-50">
+                            {t('statsHub.unlockPremium')}
+                          </span>
+                        </span>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Recibos y registros: mismo patrón que Resúmenes — parent
+                      neutro que abre Documentos, con sus dos subclases */}
                   <button
                     onClick={() => navigateToView('statistics/payslips')}
                     className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
-                    style={getSubItemStyle('/statistics/payslips')}
+                    style={{ color: '#6B7280', backgroundColor: 'transparent' }}
                   >
                     <FileText size={15} />
                     <span>{t('payslip.title')}</span>
                   </button>
+
+                  <div className="ml-5 space-y-0.5">
+                    <button
+                      onClick={() => navigateToView('statistics/payslips')}
+                      className="w-full flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
+                      style={getSubItemStyle('/statistics/payslips')}
+                    >
+                      <span>{t('payslipNav.documents')}</span>
+                    </button>
+
+                    <button
+                      onClick={() => navigateToView('statistics/payslips/calculations')}
+                      className="w-full flex items-center px-3 py-1.5 rounded-lg text-sm font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
+                      style={getSubItemStyle('/statistics/payslips/calculations')}
+                    >
+                      <span>{t('payslipNav.calculations')}</span>
+                    </button>
+                  </div>
+
+                  {deliveryEnabled && (
+                    <button
+                      onClick={() => navigateToView('statistics/delivery')}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
+                      style={getSubItemStyle('/statistics/delivery')}
+                    >
+                      <Bike size={15} />
+                      <span>{t('statistics.delivery.tab')}</span>
+                    </button>
+                  )}
+
+                  {australia88Enabled && (
+                    <button
+                      onClick={() => navigateToView('statistics/australia88')}
+                      className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all hover:bg-gray-50 dark:hover:bg-slate-800"
+                      style={getSubItemStyle('/statistics/australia88')}
+                    >
+                      <Globe size={15} />
+                      <span>{t('australia88.visaTitle')}</span>
+                    </button>
+                  )}
                 </div>
               </motion.div>
             )}

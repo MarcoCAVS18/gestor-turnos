@@ -2,10 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Briefcase, DollarSign, Palette, FileText, Clock, Check, ExternalLink, Calendar } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Briefcase, DollarSign, Palette, FileText, Clock, Check, ExternalLink, Calendar, Receipt } from 'lucide-react';
 import { useFormValidation } from '../../../../hooks/useFormValidation';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useConfigContext } from '../../../../contexts/ConfigContext';
+import { useApp } from '../../../../contexts/AppContext';
 import { VALIDATION_RULES } from '../../../../constants/validation';
 import { PREDEFINED_COLORS } from '../../../../constants/colors';
 import ThemeInput from '../../../ui/ThemeInput';
@@ -20,7 +22,11 @@ const WorkForm = ({
   const { t } = useTranslation();
   const colors = useThemeColors();
   const { holidayCountry } = useConfigContext();
+  const { works } = useApp();
   const isAustraliaMode = holidayCountry === 'AU';
+  // Creating (not editing) a second-or-later traditional work — the exact
+  // moment a "this job has different taxes" question becomes relevant.
+  const isAdditionalWork = !work && (works || []).filter(w => w.type === 'regular').length >= 1;
 
   const [formData, setFormData] = useState({
     name: '',
@@ -222,6 +228,18 @@ const WorkForm = ({
           required
         />
         <FormError error={errors.baseRate} size="sm" />
+
+        {isAdditionalWork && (
+          <p className="mt-2 flex items-start gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+            <Receipt size={13} className="flex-shrink-0 mt-0.5" style={{ color: colors.primary }} />
+            <span>
+              {t('forms.work.differentTaxHint')}{' '}
+              <Link to="/settings" className="font-medium hover:underline" style={{ color: colors.primary }}>
+                {t('forms.work.differentTaxHintLink')}
+              </Link>
+            </span>
+          </p>
+        )}
       </FormSection>
 
       {/* Specific rates */}

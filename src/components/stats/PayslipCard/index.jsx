@@ -1,79 +1,71 @@
 // src/components/stats/PayslipCard/index.jsx
-// Card colapsable de Recibos & Registros — orquestador del flujo:
+// Recibos & Registros → página DOCUMENTOS — orquestador del flujo:
 //   1. Drop zone que acepta múltiples PDFs (o uno por uno).
 //   2. Cada PDF se parsea en paralelo y se agrega a una lista.
 //      Duplicados se rechazan, parses fallidos quedan como "incompletos".
-//   3. Dashboard agregado: hero (donut + métricas), acción y acordeones.
-//   4. Generación de turnos para todos los períodos (con pregunta de 88 días
-//      si el país es Australia).
+//   3. Generación de turnos por período en modal propio (con pregunta de
+//      88 días si el país es Australia).
+// El donut y el resumen por recibo viven en la página Cálculos
+// (StatisticsPayslipsCalculations), que comparte datos vía usePayslipsData.
 //
 // Layout responsive en LIST view:
-//   - Mobile: stack vertical
-//   - Desktop (lg+): grid 12 cols, lista 5/12 a la izquierda y dashboard 7/12
+//   - Mobile: stack vertical + edición en bottom-sheet
+//   - Desktop (lg+): grid de 2 columnas (lista | formulario)
 
-import { useState, useRef, useMemo, useCallback, useEffect } from 'react';
+import { useState, useRef, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  ChevronDown,
-  ChevronUp,
-  Upload,
-  FileText,
-  Plus,
-  ExternalLink,
-} from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import Card from '../../ui/Card';
-import Button from '../../ui/Button';
+import Modal from '../../ui/Modal';
+import LogoLoaderModal from '../../ui/LogoLoaderModal';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import { useLocalStorage } from '../../../hooks/useLocalStorage';
+import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useAuth } from '../../../contexts/AuthContext';
-import { useConfigContext } from '../../../contexts/ConfigContext';
+import { usePremium } from '../../../contexts/PremiumContext';
 import { useDataContext } from '../../../contexts/DataContext';
 import {
   parsePayslipPDF,
-  calculateAggregateRefund,
-  buildPayslipBreakdown,
   hasShiftsInPeriod,
   detectConflict,
-  SUPPORTED_COUNTRIES,
-  getCurrentFiscalYear,
-  groupPayslipsByFiscalYear,
-  buildFiscalYearSummary,
 } from '../../../services/payslipService';
+import { usePayslipsData } from '../../../hooks/usePayslipsData';
+import { parsePayslipClient } from '../../../services/payslipParser';
 import * as firebaseService from '../../../services/firebaseService';
 import logger from '../../../utils/logger';
 import PayslipForm from '../PayslipForm';
 import PayslipShiftGenerator from '../PayslipShiftGenerator';
-import PayslipDropZone from './PayslipDropZone';
 import PayslipList from './PayslipList';
-import PayslipHero from './PayslipHero';
 import PayslipGenerateButton from './PayslipGenerateButton';
 import PayslipAccordions from './PayslipAccordions';
+import PayslipShiftCoverage from './PayslipShiftCoverage';
+import PayslipTaxSuggestion from './PayslipTaxSuggestion';
+import PayslipUploadCard from './PayslipUploadCard';
+import PayslipNotesFooter from './PayslipNotesFooter';
 import { VIEW, emptyPayslip, toNumeric, isComplete } from './helpers';
 
-const PayslipCard = ({ className = '' }) => {
+const PayslipCard = ({ className = '', showCalculations = true }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
+  // En mobile (<1024px, mismo breakpoint que el grid lg) la edición/revisión de
+  // un recibo se hace en un bottom-sheet enfocado en vez del grid de 3 columnas.
+  const isMobile = useIsMobile(1024);
   const { currentUser } = useAuth() || {};
-  const { holidayCountry } = useConfigContext() || {};
-  const { works = [], shifts = [], addBulkShifts, editJob } = useDataContext() || {};
+  const { works = [], shifts = [], addBulkShifts, addJob, editJob } = useDataContext() || {};
 
-  const [open, setOpen] = useLocalStorage('orary_payslip_card_open', false);
+  // Datos de recibos + derivados: fuente única compartida con la página de
+  // Cálculos (usePayslipsData mantiene la suscripción Firestore en tiempo real).
+  const {
+    payslips,
+    completePayslips,
+    country,
+    formatMoney,
+    aggregate,
+    breakdown,
+    fiscalSummary,
+    coverageByPayslipId,
+  } = usePayslipsData();
 
-  // Lista de payslips suscrita en tiempo real desde Firestore (cross-device).
-  // Se inicializa vacía y se actualiza vía onSnapshot apenas haya un user.
-  const [payslips, setPayslips] = useState([]);
   const [view, setView] = useState(VIEW.IDLE);
-
-  // Suscripción a Firestore: se mantiene activa mientras el componente esté
-  // montado y haya usuario autenticado.
-  useEffect(() => {
-    if (!currentUser?.uid) return undefined;
-    const unsub = firebaseService.subscribeToPayslips(currentUser.uid, {
-      setPayslips: (next) => setPayslips(next),
-      setError: (err) => logger.warn('subscribeToPayslips error', err),
-    });
-    return unsub;
-  }, [currentUser?.uid]);
 
   // Cuando llega el primer snapshot con payslips desde Firestore (al cargar
   // por primera vez en otro dispositivo / refresh), saltar de IDLE a LIST.
@@ -91,7 +83,7 @@ const PayslipCard = ({ className = '' }) => {
   const [formError, setFormError] = useState(null);
 
   // Mensajes informativos
-  const [parseSummary, setParseSummary] = useState(null);
+  const [, setParseSummary] = useState(null);
   const [conflictMessage, setConflictMessage] = useState(null);
 
   // Acordeones — abiertos por default en desktop (lg+) ya que hay espacio
@@ -112,14 +104,6 @@ const PayslipCard = ({ className = '' }) => {
 
   const fileInputRef = useRef(null);
 
-  // País aplicable
-  const country = useMemo(() => {
-    if (holidayCountry && SUPPORTED_COUNTRIES.includes(holidayCountry)) {
-      return holidayCountry;
-    }
-    return null;
-  }, [holidayCountry]);
-
   const countryLabel = country ? t(`payslip.country${country}`) : null;
   const countrySupported = Boolean(country);
   const isAustralia = country === 'AU';
@@ -130,48 +114,10 @@ const PayslipCard = ({ className = '' }) => {
     [works]
   );
 
-  const currencyCode = { AU: 'AUD', NZ: 'NZD', GB: 'GBP', IE: 'EUR' }[country] || 'AUD';
-  const formatMoney = useCallback((amount) => {
-    try {
-      return new Intl.NumberFormat(undefined, {
-        style: 'currency',
-        currency: currencyCode,
-        maximumFractionDigits: 2,
-      }).format(amount || 0);
-    } catch {
-      return `$${Number(amount || 0).toFixed(2)}`;
-    }
-  }, [currencyCode]);
-
-  // Solo entran al cálculo los completos
-  const completePayslips = useMemo(
-    () => payslips.filter(isComplete).map(toNumeric),
-    [payslips]
-  );
-
-  const aggregate = useMemo(
-    () => calculateAggregateRefund(completePayslips, country),
-    [completePayslips, country]
-  );
-
-  const breakdown = useMemo(
-    () => buildPayslipBreakdown(completePayslips),
-    [completePayslips]
-  );
-
-  // Resumen del año fiscal vigente
-  const fiscalSummary = useMemo(() => {
-    if (!country) return null;
-    const currentFY = getCurrentFiscalYear(country);
-    if (!currentFY) return null;
-    const groups = groupPayslipsByFiscalYear(completePayslips, country);
-    const inCurrentFY = groups[currentFY.label]?.payslips || [];
-    return {
-      currentFY,
-      inCurrentFY,
-      summary: inCurrentFY.length > 0 ? buildFiscalYearSummary(inCurrentFY, currentFY, country) : null,
-    };
-  }, [completePayslips, country]);
+  // Misma regla que Works: el segundo trabajo tradicional es premium.
+  // El generador no puede saltarse ese gate creando trabajos nuevos.
+  const { isPremium } = usePremium();
+  const canCreateWork = isPremium || regularWorks.length === 0;
 
   const periodsWithShifts = useMemo(
     () => completePayslips.filter((p) => hasShiftsInPeriod(shifts, p.periodStart, p.periodEnd)),
@@ -188,9 +134,22 @@ const PayslipCard = ({ className = '' }) => {
           periodStart: p.periodStart,
           periodEnd: p.periodEnd,
           hours: p.hours,
+          gross: p.gross,
         })),
     [completePayslips, shifts]
   );
+
+  // Tarifa efectiva estimada de los períodos a generar (bruto ÷ horas):
+  // precarga las tarifas del trabajo nuevo para que los turnos generados
+  // calculen ganancias consistentes con el recibo (en vez de $0/h).
+  const estimatedRate = useMemo(() => {
+    const totals = generatablePeriods.reduce(
+      (acc, p) => ({ h: acc.h + (Number(p.hours) || 0), g: acc.g + (Number(p.gross) || 0) }),
+      { h: 0, g: 0 }
+    );
+    if (totals.h <= 0 || totals.g <= 0) return null;
+    return Math.round((totals.g / totals.h) * 100) / 100;
+  }, [generatablePeriods]);
 
   // Carga de archivos (uno o varios PDFs)
   const handleFilesSelected = async (files) => {
@@ -200,9 +159,21 @@ const PayslipCard = ({ className = '' }) => {
     setConflictMessage(null);
     setGenerationStatus(null);
 
+    // Keep the loading modal up for a minimum time so it doesn't flash even when
+    // parsing is near-instant (digital PDFs). Runs in parallel with the work.
+    const minDelay = new Promise((r) => setTimeout(r, 4000));
+
     const arr = Array.from(files);
     const results = await Promise.all(
       arr.map(async (file) => {
+        // 1) Free client-side parse first (no server/AI cost).
+        try {
+          const local = await parsePayslipClient(file);
+          if (local?.success) return { file, response: local };
+        } catch (err) {
+          logger.warn('parsePayslipClient threw', err);
+        }
+        // 2) Fallback to the Cloud Function (e.g. scanned PDFs / odd layouts).
         try {
           const r = await parsePayslipPDF(file);
           return { file, response: r };
@@ -232,7 +203,13 @@ const PayslipCard = ({ className = '' }) => {
         if (d.hours !== null && d.hours !== undefined) base.hours = String(d.hours);
         if (d.gross !== null && d.gross !== undefined) base.gross = String(d.gross);
         if (d.tax !== null && d.tax !== undefined) base.tax = String(d.tax);
+        if (d.employer) base.employer = d.employer;
+        if (d.employee) base.employee = d.employee;
+        if (d.location) base.location = d.location;
         base.parseStatus = 'ok';
+        // Client text-layer parse ('pdf') is high-confidence; OCR or the Cloud
+        // Function fallback are lower → flag the payslip for review.
+        base.lowConfidence = response.method !== 'pdf';
         okCount += 1;
       } else {
         base.parseStatus = 'failed';
@@ -271,6 +248,8 @@ const PayslipCard = ({ className = '' }) => {
     const wasSingleAndFirst = payslips.length === 0 && arr.length === 1;
     if (wasSingleAndFirst && createdDocs.length === 1) {
       const onlyOne = createdDocs[0];
+      setCreatingManual(false);
+      setSelectedId(onlyOne.id);
       setEditingId(onlyOne.id);
       // El form trabaja con strings; convertimos los números de vuelta.
       setFormValues({
@@ -281,6 +260,8 @@ const PayslipCard = ({ className = '' }) => {
       });
       setFormError(null);
     }
+
+    await minDelay; // ensure the loading modal was shown long enough
     setView(VIEW.LIST);
 
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -295,15 +276,47 @@ const PayslipCard = ({ className = '' }) => {
   // acordeones y los demás bloques mientras editás.
   const [creatingManual, setCreatingManual] = useState(false);
 
+  // Mobile: controla la apertura del bottom-sheet de edición. Es explícito (no
+  // derivado de editingId) para que el efecto de auto-selección no abra la hoja
+  // sola al cargar la página.
+  const [mobileEditorOpen, setMobileEditorOpen] = useState(false);
+
   // El generador de turnos también es inline: ocupa el slot del hero cuando
   // el usuario clickea "Generar turnos", igual que el form de edición.
   const [showingGenerator, setShowingGenerator] = useState(false);
 
-  // Modo del Hero: 'total' (suma de todos) o 'detail' (recibo más reciente).
-  // Si solo hay 1 recibo, no se puede alternar (los dos serían idénticos).
-  const [heroMode, setHeroMode] = useState('total');
-  const toggleHeroMode = () =>
-    setHeroMode((prev) => (prev === 'total' ? 'detail' : 'total'));
+  // Completar días faltantes de un payslip con cobertura parcial (detector de
+  // discrepancias): { payslip, coverage } del recibo activo, o null si el
+  // modal de "agregar turnos faltantes" está cerrado.
+  const [gapFillTarget, setGapFillTarget] = useState(null);
+
+  // Recibo activo: se muestra editable en la 2da columna (form).
+  // Clickear un recibo en la lista lo activa.
+  const [selectedId, setSelectedId] = useState(null);
+
+  // Mantiene el form de la 2da columna sincronizado con el recibo activo:
+  //  - Si no hay nada válido cargado, carga el primero de la lista.
+  //  - No pisa ediciones en curso (solo recarga cuando cambia la lista o el
+  //    recibo editado dejó de existir); las selecciones explícitas cargan el
+  //    form ellas mismas (startEdit), por eso este efecto no depende de selectedId.
+  //  - Mientras se crea una entrada manual nueva, no toca el form.
+  useEffect(() => {
+    if (creatingManual) return;
+    if (payslips.length === 0) {
+      setSelectedId(null);
+      setEditingId(null);
+      return;
+    }
+    const current = editingId ? payslips.find((p) => p.id === editingId) : null;
+    if (!current) {
+      const first = payslips[0];
+      setSelectedId(first.id);
+      setEditingId(first.id);
+      setFormValues({ ...first });
+      setFormError(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [payslips, creatingManual]);
 
   // Acciones de la lista — los inline panels son mutuamente excluyentes
   const startManualAdd = () => {
@@ -313,32 +326,77 @@ const PayslipCard = ({ className = '' }) => {
     setShowingGenerator(false);
     setCreatingManual(true);
     if (view === VIEW.IDLE) setView(VIEW.LIST);
+    if (isMobile) setMobileEditorOpen(true);
   };
 
+  // Seleccionar un recibo = activarlo en la 2da columna para editar (y mostrar
+  // su resumen en la 3ra). Usado tanto por el click en la fila como por el lápiz.
   const startEdit = (id) => {
     const target = payslips.find((p) => p.id === id);
     if (!target) return;
+    setSelectedId(id);
     setEditingId(id);
     setFormValues({ ...target });
     setFormError(null);
     setShowingGenerator(false);
     setCreatingManual(false);
+    if (isMobile) setMobileEditorOpen(true);
   };
 
+  // "Volver": descarta cambios sin guardar y cierra el form. Si era una entrada
+  // manual nueva, la cancela (el efecto reselecciona el primero); si era edición,
+  // recarga los valores originales del recibo. Usado por el botón "Volver" de la
+  // lista (escritorio).
   const cancelInlineForm = () => {
-    setEditingId(null);
-    setCreatingManual(false);
-    setFormValues(emptyPayslip());
+    if (creatingManual) {
+      setCreatingManual(false);
+      setFormError(null);
+      return;
+    }
+    const target = payslips.find((p) => p.id === editingId);
+    if (target) setFormValues({ ...target });
     setFormError(null);
   };
 
+  // "Limpiar": vacía los campos editables del recibo activo conservando el
+  // contexto (id, source, fileName, parseStatus) para que el usuario los
+  // re-ingrese desde cero. NO cierra el form.
+  const clearInlineForm = () => {
+    setFormValues((v) => ({
+      ...v,
+      periodStart: '',
+      periodEnd: '',
+      hours: '',
+      gross: '',
+      tax: '',
+    }));
+    setFormError(null);
+  };
+
+  // Cierra el bottom-sheet de edición (mobile). Si era una entrada manual sin
+  // guardar, la descarta.
+  const closeMobileEditor = () => {
+    setMobileEditorOpen(false);
+    if (creatingManual) {
+      setCreatingManual(false);
+      setFormError(null);
+    }
+  };
+
   const startGenerator = () => {
-    cancelInlineForm();
     setShowingGenerator(true);
   };
 
   const cancelGenerator = () => {
     setShowingGenerator(false);
+  };
+
+  const startGapFill = (payslip, coverage) => {
+    setGapFillTarget({ payslip, coverage });
+  };
+
+  const cancelGapFill = () => {
+    setGapFillTarget(null);
   };
 
   // ¿Estamos mostrando el form inline en el slot del hero?
@@ -349,9 +407,14 @@ const PayslipCard = ({ className = '' }) => {
     if (!currentUser?.uid) return;
     try {
       await firebaseService.deletePayslip(currentUser.uid, id);
-      // Si era el último, el resto del estado se resetea desde la suscripción.
-      // Si payslips queda vacío después del snapshot, volvemos manualmente a IDLE.
-      if (payslips.length <= 1) setView(VIEW.IDLE);
+      setConflictMessage(null);
+      // Si borraste el recibo activo, soltamos la edición: el efecto de
+      // sincronización reselecciona el primero restante (o muestra el estado
+      // de subida si era el último).
+      if (editingId === id) {
+        setEditingId(null);
+        setCreatingManual(false);
+      }
     } catch (err) {
       logger.error('PayslipCard: deletePayslip failed', err);
     }
@@ -365,7 +428,8 @@ const PayslipCard = ({ className = '' }) => {
       return;
     }
 
-    const candidate = { ...formValues, gross: grossNum, tax: taxNum };
+    // Confirming the form means the user reviewed the figures → clear the flag.
+    const candidate = { ...formValues, gross: grossNum, tax: taxNum, lowConfidence: false };
 
     if (isComplete(candidate)) {
       const others = payslips.filter((p) => p.id !== editingId).filter(isComplete).map(toNumeric);
@@ -385,7 +449,14 @@ const PayslipCard = ({ className = '' }) => {
       if (editingId) {
         await firebaseService.updatePayslip(currentUser.uid, editingId, candidate);
       } else {
-        await firebaseService.addPayslip(currentUser.uid, candidate);
+        // Entrada manual nueva: la creamos y la dejamos seleccionada para que
+        // siga visible en el form (la 2da columna no se vacía).
+        const created = await firebaseService.addPayslip(currentUser.uid, candidate);
+        if (created?.id) {
+          setSelectedId(created.id);
+          setEditingId(created.id);
+          setFormValues({ ...created });
+        }
       }
     } catch (err) {
       logger.error('PayslipCard: form submit persistence failed', err);
@@ -399,32 +470,58 @@ const PayslipCard = ({ className = '' }) => {
       return;
     }
 
-    setEditingId(null);
-    setFormValues(emptyPayslip());
-    setFormError(null);
     setCreatingManual(false);
+    setFormError(null);
     setView(VIEW.LIST);
+    setMobileEditorOpen(false);
   };
 
   // Generación de turnos para todos los períodos
-  const handleGenerateShifts = async ({ shifts: newShifts, workId, australia88 }) => {
+  const handleGenerateShifts = async ({ shifts: newShifts, workId, newWorkName, australia88 }) => {
     if (!newShifts || newShifts.length === 0) return;
     setGenerating(true);
     try {
-      await addBulkShifts(newShifts);
-      if (isAustralia && australia88 && workId && editJob) {
-        const targetWork = regularWorks.find((w) => w.id === workId);
+      // Si el usuario eligió crear un trabajo nuevo, lo creamos con la MISMA
+      // función de la app (addJob) y enganchamos los turnos a ese id.
+      // canCreateWork refuerza el gate premium por si la UI fue salteada.
+      let targetWorkId = workId;
+      if (newWorkName && addJob && canCreateWork) {
+        const ratePayload = estimatedRate
+          ? {
+              baseRate: estimatedRate,
+              rates: {
+                day: estimatedRate,
+                afternoon: estimatedRate,
+                night: estimatedRate,
+                saturday: estimatedRate,
+                sunday: estimatedRate,
+                holidays: estimatedRate,
+              },
+            }
+          : {};
+        const created = await addJob({ name: newWorkName, type: 'regular', ...ratePayload });
+        targetWorkId = created?.id || null;
+      }
+      const finalShifts = targetWorkId
+        ? newShifts.map((s) => ({ ...s, workId: targetWorkId }))
+        : newShifts;
+
+      await addBulkShifts(finalShifts);
+      if (isAustralia && australia88 && targetWorkId && editJob) {
+        const targetWork = regularWorks.find((w) => w.id === targetWorkId);
         if (targetWork && !targetWork.australia88Eligible) {
-          await editJob(workId, { ...targetWork, australia88Eligible: true });
+          await editJob(targetWorkId, { ...targetWork, australia88Eligible: true });
         }
       }
       setGeneratedCount(newShifts.length);
       setGenerationStatus('success');
       setShowingGenerator(false);
+      setGapFillTarget(null);
     } catch (err) {
       logger.error('PayslipCard: error generating shifts', err);
       setGenerationStatus('error');
       setShowingGenerator(false);
+      setGapFillTarget(null);
     } finally {
       setGenerating(false);
     }
@@ -433,223 +530,292 @@ const PayslipCard = ({ className = '' }) => {
   const pickFiles = () => fileInputRef.current?.click();
 
   // ===== UI =====
-  const Header = (
-    <button
-      type="button"
-      onClick={() => setOpen(!open)}
-      className="w-full flex items-center justify-between gap-3 text-left"
-      aria-expanded={open}
-    >
-      <div className="flex items-center gap-3 min-w-0">
-        <div
-          className="flex items-center justify-center w-10 h-10 rounded-lg flex-shrink-0"
-          style={{ backgroundColor: colors.transparent10 }}
-        >
-          <FileText size={20} style={{ color: colors.primary }} />
-        </div>
-        <div className="min-w-0">
-          <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate">
-            {t('payslip.title')}
-          </h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-            {t('payslip.subtitle')}
-          </p>
-        </div>
-      </div>
-      <div className="flex-shrink-0 text-gray-400">
-        {open ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-      </div>
-    </button>
+  // Empty state → upload card. Otherwise the stacked result cards.
+  // The loading modal overlays everything while parsing.
+  // En mobile, mientras el editor (bottom-sheet) está abierto, no mostramos el
+  // estado de upload aunque no haya recibos: la hoja ocupa la pantalla.
+  const showUpload = payslips.length === 0 && !isInlineFormOpen && !mobileEditorOpen;
+
+  // Cobertura de turnos del recibo activo (el que se está editando/viendo en
+  // la 2da columna) — analiza el período apenas se agrega/selecciona un payslip.
+  const activePayslip = editingId ? payslips.find((p) => p.id === editingId) : null;
+  const activeCoverage = editingId ? coverageByPayslipId[editingId] : null;
+  const payslipCoverageEl = activeCoverage ? (
+    <PayslipShiftCoverage
+      coverage={activeCoverage}
+      onAddMissing={activePayslip ? () => startGapFill(activePayslip, activeCoverage) : null}
+    />
+  ) : null;
+
+  // Same panel, but without its own border/padding — used in the desktop
+  // grid where it already sits inside its own Card.
+  const payslipCoverageBareEl = activeCoverage ? (
+    <PayslipShiftCoverage
+      coverage={activeCoverage}
+      onAddMissing={activePayslip ? () => startGapFill(activePayslip, activeCoverage) : null}
+      bare
+    />
+  ) : null;
+
+  // Compares this payslip's implied tax rate (tax/gross) against the
+  // configured rate for the work its covering shifts belong to, and offers
+  // a one-click fix when they differ. Keyed by the active payslip so its
+  // "applied" state doesn't leak from one payslip to the next. Passed INTO
+  // PayslipForm (not rendered as its sibling) so it lives inside the form's
+  // own h-full flex column — as a sibling it would overflow the card, since
+  // the form already claims 100% of the parent's height for itself.
+  const payslipTaxSuggestionEl = (
+    <PayslipTaxSuggestion
+      key={editingId || 'manual'}
+      gross={formValues.gross}
+      tax={formValues.tax}
+      coverage={activeCoverage}
+    />
   );
 
-  return (
-    <Card className={`p-4 overflow-hidden ${className}`}>
-      {Header}
+  // ----- Elementos reutilizados por el layout desktop (grid) y mobile (stack) -----
+  const payslipFormEl = (
+    <PayslipForm
+      values={formValues}
+      onChange={setFormValues}
+      onSubmit={handleFormSubmit}
+      onReset={clearInlineForm}
+      parseStatus={formValues.parseStatus}
+      source={formValues.source}
+      fileName={formValues.fileName}
+      lowConfidence={formValues.lowConfidence}
+      countryLabel={countryLabel}
+      countrySupported={countrySupported}
+      error={formError}
+      taxSuggestion={payslipTaxSuggestionEl}
+    />
+  );
 
-      {open && (
-        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-slate-700 space-y-4 min-w-0">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="application/pdf"
-            multiple
-            onChange={handleFileInput}
-            className="hidden"
-          />
+  const renderList = (manualOpen) => (
+    <PayslipList
+      payslips={payslips}
+      countryLabel={countryLabel}
+      formatMoney={formatMoney}
+      selectedId={selectedId}
+      onSelect={startEdit}
+      onEdit={startEdit}
+      onRemove={removePayslip}
+      onManualAdd={startManualAdd}
+      onManualCancel={cancelInlineForm}
+      isManualOpen={manualOpen}
+      onPickFiles={pickFiles}
+      onFilesDropped={handleFilesSelected}
+    />
+  );
 
-          {/* IDLE — drop zone + opción manual */}
-          {view === VIEW.IDLE && (
-            <div className="space-y-3">
-              <PayslipDropZone onClick={pickFiles} onFiles={handleFilesSelected} />
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {t('payslip.dropzone.manualHint')}
-                </p>
-                <Button
-                  onClick={startManualAdd}
-                  variant="secondary"
-                  size="sm"
-                  icon={Plus}
-                  iconPosition="left"
-                >
-                  {t('payslip.addManual')}
-                </Button>
-              </div>
-              {!countrySupported && (
-                <p className="text-xs text-orange-600 dark:text-orange-400">
-                  {t('payslip.unsupportedCountry')}
-                </p>
-              )}
-            </div>
-          )}
+  const generateButtonEl = completePayslips.length > 0 ? (
+    <PayslipGenerateButton
+      generationStatus={generationStatus}
+      generatedCount={generatedCount}
+      allPeriodsHaveShifts={allPeriodsHaveShifts}
+      generatablePeriods={generatablePeriods}
+      regularWorks={regularWorks}
+      onClick={startGenerator}
+    />
+  ) : null;
 
-          {/* PARSING */}
-          {view === VIEW.PARSING && (
-            <div className="flex items-center justify-center py-8 gap-3 text-gray-600 dark:text-gray-400">
-              <svg className="animate-spin" width={20} height={20} viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-              <span className="text-sm">{t('payslip.parsing')}</span>
-            </div>
-          )}
+  const conflictBannerEl = conflictMessage ? (
+    <div className="flex items-start gap-2 p-2 rounded text-xs bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300">
+      <span>{conflictMessage}</span>
+    </div>
+  ) : null;
 
-          {/* FORM — manual o edición */}
-          {/* LIST — lista + dashboard agregado.
-              Mobile: stack vertical. Desktop (lg+): grid 12 cols con la
-              lista a la izquierda (5/12) y el dashboard a la derecha (7/12).
-              El form de edición/creación manual se renderiza inline en el slot
-              del hero (no reemplaza toda la card como antes). */}
-          {view === VIEW.LIST && (
-            <div className="space-y-5 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-x-6 lg:gap-y-5">
-              {/* Mensajes informativos full-width */}
-              {parseSummary && (
-                <div className="lg:col-span-12 flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-                  <Upload size={14} style={{ color: colors.primary }} />
-                  {t('payslip.parseSummary', { ok: parseSummary.ok, total: parseSummary.total })}
-                </div>
-              )}
-              {conflictMessage && (
-                <div className="lg:col-span-12 flex items-start gap-2 p-2 rounded text-xs bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300">
-                  <span>{conflictMessage}</span>
-                </div>
-              )}
+  const accordionsBlockEl = showCalculations && completePayslips.length > 0 ? (
+    <div>
+      <PayslipAccordions
+        breakdown={breakdown}
+        fiscalSummary={fiscalSummary}
+        aggregate={aggregate}
+        formatMoney={formatMoney}
+        expanded={expanded}
+        onToggleExpanded={toggleExpanded}
+      />
 
-              {/* Columna izquierda (5/12 en desktop):
-                  Lista de recibos → Botón generar turnos → Hero vertical.
-                  Apilados con space-y-4 para cohesión visual. */}
-              <div className="lg:col-span-5 lg:self-start space-y-4">
-                <PayslipList
-                  payslips={payslips}
-                  countryLabel={countryLabel}
-                  formatMoney={formatMoney}
-                  onEdit={startEdit}
-                  onRemove={removePayslip}
-                  onManualAdd={startManualAdd}
-                  onManualCancel={cancelInlineForm}
-                  isManualOpen={creatingManual}
-                  onPickFiles={pickFiles}
-                  onFilesDropped={handleFilesSelected}
-                />
-
-                {/* Botón generar turnos justo debajo de los botones de carga */}
-                {completePayslips.length > 0 && (
-                  <PayslipGenerateButton
-                    generationStatus={generationStatus}
-                    generatedCount={generatedCount}
-                    allPeriodsHaveShifts={allPeriodsHaveShifts}
-                    generatablePeriods={generatablePeriods}
-                    regularWorks={regularWorks}
-                    onClick={startGenerator}
-                  />
-                )}
-
-                {/* Slot del hero — alterna entre tres contenidos según el estado:
-                      1. Form inline (editando o creando manual)
-                      2. Generador de turnos inline
-                      3. Hero (donut + métricas) por default cuando hay datos
-                    El resto de la card (lista, botón, acordeones) queda intacto. */}
-                {isInlineFormOpen ? (
-                  <PayslipForm
-                    values={formValues}
-                    onChange={setFormValues}
-                    onSubmit={handleFormSubmit}
-                    onReset={cancelInlineForm}
-                    parseStatus={formValues.parseStatus}
-                    source={formValues.source}
-                    fileName={formValues.fileName}
-                    countryLabel={countryLabel}
-                    countrySupported={countrySupported}
-                    error={formError}
-                  />
-                ) : showingGenerator && generatablePeriods.length > 0 ? (
-                  <PayslipShiftGenerator
-                    periods={generatablePeriods}
-                    works={regularWorks}
-                    showAustralia88={isAustralia}
-                    loading={generating}
-                    onCancel={cancelGenerator}
-                    onConfirm={handleGenerateShifts}
-                  />
-                ) : (
-                  completePayslips.length > 0 && (
-                    <PayslipHero
-                      aggregate={aggregate}
-                      latestPayslip={completePayslips[0]}
-                      formatMoney={formatMoney}
-                      mode={heroMode}
-                      onToggle={toggleHeroMode}
-                      canToggle={completePayslips.length > 1}
-                    />
-                  )
-                )}
-              </div>
-
-              {/* Columna derecha (7/12): acordeones + disclaimer + link.
-                  Movimos el disclaimer y el link adentro de esta columna,
-                  justo después del acordeón "Resumen del año fiscal", para
-                  asociarlos visualmente con la sección que disclama. */}
-              <div className="lg:col-span-7 lg:self-start space-y-3">
-                {completePayslips.length > 0 && (
-                  <>
-                    <PayslipAccordions
-                      breakdown={breakdown}
-                      fiscalSummary={fiscalSummary}
-                      aggregate={aggregate}
-                      formatMoney={formatMoney}
-                      expanded={expanded}
-                      onToggleExpanded={toggleExpanded}
-                    />
-
-                    {/* Disclaimer del país + link a herramienta oficial */}
-                    <div className="space-y-1.5 pt-1">
-                      <p className="text-[11px] text-gray-400 dark:text-gray-500 italic leading-relaxed">
-                        {t(`payslip.fy.disclaimer${country}`)}
-                      </p>
-                      <a
-                        href={{
-                          AU: 'https://www.ato.gov.au/individuals-and-families/your-tax-return/how-to-lodge-your-tax-return/lodge-your-tax-return-online-with-mytax',
-                          NZ: 'https://www.ird.govt.nz/myir',
-                          GB: 'https://www.gov.uk/personal-tax-account',
-                          IE: 'https://www.revenue.ie/en/online-services/index.aspx',
-                        }[country]}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-xs font-medium hover:underline transition-colors"
-                        style={{ color: colors.primary }}
-                      >
-                        {t(`payslip.fy.link${country}`)}
-                        <ExternalLink size={12} />
-                      </a>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
+      {country && (
+        <div className="space-y-1.5 px-1 mt-3">
+          <p className="text-[11px] text-gray-400 dark:text-gray-500 italic leading-relaxed">
+            {t(`payslip.fy.disclaimer${country}`)}
+          </p>
+          <a
+            href={{
+              AU: 'https://www.ato.gov.au/individuals-and-families/your-tax-return/how-to-lodge-your-tax-return/lodge-your-tax-return-online-with-mytax',
+              NZ: 'https://www.ird.govt.nz/myir',
+              GB: 'https://www.gov.uk/personal-tax-account',
+              IE: 'https://www.revenue.ie/en/online-services/index.aspx',
+            }[country]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs font-medium hover:underline transition-colors"
+            style={{ color: colors.primary }}
+          >
+            {t(`payslip.fy.link${country}`)}
+            <ExternalLink size={12} />
+          </a>
         </div>
       )}
-    </Card>
+    </div>
+  ) : null;
+
+  return (
+    <div className={`w-full space-y-5 ${className}`}>
+      <LogoLoaderModal
+        isOpen={view === VIEW.PARSING}
+        steps={[
+          { title: t('payslip.verifyingTitle'), message: t('payslip.verifyingText') },
+          { title: t('payslip.verifyingTitle2'), message: t('payslip.verifyingText2') },
+          { title: t('payslip.verifyingTitle3'), message: t('payslip.verifyingText3') },
+        ]}
+      />
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="application/pdf"
+        multiple
+        onChange={handleFileInput}
+        className="hidden"
+      />
+
+      {showUpload ? (
+        <div className="flex items-center justify-center min-h-[65vh]">
+          <PayslipUploadCard
+            onPickFiles={pickFiles}
+            onFilesDropped={handleFilesSelected}
+            onManualAdd={startManualAdd}
+          />
+        </div>
+      ) : isMobile ? (
+        /* ===== MOBILE: flujo en stack + edición en bottom-sheet =====
+           Orden: lista + generar → acordeones (si aplica). El formulario vive
+           en el bottom-sheet; el generador, en su propio modal. */
+        <>
+          {conflictBannerEl}
+
+          <Card className="p-4 flex flex-col">
+            <div className="flex flex-col">
+              {renderList(false)}
+            </div>
+            {generateButtonEl && (
+              <div className="mt-3 shrink-0">{generateButtonEl}</div>
+            )}
+          </Card>
+
+          {accordionsBlockEl}
+        </>
+      ) : (
+        /* ===== DESKTOP: grid de 2 columnas estables ===== */
+        <>
+          {conflictBannerEl}
+
+          {/* 2 columnas ESTABLES (no se reordenan al editar/agregar):
+                Col 1 → Loaded payslips · Col 2 → Detected values (form).
+              Clickear un recibo en la col 1 lo carga editable en la col 2.
+              El donut y el resumen viven en la página Cálculos. */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+            {/* Col 1: Loaded payslips. */}
+            <Card className="p-4 flex flex-col lg:order-1">
+              <div className="flex flex-col lg:flex-1 lg:min-h-0">
+                {renderList(creatingManual)}
+              </div>
+              {generateButtonEl && (
+                <div className="mt-3 shrink-0">{generateButtonEl}</div>
+              )}
+            </Card>
+
+            {/* Col 2: Detected values (form) + shift coverage — two separate
+                cards stacked so together they match Col 1's height. The form
+                grows to fill the remaining space; the coverage panel (when
+                present) keeps its own compact height. */}
+            <div className="flex flex-col gap-5 lg:order-2 lg:h-full lg:min-h-0">
+              <Card className="p-4 flex-1 lg:min-h-0">
+                {payslipFormEl}
+              </Card>
+              {payslipCoverageBareEl && (
+                <Card className="p-4 shrink-0">
+                  {payslipCoverageBareEl}
+                </Card>
+              )}
+            </div>
+          </div>
+
+          {/* Acordeones (desglose + año fiscal) — ancho completo, debajo del grid */}
+          {accordionsBlockEl}
+        </>
+      )}
+
+      {/* Bottom-sheet de edición (solo mobile): formulario del recibo. */}
+      <Modal
+        isOpen={isMobile && mobileEditorOpen}
+        onClose={closeMobileEditor}
+        title={creatingManual ? t('payslip.newTitle') : t('payslip.editTitle')}
+        size="lg"
+      >
+        <div className="space-y-5">
+          {payslipFormEl}
+          {payslipCoverageEl}
+        </div>
+      </Modal>
+
+      {/* Generador de turnos en modal — antes aparecía inline arriba del grid
+          desplazando todo el layout; el modal es el patrón estándar. */}
+      <Modal
+        isOpen={showingGenerator && generatablePeriods.length > 0}
+        onClose={cancelGenerator}
+        title={t('payslip.generateShifts')}
+        size="lg"
+      >
+        <PayslipShiftGenerator
+          periods={generatablePeriods}
+          works={regularWorks}
+          showAustralia88={isAustralia}
+          loading={generating}
+          canCreateWork={canCreateWork}
+          estimatedRateLabel={estimatedRate !== null ? formatMoney(estimatedRate) : null}
+          onCancel={cancelGenerator}
+          onConfirm={handleGenerateShifts}
+        />
+      </Modal>
+
+      {/* Completar días faltantes (cobertura parcial) — mismo generador, en
+          modo "solo huecos": genera turnos únicamente en los días marcados
+          como faltantes por PayslipShiftCoverage. */}
+      <Modal
+        isOpen={!!gapFillTarget}
+        onClose={cancelGapFill}
+        title={t('payslip.fillGapsTitle')}
+        size="lg"
+      >
+        {gapFillTarget && (
+          <PayslipShiftGenerator
+            periods={[{
+              periodStart: gapFillTarget.payslip.periodStart,
+              periodEnd: gapFillTarget.payslip.periodEnd,
+              hours: gapFillTarget.coverage.hoursDelta,
+              gross: gapFillTarget.payslip.gross,
+            }]}
+            restrictToDates={gapFillTarget.coverage.missingDates}
+            works={regularWorks}
+            showAustralia88={isAustralia}
+            loading={generating}
+            canCreateWork={canCreateWork}
+            estimatedRateLabel={
+              gapFillTarget.payslip.hours > 0
+                ? formatMoney(Math.round((gapFillTarget.payslip.gross / gapFillTarget.payslip.hours) * 100) / 100)
+                : null
+            }
+            onCancel={cancelGapFill}
+            onConfirm={handleGenerateShifts}
+          />
+        )}
+      </Modal>
+
+      <PayslipNotesFooter />
+    </div>
   );
 };
 

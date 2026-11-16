@@ -2,6 +2,7 @@
 // Reusable confirmation action modal
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import BaseModal from '../base/BaseModal';
 import { ArrowRight, Trash2, RefreshCw, AlertTriangle, Crown, LogOut, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -10,32 +11,41 @@ import Flex from '../../ui/Flex';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import Button from '../../ui/Button';
 
+// All keys already exist in en/es/fr translation.json under "modals".
 const VARIANTS = {
   'delete-photo': {
-    title: 'Delete Profile Photo',
-    confirmText: 'Confirm Deletion',
-    confirmLoadingText: 'Deleting...',
-    cancelText: 'Cancel',
+    titleKey: 'modals.deletePhotoTitle',
+    confirmKey: 'modals.confirmDeletion',
+    loadingKey: 'modals.deleting',
     icon: Trash2,
     isDanger: false,
   },
   'clear-data': {
-    title: 'Clear All Data',
-    confirmText: 'Clear Data',
-    confirmLoadingText: 'Clearing...',
-    cancelText: 'Cancel',
+    titleKey: 'modals.clearAllData',
+    confirmKey: 'modals.clearData',
+    loadingKey: 'modals.clearing',
     icon: RefreshCw,
     isDanger: false,
   },
   'delete-account': {
-    title: 'Delete Account',
-    confirmText: 'Delete Account',
-    confirmLoadingText: 'Deleting...',
-    cancelText: 'Cancel',
+    titleKey: 'modals.deleteAccount',
+    confirmKey: 'modals.deleteAccountConfirm',
+    loadingKey: 'modals.deletingAccount',
     icon: Trash2,
     isDanger: true,
   },
+  'admin-reauth': {
+    titleKey: 'modals.adminReauthTitle',
+    confirmKey: 'modals.adminReauthConfirm',
+    loadingKey: 'modals.adminReauthLoading',
+    icon: Lock,
+    isDanger: false,
+  },
 };
+
+// Variants that require the user to re-prove their identity (password or
+// Google popup) before onConfirm runs.
+const REAUTH_VARIANTS = ['delete-account', 'admin-reauth'];
 
 const ConfirmActionModal = ({
   isOpen,
@@ -46,6 +56,7 @@ const ConfirmActionModal = ({
   isPremium = false,
   reAuthError = null,
 }) => {
+  const { t } = useTranslation();
   const { profilePhotoURL, currentUser } = useAuth();
   const defaultPhoto = getDefaultProfilePhoto();
   const colors = useThemeColors();
@@ -78,7 +89,7 @@ const ConfirmActionModal = ({
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden border-2 border-gray-300 flex items-center justify-center">
               <img
                 src={profilePhotoURL}
-                alt="Current Profile"
+                alt={t('modals.currentPhoto')}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -87,7 +98,7 @@ const ConfirmActionModal = ({
               <Trash2 size={12} className="text-white" />
             </div>
           </div>
-          <span className="text-xs text-gray-500 font-medium">Current photo</span>
+          <span className="text-xs text-gray-500 font-medium">{t('modals.currentPhoto')}</span>
         </div>
 
         {/* Arrow — points down on mobile, right on sm+ */}
@@ -104,11 +115,11 @@ const ConfirmActionModal = ({
           >
             <img
               src={defaultPhoto}
-              alt="Default Logo"
+              alt={t('modals.defaultLogo')}
               className="w-full h-full object-contain p-3 sm:p-4 filter brightness-0 invert opacity-90"
             />
           </div>
-          <span className="text-xs text-gray-500 font-medium">Default logo</span>
+          <span className="text-xs text-gray-500 font-medium">{t('modals.defaultLogo')}</span>
         </div>
       </div>
 
@@ -116,7 +127,7 @@ const ConfirmActionModal = ({
       <div className="flex items-start gap-3 p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 mb-2">
         <AlertTriangle size={16} className="text-red-400 flex-shrink-0 mt-0.5" />
         <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-          Your profile photo will be permanently deleted and replaced by the default logo. This cannot be undone.
+          {t('modals.deletePhotoWarning')}
         </p>
       </div>
     </div>
@@ -134,11 +145,11 @@ const ConfirmActionModal = ({
         </div>
       </Flex>
 
-      {/* Main Message */}
-      <p className="text-center text-sm text-gray-700 mb-4 px-2">
-        This will clear all your <strong>works</strong>, <strong>shifts</strong>, and <strong>settings</strong>.
-        Your account credentials will remain intact.
-      </p>
+      {/* Main Message — translation contains <strong> emphasis */}
+      <p
+        className="text-center text-sm text-gray-700 mb-4 px-2"
+        dangerouslySetInnerHTML={{ __html: t('modals.clearDataDesc') }}
+      />
 
       {/* Session Warning */}
       <div
@@ -147,7 +158,7 @@ const ConfirmActionModal = ({
       >
         <LogOut size={20} style={{ color: colors.primary }} />
         <p className="text-xs sm:text-sm text-gray-600">
-          Your session will be closed after clearing. You can log in again with the same credentials.
+          {t('modals.sessionWarning')}
         </p>
       </div>
 
@@ -155,9 +166,10 @@ const ConfirmActionModal = ({
       {isPremium && (
         <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 border border-amber-200">
           <Crown size={20} className="text-amber-500 flex-shrink-0" />
-          <p className="text-xs sm:text-sm text-amber-700">
-            Your <strong>Premium subscription</strong> will be cancelled automatically.
-          </p>
+          <p
+            className="text-xs sm:text-sm text-amber-700"
+            dangerouslySetInnerHTML={{ __html: t('modals.premiumWarning') }}
+          />
         </div>
       )}
     </div>
@@ -172,33 +184,34 @@ const ConfirmActionModal = ({
         </div>
       </Flex>
 
-      {/* Main Warning */}
-      <p className="text-center text-sm text-gray-700 mb-4 px-2">
-        <strong className="text-red-600">This action is irreversible.</strong> All your data, including
-        works, shifts, and account information will be permanently deleted.
-      </p>
+      {/* Main Warning — translation contains <strong> emphasis */}
+      <p
+        className="text-center text-sm text-gray-700 mb-4 px-2"
+        dangerouslySetInnerHTML={{ __html: t('modals.deleteAccountDesc') }}
+      />
 
       {/* Re-authentication Section */}
       <div className="mb-4">
         {isGoogleUser ? (
           <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 border border-blue-200">
             <Lock size={20} className="text-blue-500 flex-shrink-0" />
-            <p className="text-xs sm:text-sm text-blue-700">
-              Click the button below to confirm with your <strong>Google account</strong>.
-            </p>
+            <p
+              className="text-xs sm:text-sm text-blue-700"
+              dangerouslySetInnerHTML={{ __html: t('modals.googleConfirm') }}
+            />
           </div>
         ) : (
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
               <Lock size={16} className="text-gray-500" />
-              Enter your password to confirm
+              {t('modals.enterPassword')}
             </label>
             <div className="relative">
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Your password"
+                placeholder={t('modals.passwordPlaceholder')}
                 className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none transition-all"
                 disabled={loading}
               />
@@ -225,7 +238,7 @@ const ConfirmActionModal = ({
       {/* Farewell Message */}
       <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border border-gray-200 mb-4">
         <p className="text-xs sm:text-sm text-gray-600 text-center w-full">
-          We hope to see you again! You can create a new account anytime.
+          {t('modals.farewell')}
         </p>
       </div>
 
@@ -233,9 +246,68 @@ const ConfirmActionModal = ({
       {isPremium && (
         <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-50 border border-amber-200">
           <Crown size={20} className="text-amber-500 flex-shrink-0" />
-          <p className="text-xs sm:text-sm text-amber-700">
-            Your <strong>Premium subscription</strong> will be cancelled automatically.
-          </p>
+          <p
+            className="text-xs sm:text-sm text-amber-700"
+            dangerouslySetInnerHTML={{ __html: t('modals.premiumWarning') }}
+          />
+        </div>
+      )}
+    </div>
+  );
+
+  const renderAdminReauthContent = () => (
+    <div className="py-2">
+      <Flex variant="center" className="mb-4">
+        <div className="w-16 h-16 rounded-full flex items-center justify-center bg-blue-100">
+          <Lock size={32} className="text-blue-500" />
+        </div>
+      </Flex>
+
+      <p className="text-center text-sm text-gray-700 mb-4 px-2">
+        {t('modals.adminReauthDesc')}
+      </p>
+
+      <div className="mb-4">
+        {isGoogleUser ? (
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50 border border-blue-200">
+            <Lock size={20} className="text-blue-500 flex-shrink-0" />
+            <p
+              className="text-xs sm:text-sm text-blue-700"
+              dangerouslySetInnerHTML={{ __html: t('modals.googleConfirm') }}
+            />
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+              <Lock size={16} className="text-gray-500" />
+              {t('modals.enterPassword')}
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t('modals.passwordPlaceholder')}
+                className="w-full px-4 py-2.5 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                disabled={loading}
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {reAuthError && (
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-red-50 border border-red-200 mb-2">
+          <AlertTriangle size={20} className="text-red-500 flex-shrink-0" />
+          <p className="text-xs sm:text-sm text-red-700">{reAuthError}</p>
         </div>
       )}
     </div>
@@ -249,6 +321,8 @@ const ConfirmActionModal = ({
         return renderClearDataContent();
       case 'delete-account':
         return renderDeleteAccountContent();
+      case 'admin-reauth':
+        return renderAdminReauthContent();
       default:
         return renderDeletePhotoContent();
     }
@@ -259,21 +333,21 @@ const ConfirmActionModal = ({
   // Handle form submit with re-auth data for delete-account
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (variant === 'delete-account') {
+    if (REAUTH_VARIANTS.includes(variant)) {
       onConfirm(e, { password, isGoogleUser });
     } else {
       onConfirm(e);
     }
   };
 
-  // For delete-account, disable button if email/password user hasn't entered password
-  const isDeleteButtonDisabled = variant === 'delete-account' && !isGoogleUser && !password.trim();
+  // For re-auth variants, disable button if email/password user hasn't entered password
+  const isDeleteButtonDisabled = REAUTH_VARIANTS.includes(variant) && !isGoogleUser && !password.trim();
 
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      title={config.title}
+      title={t(config.titleKey)}
       icon={config.icon}
       showActions={false}
       loading={loading}
@@ -294,18 +368,18 @@ const ConfirmActionModal = ({
               themeColor={colors.primary}
               className="w-full sm:w-auto"
             >
-              {config.cancelText}
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
               form={`confirm-${variant}-form`}
               loading={loading}
-              loadingText={config.confirmLoadingText}
+              loadingText={t(config.loadingKey)}
               disabled={loading || isDeleteButtonDisabled}
               bgColor={buttonColor}
               className="w-full sm:w-auto"
             >
-              {config.confirmText}
+              {t(config.confirmKey)}
             </Button>
           </div>
         </div>

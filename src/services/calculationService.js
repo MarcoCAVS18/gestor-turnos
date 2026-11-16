@@ -1,6 +1,7 @@
 // src/services/calculationService.js
 
 import { getShiftGrossEarnings } from '../utils/shiftUtils';
+import { getShiftFuelExpense, getShiftNetEarnings } from '../utils/deliveryUtils';
 import { determineShiftType } from '../utils/shiftDetailsUtils';
 import { createSafeDate } from '../utils/time';
 import { getMonthRange } from '../utils/time';
@@ -79,14 +80,23 @@ const splitShiftIntoSegments = (startDate, startMinutes, endMinutes) => {
  * @param {object} shift - The shift object.
  * @param {Array} allJobs - Array of all jobs (normal and delivery).
  * @param {object} shiftRanges - Configuration of time ranges.
- * @param {number} defaultDiscount - Default discount.
+ * @param {number} defaultDiscount - Default discount, used when the shift's work has no specific override in taxesPerWork.
+ * @param {object} taxesPerWork - Map of workId -> discount percentage override (Settings > "Impuestos por Trabajo").
  * @param {boolean} smokoEnabled - Whether break (smoko) is enabled.
  * @param {number} smokoMinutes - Break duration in minutes.
  * @param {object} holidayConfig - Holiday configuration {country, region, useAutoHolidays}.
  * @returns {object} - Object with payment details.
  */
-export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, smokoEnabled, smokoMinutes, holidayConfig = {}) => {
+export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, taxesPerWork, smokoEnabled, smokoMinutes, holidayConfig = {}) => {
   const work = allJobs.find(j => j.id === shift.workId);
+
+  // A work-specific override (Settings > "Impuestos por Trabajo") always wins
+  // over the global default — this is what makes two jobs with different tax
+  // rates price correctly instead of both silently using the same percentage.
+  const perWorkDiscount = taxesPerWork?.[shift.workId];
+  const appliedDiscount = (typeof perWorkDiscount === 'number' && !isNaN(perWorkDiscount))
+    ? perWorkDiscount
+    : defaultDiscount;
 
   if (!work) return {
     total: 0,
@@ -232,7 +242,7 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     }
   });
 
-  const totalWithDiscount = total * (1 - defaultDiscount / 100);
+  const totalWithDiscount = total * (1 - appliedDiscount / 100);
 
   return {
     total,
@@ -243,6 +253,7 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, s
     breakdown,
     hoursBreakdown,
     appliedRates,
+    appliedDiscount,
     isNightShift: doesCrossMidnight,
     isHoliday: hasAnyHoliday,
     smokoApplied: smokoEnabled && hadBreak && totalMinutes > finalSmokoMinutes,
@@ -308,7 +319,7 @@ export const calculateMonthlyStats = (year, month, shifts, deliveryShifts, calcu
       totalTips += shift.tips || 0;
       totalDeliveries += shift.orderCount || 0;
       totalKilometers += shift.kilometers || 0;
-      totalFuelCost += shift.fuelExpense || 0;
+      totalFuelCost += getShiftFuelExpense(shift);
       totalHours += calculateHours(shift.startTime, shift.endTime);
     } else {
       const payment = calculatePaymentFn(shift);
@@ -330,6 +341,90 @@ export const calculateMonthlyStats = (year, month, shifts, deliveryShifts, calcu
     averageEarningsPerShift: monthlyShifts.length > 0 ? totalEarnings / monthlyShifts.length : 0,
     averageEarningsPerHour: totalHours > 0 ? totalEarnings / totalHours : 0
   };
+};
+
+/**
+ * Derives the monthly hours goal from the user's weekly goal, scaled by the
+ * exact length of the month: weeklyHoursGoal × (daysInMonth / 7).
+ * July (31 days) asks for slightly more than February on purpose.
+ * @param {number} weeklyHoursGoal - Weekly hours goal from settings.
+ * @param {number} year - Year.
+ * @param {number} month - Month (0-11).
+ * @returns {number|null} - Monthly hours goal, or null when no goal is set.
+ */
+export const calculateMonthlyHoursGoal = (weeklyHoursGoal, year, month) => {
+  if (!weeklyHoursGoal || weeklyHoursGoal <= 0) return null;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  return (weeklyHoursGoal * daysInMonth) / 7;
+};
+
+/**
+ * Breaks a month into its Monday-based weeks (same convention as
+ * calculateWeeklyStats) and sums worked hours per week, comparing each one
+ * against the weekly goal. Weeks that only partially overlap the month count
+ * only in-month shifts and get a prorated goal (goal × daysInMonth / 7),
+ * consistent with calculateMonthlyHoursGoal.
+ * @param {number} year - Year.
+ * @param {number} month - Month (0-11).
+ * @param {Array} allShifts - Traditional + delivery shifts combined.
+ * @param {Function} calculatePaymentFn - Payment calculation for traditional shifts.
+ * @param {number|null} weeklyHoursGoal - Weekly hours goal, or null/0 if unset.
+ * @returns {Array} - [{ start, end, isPartial, totalHours, goal, goalMet }]
+ */
+export const calculateMonthWeeklyBreakdown = (year, month, allShifts, calculatePaymentFn, weeklyHoursGoal = null) => {
+  const toKey = (d) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+
+  const monthStart = new Date(year, month, 1);
+  const monthEnd = new Date(year, month + 1, 0);
+
+  // Monday on/before the 1st of the month
+  const firstMonday = new Date(monthStart);
+  const dow = firstMonday.getDay();
+  firstMonday.setDate(firstMonday.getDate() - (dow === 0 ? 6 : dow - 1));
+
+  const weeks = [];
+  for (let cursor = new Date(firstMonday); cursor <= monthEnd; cursor.setDate(cursor.getDate() + 7)) {
+    const weekStart = new Date(cursor);
+    const weekEnd = new Date(cursor);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+
+    const clampStart = weekStart < monthStart ? monthStart : weekStart;
+    const clampEnd = weekEnd > monthEnd ? monthEnd : weekEnd;
+    const startKey = toKey(clampStart);
+    const endKey = toKey(clampEnd);
+
+    let totalHours = 0;
+    (allShifts || []).forEach((shift) => {
+      const dateKey = shift.startDate || shift.date;
+      if (!dateKey || dateKey < startKey || dateKey > endKey) return;
+      if (shift.type === 'delivery') {
+        totalHours += calculateHours(shift.startTime, shift.endTime);
+      } else {
+        totalHours += calculatePaymentFn(shift).hours || 0;
+      }
+    });
+
+    const daysInMonthPortion = Math.round((clampEnd - clampStart) / 86400000) + 1;
+    const goal = weeklyHoursGoal && weeklyHoursGoal > 0
+      ? (weeklyHoursGoal * daysInMonthPortion) / 7
+      : null;
+
+    weeks.push({
+      start: startKey,
+      end: endKey,
+      isPartial: daysInMonthPortion < 7,
+      totalHours,
+      goal,
+      goalMet: goal !== null ? totalHours >= goal : null,
+    });
+  }
+
+  return weeks;
 };
 
 /**
@@ -420,12 +515,29 @@ export const calculateWeeklyStats = ({
   };
 
   weekShifts.forEach(shift => {
-    const work = validWorks.find(w => w.id === shift.workId);
-    if (!work) return;
+    const isDelivery = shift.type === 'delivery';
+    const foundWork = validWorks.find(w => w.id === shift.workId);
+    // Traditional shifts need their work to price the shift. Delivery shifts
+    // carry their own earnings, so an orphaned one (deleted work) still counts.
+    if (!foundWork && !isDelivery) return;
+    const work = foundWork || {
+      id: shift.workId || 'deleted-delivery',
+      name: shift.platform || 'Delivery',
+      color: '#10B981',
+      type: 'delivery',
+    };
 
-    const result = calculatePayment(shift);
-    const earnings = result.totalWithDiscount || 0;
-    const hours = result.hours || 0;
+    let earnings;
+    let hours;
+    if (isDelivery) {
+      // Delivery counts net of fuel (net = gross when there's no fuel expense).
+      earnings = getShiftNetEarnings(shift);
+      hours = calculateHours(shift.startTime, shift.endTime);
+    } else {
+      const result = calculatePayment(shift);
+      earnings = result.totalWithDiscount || 0;
+      hours = result.hours || 0;
+    }
 
     acc.totalEarned += earnings;
     acc.hoursWorked += hours;
@@ -487,61 +599,66 @@ export const calculateWeeklyStats = ({
   };
 }
 
-export const calculateDeliveryStats = ({ deliveryWork, deliveryShifts, period = 'month', mileageRate = null }) => {
+// Computes the [start, end] date range (YYYY-MM-DD) for a delivery stats preset.
+export const getDeliveryPeriodRange = (period = 'week') => {
+  const today = new Date();
+  const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const end = fmt(today);
+  let start;
+
+  switch (period) {
+    case 'today':
+      start = end;
+      break;
+    case 'week': {
+      const d = new Date(today);
+      const mondayOffset = (d.getDay() + 6) % 7; // week starts Monday
+      d.setDate(d.getDate() - mondayOffset);
+      start = fmt(d);
+      break;
+    }
+    case '90days': {
+      const d = new Date(today);
+      d.setDate(d.getDate() - 89);
+      start = fmt(d);
+      break;
+    }
+    case 'year':
+      start = `${today.getFullYear()}-01-01`;
+      break;
+    default:
+      start = '0000-01-01';
+  }
+
+  return { start, end };
+};
+
+/**
+ * Delivery statistics for a period. Pass an explicit { startDate, endDate }
+ * (YYYY-MM-DD) or a preset `period` ('today' | 'week' | '90days' | 'year').
+ * Range/filtering lives here; the KPI math lives in aggregateDeliveryShifts,
+ * so there is a single source of truth for delivery numbers.
+ */
+export const calculateDeliveryStats = ({ deliveryWork, deliveryShifts, period = 'week', startDate = null, endDate = null, mileageRate = null }) => {
   const validDeliveryWork = Array.isArray(deliveryWork) ? deliveryWork : [];
   const validDeliveryShifts = Array.isArray(deliveryShifts) ? deliveryShifts : [];
 
-  if (validDeliveryShifts.length === 0) {
-    return {
-      totalEarned: 0,
-      totalTips: 0,
-      totalOrders: 0,
-      totalKilometers: 0,
-      totalExpenses: 0,
-      netEarnings: 0,
-      mileageDeduction: 0,
-      averagePerOrder: 0,
-      averagePerKilometer: 0,
-      averagePerHour: 0,
-      averageTipsPerOrder: 0,
-      bestDay: null,
-      bestShift: null,
-      shiftsByPlatform: {},
-      statsByVehicle: {},
-      statsByDay: {},
-      trend: 0,
-      daysWorked: 0,
-      shiftsCompleted: 0,
-      totalHours: 0,
-      fuelEfficiency: 0,
-      costPerKilometer: 0
-    };
-  }
-
-  const today = new Date();
-  let startDate;
-
-  switch (period) {
-    case 'week':
-      startDate = new Date(today);
-      startDate.setDate(today.getDate() - 7);
-      break;
-    case 'month':
-      startDate = new Date(today);
-      startDate.setMonth(today.getMonth() - 1);
-      break;
-    case 'year':
-      startDate = new Date(today);
-      startDate.setFullYear(today.getFullYear() - 1);
-      break;
-    default:
-      startDate = new Date(0);
-  }
+  const range = (startDate && endDate) ? { start: startDate, end: endDate } : getDeliveryPeriodRange(period);
 
   const periodShifts = validDeliveryShifts.filter(shift => {
-    const shiftDate = new Date(shift.date);
-    return shiftDate >= startDate;
+    const d = shift.startDate || shift.date;
+    return d && d >= range.start && d <= range.end;
   });
+
+  return aggregateDeliveryShifts(periodShifts, validDeliveryWork, mileageRate);
+};
+
+/**
+ * Aggregates an already-filtered list of delivery shifts into KPIs. Single
+ * source of truth for delivery math (totals, averages, by platform / vehicle /
+ * day, best day/shift, mileage deduction). Returns a zeroed shape for [].
+ */
+export const aggregateDeliveryShifts = (periodShifts = [], validDeliveryWork = [], mileageRate = null) => {
 
   let totalEarned = 0;
   let totalTips = 0;
@@ -555,17 +672,20 @@ export const calculateDeliveryStats = ({ deliveryWork, deliveryShifts, period = 
   const statsByVehicle = {};
 
   periodShifts.forEach(shift => {
-    const work = validDeliveryWork.find(w => w.id === shift.workId);
-    if (!work) {
-      logger.warn('Delivery work not found for shift:', shift.id);
-      return;
-    }
+    // If the linked delivery work was deleted, fall back to the shift's own
+    // platform/vehicle fields so the shift still counts instead of vanishing.
+    const work = validDeliveryWork.find(w => w.id === shift.workId) || {
+      id: shift.workId || null,
+      name: shift.platform || 'Unknown',
+      platform: shift.platform || '',
+      vehicle: shift.vehicle || '',
+    };
 
     const shiftEarnings = getShiftGrossEarnings(shift);
     const tips = shift.tips || 0;
     const orders = shift.orderCount || 0;
     const kilometers = shift.kilometers || 0;
-    const expenses = shift.fuelExpense || 0;
+    const expenses = getShiftFuelExpense(shift);
 
     totalEarned += shiftEarnings;
     totalTips += tips;

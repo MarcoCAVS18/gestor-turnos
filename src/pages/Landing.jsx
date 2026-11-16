@@ -80,6 +80,14 @@ const Landing = ({ lang }) => {
   const { currentUser, loading } = useAuth();
   const navigate = useNavigate();
   const [videoReady, setVideoReady] = useState(false);
+  // Inject the <source> only for real visitors, skipping the prerender headless
+  // browser (UA 'OraryPrerender', same marker AuthContext uses). This keeps the
+  // video URL out of the prerendered HTML so the decorative background stays out
+  // of Google's video index, while real users still get the video.
+  const [videoMounted, setVideoMounted] = useState(false);
+  useEffect(() => {
+    if (navigator.userAgent !== 'OraryPrerender') setVideoMounted(true);
+  }, []);
 
   // Just the three real differentiators — earnings calculator, live timer and
   // the 88-day visa tracker (the moat). The full feature list stays in the
@@ -164,7 +172,7 @@ const Landing = ({ lang }) => {
           onCanPlay={(e) => { setVideoReady(true); e.currentTarget.play().catch(() => {}); }}
           className={`absolute object-cover w-full h-full transition-opacity duration-700 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
         >
-          <source src="/assets/videos/sample_0.mp4" type="video/mp4" />
+          {videoMounted && <source src="/assets/videos/sample_0.mp4" type="video/mp4" />}
         </video>
       </div>
 
@@ -309,7 +317,7 @@ const Landing = ({ lang }) => {
           <p className="text-white/60 text-xs">
             <Link to="/australia-88" className="hover:text-white/90 transition-colors">88-day visa tracker</Link>
             <span className="mx-2 opacity-50">·</span>
-            <Link to="/blog" className="hover:text-white/90 transition-colors">Blog</Link>
+            <Link to="/blog" className="hover:text-white/90 transition-colors">Blogary</Link>
             <span className="mx-2 opacity-50">·</span>
             <Link to="/faq" className="hover:text-white/90 transition-colors">FAQ</Link>
           </p>

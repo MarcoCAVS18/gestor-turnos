@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Truck, Calendar, Clock, DollarSign, Package, Navigation, Fuel, Heart } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
+import { vehicleNeedsFuel } from '../../../../utils/deliveryUtils';
 import BaseForm, { FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses } from '../../base/BaseForm';
 
 const DeliveryShiftForm = ({
@@ -56,14 +57,6 @@ const DeliveryShiftForm = ({
       onDirtyChange(true);
     }
   }, [formData, initialFormData, onDirtyChange, shift]);
-
-  const vehicleNeedsFuel = useCallback((vehicle) => {
-    if (!vehicle) return false;
-    const vehicleLower = vehicle.toLowerCase();
-    return vehicleLower.includes('motorcycle') || 
-           vehicleLower.includes('car') || 
-           vehicleLower.includes('auto');
-  }, []);
 
   const selectedWork = works.find(t => t.id === formData.workId);
   const showFuel = selectedWork ? vehicleNeedsFuel(selectedWork.vehicle) : true;

@@ -71,18 +71,24 @@ Originally built as a personal tool for managing work in Australia, it evolved i
 | **Multi-currency** | Live exchange rates for international workers via Frankfurter API |
 | **Holiday Detection** | Automatic public holiday identification with country-aware rate application |
 | **Break Tracking (Smoko)** | Configurable unpaid break deduction per shift |
-| **Shared Work** | Share job stats via unique shareable links — viewable without an account |
+| **Shared Work** | Share job stats via unique shareable links (48 h validity, max 10 uses) — viewable without an account |
+| **Payslip Scanner** | Upload payslip PDFs/images — figures (gross, tax, net, period) extracted automatically and stored per user |
+| **Tax Refund Estimate** | Annualized income-tax and refund estimation from payslips using official brackets (AU · NZ · UK · IE) |
+| **Mileage Deduction** | Estimated tax deduction from delivery kilometres using official per-km rates (AU · NZ · UK · CA) |
+| **Blogary (Blog)** | Built-in trilingual blog with guides on shifts, pay, taxes, and the Working Holiday Visa |
+| **FAQ & 88-Days Pages** | Public SEO pages: FAQ with JSON-LD schema and a Working Holiday Visa 88-day guide |
 | **Profile Customization** | Theme color, emoji avatar, weekly hours goal, discount settings |
 | **i18n** | Full UI in English, Spanish, and French |
 | **PWA** | Installable on any device from the browser |
 
-### Premium ($1.99/month via Stripe)
+### Premium ($2.99 AUD/month via Stripe, 15-day free trial)
 
 | Feature | Description |
 |---|---|
 | **Live Mode** | Real-time session timer showing earnings tick up as you work (unlimited sessions) |
 | **Advanced Statistics** | Monthly breakdowns, trend comparisons, per-work analytics |
 | **Data Export** | Professional Excel (.xlsx) and PDF reports with charts and branding |
+| **Dark Theme** | Full dark mode across the app |
 | **Priority Support** | Direct support channel |
 
 ### Platform & Security
@@ -115,7 +121,6 @@ Originally built as a personal tool for managing work in Australia, it evolved i
 | Charts | Recharts v3 |
 | Internationalization | i18next + react-i18next (EN / ES / FR) |
 | SEO | react-helmet-async |
-| Testing | Testing Library (React + Jest DOM) |
 
 ### Backend & Cloud
 
@@ -129,6 +134,8 @@ Originally built as a personal tool for managing work in Australia, it evolved i
 | Payments | Stripe (Checkout + Webhooks + Customer Portal) |
 | Public Holidays | date-holidays (country-aware) |
 | Exchange Rates | Frankfurter API (live) |
+| Payslip PDF Parsing | pdfjs-dist + Cloud Function `parsePDF` |
+| Payslip OCR (images/scans) | tesseract.js |
 
 ### Export
 
@@ -238,21 +245,21 @@ gestor-turnos/
 │   │   ├── charts/        # Recharts wrappers (earnings, hours, breakdowns)
 │   │   ├── dashboard/     # Stat cards, quick actions, suggested action card
 │   │   ├── delivery/      # Delivery shift cards and forms
+│   │   ├── blog/          # Interactive blog widgets (AU region explorer, NZ finder)
 │   │   ├── demos/         # Feature demo/preview components
-│   │   ├── filters/       # Date + work + shift-type filter bar
+│   │   ├── filters/       # ShiftFilters — work + weekday + shift-type filter bar
 │   │   ├── forms/         # Work form, shift form, delivery form, bulk shift form
 │   │   ├── icons/         # Custom SVG icon components
 │   │   ├── layout/        # Header, Navigation, PageHeader (with dynamic title)
 │   │   ├── modals/        # All modals: live mode, premium, confirm, bulk, shift, work
 │   │   ├── native/        # Capacitor native bridges (biometric, notifications)
-│   │   ├── premium/       # Locked feature cards, premium gates
-│   │   ├── sections/      # Reusable page section wrappers
+│   │   ├── premium/       # Premium gates and subscription cards
 │   │   ├── settings/      # Settings panels (theme, rates, breaks, holidays)
 │   │   ├── shared/        # Shared work view components (public, no auth)
 │   │   ├── shifts/        # Shift list, shift card, swipe-to-delete
-│   │   ├── stats/         # Statistics widgets and Australia88 week card
+│   │   ├── stats/         # Statistics widgets, PayslipCard (scanner + tax estimates)
 │   │   ├── ui/            # Base UI library: Button, Input, Badge, Modal, Skeleton…
-│   │   └── work/          # Work card with share + delete actions
+│   │   └── work/          # WorkAvatar + share message helpers
 │   ├── contexts/
 │   │   ├── AppContext.jsx          # Root aggregator
 │   │   ├── AuthContext.jsx         # Firebase Auth
@@ -273,21 +280,23 @@ gestor-turnos/
 │   │   ├── useFormValidation.js    # Reusable field-level validation
 │   │   ├── useIsMobile.js          # Responsive breakpoint detection
 │   │   ├── useLiveMode.js          # Live Mode session access
-│   │   ├── useLocalStorage.js      # Typed localStorage wrapper
 │   │   ├── useModalManager.js      # Work + shift modal open/close state
 │   │   ├── useShare.js             # Native share sheet + link generation
 │   │   ├── useSharedWork.js        # Accept shared work via URL token
-│   │   ├── useSwipeActions.js      # Touch swipe detection for mobile lists
 │   │   ├── useThemeColors.js       # Dynamic theme color derivation
 │   │   ├── useTurnManager.js       # Shift modal state management
-│   │   ├── useUtils.js             # Currency + hours formatters (i18n-aware)
 │   │   └── useWorks.js             # Works list with share + delete integration
 │   ├── pages/
-│   │   ├── auth/                   # Login, Register
+│   │   ├── auth/                   # Login, Register, ForgotPassword, ResetPassword
 │   │   ├── legal/                  # PrivacyPolicy, TermsOfService, DeleteAccount, ClearEverything
 │   │   ├── About.jsx
+│   │   ├── Admin.jsx               # Admin panel (gated by `admin` custom claim)
+│   │   ├── Australia88.jsx         # Public 88-day Working Holiday Visa guide (SEO)
+│   │   ├── Blog.jsx                # Blogary index (EN /blog, ES /es/blog, FR /fr/blog)
+│   │   ├── BlogPost.jsx            # Blog article renderer (content in src/data/blogPosts.js)
 │   │   ├── CalendarView.jsx
 │   │   ├── Dashboard.jsx
+│   │   ├── FAQ.jsx                 # Public FAQ with JSON-LD FAQPage schema (SEO)
 │   │   ├── Integrations.jsx        # PWA / native app install guide
 │   │   ├── Landing.jsx             # Public landing page (SEO, background video)
 │   │   ├── NotFound.jsx
@@ -296,7 +305,11 @@ gestor-turnos/
 │   │   ├── Settings.jsx
 │   │   ├── SharedWork.jsx          # Public work view via share token
 │   │   ├── Shifts.jsx
-│   │   ├── Statistics.jsx
+│   │   ├── StatisticsLayout.jsx    # /statistics shell with sub-routes
+│   │   ├── Statistics.jsx          # /statistics (general)
+│   │   ├── StatisticsPayslips.jsx  # /statistics/payslips — payslip scanner + tax estimates
+│   │   ├── StatisticsDelivery.jsx  # /statistics/delivery — delivery analytics + mileage
+│   │   ├── Support.jsx
 │   │   └── Works.jsx
 │   ├── services/
 │   │   ├── export/                 # Professional export system
@@ -317,9 +330,11 @@ gestor-turnos/
 │   │   ├── holidayService.js       # Public holiday detection (date-holidays)
 │   │   ├── liveSessionService.js   # Live Mode sessions (Firestore real-time)
 │   │   ├── native/                 # Capacitor plugin wrappers
+│   │   ├── payslipParser.js        # Client-side payslip text extraction (pdfjs + tesseract OCR)
+│   │   ├── payslipService.js       # parsePDF Cloud Function client + tax bracket / refund engine
 │   │   ├── premiumService.js       # Stripe subscription status checks
 │   │   ├── profilePhotoService.js  # Profile photo upload (Firebase Storage)
-│   │   ├── shareService.js         # Shareable link generation + acceptance
+│   │   ├── shareService.js         # Shareable link generation + acceptance (48 h, 10 uses)
 │   │   └── stripeService.js        # Stripe Checkout / Customer Portal
 │   ├── config/            # App-wide constants and configuration
 │   ├── constants/         # Shared constant values (delivery platforms, etc.)
@@ -330,11 +345,10 @@ gestor-turnos/
 │   ├── styles/            # Global CSS overrides
 │   ├── utils/
 │   │   ├── analytics.js           # Event tracking helpers
-│   │   ├── arrayUtils.js          # Array manipulation utilities
 │   │   ├── calendarUtils.js       # Date grid generation
 │   │   ├── colorUtils.js          # Hex color manipulation + theme derivation
 │   │   ├── currency.js            # Currency formatting (Intl.NumberFormat)
-│   │   ├── helpers.js             # General-purpose helpers
+│   │   ├── deliveryUtils.js       # Delivery shift helpers
 │   │   ├── logger.js              # Environment-aware console logger
 │   │   ├── pluralization.js       # i18n-aware plural forms
 │   │   ├── profanityFilter.js     # User content filtering (bad-words)
@@ -353,15 +367,8 @@ gestor-turnos/
 │   └── email-templates/   # HTML email templates
 ├── android/               # Android Studio project (Capacitor-generated)
 ├── ios/                   # Xcode project (Capacitor-generated)
-├── docs/                  # Internal planning documents
-│   ├── AUSTRALIA_88_PLAN.md
-│   ├── CAPACITOR_MIGRATION_PLAN.md
-│   ├── FIRESTORE_STRUCTURE.md
-│   ├── FIRESTORE_INDEXES.md
-│   ├── OPTIMIZACIONES.md
-│   ├── ORARY_MIGRATION_PLAN.md
-│   ├── PREMIUM_ROADMAP.md
-│   └── SECURITY_AUDIT.md
+├── docs/                  # Internal planning documents (gitignored, currently empty)
+├── ORARY_AUDIT.md         # Internal: consolidated product status + roadmap (gitignored)
 ├── scripts/
 │   └── prerender.js       # Puppeteer-based SEO pre-renderer
 ├── capacitor.config.ts    # Capacitor: appId, plugins, splash, status bar
@@ -418,13 +425,16 @@ REACT_APP_FIREBASE_PROJECT_ID=your_project_id
 REACT_APP_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 REACT_APP_FIREBASE_APP_ID=your_app_id
-REACT_APP_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
 
 # ─── Stripe ──────────────────────────────────────────────────
 REACT_APP_STRIPE_PUBLISHABLE_KEY=pk_test_...
 
-# ─── Google Sign-In ──────────────────────────────────────────
-REACT_APP_GOOGLE_CLIENT_ID=your_client_id.apps.googleusercontent.com
+# ─── Google Sign-In (native apps) ────────────────────────────
+REACT_APP_GOOGLE_WEB_CLIENT_ID=your_client_id.apps.googleusercontent.com
+
+# ─── App ─────────────────────────────────────────────────────
+REACT_APP_APP_URL=https://orary.app
+REACT_APP_USE_EMULATOR=false
 ```
 
 Create `functions/.env` for Cloud Functions secrets:
@@ -487,6 +497,8 @@ Update `src/services/firebase.js` to connect to emulators when `NODE_ENV === 'de
 ## Docker
 
 Run Orary locally without installing Node.js globally, or build a production image to self-host.
+
+> **Note:** the repository does not ship Docker files. The snippets below are reference configurations — copy them into your own `Dockerfile.dev`, `Dockerfile`, `nginx.conf`, and `docker-compose.yml` as needed.
 
 ### Development container
 
@@ -810,6 +822,23 @@ await exportReport('excel', stats, shifts, works, calculatePayment, {
 }
 ```
 
+### `payslips/{payslipId}`
+
+```javascript
+{
+  userId: string,
+  workId: string | null,        // Linked work (optional)
+  employer: string | null,      // Extracted employer name
+  periodStart: string,          // YYYY-MM-DD
+  periodEnd: string,            // YYYY-MM-DD
+  gross: number,                // Gross pay for the period
+  tax: number,                  // Tax withheld
+  net: number,                  // Net / take-home pay
+  parseStatus: string,          // 'ok' | 'partial' | 'manual'
+  createdAt: Timestamp
+}
+```
+
 ### `shifts/{shiftId}`
 
 ```javascript
@@ -862,18 +891,15 @@ await exportReport('excel', stats, shifts, works, calculatePayment, {
 | `useClearProfile` | Orchestrates the "wipe all my data" user flow with loading/error state |
 | `useDashboardStats` | Derives current week and month earnings + hours summary for the Dashboard |
 | `useDeleteManager` | Manages the confirmation modal flow before any delete operation |
-| `useShiftFilters` | Filter state for shifts list — by work, weekday, and shift type |
+| `useFilterTurnos` | Filter state for shifts list — by work, weekday, and shift type |
 | `useFormValidation` | Generic field-level validation engine with rule arrays |
 | `useIsMobile` | Detects mobile viewport via configurable breakpoint (default 768px) |
 | `useLiveMode` | Access Live Mode session state — start, stop, elapsed, earnings counter |
-| `useLocalStorage` | Typed wrapper around `localStorage` with JSON serialization and error handling |
 | `useModalManager` | Work and shift modal open/close state with selected item tracking |
 | `useShare` | Triggers native OS share sheet or clipboard fallback for work links |
 | `useSharedWork` | Reads and accepts a shared work via URL token; handles auth state |
-| `useSwipeActions` | Touch event handler for swipe-to-reveal actions on mobile lists |
 | `useThemeColors` | Derives full color palette (primary, dark, light, text) from the user's chosen hex |
 | `useTurnManager` | Shift modal state: new / edit mode, selected shift, initial date |
-| `useUtils` | i18n-aware `formatCurrency` and `formatHours` helpers |
 | `useWorks` | Aggregates works list with share, delete, and modal management |
 
 ---
@@ -885,7 +911,7 @@ npm start              # Development server → http://localhost:3000
 npm run build          # Production build → /build
 npm run build:prod     # Production build + Puppeteer SEO pre-render
 npm run prerender      # Run pre-renderer only (requires existing /build)
-npm test               # Run test suite (Testing Library + Jest)
+npm test               # Jest runner via react-scripts (no test suite committed yet)
 npm run eject          # Eject from CRA (irreversible — avoid unless necessary)
 ```
 

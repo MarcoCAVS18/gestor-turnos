@@ -1,6 +1,7 @@
 // src/pages/Support.jsx
 
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, CheckCircle, Crown, MessageSquare, AlertCircle } from 'lucide-react';
@@ -22,6 +23,9 @@ const Support = () => {
   const colors = useThemeColors();
   const { isPremium } = usePremium();
   const { currentUser } = useAuth();
+  const location = useLocation();
+  // Desde el hub móvil "Más" el back vuelve ahí; desde cualquier otro lado, a Ajustes
+  const cameFromMore = location.state?.from === '/more';
 
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -64,11 +68,13 @@ const Support = () => {
   return (
     <div className="px-4 py-6 space-y-6">
       <Helmet>
-        <title>Support - Orary</title>
+        <title>{`${t('support.title')} - Orary`}</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
-      <BackLink to="/settings">{t('common.backToSettings')}</BackLink>
+      <BackLink to={cameFromMore ? '/more' : '/settings'}>
+        {cameFromMore ? t('common.back') : t('common.backToSettings')}
+      </BackLink>
 
       {/* Header — logo reutilizado igual que HeroSection */}
       <motion.div

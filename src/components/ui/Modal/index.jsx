@@ -59,7 +59,7 @@ const Modal = ({
   };
 
   const getModalClasses = () => {
-    const baseClasses = 'relative bg-white shadow-xl';
+    const baseClasses = 'relative bg-white dark:bg-slate-800 shadow-xl';
     
     if (isMobile) {
       return mobileFullScreen
@@ -83,22 +83,22 @@ const Modal = ({
         {/* Header */}
         {(title || showCloseButton) && (
           <Flex variant="between" className={`
-            p-4 border-b border-gray-200
-            ${isMobile ? 'sticky top-0 bg-white z-10' : ''}
+            p-4 border-b border-gray-200 dark:border-slate-700
+            ${isMobile ? 'sticky top-0 bg-white dark:bg-slate-800 z-10' : ''}
             ${isMobile && mobileFullScreen ? 'pt-6' : ''}
           `}>
             <div className="flex items-center flex-1">
               {title && (
-                <h2 className="text-lg md:text-xl font-semibold text-gray-900 truncate">
+                <h2 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white truncate">
                   {title}
                 </h2>
               )}
             </div>
-            
+
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="ml-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+                className="ml-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors flex-shrink-0"
               >
                 <X size={isMobile ? 24 : 20} />
               </button>
@@ -118,8 +118,8 @@ const Modal = ({
         {/* Footer */}
         {footer && (
           <div className={`
-            flex justify-end gap-3 p-4 md:p-6 border-t border-gray-200
-            ${isMobile ? 'sticky bottom-0 bg-white' : ''}
+            flex justify-end gap-3 p-4 md:p-6 border-t border-gray-200 dark:border-slate-700
+            ${isMobile ? 'sticky bottom-0 bg-white dark:bg-slate-800' : ''}
             ${isMobile && mobileFullScreen ? 'pb-6' : ''}
           `}>
             {footer}
@@ -128,7 +128,7 @@ const Modal = ({
         
         {isMobile && !mobileFullScreen && (
           <div className="absolute top-2 left-1/2 transform -translate-x-1/2">
-            <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
+            <div className="w-10 h-1 bg-gray-300 dark:bg-slate-600 rounded-full"></div>
           </div>
         )}
       </div>

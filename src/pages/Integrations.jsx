@@ -1,6 +1,7 @@
 // src/pages/Integrations.jsx
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
   Puzzle,
@@ -53,6 +54,9 @@ const FUNCTIONS_URL = 'https://us-central1-gestionturnos-7ec99.cloudfunctions.ne
 
 const Integrations = () => {
   const { t } = useTranslation();
+  const location = useLocation();
+  // Desde el hub móvil "Más" el back vuelve ahí; desde cualquier otro lado, a Ajustes
+  const cameFromMore = location.state?.from === '/more';
   const { thematicColors } = useConfigContext();
   const { currentUser } = useAuth();
   const { shifts, works } = useDataContext();
@@ -372,11 +376,13 @@ const Integrations = () => {
   return (
     <div className="px-4 py-6 space-y-6">
       <Helmet>
-        <title>Integrations - Orary</title>
+        <title>{`${t('nav.integrations')} - Orary`}</title>
         <meta name="description" content="Connect Orary with notifications, calendar feeds, biometrics, and other integrations." />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
-      <BackLink to="/settings">{t('integrations.backToSettings')}</BackLink>
+      <BackLink to={cameFromMore ? '/more' : '/settings'}>
+        {cameFromMore ? t('common.back') : t('integrations.backToSettings')}
+      </BackLink>
 
       <PageHeader
         title={t('nav.integrations')}
