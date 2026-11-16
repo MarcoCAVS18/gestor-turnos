@@ -26,7 +26,11 @@ async function loadPdf(file) {
   const buf = await file.arrayBuffer();
   // verbosity 0 = errors only — silences noisy font warnings like
   // "Required 'glyf' table is not found" (pdf.js recovers on its own).
-  return pdfjsLib.getDocument({ data: buf, verbosity: 0 }).promise;
+  // isEvalSupported: false — users upload arbitrary PDFs. pdf.js <= 4.1 compiles
+  // font glyph programs with `new Function`, which lets a crafted PDF run
+  // JavaScript in the page (GHSA-wgrm-67xf-hhpq). Disabling eval closes that
+  // path at a small rendering-speed cost; keep it until pdfjs-dist is >= 4.2.67.
+  return pdfjsLib.getDocument({ data: buf, verbosity: 0, isEvalSupported: false }).promise;
 }
 
 // Lazy Tesseract loader — heavy (~MBs of wasm + lang data fetched once and
