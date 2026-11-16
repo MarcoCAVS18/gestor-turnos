@@ -7,7 +7,7 @@ import Switch from '../../../ui/Switch';
 import { hapticMedium, hapticError } from '../../../../services/native/haptics';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useApp } from '../../../../contexts/AppContext';
-import { createSafeDate, calculateShiftHours } from '../../../../utils/time';
+import { calculateShiftHours, toLocalDateKey, addDaysToDateKey } from '../../../../utils/time';
 import BaseForm, { FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses } from '../../base/BaseForm';
 import Flex from '../../../ui/Flex';
 import BulkShiftOptions from '../BulkShiftOptions';
@@ -113,11 +113,7 @@ const ShiftForm = ({
     }
   }, [formData.startTime, formData.endTime, formData.startDate, formData.crossesMidnight]);
 
-  const calculateEndDate = (startDate) => {
-    const date = createSafeDate(startDate);
-    date.setDate(date.getDate() + 1);
-    return date.toISOString().split('T')[0];
-  };
+  const calculateEndDate = (startDate) => addDaysToDateKey(startDate, 1);
 
   const validateForm = () => {
     const newErrors = {};
@@ -188,8 +184,8 @@ const ShiftForm = ({
       };
     } else {
       const dateStr = initialDate 
-        ? (initialDate instanceof Date ? initialDate.toISOString().split('T')[0] : initialDate)
-        : new Date().toISOString().split('T')[0];
+        ? (initialDate instanceof Date ? toLocalDateKey(initialDate) : initialDate)
+        : toLocalDateKey();
 
       initialData = {
         workId: workId || '',

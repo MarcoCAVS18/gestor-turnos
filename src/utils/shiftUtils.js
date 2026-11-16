@@ -1,5 +1,49 @@
 // src/utils/shiftUtils.js
 
+import { addDaysToDateKey } from './time';
+
+/**
+ * Whether a shift crosses midnight: flagged so, or ending at an earlier hour
+ * than it starts (e.g. 22:00 → 02:00).
+ * @param {object} shift
+ * @returns {boolean}
+ */
+export const shiftCrossesMidnight = (shift) =>
+  !!shift.crossesMidnight ||
+  !!(shift.startTime && shift.endTime && shift.startTime.split(':')[0] > shift.endTime.split(':')[0]);
+
+/**
+ * End date to store for a new shift: an explicit one if given, the day after
+ * the start for overnight shifts, otherwise the start date itself.
+ * @param {object} shift
+ * @param {boolean} crossesMidnight
+ * @returns {string} "YYYY-MM-DD"
+ */
+export const resolveShiftEndDate = (shift, crossesMidnight) => {
+  const start = shift.startDate || shift.date;
+  if (shift.endDate) return shift.endDate;
+  return crossesMidnight && start ? addDaysToDateKey(start, 1) : start;
+};
+
+/**
+ * Repairs a shift as it is read from Firestore. Until 2026-11 the overnight end
+ * date was derived with toISOString() (UTC), so for users ahead of UTC
+ * (Australia, NZ, Europe) overnight shifts were stored with endDate === startDate.
+ * Anything reading endDate (calendar, hourly stats, the ICS feed) then saw a
+ * shift ending before it started. Stored documents are left untouched; the
+ * corrected value is applied in memory and written back the next time the
+ * shift is saved.
+ * @param {object} shift
+ * @returns {object} the same shift, or a copy with endDate fixed
+ */
+export const normalizeShiftDates = (shift) => {
+  const start = shift.startDate || shift.date;
+  if (start && shiftCrossesMidnight(shift) && (!shift.endDate || shift.endDate <= start)) {
+    return { ...shift, endDate: addDaysToDateKey(start, 1) };
+  }
+  return shift;
+};
+
 /**
  * Calculates gross earnings for a shift, handling different data structures.
  * For delivery shifts, it ensures tips are included.

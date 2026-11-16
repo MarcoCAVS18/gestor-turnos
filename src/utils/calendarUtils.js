@@ -1,6 +1,6 @@
 // src/utils/calendarUtils.js - FULLY UPDATED VERSION
 
-import { createSafeDate } from './time';
+import { createSafeDate, toLocalDateKey } from './time';
 
 /**
  * Creates a local date avoiding timezone issues
@@ -10,12 +10,7 @@ export const createLocalDate = (year, month, day) => new Date(year, month, day);
 /**
  * Converts a local date to ISO string (YYYY-MM-DD)
  */
-export const localDateToISO = (date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+export const localDateToISO = (date) => toLocalDateKey(date);
 
 /**
  * Checks if a date is today

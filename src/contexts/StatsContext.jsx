@@ -7,7 +7,7 @@ import { useDeliveryContext } from './DeliveryContext';
 import { useConfigContext } from './ConfigContext';
 import * as calculationService from '../services/calculationService';
 import { getMileageRate } from '../constants/mileageRates';
-import { createSafeDate } from '../utils/time';
+import { addDaysToDateKey } from '../utils/time';
 
 const StatsContext = createContext();
 
@@ -139,10 +139,7 @@ export const StatsProvider = ({ children }) => {
       if (isNight && mainDate) {
         let endDate = shift.endDate;
         if (!endDate) {
-          const startDateObj = createSafeDate(mainDate);
-          const calculatedEndDate = new Date(startDateObj);
-          calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
-          endDate = calculatedEndDate.toISOString().split('T')[0];
+          endDate = addDaysToDateKey(mainDate, 1);
         }
         if (endDate && endDate !== mainDate) {
           if (!shiftsMap[endDate]) {

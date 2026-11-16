@@ -21,7 +21,8 @@ import {
 } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { db, functions } from './firebase';
-import { createSafeDate } from '../utils/time';
+import { addDaysToDateKey } from '../utils/time';
+import { shiftCrossesMidnight, resolveShiftEndDate, normalizeShiftDates } from '../utils/shiftUtils';
 
 // ============================================================================
 // COLLECTION REFERENCES
@@ -191,7 +192,8 @@ export const subscribeToNormalData = (userUid, { setWorks, setShifts, setError }
       shiftsQuery,
       setShifts,
       (error) => setError(error),
-      (a, b) => new Date(b.date) - new Date(a.date)
+      (a, b) => new Date(b.date) - new Date(a.date),
+      normalizeShiftDates
     )
   );
 
@@ -221,7 +223,8 @@ export const subscribeToDeliveryData = (userUid, { setDeliveryWork, setDeliveryS
       deliveryShiftsQuery,
       setDeliveryShifts,
       (error) => setError(error),
-      (a, b) => new Date(b.date) - new Date(a.date)
+      (a, b) => new Date(b.date) - new Date(a.date),
+      normalizeShiftDates
     )
   );
 
@@ -327,12 +330,8 @@ export const deleteJob = async (userUid, id, isDelivery = false) => {
 export const addShift = async (userUid, newShift, isDelivery = false) => {
   const { shiftsRef } = getCollections();
 
-  const crossesMidnight = newShift.crossesMidnight || (newShift.startTime && newShift.endTime && newShift.startTime.split(':')[0] > newShift.endTime.split(':')[0]);
-  let endDate = newShift.endDate;
-  if (!endDate && crossesMidnight) {
-    const startDate = createSafeDate(newShift.startDate || newShift.date);
-    endDate = new Date(startDate.setDate(startDate.getDate() + 1)).toISOString().split('T')[0];
-  }
+  const crossesMidnight = shiftCrossesMidnight(newShift);
+  const endDate = resolveShiftEndDate(newShift, crossesMidnight);
 
   let shiftData = {
     userId: userUid,
@@ -340,7 +339,7 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
     type: isDelivery ? 'delivery' : 'regular',
     date: newShift.startDate || newShift.date,
     startDate: newShift.startDate || newShift.date,
-    endDate: endDate || newShift.startDate || newShift.date,
+    endDate,
     startTime: newShift.startTime || null,
     endTime: newShift.endTime || null,
     crossesMidnight,
@@ -409,12 +408,8 @@ export const addBulkShiftsService = async (userUid, shifts) => {
     const batch = writeBatch(db);
 
     chunk.forEach(newShift => {
-      const crossesMidnight = newShift.crossesMidnight || (newShift.startTime && newShift.endTime && newShift.startTime.split(':')[0] > newShift.endTime.split(':')[0]);
-      let endDate = newShift.endDate;
-      if (!endDate && crossesMidnight) {
-        const startDate = createSafeDate(newShift.startDate || newShift.date);
-        endDate = new Date(startDate.setDate(startDate.getDate() + 1)).toISOString().split('T')[0];
-      }
+      const crossesMidnight = shiftCrossesMidnight(newShift);
+      const endDate = resolveShiftEndDate(newShift, crossesMidnight);
 
       let shiftData = {
         userId: userUid,
@@ -422,7 +417,7 @@ export const addBulkShiftsService = async (userUid, shifts) => {
         type: 'regular',
         date: newShift.startDate || newShift.date,
         startDate: newShift.startDate || newShift.date,
-        endDate: endDate || newShift.startDate || newShift.date,
+        endDate,
         startTime: newShift.startTime || null,
         endTime: newShift.endTime || null,
         crossesMidnight,
@@ -456,18 +451,20 @@ export const editShift = async (userUid, id, updatedData, isDelivery = false) =>
   const { shiftsRef } = getCollections();
   const shiftRef = doc(shiftsRef, id);
 
-  const crossesMidnight = updatedData.crossesMidnight || (updatedData.startTime && updatedData.endTime && updatedData.startTime.split(':')[0] > updatedData.endTime.split(':')[0]);
-  let endDate = updatedData.endDate;
-  if (!endDate && crossesMidnight) {
-    const startDate = createSafeDate(updatedData.startDate || updatedData.date);
-    endDate = new Date(startDate.setDate(startDate.getDate() + 1)).toISOString().split('T')[0];
-  }
+  const crossesMidnight = shiftCrossesMidnight(updatedData);
+  // An edit can turn an overnight shift into a same-day one (or the reverse),
+  // so the end date is re-derived from the times instead of trusting whatever
+  // the form carried over.
+  const start = updatedData.startDate || updatedData.date;
+  const endDate = crossesMidnight
+    ? (updatedData.endDate && updatedData.endDate > start ? updatedData.endDate : addDaysToDateKey(start, 1))
+    : start;
 
   let dataWithMetadata = {
     ...updatedData,
     updatedAt: new Date(),
     date: updatedData.startDate || updatedData.date,
-    endDate: endDate || updatedData.startDate || updatedData.date,
+    endDate,
     crossesMidnight,
   };
 

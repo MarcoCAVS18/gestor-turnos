@@ -5,6 +5,7 @@ import { loadLogoWhite } from '../utils/LogoLoader';
 import { renderComponentToImage } from '../utils/ChartRenderer';
 import { PNGDashboard } from './PNGDashboard';
 import logger from '../../../utils/logger';
+import { toLocalDateKey } from '../../../utils/time';
 
 /**
  * PNG Exporter - Generates a beautiful, summarized dashboard image
@@ -24,7 +25,7 @@ export class PNGExporter {
   }
 
   formatDate(date) {
-    return date.toISOString().split('T')[0];
+    return toLocalDateKey(date);
   }
 
   async loadResources() {

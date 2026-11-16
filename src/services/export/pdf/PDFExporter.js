@@ -14,6 +14,7 @@ import {
   addMonthlyDetailPages
 } from './PDFSections';
 import logger from '../../../utils/logger';
+import { toLocalDateKey } from '../../../utils/time';
 
 /**
  * PDF Exporter - Generates professional PDF reports
@@ -45,7 +46,7 @@ export class PDFExporter {
    * @returns {string} Formatted date (YYYY-MM-DD)
    */
   formatDate(date) {
-    return date.toISOString().split('T')[0];
+    return toLocalDateKey(date);
   }
 
   /**

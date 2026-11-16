@@ -5,6 +5,7 @@ import i18n from '../../../i18n';
 import { createAllSheets } from './ExcelSheets';
 import { loadLogoForExcel } from '../utils/LogoLoader';
 import logger from '../../../utils/logger';
+import { toLocalDateKey } from '../../../utils/time';
 
 /**
  * Excel Exporter - Generates professional Excel reports
@@ -27,7 +28,7 @@ export class ExcelExporter {
    * @returns {string} Formatted date (YYYY-MM-DD)
    */
   formatDate(date) {
-    return date.toISOString().split('T')[0];
+    return toLocalDateKey(date);
   }
 
   /**

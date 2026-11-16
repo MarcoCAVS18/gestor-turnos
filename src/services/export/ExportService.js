@@ -7,6 +7,7 @@ import { generatePNGReport, generatePNGBlob } from './png/PNGExporter';
 import { preloadLogos } from './utils/LogoLoader';
 import { nativeSave, isNativePlatform } from './utils/nativeSave';
 import logger from '../../utils/logger';
+import { toLocalDateKey } from '../../utils/time';
 
 /**
  * Main Export Service
@@ -195,7 +196,7 @@ export class ExportService {
    * @returns {string} Formatted date (YYYY-MM-DD)
    */
   formatDate(date) {
-    return date.toISOString().split('T')[0];
+    return toLocalDateKey(date);
   }
 }
 

@@ -22,6 +22,41 @@ export const createSafeDate = (dateString) => {
 };
 
 /**
+ * Formats a Date as a "YYYY-MM-DD" key using the user's LOCAL calendar day.
+ *
+ * Always use this (never `date.toISOString().split('T')[0]`) to turn a Date
+ * into a date key. toISOString() is UTC: in any timezone ahead of UTC
+ * (Australia, New Zealand, Europe) a local midnight — or simply "now" in the
+ * morning — falls on the PREVIOUS day in UTC, so the key comes out one day
+ * early. That bug is invisible when developing from the Americas.
+ *
+ * @param {Date} [date] - Defaults to now
+ * @returns {string} - e.g. "2026-11-17"
+ */
+export const toLocalDateKey = (date = new Date()) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+/**
+ * Adds (or subtracts) whole days to a "YYYY-MM-DD" key, in local time.
+ *
+ * @param {string} dateKey - Date in format "YYYY-MM-DD"
+ * @param {number} days - Days to add (negative to subtract)
+ * @returns {string} - Resulting date key
+ *
+ * @example
+ * addDaysToDateKey("2026-11-30", 1) // "2026-12-01"
+ */
+export const addDaysToDateKey = (dateKey, days) => {
+  const date = createSafeDate(dateKey);
+  date.setDate(date.getDate() + days);
+  return toLocalDateKey(date);
+};
+
+/**
  * Formats a date relatively (Today, Yesterday, Tomorrow)
  *
  * @param {string} dateString - Date in format "YYYY-MM-DD"
@@ -41,7 +76,9 @@ export const formatRelativeDate = (dateString, locale = 'en-US', t = null) => {
   const tomorrow = new Date(today);
   tomorrow.setDate(today.getDate() + 1);
 
-  const targetDate = new Date(dateString);
+  // createSafeDate, not new Date(dateString): a bare "YYYY-MM-DD" parses as UTC
+  // midnight, which is the previous local day in timezones behind UTC.
+  const targetDate = createSafeDate(dateString);
   targetDate.setHours(0, 0, 0, 0);
 
   if (t) {

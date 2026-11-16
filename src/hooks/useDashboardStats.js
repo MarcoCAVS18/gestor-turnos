@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../contexts/AppContext';
-import { formatRelativeDate } from '../utils/time';
+import { formatRelativeDate, toLocalDateKey } from '../utils/time';
 import { calculateShiftHours } from '../utils/time/timeCalculations';
 import { getShiftNetEarnings } from '../utils/deliveryUtils';
 import logger from '../utils/logger';
@@ -153,8 +153,9 @@ export const useDashboardStats = () => {
         .sort((a, b) => b.shifts - a.shifts)
         .slice(0, 3);
 
+      const todayKey = toLocalDateKey();
       const nextShift = allShifts
-        .filter(t => (t.startDate || t.date) >= new Date().toISOString().split('T')[0])
+        .filter(t => (t.startDate || t.date) >= todayKey)
         .sort((a, b) => (a.startDate || a.date).localeCompare(b.startDate || b.date))[0] || null;
 
       // Simple projection based on month progress (daily average * total days in month)

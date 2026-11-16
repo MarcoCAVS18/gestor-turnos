@@ -10,6 +10,7 @@ import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import SettingsSection from '../SettingsSection';
 import logger from '../../../utils/logger';
+import { toLocalDateKey } from '../../../utils/time';
 import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS } from '../../../services/australia88Service';
 
 const Australia88Section = ({ className }) => {
@@ -48,7 +49,7 @@ const Australia88Section = ({ className }) => {
         // after the switch into separate Year 1 / Year 2 totals.
         if (yearChanged) {
           payload.australia88Year2StartDate = selectedYear === 2
-            ? new Date().toISOString().split('T')[0]
+            ? toLocalDateKey()
             : null;
         }
         await savePreferences(payload);

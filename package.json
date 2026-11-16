@@ -50,6 +50,7 @@
     "prerender": "node scripts/prerender.js",
     "build:prod": "npm run gen:build-info && react-scripts build && node scripts/prerender.js",
     "test": "react-scripts test",
+    "test:tz": "for tz in Australia/Sydney America/Argentina/Buenos_Aires UTC; do echo \"== TZ=$tz ==\"; TZ=$tz CI=true react-scripts test --watchAll=false || exit 1; done",
     "eject": "react-scripts eject",
     "dev": "concurrently -k -n EMU,WEB -c blue,green \"npm:dev:emulators\" \"npm:dev:web\"",
     "dev:emulators": "firebase emulators:start --only auth,firestore,functions,storage",

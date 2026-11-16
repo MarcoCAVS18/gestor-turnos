@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Truck, Calendar, Clock, DollarSign, Package, Navigation, Fuel, Heart } from 'lucide-react';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { vehicleNeedsFuel } from '../../../../utils/deliveryUtils';
+import { toLocalDateKey } from '../../../../utils/time';
 import BaseForm, { FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses } from '../../base/BaseForm';
 
 const DeliveryShiftForm = ({
@@ -77,8 +78,8 @@ const DeliveryShiftForm = ({
         notes: shift.notes || ''
       };
     } else {
-      const dateStr = initialDate instanceof Date 
-        ? initialDate.toISOString().split('T')[0] 
+      const dateStr = initialDate instanceof Date
+        ? toLocalDateKey(initialDate)
         : initialDate;
       initialData = {
         workId: workId || '',

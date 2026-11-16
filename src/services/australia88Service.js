@@ -3,7 +3,7 @@
 // No React dependencies — safe to import anywhere.
 
 import { calculateShiftHours } from '../utils/time';
-import { createSafeDate } from '../utils/time';
+import { createSafeDate, toLocalDateKey } from '../utils/time';
 
 // Official Home Affairs definitions: "three months" of specified work = 88
 // calendar days (needed for a 2nd WHM visa, done during the 1st), and "six
@@ -51,7 +51,7 @@ export const getMondayOfWeek = (date) => {
  */
 const getWeekKey = (date) => {
   const monday = getMondayOfWeek(date);
-  return monday.toISOString().split('T')[0];
+  return toLocalDateKey(monday);
 };
 
 /**

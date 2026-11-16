@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight, PartyPopper, X } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import { toLocalDateKey } from '../../../utils/time';
 
 const CONFETTI_COLORS = ['#FFD700', '#FFA500', '#FF6347', '#7B68EE', '#00CED1', '#FF69B4', '#32CD32', '#FF4500'];
 
@@ -54,7 +55,7 @@ const Australia88ActivateYear2 = ({ className = '' }) => {
       await savePreferences({
         australia88VisaYear: 2,
         australia88ManualDays: 0,
-        australia88Year2StartDate: new Date().toISOString().split('T')[0],
+        australia88Year2StartDate: toLocalDateKey(),
       });
       setStep('celebrating');
     } catch {

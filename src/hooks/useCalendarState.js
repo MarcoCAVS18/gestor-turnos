@@ -6,7 +6,7 @@ import {
   localDateToISO,
   dateIsToday
 } from '../utils/calendarUtils';
-import { createSafeDate } from '../utils/time';
+import { addDaysToDateKey } from '../utils/time';
 
 // `initialDate` (opcional) abre el calendario directo en ese mes/día — usado
 // por deep links como /calendar?date=... (ej. desde el detector de cobertura
@@ -58,10 +58,7 @@ export const useCalendarState = (shifts, onSelectedDay, initialDate = null) => {
         
         // If it doesn't have endDate but is night shift, calculate if it ends today
         if (!shift.endDate && mainDate) {
-          const startDateObj = createSafeDate(mainDate);
-          const calculatedEndDate = new Date(startDateObj);
-          calculatedEndDate.setDate(calculatedEndDate.getDate() + 1);
-          const endDateStr = calculatedEndDate.toISOString().split('T')[0];
+          const endDateStr = addDaysToDateKey(mainDate, 1);
           
           if (endDateStr === dateStr) {
             return true;
