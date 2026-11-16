@@ -249,6 +249,8 @@ const FeedbackSection = ({ colors }) => {
                   }}
                   placeholder={t('about.feedback.commentPlaceholder')}
                   rows={3}
+                  // Must stay <= the comment size limit in firestore.rules (feedback).
+                  maxLength={2000}
                   className={`w-full rounded-xl border px-3 py-2.5 text-sm resize-none focus:outline-none focus:ring-2 bg-white dark:bg-slate-800 placeholder-gray-400 dark:placeholder-gray-500 placeholder:text-xs ${
                     profanityError ? 'border-red-400 dark:border-red-500' : 'border-gray-200 dark:border-slate-700'
                   }`}

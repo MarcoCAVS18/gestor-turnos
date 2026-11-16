@@ -111,7 +111,10 @@ service cloud.firestore {
     // Shared works collection - SECURED
     // Only publicly accessible if explicitly marked as public
     match /shared_works/{sharedWorkId} {
-      allow read: if resource.data.isPublic == true; // Only if marked public
+      // `get` only, never `list`: the document ID is the secret share token, so
+      // a link must be known to be opened. Allowing `list` would let anyone
+      // query isPublic == true and enumerate every active token and its data.
+      allow get: if resource.data.isPublic == true; // Only if marked public
       allow create: if request.auth != null
                     && request.resource.data.sharedBy == request.auth.uid
                     && request.resource.data.isPublic is bool; // Require isPublic field
@@ -130,14 +133,32 @@ service cloud.firestore {
     // Anyone can read approved feedback (for the carousel)
     // Users can read/write their own feedback
     match /feedback/{feedbackId} {
+
+      // What a regular user may write to their own review. `status` must be
+      // 'pending': only an admin can approve, otherwise a user could publish
+      // unmoderated text straight to the public carousel. Editing an approved
+      // review therefore sends it back to moderation. The size and type checks
+      // bound what can end up on the landing page.
+      function isValidOwnFeedback() {
+        let d = request.resource.data;
+        return d.status == 'pending'
+          && d.userId == request.auth.uid
+          && d.rating is number && d.rating >= 1 && d.rating <= 5
+          && d.comment is string && d.comment.size() <= 2000
+          && d.displayName is string && d.displayName.size() <= 100
+          && d.isAnonymous is bool;
+      }
+
       // Anyone (even unauthenticated) can read approved feedback
       allow read: if resource.data.status == 'approved';
       // Authenticated users can read their own feedback (any status)
       allow read: if request.auth != null && feedbackId == request.auth.uid;
       // Admins can read every review (moderation panel) and change its status
       allow read, update: if isAdmin();
-      // Users can only create/update their own feedback
-      allow create, update: if request.auth != null && feedbackId == request.auth.uid;
+      // Users can only create/update their own feedback, always as 'pending'
+      allow create, update: if request.auth != null
+                            && feedbackId == request.auth.uid
+                            && isValidOwnFeedback();
       allow delete: if false;
     }
 
