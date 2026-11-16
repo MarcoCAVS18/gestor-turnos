@@ -1,8 +1,12 @@
 // functions/index.js
 
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const { Timestamp, FieldValue } = require('firebase-admin/firestore');
+// v1 (1st gen) API. Since firebase-functions v6 the package root exports the
+// 2nd gen API, so the 1st gen triggers used here must come from the /v1 entry.
+const functions = require('firebase-functions/v1');
+// Modular Admin SDK imports (the legacy `admin.*` namespace is removed in v14).
+const { initializeApp } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
+const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
 const emailService = require('./emailService');
 // Lazy-loaded to avoid slow startup that causes deployment timeout
 let _google = null;
@@ -37,8 +41,8 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const crypto = require('crypto');
 
-admin.initializeApp();
-const db = admin.firestore();
+initializeApp();
+const db = getFirestore();
 
 // ============================================
 // SECURITY HELPERS - Rate Limiting & Validation
@@ -142,7 +146,7 @@ exports.getGoogleAuthUrl = functions.https.onRequest((req, res) => {
       }
 
       const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await getAuth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
       const oauth2Client = getOAuth2Client();
@@ -239,7 +243,7 @@ exports.disconnectGoogleCalendar = functions.https.onRequest((req, res) => {
       }
 
       const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await getAuth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
       // Delete stored tokens
@@ -270,7 +274,7 @@ exports.getCalendarStatus = functions.https.onRequest((req, res) => {
       }
 
       const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await getAuth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
       const calendarDoc = await db.collection('users').doc(userId)
@@ -545,7 +549,7 @@ exports.syncAllShiftsToCalendar = functions.https.onRequest((req, res) => {
       }
 
       const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await getAuth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
       // Get all shifts without calendar events
@@ -615,7 +619,7 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
       }
 
       const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await getAuth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
       // Rate limiting: max 5 subscription attempts per minute
@@ -1050,7 +1054,7 @@ exports.activateExistingSubscription = functions.https.onRequest((req, res) => {
       }
 
       const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await getAuth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
       const email = decodedToken.email;
 
@@ -1133,7 +1137,7 @@ exports.cancelSubscription = functions.https.onRequest((req, res) => {
       }
 
       const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await getAuth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
       // Rate limiting: max 5 cancel attempts per minute
@@ -1251,7 +1255,7 @@ exports.verifyAndActivateSubscription = functions.https.onRequest((req, res) => 
       }
 
       const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await getAuth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
       const { subscriptionId } = req.body;
@@ -1317,7 +1321,7 @@ exports.createBillingPortalSession = functions.https.onRequest((req, res) => {
       }
 
       const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await getAuth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
       // Rate limiting: max 10 portal requests per minute
@@ -1462,7 +1466,7 @@ exports.getInvoices = functions.https.onRequest((req, res) => {
       }
 
       const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await getAuth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
       // Rate limiting: 10 requests per minute
@@ -1573,7 +1577,7 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
         console.log(`Invoice paid for user ${userDoc.id}`);
 
         // Send payment confirmation email (fire-and-forget)
-        const userEmail = userData.email || (await admin.auth().getUser(userDoc.id)).email;
+        const userEmail = userData.email || (await getAuth().getUser(userDoc.id)).email;
         if (userEmail) {
           const nextBillingDate = periodEnd
             ? new Date(periodEnd * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
@@ -1783,7 +1787,7 @@ exports.getCalendarToken = functions.https.onRequest(async (req, res) => {
     const idToken = authHeader.split('Bearer ')[1];
     let uid;
     try {
-      const decoded = await admin.auth().verifyIdToken(idToken);
+      const decoded = await getAuth().verifyIdToken(idToken);
       uid = decoded.uid;
     } catch {
       return res.status(401).json({ error: 'Invalid token' });
@@ -1898,7 +1902,7 @@ exports.userCalendar = functions.https.onRequest(async (req, res) => {
  * @returns {Promise<number>} total documents deleted
  */
 async function cleanupExpiredShares() {
-  const now = admin.firestore.Timestamp.now();
+  const now = Timestamp.now();
   const expiredQuery = db.collection('shared_works')
     .where('expiresAt', '<', now)
     .limit(500);
@@ -1998,12 +2002,12 @@ exports.sendVerificationEmail = functions.https.onCall(async (data, context) => 
   }
 
   try {
-    const user = await admin.auth().getUser(uid);
+    const user = await getAuth().getUser(uid);
     if (user.emailVerified) {
       return { success: true, alreadyVerified: true };
     }
 
-    const link = await admin.auth().generateEmailVerificationLink(user.email, {
+    const link = await getAuth().generateEmailVerificationLink(user.email, {
       url: `${APP_URL}/dashboard`,
     });
 
@@ -2040,7 +2044,7 @@ exports.sendPasswordResetEmailCustom = functions.https.onCall(async (data) => {
   }
 
   try {
-    const link = await admin.auth().generatePasswordResetLink(email, {
+    const link = await getAuth().generatePasswordResetLink(email, {
       url: `${APP_URL}/login`,
     });
 
@@ -2076,7 +2080,7 @@ exports.sendEmailChangeNotification = functions.https.onCall(async (data, contex
   }
 
   try {
-    const user = await admin.auth().getUser(uid);
+    const user = await getAuth().getUser(uid);
     const oldEmail = user.email;
 
     // Generate a "revert" link pointing back to the old email (sign-in page)
@@ -2112,7 +2116,7 @@ exports.sendMFAEnrollmentNotification = functions.https.onCall(async (data, cont
   }
 
   try {
-    const user = await admin.auth().getUser(uid);
+    const user = await getAuth().getUser(uid);
     await emailService.sendMFAEnrollmentNotification({
       email: user.email,
       displayName: user.displayName || '',
@@ -2173,7 +2177,7 @@ exports.sendSupportRequest = functions.https.onCall(async (data, context) => {
     // Non-fatal — treat as free user if Firestore fails
   }
 
-  const firebaseUser = await admin.auth().getUser(uid);
+  const firebaseUser = await getAuth().getUser(uid);
   const userEmail = firebaseUser.email || 'unknown';
   const displayName = firebaseUser.displayName || 'Unknown User';
 
@@ -2569,7 +2573,7 @@ exports.parsePDF = functions.https.onRequest((req, res) => {
       }
 
       const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const decodedToken = await getAuth().verifyIdToken(idToken);
       const userId = decodedToken.uid;
 
       // Rate limit: 10 parseos por minuto
