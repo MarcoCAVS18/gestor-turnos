@@ -5,7 +5,7 @@ import { Package, Navigation, Fuel, DollarSign } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Flex from '../../../ui/Flex';
 import { getShiftGrossEarnings } from '../../../../utils/shiftUtils';
-import { formatCurrency } from '../../../../utils/currency';
+import { formatCurrencyExact } from '../../../../utils/currency';
 import { useApp } from '../../../../contexts/AppContext';
 
 const DeliveryShiftCard = (props) => {
@@ -100,7 +100,7 @@ const DeliveryShiftCard = (props) => {
             <div className="pt-2 border-t border-gray-100 dark:border-[rgba(255,255,255,0.08)] space-y-1.5">
               <Flex variant="between">
                 <span className="text-gray-500 dark:text-gray-400">{t('cards.shift.baseEarnings')}</span>
-                <span className="font-medium dark:text-white">{formatCurrency(shiftData.baseEarning, currencySymbol)}</span>
+                <span className="font-medium dark:text-white">{formatCurrencyExact(shiftData.baseEarning, currencySymbol)}</span>
               </Flex>
 
               {shiftData.tips > 0 && (
@@ -109,7 +109,7 @@ const DeliveryShiftCard = (props) => {
                     <DollarSign size={10} className="mr-1 text-green-500" />
                     <span>{t('shifts.tips')}</span>
                   </Flex>
-                  <span className="font-medium text-green-600">{formatCurrency(shiftData.tips, currencySymbol)}</span>
+                  <span className="font-medium text-green-600">{formatCurrencyExact(shiftData.tips, currencySymbol)}</span>
                 </Flex>
               )}
 
@@ -119,14 +119,14 @@ const DeliveryShiftCard = (props) => {
                     <Fuel size={10} className="mr-1 text-orange-500" />
                     <span>{t('cards.shift.fuelExpense')}</span>
                   </Flex>
-                  <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrency(shiftData.expenses, currencySymbol)}</span>
+                  <span className="font-medium text-red-600 dark:text-red-400">-{formatCurrencyExact(shiftData.expenses, currencySymbol)}</span>
                 </Flex>
               )}
 
               {shiftData.averagePerOrder > 0 && (
                 <Flex variant="between" className="pt-1.5 border-t border-gray-50 dark:border-[rgba(255,255,255,0.05)]">
                   <span className="text-gray-500 dark:text-gray-400">{t('cards.shift.avgPerOrder')}</span>
-                  <span className="font-semibold text-blue-600">{formatCurrency(shiftData.averagePerOrder, currencySymbol)}</span>
+                  <span className="font-semibold text-blue-600">{formatCurrencyExact(shiftData.averagePerOrder, currencySymbol)}</span>
                 </Flex>
               )}
             </div>

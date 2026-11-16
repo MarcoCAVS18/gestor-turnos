@@ -6,7 +6,7 @@ import { Activity, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../hooks/useIsMobile'; 
-import { formatCurrency } from '../../../utils/currency';
+import { formatCurrency, formatCurrencyExact } from '../../../utils/currency';
 import { createSafeDate } from '../../../utils/time';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
@@ -165,7 +165,7 @@ const RecentActivityCard = memo(({ stats, allWorks, allShifts, calculatePayment 
               
               <div className="text-right flex-shrink-0 ml-2">
                 <p className="text-sm font-semibold" style={{ color: colors.primary }}>
-                  {formatCurrency(earnings)}
+                  {formatCurrencyExact(earnings)}
                 </p>
               </div>
             </Flex>

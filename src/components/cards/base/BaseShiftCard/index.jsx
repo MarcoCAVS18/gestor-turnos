@@ -10,7 +10,7 @@ import ShiftTypeBadge from '../../../shifts/ShiftTypeBadge';
 import Badge from '../../../ui/Badge';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 
-import { formatCurrency } from '../../../../utils/currency';
+import { formatCurrency, formatCurrencyExact } from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
 import WorkAvatar from '../../../work/WorkAvatar';
 import { DELIVERY_VEHICLES, DELIVERY_PLATFORMS_AUSTRALIA } from '../../../../constants/delivery';
@@ -321,7 +321,7 @@ const BaseShiftCard = ({
                       <span className="text-xs text-gray-600 dark:text-gray-400">{earningLabel || 'Total'}</span>
                     </Flex>
                     <span className="text-lg font-bold text-green-600">
-                      {formatCurrency(earningValue, currencySymbol)}
+                      {formatCurrencyExact(earningValue, currencySymbol)}
                     </span>
                   </Flex>
 
@@ -331,31 +331,31 @@ const BaseShiftCard = ({
                       {shiftData.baseAmount !== undefined && (
                         <Flex variant="between">
                           <span className="text-gray-500 dark:text-gray-400">{t('shifts.basePay')}</span>
-                          <span className="font-medium dark:text-white">{formatCurrency(shiftData.baseAmount, currencySymbol)}</span>
+                          <span className="font-medium dark:text-white">{formatCurrencyExact(shiftData.baseAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.nightAmount !== undefined && shiftData.nightAmount > 0 && (
                         <Flex variant="between">
                           <span className="text-gray-500 dark:text-gray-400">{t('shifts.nightBonus')}</span>
-                          <span className="font-medium dark:text-white">{formatCurrency(shiftData.nightAmount, currencySymbol)}</span>
+                          <span className="font-medium dark:text-white">{formatCurrencyExact(shiftData.nightAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.saturdayAmount !== undefined && shiftData.saturdayAmount > 0 && (
                         <Flex variant="between">
                           <span className="text-gray-500 dark:text-gray-400">{t('shifts.saturdayBonus')}</span>
-                          <span className="font-medium dark:text-white">{formatCurrency(shiftData.saturdayAmount, currencySymbol)}</span>
+                          <span className="font-medium dark:text-white">{formatCurrencyExact(shiftData.saturdayAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.sundayAmount !== undefined && shiftData.sundayAmount > 0 && (
                         <Flex variant="between">
                           <span className="text-gray-500 dark:text-gray-400">{t('shifts.sundayBonus')}</span>
-                          <span className="font-medium dark:text-white">{formatCurrency(shiftData.sundayAmount, currencySymbol)}</span>
+                          <span className="font-medium dark:text-white">{formatCurrencyExact(shiftData.sundayAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                       {shiftData.holidayAmount !== undefined && shiftData.holidayAmount > 0 && (
                         <Flex variant="between">
                           <span className="text-gray-500 dark:text-gray-400">{t('shifts.holidayBonus')}</span>
-                          <span className="font-medium dark:text-white">{formatCurrency(shiftData.holidayAmount, currencySymbol)}</span>
+                          <span className="font-medium dark:text-white">{formatCurrencyExact(shiftData.holidayAmount, currencySymbol)}</span>
                         </Flex>
                       )}
                     </div>

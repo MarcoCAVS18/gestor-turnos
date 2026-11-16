@@ -693,10 +693,15 @@ export const aggregateDeliveryShifts = (periodShifts = [], validDeliveryWork = [
     totalKilometers += kilometers;
     totalExpenses += expenses;
 
-    const [startHour, startMin] = shift.startTime.split(':').map(Number);
-    const [endHour, endMin] = shift.endTime.split(':').map(Number);
-    let hours = (endHour + endMin / 60) - (startHour + startMin / 60);
-    if (hours < 0) hours += 24;
+    // Times are optional on delivery shifts (earnings can be logged without
+    // them), so a shift with no start/end counts money but zero hours.
+    let hours = 0;
+    if (shift.startTime && shift.endTime) {
+      const [startHour, startMin] = shift.startTime.split(':').map(Number);
+      const [endHour, endMin] = shift.endTime.split(':').map(Number);
+      hours = (endHour + endMin / 60) - (startHour + startMin / 60);
+      if (hours < 0) hours += 24;
+    }
     totalHours += hours;
 
     if (!statsByDay[shift.date]) {
@@ -894,7 +899,7 @@ export const calculateDeliveryHourlyStats = (shifts = []) => {
   const deliveryShifts = shifts.filter(s => s.type === 'delivery' || s.isDelivery || s.platform);
 
   deliveryShifts.forEach(shift => {
-    if (!shift.startDate || !shift.endDate) return;
+    if (!shift.startDate || !shift.endDate || !shift.startTime || !shift.endTime) return;
 
     // Use startTime directly to avoid UTC timezone issues with date-only strings
     const hour = shift.startTime ? parseInt(shift.startTime.split(':')[0], 10) : 0;
@@ -904,8 +909,9 @@ export const calculateDeliveryHourlyStats = (shifts = []) => {
     else if (hour >= 12 && hour < 16) key = 'midday';
     else if (hour >= 16 && hour < 20) key = 'afternoon';
 
-    // Calculate net earnings of the shift
-    const shiftEarnings = (shift.earnings || shift.totalEarnings || 0) + (shift.tips || 0) - (shift.fuelExpense || 0);
+    // Net earnings of the shift (gross incl. tips, minus fuel). Uses the shared
+    // helper so tips are not added on top of a totalEarnings that already has them.
+    const shiftEarnings = getShiftNetEarnings(shift);
 
     // Calculate real duration
     const startDateTime = new Date(`${shift.startDate}T${shift.startTime}:00`);
@@ -970,7 +976,7 @@ export const calculateWeeklyHourlyDeliveryStats = (shifts = []) => {
       shiftEnd.setDate(shiftEnd.getDate() + 1);
     }
 
-    const shiftEarnings = (shift.earnings || shift.totalEarnings || 0) + (shift.tips || 0) - (shift.fuelExpense || 0);
+    const shiftEarnings = getShiftNetEarnings(shift);
 
     let currentHour = shiftStart.getHours();
     let currentDay = shiftStart.getDay(); // 0 for Sunday, 1 for Monday, etc.

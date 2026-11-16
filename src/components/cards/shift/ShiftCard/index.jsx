@@ -6,7 +6,7 @@ import { Coffee, PartyPopper, Calculator } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Badge from '../../../ui/Badge';
 import { useApp } from '../../../../contexts/AppContext';
-import { formatCurrency } from '../../../../utils/currency';
+import { formatCurrencyExact } from '../../../../utils/currency';
 import Flex from '../../../ui/Flex';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 
@@ -127,10 +127,10 @@ const ShiftCard = (props) => {
               {calculationBreakdown.rateItems && calculationBreakdown.rateItems.map((item) => (
                 <Flex key={item.type} variant="between">
                   <span style={{ color: colors.textSecondary }}>
-                    {item.hours.toFixed(1)}h × {formatCurrency(item.rate, currencySymbol)}/{t('common.perHour')} ({item.label})
+                    {item.hours.toFixed(1)}h × {formatCurrencyExact(item.rate, currencySymbol)}/{t('common.perHour')} ({item.label})
                   </span>
                   <span className="font-medium" style={{ color: colors.text }}>
-                    {formatCurrency(item.amount, currencySymbol)}
+                    {formatCurrencyExact(item.amount, currencySymbol)}
                   </span>
                 </Flex>
               ))}
@@ -142,7 +142,7 @@ const ShiftCard = (props) => {
                     {t('shifts.subtotal')}
                   </span>
                   <span className="font-medium" style={{ color: colors.text }}>
-                    {formatCurrency(calculationBreakdown.baseCalc, currencySymbol)}
+                    {formatCurrencyExact(calculationBreakdown.baseCalc, currencySymbol)}
                   </span>
                 </Flex>
               )}
@@ -154,7 +154,7 @@ const ShiftCard = (props) => {
                     {t('shifts.discount')} ({calculationBreakdown.discountPercent}%)
                   </span>
                   <span className="font-medium" style={{ color: colors.error }}>
-                    -{formatCurrency(calculationBreakdown.discountAmount, currencySymbol)}
+                    -{formatCurrencyExact(calculationBreakdown.discountAmount, currencySymbol)}
                   </span>
                 </Flex>
               )}
@@ -165,7 +165,7 @@ const ShiftCard = (props) => {
                   {t('shifts.total')}
                 </span>
                 <span className="font-bold text-green-600">
-                  {formatCurrency(calculationBreakdown.final, currencySymbol)}
+                  {formatCurrencyExact(calculationBreakdown.final, currencySymbol)}
                 </span>
               </Flex>
             </div>
@@ -185,10 +185,10 @@ const ShiftCard = (props) => {
               {calculationBreakdown.rateItems && calculationBreakdown.rateItems.map((item) => (
                 <Flex key={item.type} variant="between">
                   <span style={{ color: colors.textSecondary }}>
-                    {item.hours.toFixed(1)}h × {formatCurrency(item.rate, currencySymbol)}/{t('common.perHour')} ({item.label})
+                    {item.hours.toFixed(1)}h × {formatCurrencyExact(item.rate, currencySymbol)}/{t('common.perHour')} ({item.label})
                   </span>
                   <span className="font-medium" style={{ color: colors.text }}>
-                    {formatCurrency(item.amount, currencySymbol)}
+                    {formatCurrencyExact(item.amount, currencySymbol)}
                   </span>
                 </Flex>
               ))}
@@ -200,7 +200,7 @@ const ShiftCard = (props) => {
                     {t('shifts.subtotal')}
                   </span>
                   <span className="font-medium" style={{ color: colors.text }}>
-                    {formatCurrency(calculationBreakdown.baseCalc, currencySymbol)}
+                    {formatCurrencyExact(calculationBreakdown.baseCalc, currencySymbol)}
                   </span>
                 </Flex>
               )}
@@ -212,7 +212,7 @@ const ShiftCard = (props) => {
                     {t('shifts.discount')} ({calculationBreakdown.discountPercent}%)
                   </span>
                   <span className="font-medium" style={{ color: colors.error }}>
-                    -{formatCurrency(calculationBreakdown.discountAmount, currencySymbol)}
+                    -{formatCurrencyExact(calculationBreakdown.discountAmount, currencySymbol)}
                   </span>
                 </Flex>
               )}
@@ -223,7 +223,7 @@ const ShiftCard = (props) => {
                   {t('shifts.total')}
                 </span>
                 <span className="font-bold text-green-600">
-                  {formatCurrency(calculationBreakdown.final, currencySymbol)}
+                  {formatCurrencyExact(calculationBreakdown.final, currencySymbol)}
                 </span>
               </Flex>
             </div>

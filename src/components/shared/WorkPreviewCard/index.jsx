@@ -3,7 +3,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Briefcase, Truck, Bike, Car, User, Package } from 'lucide-react';
-import { formatCurrency } from '../../../utils/currency';
+import { formatCurrencyExact } from '../../../utils/currency';
 import Card from '../../ui/Card';
 import Badge from '../../ui/Badge';
 import Flex from '../../ui/Flex';
@@ -93,7 +93,7 @@ const WorkPreviewCard = ({ work }) => {
               <Briefcase className="h-5 w-5 text-green-500 mr-2" />
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{t('shared.workPreview.baseRate')}</p>
-                <p className="font-semibold dark:text-gray-200">{formatCurrency(work.baseRate)}/hour</p>
+                <p className="font-semibold dark:text-gray-200">{formatCurrencyExact(work.baseRate)}/hour</p>
               </div>
             </Flex>
           )}          
@@ -104,35 +104,35 @@ const WorkPreviewCard = ({ work }) => {
                 {work.rates.day && (
                   <div className="text-center p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border dark:border-yellow-900/30">
                     <p className="text-xs text-gray-600 dark:text-gray-400">{t('common.day')}</p>
-                    <p className="font-semibold text-sm dark:text-gray-200">{formatCurrency(work.rates.day)}/h</p>
+                    <p className="font-semibold text-sm dark:text-gray-200">{formatCurrencyExact(work.rates.day)}/h</p>
                   </div>
                 )}
                 
                 {work.rates.afternoon && (
                   <div className="text-center p-2 bg-orange-50 dark:bg-orange-900/20 rounded-lg border dark:border-orange-900/30">
                     <p className="text-xs text-gray-600 dark:text-gray-400">{t('common.afternoon')}</p>
-                    <p className="font-semibold text-sm dark:text-gray-200">{formatCurrency(work.rates.afternoon)}/h</p>
+                    <p className="font-semibold text-sm dark:text-gray-200">{formatCurrencyExact(work.rates.afternoon)}/h</p>
                   </div>
                 )}
                 
                 {work.rates.night && (
                   <div className="text-center p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border dark:border-blue-900/30">
                     <p className="text-xs text-gray-600 dark:text-gray-400">{t('common.night')}</p>
-                    <p className="font-semibold text-sm dark:text-gray-200">{formatCurrency(work.rates.night)}/h</p>
+                    <p className="font-semibold text-sm dark:text-gray-200">{formatCurrencyExact(work.rates.night)}/h</p>
                   </div>
                 )}
                 
                 {work.rates.saturday && (
                   <div className="text-center p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg border dark:border-purple-900/30">
                     <p className="text-xs text-gray-600 dark:text-gray-400">{t('common.saturday')}</p>
-                    <p className="font-semibold text-sm dark:text-gray-200">{formatCurrency(work.rates.saturday)}/h</p>
+                    <p className="font-semibold text-sm dark:text-gray-200">{formatCurrencyExact(work.rates.saturday)}/h</p>
                   </div>
                 )}
                 
                 {work.rates.sunday && (
                   <div className="text-center p-2 bg-red-50 dark:bg-red-900/20 rounded-lg border dark:border-red-900/30">
                     <p className="text-xs text-gray-600 dark:text-gray-400">{t('common.sunday')}</p>
-                    <p className="font-semibold text-sm dark:text-gray-200">{formatCurrency(work.rates.sunday)}/h</p>
+                    <p className="font-semibold text-sm dark:text-gray-200">{formatCurrencyExact(work.rates.sunday)}/h</p>
                   </div>
                 )}
               </div>

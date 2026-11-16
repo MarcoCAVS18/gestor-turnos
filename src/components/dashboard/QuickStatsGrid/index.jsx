@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../../contexts/AppContext';
 import QuickStatCard from '../QuickStatCard';
+import { formatCurrencyExact } from '../../../utils/currency';
 
 const QuickStatsGrid = memo(({ stats, className }) => {
   const { t } = useTranslation();
@@ -42,7 +43,7 @@ const QuickStatsGrid = memo(({ stats, className }) => {
         { label: t('dashboard.quickStats.currentMonth'), value: `${(currentMonth?.hoursWorked || 0).toFixed(1)}h`, icon: History, iconColor: '#f59e0b' }
       ],
       average: [
-        { label: t('dashboard.quickStats.perHour'), value: `$${stats.averagePerHour.toFixed(0)}`, icon: Clock, iconColor: '#6366f1' },
+        { label: t('dashboard.quickStats.perHour'), value: formatCurrencyExact(stats.averagePerHour), icon: Clock, iconColor: '#6366f1' },
         { label: t('dashboard.quickStats.weekEarnings'), value: `$${(currentWeek?.totalEarned || 0).toLocaleString()}`, icon: TrendingUp, iconColor: '#ec4899' }
       ]
     };
@@ -81,7 +82,7 @@ const QuickStatsGrid = memo(({ stats, className }) => {
       type: 'general',
       icon: Target,
       label: t('dashboard.quickStats.average'),
-      value: `$${stats.averagePerHour.toFixed(0)}`,
+      value: formatCurrencyExact(stats.averagePerHour),
       subtitle: t('dashboard.quickStats.perHour'),
       details: detailedData.average
     }

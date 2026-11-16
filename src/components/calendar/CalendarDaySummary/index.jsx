@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { PlusCircle, Plus, Calendar, Clock, DollarSign, SearchX, Briefcase } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../../../contexts/AppContext';
-import { formatCurrency } from '../../../utils/currency';
+import { formatCurrencyExact } from '../../../utils/currency';
 import { useIsMobile } from '../../../hooks/useIsMobile';
 import { createSafeDate } from '../../../utils/time';
 import ShiftCard from '../../cards/shift/ShiftCard';
@@ -111,7 +111,7 @@ const CalendarDaySummary = ({
                 <Clock size={14} className="mr-1 text-blue-500" />
                 <span className="mr-3">{safeShiftsOfDay.length} {safeShiftsOfDay.length === 1 ? t('common.shift') : t('common.shifts')}</span>
                 <DollarSign size={14} className="mr-1 text-green-500" />
-                <span className="font-medium">{formatCurrency(dayTotal)}</span>
+                <span className="font-medium">{formatCurrencyExact(dayTotal)}</span>
               </div>
             </Flex>
           </div>

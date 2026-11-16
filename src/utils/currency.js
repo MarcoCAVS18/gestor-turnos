@@ -37,6 +37,22 @@ export const formatCurrencyPrecise = (amount) => {
 };
 
 /**
+ * Formats an amount keeping cents when it has them: 28.5 -> "$28.50", 30 -> "$30".
+ * Use for pay rates and per-shift amounts, where the user compares the figure
+ * against a payslip or an award rate (e.g. $30.13/h must not read "$30/h").
+ * formatCurrency, which rounds to whole dollars, stays for large totals.
+ * @param {number} amount
+ * @returns {string}
+ */
+export const formatCurrencyExact = (amount) => {
+  if (amount === null || amount === undefined || isNaN(amount)) {
+    return formatCurrency(0);
+  }
+  const hasCents = Math.round(Number(amount) * 100) % 100 !== 0;
+  return hasCents ? formatCurrencyPrecise(amount) : formatCurrency(amount);
+};
+
+/**
  * Formats an amount with a custom symbol (backward compatibility)
  * @param {number} amount
  * @param {string} symbol - Currency symbol (default: '$')
