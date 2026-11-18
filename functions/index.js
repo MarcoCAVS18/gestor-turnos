@@ -6,14 +6,18 @@ const functions = require('firebase-functions/v1');
 // Modular Admin SDK imports (the legacy `admin.*` namespace is removed in v14).
 const { initializeApp } = require('firebase-admin/app');
 const { getAuth } = require('firebase-admin/auth');
-const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+const { getFirestore, Timestamp, FieldValue, FieldPath } = require('firebase-admin/firestore');
+const { getStorage } = require('firebase-admin/storage');
 const emailService = require('./emailService');
-// Lazy-loaded to avoid slow startup that causes deployment timeout
-let _google = null;
-const getGoogle = () => {
-  if (!_google) _google = require('googleapis').google;
-  return _google;
-};
+const {
+  idOf,
+  getExpiryMillis,
+  getInvoiceSubscriptionId,
+  isInvoicePaid,
+  getInvoiceClientSecret,
+  subscriptionStateUpdates,
+} = require('./stripeUtils');
+const { isValidTimeZone, generateICS } = require('./calendarUtils');
 const allowedOrigins = [
   'https://gestionturnos-7ec99.web.app',
   'https://gestionturnos-7ec99.firebaseapp.com',
@@ -112,490 +116,103 @@ const getAppUrl = () => {
   return allowed.includes(url) ? url : 'https://orary.app';
 };
 
-// Google OAuth2 Configuration
-// These values come from .env file
-const getOAuth2Client = () => {
-  return new (getGoogle()).auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    process.env.GOOGLE_REDIRECT_URI
-  );
-};
-
-// Scopes required for Google Calendar
-const SCOPES = [
-  'https://www.googleapis.com/auth/calendar.events',
-  'https://www.googleapis.com/auth/calendar.readonly'
-];
-
 // ============================================
-// HTTP FUNCTIONS - OAuth Flow
+// STRIPE HELPERS
 // ============================================
+// The Google Calendar OAuth sync that lived here (getGoogleAuthUrl,
+// googleAuthCallback, disconnect/status, syncAllShiftsToCalendar and the three
+// shift triggers) was removed on 2026-11-18: its UI was taken out on 2026-03-02
+// and no user had it connected. The ICS feed below (getCalendarToken /
+// userCalendar) is the calendar integration in use.
+
+const toTimestamp = (ms) => Timestamp.fromMillis(ms);
 
 /**
- * Get the Google OAuth authorization URL
- * Called when user clicks "Connect Google Calendar"
+ * Finds the Firestore user for a Stripe object. Looks up the stored customer id
+ * first, then falls back to the firebaseUserId metadata set on every customer
+ * and subscription this code creates, so a payment Firestore has not recorded
+ * yet (browser closed mid-checkout) still reaches the right user.
+ * @returns {Promise<FirebaseFirestore.DocumentSnapshot|null>}
  */
-exports.getGoogleAuthUrl = functions.https.onRequest((req, res) => {
-  cors(req, res, async () => {
+async function findUserForStripe({ customerId = null, subscription = null, subscriptionId = null }) {
+  if (customerId) {
+    const snap = await db.collection('users').where('subscription.stripeCustomerId', '==', customerId).limit(1).get();
+    if (!snap.empty) return snap.docs[0];
+  }
+  let uid = subscription?.metadata?.firebaseUserId || null;
+  if (!uid && subscriptionId) {
+    try { uid = (await stripe.subscriptions.retrieve(subscriptionId)).metadata?.firebaseUserId || null; } catch { /* not found */ }
+  }
+  if (!uid && customerId) {
     try {
-      // Verify Firebase Auth token
-      const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-
-      const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await getAuth().verifyIdToken(idToken);
-      const userId = decodedToken.uid;
-
-      const oauth2Client = getOAuth2Client();
-
-      // Generate a secure random state token for CSRF protection
-      const stateToken = crypto.randomBytes(32).toString('hex');
-
-      // Store state → userId mapping in Firestore (expires in 10 minutes)
-      await db.collection('oauth_states').doc(stateToken).set({
-        userId,
-        createdAt: FieldValue.serverTimestamp(),
-        expiresAt: new Date(Date.now() + 10 * 60 * 1000),
-      });
-
-      const authUrl = oauth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: SCOPES,
-        prompt: 'consent',
-        state: stateToken
-      });
-
-      res.json({ url: authUrl });
-    } catch (error) {
-      console.error('Error generating auth URL:', error);
-      res.status(500).json({ error: 'Failed to generate auth URL' });
-    }
-  });
-});
+      const customer = await stripe.customers.retrieve(customerId);
+      if (!customer.deleted) uid = customer.metadata?.firebaseUserId || null;
+    } catch { /* not found */ }
+  }
+  if (!uid) return null;
+  const doc = await db.collection('users').doc(uid).get();
+  return doc.exists ? doc : null;
+}
 
 /**
- * OAuth callback - exchanges code for tokens and stores them
+ * Active (or trialing, or paid-but-still-incomplete) subscription for a Firebase
+ * user across all of their Stripe customers. Email lookup is only used when the
+ * caller passes an email, i.e. when Firebase has verified it: otherwise anyone
+ * could register with someone else's address and claim their subscription.
  */
-exports.googleAuthCallback = functions.https.onRequest(async (req, res) => {
+async function findActiveStripeSubscription({ userId, email = null, priceId = null, extraCustomerIds = [] }) {
+  const [byMetadata, byEmail] = await Promise.all([
+    stripe.customers.search({ query: `metadata['firebaseUserId']:'${userId}'`, limit: 10 }),
+    email ? stripe.customers.list({ email, limit: 10 }) : Promise.resolve({ data: [] }),
+  ]);
+  const customerIds = [...new Set([...extraCustomerIds, ...byMetadata.data.map((c) => c.id), ...byEmail.data.map((c) => c.id)].filter(Boolean))];
+
+  for (const customerId of customerIds) {
+    const subs = await stripe.subscriptions.list({
+      customer: customerId,
+      status: 'all',
+      limit: 20,
+      ...(priceId ? { price: priceId } : {}),
+      expand: ['data.latest_invoice'],
+    });
+    let found = subs.data.find((s) => s.status === 'active' || s.status === 'trialing');
+    // Stripe moves incomplete -> active asynchronously after the invoice is paid
+    if (!found) found = subs.data.find((s) => s.status === 'incomplete' && isInvoicePaid(s.latest_invoice));
+    if (found) return { customerId, subscription: found };
+  }
+  return null;
+}
+
+/** "**** 4242" for a payment method id, or null. */
+async function describePaymentMethod(paymentMethodId) {
+  if (!paymentMethodId) return null;
   try {
-    const { code, state: stateToken } = req.query;
-
-    if (!code || !stateToken) {
-      return res.status(400).send('Missing code or state parameter');
-    }
-
-    // Validate state token against stored value (CSRF protection)
-    const stateDoc = await db.collection('oauth_states').doc(stateToken).get();
-    if (!stateDoc.exists) {
-      return res.status(403).send('Invalid or expired state token');
-    }
-
-    const stateData = stateDoc.data();
-    const userId = stateData.userId;
-
-    // Check expiration
-    if (stateData.expiresAt && stateData.expiresAt.toDate() < new Date()) {
-      await db.collection('oauth_states').doc(stateToken).delete();
-      return res.status(403).send('State token expired');
-    }
-
-    // Delete used state token (single-use)
-    await db.collection('oauth_states').doc(stateToken).delete();
-
-    const oauth2Client = getOAuth2Client();
-    const { tokens } = await oauth2Client.getToken(code);
-
-    // Store tokens securely in Firestore
-    await db.collection('users').doc(userId).collection('private').doc('googleCalendar').set({
-      accessToken: tokens.access_token,
-      refreshToken: tokens.refresh_token,
-      expiryDate: tokens.expiry_date,
-      connected: true,
-      connectedAt: FieldValue.serverTimestamp()
-    });
-
-    // Update user's public profile to show calendar is connected
-    await db.collection('users').doc(userId).update({
-      googleCalendarConnected: true
-    });
-
-    const appUrl = getAppUrl();
-    res.redirect(`${appUrl}/integrations?calendar=connected`);
-  } catch (error) {
-    console.error('OAuth callback error:', error);
-    const appUrl = getAppUrl();
-    res.redirect(`${appUrl}/integrations?calendar=error`);
+    const pm = await stripe.paymentMethods.retrieve(paymentMethodId);
+    return pm.card?.last4 ? `**** ${pm.card.last4}` : null;
+  } catch {
+    return null;
   }
-});
-
-/**
- * Disconnect Google Calendar
- */
-exports.disconnectGoogleCalendar = functions.https.onRequest((req, res) => {
-  cors(req, res, async () => {
-    try {
-      const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-
-      const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await getAuth().verifyIdToken(idToken);
-      const userId = decodedToken.uid;
-
-      // Delete stored tokens
-      await db.collection('users').doc(userId).collection('private').doc('googleCalendar').delete();
-
-      // Update user profile
-      await db.collection('users').doc(userId).update({
-        googleCalendarConnected: false
-      });
-
-      res.json({ success: true });
-    } catch (error) {
-      console.error('Error disconnecting:', error);
-      res.status(500).json({ error: 'Failed to disconnect' });
-    }
-  });
-});
-
-/**
- * Get connection status
- */
-exports.getCalendarStatus = functions.https.onRequest((req, res) => {
-  cors(req, res, async () => {
-    try {
-      const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-
-      const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await getAuth().verifyIdToken(idToken);
-      const userId = decodedToken.uid;
-
-      const calendarDoc = await db.collection('users').doc(userId)
-        .collection('private').doc('googleCalendar').get();
-
-      if (!calendarDoc.exists) {
-        return res.json({ connected: false });
-      }
-
-      const data = calendarDoc.data();
-      res.json({
-        connected: data.connected || false,
-        connectedAt: data.connectedAt
-      });
-    } catch (error) {
-      console.error('Error getting status:', error);
-      res.status(500).json({ error: 'Failed to get status' });
-    }
-  });
-});
-
-// ============================================
-// HELPER FUNCTIONS
-// ============================================
-
-/**
- * Get authenticated Google Calendar client for a user
- */
-async function getCalendarClient(userId) {
-  const calendarDoc = await db.collection('users').doc(userId)
-    .collection('private').doc('googleCalendar').get();
-
-  if (!calendarDoc.exists) {
-    throw new Error('Google Calendar not connected');
-  }
-
-  const tokens = calendarDoc.data();
-  const oauth2Client = getOAuth2Client();
-
-  oauth2Client.setCredentials({
-    access_token: tokens.accessToken,
-    refresh_token: tokens.refreshToken,
-    expiry_date: tokens.expiryDate
-  });
-
-  // Handle token refresh
-  oauth2Client.on('tokens', async (newTokens) => {
-    const updateData = {
-      accessToken: newTokens.access_token,
-      expiryDate: newTokens.expiry_date
-    };
-    if (newTokens.refresh_token) {
-      updateData.refreshToken = newTokens.refresh_token;
-    }
-    await db.collection('users').doc(userId)
-      .collection('private').doc('googleCalendar').update(updateData);
-  });
-
-  return getGoogle().calendar({ version: 'v3', auth: oauth2Client });
 }
 
-/**
- * Format shift data for Google Calendar event
- */
-function formatShiftForCalendar(shift, work) {
-  const startDate = new Date(shift.date);
-  const [startHour, startMin] = (shift.startTime || '09:00').split(':').map(Number);
-  const [endHour, endMin] = (shift.endTime || '17:00').split(':').map(Number);
-
-  const startDateTime = new Date(startDate);
-  startDateTime.setHours(startHour, startMin, 0, 0);
-
-  const endDateTime = new Date(startDate);
-  endDateTime.setHours(endHour, endMin, 0, 0);
-
-  // Handle overnight shifts
-  if (endDateTime <= startDateTime) {
-    endDateTime.setDate(endDateTime.getDate() + 1);
+/** Marks a user as premium from an active or trialing Stripe subscription. */
+async function activateUserSubscription(userId, { customerId = null, subscription, paymentMethodId = null, now = Timestamp.now() }) {
+  const state = subscriptionStateUpdates(
+    // incomplete-but-paid subscriptions are treated as active
+    subscription.status === 'incomplete' ? { ...subscription, status: 'active' } : subscription,
+    toTimestamp
+  );
+  if (!state || state['subscription.isPremium'] !== true) {
+    throw new Error(`Subscription ${subscription.id} is not active (${subscription.status})`);
   }
-
-  const workName = work?.name || 'Work Shift';
-  const workColor = work?.color || '#EC4899';
-
-  return {
-    summary: `${workName} - Shift`,
-    description: `Shift at ${workName}\n\nManaged by Gestor Turnos`,
-    start: {
-      dateTime: startDateTime.toISOString(),
-      timeZone: 'America/Argentina/Buenos_Aires'
-    },
-    end: {
-      dateTime: endDateTime.toISOString(),
-      timeZone: 'America/Argentina/Buenos_Aires'
-    },
-    colorId: getGoogleCalendarColorId(workColor),
-    reminders: {
-      useDefault: false,
-      overrides: [
-        { method: 'popup', minutes: 30 },
-        { method: 'popup', minutes: 10 }
-      ]
-    }
+  const updates = {
+    ...state,
+    'subscription.stripeCustomerId': customerId || idOf(subscription.customer),
+    'subscription.startDate': now,
   };
+  const label = await describePaymentMethod(paymentMethodId || idOf(subscription.default_payment_method));
+  if (label) updates['subscription.paymentMethod'] = label;
+  await db.collection('users').doc(userId).update(updates);
 }
-
-/**
- * Map hex color to Google Calendar color ID
- */
-function getGoogleCalendarColorId(hexColor) {
-  // Google Calendar has predefined colors (1-11)
-  // Map common colors to closest match
-  const colorMap = {
-    '#EC4899': '4', // Pink -> Flamingo
-    '#F43F5E': '11', // Rose -> Tomato
-    '#EF4444': '11', // Red -> Tomato
-    '#F97316': '6', // Orange -> Tangerine
-    '#EAB308': '5', // Yellow -> Banana
-    '#22C55E': '10', // Green -> Basil
-    '#10B981': '2', // Emerald -> Sage
-    '#14B8A6': '7', // Teal -> Peacock
-    '#06B6D4': '7', // Cyan -> Peacock
-    '#3B82F6': '9', // Blue -> Blueberry
-    '#6366F1': '1', // Indigo -> Lavender
-    '#8B5CF6': '1', // Violet -> Lavender
-    '#A855F7': '3', // Purple -> Grape
-    '#D946EF': '3', // Fuchsia -> Grape
-  };
-  return colorMap[hexColor] || '8'; // Default: Graphite
-}
-
-// ============================================
-// FIRESTORE TRIGGERS - Auto Sync
-// ============================================
-
-/**
- * When a shift is created, add it to Google Calendar
- */
-exports.onShiftCreated = functions.firestore
-  .document('shifts/{shiftId}')
-  .onCreate(async (snapshot, context) => {
-    const shift = snapshot.data();
-    const shiftId = context.params.shiftId;
-    const userId = shift.userId;
-
-    try {
-      // Check if user has calendar connected
-      const userDoc = await db.collection('users').doc(userId).get();
-      if (!userDoc.exists || !userDoc.data().googleCalendarConnected) {
-        return null;
-      }
-
-      // Get work details
-      const workDoc = await db.collection('works').doc(shift.workId).get();
-      const work = workDoc.exists ? workDoc.data() : null;
-
-      // Create calendar event
-      const calendar = await getCalendarClient(userId);
-      const event = formatShiftForCalendar(shift, work);
-
-      const response = await calendar.events.insert({
-        calendarId: 'primary',
-        resource: event
-      });
-
-      // Store the Google Calendar event ID for future updates/deletes
-      await snapshot.ref.update({
-        googleCalendarEventId: response.data.id
-      });
-
-      console.log(`Created calendar event for shift ${shiftId}`);
-    } catch (error) {
-      console.error(`Error creating calendar event for shift ${shiftId}:`, error);
-    }
-  });
-
-/**
- * When a shift is updated, update the Google Calendar event
- */
-exports.onShiftUpdated = functions.firestore
-  .document('shifts/{shiftId}')
-  .onUpdate(async (change, context) => {
-    const newShift = change.after.data();
-    const oldShift = change.before.data();
-    const shiftId = context.params.shiftId;
-    const userId = newShift.userId;
-
-    // Skip if only googleCalendarEventId changed (to avoid infinite loop)
-    if (oldShift.googleCalendarEventId !== newShift.googleCalendarEventId &&
-        Object.keys(newShift).length === Object.keys(oldShift).length) {
-      return null;
-    }
-
-    // Skip if no calendar event exists
-    if (!newShift.googleCalendarEventId) {
-      return null;
-    }
-
-    try {
-      // Check if user has calendar connected
-      const userDoc = await db.collection('users').doc(userId).get();
-      if (!userDoc.exists || !userDoc.data().googleCalendarConnected) {
-        return null;
-      }
-
-      // Get work details
-      const workDoc = await db.collection('works').doc(newShift.workId).get();
-      const work = workDoc.exists ? workDoc.data() : null;
-
-      // Update calendar event
-      const calendar = await getCalendarClient(userId);
-      const event = formatShiftForCalendar(newShift, work);
-
-      await calendar.events.update({
-        calendarId: 'primary',
-        eventId: newShift.googleCalendarEventId,
-        resource: event
-      });
-
-      console.log(`Updated calendar event for shift ${shiftId}`);
-    } catch (error) {
-      console.error(`Error updating calendar event for shift ${shiftId}:`, error);
-    }
-  });
-
-/**
- * When a shift is deleted, remove it from Google Calendar
- */
-exports.onShiftDeleted = functions.firestore
-  .document('shifts/{shiftId}')
-  .onDelete(async (snapshot, context) => {
-    const shift = snapshot.data();
-    const shiftId = context.params.shiftId;
-    const userId = shift.userId;
-
-    if (!shift.googleCalendarEventId) {
-      return null;
-    }
-
-    try {
-      // Check if user has calendar connected
-      const userDoc = await db.collection('users').doc(userId).get();
-      if (!userDoc.exists || !userDoc.data().googleCalendarConnected) {
-        return null;
-      }
-
-      // Delete calendar event
-      const calendar = await getCalendarClient(userId);
-
-      await calendar.events.delete({
-        calendarId: 'primary',
-        eventId: shift.googleCalendarEventId
-      });
-
-      console.log(`Deleted calendar event for shift ${shiftId}`);
-    } catch (error) {
-      // Ignore 404 errors (event already deleted)
-      if (error.code !== 404) {
-        console.error(`Error deleting calendar event for shift ${shiftId}:`, error);
-      }
-    }
-  });
-
-/**
- * Manual sync - sync all existing shifts to calendar
- */
-exports.syncAllShiftsToCalendar = functions.https.onRequest((req, res) => {
-  cors(req, res, async () => {
-    try {
-      const authHeader = req.headers.authorization;
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'Unauthorized' });
-      }
-
-      const idToken = authHeader.split('Bearer ')[1];
-      const decodedToken = await getAuth().verifyIdToken(idToken);
-      const userId = decodedToken.uid;
-
-      // Get all shifts without calendar events
-      const shiftsSnapshot = await db.collection('shifts')
-        .where('userId', '==', userId)
-        .where('googleCalendarEventId', '==', null)
-        .get();
-
-      if (shiftsSnapshot.empty) {
-        return res.json({ synced: 0, message: 'All shifts already synced' });
-      }
-
-      const calendar = await getCalendarClient(userId);
-      let synced = 0;
-
-      for (const shiftDoc of shiftsSnapshot.docs) {
-        const shift = shiftDoc.data();
-
-        // Get work details
-        const workDoc = await db.collection('works').doc(shift.workId).get();
-        const work = workDoc.exists ? workDoc.data() : null;
-
-        try {
-          const event = formatShiftForCalendar(shift, work);
-          const response = await calendar.events.insert({
-            calendarId: 'primary',
-            resource: event
-          });
-
-          await shiftDoc.ref.update({
-            googleCalendarEventId: response.data.id
-          });
-
-          synced++;
-        } catch (error) {
-          console.error(`Error syncing shift ${shiftDoc.id}:`, error);
-        }
-      }
-
-      res.json({ synced, total: shiftsSnapshot.size });
-    } catch (error) {
-      console.error('Error syncing shifts:', error);
-      res.status(500).json({ error: 'Failed to sync shifts' });
-    }
-  });
-});
 
 // ============================================
 // STRIPE FUNCTIONS - Premium Subscriptions
@@ -719,94 +336,26 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
 
       const now = Timestamp.now();
 
-      // Check for existing active/trialing subscription — avoids duplicates when payment
-      // succeeded in Stripe but Firestore wasn't updated (e.g. server returned 500 mid-flow).
-      // Search across ALL Stripe customers for this Firebase user using two strategies:
-      // 1. metadata search (customers created with firebaseUserId metadata)
-      // 2. email search (fallback for customers created without metadata)
-      const [metadataCustomers, emailCustomers] = await Promise.all([
-        stripe.customers.search({
-          query: `metadata['firebaseUserId']:'${userId}'`,
-          limit: 10,
-        }),
-        stripe.customers.list({ email: email, limit: 10 }),
-      ]);
-      const seenIds = new Set();
-      const allCustomerIds = [customerId, ...metadataCustomers.data.map((c) => c.id), ...emailCustomers.data.map((c) => c.id)]
-        .filter((id) => {
-          if (!id || seenIds.has(id)) return false;
-          seenIds.add(id);
-          return true;
-        });
-      const customerIdsToCheck = allCustomerIds;
-
-      let resolvedSub = null;
-      let resolvedCustomerId = customerId;
-
-      for (const custId of customerIdsToCheck) {
-        const existingSubs = await stripe.subscriptions.list({
-          customer: custId,
-          price: priceId,
-          status: 'all',
-          limit: 10,
-        });
-
-        // First look for clearly active/trialing subs
-        let found = existingSubs.data.find(
-          (s) => s.status === 'active' || s.status === 'trialing'
-        );
-
-        // Also check incomplete subs — Stripe transitions incomplete→active asynchronously
-        // after invoice payment, so there can be a gap where the sub looks incomplete but IS paid.
-        if (!found) {
-          for (const sub of existingSubs.data.filter((s) => s.status === 'incomplete')) {
-            const invId = typeof sub.latest_invoice === 'string'
-              ? sub.latest_invoice
-              : sub.latest_invoice?.id;
-            if (invId) {
-              const inv = await stripe.invoices.retrieve(invId);
-              if (inv.paid || inv.status === 'paid') {
-                console.log('Incomplete sub with paid invoice found:', sub.id);
-                found = sub;
-                break;
-              }
-            }
-          }
-        }
-
-        if (found) {
-          resolvedSub = found;
-          resolvedCustomerId = custId;
-          break;
-        }
+      // Already subscribed (e.g. payment succeeded in Stripe but Firestore was
+      // never updated): activate that one instead of creating a duplicate.
+      const existing = await findActiveStripeSubscription({
+        userId,
+        email: decodedToken.email_verified ? email : null,
+        priceId,
+        extraCustomerIds: [customerId],
+      });
+      if (existing) {
+        console.log('Existing subscription found:', existing.subscription.id, existing.subscription.status);
+        await activateUserSubscription(userId, { customerId: existing.customerId, subscription: existing.subscription, paymentMethodId, now });
+        return res.json({ status: 'success', subscriptionId: existing.subscription.id });
       }
 
-      if (resolvedSub) {
-        console.log('Existing subscription found:', resolvedSub.id, resolvedSub.status, 'customer:', resolvedCustomerId);
-        const periodEnd = resolvedSub.current_period_end;
-        const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-        await db.collection('users').doc(userId).update({
-          subscription: {
-            isPremium: true,
-            plan: 'premium',
-            status: 'active',
-            stripeCustomerId: resolvedCustomerId,
-            stripeSubscriptionId: resolvedSub.id,
-            startDate: now,
-            expiryDate: Timestamp.fromMillis(expiryMillis),
-            paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
-          },
-        });
-        return res.json({ status: 'success', subscriptionId: resolvedSub.id });
-      }
-
-      // Check if this user has already used a free trial (survives "Clear Everything")
+      // Free trial only once per user (record survives "Clear Everything")
       const trialRecord = await db.collection('trial_records').doc(userId).get();
       const trialAlreadyUsed = trialRecord.exists;
 
-      // Create subscription — only offer trial to first-time users.
-      // For returning users: trial_end: 'now' overrides any trial period defined on the
-      // price object itself, forcing an immediate billable invoice with a payment_intent.
+      // trial_end: 'now' overrides any trial defined on the price itself, forcing
+      // an immediate billable invoice for returning users.
       const subscription = await stripe.subscriptions.create({
         customer: customerId,
         items: [{ price: priceId }],
@@ -817,18 +366,16 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
           payment_method_types: ['card'],
           save_default_payment_method: 'on_subscription',
         },
-        expand: ['latest_invoice.payment_intent', 'pending_setup_intent'],
-        metadata: {
-          firebaseUserId: userId,
-        },
+        // confirmation_secret is the API 2025-03-31+ replacement of
+        // latest_invoice.payment_intent (removed from the Invoice object).
+        expand: ['latest_invoice.confirmation_secret', 'pending_setup_intent'],
+        metadata: { firebaseUserId: userId },
       });
 
-      // Handle trial subscriptions — no payment needed yet, card saved for later
+      // ---- Trial: no payment yet, the card is saved for when it converts
       if (subscription.status === 'trialing') {
-        const trialEnd = subscription.trial_end;
-        const trialEndMillis = trialEnd ? trialEnd * 1000 : Date.now() + (15 * 24 * 60 * 60 * 1000);
+        const trialEndMillis = subscription.trial_end ? subscription.trial_end * 1000 : Date.now() + (15 * 24 * 60 * 60 * 1000);
 
-        // Record trial usage so it persists across "Clear Everything"
         await db.collection('trial_records').doc(userId).set({
           usedAt: FieldValue.serverTimestamp(),
           stripeSubscriptionId: subscription.id,
@@ -843,182 +390,68 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
             stripeSubscriptionId: subscription.id,
             startDate: now,
             trialEnd: Timestamp.fromMillis(trialEndMillis),
-            paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
+            expiryDate: Timestamp.fromMillis(getExpiryMillis(subscription)),
+            paymentMethod: (await describePaymentMethod(paymentMethodId)) || null,
           },
         });
 
         return res.json({
           status: 'trial',
-          trialEnd: trialEnd,
+          trialEnd: subscription.trial_end,
           setupClientSecret: subscription.pending_setup_intent?.client_secret || null,
           subscriptionId: subscription.id,
         });
       }
 
-      // ========== NO TRIAL - PAYMENT REQUIRED IMMEDIATELY ==========
-      // Standard Stripe pattern: return clientSecret to frontend.
-      // Stripe.js (confirmCardPayment) handles all scenarios natively:
-      // direct payment, 3DS authentication, etc.
-      // After frontend confirms, verifyAndActivateSubscription updates Firestore.
-
-      // Fast path: subscription already active (e.g. saved card auto-charged)
+      // ---- No trial: payment required now
       if (subscription.status === 'active') {
-        const periodEnd = subscription.current_period_end;
-        const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-        await db.collection('users').doc(userId).update({
-          subscription: {
-            isPremium: true,
-            plan: 'premium',
-            status: 'active',
-            stripeCustomerId: customerId,
-            stripeSubscriptionId: subscription.id,
-            startDate: now,
-            expiryDate: Timestamp.fromMillis(expiryMillis),
-            paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
-          },
-        });
+        await activateUserSubscription(userId, { customerId, subscription, paymentMethodId, now });
         return res.json({ status: 'success', subscriptionId: subscription.id });
       }
 
-      // Get invoice ID from the subscription response
-      const rawInvoice = subscription.latest_invoice;
-      const invoiceId = typeof rawInvoice === 'string' ? rawInvoice : rawInvoice?.id;
-
-      if (!invoiceId) {
-        throw new Error('No invoice found for subscription');
+      let invoice = subscription.latest_invoice && typeof subscription.latest_invoice === 'object'
+        ? subscription.latest_invoice
+        : null;
+      if (!invoice && subscription.latest_invoice) {
+        invoice = await stripe.invoices.retrieve(subscription.latest_invoice, { expand: ['confirmation_secret'] });
       }
+      if (!invoice) throw new Error('No invoice found for subscription');
 
-      // Fetch the invoice fresh to get accurate state
-      let invoice = await stripe.invoices.retrieve(invoiceId, {
-        expand: ['payment_intent'],
-      });
-
-      console.log('Invoice state after subscription create:', JSON.stringify({
-        id: invoice.id,
-        status: invoice.status,
-        amount_due: invoice.amount_due,
-        collection_method: invoice.collection_method,
-        paid: invoice.paid,
-        has_payment_intent: !!invoice.payment_intent,
-        payment_intent_id: typeof invoice.payment_intent === 'object'
-          ? invoice.payment_intent?.id
-          : invoice.payment_intent,
-        payment_intent_status: typeof invoice.payment_intent === 'object'
-          ? invoice.payment_intent?.status
-          : null,
-      }));
-
-      // Handle zero-amount or already-paid invoice (covered by credit balance, etc.)
-      if (invoice.amount_due === 0 || invoice.paid) {
-        console.log('Invoice zero/paid — checking subscription status');
-        const freshSub = await stripe.subscriptions.retrieve(subscription.id);
-        if (freshSub.status === 'active') {
-          const periodEnd = freshSub.current_period_end;
-          const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-          await db.collection('users').doc(userId).update({
-            subscription: {
-              isPremium: true,
-              plan: 'premium',
-              status: 'active',
-              stripeCustomerId: customerId,
-              stripeSubscriptionId: freshSub.id,
-              startDate: now,
-              expiryDate: Timestamp.fromMillis(expiryMillis),
-              paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
-            },
-          });
-          return res.json({ status: 'success', subscriptionId: freshSub.id });
+      // Nothing to pay (credit balance, 100% coupon) or already paid
+      if (invoice.amount_due === 0 || isInvoicePaid(invoice)) {
+        const fresh = await stripe.subscriptions.retrieve(subscription.id);
+        if (fresh.status === 'active') {
+          await activateUserSubscription(userId, { customerId, subscription: fresh, paymentMethodId, now });
+          return res.json({ status: 'success', subscriptionId: fresh.id });
         }
       }
 
-      // Finalize draft invoice so Stripe creates the PaymentIntent
       if (invoice.status === 'draft') {
-        console.log('Invoice is draft, finalizing:', invoiceId);
-        invoice = await stripe.invoices.finalizeInvoice(invoiceId, {
-          expand: ['payment_intent'],
-        });
+        invoice = await stripe.invoices.finalizeInvoice(invoice.id, { expand: ['confirmation_secret'] });
       }
 
-      // Check if PI already exists on the invoice (happy path)
-      let pi = typeof invoice.payment_intent === 'string'
-        ? await stripe.paymentIntents.retrieve(invoice.payment_intent)
-        : invoice.payment_intent;
-
-      // If no PI yet, explicitly trigger payment via invoices.pay().
-      // This is more reliable than waiting for Stripe to attach the PI asynchronously.
-      // off_session: false allows on-session 3DS authentication (PI goes to requires_action
-      // instead of throwing an error), so the frontend can handle it with confirmCardPayment.
-      if (!pi && invoice.status === 'open') {
-        console.log('No PI on invoice — calling invoices.pay() to trigger payment...');
-        try {
-          const paidInvoice = await stripe.invoices.pay(invoiceId, {
-            payment_method: paymentMethodId,
-            off_session: false,
-            expand: ['payment_intent'],
-          });
-
-          console.log('invoices.pay() result:', JSON.stringify({
-            paid: paidInvoice.paid,
-            status: paidInvoice.status,
-            pi_status: typeof paidInvoice.payment_intent === 'object'
-              ? paidInvoice.payment_intent?.status
-              : null,
-          }));
-
-          if (paidInvoice.paid || paidInvoice.status === 'paid') {
-            // Payment succeeded immediately (card charge or customer credit balance) — activate subscription
-            const freshSub = await stripe.subscriptions.retrieve(subscription.id);
-            const periodEnd = freshSub.current_period_end;
-            const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-            await db.collection('users').doc(userId).update({
-              subscription: {
-                isPremium: true,
-                plan: 'premium',
-                status: 'active',
-                stripeCustomerId: customerId,
-                stripeSubscriptionId: freshSub.id,
-                startDate: now,
-                expiryDate: Timestamp.fromMillis(expiryMillis),
-                paymentMethod: `**** ${paymentMethodId.slice(-4)}`,
-              },
-            });
-            return res.json({ status: 'success', subscriptionId: freshSub.id });
-          }
-
-          pi = typeof paidInvoice.payment_intent === 'string'
-            ? await stripe.paymentIntents.retrieve(paidInvoice.payment_intent)
-            : paidInvoice.payment_intent;
-        } catch (payErr) {
-          // invoices.pay() may throw even with off_session:false in some edge cases.
-          // Retrieve the PI from the invoice directly.
-          console.log('invoices.pay() threw:', payErr.code, payErr.message);
-          const freshInvoice = await stripe.invoices.retrieve(invoiceId, {
-            expand: ['payment_intent'],
-          });
-          pi = typeof freshInvoice.payment_intent === 'string'
-            ? await stripe.paymentIntents.retrieve(freshInvoice.payment_intent)
-            : freshInvoice.payment_intent;
-
-          if (!pi) throw payErr; // re-throw original if PI still not found
-        }
-      }
-
-      if (!pi) {
-        console.error('No payment intent found for subscription:', subscription.id, {
-          subscriptionStatus: subscription.status,
-          invoiceId,
-          invoiceStatus: invoice.status,
-        });
+      // The browser confirms the payment with Stripe.js, which also runs 3-D
+      // Secure when the bank asks for it. (Charging server-side with
+      // invoices.pay() cannot complete 3-D Secure.)
+      const clientSecret = getInvoiceClientSecret(invoice);
+      if (!clientSecret) {
+        console.error('No client secret for invoice', invoice.id, 'status', invoice.status);
         throw new Error('Could not initialize payment. Please try again.');
       }
 
-      console.log('Returning clientSecret for PI:', pi.id, 'status:', pi.status);
+      // Remember the pending subscription now, so the webhook can activate this
+      // user even if the browser never returns to verifyAndActivateSubscription.
+      await db.collection('users').doc(userId).set({
+        subscription: {
+          stripeCustomerId: customerId,
+          stripeSubscriptionId: subscription.id,
+          ...(userData.subscription?.isPremium === true ? {} : { isPremium: false, status: 'incomplete' }),
+        },
+      }, { merge: true });
 
-      // Return clientSecret to frontend — Stripe.js handles confirmation + 3DS natively.
-      // Frontend calls verifyAndActivateSubscription after stripe.confirmCardPayment succeeds.
       return res.json({
         status: 'requires_payment',
-        clientSecret: pi.client_secret,
+        clientSecret,
         subscriptionId: subscription.id,
       });
       } finally {
@@ -1058,62 +491,17 @@ exports.activateExistingSubscription = functions.https.onRequest((req, res) => {
       const userId = decodedToken.uid;
       const email = decodedToken.email;
 
-      const priceId = process.env.STRIPE_PRICE_ID;
-      if (!priceId) {
-        return res.status(500).json({ error: 'Payment system not configured.' });
-      }
-
-      // Search by metadata AND email to find all customers for this user
-      const [metadataCustomers, emailCustomers] = await Promise.all([
-        stripe.customers.search({
-          query: `metadata['firebaseUserId']:'${userId}'`,
-          limit: 10,
-        }),
-        stripe.customers.list({ email, limit: 10 }),
-      ]);
-
-      const seenIds = new Set();
-      const customerIds = [...metadataCustomers.data.map((c) => c.id), ...emailCustomers.data.map((c) => c.id)]
-        .filter((id) => { if (seenIds.has(id)) return false; seenIds.add(id); return true; });
-
-      let activeSub = null;
-      let activeCustomerId = null;
-
-      for (const custId of customerIds) {
-        const subs = await stripe.subscriptions.list({
-          customer: custId,
-          status: 'all',
-          limit: 20,
-        });
-        const found = subs.data.find((s) => s.status === 'active' || s.status === 'trialing');
-        if (found) {
-          activeSub = found;
-          activeCustomerId = custId;
-          break;
-        }
-      }
-
-      if (!activeSub) {
+      const found = await findActiveStripeSubscription({
+        userId,
+        email: decodedToken.email_verified ? email : null,
+      });
+      if (!found) {
         return res.status(404).json({ error: 'No active subscription found in Stripe.' });
       }
 
-      const now = Timestamp.now();
-      const periodEnd = activeSub.current_period_end;
-      const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-
-      // Dot-notation update preserves existing fields (paymentMethod, trialEnd, etc.)
-      await db.collection('users').doc(userId).update({
-        'subscription.isPremium': true,
-        'subscription.plan': 'premium',
-        'subscription.status': activeSub.status,
-        'subscription.stripeCustomerId': activeCustomerId,
-        'subscription.stripeSubscriptionId': activeSub.id,
-        'subscription.startDate': now,
-        'subscription.expiryDate': Timestamp.fromMillis(expiryMillis),
-      });
-
-      console.log(`activateExistingSubscription: activated ${activeSub.id} for user ${userId}`);
-      return res.json({ status: 'success', subscriptionId: activeSub.id, customerId: activeCustomerId });
+      await activateUserSubscription(userId, { customerId: found.customerId, subscription: found.subscription });
+      console.log(`activateExistingSubscription: activated ${found.subscription.id} for user ${userId}`);
+      return res.json({ status: 'success', subscriptionId: found.subscription.id, customerId: found.customerId });
     } catch (error) {
       console.error('Error activating subscription:', error);
       res.status(500).json({ error: error.message || 'Failed to activate subscription' });
@@ -1264,11 +652,18 @@ exports.verifyAndActivateSubscription = functions.https.onRequest((req, res) => 
       }
 
       // Retrieve subscription from Stripe to get authoritative status
-      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      let subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
       // Security: ensure this subscription belongs to the requesting user
       if (subscription.metadata?.firebaseUserId !== userId) {
         return res.status(403).json({ error: 'Subscription does not belong to this user' });
+      }
+
+      // Stripe flips the subscription from 'incomplete' to 'active' a moment after
+      // the payment succeeds; give it a few seconds before reporting a failure.
+      for (let attempt = 0; attempt < 4 && !['active', 'trialing'].includes(subscription.status); attempt++) {
+        await new Promise((r) => setTimeout(r, 1500));
+        subscription = await stripe.subscriptions.retrieve(subscriptionId);
       }
 
       if (!['active', 'trialing'].includes(subscription.status)) {
@@ -1277,25 +672,7 @@ exports.verifyAndActivateSubscription = functions.https.onRequest((req, res) => 
         });
       }
 
-      const now = Timestamp.now();
-      const periodEnd = subscription.current_period_end;
-      const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-      const customerId = typeof subscription.customer === 'string'
-        ? subscription.customer
-        : subscription.customer?.id;
-
-      // Dot-notation update: preserves existing fields (paymentMethod, trialEnd, etc.)
-      // and keeps Stripe's authoritative status instead of forcing 'active'.
-      await db.collection('users').doc(userId).update({
-        'subscription.isPremium': true,
-        'subscription.plan': 'premium',
-        'subscription.status': subscription.status === 'trialing' ? 'trialing' : 'active',
-        'subscription.stripeCustomerId': customerId,
-        'subscription.stripeSubscriptionId': subscription.id,
-        'subscription.startDate': now,
-        'subscription.expiryDate': Timestamp.fromMillis(expiryMillis),
-      });
-
+      await activateUserSubscription(userId, { customerId: idOf(subscription.customer), subscription });
       return res.json({ status: 'success', subscriptionId: subscription.id });
     } catch (error) {
       console.error('Error verifying subscription:', error);
@@ -1350,7 +727,7 @@ exports.createBillingPortalSession = functions.https.onRequest((req, res) => {
 
       const session = await stripe.billingPortal.sessions.create({
         customer: customerId,
-        return_url: process.env.APP_URL + '/premium',
+        return_url: `${getAppUrl()}/premium`,
       });
 
       res.json({ url: session.url });
@@ -1540,52 +917,50 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
     return res.json({ received: true, duplicate: true });
   }
 
-  // Handle the event
-  switch (event.type) {
-    case 'invoice.paid': {
-      const invoice = event.data.object;
-      const customerId = invoice.customer;
+  // Handle the event. Errors return 500 so Stripe retries the delivery; the
+  // event is only marked processed after it was handled.
+  try {
+    switch (event.type) {
+      case 'invoice.paid': {
+        const invoice = event.data.object;
+        const subscriptionId = getInvoiceSubscriptionId(invoice);
+        if (!subscriptionId) break; // one-off invoice, not a subscription
 
-      // Trial subscriptions generate a $0 invoice at creation — if we marked the user
-      // 'active' here we would wipe their 'trialing' status and trialEnd date.
-      if (invoice.billing_reason === 'subscription_create' && invoice.amount_paid === 0) {
-        console.log(`Skipping $0 subscription_create invoice for customer ${customerId} (trial start)`);
-        break;
-      }
+        // Trial start generates a $0 invoice; marking 'active' here would wipe
+        // the user's 'trialing' status and trial end date.
+        if (invoice.billing_reason === 'subscription_create' && invoice.amount_paid === 0) {
+          console.log(`Skipping $0 subscription_create invoice ${invoice.id} (trial start)`);
+          break;
+        }
 
-      // Find user by Stripe customer ID
-      const usersSnapshot = await db.collection('users')
-        .where('subscription.stripeCustomerId', '==', customerId)
-        .limit(1)
-        .get();
+        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+        const userDoc = await findUserForStripe({ customerId: idOf(invoice.customer), subscription });
+        if (!userDoc) {
+          console.warn(`invoice.paid: no user for customer ${idOf(invoice.customer)} / subscription ${subscriptionId}`);
+          break;
+        }
 
-      if (!usersSnapshot.empty) {
-        const userDoc = usersSnapshot.docs[0];
-        const userData = userDoc.data() || {};
-        const subscription = await stripe.subscriptions.retrieve(invoice.subscription);
-
-        // Safely calculate expiry date
-        const periodEnd = subscription.current_period_end;
-        const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-
+        const state = subscriptionStateUpdates(subscription, toTimestamp) || {};
         await userDoc.ref.update({
+          ...state,
           'subscription.isPremium': true,
-          'subscription.status': 'active',
-          'subscription.expiryDate': Timestamp.fromMillis(expiryMillis),
+          'subscription.plan': 'premium',
+          'subscription.status': state['subscription.status'] && state['subscription.status'] !== 'past_due' ? state['subscription.status'] : 'active',
+          'subscription.stripeCustomerId': idOf(invoice.customer),
+          'subscription.stripeSubscriptionId': subscription.id,
+          'subscription.expiryDate': toTimestamp(getExpiryMillis(subscription)),
         });
-
         console.log(`Invoice paid for user ${userDoc.id}`);
 
-        // Send payment confirmation email (fire-and-forget)
-        const userEmail = userData.email || (await getAuth().getUser(userDoc.id)).email;
+        // Payment confirmation email (fire-and-forget)
+        const userData = userDoc.data() || {};
+        const userEmail = userData.email || (await getAuth().getUser(userDoc.id).catch(() => null))?.email;
         if (userEmail) {
-          const nextBillingDate = periodEnd
-            ? new Date(periodEnd * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
-            : 'next month';
-          const priceAmount = invoice.amount_paid;
+          const periodEndMs = getExpiryMillis(subscription);
+          const nextBillingDate = new Date(periodEndMs).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
           const currency = (invoice.currency || 'aud').toUpperCase();
-          const formattedAmount = priceAmount
-            ? `${(priceAmount / 100).toFixed(2)} ${currency} / month`
+          const formattedAmount = invoice.amount_paid
+            ? `${(invoice.amount_paid / 100).toFixed(2)} ${currency} / month`
             : 'Premium';
           emailService.sendSubscriptionConfirmationEmail({
             email: userEmail,
@@ -1595,100 +970,51 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
             invoiceUrl: invoice.hosted_invoice_url || null,
           }).catch((err) => console.warn('Failed to send subscription confirmation email:', err.message));
         }
+        break;
       }
-      break;
-    }
 
-    case 'invoice.payment_failed': {
-      const invoice = event.data.object;
-      const customerId = invoice.customer;
-
-      const usersSnapshot = await db.collection('users')
-        .where('subscription.stripeCustomerId', '==', customerId)
-        .limit(1)
-        .get();
-
-      if (!usersSnapshot.empty) {
-        const userDoc = usersSnapshot.docs[0];
-        await userDoc.ref.update({
-          'subscription.status': 'past_due',
-        });
-        console.log(`Payment failed for user ${userDoc.id}`);
-      }
-      break;
-    }
-
-    case 'customer.subscription.deleted': {
-      const subscription = event.data.object;
-      const customerId = subscription.customer;
-
-      const usersSnapshot = await db.collection('users')
-        .where('subscription.stripeCustomerId', '==', customerId)
-        .limit(1)
-        .get();
-
-      if (!usersSnapshot.empty) {
-        const userDoc = usersSnapshot.docs[0];
-        await userDoc.ref.update({
-          'subscription.isPremium': false,
-          'subscription.status': 'cancelled',
-          'subscription.plan': 'free',
-        });
-        console.log(`Subscription cancelled for user ${userDoc.id}`);
-      }
-      break;
-    }
-
-    case 'customer.subscription.trial_will_end': {
-      // Fired 3 days before trial ends — flag user so UI can show a notice
-      const trialSub = event.data.object;
-      const trialCustomerId = trialSub.customer;
-
-      const trialUsersSnapshot = await db.collection('users')
-        .where('subscription.stripeCustomerId', '==', trialCustomerId)
-        .limit(1)
-        .get();
-
-      if (!trialUsersSnapshot.empty) {
-        const userDoc = trialUsersSnapshot.docs[0];
-        await userDoc.ref.update({
-          'subscription.trialEndingSoon': true,
-        });
-        console.log(`Trial ending soon for user ${userDoc.id}`);
-      }
-      break;
-    }
-
-    case 'customer.subscription.updated': {
-      // Handle trial → active transition (belt-and-suspenders; invoice.paid also covers this)
-      const updatedSub = event.data.object;
-      const prevStatus = event.data.previous_attributes?.status;
-
-      if (updatedSub.status === 'active' && prevStatus === 'trialing') {
-        const updatedCustomerId = updatedSub.customer;
-        const updatedUsersSnapshot = await db.collection('users')
-          .where('subscription.stripeCustomerId', '==', updatedCustomerId)
-          .limit(1)
-          .get();
-
-        if (!updatedUsersSnapshot.empty) {
-          const userDoc = updatedUsersSnapshot.docs[0];
-          const periodEnd = updatedSub.current_period_end;
-          const expiryMillis = periodEnd ? periodEnd * 1000 : Date.now() + (30 * 24 * 60 * 60 * 1000);
-          await userDoc.ref.update({
-            'subscription.status': 'active',
-            'subscription.expiryDate': Timestamp.fromMillis(expiryMillis),
-            'subscription.trialEnd': null,
-            'subscription.trialEndingSoon': null,
-          });
-          console.log(`Trial converted to active for user ${userDoc.id}`);
+      case 'invoice.payment_failed': {
+        const invoice = event.data.object;
+        const userDoc = await findUserForStripe({ customerId: idOf(invoice.customer), subscriptionId: getInvoiceSubscriptionId(invoice) });
+        if (userDoc) {
+          await userDoc.ref.update({ 'subscription.status': 'past_due' });
+          console.log(`Payment failed for user ${userDoc.id}`);
         }
+        break;
       }
-      break;
-    }
 
-    default:
-      console.log(`Unhandled event type: ${event.type}`);
+      case 'customer.subscription.deleted':
+      case 'customer.subscription.updated': {
+        // Covers trial -> active, cancel or reactivate from the app or the Stripe
+        // billing portal, past_due, and the final cancellation.
+        const subscription = event.data.object;
+        const userDoc = await findUserForStripe({ customerId: idOf(subscription.customer), subscription });
+        if (!userDoc) break;
+        const updates = subscriptionStateUpdates(
+          event.type === 'customer.subscription.deleted' ? { ...subscription, status: 'canceled' } : subscription,
+          toTimestamp
+        );
+        if (updates) {
+          await userDoc.ref.update(updates);
+          console.log(`${event.type} -> ${updates['subscription.status']} for user ${userDoc.id}`);
+        }
+        break;
+      }
+
+      case 'customer.subscription.trial_will_end': {
+        // Fired 3 days before the trial ends; the UI shows a notice
+        const subscription = event.data.object;
+        const userDoc = await findUserForStripe({ customerId: idOf(subscription.customer), subscription });
+        if (userDoc) await userDoc.ref.update({ 'subscription.trialEndingSoon': true });
+        break;
+      }
+
+      default:
+        console.log(`Unhandled event type: ${event.type}`);
+    }
+  } catch (err) {
+    console.error(`stripeWebhook ${event.type} (${event.id}) failed:`, err.message);
+    return res.status(500).send('Webhook handler failed');
   }
 
   // Mark event as processed for idempotency
@@ -1703,74 +1029,6 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
 // ============================================
 // CALENDAR FEED - WebCal ICS Subscription
 // ============================================
-
-/**
- * Format a date+time string pair into ICS local datetime format.
- * @param {string} dateStr - "YYYY-MM-DD"
- * @param {string} timeStr - "HH:mm"
- * @returns {string} e.g. "20260227T090000"
- */
-function formatDateForICS(dateStr, timeStr) {
-  const [year, month, day] = dateStr.split('-');
-  const [hour, minute] = timeStr.split(':');
-  return `${year}${month}${day}T${hour}${minute}00`;
-}
-
-/**
- * Escape special characters for ICS text fields.
- */
-function escapeICSText(text) {
-  if (!text) return '';
-  return String(text)
-    .replace(/\\/g, '\\\\')
-    .replace(/,/g, '\\,')
-    .replace(/;/g, '\\;')
-    .replace(/\n/g, '\\n');
-}
-
-/**
- * Build a complete ICS calendar string from an array of shifts.
- * @param {Array} shifts - shift objects with id, startDate, startTime, endDate, endTime, notes, workId
- * @param {Object} worksMap - { [workId]: { name } }
- * @param {string} timezone - IANA timezone string e.g. "Australia/Sydney"
- * @returns {string}
- */
-function generateICS(shifts, worksMap, timezone) {
-  const tz = timezone || 'UTC';
-
-  const lines = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Orary//Shift Manager//EN',
-    'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH',
-    'X-WR-CALNAME:Orary - My Shifts',
-    `X-WR-TIMEZONE:${tz}`,
-    'REFRESH-INTERVAL;VALUE=DURATION:PT6H',
-    'X-PUBLISHED-TTL:PT6H',
-  ];
-
-  const dtstamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 15) + 'Z';
-
-  for (const shift of shifts) {
-    const work = worksMap[shift.workId];
-    const workName = work?.name || 'Shift';
-    const endDate = shift.endDate || shift.startDate;
-
-    lines.push('BEGIN:VEVENT');
-    lines.push(`UID:shift-${shift.id}@orary.app`);
-    // Use TZID so calendar apps render events in the user's local time, not UTC
-    lines.push(`DTSTART;TZID=${tz}:${formatDateForICS(shift.startDate, shift.startTime)}`);
-    lines.push(`DTEND;TZID=${tz}:${formatDateForICS(endDate, shift.endTime)}`);
-    lines.push(`SUMMARY:${escapeICSText(workName)}`);
-    if (shift.notes) lines.push(`DESCRIPTION:${escapeICSText(shift.notes)}`);
-    lines.push(`DTSTAMP:${dtstamp}`);
-    lines.push('END:VEVENT');
-  }
-
-  lines.push('END:VCALENDAR');
-  return lines.join('\r\n');
-}
 
 /**
  * Get or create a permanent calendar subscription token for the authenticated user.
@@ -1793,14 +1051,9 @@ exports.getCalendarToken = functions.https.onRequest(async (req, res) => {
       return res.status(401).json({ error: 'Invalid token' });
     }
 
-    // Accept timezone from request body
-    let timezone = 'UTC';
-    try {
-      const body = req.body || {};
-      if (body.timezone && typeof body.timezone === 'string') {
-        timezone = body.timezone;
-      }
-    } catch { /* ignore */ }
+    // Timezone from the device; written into the ICS, so only valid IANA names
+    const requested = req.body?.timezone;
+    const timezone = isValidTimeZone(requested) ? requested : 'UTC';
 
     // Get or generate a permanent calendar token for this user
     const userRef = db.collection('users').doc(uid);
@@ -1828,8 +1081,11 @@ exports.userCalendar = functions.https.onRequest(async (req, res) => {
   if (req.method !== 'GET') return res.status(405).send('Method not allowed');
 
   const { uid, token } = req.query;
-  if (!uid || !token || typeof uid !== 'string' || typeof token !== 'string') {
-    return res.status(400).send('Missing uid or token');
+  // Cheap format checks before touching Firestore: Firebase uids are
+  // alphanumeric and tokens are 32 random bytes in hex.
+  if (typeof uid !== 'string' || !/^[A-Za-z0-9]{1,128}$/.test(uid)
+      || typeof token !== 'string' || !/^[0-9a-f]{64}$/.test(token)) {
+    return res.status(400).send('Missing or invalid uid or token');
   }
 
   // Light rate limit per uid — calendar apps poll every few hours, so 20/min
@@ -1848,7 +1104,8 @@ exports.userCalendar = functions.https.onRequest(async (req, res) => {
     return res.status(403).send('Forbidden');
   }
 
-  const timezone = userDoc.data().calendarTimezone || 'UTC';
+  const storedTz = userDoc.data().calendarTimezone;
+  const timezone = isValidTimeZone(storedTz) ? storedTz : 'UTC';
 
   // Date range for JS-side filtering: last 90 days → next 365 days
   const now = new Date();
@@ -1974,6 +1231,74 @@ exports.scheduledCleanExpiredShares = functions.pubsub
     return null;
   });
 
+
+// ============================================
+// ACCOUNT DELETION - server-side cleanup
+// ============================================
+
+/**
+ * Runs when a Firebase Auth user is deleted (from the app's Delete Account flow
+ * or the console). The client already deletes shifts, works, payslips and the
+ * user document, but it cannot reach server-only data (private subcollection,
+ * rate limits, trial record), other users' shared links, sessions or Storage.
+ * Everything tied to the uid is removed here, idempotently.
+ */
+exports.cleanupDeletedUser = functions.auth.user().onDelete(async (user) => {
+  const uid = user.uid;
+  const deleted = {};
+
+  const deleteQuery = async (label, q) => {
+    let total = 0;
+    for (;;) {
+      const snap = await q.limit(400).get();
+      if (snap.empty) break;
+      const batch = db.batch();
+      snap.docs.forEach((d) => batch.delete(d.ref));
+      await batch.commit();
+      total += snap.size;
+      if (snap.size < 400) break;
+    }
+    deleted[label] = total;
+  };
+
+  // Stop renewals for any live subscription (keeps the already-paid period)
+  try {
+    const customers = await stripe.customers.search({ query: `metadata['firebaseUserId']:'${uid}'`, limit: 10 });
+    for (const customer of customers.data) {
+      const subs = await stripe.subscriptions.list({ customer: customer.id, status: 'all', limit: 20 });
+      for (const sub of subs.data) {
+        if (['active', 'trialing', 'past_due'].includes(sub.status) && !sub.cancel_at_period_end) {
+          await stripe.subscriptions.update(sub.id, { cancel_at_period_end: true });
+          deleted.stripeRenewalsStopped = (deleted.stripeRenewalsStopped || 0) + 1;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('cleanupDeletedUser: Stripe step failed:', err.message);
+  }
+
+  const steps = [
+    () => db.recursiveDelete(db.collection('users').doc(uid)), // includes private/
+    () => deleteQuery('shifts', db.collection('shifts').where('userId', '==', uid)),
+    () => deleteQuery('works', db.collection('works').where('userId', '==', uid)),
+    () => deleteQuery('payslips', db.collection('payslips').where('userId', '==', uid)),
+    () => deleteQuery('liveSessions', db.collection('liveSessions').where('userId', '==', uid)),
+    () => deleteQuery('sharedWorks', db.collection('shared_works').where('sharedBy', '==', uid)),
+    () => deleteQuery('rateLimits', db.collection('rate_limits')
+      .where(FieldPath.documentId(), '>=', `${uid}_`)
+      .where(FieldPath.documentId(), '<', `${uid}_\uf8ff`)),
+    () => db.collection('feedback').doc(uid).delete(),
+    () => db.collection('trial_records').doc(uid).delete(),
+    () => db.collection('subscription_locks').doc(uid).delete(),
+    () => getStorage().bucket().deleteFiles({ prefix: `profile-photos/${uid}/` }),
+  ];
+  for (const step of steps) {
+    try { await step(); } catch (err) { console.warn('cleanupDeletedUser step failed:', err.message); }
+  }
+
+  console.log(`cleanupDeletedUser ${uid}: ${JSON.stringify(deleted)}`);
+  return null;
+});
 
 // ============================================
 // CUSTOM AUTH EMAILS — powered by Resend
