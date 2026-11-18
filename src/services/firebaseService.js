@@ -358,6 +358,11 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
     shiftData.createdWith = newShift.createdWith;
   }
 
+  // Minutes paused during a Live Mode session (deducted in calculatePayment)
+  if (newShift.pausedMinutes > 0) {
+    shiftData.pausedMinutes = Math.round(newShift.pausedMinutes);
+  }
+
   // Add break/smoko fields if present
   if (newShift.hadBreak !== undefined) {
     shiftData.hadBreak = newShift.hadBreak;

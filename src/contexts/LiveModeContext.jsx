@@ -535,6 +535,10 @@ export const LiveModeProvider = ({ children }) => {
 
       const startDate = formatDate(startTime);
       const endDate = formatDate(endTime);
+      // Time spent paused is not work time. The shift stores wall-clock start
+      // and end, so the pause total is saved alongside and deducted in
+      // calculatePayment (the live counter already excluded it).
+      const pausedMinutes = Math.round(finalPauseDuration / 60000);
       const crossesMidnight = startDate !== endDate;
 
       // Create shift data
@@ -551,6 +555,7 @@ export const LiveModeProvider = ({ children }) => {
         // Smoko/break deduction
         hadBreak: smokoMinutesToDeduct > 0,
         breakMinutes: smokoMinutesToDeduct > 0 ? smokoMinutesToDeduct : 0,
+        ...(pausedMinutes > 0 ? { pausedMinutes } : {}),
       };
 
       // Add the shift

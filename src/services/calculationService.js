@@ -145,9 +145,13 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, t
   }
 
   const totalMinutes = endMinutes - startMinutes;
-  let workingMinutes = totalMinutes;
-  if (smokoEnabled && hadBreak && totalMinutes > finalSmokoMinutes) {
-    workingMinutes = totalMinutes - finalSmokoMinutes;
+  // Minutes paused during a Live Mode session are never work time, whatever the
+  // break (smoko) setting says.
+  const pausedMinutes = Math.min(Math.max(0, Number(shift.pausedMinutes) || 0), totalMinutes);
+  let workingMinutes = totalMinutes - pausedMinutes;
+  const smokoApplied = !!(smokoEnabled && hadBreak && workingMinutes > finalSmokoMinutes);
+  if (smokoApplied) {
+    workingMinutes -= finalSmokoMinutes;
   }
 
   const hours = workingMinutes / 60;
@@ -256,7 +260,8 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, t
     appliedDiscount,
     isNightShift: doesCrossMidnight,
     isHoliday: hasAnyHoliday,
-    smokoApplied: smokoEnabled && hadBreak && totalMinutes > finalSmokoMinutes,
+    smokoApplied,
+    pausedMinutes,
     smokoMinutes: smokoEnabled && hadBreak ? finalSmokoMinutes : 0,
     totalMinutesWorked: workingMinutes,
     totalMinutesScheduled: totalMinutes

@@ -1,6 +1,6 @@
 // src/utils/shiftUtils.js
 
-import { addDaysToDateKey } from './time';
+import { addDaysToDateKey, createSafeDate, calculateShiftHours } from './time';
 
 /**
  * Whether a shift crosses midnight: flagged so, or ending at an earlier hour
@@ -42,6 +42,30 @@ export const normalizeShiftDates = (shift) => {
     return { ...shift, endDate: addDaysToDateKey(start, 1) };
   }
   return shift;
+};
+
+/**
+ * Whether a shift has already been worked: its end (start + duration) is at or
+ * before `now`, in local time. Shifts that have not finished are scheduled,
+ * not worked, so they must not count as money earned or as visa days.
+ * A shift without times counts once its day has ended.
+ * @param {object} shift
+ * @param {Date} [now]
+ * @returns {boolean}
+ */
+export const isShiftCompleted = (shift, now = new Date()) => {
+  const date = shift?.startDate || shift?.date;
+  if (!date) return false;
+  const start = createSafeDate(date);
+  if (shift.startTime && shift.endTime) {
+    const [h, m] = shift.startTime.split(':').map(Number);
+    start.setHours(h || 0, m || 0, 0, 0);
+    const end = new Date(start.getTime() + calculateShiftHours(shift.startTime, shift.endTime) * 3600000);
+    return end <= now;
+  }
+  const endOfDay = new Date(start);
+  endOfDay.setDate(endOfDay.getDate() + 1);
+  return endOfDay <= now;
 };
 
 /**

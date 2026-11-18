@@ -2,7 +2,6 @@
 
 import React, { createContext, useMemo } from 'react';
 
-import { AuthProvider } from './AuthContext';
 import { PremiumProvider, usePremium } from './PremiumContext';
 import { ConfigProvider, useConfigContext } from './ConfigContext';
 import { DataProvider, useDataContext } from './DataContext';
@@ -18,7 +17,6 @@ const AppContext = createContext(null);
 // 2. The main AppProvider now composes all other providers
 export const AppProvider = ({ children }) => {
   return (
-    <AuthProvider>
       <PremiumProvider>
         <ConfigProvider>
           <DataProvider>
@@ -35,7 +33,6 @@ export const AppProvider = ({ children }) => {
           </DataProvider>
         </ConfigProvider>
       </PremiumProvider>
-    </AuthProvider>
   );
 };
 

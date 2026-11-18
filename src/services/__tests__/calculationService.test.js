@@ -62,6 +62,18 @@ describe('calculatePayment', () => {
     expect(pay(shift, { smoko: false }).hours).toBe(6);
   });
 
+  test('Live Mode pauses are deducted even with breaks disabled, and replace the smoko check', () => {
+    // 07:00-13:00 with 45 min paused -> 5.25 h, at the day rate 30
+    const shift = { startDate: '2026-11-17', startTime: '07:00', endTime: '13:00', hadBreak: false, breakMinutes: 0, pausedMinutes: 45 };
+    const off = pay(shift, { smoko: false });
+    expect(off.hours).toBe(5.25);
+    expect(off.total).toBeCloseTo(157.5, 5);
+    expect(off.pausedMinutes).toBe(45);
+    expect(pay(shift, { smoko: true }).hours).toBe(5.25);
+    // a pause can never exceed the shift
+    expect(pay({ ...shift, pausedMinutes: 999 }).hours).toBe(0);
+  });
+
   test('tax: per-job override wins over the default', () => {
     const shift = { startDate: '2026-11-17', startTime: '07:00', endTime: '13:00' };
     expect(pay(shift, { discount: 15 }).totalWithDiscount).toBeCloseTo(153, 5);

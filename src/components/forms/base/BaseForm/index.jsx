@@ -39,7 +39,7 @@ const BaseForm = ({
 
       {/* Additional styles for mobile - prevents zoom on iOS */}
       {isMobile && (
-        <style jsx>{`
+        <style>{`
           .mobile-form input[type="date"],
           .mobile-form input[type="time"],
           .mobile-form input[type="number"],

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Coffee, PartyPopper, Calculator } from 'lucide-react';
+import { Coffee, PartyPopper, Calculator, Pause } from 'lucide-react';
 import BaseShiftCard from '../../base/BaseShiftCard';
 import Badge from '../../../ui/Badge';
 import { useApp } from '../../../../contexts/AppContext';
@@ -91,6 +91,11 @@ const ShiftCard = (props) => {
                 {t('shifts.holiday')}
               </Badge>
             )}
+            {shiftData.pausedMinutes > 0 && (
+              <Badge variant="warning" size="xs" icon={Pause}>
+                -{shiftData.pausedMinutes}min
+              </Badge>
+            )}
             {smokoEnabled && shiftData.smokoApplied && (
               <Badge variant="warning" size="xs" icon={Coffee}>
                 -{shiftData.smokoMinutes}min
@@ -104,6 +109,11 @@ const ShiftCard = (props) => {
             {shiftData.isHoliday && (
               <Badge variant="danger" size="xs" icon={PartyPopper} rounded>
                 {t('shifts.holiday')}
+              </Badge>
+            )}
+            {shiftData.pausedMinutes > 0 && (
+              <Badge variant="warning" size="xs" icon={Pause} rounded>
+                -{shiftData.pausedMinutes}min
               </Badge>
             )}
             {smokoEnabled && shiftData.smokoApplied && (

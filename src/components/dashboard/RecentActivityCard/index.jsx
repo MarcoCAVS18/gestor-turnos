@@ -8,6 +8,7 @@ import { useThemeColors } from '../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../hooks/useIsMobile'; 
 import { formatCurrency, formatCurrencyExact } from '../../../utils/currency';
 import { createSafeDate } from '../../../utils/time';
+import { isShiftCompleted } from '../../../utils/shiftUtils';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 import Button from '../../ui/Button'; 
@@ -24,7 +25,11 @@ const RecentActivityCard = memo(({ stats, allWorks, allShifts, calculatePayment 
   const recentShifts = useMemo(() => {
     if (!Array.isArray(allShifts)) return [];
 
+    // Worked shifts only: a rostered shift for tomorrow is not "recent
+    // activity". filter() also stops sort() from mutating the shared array.
+    const now = new Date();
     return allShifts
+      .filter((shift) => isShiftCompleted(shift, now))
       .sort((a, b) => {
         const dateA = (a.startDate || a.date) || '';
         const dateB = (b.startDate || b.date) || '';

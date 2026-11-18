@@ -15,6 +15,7 @@ import {
 } from '../services/australia88Service';
 import { calculateShiftHours } from '../utils/time';
 import { createSafeDate } from '../utils/time';
+import { isShiftCompleted } from '../utils/shiftUtils';
 
 /**
  * Provides all Australia 88-day visa tracking data to UI components.
@@ -82,6 +83,7 @@ export const useAustralia88 = () => {
     const thisWeekHours = shifts
       .filter(s => {
         if (s.type !== 'regular' || !eligibleWorkIds.has(s.workId)) return false;
+        if (!isShiftCompleted(s, today)) return false; // scheduled, not worked yet
         const d = createSafeDate(s.startDate || s.date);
         return d >= monday && d <= sunday;
       })

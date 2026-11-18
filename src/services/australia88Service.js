@@ -4,6 +4,7 @@
 
 import { calculateShiftHours } from '../utils/time';
 import { createSafeDate, toLocalDateKey } from '../utils/time';
+import { isShiftCompleted } from '../utils/shiftUtils';
 
 // Official Home Affairs definitions: "three months" of specified work = 88
 // calendar days (needed for a 2nd WHM visa, done during the 1st), and "six
@@ -61,15 +62,19 @@ const getWeekKey = (date) => {
  * Shifts are grouped by week (Mon–Sun). Each week's total hours maps to visa days
  * via getVisaDaysFromWeeklyHours. Days from all weeks are summed.
  *
+ * Only shifts already worked (ended by `now`) count: a rostered shift for next
+ * week is not a visa day yet.
+ *
  * @param {Array} shifts - All traditional shifts from DataContext
  * @param {Array} works  - All traditional works from DataContext
+ * @param {Date}  [now]  - Reference time, defaults to the current time
  * @returns {{
  *   totalDays: number,
  *   weeklyBreakdown: Array<{ weekKey, weekStart, weekEnd, hours, visaDays }>,
  *   currentMilestone: 88 | 179 | 'complete'
  * }}
  */
-export const calculateTotalVisaDays = (shifts, works) => {
+export const calculateTotalVisaDays = (shifts, works, now = new Date()) => {
   const eligibleWorkIds = new Set(
     works
       .filter(w => w.type === 'regular' && w.australia88Eligible === true)
@@ -81,7 +86,7 @@ export const calculateTotalVisaDays = (shifts, works) => {
   }
 
   const eligibleShifts = shifts.filter(
-    s => s.type === 'regular' && eligibleWorkIds.has(s.workId)
+    s => s.type === 'regular' && eligibleWorkIds.has(s.workId) && isShiftCompleted(s, now)
   );
 
   // Group eligible shifts by week key (Monday's date)

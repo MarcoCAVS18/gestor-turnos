@@ -6,6 +6,7 @@ import { useApp } from '../contexts/AppContext';
 import { formatRelativeDate, toLocalDateKey } from '../utils/time';
 import { calculateShiftHours } from '../utils/time/timeCalculations';
 import { getShiftNetEarnings } from '../utils/deliveryUtils';
+import { isShiftCompleted } from '../utils/shiftUtils';
 import logger from '../utils/logger';
 import { getLocaleFromI18n } from '../utils/locale';
 
@@ -14,10 +15,10 @@ export const useDashboardStats = () => {
   const locale = getLocaleFromI18n(i18n.language);
   const { works, deliveryWork, shifts, deliveryShifts, calculatePayment } = useApp();
 
-  // Function to get dates of the current week (Monday to Sunday)
-  const timeRanges = useMemo(() => {
-    const today = new Date();
-    
+  // Week (Monday to Sunday) and month ranges. Computed on every stats pass, not
+  // memoized once: an app left open overnight must roll over to the new day.
+  const getTimeRanges = (today) => {
+
     // --- WEEK ---
     const dayOfWeek = today.getDay();
     const startDiff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; 
@@ -35,7 +36,7 @@ export const useDashboardStats = () => {
     const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
 
     return { weekStart, weekEnd, monthStart, monthEnd };
-  }, []);
+  };
 
   const stats = useMemo(() => {
     // Defensive validation
@@ -75,6 +76,11 @@ export const useDashboardStats = () => {
 
     if (allShifts.length === 0) return defaultStats;
 
+    // Earned money, hours and counts only include shifts already worked.
+    // Rostered future shifts are still in allShifts (next shift, calendar).
+    const now = new Date();
+    const workedShifts = allShifts.filter((shift) => isShiftCompleted(shift, now));
+
     try {
       let totalEarned = 0;
       let totalHours = 0;
@@ -84,9 +90,9 @@ export const useDashboardStats = () => {
       const weekCounters = { earnings: 0, hours: 0, shifts: 0, dates: new Set() };
       const monthCounters = { earnings: 0, hours: 0, shifts: 0, dates: new Set() };
       
-      const { weekStart, weekEnd, monthStart, monthEnd } = timeRanges;
+      const { weekStart, weekEnd, monthStart, monthEnd } = getTimeRanges(now);
 
-      allShifts.forEach(shift => {
+      workedShifts.forEach(shift => {
         const isDelivery = shift.type === 'delivery';
         const foundWork = allWork.find(t => t.id === shift.workId);
         // Delivery shifts carry their own earnings, so an orphaned one (deleted
@@ -99,18 +105,19 @@ export const useDashboardStats = () => {
           avatarColor: '#10B981',
         };
 
-        // 1. Calculate Earnings
+        // 1-2. Earnings and hours. Traditional shifts use calculatePayment so the
+        // dashboard shows the same paid hours (breaks and Live Mode pauses
+        // deducted) as the weekly summary.
         let earnings = 0;
+        let hours = calculateShiftHours(shift.startTime, shift.endTime);
         if (isDelivery || work.type === 'delivery') {
           // Net of fuel, via gross helper (handles legacy tips correctly).
           earnings = getShiftNetEarnings(shift);
         } else if (typeof calculatePayment === 'function') {
           const result = calculatePayment(shift);
           earnings = result.totalWithDiscount || 0;
+          hours = result.hours || 0;
         }
-
-        // 2. Calculate Hours (Using your utility)
-        const hours = calculateShiftHours(shift.startTime, shift.endTime);
 
         // 3. Global Accumulators
         totalEarned += earnings;
@@ -159,8 +166,8 @@ export const useDashboardStats = () => {
         .sort((a, b) => (a.startDate || a.date).localeCompare(b.startDate || b.date))[0] || null;
 
       // Simple projection based on month progress (daily average * total days in month)
-      const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-      const currentDay = new Date().getDate();
+      const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+      const currentDay = now.getDate();
       const monthlyProjection = currentDay > 0 
         ? (monthCounters.earnings / currentDay) * daysInMonth 
         : 0;
@@ -169,7 +176,7 @@ export const useDashboardStats = () => {
         totalEarned,
         hoursWorked: totalHours,
         averagePerHour: totalHours > 0 ? totalEarned / totalHours : 0,
-        totalShifts: allShifts.length,
+        totalShifts: workedShifts.length,
         mostProfitableWork,
         nextShift,
         favoriteWorks,
@@ -196,7 +203,7 @@ export const useDashboardStats = () => {
       logger.error('Error calculating statistics:', error);
       return defaultStats;
     }
-  }, [works, deliveryWork, shifts, deliveryShifts, calculatePayment, timeRanges]);
+  }, [works, deliveryWork, shifts, deliveryShifts, calculatePayment]);
 
   const formatDate = useMemo(() => {
     return (dateString) => formatRelativeDate(dateString, locale, t);

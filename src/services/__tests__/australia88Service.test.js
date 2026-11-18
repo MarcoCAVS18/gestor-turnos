@@ -57,6 +57,20 @@ describe('what counts', () => {
     expect(weeklyBreakdown[0].hours).toBe(24);
   });
 
+  test('rostered shifts that have not been worked yet do not count', () => {
+    const now = new Date('2026-11-11T12:00:00'); // Wednesday midday
+    const shifts = [
+      shift('farm', '2026-11-09'), shift('farm', '2026-11-10'), // worked: 16 h
+      shift('farm', '2026-11-11'),                                // in progress at 12:00
+      shift('farm', '2026-11-12'), shift('farm', '2026-11-13'), // rostered
+      shift('farm', '2026-11-18'),                                // next week
+    ];
+    const { weeklyBreakdown, totalDays } = calculateTotalVisaDays(shifts, works, now);
+    expect(weeklyBreakdown).toHaveLength(1);
+    expect(weeklyBreakdown[0].hours).toBe(16);
+    expect(totalDays).toBe(getVisaDaysFromWeeklyHours(16));
+  });
+
   test('no eligible job means no days', () => {
     const result = calculateTotalVisaDays([shift('cafe', '2026-11-09')], works);
     expect(result.totalDays).toBe(0);

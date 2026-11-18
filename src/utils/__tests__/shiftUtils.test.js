@@ -47,3 +47,29 @@ describe('normalizeShiftDates', () => {
     expect(normalizeShiftDates(multiDay)).toBe(multiDay);
   });
 });
+
+describe('isShiftCompleted', () => {
+  const { isShiftCompleted } = require('../shiftUtils');
+  const at = (key, hhmm) => { const d = new Date(`${key}T00:00:00`); const [h, m] = hhmm.split(':').map(Number); d.setHours(h, m, 0, 0); return d; };
+  const shift = { startDate: '2026-11-17', startTime: '07:00', endTime: '15:30' };
+
+  test('not completed before or during the shift, completed once it ends', () => {
+    expect(isShiftCompleted(shift, at('2026-11-17', '06:00'))).toBe(false);
+    expect(isShiftCompleted(shift, at('2026-11-17', '12:00'))).toBe(false);
+    expect(isShiftCompleted(shift, at('2026-11-17', '15:30'))).toBe(true);
+    expect(isShiftCompleted(shift, at('2026-11-18', '00:00'))).toBe(true);
+  });
+
+  test('overnight shift completes the next morning', () => {
+    const night = { startDate: '2026-11-20', startTime: '22:00', endTime: '02:00' };
+    expect(isShiftCompleted(night, at('2026-11-20', '23:59'))).toBe(false);
+    expect(isShiftCompleted(night, at('2026-11-21', '01:59'))).toBe(false);
+    expect(isShiftCompleted(night, at('2026-11-21', '02:00'))).toBe(true);
+  });
+
+  test('shift without times completes when its day ends; no date is never completed', () => {
+    expect(isShiftCompleted({ date: '2026-11-17' }, at('2026-11-17', '23:00'))).toBe(false);
+    expect(isShiftCompleted({ date: '2026-11-17' }, at('2026-11-18', '00:00'))).toBe(true);
+    expect(isShiftCompleted({}, new Date())).toBe(false);
+  });
+});
