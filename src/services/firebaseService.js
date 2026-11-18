@@ -271,6 +271,10 @@ export const addJob = async (userUid, newJob, isDelivery = false) => {
     if (newJob.australia88Eligible !== undefined) {
       jobData.australia88Eligible = newJob.australia88Eligible;
     }
+    // Optional per-job visa thresholds (industries differ); null = defaults
+    ['australia88FullTimeHours', 'australia88StandardDayHours'].forEach((key) => {
+      if (newJob[key] !== undefined) jobData[key] = newJob[key];
+    });
   }
 
   if (!isDelivery && (!jobData.name || !jobData.name.trim())) {

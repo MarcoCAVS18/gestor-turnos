@@ -13,21 +13,79 @@ import { isShiftCompleted } from '../utils/shiftUtils';
 export const YEAR1_TARGET_DAYS = 88;
 export const YEAR2_TARGET_DAYS = 179;
 
+// ── How visa days are counted ────────────────────────────────────────────────
+// Home Affairs asks for "the same number of normal work days or shifts as a
+// full-time employee in that role and industry would normally work" in the
+// 88 (or 179) calendar-day period. In practice:
+//   • A full-time week (5+ days and the industry's full-time hours) counts all
+//     7 calendar days, weekend included.
+//   • Otherwise only days actually worked count, and one calendar day never
+//     counts as more than one day, however long it was.
+//   • Part-time days count pro rata: half a standard day is half a day.
+// Until 2026-11 Orary used an hours→days table that ignored the number of
+// days worked (one 7.5 h shift = 2 days, four 9 h shifts = 7 days). It
+// overcounted and was replaced by the method below (audit item V88-1).
+// Thresholds are per job (industries differ) with these defaults.
+export const DEFAULT_FULL_TIME_WEEKLY_HOURS = 38;
+export const DEFAULT_STANDARD_DAY_HOURS = 7.6;
+export const FULL_TIME_MIN_DAYS = 5;
+export const FULL_TIME_WEEK_VISA_DAYS = 7;
+
+/** Rounds a day count to one decimal, the precision shown in the UI. */
+export const roundVisaDays = (n) => Math.round((Number(n) || 0) * 10) / 10;
+
+/** Per-job thresholds, falling back to the defaults for missing/invalid values. */
+export const getWorkVisaThresholds = (work) => {
+  const ft = Number(work?.australia88FullTimeHours);
+  const day = Number(work?.australia88StandardDayHours);
+  return {
+    fullTimeWeeklyHours: ft > 0 ? ft : DEFAULT_FULL_TIME_WEEKLY_HOURS,
+    standardDayHours: day > 0 ? day : DEFAULT_STANDARD_DAY_HOURS,
+  };
+};
+
 /**
- * Maps weekly hours worked to visa days earned.
- * Based on unofficial reference table for WHV extension calculation.
+ * Visa days earned in one Monday–Sunday week.
  *
- * @param {number} hours - Total hours worked in a week
- * @returns {number} - Visa days earned (0–7)
+ * @param {Array<{ date: string, hours: number, fullTimeWeeklyHours?: number, standardDayHours?: number }>} entries
+ *   One entry per shift (several shifts or employers on the same date are fine).
+ * @returns {{ visaDays: number, daysWorked: number, isFullTime: boolean }}
  */
-export const getVisaDaysFromWeeklyHours = (hours) => {
-  if (hours >= 35.25) return 7;
-  if (hours >= 28.25) return 5;
-  if (hours >= 21.25) return 4;
-  if (hours >= 14.25) return 3;
-  if (hours >= 7.25)  return 2;
-  if (hours >= 4)     return 1;
-  return 0;
+export const getVisaDaysForWeek = (entries = []) => {
+  const dayFraction = new Map(); // date -> sum of hours / standard day
+  let fullTimeFraction = 0;      // sum of hours / full-time week
+
+  entries.forEach(({ date, hours, fullTimeWeeklyHours = DEFAULT_FULL_TIME_WEEKLY_HOURS, standardDayHours = DEFAULT_STANDARD_DAY_HOURS }) => {
+    if (!date || !(hours > 0)) return;
+    dayFraction.set(date, (dayFraction.get(date) || 0) + hours / standardDayHours);
+    fullTimeFraction += hours / fullTimeWeeklyHours;
+  });
+
+  const daysWorked = dayFraction.size;
+  if (daysWorked >= FULL_TIME_MIN_DAYS && fullTimeFraction >= 1 - 1e-9) {
+    return { visaDays: FULL_TIME_WEEK_VISA_DAYS, daysWorked, isFullTime: true };
+  }
+
+  let visaDays = 0;
+  dayFraction.forEach((fraction) => { visaDays += Math.min(1, fraction); });
+  return { visaDays: roundVisaDays(visaDays), daysWorked, isFullTime: false };
+};
+
+/**
+ * Estimate for a week known only by totals (the public calculator), assuming
+ * the hours are spread evenly over the days worked.
+ * @param {number} daysWorked
+ * @param {number} hours
+ */
+export const estimateVisaDaysFromWeekTotals = (daysWorked, hours, {
+  fullTimeWeeklyHours = DEFAULT_FULL_TIME_WEEKLY_HOURS,
+  standardDayHours = DEFAULT_STANDARD_DAY_HOURS,
+} = {}) => {
+  const days = Math.min(7, Math.max(0, Math.floor(Number(daysWorked) || 0)));
+  const h = Math.max(0, Number(hours) || 0);
+  if (days === 0 || h === 0) return 0;
+  if (days >= FULL_TIME_MIN_DAYS && h >= fullTimeWeeklyHours) return FULL_TIME_WEEK_VISA_DAYS;
+  return roundVisaDays(Math.min(days, h / standardDayHours));
 };
 
 /**
@@ -59,8 +117,8 @@ const getWeekKey = (date) => {
  * Calculates total visa days accumulated across all eligible works and their shifts.
  *
  * Only works with type 'regular' and australia88Eligible === true are counted.
- * Shifts are grouped by week (Mon–Sun). Each week's total hours maps to visa days
- * via getVisaDaysFromWeeklyHours. Days from all weeks are summed.
+ * Shifts are grouped by week (Mon–Sun) and each week is counted with
+ * getVisaDaysForWeek. Days from all weeks are summed.
  *
  * Only shifts already worked (ended by `now`) count: a rostered shift for next
  * week is not a visa day yet.
@@ -68,18 +126,23 @@ const getWeekKey = (date) => {
  * @param {Array} shifts - All traditional shifts from DataContext
  * @param {Array} works  - All traditional works from DataContext
  * @param {Date}  [now]  - Reference time, defaults to the current time
+ * @param {Function} [getShiftHours] - Hours that count for a shift. The app passes
+ *   paid hours (breaks and Live Mode pauses deducted); defaults to start→end.
  * @returns {{
  *   totalDays: number,
- *   weeklyBreakdown: Array<{ weekKey, weekStart, weekEnd, hours, visaDays }>,
+ *   weeklyBreakdown: Array<{ weekKey, weekStart, weekEnd, hours, visaDays, daysWorked, isFullTime }>,
  *   currentMilestone: 88 | 179 | 'complete'
  * }}
  */
-export const calculateTotalVisaDays = (shifts, works, now = new Date()) => {
-  const eligibleWorkIds = new Set(
+const rawShiftHours = (s) => calculateShiftHours(s.startTime, s.endTime);
+
+export const calculateTotalVisaDays = (shifts, works, now = new Date(), getShiftHours = rawShiftHours) => {
+  const eligibleWorks = new Map(
     works
       .filter(w => w.type === 'regular' && w.australia88Eligible === true)
-      .map(w => w.id)
+      .map(w => [w.id, w])
   );
+  const eligibleWorkIds = new Set(eligibleWorks.keys());
 
   if (eligibleWorkIds.size === 0) {
     return { totalDays: 0, weeklyBreakdown: [], currentMilestone: 88 };
@@ -107,24 +170,29 @@ export const calculateTotalVisaDays = (shifts, works, now = new Date()) => {
     weekEnd.setDate(weekStart.getDate() + 6);
     weekEnd.setHours(23, 59, 59, 999);
 
-    const totalHours = weekShifts.reduce(
-      (sum, s) => sum + calculateShiftHours(s.startTime, s.endTime),
-      0
-    );
+    const entries = weekShifts.map((s) => ({
+      date: s.startDate || s.date,
+      hours: getShiftHours(s) || 0,
+      ...getWorkVisaThresholds(eligibleWorks.get(s.workId)),
+    }));
+    const totalHours = entries.reduce((sum, e) => sum + e.hours, 0);
+    const { visaDays, daysWorked, isFullTime } = getVisaDaysForWeek(entries);
 
     weeklyBreakdown.push({
       weekKey,
       weekStart,
       weekEnd,
       hours: totalHours,
-      visaDays: getVisaDaysFromWeeklyHours(totalHours),
+      visaDays,
+      daysWorked,
+      isFullTime,
     });
   });
 
   // Chronological order for display
   weeklyBreakdown.sort((a, b) => a.weekStart - b.weekStart);
 
-  const totalDays = weeklyBreakdown.reduce((sum, w) => sum + w.visaDays, 0);
+  const totalDays = roundVisaDays(weeklyBreakdown.reduce((sum, w) => sum + w.visaDays, 0));
 
   let currentMilestone;
   if (totalDays < YEAR1_TARGET_DAYS)      currentMilestone = YEAR1_TARGET_DAYS;
@@ -177,7 +245,7 @@ export const getMonthlyBreakdown = (weeklyBreakdown) => {
     }
     const entry = monthMap.get(monthKey);
     entry.hours += week.hours;
-    entry.visaDays += week.visaDays;
+    entry.visaDays = roundVisaDays(entry.visaDays + week.visaDays);
   });
 
   return Array.from(monthMap.values()).sort((a, b) => a.monthStart - b.monthStart);

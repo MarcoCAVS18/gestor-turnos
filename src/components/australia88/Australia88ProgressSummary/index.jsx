@@ -13,7 +13,7 @@ import { useAustralia88 } from '../../../hooks/useAustralia88';
 import Card from '../../ui/Card';
 import ProgressBar from '../../ui/ProgressBar';
 import Australia88ActivateYear2 from '../Australia88ActivateYear2';
-import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS } from '../../../services/australia88Service';
+import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS, roundVisaDays } from '../../../services/australia88Service';
 
 const StatBox = ({ icon: Icon, label, value, highlight, colors }) => (
   <div
@@ -54,7 +54,7 @@ const Australia88ProgressSummary = () => {
   const y1Days = Math.min(totalVisaDays, 88);
   const displayDays = year2Active ? year2Days : y1Days;
   const isCompleteForView = year2Active ? year2Complete : year1Complete;
-  const daysRemaining = Math.max(0, activeGoal - displayDays);
+  const daysRemaining = roundVisaDays(Math.max(0, activeGoal - displayDays));
   const progressPercent = Math.min(100, Math.round((displayDays / activeGoal) * 100));
 
   return (

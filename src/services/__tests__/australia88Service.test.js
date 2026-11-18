@@ -1,7 +1,7 @@
 // Timezone-sensitive: run with `npm run test:tz`. Before 2026-11 the week key
 // came from toISOString(), so ahead of UTC every week was keyed (and labelled)
 // from Sunday instead of Monday.
-import { calculateTotalVisaDays, getMondayOfWeek, getMonthlyBreakdown, getVisaDaysFromWeeklyHours } from '../australia88Service';
+import { calculateTotalVisaDays, getMondayOfWeek, getMonthlyBreakdown, getVisaDaysForWeek, estimateVisaDaysFromWeekTotals } from '../australia88Service';
 import { toLocalDateKey } from '../../utils/time';
 
 const works = [
@@ -68,7 +68,7 @@ describe('what counts', () => {
     const { weeklyBreakdown, totalDays } = calculateTotalVisaDays(shifts, works, now);
     expect(weeklyBreakdown).toHaveLength(1);
     expect(weeklyBreakdown[0].hours).toBe(16);
-    expect(totalDays).toBe(getVisaDaysFromWeeklyHours(16));
+    expect(totalDays).toBe(2); // two 8 h days, each capped at 1
   });
 
   test('no eligible job means no days', () => {
@@ -78,12 +78,55 @@ describe('what counts', () => {
   });
 });
 
-// Pins the hours → days table as it is today. The table is under review
-// (audit item V88-1): if the counting method changes, update these on purpose.
-describe('getVisaDaysFromWeeklyHours (current table)', () => {
+// Counting method (audit V88-1): full-time week = 7, otherwise each day worked
+// counts at most once, pro rata to a standard day. Defaults 38 h / 7.6 h.
+describe('getVisaDaysForWeek', () => {
+  const week = (...hoursPerDay) => hoursPerDay.map((hours, i) => ({ date: `2026-11-${String(9 + i).padStart(2, '0')}`, hours }));
+
   test.each([
-    [0, 0], [3.99, 0], [4, 1], [7.24, 1], [7.25, 2], [14.25, 3], [21.25, 4], [28.25, 5], [35.24, 5], [35.25, 7], [60, 7],
-  ])('%p hours -> %p days', (hours, days) => {
-    expect(getVisaDaysFromWeeklyHours(hours)).toBe(days);
+    ['5 x 8 h (40 h): full-time week', week(8, 8, 8, 8, 8), 7],
+    ['6 x 7 h (42 h): full-time week', week(7, 7, 7, 7, 7, 7), 7],
+    ['5 x 7.6 h (38 h): exactly full-time', week(7.6, 7.6, 7.6, 7.6, 7.6), 7],
+    ['4 x 9 h (36 h): 4 days, a long day is still one day', week(9, 9, 9, 9), 4],
+    ['1 x 7.5 h: about one day', week(7.5), 1],
+    ['1 x 12 h: still one day', week(12), 1],
+    ['3 x 4 h: pro rata', week(4, 4, 4), 1.6],
+    ['5 x 6 h (30 h): 5 days but under full-time hours', week(6, 6, 6, 6, 6), 3.9],
+    ['no hours', [], 0],
+  ])('%s -> %p', (_label, entries, expected) => {
+    expect(getVisaDaysForWeek(entries).visaDays).toBe(expected);
+  });
+
+  test('two employers on the same date add up, capped at one day', () => {
+    const r = getVisaDaysForWeek([{ date: '2026-11-09', hours: 5 }, { date: '2026-11-09', hours: 5 }]);
+    expect(r.visaDays).toBe(1);
+    expect(r.daysWorked).toBe(1);
+  });
+
+  test('per-job thresholds: a 35 h full-time industry', () => {
+    const entries = week(7, 7, 7, 7, 7).map((e) => ({ ...e, fullTimeWeeklyHours: 35, standardDayHours: 7 }));
+    expect(getVisaDaysForWeek(entries)).toEqual({ visaDays: 7, daysWorked: 5, isFullTime: true });
+  });
+});
+
+describe('calculateTotalVisaDays with job thresholds and paid hours', () => {
+  test('uses the job thresholds and the hours function passed in', () => {
+    const hospo = [{ id: 'bar', type: 'regular', australia88Eligible: true, australia88FullTimeHours: 30, australia88StandardDayHours: 6 }];
+    const shifts = ['09', '10', '11', '12', '13'].map((d) => shift('bar', `2026-11-${d}`, '18:00', '24:00'.replace('24', '00')));
+    // 6 h raw per shift; with a 30 min unpaid break they are 5.5 h paid
+    const raw = calculateTotalVisaDays(shifts, hospo, new Date('2026-12-01'));
+    expect(raw.weeklyBreakdown[0].isFullTime).toBe(true); // 30 h >= 30
+    expect(raw.totalDays).toBe(7);
+    const paid = calculateTotalVisaDays(shifts, hospo, new Date('2026-12-01'), () => 5.5);
+    expect(paid.weeklyBreakdown[0].isFullTime).toBe(false); // 27.5 h < 30
+    expect(paid.totalDays).toBe(4.6); // 5 x 5.5/6 = 4.58
+  });
+});
+
+describe('estimateVisaDaysFromWeekTotals (public calculator)', () => {
+  test.each([
+    [5, 40, 7], [4, 36, 4], [1, 7.5, 1], [3, 12, 1.6], [5, 30, 3.9], [0, 10, 0], [3, 0, 0],
+  ])('%p days / %p h -> %p', (days, hours, expected) => {
+    expect(estimateVisaDaysFromWeekTotals(days, hours)).toBe(expected);
   });
 });

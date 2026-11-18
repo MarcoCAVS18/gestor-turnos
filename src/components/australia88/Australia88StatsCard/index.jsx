@@ -22,7 +22,7 @@ import { useIsMobile } from '../../../hooks/useIsMobile';
 import { useAustralia88 } from '../../../hooks/useAustralia88';
 import { usePayslipsData } from '../../../hooks/usePayslipsData';
 import { getPayslipsOverlappingRange } from '../../../services/payslipService';
-import { formatWeekRange } from '../../../services/australia88Service';
+import { formatWeekRange, roundVisaDays } from '../../../services/australia88Service';
 import { localDateToISO } from '../../../utils/calendarUtils';
 import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
@@ -93,7 +93,7 @@ const Australia88StatsCard = ({ className = '' }) => {
   const y1Days = Math.min(totalVisaDays, 88);
   const displayDays    = viewYear === 2 ? year2Days : y1Days;
   const yearGoal       = viewYear === 2 ? YEAR2_TARGET_DAYS : YEAR1_TARGET_DAYS; // Year 2's goal is 6 months, not 88
-  const daysRemaining  = yearGoal - displayDays;
+  const daysRemaining  = roundVisaDays(yearGoal - displayDays);
   const isComplete     = viewYear === 2 ? year2Complete : year1Complete;
 
   // Most recent weeks at the top of the ledger

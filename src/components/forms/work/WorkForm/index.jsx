@@ -11,7 +11,8 @@ import { useApp } from '../../../../contexts/AppContext';
 import { VALIDATION_RULES } from '../../../../constants/validation';
 import { PREDEFINED_COLORS } from '../../../../constants/colors';
 import ThemeInput from '../../../ui/ThemeInput';
-import BaseForm, { FormSection, FormGrid, FormLabel, FormError } from '../../base/BaseForm';
+import BaseForm, { FormSection, FormGrid, FormField, FormLabel, FormError, getInputClasses } from '../../base/BaseForm';
+import { DEFAULT_FULL_TIME_WEEKLY_HOURS, DEFAULT_STANDARD_DAY_HOURS } from '../../../../services/australia88Service';
 
 const WorkForm = ({
   id,
@@ -34,6 +35,8 @@ const WorkForm = ({
     color: colors.primary,
     baseRate: '',
     australia88Eligible: false,
+    australia88FullTimeHours: '',
+    australia88StandardDayHours: '',
     rates: {
       day: '',
       afternoon: '',
@@ -65,6 +68,8 @@ const WorkForm = ({
         color: work.color || colors.primary,
         baseRate: work.baseRate?.toString() || '',
         australia88Eligible: work.australia88Eligible || false,
+        australia88FullTimeHours: work.australia88FullTimeHours?.toString() || '',
+        australia88StandardDayHours: work.australia88StandardDayHours?.toString() || '',
         rates: {
           day: work.rates?.day?.toString() || '',
           afternoon: work.rates?.afternoon?.toString() || '',
@@ -126,8 +131,16 @@ const WorkForm = ({
 
     if (!validateForm(flatFormData)) return;
 
+    // Blank or invalid visa thresholds are stored as null = use the defaults.
+    const parseThreshold = (value) => {
+      const n = parseDecimal(value);
+      return n > 0 ? n : null;
+    };
+
     const completeData = {
       ...formData,
+      australia88FullTimeHours: parseThreshold(formData.australia88FullTimeHours),
+      australia88StandardDayHours: parseThreshold(formData.australia88StandardDayHours),
       baseRate: parseDecimal(formData.baseRate),
       rates: {
         day: parseDecimal(formData.rates.day),
@@ -342,6 +355,45 @@ const WorkForm = ({
               </span>
             </div>
           </button>
+
+          {/* Counting thresholds — only relevant once the job counts */}
+          {formData.australia88Eligible && (
+            <div className="mt-3">
+              <FormGrid columns={2}>
+                <FormField>
+                  <label className={`block font-medium text-gray-600 dark:text-gray-300 mb-1 ${isMobile ? 'text-sm' : 'text-xs'}`}>
+                    {t('australia88.fullTimeHoursLabel')}
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={formData.australia88FullTimeHours}
+                    onChange={(e) => handleInputChange('australia88FullTimeHours', e.target.value)}
+                    placeholder={String(DEFAULT_FULL_TIME_WEEKLY_HOURS)}
+                    className={getInputClasses(isMobile)}
+                    style={{ '--tw-ring-color': colors.primary }}
+                  />
+                </FormField>
+                <FormField>
+                  <label className={`block font-medium text-gray-600 dark:text-gray-300 mb-1 ${isMobile ? 'text-sm' : 'text-xs'}`}>
+                    {t('australia88.standardDayHoursLabel')}
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={formData.australia88StandardDayHours}
+                    onChange={(e) => handleInputChange('australia88StandardDayHours', e.target.value)}
+                    placeholder={String(DEFAULT_STANDARD_DAY_HOURS)}
+                    className={getInputClasses(isMobile)}
+                    style={{ '--tw-ring-color': colors.primary }}
+                  />
+                </FormField>
+              </FormGrid>
+              <p className={`mt-1.5 text-gray-500 dark:text-gray-400 ${isMobile ? 'text-sm' : 'text-xs'}`}>
+                {t('australia88.thresholdsHint', { fullTime: DEFAULT_FULL_TIME_WEEKLY_HOURS, day: DEFAULT_STANDARD_DAY_HOURS })}
+              </p>
+            </div>
+          )}
 
           {/* Home Affairs link */}
           <p className={`mt-2 text-gray-500 dark:text-gray-400 ${isMobile ? 'text-sm' : 'text-xs'}`}>

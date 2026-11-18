@@ -5,17 +5,16 @@
 import { useMemo } from 'react';
 import { useConfigContext } from '../contexts/ConfigContext';
 import { useDataContext } from '../contexts/DataContext';
+import { useStats } from '../contexts/StatsContext';
 import {
   calculateTotalVisaDays,
   getMonthlyBreakdown,
-  getVisaDaysFromWeeklyHours,
   getMondayOfWeek,
+  roundVisaDays,
   YEAR1_TARGET_DAYS,
   YEAR2_TARGET_DAYS,
 } from '../services/australia88Service';
-import { calculateShiftHours } from '../utils/time';
-import { createSafeDate } from '../utils/time';
-import { isShiftCompleted } from '../utils/shiftUtils';
+import { calculateShiftHours, toLocalDateKey } from '../utils/time';
 
 /**
  * Provides all Australia 88-day visa tracking data to UI components.
@@ -38,6 +37,17 @@ import { isShiftCompleted } from '../utils/shiftUtils';
 export const useAustralia88 = () => {
   const { holidayCountry, australia88VisaYear, australia88ManualDays, australia88Year2StartDate } = useConfigContext();
   const { works, shifts } = useDataContext();
+  // Paid hours (unpaid breaks and Live Mode pauses deducted), the same figure
+  // the dashboard and weekly summary show. Falls back to start→end when the
+  // hook is used outside StatsProvider.
+  const stats = useStats();
+  const calculatePayment = stats?.calculatePayment;
+  const getShiftHours = useMemo(
+    () => (calculatePayment
+      ? (s) => calculatePayment(s).hours || 0
+      : (s) => calculateShiftHours(s.startTime, s.endTime)),
+    [calculatePayment]
+  );
 
   // Australia mode is on when the user's location is set to Australia
   const isAustraliaMode = holidayCountry === 'AU';
@@ -55,8 +65,8 @@ export const useAustralia88 = () => {
     if (!hasEligibleWorks) {
       return { totalDays: 0, weeklyBreakdown: [], currentMilestone: 88 };
     }
-    return calculateTotalVisaDays(shifts, works);
-  }, [hasEligibleWorks, shifts, works]);
+    return calculateTotalVisaDays(shifts, works, new Date(), getShiftHours);
+  }, [hasEligibleWorks, shifts, works, getShiftHours]);
 
   // Weekly data grouped into calendar months — for the /statistics/australia88 page
   const monthlyBreakdown = useMemo(
@@ -64,33 +74,11 @@ export const useAustralia88 = () => {
     [visaData.weeklyBreakdown]
   );
 
-  // Hours worked for eligible works in the current calendar week (Mon–Sun)
+  // Visa days earned in the current Monday–Sunday week (worked shifts only).
   const currentWeekVisaDays = useMemo(() => {
-    if (!hasEligibleWorks) return 0;
-
-    const today = new Date();
-    const monday = getMondayOfWeek(today);
-    const sunday = new Date(monday);
-    sunday.setDate(monday.getDate() + 6);
-    sunday.setHours(23, 59, 59, 999);
-
-    const eligibleWorkIds = new Set(
-      works
-        .filter(w => w.type === 'regular' && w.australia88Eligible === true)
-        .map(w => w.id)
-    );
-
-    const thisWeekHours = shifts
-      .filter(s => {
-        if (s.type !== 'regular' || !eligibleWorkIds.has(s.workId)) return false;
-        if (!isShiftCompleted(s, today)) return false; // scheduled, not worked yet
-        const d = createSafeDate(s.startDate || s.date);
-        return d >= monday && d <= sunday;
-      })
-      .reduce((sum, s) => sum + calculateShiftHours(s.startTime, s.endTime), 0);
-
-    return getVisaDaysFromWeeklyHours(thisWeekHours);
-  }, [hasEligibleWorks, shifts, works]);
+    const key = toLocalDateKey(getMondayOfWeek(new Date()));
+    return visaData.weeklyBreakdown.find((w) => w.weekKey === key)?.visaDays || 0;
+  }, [visaData.weeklyBreakdown]);
 
   // ── Split shifts between Year 1 and Year 2 ──────────────────────────────
   // Once Year 2 is declared (australia88VisaYear === 2), australia88Year2StartDate
@@ -133,8 +121,8 @@ export const useAustralia88 = () => {
       const d = s.startDate || s.date;
       return d && d < australia88Year2StartDate;
     });
-    return calculateTotalVisaDays(preCutoverShifts, works).totalDays;
-  }, [hasEligibleWorks, hasCutover, australia88Year2StartDate, shifts, works, visaData.totalDays]);
+    return calculateTotalVisaDays(preCutoverShifts, works, new Date(), getShiftHours).totalDays;
+  }, [hasEligibleWorks, hasCutover, australia88Year2StartDate, shifts, works, visaData.totalDays, getShiftHours]);
 
   const year2AppDays = useMemo(() => {
     if (!hasEligibleWorks || australia88VisaYear !== 2) return 0;
@@ -143,8 +131,8 @@ export const useAustralia88 = () => {
       const d = s.startDate || s.date;
       return d && d >= australia88Year2StartDate;
     });
-    return calculateTotalVisaDays(postCutoverShifts, works).totalDays;
-  }, [hasEligibleWorks, australia88VisaYear, hasCutover, australia88Year2StartDate, shifts, works, visaData.totalDays]);
+    return calculateTotalVisaDays(postCutoverShifts, works, new Date(), getShiftHours).totalDays;
+  }, [hasEligibleWorks, australia88VisaYear, hasCutover, australia88Year2StartDate, shifts, works, visaData.totalDays, getShiftHours]);
 
   // manualDays is contextual to whichever year is currently declared (see
   // Settings copy: "days before Orary" for Year 1 or Year 2 respectively).
@@ -153,7 +141,7 @@ export const useAustralia88 = () => {
 
   // totalVisaDays is Year 1's running total — kept under this name for
   // existing callers (e.g. y1Days = Math.min(totalVisaDays, 88)).
-  const totalVisaDays = year1AppDays + year1ManualDays;
+  const totalVisaDays = roundVisaDays(year1AppDays + year1ManualDays);
 
   // Year-based computed values. Per the official rules (see the app's own
   // "second/third-year application guide" blog post): a Year 2 extension
@@ -171,7 +159,7 @@ export const useAustralia88 = () => {
   // to 0 and counts up to YEAR2_TARGET_DAYS.
   const year1Complete = totalVisaDays >= YEAR1_TARGET_DAYS;
   const year2Active   = australia88VisaYear === 2;
-  const year2Days     = year2Active ? Math.max(0, Math.min(YEAR2_TARGET_DAYS, year2AppDays + year2ManualDays)) : 0;
+  const year2Days     = year2Active ? roundVisaDays(Math.max(0, Math.min(YEAR2_TARGET_DAYS, year2AppDays + year2ManualDays))) : 0;
   const year2Complete = year2Active && year2Days >= YEAR2_TARGET_DAYS;
 
   // Progress percent relative to the active year's goal

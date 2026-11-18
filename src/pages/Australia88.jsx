@@ -9,20 +9,10 @@ import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, CheckCircle, ArrowRight, Clock, Calendar, BarChart3, Bell } from 'lucide-react';
-import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS } from '../services/australia88Service';
+import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS, estimateVisaDaysFromWeekTotals, roundVisaDays } from '../services/australia88Service';
 
 const PINK = '#EC4899';
 
-// ── Visa day formula (mirrors australia88Service.js) ───────────────────────
-function getVisaDaysFromHours(hours) {
-  if (hours >= 35.25) return 7;
-  if (hours >= 28.25) return 5;
-  if (hours >= 21.25) return 4;
-  if (hours >= 14.25) return 3;
-  if (hours >= 7.25)  return 2;
-  if (hours >= 4)     return 1;
-  return 0;
-}
 
 // ── Smooth scroll helper ────────────────────────────────────────────────────
 function scrollTo(id) {
@@ -60,15 +50,9 @@ function LangSwitcher() {
   );
 }
 
-// ── Formula table rows ──────────────────────────────────────────────────────
-const FORMULA_ROWS = [
-  { hoursKey: 'row1hours', daysKey: 'row1days', days: 1 },
-  { hoursKey: 'row2hours', daysKey: 'row2days', days: 2 },
-  { hoursKey: 'row3hours', daysKey: 'row3days', days: 3 },
-  { hoursKey: 'row4hours', daysKey: 'row4days', days: 4 },
-  { hoursKey: 'row5hours', daysKey: 'row5days', days: 5 },
-  { hoursKey: 'row6hours', daysKey: 'row6days', days: 7 },
-];
+// ── Counting rules and worked examples (same method as australia88Service) ──
+const RULE_KEYS = ['rule1', 'rule2', 'rule3'];
+const EXAMPLE_KEYS = ['ex1', 'ex2', 'ex3', 'ex4'];
 
 // ── Progress bar ────────────────────────────────────────────────────────────
 function ProgressBar({ value, max, color }) {
@@ -89,11 +73,11 @@ function ProgressBar({ value, max, color }) {
 // ── Interactive demo calculator ─────────────────────────────────────────────
 function DemoCalculator() {
   const { t } = useTranslation();
-  const [weeks, setWeeks] = useState([{ id: 1, hours: '' }]);
+  const [weeks, setWeeks] = useState([{ id: 1, days: '', hours: '' }]);
   const nextId = React.useRef(2);
 
   const addWeek = () => {
-    setWeeks((prev) => [...prev, { id: nextId.current++, hours: '' }]);
+    setWeeks((prev) => [...prev, { id: nextId.current++, days: '', hours: '' }]);
   };
 
   const removeWeek = (id) => {
@@ -107,15 +91,23 @@ function DemoCalculator() {
     }
   };
 
-  const totalDays = weeks.reduce((sum, w) => {
-    const h = parseFloat(w.hours);
-    return sum + (isNaN(h) ? 0 : getVisaDaysFromHours(h));
-  }, 0);
+  const updateDays = (id, val) => {
+    if (val === '' || /^[0-7]$/.test(val)) {
+      setWeeks((prev) => prev.map((w) => (w.id === id ? { ...w, days: val } : w)));
+    }
+  };
+
+  // null until both fields are filled in
+  const weekVisaDays = (w) => (w.days === '' || w.hours === ''
+    ? null
+    : estimateVisaDaysFromWeekTotals(parseInt(w.days, 10), parseFloat(w.hours)));
+
+  const totalDays = roundVisaDays(weeks.reduce((sum, w) => sum + (weekVisaDays(w) || 0), 0));
 
   const reachedYear2 = totalDays >= YEAR1_TARGET_DAYS;
   // Third-year days are a separate count done on the 2nd visa, so the demo
   // only credits days beyond the first 88 toward it (never cumulative).
-  const year3Days = Math.max(0, totalDays - YEAR1_TARGET_DAYS);
+  const year3Days = roundVisaDays(Math.max(0, totalDays - YEAR1_TARGET_DAYS));
   const reachedYear3 = year3Days >= YEAR2_TARGET_DAYS;
 
   return (
@@ -123,9 +115,7 @@ function DemoCalculator() {
       {/* Week rows */}
       <AnimatePresence initial={false}>
         {weeks.map((week, idx) => {
-          const h = parseFloat(week.hours);
-          const visaDays = isNaN(h) || week.hours === '' ? null : getVisaDaysFromHours(h);
-          const belowMin = !isNaN(h) && week.hours !== '' && h < 4;
+          const visaDays = weekVisaDays(week);
 
           return (
             <motion.div
@@ -134,51 +124,69 @@ function DemoCalculator() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, height: 0, marginTop: 0 }}
               transition={{ duration: 0.2 }}
-              className="flex items-center gap-3"
+              className="space-y-2"
             >
-              <span className="text-xs font-semibold text-slate-400 w-16 shrink-0">
-                {t('australia88Page.demo.weekLabel')} {idx + 1}
-              </span>
-              <div className="flex-1 relative">
-                <input
-                  type="number"
-                  inputMode="decimal"
-                  value={week.hours}
-                  onChange={(e) => updateHours(week.id, e.target.value)}
-                  placeholder={t('australia88Page.demo.hoursPlaceholder')}
-                  min="0"
-                  max="168"
-                  step="0.5"
-                  className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
-                  style={{ fontSize: '16px' }}
-                />
+              {/* Line 1: week label, result, remove */}
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-xs font-semibold text-slate-400">
+                  {t('australia88Page.demo.weekLabel')} {idx + 1}
+                </span>
+                <div className="flex items-center gap-2">
+                  {visaDays !== null && (
+                    <span
+                      className="inline-block px-2.5 py-1 rounded-lg text-xs font-bold"
+                      style={{
+                        backgroundColor: visaDays > 0 ? '#fdf2f8' : '#f1f5f9',
+                        color: visaDays > 0 ? PINK : '#94a3b8',
+                      }}
+                    >
+                      +{visaDays} {visaDays === 1 ? t('australia88Page.demo.visaDays') : t('australia88Page.demo.visaDaysPlural')}
+                    </span>
+                  )}
+                  {weeks.length > 1 && (
+                    <button
+                      onClick={() => removeWeek(week.id)}
+                      className="p-1.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-colors"
+                      aria-label={t('australia88Page.demo.removeWeek')}
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  )}
+                </div>
               </div>
-              {/* Visa days badge */}
-              <div className="w-28 shrink-0 text-right">
-                {belowMin ? (
-                  <span className="text-xs text-slate-400">{t('australia88Page.demo.notEnough')}</span>
-                ) : visaDays !== null ? (
-                  <span
-                    className="inline-block px-2.5 py-1 rounded-lg text-xs font-bold"
-                    style={{
-                      backgroundColor: visaDays > 0 ? '#fdf2f8' : '#f1f5f9',
-                      color: visaDays > 0 ? PINK : '#94a3b8',
-                    }}
-                  >
-                    +{visaDays} {visaDays === 1 ? t('australia88Page.demo.visaDays') : t('australia88Page.demo.visaDaysPlural')}
-                  </span>
-                ) : null}
+              {/* Line 2: days worked + total hours */}
+              <div className="grid grid-cols-2 gap-3">
+                <label className="block">
+                  <span className="block text-xs text-slate-500 mb-1">{t('australia88Page.demo.daysLabel')}</span>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    value={week.days}
+                    onChange={(e) => updateDays(week.id, e.target.value)}
+                    placeholder={t('australia88Page.demo.daysPlaceholder')}
+                    min="0"
+                    max="7"
+                    step="1"
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
+                    style={{ fontSize: '16px' }}
+                  />
+                </label>
+                <label className="block">
+                  <span className="block text-xs text-slate-500 mb-1">{t('australia88Page.demo.hoursLabel')}</span>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    value={week.hours}
+                    onChange={(e) => updateHours(week.id, e.target.value)}
+                    placeholder={t('australia88Page.demo.hoursPlaceholder')}
+                    min="0"
+                    max="168"
+                    step="0.5"
+                    className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white"
+                    style={{ fontSize: '16px' }}
+                  />
+                </label>
               </div>
-              {/* Remove button */}
-              {weeks.length > 1 && (
-                <button
-                  onClick={() => removeWeek(week.id)}
-                  className="p-1.5 rounded-lg text-slate-300 hover:text-red-400 hover:bg-red-50 transition-colors shrink-0"
-                  aria-label={t('australia88Page.demo.removeWeek')}
-                >
-                  <Trash2 size={14} />
-                </button>
-              )}
             </motion.div>
           );
         })}
@@ -268,7 +276,7 @@ const HOWTO_JSON_LD = JSON.stringify({
   '@type': 'HowTo',
   name: 'How to count 88 days for the Australian Working Holiday Visa extension',
   description:
-    'Step-by-step guide to calculating visa-accredited days for the Australian Working Holiday Visa (subclass 417 & 462) second and third year extension using the official government formula.',
+    'Step-by-step guide to calculating visa-accredited days for the Australian Working Holiday Visa (subclass 417 & 462) second and third year extension, following Home Affairs guidance on full-time and part-time work.',
   totalTime: 'PT5M',
   estimatedCost: { '@type': 'MonetaryAmount', currency: 'USD', value: '0' },
   step: [
@@ -280,14 +288,14 @@ const HOWTO_JSON_LD = JSON.stringify({
     },
     {
       '@type': 'HowToStep',
-      name: 'Track your hours each Monday–Sunday week',
-      text: 'Record your total hours worked in each Monday-to-Sunday week. The visa-day formula is applied per week, not per day or per month.',
+      name: 'Track the days and hours you work each Monday–Sunday week',
+      text: 'Record every shift: which days you worked and how many paid hours. Each Monday-to-Sunday week is counted on its own.',
       position: 2,
     },
     {
       '@type': 'HowToStep',
-      name: 'Apply the government formula to each week',
-      text: 'Convert weekly hours to visa days: 4–7.24 h = 1 day, 7.25–14.24 h = 2 days, 14.25–21.24 h = 3 days, 21.25–28.24 h = 4 days, 28.25–35.24 h = 5 days, 35.25+ h = 7 days. Less than 4 hours earns 0 days.',
+      name: 'Count each week',
+      text: 'A full-time week (5 or more days at the industry full-time hours, commonly 38) counts as 7 visa days, weekend included. Otherwise each day worked counts once at most, in proportion to a standard day (7.6 hours by default). A long day never counts as two.',
       position: 3,
     },
     {
@@ -315,7 +323,7 @@ const Australia88 = () => {
         <title>88 Day Tracker Australia — Working Holiday Visa | Orary</title>
         <meta
           name="description"
-          content="Track your 88 days for the Australian Working Holiday Visa (subclass 417 & 462). Understand the formula, use our free calculator, and let Orary count automatically from your real shift hours."
+          content="Track your 88 days for the Australian Working Holiday Visa (subclass 417 & 462). Understand how days are counted, use our free calculator, and let Orary count automatically from your real shift hours."
         />
         <link rel="canonical" href="https://orary.app/australia-88" />
 
@@ -441,7 +449,21 @@ const Australia88 = () => {
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
               {t('australia88Page.formula.title')}
             </h2>
-            <p className="text-slate-500 mb-8">{t('australia88Page.formula.subtitle')}</p>
+            <p className="text-slate-500 mb-6">{t('australia88Page.formula.subtitle')}</p>
+
+            <ol className="space-y-3 mb-8">
+              {RULE_KEYS.map((key, idx) => (
+                <li key={key} className="flex gap-3 text-sm text-slate-700 leading-relaxed">
+                  <span
+                    className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold"
+                    style={{ backgroundColor: '#fdf2f8', color: PINK }}
+                  >
+                    {idx + 1}
+                  </span>
+                  <span>{t(`australia88Page.formula.${key}`)}</span>
+                </li>
+              ))}
+            </ol>
 
             <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm">
               {/* Table header */}
@@ -450,21 +472,21 @@ const Australia88 = () => {
                 <span className="text-right">{t('australia88Page.formula.col2')}</span>
               </div>
               {/* Rows */}
-              {FORMULA_ROWS.map(({ hoursKey, daysKey, days }, idx) => (
+              {EXAMPLE_KEYS.map((key, idx) => (
                 <div
-                  key={hoursKey}
+                  key={key}
                   className="grid grid-cols-2 px-5 py-4 items-center border-b border-slate-100 last:border-0 transition-colors hover:bg-white"
                   style={{ backgroundColor: idx % 2 === 0 ? '#fff' : '#f8fafc' }}
                 >
                   <span className="text-sm font-medium text-slate-700">
-                    {t(`australia88Page.formula.${hoursKey}`)}
+                    {t(`australia88Page.formula.${key}Week`)}
                   </span>
                   <div className="flex justify-end">
                     <span
                       className="inline-block px-3 py-1 rounded-lg text-sm font-bold"
                       style={{ backgroundColor: '#fdf2f8', color: PINK }}
                     >
-                      {t(`australia88Page.formula.${daysKey}`)}
+                      {t(`australia88Page.formula.${key}Days`)}
                     </span>
                   </div>
                 </div>

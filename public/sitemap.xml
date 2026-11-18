@@ -61,7 +61,7 @@
   <!-- 88-day Working Holiday Visa tracker for Australia -->
   <url>
     <loc>https://orary.app/australia-88</loc>
-    <lastmod>2026-06-13</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -69,7 +69,7 @@
   <!-- FAQ — Orary general + Australia 88-day WHV questions -->
   <url>
     <loc>https://orary.app/faq</loc>
-    <lastmod>2026-06-13</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -87,14 +87,14 @@
 
   <url>
     <loc>https://orary.app/blog/track-88-days-working-holiday-visa</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://orary.app/blog/working-holiday-visa-days-calculator</loc>
-    <lastmod>2026-11-11</lastmod>
+    <lastmod>2026-11-18</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -123,14 +123,14 @@
   <url><loc>https://orary.app/blog/specified-work-eligible-postcodes-australia</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/blog/subclass-417-vs-462-working-holiday</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/blog/working-holiday-visa-evidence-payslips</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://orary.app/blog/working-holiday-visa-mistakes</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/working-holiday-visa-mistakes</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/blog/how-to-calculate-your-pay</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/blog/understand-australian-payslip</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/blog/tax-delivery-gig-workers-australia</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/blog/mileage-deduction-delivery-riders</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/blog/track-delivery-earnings-multiple-apps</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/blog/how-to-track-work-shifts</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://orary.app/blog/working-holiday-visa-new-zealand-guide</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/working-holiday-visa-new-zealand-guide</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/blog/canada-iec-working-holiday-guide</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/blog/uk-ireland-tax-working-holiday</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/blog/new-zealand-ird-tax-backpackers</loc><lastmod>2026-06-15</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -146,21 +146,21 @@
   <url><loc>https://orary.app/blog/working-holiday-visa-ballot-second-third-year</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/es/blog/working-holiday-visa-ballot-second-third-year</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/fr/blog/working-holiday-visa-ballot-second-third-year</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://orary.app/blog/second-third-working-holiday-visa-application-guide</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/blog/second-third-working-holiday-visa-application-guide</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
   <!-- Localized blog (ES / FR) -->
   <url><loc>https://orary.app/es/blog</loc><lastmod>2026-06-15</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
   <url><loc>https://orary.app/fr/blog</loc><lastmod>2026-06-15</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://orary.app/es/blog/second-third-working-holiday-visa-application-guide</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://orary.app/fr/blog/second-third-working-holiday-visa-application-guide</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/es/blog/second-third-working-holiday-visa-application-guide</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/second-third-working-holiday-visa-application-guide</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/es/blog/specified-work-eligible-postcodes-australia</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/fr/blog/specified-work-eligible-postcodes-australia</loc><lastmod>2026-06-22</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/es/blog/subclass-417-vs-462-working-holiday</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/fr/blog/subclass-417-vs-462-working-holiday</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://orary.app/es/blog/track-88-days-working-holiday-visa</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://orary.app/fr/blog/track-88-days-working-holiday-visa</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://orary.app/es/blog/working-holiday-visa-days-calculator</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://orary.app/fr/blog/working-holiday-visa-days-calculator</loc><lastmod>2026-11-11</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/es/blog/track-88-days-working-holiday-visa</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/track-88-days-working-holiday-visa</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/es/blog/working-holiday-visa-days-calculator</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/working-holiday-visa-days-calculator</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/es/blog/working-holiday-maker-tax-refund-australia</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/fr/blog/working-holiday-maker-tax-refund-australia</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/es/blog/working-holiday-visa-evidence-payslips</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -173,8 +173,8 @@
   <url><loc>https://orary.app/fr/blog/track-delivery-earnings-multiple-apps</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/es/blog/how-to-track-work-shifts</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://orary.app/fr/blog/how-to-track-work-shifts</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://orary.app/es/blog/working-holiday-visa-new-zealand-guide</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://orary.app/fr/blog/working-holiday-visa-new-zealand-guide</loc><lastmod>2026-06-16</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/es/blog/working-holiday-visa-new-zealand-guide</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://orary.app/fr/blog/working-holiday-visa-new-zealand-guide</loc><lastmod>2026-11-18</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 
   <!-- ======================== -->
   <!-- LEGAL PAGES              -->

@@ -30,7 +30,7 @@ import Button from '../../ui/Button';
 import Flex from '../../ui/Flex';
 import ProgressBar from '../../ui/ProgressBar';
 import Australia88ActivateYear2 from '../Australia88ActivateYear2';
-import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS } from '../../../services/australia88Service';
+import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS, roundVisaDays } from '../../../services/australia88Service';
 
 const Australia88DashboardCard = () => {
   const { t } = useTranslation();
@@ -72,7 +72,7 @@ const Australia88DashboardCard = () => {
   const y1Days = Math.min(totalVisaDays, 88);
   const displayDays = viewYear === 2 ? year2Days : y1Days;
   const yearGoal = viewYear === 2 ? YEAR2_TARGET_DAYS : YEAR1_TARGET_DAYS; // Year 2's goal is 6 months, not 88; see header note
-  const daysRemaining = yearGoal - displayDays;
+  const daysRemaining = roundVisaDays(yearGoal - displayDays);
   const progressPercent = Math.min(100, Math.round((displayDays / yearGoal) * 100));
   const isCompleteForView = viewYear === 2 ? year2Complete : year1Complete;
 

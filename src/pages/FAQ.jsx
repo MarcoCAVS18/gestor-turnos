@@ -92,11 +92,11 @@ const AUSTRALIA_FAQS = [
   },
   {
     q: 'Are the 88 days calendar days or working days?',
-    a: "Neither. The 88 days are visa-accredited days calculated from the hours you work each Monday–Sunday week, using an official formula set by the Australian Department of Home Affairs. Full-time work (35.25+ hours/week) earns 7 visa days that week. Fewer hours earns fewer days. They are not the number of calendar days you physically spent at work.",
+    a: "A bit of both. Home Affairs asks for as many normal work days as a full-time worker in your industry would do in 88 calendar days. A full-time week (5 or more days at the industry's full-time hours, commonly 38) counts all 7 calendar days, weekend included. Part-time and casual work count only the days you actually worked, and a long day never counts as two.",
   },
   {
     q: 'How many hours per week do I need to earn visa days?',
-    a: 'Minimum 4 hours in a Monday–Sunday week to earn 1 visa day. Full formula: 4–7.24 h = 1 day · 7.25–14.24 h = 2 days · 14.25–21.24 h = 3 days · 21.25–28.24 h = 4 days · 28.25–35.24 h = 5 days · 35.25 h or more = 7 days. Less than 4 hours in a week earns zero visa days.',
+    a: "There is no official hours-per-week table. A week counts as 7 visa days when you work 5 or more days and at least the industry's full-time hours (commonly 38). Below that, each day you worked counts once at most, in proportion to a standard day (7.6 h by default): four 9-hour days are 4 visa days, three 4-hour days are about 1.6.",
   },
   {
     q: 'What counts as specified work for the 88 days?',
@@ -116,7 +116,7 @@ const AUSTRALIA_FAQS = [
   },
   {
     q: 'How many days do I need for a third year in Australia?',
-    a: "6 months of specified work, which Home Affairs counts as 179 days, done while you're on your second visa. It's a fresh count: the 88 days from your first year don't add to it. The same weekly formula applies.",
+    a: "6 months of specified work, which Home Affairs counts as 179 days, done while you're on your second visa. It's a fresh count: the 88 days from your first year don't add to it. The same counting rules apply.",
   },
   {
     q: 'Are second and third year visas going to a ballot?',
@@ -124,15 +124,15 @@ const AUSTRALIA_FAQS = [
   },
   {
     q: 'What is the minimum to earn any visa days at all?',
-    a: "You must work at least 4 hours within a single Monday–Sunday week to earn even 1 visa day. Any week with fewer than 4 hours contributes zero days to your total, even if you worked on multiple days that week. Tracking weekly hours consistently is essential, especially during casual or irregular work periods.",
+    a: "There is no fixed weekly minimum. Every day of specified work counts, in proportion to a standard day: a 3.8-hour day is half a day. What doesn't count is time off: unpaid days, including days lost to bad weather, add nothing. Paid public holidays and paid sick leave do count.",
   },
   {
     q: 'Does Orary automatically track my 88-day progress?',
-    a: "Yes. Orary groups your logged shifts into Monday–Sunday weeks, applies the government visa-day formula to each week, and accumulates your total. Your dashboard shows a real-time progress bar toward 88 days (second year) or, once you switch to year two, 179 days (third year). No manual counting needed.",
+    a: "Yes. Orary groups your logged shifts into Monday–Sunday weeks, counts each one with the rules above using your paid hours (unpaid breaks deducted), and accumulates your total. Only shifts you have already worked count, not rostered ones. Your dashboard shows a real-time progress bar toward 88 days (second year) or, once you switch to year two, 179 days (third year). No manual counting needed.",
   },
   {
     q: 'Can casual or part-time farm work count toward the 88 days?',
-    a: "Yes. Casual and part-time hours count as long as the work is in a qualifying specified-work category and approved regional area. A worker doing 20 hours/week earns 4 visa days that week. Consistent part-time work over many weeks accumulates just as effectively as full-time.",
+    a: "Yes. Casual and part-time hours count as long as the work is in a qualifying specified-work category and approved regional area. Four 5-hour days earn about 2.6 visa days that week (4 × 5 ÷ 7.6). Part-time work counts, it just takes longer to reach 88.",
   },
   {
     q: 'What if I do not complete the 88 days before my visa expires?',
