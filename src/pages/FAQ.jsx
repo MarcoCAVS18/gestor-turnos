@@ -83,6 +83,14 @@ const GENERAL_FAQS = [
     q: 'Does Orary send reminders and notifications?',
     a: 'Yes, on the iOS and Android apps. Orary can send an optional daily reminder to log your shifts (you choose the time in Settings), a heads-up before each upcoming shift, and milestone alerts as you approach your Australian Working Holiday Visa 88-day goal. All notifications are opt-in and managed from Settings.',
   },
+  {
+    q: 'Does Orary work without signal?',
+    a: "Yes. Once you have opened Orary with a connection, it opens without one too, on the apps and on the website. Shifts and jobs you add or edit offline are saved on your device straight away and sync automatically when you are back online. A banner tells you when you are offline. Signing in for the first time, payments and payslip uploads still need a connection.",
+  },
+  {
+    q: 'What happens when I archive a job?',
+    a: "Archiving hides a job you no longer work at from the list you pick from when adding a shift, without deleting anything. All of its shifts keep counting in your statistics, exports and Working Holiday Visa tracker, and you can restore it at any time from the Archived section on the Jobs page. Deleting a job, by contrast, also deletes all of its shifts.",
+  },
 ];
 
 const AUSTRALIA_FAQS = [

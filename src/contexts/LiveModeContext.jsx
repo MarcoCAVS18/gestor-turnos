@@ -5,6 +5,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { useAuth } from './AuthContext';
 import { useDataContext } from './DataContext';
 import { useConfigContext } from './ConfigContext';
+import { usePremium } from './PremiumContext';
 import * as liveSessionService from '../services/liveSessionService';
 import * as firebaseService from '../services/firebaseService';
 import * as premiumService from '../services/premiumService';
@@ -48,6 +49,16 @@ export const LiveModeProvider = ({ children }) => {
     remaining: premiumService.LIVE_MODE_FREE_LIMIT,
     isPremium: false,
   });
+
+  // Premium from PremiumContext, which follows the user document live and
+  // also works offline (Firestore cache). The usage check below is a one-off
+  // read that fails without a connection, which used to show Premium users the
+  // free 5-session limit while offline.
+  const { isPremium: subscriptionIsPremium } = usePremium();
+  const effectiveUsage = useMemo(
+    () => (subscriptionIsPremium && !liveModeUsage.isPremium ? { ...liveModeUsage, isPremium: true } : liveModeUsage),
+    [liveModeUsage, subscriptionIsPremium]
+  );
 
   // Refs
   const timerRef = useRef(null);
@@ -342,7 +353,7 @@ export const LiveModeProvider = ({ children }) => {
 
     try {
       // Use cached liveModeUsage instead of fetching again
-      const canUse = liveModeUsage.isPremium || liveModeUsage.remaining > 0;
+      const canUse = effectiveUsage.isPremium || effectiveUsage.remaining > 0;
 
       if (!canUse) {
         const errorMsg = `You have reached the limit of ${premiumService.LIVE_MODE_FREE_LIMIT} Live Mode sessions this month. Upgrade to Premium for unlimited sessions.`;
@@ -369,7 +380,7 @@ export const LiveModeProvider = ({ children }) => {
       }
 
       // Increment usage for free users
-      if (!liveModeUsage.isPremium) {
+      if (!effectiveUsage.isPremium) {
         await premiumService.incrementLiveModeUsage(currentUser.uid);
         setLiveModeUsage({
           monthlyCount: liveModeUsage.monthlyCount + 1,
@@ -389,7 +400,7 @@ export const LiveModeProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [currentUser?.uid, requestNotificationPermissionFn, liveModeUsage, primaryColor]);
+  }, [currentUser?.uid, requestNotificationPermissionFn, liveModeUsage, effectiveUsage, primaryColor]);
 
   // Pause the current session
   const pauseSession = useCallback(async () => {
@@ -625,7 +636,7 @@ export const LiveModeProvider = ({ children }) => {
     formattedEarnings,
 
     // Premium/Usage state
-    liveModeUsage,
+    liveModeUsage: effectiveUsage,
     liveModeLimit: premiumService.LIVE_MODE_FREE_LIMIT,
 
     // Actions

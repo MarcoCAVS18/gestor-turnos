@@ -7,6 +7,7 @@ import './index.css';
 import './i18n';
 import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
+import { registerServiceWorker } from './serviceWorkerRegistration';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -18,3 +19,6 @@ root.render(
     </HelmetProvider>
   </React.StrictMode>
 );
+
+// Lets the website open without a connection (production web only)
+registerServiceWorker();

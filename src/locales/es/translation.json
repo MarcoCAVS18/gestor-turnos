@@ -2311,5 +2311,10 @@
   },
   "offline": {
     "banner": "Sin conexión. Lo que registres se guarda en este dispositivo y se sincroniza cuando vuelva la conexión."
+  },
+  "update": {
+    "available": "Hay una versión nueva de Orary.",
+    "reload": "Actualizar",
+    "dismiss": "Cerrar"
   }
 }

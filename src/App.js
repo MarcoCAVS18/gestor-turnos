@@ -16,6 +16,7 @@ import './styles/animation.css';
 import ScrollToTop from './components/layout/ScrollToTop/index.jsx';
 import CookieConsent from './components/ui/CookieConsent';
 import OfflineBanner from './components/ui/OfflineBanner';
+import UpdateBanner from './components/ui/UpdateBanner';
 import NativeSplash from './components/native/NativeSplash';
 import Header from './components/layout/Header';
 import Navigation from './components/layout/Navigation';
@@ -162,6 +163,7 @@ function App() {
     <>
       <NativeSplash />
       <CookieConsent />
+      <UpdateBanner />
       <Router>
       <ScrollToTop />
       <Routes>

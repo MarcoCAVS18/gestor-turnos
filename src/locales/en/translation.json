@@ -2311,5 +2311,10 @@
   },
   "offline": {
     "banner": "You're offline. What you log is saved on this device and syncs when you're back online."
+  },
+  "update": {
+    "available": "A new version of Orary is ready.",
+    "reload": "Update",
+    "dismiss": "Dismiss"
   }
 }

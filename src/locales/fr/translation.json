@@ -2311,5 +2311,10 @@
   },
   "offline": {
     "banner": "Hors ligne. Ce que vous enregistrez est gardé sur cet appareil et se synchronise au retour de la connexion."
+  },
+  "update": {
+    "available": "Une nouvelle version d’Orary est prête.",
+    "reload": "Mettre à jour",
+    "dismiss": "Fermer"
   }
 }

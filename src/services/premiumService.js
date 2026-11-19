@@ -85,8 +85,10 @@ export const loadSubscriptionAndUsage = async (userId) => {
   try {
     const userDocRef = doc(db, 'users', userId);
     const trialDocRef = doc(db, 'trial_records', userId);
-    const [userDoc, trialDoc] = await Promise.all([getDoc(userDocRef), getDoc(trialDocRef)]);
-    const hasUsedTrial = trialDoc.exists();
+    // The trial record is only used to word the upsell; if it cannot be read
+    // (offline and not cached) do not fail the whole subscription load.
+    const [userDoc, trialDoc] = await Promise.all([getDoc(userDocRef), getDoc(trialDocRef).catch(() => null)]);
+    const hasUsedTrial = !!trialDoc?.exists();
 
     if (!userDoc.exists()) {
       return {
