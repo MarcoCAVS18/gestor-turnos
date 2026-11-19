@@ -15,6 +15,7 @@ import './styles/animation.css';
 
 import ScrollToTop from './components/layout/ScrollToTop/index.jsx';
 import CookieConsent from './components/ui/CookieConsent';
+import OfflineBanner from './components/ui/OfflineBanner';
 import NativeSplash from './components/native/NativeSplash';
 import Header from './components/layout/Header';
 import Navigation from './components/layout/Navigation';
@@ -110,6 +111,8 @@ function AppLayout() {
   // afecta. Mantengo min-h-screen como fallback para browsers viejos.
   return (
     <div className="min-h-screen min-h-dvh bg-gray-100 dark:bg-slate-950 font-poppins transition-colors duration-300 md:flex md:h-screen md:min-h-0">
+      <OfflineBanner />
+
       {/* Header only on mobile */}
       <div className="md:hidden">
         <Header />

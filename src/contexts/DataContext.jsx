@@ -18,6 +18,7 @@ export const DataProvider = ({ children }) => {
   const [shifts, setShifts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [shiftsLimitReached, setShiftsLimitReached] = useState(false);
 
   useEffect(() => {
     if (currentUser) {
@@ -29,6 +30,7 @@ export const DataProvider = ({ children }) => {
           setWorks,
           setShifts,
           setError,
+          setShiftsLimitReached,
         }
       );
 
@@ -73,6 +75,17 @@ export const DataProvider = ({ children }) => {
       await firebaseService.deleteJob(currentUser.uid, id);
     } catch (err) {
       setError('Error deleting job: ' + err.message);
+      throw err;
+    }
+  }, [currentUser]);
+
+  // Archive (active = false) or restore a job, regular or delivery (DATA-2)
+  const setWorkActive = useCallback(async (id, active) => {
+    if (!currentUser) throw new Error("User not authenticated");
+    try {
+      await firebaseService.setJobActive(currentUser.uid, id, active);
+    } catch (err) {
+      setError('Error archiving job: ' + err.message);
       throw err;
     }
   }, [currentUser]);
@@ -128,7 +141,9 @@ export const DataProvider = ({ children }) => {
     shifts,
     loading,
     error,
+    shiftsLimitReached,
     addJob,
+    setWorkActive,
     editJob,
     deleteJob,
     addShift,

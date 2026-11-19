@@ -50,7 +50,12 @@ import logger from '../utils/logger';
 
 // Cloud Functions base URL - always use production URL
 // Local emulator would be: http://localhost:5001/gestionturnos-7ec99/us-central1
-const FUNCTIONS_URL = 'https://us-central1-gestionturnos-7ec99.cloudfunctions.net';
+// Local emulator in development (npm run dev), deployed functions otherwise —
+// same pattern as stripeService/payslipService.
+const PROJECT_ID = process.env.REACT_APP_FIREBASE_PROJECT_ID || 'gestionturnos-7ec99';
+const FUNCTIONS_URL = process.env.REACT_APP_USE_EMULATOR === 'true'
+  ? `http://localhost:5001/${PROJECT_ID}/us-central1`
+  : `https://us-central1-${PROJECT_ID}.cloudfunctions.net`;
 
 const Integrations = () => {
   const { t } = useTranslation();

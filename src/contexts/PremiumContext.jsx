@@ -2,6 +2,8 @@
 // Context for managing premium subscriptions and Live Mode limits
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../services/firebase';
 import { useAuth } from './AuthContext';
 import {
   loadSubscriptionAndUsage,
@@ -92,6 +94,24 @@ export const PremiumProvider = ({ children }) => {
     };
 
     loadSubscriptionData();
+  }, [currentUser?.uid]);
+
+  // Live subscription state. Payments, trial conversion, cancellations from the
+  // Stripe portal and webhooks all update the user document server-side; without
+  // this the UI only noticed after a reload.
+  useEffect(() => {
+    if (!currentUser?.uid) return undefined;
+    const unsubscribe = onSnapshot(
+      doc(db, 'users', currentUser.uid),
+      (snap) => {
+        const sub = snap.data()?.subscription;
+        if (!sub) return;
+        setSubscription(sub);
+        setIsPremium(isSubscriptionValid(sub));
+      },
+      (err) => logger.warn('Subscription listener error:', err)
+    );
+    return unsubscribe;
   }, [currentUser?.uid]);
 
   // NOTE: upgrades are handled by the Stripe payment flow (PaymentForm →

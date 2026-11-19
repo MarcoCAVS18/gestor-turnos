@@ -33,7 +33,30 @@ async function loadPdf(file) {
   return pdfjsLib.getDocument({ data: buf, verbosity: 0, isEvalSupported: false }).promise;
 }
 
-// Lazy Tesseract loader — heavy (~MBs of wasm + lang data fetched once and
+// OCR assets are served from our own origin (public/tesseract, copied by
+// scripts/copy-ocr-assets.js). The CSP blocks tesseract.js's defaults: files
+// from cdn.jsdelivr.net and a worker started from a blob: URL.
+const OCR_BASE = `${process.env.PUBLIC_URL || ''}/tesseract`;
+
+// Same check wasm-feature-detect uses: does this engine accept a SIMD opcode?
+const supportsWasmSimd = () => {
+  try {
+    return WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123, 3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11]));
+  } catch {
+    return false;
+  }
+};
+
+const getOcrOptions = () => ({
+  workerPath: `${OCR_BASE}/worker.min.js`,
+  workerBlobURL: false,
+  // only the two cores we ship (see copy-ocr-assets.js)
+  corePath: `${OCR_BASE}/${supportsWasmSimd() ? 'tesseract-core-simd-lstm.wasm.js' : 'tesseract-core-lstm.wasm.js'}`,
+  langPath: OCR_BASE,
+  gzip: true,
+});
+
+// Lazy Tesseract loader — heavy (~10 MB of wasm + lang data, fetched once and
 // cached), so it's only pulled in when a PDF has no text layer (scanned).
 let _tesseract = null;
 async function getTesseract() {
@@ -724,7 +747,7 @@ async function ocrPdf(pdf, maxPages = 2) {
     canvas.width = viewport.width;
     canvas.height = viewport.height;
     await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-    const { data } = await Tesseract.recognize(canvas, 'eng');
+    const { data } = await Tesseract.recognize(canvas, 'eng', getOcrOptions());
     text += '\n' + (data?.text || '');
   }
   return text.trim();

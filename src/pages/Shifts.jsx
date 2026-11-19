@@ -9,6 +9,7 @@ import { useDeleteManager } from '../hooks/useDeleteManager';
 import { useShiftFilters } from '../hooks/useFilterTurnos';
 import { createSafeDate } from '../utils/time';
 import PageHeader from '../components/layout/PageHeader';
+import { SHIFTS_QUERY_LIMIT } from '../services/firebaseService';
 import { List, Plus, Search } from 'lucide-react';
 import ShiftsEmptyState from '../components/shifts/ShiftsEmptyState';
 import ShiftFilters from '../components/filters/ShiftFilters';
@@ -28,7 +29,8 @@ const Shifts = () => {
     thematicColors,
     shiftsByDate,
     works,
-    deliveryWork
+    deliveryWork,
+    shiftsLimitReached
   } = useApp();
 
   // Hook for filter management
@@ -187,6 +189,12 @@ const Shifts = () => {
           themeColor: thematicColors?.base,
         }}
       />
+
+      {shiftsLimitReached && (
+        <p role="status" className="text-sm rounded-xl px-4 py-3 bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-900/20 dark:text-amber-200 dark:border-amber-800">
+          {t('shifts.limitReached', { count: SHIFTS_QUERY_LIMIT })}
+        </p>
+      )}
 
       {/* Filter system */}
       {hasShifts && (

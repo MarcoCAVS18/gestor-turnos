@@ -59,7 +59,13 @@ export const AuthProvider = ({ children }) => {
           primaryColor: '#EC4899'
         }
       });
-      
+
+      // Branded verification email (Cloud Function + Resend). Not awaited: a
+      // failure must not block signup. A verified email is what lets the
+      // backend safely match an existing Stripe customer by email.
+      httpsCallable(functions, 'sendVerificationEmail')({})
+        .catch((err) => logger.warn('Verification email not sent:', err));
+
       return userCredential.user;
     } catch (error) {
       logger.error('Signup error:', error);

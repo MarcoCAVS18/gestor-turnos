@@ -972,7 +972,8 @@
         "saturday": "Samedi",
         "sunday": "Dimanche"
       }
-    }
+    },
+    "limitReached": "Seuls vos {{count}} derniers services sont chargés. Les plus anciens sont conservés, mais ne sont pas inclus dans les totaux sur cet appareil."
   },
   "settingsOnboarding": {
     "title": "Bienvenue dans Paramètres",
@@ -1035,8 +1036,8 @@
     "trackDeliveries": "Suivez vos livraisons",
     "addAnotherPlatform": "Ajouter une autre plateforme",
     "multipleApps": "Plusieurs applications prises en charge",
-    "deleteWarning": "Tous les quarts associés à ce travail seront également supprimés.",
-    "deleteWarningDelivery": "Tous les quarts de livraison associés à ce travail seront également supprimés.",
+    "deleteWarning": "Tous les quarts associés à ce travail seront également supprimés. Si vous avez simplement arrêté d’y travailler, archivez-le pour garder ses services.",
+    "deleteWarningDelivery": "Tous les quarts de livraison associés à ce travail seront également supprimés. Si vous avez simplement arrêté d’y travailler, archivez-le pour garder ses services.",
     "traditionalBadge": "Traditionnel",
     "deliveryBadge": "Delivery",
     "platform": "Plateforme",
@@ -1056,7 +1057,11 @@
     "deliveryFeature3": "Contrôle des pourboires et dépenses de carburant",
     "notSureWhich": "Pas sûr de quel type choisir ?",
     "helpChoose": "Si vous avez des doutes sur le type à choisir, vous pouvez le modifier plus tard dans les paramètres du travail.",
-    "liveModeActiveError": "\"{{workName}}\" est actuellement actif en Mode Live. Arrêtez la session pour le modifier."
+    "liveModeActiveError": "\"{{workName}}\" est actuellement actif en Mode Live. Arrêtez la session pour le modifier.",
+    "archive": "Archiver",
+    "restore": "Restaurer",
+    "archivedSection": "Archivés ({{count}})",
+    "archivedHint": "Les emplois archivés n’apparaissent plus quand vous ajoutez un service. Leurs services comptent toujours dans vos statistiques et le suivi de visa."
   },
   "statistics": {
     "tabs": {
@@ -2303,5 +2308,8 @@
       "averages": "Moyennes",
       "generatedBy": "Généré par"
     }
+  },
+  "offline": {
+    "banner": "Hors ligne. Ce que vous enregistrez est gardé sur cet appareil et se synchronise au retour de la connexion."
   }
 }

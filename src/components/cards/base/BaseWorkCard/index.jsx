@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Edit, Edit2, Trash2, Share2, MoreVertical, Briefcase, Bike } from 'lucide-react';
+import { Edit, Edit2, Trash2, Share2, MoreVertical, Briefcase, Bike, Archive, ArchiveRestore } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Card from '../../../ui/Card';
 import WorkAvatar from '../../../work/WorkAvatar';
@@ -18,6 +18,7 @@ const BaseWorkCard = ({
   onEdit,
   onDelete,
   onShare,
+  onArchive,
   showActions = true,
   variant = 'default',
   isSharing = false,
@@ -95,6 +96,11 @@ const BaseWorkCard = ({
       label: t('common.share'),
       onClick: () => onShare?.(work),
       disabled: isSharing
+    }] : []),
+    ...(onArchive ? [{
+      icon: work?.active === false ? ArchiveRestore : Archive,
+      label: work?.active === false ? t('works.restore') : t('works.archive'),
+      onClick: () => onArchive(work),
     }] : []),
     {
       icon: Trash2,

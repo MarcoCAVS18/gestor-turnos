@@ -972,7 +972,8 @@
         "saturday": "Sábado",
         "sunday": "Domingo"
       }
-    }
+    },
+    "limitReached": "Solo se cargan tus últimos {{count}} turnos. Los anteriores se conservan, pero no se incluyen en los totales en este dispositivo."
   },
   "settingsOnboarding": {
     "title": "Bienvenido a Ajustes",
@@ -1035,8 +1036,8 @@
     "trackDeliveries": "Registra tus deliveries",
     "addAnotherPlatform": "Agregar otra plataforma",
     "multipleApps": "Múltiples apps compatibles",
-    "deleteWarning": "Todos los turnos asociados a este trabajo también serán eliminados.",
-    "deleteWarningDelivery": "Todos los turnos de delivery asociados a este trabajo también serán eliminados.",
+    "deleteWarning": "Todos los turnos asociados a este trabajo también serán eliminados. Si solo dejaste de trabajar ahí, archívalo y conservas sus turnos.",
+    "deleteWarningDelivery": "Todos los turnos de delivery asociados a este trabajo también serán eliminados. Si solo dejaste de trabajar ahí, archívalo y conservas sus turnos.",
     "traditionalBadge": "Tradicional",
     "deliveryBadge": "Delivery",
     "platform": "Plataforma",
@@ -1056,7 +1057,11 @@
     "deliveryFeature3": "Control de propinas y gastos de combustible",
     "notSureWhich": "¿No estás seguro cuál elegir?",
     "helpChoose": "Si tienes dudas sobre qué tipo elegir, puedes cambiarlo más tarde en la configuración del trabajo.",
-    "liveModeActiveError": "\"{{workName}}\" está activo en Modo Live. Detén la sesión para editarlo."
+    "liveModeActiveError": "\"{{workName}}\" está activo en Modo Live. Detén la sesión para editarlo.",
+    "archive": "Archivar",
+    "restore": "Restaurar",
+    "archivedSection": "Archivados ({{count}})",
+    "archivedHint": "Los trabajos archivados ya no aparecen al cargar un turno. Sus turnos siguen contando en tus estadísticas y en el tracker de visa."
   },
   "statistics": {
     "tabs": {
@@ -2303,5 +2308,8 @@
       "averages": "Promedios",
       "generatedBy": "Generado por"
     }
+  },
+  "offline": {
+    "banner": "Sin conexión. Lo que registres se guarda en este dispositivo y se sincroniza cuando vuelva la conexión."
   }
 }

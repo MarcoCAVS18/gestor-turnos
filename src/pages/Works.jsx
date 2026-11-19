@@ -8,7 +8,8 @@ import { useWorks } from '../hooks/useWorks';
 import { useLiveModeContext } from '../contexts/LiveModeContext';
 import ShareMessages from '../components/work/ShareMessages';
 import PageHeader from '../components/layout/PageHeader';
-import { Briefcase, Plus, Truck, Lock, Crown, Radio } from 'lucide-react';
+import { Briefcase, Plus, Truck, Lock, Crown, Radio, Archive, ChevronDown } from 'lucide-react';
+import { useApp } from '../contexts/AppContext';
 import WorkCard from '../components/cards/work/WorkCard';
 import DeliveryWorkCard from '../components/cards/work/DeliveryWorkCard';
 import WorkModal from '../components/modals/work/WorkModal';
@@ -89,6 +90,8 @@ const Works = () => {
   } = useWorks();
 
   const [liveModeError, setLiveModeError] = useState('');
+  const [showArchived, setShowArchived] = useState(false);
+  const { setWorkActive } = useApp();
 
   // Auto-clear live mode error after 4 seconds
   useEffect(() => {
@@ -106,9 +109,24 @@ const Works = () => {
     openEditModal(work);
   };
 
-  // Separate traditional and delivery works
-  const traditionalWorks = allWorks.filter(work => work.type !== 'delivery');
-  const deliveryWorks = allWorks.filter(work => work.type === 'delivery');
+  // Archive / restore. Blocked for the job Live Mode is running on.
+  const handleArchiveWork = async (work) => {
+    if (isLiveModeActive && liveWork?.id === work.id) {
+      setLiveModeError(t('works.liveModeActiveError', { workName: work.name }));
+      return;
+    }
+    await setWorkActive(work.id, work.active === false);
+  };
+
+  // Separate traditional and delivery works; archived ones get their own section
+  const isActiveWork = (work) => work.active !== false;
+  const allTraditional = allWorks.filter(work => work.type !== 'delivery');
+  const traditionalWorks = allTraditional.filter(isActiveWork);
+  const deliveryWorks = allWorks.filter(work => work.type === 'delivery' && isActiveWork(work));
+  const archivedWorks = allWorks.filter(work => !isActiveWork(work));
+  // The free plan's one-job limit counts archived jobs too, otherwise archiving
+  // would be a way around it. A free user can restore the archived job instead.
+  const freePlanJobUsed = !isPremium && allTraditional.length >= 1;
 
   // Colors for each section
   const traditionalColor = thematicColors?.primary || '#EC4899';
@@ -175,6 +193,7 @@ const Works = () => {
                     onEdit={handleEditWork}
                     onDelete={deleteManager.startDeletion}
                     onShare={handleShareWork}
+                    onArchive={handleArchiveWork}
                     showActions={true}
                     isSharing={isSharing}
                   />
@@ -182,7 +201,7 @@ const Works = () => {
               })}
 
               {/* Show Premium locked card if user has 1 traditional work and is not premium */}
-              {traditionalWorks.length === 1 && !isPremium && (
+              {freePlanJobUsed && traditionalWorks.length <= 1 && (
                 <PremiumLockedCard
                   onClick={handlePremiumClick}
                   label={t('works.premiumOnly')}
@@ -191,7 +210,7 @@ const Works = () => {
               )}
 
               {/* Show empty state cards if no traditional works */}
-              {traditionalWorks.length === 0 && (
+              {traditionalWorks.length === 0 && !freePlanJobUsed && (
                 <>
                   <EmptyWorkCard
                     onClick={() => openNewModal('traditional')}
@@ -248,6 +267,7 @@ const Works = () => {
                     onEdit={handleEditWork}
                     onDelete={deleteManager.startDeletion}
                     onShare={handleShareWork}
+                    onArchive={handleArchiveWork}
                     showActions={true}
                     isSharing={isSharing}
                   />
@@ -296,6 +316,40 @@ const Works = () => {
         work={selectedWork}
         defaultWorkType={defaultWorkType}
       />
+
+      {/* Archived jobs (DATA-2) */}
+      {archivedWorks.length > 0 && (
+        <div className="px-4 pb-32 -mt-24">
+          <button
+            type="button"
+            onClick={() => setShowArchived((v) => !v)}
+            aria-expanded={showArchived}
+            className="flex items-center gap-2 text-sm font-semibold text-gray-600 dark:text-gray-300"
+          >
+            <Archive size={16} aria-hidden="true" />
+            {t('works.archivedSection', { count: archivedWorks.length })}
+            <ChevronDown size={16} aria-hidden="true" className={`transition-transform ${showArchived ? 'rotate-180' : ''}`} />
+          </button>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{t('works.archivedHint')}</p>
+          {showArchived && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4 opacity-80">
+              {archivedWorks.map((work) => {
+                const CardComponent = work.type === 'delivery' ? DeliveryWorkCard : WorkCard;
+                return (
+                  <CardComponent
+                    key={work.id}
+                    work={work}
+                    onEdit={handleEditWork}
+                    onDelete={deleteManager.startDeletion}
+                    onArchive={handleArchiveWork}
+                    showActions={true}
+                  />
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       <DeleteAlert
         visible={deleteManager.showDeleteModal}

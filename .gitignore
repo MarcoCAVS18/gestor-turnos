@@ -13,6 +13,8 @@
 
 # generated at build time (version + legal dates) — see scripts/gen-build-info.js
 /src/generated/
+# OCR assets copied from node_modules — see scripts/copy-ocr-assets.js
+/public/tesseract/
 
 # misc
 .DS_Store

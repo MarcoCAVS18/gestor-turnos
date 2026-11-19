@@ -21,6 +21,7 @@ import {
 } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { db, functions } from './firebase';
+import logger from '../utils/logger';
 import { addDaysToDateKey } from '../utils/time';
 import { shiftCrossesMidnight, resolveShiftEndDate, normalizeShiftDates } from '../utils/shiftUtils';
 
@@ -47,9 +48,26 @@ const getUserDocRef = (userUid) => {
 // SUBSCRIPTION HELPERS
 // ============================================================================
 
+// Max shifts loaded per type. Older shifts are not loaded beyond this; the UI
+// says so when it is reached (DATA-1). Raised from 500 on 2026-11-18.
+export const SHIFTS_QUERY_LIMIT = 3000;
+
+// With the persistent cache a write is applied locally at once and synced when
+// the device is back online, but its promise only resolves when the server
+// acknowledges it. Awaiting that without signal would leave forms spinning, so
+// offline (or after a short wait) the caller moves on and the write completes
+// in the background. Errors are still logged.
+const OFFLINE_ACK_WAIT_MS = 4000;
+const commitWrite = (writePromise) => {
+  writePromise.catch((err) => logger.error('Firestore write failed:', err));
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return Promise.resolve();
+  return Promise.race([writePromise, new Promise((resolve) => setTimeout(resolve, OFFLINE_ACK_WAIT_MS))]);
+};
+
 // Generic subscription helper that accepts any state setter name
-const createIncrementalSubscription = (query, stateSetter, errorCallback, sortComparator, dataTransform = (d) => d) => {
+const createIncrementalSubscription = (query, stateSetter, errorCallback, sortComparator, dataTransform = (d) => d, onSize = null) => {
   return onSnapshot(query, (snapshot) => {
+    if (onSize) onSize(snapshot.size);
     stateSetter((currentData) => {
       let updatedData = [...(currentData || [])];
       snapshot.docChanges().forEach((change) => {
@@ -169,7 +187,7 @@ export const updateWeeklyHoursGoal = (userUid, newGoal) => {
 // DATA SUBSCRIPTIONS (NEW STRUCTURE)
 // ============================================================================
 
-export const subscribeToNormalData = (userUid, { setWorks, setShifts, setError }) => {
+export const subscribeToNormalData = (userUid, { setWorks, setShifts, setError, setShiftsLimitReached }) => {
   const { worksRef, shiftsRef } = getCollections();
 
   if (!userUid) return () => {};
@@ -186,14 +204,19 @@ export const subscribeToNormalData = (userUid, { setWorks, setShifts, setError }
     )
   );
 
-  const shiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('type', '==', 'regular'), orderBy('date', 'desc'), limit(500));
+  const shiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('type', '==', 'regular'), orderBy('date', 'desc'), limit(SHIFTS_QUERY_LIMIT));
   unsubscribes.push(
     createIncrementalSubscription(
       shiftsQuery,
       setShifts,
       (error) => setError(error),
       (a, b) => new Date(b.date) - new Date(a.date),
-      normalizeShiftDates
+      normalizeShiftDates,
+      (size) => {
+        const reached = size >= SHIFTS_QUERY_LIMIT;
+        if (reached) logger.warn(`Shift query hit its ${SHIFTS_QUERY_LIMIT}-document limit; older shifts are not loaded`);
+        setShiftsLimitReached?.(reached);
+      }
     )
   );
 
@@ -217,7 +240,7 @@ export const subscribeToDeliveryData = (userUid, { setDeliveryWork, setDeliveryS
     )
   );
 
-  const deliveryShiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('type', '==', 'delivery'), orderBy('date', 'desc'), limit(500));
+  const deliveryShiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('type', '==', 'delivery'), orderBy('date', 'desc'), limit(SHIFTS_QUERY_LIMIT));
   unsubscribes.push(
     createIncrementalSubscription(
       deliveryShiftsQuery,
@@ -281,7 +304,8 @@ export const addJob = async (userUid, newJob, isDelivery = false) => {
     throw new Error('Work name is required');
   }
 
-  const docRef = await addDoc(worksRef, jobData);
+  const docRef = doc(worksRef);
+  await commitWrite(setDoc(docRef, jobData));
   return { ...jobData, id: docRef.id };
 };
 
@@ -305,7 +329,17 @@ export const editJob = async (userUid, id, updatedData, isDelivery = false) => {
     }
   }
 
-  await updateDoc(jobRef, dataWithMetadata);
+  await commitWrite(updateDoc(jobRef, dataWithMetadata));
+};
+
+/**
+ * Archives or restores a job (DATA-2). Archived jobs drop out of the pickers
+ * for new shifts but keep all their shifts, so stats and the visa tracker are
+ * unchanged. Works for regular and delivery jobs without touching other fields.
+ */
+export const setJobActive = async (userUid, id, active) => {
+  const { worksRef } = getCollections();
+  await commitWrite(updateDoc(doc(worksRef, id), { active: !!active, updatedAt: new Date() }));
 };
 
 export const deleteJob = async (userUid, id, isDelivery = false) => {
@@ -320,11 +354,13 @@ export const deleteJob = async (userUid, id, isDelivery = false) => {
   const shiftsQuery = query(shiftsRef, where('userId', '==', userUid), where('workId', '==', id));
   const shiftsSnapshot = await getDocs(shiftsQuery);
 
-  const batch = writeBatch(db);
-  shiftsSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-  batch.delete(jobRef);
-
-  await batch.commit();
+  // Batches hold at most 500 operations: delete shifts in chunks, the job last.
+  const refs = [...shiftsSnapshot.docs.map((d) => d.ref), jobRef];
+  for (let i = 0; i < refs.length; i += 450) {
+    const batch = writeBatch(db);
+    refs.slice(i, i + 450).forEach((ref) => batch.delete(ref));
+    await commitWrite(batch.commit());
+  }
 };
 
 // ============================================================================
@@ -398,7 +434,8 @@ export const addShift = async (userUid, newShift, isDelivery = false) => {
     };
   }
 
-  const docRef = await addDoc(shiftsRef, shiftData);
+  const docRef = doc(shiftsRef);
+  await commitWrite(setDoc(docRef, shiftData));
   return { ...shiftData, id: docRef.id };
 };
 
@@ -450,7 +487,7 @@ export const addBulkShiftsService = async (userUid, shifts) => {
       results.push({ ...shiftData, id: newDocRef.id });
     });
 
-    await batch.commit();
+    await commitWrite(batch.commit());
   }
 
   return results;
@@ -497,13 +534,13 @@ export const editShift = async (userUid, id, updatedData, isDelivery = false) =>
     };
   }
 
-  await updateDoc(shiftRef, dataWithMetadata);
+  await commitWrite(updateDoc(shiftRef, dataWithMetadata));
 };
 
 export const deleteShift = async (userUid, id, isDelivery = false) => {
   const { shiftsRef } = getCollections();
   const shiftRef = doc(shiftsRef, id);
-  return deleteDoc(shiftRef);
+  return commitWrite(deleteDoc(shiftRef));
 };
 
 // ============================================================================
@@ -683,30 +720,17 @@ export const clearUserData = async (userUid) => {
     }
   }
 
-  // Update user document to mark data as cleared
-  // Also reset Google Calendar connection, Live Mode usage, and other integration settings
-  // Using setDoc with merge to handle cases where user doc doesn't exist
+  // Mark the data as cleared. The subscription is deliberately NOT touched: it is
+  // server-managed (Stripe webhooks). Clear Everything cancels at period end, so
+  // the user keeps what they already paid for; wiping the Stripe ids here used
+  // to cut that access short and leave the webhooks unable to find the user.
+  // liveModeUsage is not reset either, so the free monthly limit can't be
+  // bypassed by clearing data.
   const userDocRef = getUserDocRef(userUid);
   await setDoc(userDocRef, {
     dataCleared: true,
     dataClearedAt: new Date(),
     updatedAt: new Date(),
-    // Reset integrations
-    googleCalendarConnected: false,
-    googleCalendarTokens: null,
-    // NOTE: liveModeUsage is intentionally NOT reset here so users cannot
-    // bypass the monthly free-session limit by clearing their data.
-    // Reset subscription if user wants fresh start
-    subscription: {
-      isPremium: false,
-      plan: 'free',
-      status: 'inactive',
-      startDate: null,
-      expiryDate: null,
-      paymentMethod: null,
-      stripeCustomerId: null,
-      stripeSubscriptionId: null,
-    },
   }, { merge: true });
 
   return {

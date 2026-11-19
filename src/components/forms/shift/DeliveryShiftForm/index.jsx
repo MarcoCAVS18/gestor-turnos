@@ -153,8 +153,10 @@ const DeliveryShiftForm = ({
     }
   }, [errors, onWorkChange]);
 
-  const traditionalWorks = works.filter(t => t.type !== 'delivery');
-  const deliveryWork = works.filter(t => t.type === 'delivery');
+  // Archived jobs are hidden from the picker, except the one this shift already uses
+  const selectableWorks = works.filter(w => w.active !== false || w.id === formData.workId || w.id === shift?.workId);
+  const traditionalWorks = selectableWorks.filter(w => w.type !== 'delivery');
+  const deliveryWork = selectableWorks.filter(w => w.type === 'delivery');
 
   return (
     <BaseForm

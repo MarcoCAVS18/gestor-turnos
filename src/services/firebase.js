@@ -1,7 +1,12 @@
 // src/services/firebase.js
 
 import { initializeApp } from 'firebase/app';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  connectFirestoreEmulator,
+} from 'firebase/firestore';
 import { getAuth, initializeAuth, indexedDBLocalPersistence, connectAuthEmulator } from 'firebase/auth';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
@@ -19,7 +24,13 @@ const firebaseConfig = {
 
 // Initialize Firebase, Firestore, Auth and Storage
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+// Persistent cache (IndexedDB): the app opens with the last data it saw and
+// shifts logged without signal (farms, remote areas) are kept on the device
+// and synced when the connection is back. Falls back to memory if IndexedDB
+// is unavailable (some private browsing modes).
+const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+});
 
 // On native (iOS/Android), use initializeAuth with indexedDBLocalPersistence to prevent
 // Firebase from loading the browser popup/redirect resolver (gapi.js), which is
