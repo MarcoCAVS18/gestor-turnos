@@ -12,6 +12,7 @@ import Switch from '../../../ui/Switch';
 import { useThemeColors } from '../../../../hooks/useThemeColors';
 import { useIsMobile } from '../../../../hooks/useIsMobile';
 import { generateColorVariations } from '../../../../utils/colorUtils';
+import { MIN_SAVED_SHIFT_MS } from '../../../../contexts/LiveModeContext';
 
 const LiveModeFinishConfirmModal = ({
   isOpen,
@@ -23,6 +24,9 @@ const LiveModeFinishConfirmModal = ({
   const { t } = useTranslation();
   const colors = useThemeColors();
   const isMobile = useIsMobile();
+
+  // Under a minute nothing is saved (see MIN_SAVED_SHIFT_MS in LiveModeContext)
+  const tooShort = typeof sessionData.elapsedTime === 'number' && sessionData.elapsedTime < MIN_SAVED_SHIFT_MS;
 
   const {
     time = '00:00:00',
@@ -146,7 +150,7 @@ const LiveModeFinishConfirmModal = ({
             </div>
 
             {/* Smoko deduction option */}
-            {shouldOfferSmoko && (
+            {shouldOfferSmoko && !tooShort && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -176,22 +180,23 @@ const LiveModeFinishConfirmModal = ({
             <div className="flex items-start gap-2 mt-4 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
               <AlertCircle size={16} className="text-yellow-300 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-white/80">
-                {t('shifts.liveShiftNote')}
-                {deductSmoko && shouldOfferSmoko && ` ${t('shifts.smokoWillDeduct', { minutes: smokoMinutes })}`}
+                {tooShort ? t('liveMode.tooShort') : t('shifts.liveShiftNote')}
+                {!tooShort && deductSmoko && shouldOfferSmoko && ` ${t('shifts.smokoWillDeduct', { minutes: smokoMinutes })}`}
               </p>
             </div>
           </div>
 
           {/* Actions */}
           <div className="p-6 pt-2 flex gap-3">
-            <Button
-              variant="cancel"
+            {/* Outlined white: the grey "cancel" style was unreadable on the gradient */}
+            <button
+              type="button"
               onClick={onClose}
               disabled={loading}
-              className="flex-1 bg-white/20 hover:bg-white/30 text-white border-none"
+              className="flex-1 rounded-xl border-2 border-white text-white font-semibold py-3 px-4 hover:bg-white/15 active:bg-white/25 transition-colors disabled:opacity-50"
             >
               {t('common.cancel')}
-            </Button>
+            </button>
             <Button
               variant="solid"
               onClick={() => onConfirm(deductSmoko)}
@@ -202,7 +207,7 @@ const LiveModeFinishConfirmModal = ({
               themeColor={colors.primary}
               icon={CheckCircle}
             >
-              {t('common.finish')}
+              {tooShort ? t('liveMode.discardShort') : t('common.finish')}
             </Button>
           </div>
         </div>

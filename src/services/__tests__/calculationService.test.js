@@ -148,3 +148,21 @@ describe('calculateMonthlyStats uses the same "earned" as the rest of the app', 
     expect(m.totalHours).toBe(9);
   });
 });
+
+describe('equal start and end times are zero hours, not 24 (Live Mode bug, 2026-11-20)', () => {
+  const { calculateShiftHours } = require('../../utils/time');
+  test('helpers', () => {
+    expect(calculateHours('01:57', '01:57')).toBe(0);
+    expect(calculateShiftHours('01:57', '01:57')).toBe(0);
+    expect(calculateHours('22:00', '02:00')).toBe(4);
+  });
+  test('a live shift saved as 01:57-01:57 on the same day pays nothing', () => {
+    const r = pay({ startDate: '2026-11-20', endDate: '2026-11-20', startTime: '01:57', endTime: '01:57', crossesMidnight: false, isLive: true, hadBreak: false });
+    expect(r.hours).toBe(0);
+    expect(r.total).toBe(0);
+  });
+  test('an explicitly overnight 24 h shift still counts', () => {
+    const r = pay({ startDate: '2026-11-17', endDate: '2026-11-18', startTime: '07:00', endTime: '07:00', crossesMidnight: true, hadBreak: false });
+    expect(r.hours).toBe(24);
+  });
+});

@@ -168,7 +168,9 @@ const Shifts = () => {
   // Format shift details for delete alert
   const deletionDetails = useMemo(() => {
     return generateShiftDetails(deleteManager.itemToDelete, allJobs);
-  }, [deleteManager.itemToDelete, allJobs]);
+    // the details are translated inside the helper: rebuild them when the language changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deleteManager.itemToDelete, allJobs, i18n.language]);
 
   return (
     <div className="px-4 py-6 pb-32 space-y-4">

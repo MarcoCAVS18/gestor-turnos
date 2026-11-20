@@ -129,6 +129,8 @@ const ShiftForm = ({
     }
     if (!formData.endTime) {
       newErrors.endTime = t('forms.shift.validation.endTimeRequired');
+    } else if (formData.startTime && formData.startTime === formData.endTime) {
+      newErrors.endTime = t('forms.shift.validation.sameAsStart');
     }
 
     setErrors(newErrors);

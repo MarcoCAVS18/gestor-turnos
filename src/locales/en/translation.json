@@ -1182,7 +1182,8 @@
         "startTimeRequired": "Start time is required",
         "endTimeRequired": "End time is required",
         "positiveNumber": "Must be greater than 0",
-        "endAfterStart": "Must be after start"
+        "endAfterStart": "Must be after start",
+        "sameAsStart": "End time can't be the same as the start time"
       },
       "bulk": {
         "title": "Bulk Shift Creation",
@@ -2331,6 +2332,29 @@
       "keep": "Keep it running",
       "discard": "Discard this session",
       "invalid": "Choose a time after the start, not in the future and within 24 hours."
+    },
+    "tooShort": "Less than a minute: this session will not be saved as a shift.",
+    "discardShort": "Discard"
+  },
+  "deleteDetails": {
+    "workNotFound": "Job not found",
+    "dateNotAvailable": "Date not available",
+    "breakYes": "Break: {{minutes}} min",
+    "breakNo": "Break: none",
+    "orders_one": "{{count}} order",
+    "orders_other": "{{count}} orders",
+    "liveTracked": "Tracked with Live Mode",
+    "platform": "Platform: {{platform}}",
+    "vehicle": "Vehicle: {{vehicle}}",
+    "rate": "Rate: {{rate}}/h",
+    "types": {
+      "day": "Day shift",
+      "afternoon": "Afternoon shift",
+      "night": "Night shift",
+      "saturday": "Saturday shift",
+      "sunday": "Sunday shift",
+      "delivery": "Delivery shift",
+      "mixed": "Mixed shift"
     }
   }
 }

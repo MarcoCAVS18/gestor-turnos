@@ -1117,7 +1117,8 @@
         "startTimeRequired": "La hora de inicio es obligatoria",
         "endTimeRequired": "La hora de fin es obligatoria",
         "positiveNumber": "Debe ser mayor que 0",
-        "endAfterStart": "Debe ser después del inicio"
+        "endAfterStart": "Debe ser después del inicio",
+        "sameAsStart": "La hora de fin no puede ser igual a la de inicio"
       },
       "bulk": {
         "title": "Creación Múltiple de Turnos",
@@ -2331,6 +2332,29 @@
       "keep": "Dejarla abierta",
       "discard": "Descartar esta sesión",
       "invalid": "Elige una hora posterior al inicio, que no sea futura y dentro de las 24 horas."
+    },
+    "tooShort": "Menos de un minuto: esta sesión no se guardará como turno.",
+    "discardShort": "Descartar"
+  },
+  "deleteDetails": {
+    "workNotFound": "Trabajo no encontrado",
+    "dateNotAvailable": "Fecha no disponible",
+    "breakYes": "Descanso: {{minutes}} min",
+    "breakNo": "Descanso: no",
+    "orders_one": "{{count}} pedido",
+    "orders_other": "{{count}} pedidos",
+    "liveTracked": "Registrado con Modo Live",
+    "platform": "Plataforma: {{platform}}",
+    "vehicle": "Vehículo: {{vehicle}}",
+    "rate": "Tarifa: {{rate}}/h",
+    "types": {
+      "day": "Turno de día",
+      "afternoon": "Turno de tarde",
+      "night": "Turno de noche",
+      "saturday": "Turno de sábado",
+      "sunday": "Turno de domingo",
+      "delivery": "Turno de delivery",
+      "mixed": "Turno mixto"
     }
   }
 }

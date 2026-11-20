@@ -27,7 +27,7 @@ const addDaysToKey = (key, days) => {
  */
 const getShiftEndDate = (shift) => {
   const start = shift.startDate || shift.date;
-  const overnight = shift.endTime <= shift.startTime;
+  const overnight = shift.endTime < shift.startTime;
   if (!overnight) return start;
   return isValidDateKey(shift.endDate) && shift.endDate > start ? shift.endDate : addDaysToKey(start, 1);
 };

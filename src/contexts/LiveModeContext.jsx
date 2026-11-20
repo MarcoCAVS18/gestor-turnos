@@ -35,6 +35,9 @@ const NOTIFICATION_MS = NOTIFICATION_HOURS * 60 * 60 * 1000;
 export const FORGOTTEN_SESSION_HOURS = 14;
 const FORGOTTEN_SESSION_MS = FORGOTTEN_SESSION_HOURS * 60 * 60 * 1000;
 export const MAX_SHIFT_MS = 24 * 60 * 60 * 1000;
+// Shifts store HH:MM, so a session under a minute has start == end. It is
+// discarded instead of being saved as an empty (or, before, a 24-hour) shift.
+export const MIN_SAVED_SHIFT_MS = 60 * 1000;
 
 export const LiveModeProvider = ({ children }) => {
   const { currentUser } = useAuth();
@@ -554,6 +557,16 @@ export const LiveModeProvider = ({ children }) => {
 
       const startDate = formatDate(startTime);
       const endDate = formatDate(endTime);
+
+      const activeMs = endTime.getTime() - startTime.getTime() - finalPauseDuration;
+      if (activeMs < MIN_SAVED_SHIFT_MS || (startDate === endDate && formatTime(startTime) === formatTime(endTime))) {
+        await liveSessionService.deleteLiveSession(liveSession.id);
+        endLiveActivity().catch(() => {});
+        setLiveSession(null);
+        setElapsedTime(0);
+        setCurrentEarnings(0);
+        return { saved: false, reason: 'too-short' };
+      }
       // Time spent paused is not work time. The shift stores wall-clock start
       // and end, so the pause total is saved alongside and deducted in
       // calculatePayment (the live counter already excluded it).
@@ -590,6 +603,7 @@ export const LiveModeProvider = ({ children }) => {
       setLiveSession(null);
       setElapsedTime(0);
       setCurrentEarnings(0);
+      return { saved: true };
     } catch (err) {
       setError(err.message);
       throw err;

@@ -1117,7 +1117,8 @@
         "startTimeRequired": "L'heure de début est obligatoire",
         "endTimeRequired": "L'heure de fin est obligatoire",
         "positiveNumber": "Doit être supérieur à 0",
-        "endAfterStart": "Doit être après le début"
+        "endAfterStart": "Doit être après le début",
+        "sameAsStart": "L’heure de fin ne peut pas être identique à l’heure de début"
       },
       "bulk": {
         "title": "Création multiple de quarts",
@@ -2331,6 +2332,29 @@
       "keep": "La laisser ouverte",
       "discard": "Supprimer cette session",
       "invalid": "Choisissez une heure après le début, pas dans le futur et sous 24 heures."
+    },
+    "tooShort": "Moins d’une minute : cette session ne sera pas enregistrée comme service.",
+    "discardShort": "Supprimer"
+  },
+  "deleteDetails": {
+    "workNotFound": "Emploi introuvable",
+    "dateNotAvailable": "Date non disponible",
+    "breakYes": "Pause : {{minutes}} min",
+    "breakNo": "Pause : aucune",
+    "orders_one": "{{count}} commande",
+    "orders_other": "{{count}} commandes",
+    "liveTracked": "Enregistré avec le Mode Live",
+    "platform": "Plateforme : {{platform}}",
+    "vehicle": "Véhicule : {{vehicle}}",
+    "rate": "Taux : {{rate}}/h",
+    "types": {
+      "day": "Service de jour",
+      "afternoon": "Service d’après-midi",
+      "night": "Service de nuit",
+      "saturday": "Service du samedi",
+      "sunday": "Service du dimanche",
+      "delivery": "Service de livraison",
+      "mixed": "Service mixte"
     }
   }
 }

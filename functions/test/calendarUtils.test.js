@@ -30,3 +30,7 @@ test('ICS: overnight event ends the next day, shifts without times are skipped, 
   assert.match(ics, /DESCRIPTION:line1\\nline2\\, ok\;/);
   assert.match(c.generateICS([], {}, 'Bad\r\nZone'), /X-WR-TIMEZONE:UTC/);
 });
+
+test('equal start and end times end the same day (zero length, not 24 h)', () => {
+  assert.equal(c.getShiftEndDate({ startDate: '2026-11-20', startTime: '01:57', endTime: '01:57' }), '2026-11-20');
+});

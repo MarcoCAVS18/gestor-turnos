@@ -21,8 +21,10 @@ export const calculateShiftHours = (startTime, endTime) => {
   let startMinutes = startHour * 60 + startMin;
   let endMinutes = endHour * 60 + endMin;
 
-  // If crosses midnight (e.g: 22:00 to 02:00)
-  if (endMinutes <= startMinutes) {
+  // If crosses midnight (e.g: 22:00 to 02:00).
+  // Equal start and end times mean zero duration, not a 24-hour shift: a Live
+  // Mode session stopped within its first minute used to be saved as 24 h.
+  if (endMinutes < startMinutes) {
     endMinutes += 24 * 60;
   }
 

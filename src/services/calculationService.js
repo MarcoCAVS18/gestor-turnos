@@ -23,8 +23,10 @@ export const calculateHours = (start, end) => {
   let startMinutes = startHour * 60 + startMin;
   let endMinutes = endHour * 60 + endMin;
 
-  // If shift crosses midnight
-  if (endMinutes <= startMinutes) {
+  // If shift crosses midnight (end before start)
+  // Equal start and end times mean zero duration, not a 24-hour shift: a Live
+  // Mode session stopped within its first minute used to be saved as 24 h.
+  if (endMinutes < startMinutes) {
     endMinutes += 24 * 60;
   }
 
@@ -139,7 +141,9 @@ export const calculatePayment = (shift, allJobs, shiftRanges, defaultDiscount, t
   let endMinutes = endHour * 60 + endMin;
 
   // Detect if shift crosses midnight
-  const doesCrossMidnight = crossesMidnight || endMinutes <= startMinutes;
+  // Crosses midnight when it ends before it starts. Equal times are zero
+  // duration unless the shift is explicitly flagged as running into the next day.
+  const doesCrossMidnight = endMinutes < startMinutes || (crossesMidnight && endMinutes === startMinutes);
   if (doesCrossMidnight) {
     endMinutes += 24 * 60;
   }
@@ -936,7 +940,7 @@ export const calculateDeliveryHourlyStats = (shifts = []) => {
     // it implies shift crosses midnight into the next day.
     // This handles cases like 22:00 (Day 1) to 02:00 (Day 2)
     // where endDate and startDate might still be the same ('YYYY-MM-DD').
-    if (endDateTime.getTime() <= startDateTime.getTime() && shift.endDate === shift.startDate) {
+    if (endDateTime.getTime() < startDateTime.getTime() && shift.endDate === shift.startDate) {
       endDateTime.setDate(endDateTime.getDate() + 1);
     }
 
@@ -986,7 +990,7 @@ export const calculateWeeklyHourlyDeliveryStats = (shifts = []) => {
     let shiftEnd = new Date(`${shift.startDate}T${shift.endTime}:00`);
 
     // Adjust shiftEnd if it crosses midnight
-    if (shiftEnd.getTime() <= shiftStart.getTime()) {
+    if (shiftEnd.getTime() < shiftStart.getTime()) {
       shiftEnd.setDate(shiftEnd.getDate() + 1);
     }
 

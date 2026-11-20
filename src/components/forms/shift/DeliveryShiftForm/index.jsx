@@ -118,6 +118,8 @@ const DeliveryShiftForm = ({
     }
     if (!formData.endTime) {
       newErrors.endTime = t('shifts.errors.endTimeRequired');
+    } else if (formData.startTime && formData.startTime === formData.endTime) {
+      newErrors.endTime = t('forms.shift.validation.sameAsStart');
     }
     if (!formData.baseEarnings || parseFloat(formData.baseEarnings) <= 0) {
       newErrors.baseEarnings = t('shifts.errors.earningsRequired');

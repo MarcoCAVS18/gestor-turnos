@@ -1,6 +1,13 @@
 // src/utils/shiftDetailsUtils.js
 
 import { createSafeDate } from './time';
+import i18n from '../i18n';
+import { getLocaleFromI18n } from './locale';
+import { formatCurrencyExact } from './currency';
+
+// Texts follow the app language (the delete dialog used to be English only)
+const t = (key, options) => i18n.t(key, options);
+const currentLocale = () => getLocaleFromI18n(i18n.language);
 
 // Function to detect if a shift crosses midnight
 export function checkIfShiftCrossesMidnight(shift) {
@@ -68,8 +75,8 @@ export function determineShiftType(shift, shiftRanges) {
     const startMinutes = startHour * 60 + startMinute;
     let endMinutes = endHour * 60 + endMinute;
     
-    // If crosses midnight
-    if (endMinutes <= startMinutes) {
+    // If crosses midnight (equal times = zero duration)
+    if (endMinutes < startMinutes) {
       endMinutes += 24 * 60;
     }
     
@@ -96,17 +103,8 @@ export function determineShiftType(shift, shiftRanges) {
 
 // Function that returns the readable label
 export function getShiftTypeLabel(type) {
-  const labels = {
-    day: 'Day',
-    afternoon: 'Afternoon', 
-    night: 'Night',
-    saturday: 'Saturday',
-    sunday: 'Sunday',
-    delivery: 'Delivery',
-    mixed: 'Mixed'
-  };
-  
-  return labels[type] || 'Night';
+  const known = ['day', 'afternoon', 'night', 'saturday', 'sunday', 'delivery', 'mixed'];
+  return t(`deleteDetails.types.${known.includes(type) ? type : 'night'}`);
 }
 
 export function formatShifts(quantity) {
@@ -123,7 +121,7 @@ function calculateDuration(startTime, endTime, crossesMidnight) {
   let startMinutes = startHour * 60 + startMinute;
   let endMinutes = endHour * 60 + endMinute;
 
-  if (crossesMidnight || endMinutes <= startMinutes) {
+  if (endMinutes < startMinutes || (crossesMidnight && endMinutes === startMinutes)) {
     endMinutes += 24 * 60;
   }
 
@@ -161,13 +159,13 @@ export function generateShiftDetails(shift, allJobs, shiftRanges) {
       endDate.setDate(endDate.getDate() + 1);
     }
 
-    const startDateStr = startDate.toLocaleDateString('en-US', {
+    const startDateStr = startDate.toLocaleDateString(currentLocale(), {
       weekday: 'short',
       day: 'numeric',
       month: 'short'
     });
 
-    const endDateStr = endDate.toLocaleDateString('en-US', {
+    const endDateStr = endDate.toLocaleDateString(currentLocale(), {
       weekday: 'short',
       day: 'numeric',
       month: 'short'
@@ -179,13 +177,13 @@ export function generateShiftDetails(shift, allJobs, shiftRanges) {
     const dateStr = shift.startDate || shift.date;
     if (dateStr) {
       const date = createSafeDate(dateStr);
-      dateText = date.toLocaleDateString('en-US', {
+      dateText = date.toLocaleDateString(currentLocale(), {
         weekday: 'long',
         day: 'numeric',
         month: 'long'
       });
     } else {
-      dateText = 'Date not available';
+      dateText = t('deleteDetails.dateNotAvailable');
     }
   }
 
@@ -204,32 +202,34 @@ export function generateShiftDetails(shift, allJobs, shiftRanges) {
 
   // Build details array
   const details = [
-    work?.name || 'Work not found',
+    work?.name || t('deleteDetails.workNotFound'),
     `${dateText}`,
     `${shift.startTime} - ${shift.endTime} (${durationText})`,
   ];
 
   // Add shift type for regular shifts
   if (shift.type !== 'delivery') {
-    details.push(`${shiftTypeLabel} shift`);
+    details.push(shiftTypeLabel);
   }
 
   // Add break info if applicable
   if (shift.hadBreak !== undefined) {
-    details.push(`Break: ${shift.hadBreak ? `Yes (${shift.breakMinutes || 0}min)` : 'No'}`);
+    details.push(shift.hadBreak
+      ? t('deleteDetails.breakYes', { minutes: shift.breakMinutes || 0 })
+      : t('deleteDetails.breakNo'));
   }
 
   // Add delivery-specific info
   if (shift.type === 'delivery') {
-    details.push(`${shift.orderCount || 0} orders`);
+    details.push(t('deleteDetails.orders', { count: shift.orderCount || 0 }));
     if (shift.totalEarnings) {
-      details.push(`$${shift.totalEarnings.toFixed(2)}`);
+      details.push(formatCurrencyExact(shift.totalEarnings));
     }
   }
 
   // Add live mode indicator
   if (shift.isLive) {
-    details.push('Live tracked shift');
+    details.push(t('deleteDetails.liveTracked'));
   }
 
   return details;

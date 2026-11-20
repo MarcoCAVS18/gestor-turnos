@@ -106,7 +106,9 @@ const CalendarView = () => {
   // Format itemToDelete for summary display using shared utility
   const deletionDetails = useMemo(() => {
     return generateShiftDetails(itemToDelete, allWorks);
-  }, [itemToDelete, allWorks]);
+    // the details are translated inside the helper: rebuild them when the language changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemToDelete, allWorks, i18n.language]);
 
   const selectDay = (date) => {
     setSelectedDate(localDateToISO(date));
