@@ -6,8 +6,8 @@ import { Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import { formatCurrency } from '../../../utils/currency';
 import Card from '../../ui/Card';
+import AnimatedNumber from '../../ui/AnimatedNumber';
 
 // Large pool of emojis — one is selected deterministically per calendar day
 const DAILY_EMOJIS = [
@@ -124,7 +124,7 @@ const WelcomeCard = ({ totalEarned, isFeatureVisible = false, className }) => {
                     className="text-4xl font-bold"
                     style={{ color: colors.primary }}
                   >
-                    {formatCurrency(totalEarned || 0)}
+                    <AnimatedNumber value={totalEarned || 0} format="currency" highlight />
                   </p>
                 </div>
               </div>
@@ -145,7 +145,7 @@ const WelcomeCard = ({ totalEarned, isFeatureVisible = false, className }) => {
                     className="text-2xl font-bold"
                     style={{ color: colors.primary }}
                   >
-                    {formatCurrency(totalEarned || 0)}
+                    <AnimatedNumber value={totalEarned || 0} format="currency" highlight />
                   </p>
                 </div>
               </div>

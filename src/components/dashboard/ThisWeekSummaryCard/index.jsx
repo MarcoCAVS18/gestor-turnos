@@ -6,12 +6,12 @@ import { Calendar, TrendingUp, Target, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import { formatCurrency } from '../../../utils/currency';
 import Flex from '../../ui/Flex';
 import { useApp } from '../../../contexts/AppContext';
 import Card from '../../ui/Card';
 import ProgressBar from '../../ui/ProgressBar';
 import Button from '../../ui/Button';
+import AnimatedNumber from '../../ui/AnimatedNumber';
 
 // Motivational phrases
 const MOTIVATIONAL_PHRASES = [
@@ -104,7 +104,7 @@ const ThisWeekSummaryCard = memo(({ stats, className }) => {
                 className="text-2xl font-bold"
                 style={{ color: colors.primary }}
               >
-                {formatCurrency(totalWeek)}
+                <AnimatedNumber value={totalWeek} format="currency" highlight />
               </p>
               <p className="text-sm text-gray-600">{t('dashboard.thisWeek.totalEarned')}</p>
             </div>
@@ -114,7 +114,7 @@ const ThisWeekSummaryCard = memo(({ stats, className }) => {
               <div className="space-y-2">
                 <Flex variant="between" className="text-sm">
                   <span className="text-gray-600">{t('dashboard.thisWeek.progress')}: </span>
-                  <span className="font-medium">{hoursWeek.toFixed(1)}h / {goalHours}h</span>
+                  <span className="font-medium"><AnimatedNumber value={hoursWeek} format="hours" suffix="h" /> / {goalHours}h</span>
                 </Flex>
 
                 <ProgressBar
@@ -126,7 +126,7 @@ const ThisWeekSummaryCard = memo(({ stats, className }) => {
               <div className="text-center">
                 <Flex variant="center" className="mb-2">
                   <Target size={16} className="text-gray-400 mr-1" />
-                  <span className="text-lg font-semibold text-gray-700">{hoursWeek.toFixed(1)}h</span>
+                  <span className="text-lg font-semibold text-gray-700"><AnimatedNumber value={hoursWeek} format="hours" suffix="h" /></span>
                 </Flex>
                 <div
                   className="p-2 rounded-lg border border-dashed transition-all duration-200"

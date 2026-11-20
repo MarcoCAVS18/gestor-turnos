@@ -29,6 +29,7 @@ import { useConfigContext } from '../../../../contexts/ConfigContext';
 import { generateColorVariations } from '../../../../utils/colorUtils';
 import LiveModeFinishConfirmModal from '../LiveModeFinishConfirmModal';
 import logger from '../../../../utils/logger';
+import AnimatedNumber, { AnimatedClock } from '../../../ui/AnimatedNumber';
 
 const RATE_TYPE_CONFIG = {
   day: { icon: Sun, key: 'day', color: '#10B981' },
@@ -47,6 +48,7 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
     isPaused,
     formattedTime,
     formattedEarnings,
+    currentEarnings,
     currentRate,
     rateType,
     selectedWork,
@@ -218,7 +220,7 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
                   </motion.div>
                 </div>
                 <p className="text-6xl sm:text-7xl font-bold text-white tracking-tight font-mono">
-                  {formattedTime.formatted}
+                  <AnimatedClock time={formattedTime} />
                 </p>
               </motion.div>
             </div>
@@ -230,7 +232,7 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
                   <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
                     <DollarSign size={24} className="text-white" />
                   </div>
-                  <span className="text-4xl font-bold text-white">{formattedEarnings}</span>
+                  <span className="text-4xl font-bold text-white"><AnimatedNumber value={currentEarnings} format="currencyExact" continuous /></span>
                 </div>
 
                 {/* Rate indicator */}
@@ -249,15 +251,15 @@ const LiveModeActiveModal = ({ isOpen, onClose }) => {
             <div className="px-6 pb-4">
               <div className="grid grid-cols-3 gap-2">
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl py-3 text-center border border-white/10">
-                  <p className="text-white font-bold text-2xl">{formattedTime.hours}</p>
+                  <p className="text-white font-bold text-2xl"><AnimatedNumber value={formattedTime.hours} trend={1} /></p>
                   <p className="text-white/60 text-xs">{t('common.hours')}</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl py-3 text-center border border-white/10">
-                  <p className="text-white font-bold text-2xl">{formattedTime.minutes}</p>
+                  <p className="text-white font-bold text-2xl"><AnimatedNumber value={formattedTime.minutes} trend={1} digits={{ 1: { max: 5 } }} /></p>
                   <p className="text-white/60 text-xs">{t('common.minutes')}</p>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm rounded-xl py-3 text-center border border-white/10">
-                  <p className="text-white font-bold text-2xl">{formattedTime.seconds}</p>
+                  <p className="text-white font-bold text-2xl"><AnimatedNumber value={formattedTime.seconds} trend={1} digits={{ 1: { max: 5 } }} /></p>
                   <p className="text-white/60 text-xs">{t('common.seconds')}</p>
                 </div>
               </div>

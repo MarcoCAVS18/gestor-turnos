@@ -14,6 +14,7 @@ import Card from '../../ui/Card';
 import ProgressBar from '../../ui/ProgressBar';
 import Australia88ActivateYear2 from '../Australia88ActivateYear2';
 import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS, roundVisaDays } from '../../../services/australia88Service';
+import AnimatedNumber from '../../ui/AnimatedNumber';
 
 const StatBox = ({ icon: Icon, label, value, highlight, colors }) => (
   <div
@@ -71,7 +72,7 @@ const Australia88ProgressSummary = () => {
           className="text-7xl font-extrabold tabular-nums leading-none"
           style={{ color: colors.primary }}
         >
-          {displayDays}
+          <AnimatedNumber value={displayDays} format="days" highlight />
         </p>
         <p className="text-sm text-gray-500 dark:text-gray-400">
           {isCompleteForView
@@ -101,14 +102,14 @@ const Australia88ProgressSummary = () => {
         <StatBox
           icon={CalendarDays}
           label={t('australia88.thisWeek')}
-          value={`+${currentWeekVisaDays}`}
+          value={<AnimatedNumber value={currentWeekVisaDays} format="days" prefix="+" />}
           highlight
           colors={colors}
         />
         <StatBox
           icon={Target}
           label={t('australia88.remaining')}
-          value={isCompleteForView ? '—' : daysRemaining}
+          value={isCompleteForView ? '—' : <AnimatedNumber value={daysRemaining} format="days" />}
           highlight={false}
           colors={colors}
         />

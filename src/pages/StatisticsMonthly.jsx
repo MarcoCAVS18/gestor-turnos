@@ -26,6 +26,7 @@ import { useMonthlyStats } from '../hooks/useMonthlyStats';
 import { usePremium, PREMIUM_COLORS } from '../contexts/PremiumContext';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { formatCurrency } from '../utils/currency';
+import AnimatedNumber from '../components/ui/AnimatedNumber';
 
 const StatCard = ({ icon: Icon, label, value, colors, delay = 0 }) => (
   <motion.div
@@ -167,27 +168,27 @@ const StatisticsMonthly = () => {
           <StatCard
             icon={Clock}
             label={t('monthlySummary.hours')}
-            value={`${(monthlyData?.totalHours || 0).toFixed(1)}h`}
+            value={<AnimatedNumber value={monthlyData?.totalHours || 0} format="hours" suffix="h" />}
             colors={colors}
           />
           <StatCard
             icon={DollarSign}
             label={t('monthlySummary.earnings')}
-            value={formatCurrency(monthlyData?.totalEarnings || 0)}
+            value={<AnimatedNumber value={monthlyData?.totalEarnings || 0} format="currency" />}
             colors={colors}
             delay={0.05}
           />
           <StatCard
             icon={Briefcase}
             label={t('monthlySummary.shifts')}
-            value={monthlyData?.shiftsCount || 0}
+            value={<AnimatedNumber value={monthlyData?.shiftsCount || 0} />}
             colors={colors}
             delay={0.1}
           />
           <StatCard
             icon={TrendingUp}
             label={t('monthlySummary.perHour')}
-            value={formatCurrency(monthlyData?.averageEarningsPerHour || 0)}
+            value={<AnimatedNumber value={monthlyData?.averageEarningsPerHour || 0} format="currency" />}
             colors={colors}
             delay={0.15}
           />

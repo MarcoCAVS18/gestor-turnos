@@ -29,6 +29,7 @@ import LiveModeFinishConfirmModal from '../../modals/liveMode/LiveModeFinishConf
 import { useConfigContext } from '../../../contexts/ConfigContext';
 import { PREMIUM_COLORS, usePremium } from '../../../contexts/PremiumContext';
 import logger from '../../../utils/logger';
+import AnimatedNumber, { AnimatedClock } from '../../ui/AnimatedNumber';
 
 const LiveModeCard = ({ onClick, onShowActive, className }) => {
   const { t } = useTranslation();
@@ -42,6 +43,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
     isPaused,
     formattedTime,
     formattedEarnings,
+    currentEarnings,
     selectedWork,
     liveSession,
     elapsedTime,
@@ -161,7 +163,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                   transition={{ duration: 2, repeat: Infinity }}
                   className="text-3xl sm:text-4xl font-bold text-white leading-tight font-mono"
                 >
-                  {formattedTime.formatted}
+                  <AnimatedClock time={formattedTime} />
                 </motion.h2>
               </div>
 
@@ -169,7 +171,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
                 <div className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
                   <DollarSign size={18} className="text-white/80" />
                   <span className="text-white font-semibold text-lg">
-                    {selectedWork ? formattedEarnings : '—'}
+                    {selectedWork ? <AnimatedNumber value={currentEarnings} format="currencyExact" continuous /> : '—'}
                   </span>
                 </div>
               </div>

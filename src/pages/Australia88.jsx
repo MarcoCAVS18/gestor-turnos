@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Trash2, CheckCircle, ArrowRight, Clock, Calendar, BarChart3, Bell } from 'lucide-react';
 import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS, estimateVisaDaysFromWeekTotals, roundVisaDays } from '../services/australia88Service';
+import AnimatedNumber from '../components/ui/AnimatedNumber';
 
 const PINK = '#EC4899';
 
@@ -212,7 +213,7 @@ function DemoCalculator() {
           {/* Total */}
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-slate-700">{t('australia88Page.demo.totalDays')}</span>
-            <span className="text-2xl font-bold" style={{ color: PINK }}>{totalDays}</span>
+            <span className="text-2xl font-bold" style={{ color: PINK }}><AnimatedNumber value={totalDays} format="days" highlight /></span>
           </div>
 
           {/* Progress to 88 */}

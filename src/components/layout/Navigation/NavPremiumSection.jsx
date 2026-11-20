@@ -4,6 +4,7 @@ import React, { memo } from 'react';
 import { Crown, CircleDotDashed } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PREMIUM_COLORS } from '../../../contexts/PremiumContext';
+import { AnimatedClock } from '../../ui/AnimatedNumber';
 
 const NavPremiumSection = memo(({
   isLiveModeActive,
@@ -46,7 +47,7 @@ const NavPremiumSection = memo(({
                 {isPaused ? t('nav.paused') : t('nav.liveMode')}
               </p>
               <p className="font-semibold font-mono text-sm">
-                {formattedTime?.formatted || '00:00:00'}
+                <AnimatedClock time={formattedTime} />
               </p>
             </div>
             {liveWork && (

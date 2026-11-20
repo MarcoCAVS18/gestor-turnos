@@ -31,6 +31,7 @@ import Flex from '../../ui/Flex';
 import ProgressBar from '../../ui/ProgressBar';
 import Australia88ActivateYear2 from '../Australia88ActivateYear2';
 import { YEAR1_TARGET_DAYS, YEAR2_TARGET_DAYS, roundVisaDays } from '../../../services/australia88Service';
+import AnimatedNumber from '../../ui/AnimatedNumber';
 
 const Australia88DashboardCard = () => {
   const { t } = useTranslation();
@@ -146,7 +147,7 @@ const Australia88DashboardCard = () => {
             className="text-6xl sm:text-7xl font-extrabold tabular-nums leading-none"
             style={{ color: colors.primary }}
           >
-            {displayDays}
+            <AnimatedNumber value={displayDays} format="days" highlight />
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
             {goalLabel}
@@ -180,7 +181,7 @@ const Australia88DashboardCard = () => {
               </p>
             </div>
             <p className="text-base font-bold" style={{ color: colors.primary }}>
-              +{currentWeekVisaDays}
+              <AnimatedNumber value={currentWeekVisaDays} format="days" prefix="+" />
               <span className="text-xs font-normal ml-0.5">{t('australia88.daysUnit')}</span>
             </p>
           </div>
@@ -222,7 +223,7 @@ const Australia88DashboardCard = () => {
                   </p>
                 </div>
                 <p className="text-base font-bold text-gray-700 dark:text-gray-200">
-                  {daysRemaining}
+                  <AnimatedNumber value={daysRemaining} format="days" />
                   <span className="text-xs font-normal ml-0.5">{t('australia88.daysUnit')}</span>
                 </p>
               </>

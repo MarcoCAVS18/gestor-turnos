@@ -4,6 +4,7 @@ import { DollarSign, Clock, Target, Activity } from 'lucide-react';
 import Flex from '../../ui/Flex';
 import Card from '../../ui/Card';
 import LoadingSpinner from '../../ui/LoadingSpinner/LoadingSpinner';
+import AnimatedNumber from '../../ui/AnimatedNumber';
 
 const WeeklyStatsGrid = ({ currentData, thematicColors, loading, className = '' }) => {
   const { t } = useTranslation();
@@ -15,9 +16,9 @@ const WeeklyStatsGrid = ({ currentData, thematicColors, loading, className = '' 
   };
 
   const stats = [
-    { icon: DollarSign, label: t('stats.weeklyStatsGrid.totalEarned'), value: `${safeData.totalEarned.toFixed(2)}` },
-    { icon: Clock, label: t('stats.weeklyStatsGrid.hoursWorked'), value: `${safeData.hoursWorked.toFixed(1)}h` },
-    { icon: Target, label: t('stats.weeklyStatsGrid.totalShifts'), value: safeData.totalShifts },
+    { icon: DollarSign, label: t('stats.weeklyStatsGrid.totalEarned'), value: <AnimatedNumber value={safeData.totalEarned} format="decimal2" /> },
+    { icon: Clock, label: t('stats.weeklyStatsGrid.hoursWorked'), value: <AnimatedNumber value={safeData.hoursWorked} format="hours" suffix="h" /> },
+    { icon: Target, label: t('stats.weeklyStatsGrid.totalShifts'), value: <AnimatedNumber value={safeData.totalShifts} /> },
     { icon: Activity, label: t('stats.weeklyStatsGrid.daysWorked'), value: `${safeData.daysWorked}/7` }
   ];
 
