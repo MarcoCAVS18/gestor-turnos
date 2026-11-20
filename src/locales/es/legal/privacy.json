@@ -1,0 +1,324 @@
+{
+  "seoTitle": "Política de privacidad | Orary",
+  "seoDescription": "Lee la Política de privacidad de Orary. Descubre cómo recopilamos, usamos, almacenamos y protegemos tus datos en nuestra app de gestión de turnos y seguimiento de ganancias.",
+  "badge": "Legal · Privacidad",
+  "title": "Política de privacidad",
+  "intro": "En <strong>Orary</strong> nos tomamos en serio tu privacidad. Esta Política de privacidad explica cómo recopilamos, usamos, almacenamos y protegemos tu información cuando usas nuestra aplicación de gestión de turnos. Al usar Orary, aceptas las prácticas descritas en esta política.",
+  "sections": [
+    {
+      "callout": "collect",
+      "title": "1. Información que recopilamos",
+      "lead": "Recopilamos información para ofrecer un mejor servicio a todos nuestros usuarios. Esto incluye:",
+      "blocks": [
+        {
+          "h3": "1.1 Información de la cuenta"
+        },
+        {
+          "ul": [
+            "<strong>Datos de autenticación:</strong> correo electrónico, nombre visible y foto de perfil (al iniciar sesión con Google o registrarte con correo).",
+            "<strong>Preferencias de la cuenta:</strong> idioma, tema, notificaciones y otras opciones de personalización.",
+            "<strong>Información del perfil:</strong> cualquier dato adicional que decidas agregar a tu perfil."
+          ]
+        },
+        {
+          "h3": "1.2 Datos de trabajos y turnos"
+        },
+        {
+          "ul": [
+            "<strong>Configuración de trabajos:</strong> nombres de trabajos, tarifas por hora, recargos (día/tarde/noche/fin de semana) y descripciones.",
+            "<strong>Registros de turnos:</strong> horas de entrada y salida, descansos, fechas y el trabajo asociado.",
+            "<strong>Datos de trabajos de reparto:</strong> plataforma (p. ej. DoorDash, Uber Eats), tipo de vehículo, ganancias, propinas y kilómetros recorridos.",
+            "<strong>Cálculo de ganancias:</strong> ganancias calculadas según las tarifas que configuras (son solo estimaciones).",
+            "<strong>Impuestos y deducciones:</strong> porcentajes de impuestos, de superannuation y deducciones personalizadas que configuras.",
+            "<strong>Datos de recibos de sueldo:</strong> si usas la función de recibos de sueldo (payslips), Orary primero intenta leer el archivo (PDF o imagen) en tu dispositivo. Solo si no puede leerlo ahí, el archivo se envía de forma segura a nuestro servicio de procesamiento, únicamente para extraer sus cifras, y no se guarda allí. Los datos extraídos (período de pago, nombre del empleador, sueldo bruto, impuestos retenidos y sueldo neto) se guardan en tu cuenta para que puedas revisarlos, generar los turnos correspondientes y ver estimaciones de impuestos. Puedes borrar cualquier recibo guardado en cualquier momento desde la app."
+          ]
+        },
+        {
+          "h3": "1.3 Datos del Modo Live"
+        },
+        {
+          "ul": [
+            "<strong>Datos de la sesión:</strong> hora de inicio, pausas y reanudaciones, duración total y ganancias calculadas durante las sesiones en vivo.",
+            "<strong>Métricas de uso:</strong> cantidad de sesiones del Modo Live usadas por mes (para los límites del plan gratuito)."
+          ]
+        },
+        {
+          "h3": "1.4 Información técnica"
+        },
+        {
+          "ul": [
+            "<strong>Información del dispositivo:</strong> tipo de dispositivo, sistema operativo, navegador y versión.",
+            "<strong>Datos de conexión:</strong> dirección IP y ubicación aproximada (solo a nivel de país o región).",
+            "<strong>Analítica de uso:</strong> uso de funciones, recorridos de navegación y registros de errores para mejorar la aplicación."
+          ]
+        }
+      ]
+    },
+    {
+      "callout": "location",
+      "title": "1.5 Datos de ubicación",
+      "lead": "Con tu permiso explícito, Orary puede acceder a la ubicación de tu dispositivo para activar funciones regionales.",
+      "blocks": [
+        "Si concedes el permiso de ubicación, Orary usa la API de geolocalización del navegador para determinar tu país. Esto se usa exclusivamente para:",
+        {
+          "ul": [
+            "<strong>Activar funciones regionales:</strong> activar automáticamente funciones relevantes para tu ubicación, como el contador de 88 días de la visa Working Holiday para usuarios en Australia o los calendarios de feriados de cada país.",
+            "<strong>Guardar tu preferencia regional:</strong> guardar el código de país detectado (p. ej. <code>AU</code>) en los ajustes de tu cuenta para que las funciones sigan activas entre sesiones."
+          ]
+        },
+        "<strong>Lo que no hacemos con tus datos de ubicación:</strong>",
+        {
+          "ul": [
+            "No guardamos tus coordenadas GPS exactas en nuestros servidores.",
+            "No compartimos ni vendemos tus datos de ubicación a terceros.",
+            "La conversión de coordenadas a código de país (geocodificación inversa) se hace mediante una consulta anónima y sin clave de API a BigDataCloud. No se envía información que te identifique.",
+            "Negar el acceso a la ubicación no afecta al resto de la app. Puedes elegir tu país manualmente en Ajustes."
+          ]
+        }
+      ]
+    },
+    {
+      "callout": "payments",
+      "title": "2. Pagos y Stripe",
+      "lead": "Orary usa Stripe como procesador de pagos para las suscripciones Premium. Esta sección explica cómo se manejan los datos de pago.",
+      "blocks": [
+        {
+          "h3": "2.1 Datos de pago"
+        },
+        "Cuando te suscribes a Orary Premium, se te redirige al portal de pago seguro de Stripe. <strong>No</strong> recopilamos, guardamos ni tenemos acceso a:",
+        {
+          "ul": [
+            "El número de tu tarjeta ni su código de seguridad (CVV)",
+            "Los datos completos de tu cuenta bancaria",
+            "Ninguna otra información de pago sensible"
+          ]
+        },
+        {
+          "h3": "2.2 Período de prueba gratuita"
+        },
+        "Orary ofrece una <strong>prueba gratuita de 15 días</strong> a los nuevos suscriptores Premium. Durante la prueba:",
+        {
+          "ul": [
+            "No se realiza ningún cobro a tu medio de pago.",
+            "Puedes cancelar en cualquier momento sin ningún cargo.",
+            "Al terminar los 15 días, tu suscripción comienza automáticamente y se cobra a tu medio de pago.",
+            "Guardamos tu ID de cliente de Stripe y el estado de tu suscripción para gestionar la prueba."
+          ]
+        },
+        {
+          "h3": "2.3 Información que recibimos de Stripe"
+        },
+        "Para gestionar tu suscripción y tu prueba, recibimos y guardamos solo:",
+        {
+          "ul": [
+            "<strong>ID de cliente de Stripe:</strong> un identificador único que vincula tu cuenta de Orary con tu perfil de cliente en Stripe.",
+            "<strong>Estado de la suscripción:</strong> si está activa, en prueba, cancelada o con pagos vencidos.",
+            "<strong>Período de facturación:</strong> fechas de inicio y fin del período actual, incluidas las de la prueba.",
+            "<strong>Estado de los pagos:</strong> si los pagos se completaron, están pendientes o requieren una acción.",
+            "<strong>Historial de compras:</strong> registros de las transacciones de tu suscripción y de la conversión de la prueba.",
+            "<strong>Últimos 4 dígitos:</strong> solo los últimos 4 dígitos de tu tarjeta (para mostrarlos en los ajustes de tu cuenta). Nunca guardamos el número completo, el CVV ni la fecha de vencimiento."
+          ]
+        },
+        {
+          "h3": "2.4 Prácticas de privacidad de Stripe"
+        },
+        "Stripe es un proveedor de servicios certificado PCI de Nivel 1, el nivel de certificación más exigente de la industria de pagos. Cuando das tus datos de pago a Stripe, se manejan según su política de privacidad. Te recomendamos leer la [[https://stripe.com/privacy|Política de privacidad de Stripe]] para saber más sobre cómo manejan tus datos.",
+        {
+          "h3": "2.5 Gestión de la suscripción"
+        },
+        {
+          "ul": [
+            "<strong>Facturación:</strong> la cuota de la suscripción (2,99 AUD por mes) se cobra automáticamente a través de Stripe en tu fecha de facturación.",
+            "<strong>Cancelación:</strong> puedes cancelar tu suscripción en cualquier momento desde la app. La cancelación se aplica al final del período de facturación en curso.",
+            "<strong>Reembolsos:</strong> no hacemos reembolsos por períodos de facturación parciales. Para disputas de facturación, contacta a soporte.",
+            "<strong>Datos después de cancelar:</strong> tus trabajos y turnos se conservan después de cancelar. Solo dejan de estar disponibles las funciones Premium."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "3. Cómo usamos tu información",
+      "blocks": [
+        "Usamos los datos que recopilamos para:",
+        {
+          "ul": [
+            "<strong>Prestar el servicio:</strong> registro de turnos, cálculo de ganancias, estadísticas y sincronización de datos.",
+            "<strong>Sincronizar entre dispositivos:</strong> mantener tus datos sincronizados de forma segura en todos tus dispositivos.",
+            "<strong>Procesar pagos:</strong> gestionar las suscripciones Premium y la facturación a través de Stripe.",
+            "<strong>Mejorar la aplicación:</strong> analizar el uso para corregir errores, mejorar el rendimiento y desarrollar nuevas funciones.",
+            "<strong>Comunicarnos contigo:</strong> enviarte avisos importantes sobre tu cuenta, alertas de seguridad y cambios en el servicio.",
+            "<strong>Darte soporte:</strong> responder tus preguntas y resolver problemas técnicos."
+          ]
+        }
+      ]
+    },
+    {
+      "callout": "security",
+      "title": "4. Almacenamiento y seguridad de los datos",
+      "lead": "Tus datos se guardan de forma segura con cifrado y prácticas de seguridad estándar de la industria.",
+      "blocks": [
+        {
+          "h3": "4.1 Dónde se guardan tus datos"
+        },
+        "Orary usa Firebase (Google Cloud Platform) para el almacenamiento de datos y la autenticación. Tus datos se guardan en centros de datos seguros con estas protecciones:",
+        {
+          "ul": [
+            "Cifrado en tránsito (TLS/SSL) y en reposo (AES-256)",
+            "Copias de seguridad automáticas y recuperación ante desastres",
+            "Controles de acceso y autenticación estrictos",
+            "Auditorías de seguridad y certificaciones de cumplimiento periódicas"
+          ]
+        },
+        "Para que la app funcione sin conexión, también se guarda una copia de tus datos en tu dispositivo, que se sincroniza cuando vuelves a estar en línea.",
+        {
+          "h3": "4.2 Medidas de seguridad"
+        },
+        {
+          "ul": [
+            "<strong>Autenticación:</strong> inicio de sesión seguro con Firebase Authentication y, si quieres, con Google.",
+            "<strong>Aislamiento de datos:</strong> los datos de cada usuario están estrictamente aislados y solo ese usuario puede acceder a ellos.",
+            "<strong>Comunicaciones seguras:</strong> toda la comunicación entre la app y nuestros servidores está cifrada.",
+            "<strong>Nada en texto plano:</strong> los datos sensibles nunca se guardan en texto plano.",
+            "<strong>Inicio de sesión biométrico:</strong> en las apps nativas de iOS y Android puedes activar el desbloqueo con Face ID o huella. Los datos biométricos los maneja por completo el sistema operativo de tu dispositivo y nunca salen de él. Orary solo recibe una señal de éxito o fallo."
+          ]
+        }
+      ]
+    },
+    {
+      "callout": "sharing",
+      "title": "5. Compartir datos y terceros",
+      "lead": "No vendemos tus datos personales. Solo compartimos datos con proveedores de confianza imprescindibles para que Orary funcione.",
+      "blocks": [
+        {
+          "h3": "5.1 Proveedores que usamos"
+        },
+        {
+          "ul": [
+            "<strong>Firebase (Google):</strong> autenticación, base de datos y hosting.",
+            "<strong>Stripe:</strong> procesamiento de pagos de las suscripciones Premium.",
+            "<strong>BigDataCloud:</strong> geocodificación inversa anónima para detectar tu país a partir de la ubicación del dispositivo (sin clave de API ni datos personales).",
+            "<strong>Google Analytics:</strong> estadísticas de uso agregadas, solo si aceptas las cookies de analítica."
+          ]
+        },
+        {
+          "h3": "5.2 Compartir un trabajo"
+        },
+        "Cuando usas la función \"Compartir trabajo\", se crea un enlace temporal con la configuración de tu trabajo (nombre, tarifas, ajustes). Estos datos:",
+        {
+          "ul": [
+            "Caducan automáticamente a las 48 horas",
+            "Se pueden usar como máximo 10 veces",
+            "No incluyen tu información personal ni tu historial de turnos",
+            "Puedes desactivarlos en cualquier momento"
+          ]
+        },
+        {
+          "h3": "5.3 Suscripción de calendario"
+        },
+        "Si activas la suscripción de calendario, Orary crea un enlace privado que tu app de calendario (Google Calendar, Apple Calendar, Outlook) usa para leer tus turnos. El enlace contiene un código secreto y muestra las fechas, horarios y nombres de trabajo de tus turnos. Cualquiera que tenga el enlace puede ver esa información, así que no lo compartas. Orary no accede a tu calendario.",
+        {
+          "h3": "5.4 Divulgación legal"
+        },
+        "Podemos divulgar tu información si lo exige la ley, una orden judicial o una norma gubernamental, o para proteger los derechos, bienes o la seguridad de Orary, de nuestros usuarios o de terceros."
+      ]
+    },
+    {
+      "callout": "cookies",
+      "title": "6. Cookies y almacenamiento local",
+      "lead": "Orary usa cookies esenciales y almacenamiento local para que la aplicación funcione.",
+      "blocks": [
+        "Usamos estos tipos de almacenamiento:",
+        {
+          "ul": [
+            "<strong>Cookies de autenticación:</strong> para mantener tu sesión iniciada de forma segura.",
+            "<strong>Almacenamiento local:</strong> para guardar tus preferencias y mejorar el rendimiento.",
+            "<strong>IndexedDB y caché sin conexión:</strong> para que la app funcione sin conexión y guardar datos en caché.",
+            "<strong>Cookies de analítica (opcionales):</strong> con tu consentimiento, usamos Google Analytics para entender el uso agregado de las funciones y mejorar la app. Estas cookies solo se activan si las aceptas en el aviso de consentimiento, y puedes rechazarlas o retirar tu consentimiento en cualquier momento sin afectar al funcionamiento."
+          ]
+        },
+        "No usamos cookies publicitarias ni de seguimiento con fines de marketing. Aparte de la analítica opcional, todas las cookies son esenciales para que la aplicación funcione correctamente."
+      ]
+    },
+    {
+      "callout": "rights",
+      "title": "7. Tus derechos de privacidad",
+      "lead": "Tienes control total sobre tus datos personales. Estos son tus derechos según el RGPD, la CCPA, la Ley de Privacidad de Australia y otras normas de privacidad.",
+      "blocks": [
+        {
+          "h3": "7.1 Tus derechos incluyen"
+        },
+        {
+          "ul": [
+            "<strong>Derecho de acceso:</strong> pedir una copia de todos los datos que tenemos sobre ti.",
+            "<strong>Derecho de rectificación:</strong> corregir cualquier dato incorrecto de tu perfil.",
+            "<strong>Derecho de supresión:</strong> eliminar tu cuenta y todos sus datos de forma permanente.",
+            "<strong>Derecho a la portabilidad:</strong> exportar tus datos en un formato legible por máquina.",
+            "<strong>Derecho a limitar el tratamiento:</strong> restringir cómo usamos tus datos.",
+            "<strong>Derecho de oposición:</strong> oponerte a ciertos tipos de tratamiento de datos.",
+            "<strong>Derecho a retirar el consentimiento:</strong> retirar tu consentimiento para tratamientos opcionales en cualquier momento."
+          ]
+        },
+        {
+          "h3": "7.2 Cómo ejercer tus derechos"
+        },
+        "Puedes ejercer estos derechos directamente desde la app:",
+        {
+          "ul": [
+            "<strong>Ver o editar datos:</strong> accede a tus datos y modifícalos desde Ajustes.",
+            "<strong>Borrar datos:</strong> usa \"Borrarlo todo\" para eliminar todos tus trabajos y turnos sin perder tu cuenta.",
+            "<strong>Eliminar la cuenta:</strong> usa \"Eliminar cuenta\" para borrar de forma permanente tu cuenta y todos sus datos.",
+            "<strong>Exportar datos:</strong> exporta todo tu historial de turnos y ganancias a PDF o Excel desde la app (disponible con Orary Premium).",
+            "<strong>Revocar el permiso de ubicación:</strong> niega o revoca el acceso a la ubicación desde los ajustes de tu navegador en cualquier momento."
+          ]
+        },
+        "También puedes escribirnos a [[mailto:privacy@orary.app]] para cualquier solicitud relacionada con la privacidad."
+      ]
+    },
+    {
+      "title": "8. Conservación de los datos",
+      "blocks": [
+        {
+          "ul": [
+            "<strong>Cuentas activas:</strong> conservamos tus datos mientras tu cuenta esté activa.",
+            "<strong>Cuentas eliminadas:</strong> cuando eliminas tu cuenta, todos los datos se borran de forma permanente en un plazo de 30 días.",
+            "<strong>Copias de seguridad:</strong> las copias de seguridad pueden conservarse hasta 90 días para recuperación ante desastres y luego se eliminan definitivamente.",
+            "<strong>Obligaciones legales:</strong> podemos conservar algunos datos por más tiempo si la ley lo exige (p. ej. registros de facturación por motivos fiscales)."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "9. Privacidad de menores",
+      "blocks": [
+        "Orary no está dirigida a menores de 16 años. No recopilamos a sabiendas información personal de menores. Si descubrimos que un menor de 16 años nos ha dado información personal, tomaremos medidas para eliminarla."
+      ]
+    },
+    {
+      "title": "10. Transferencias internacionales de datos",
+      "blocks": [
+        "Tu información puede transferirse y procesarse en países distintos del tuyo, que pueden tener leyes de protección de datos diferentes. Cuando transferimos tu información, nos aseguramos de que existan garantías adecuadas para protegerla, incluidas cláusulas contractuales tipo aprobadas por las autoridades competentes."
+      ]
+    },
+    {
+      "callout": "changes",
+      "title": "11. Cambios en esta política",
+      "lead": "Podemos actualizar esta Política de privacidad cada cierto tiempo. Te avisaremos de cualquier cambio importante con un aviso en la app o por correo electrónico. Te recomendamos revisarla periódicamente.",
+      "blocks": []
+    },
+    {
+      "title": "12. Contacto",
+      "blocks": [
+        "Si tienes preguntas, dudas o solicitudes sobre esta Política de privacidad o sobre cómo tratamos tus datos, contáctanos:",
+        {
+          "ul": [
+            "<strong>Correo:</strong> [[mailto:privacy@orary.app]]",
+            "<strong>Soporte:</strong> [[mailto:support@orary.app]]"
+          ]
+        },
+        {
+          "small": "Intentamos responder a todas las consultas de privacidad en un plazo de 30 días."
+        }
+      ]
+    }
+  ]
+}

@@ -1,137 +1,21 @@
 // src/pages/legal/TermsOfService.jsx
+// Text: src/locales/<lang>/legal/terms.json (en, es, fr)
 
-import { AlertTriangle } from 'lucide-react';
 import LegalPageShell from './LegalPageShell';
+import LegalContent, { useLegalDoc } from './LegalContent';
 import buildInfo from '../../generated/buildInfo.json';
 
 const TermsOfService = () => {
+  const doc = useLegalDoc('terms');
   return (
     <LegalPageShell
-      seo={{
-        title: 'Terms of Service | Orary',
-        description: "Read Orary's Terms of Service. Understand your rights and responsibilities when using our shift management and earnings tracking application.",
-        canonical: 'https://orary.app/terms',
-      }}
-      badge={{ label: 'Legal · Terms', bg: 'rgba(236,72,153,0.2)', text: '#f9a8d4' }}
-      title="Terms of Service"
+      seo={{ title: doc.seoTitle, description: doc.seoDescription, canonical: 'https://orary.app/terms' }}
+      badge={{ label: doc.badge, bg: 'rgba(236,72,153,0.2)', text: '#f9a8d4' }}
+      title={doc.title}
       lastUpdated={buildInfo.legalDates.terms}
       currentPath="/terms"
     >
-        <p>
-          Welcome to <strong>Orary</strong>. By downloading, accessing, or using this application, you agree to be bound by these Terms of Service ("Terms"). If you disagree with any part of these terms, you must not access our service.
-        </p>
-
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">1. Acceptance of Terms</h2>
-        <p>
-          These Terms constitute a legally binding agreement between you and Orary. We reserve the right to modify these terms at any time. Continued use of the app after changes constitutes acceptance of the new terms.
-        </p>
-
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">2. Description of Service</h2>
-        <p>
-          Orary is a digital tool designed to help workers track their shifts, calculate earnings based on configurable rates, and visualize their work statistics. The service is provided "as is" and is intended for personal organizational purposes.
-        </p>
-
-        {/* Important Disclaimer about Calculations */}
-        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mt-6 not-prose">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-1" size={20} />
-            <div>
-              <p className="font-semibold text-amber-800 dark:text-amber-300">Important Disclaimer About Calculations</p>
-              <ul className="text-amber-700 dark:text-amber-400 text-sm mt-2 space-y-2">
-                <li>• All earnings calculations displayed in Orary are <strong>estimates</strong> based on the rates and preferences you configure within the application.</li>
-                <li>• Your actual paycheck may include additional values not tracked by this application, such as bonuses, penalties, superannuation contributions, tax withholdings, or other payroll adjustments.</li>
-                <li>• The values shown are <strong>not official</strong> and should not be used as legal or tax documents.</li>
-                <li>• Always verify your actual earnings with your official payslips and employer records.</li>
-                <li>• Figures extracted automatically from uploaded payslips may contain reading errors — always check them against the original document.</li>
-                <li>• Income tax and refund estimates are approximations based on published income tax brackets only. They do not include levies (e.g. Medicare, ACC), National Insurance, USC, PRSI, offsets, or your personal circumstances, and are not tax advice. Always confirm with your official tax office or a registered tax agent before lodging.</li>
-                <li>• Orary is not responsible for any discrepancies between the estimated values and your actual received payment.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">3. User Responsibilities</h2>
-        <p>As a user of Orary, you agree to:</p>
-        <ul className="list-disc pl-5 space-y-2 mt-2">
-          <li>Provide accurate and current information when creating your account.</li>
-          <li>Maintain the security of your password and account.</li>
-          <li>Accept full responsibility for all activities that occur under your account.</li>
-          <li>Not use the application for any illegal purpose or to harass other users.</li>
-          <li>Understand that calculations provided by the app are estimates based on user input and should not be used as official legal or tax documents without verification.</li>
-          <li>Configure your hourly rates, shift types, and deductions accurately to obtain the most precise estimates.</li>
-        </ul>
-
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">4. Location Data</h2>
-        <p>
-          Orary may request access to your device's location (via the browser Geolocation API) solely to enable relevant regional features, such as:
-        </p>
-        <ul className="list-disc pl-5 space-y-2 mt-2">
-          <li>Auto-detecting your country to activate the Working Holiday Visa 88-day tracker (Australia) or configure public holiday calendars.</li>
-          <li>Setting your regional preferences within the app.</li>
-        </ul>
-        <p className="mt-2">
-          Location data is processed locally on your device. Only the resulting country preference is saved to your account. We do not store your precise GPS coordinates or transmit them to our servers. You may deny location access at any time without affecting other app functionality.
-        </p>
-
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">5. Premium Subscription & Free Trial</h2>
-        <p>
-          Orary offers a Premium subscription with additional features. New subscribers are eligible for a <strong>15-day free trial</strong>.
-        </p>
-        
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">5.1 Free Trial Terms</h3>
-        <ul className="list-disc pl-5 space-y-2 mt-2">
-          <li>New subscribers receive a 15-day free trial period with full access to Premium features.</li>
-          <li>No charges will be made to your payment method during the trial period.</li>
-          <li>You may cancel your subscription at any time during the trial to avoid any charges.</li>
-          <li>At the end of the 15-day trial, your subscription automatically converts to a paid subscription and your payment method will be charged $2.99 AUD (or equivalent in your local currency).</li>
-          <li>If you cancel before the trial ends, you will continue to have Premium access until the end of the trial period, and no charges will be made.</li>
-          <li>We reserve the right to modify or terminate the free trial offer at any time.</li>
-        </ul>
-
-        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">5.2 Subscription Terms</h3>
-        <ul className="list-disc pl-5 space-y-2 mt-2">
-          <li>After the trial period (or immediately if no trial applies), you agree to pay the recurring subscription fee ($2.99 AUD/month).</li>
-          <li>Payments are processed securely through Stripe.</li>
-          <li>You can cancel your subscription at any time from the app settings.</li>
-          <li>Cancellation takes effect at the end of your current billing period.</li>
-          <li>No refunds are provided for partial billing periods or unused trial days.</li>
-        </ul>
-
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">6. Intellectual Property</h2>
-        <p>
-          The Orary application, its design, text, graphics, and the code underlying the service are owned by Orary and are protected by intellectual property laws. You may not reproduce, distribute, or create derivative works without explicit permission.
-        </p>
-
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">7. Termination</h2>
-        <p>
-          We reserve the right to suspend or terminate your access to Orary at our sole discretion, without prior notice or liability, for any reason, including but not limited to a breach of these Terms.
-        </p>
-
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">8. Limitation of Liability</h2>
-        <p>
-          To the fullest extent permitted by law, Orary shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your use of the service.
-        </p>
-        <p className="mt-2">
-          <strong>Specifically, Orary is not liable for:</strong>
-        </p>
-        <ul className="list-disc pl-5 space-y-2 mt-2">
-          <li>Any financial decisions made based on the earnings estimates provided by the app.</li>
-          <li>Discrepancies between estimated and actual earnings.</li>
-          <li>Tax implications or legal matters related to your employment.</li>
-          <li>Data loss due to user error or third-party service outages.</li>
-        </ul>
-
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">9. Governing Law</h2>
-        <p>
-          These Terms shall be governed and construed in accordance with the laws of your jurisdiction, without regard to its conflict of law provisions.
-        </p>
-
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mt-8 mb-4">10. Contact Us</h2>
-        <p>
-          If you have any questions about these Terms of Service, please contact us at{' '}
-          <a href="mailto:support@orary.app" className="text-pink-600 dark:text-pink-400 hover:underline">support@orary.app</a>.
-        </p>
-
+      <LegalContent doc="terms" />
     </LegalPageShell>
   );
 };

@@ -2356,5 +2356,15 @@
       "delivery": "Turno de delivery",
       "mixed": "Turno mixto"
     }
+  },
+  "legal": {
+    "lastUpdated": "Última actualización: {{date}}",
+    "translationNote": "Esta es una traducción del original en inglés. Si hay alguna diferencia entre versiones, prevalece la versión en inglés.",
+    "footer": {
+      "faq": "Preguntas frecuentes",
+      "visa88": "Contador de 88 días",
+      "terms": "Términos del servicio",
+      "privacy": "Política de privacidad"
+    }
   }
 }

@@ -1,0 +1,136 @@
+{
+  "seoTitle": "Términos del servicio | Orary",
+  "seoDescription": "Lee los Términos del servicio de Orary. Conoce tus derechos y responsabilidades al usar nuestra app de gestión de turnos y seguimiento de ganancias.",
+  "badge": "Legal · Términos",
+  "title": "Términos del servicio",
+  "intro": "Te damos la bienvenida a <strong>Orary</strong>. Al descargar, acceder o usar esta aplicación, aceptas quedar vinculado por estos Términos del servicio (\"Términos\"). Si no estás de acuerdo con alguna parte de estos términos, no debes acceder a nuestro servicio.",
+  "sections": [
+    {
+      "title": "1. Aceptación de los términos",
+      "blocks": [
+        "Estos Términos constituyen un acuerdo legalmente vinculante entre tú y Orary. Nos reservamos el derecho de modificarlos en cualquier momento. Seguir usando la app después de un cambio implica que aceptas los nuevos términos."
+      ]
+    },
+    {
+      "title": "2. Descripción del servicio",
+      "blocks": [
+        "Orary es una herramienta digital pensada para ayudar a los trabajadores a registrar sus turnos, calcular sus ganancias según tarifas configurables y ver estadísticas de su trabajo. El servicio se ofrece \"tal cual\" y está pensado para la organización personal.",
+        {
+          "warn": {
+            "title": "Aviso importante sobre los cálculos",
+            "items": [
+              "Todos los cálculos de ganancias que muestra Orary son <strong>estimaciones</strong> basadas en las tarifas y preferencias que configuras en la aplicación.",
+              "Tu pago real puede incluir valores que esta aplicación no registra, como bonos, penalizaciones, aportes de jubilación (superannuation), retenciones de impuestos u otros ajustes de nómina.",
+              "Los valores mostrados <strong>no son oficiales</strong> y no deben usarse como documentos legales ni fiscales.",
+              "Verifica siempre tus ganancias reales con tus recibos de sueldo (payslips) oficiales y los registros de tu empleador.",
+              "Las cifras extraídas automáticamente de los recibos de sueldo que subes pueden contener errores de lectura. Compáralas siempre con el documento original.",
+              "El conteo de días de la visa Working Holiday es una estimación basada en los turnos que registras. Solo la autoridad de inmigración decide qué días cuentan para tu visa. Guarda tus recibos de sueldo y las pruebas de tu empleador.",
+              "Las estimaciones de impuestos y devoluciones son aproximaciones basadas solo en los tramos del impuesto a la renta publicados. No incluyen gravámenes (p. ej. Medicare, ACC), National Insurance, USC, PRSI, deducciones ni tu situación personal, y no son asesoramiento fiscal. Confirma siempre con la oficina de impuestos oficial o con un agente fiscal registrado antes de presentar tu declaración.",
+              "Orary no se hace responsable de las diferencias entre los valores estimados y el pago que realmente recibas."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "3. Responsabilidades del usuario",
+      "blocks": [
+        "Como usuario de Orary, aceptas:",
+        {
+          "ul": [
+            "Proporcionar información exacta y actualizada al crear tu cuenta.",
+            "Mantener la seguridad de tu contraseña y de tu cuenta.",
+            "Asumir toda la responsabilidad por la actividad que ocurra en tu cuenta.",
+            "No usar la aplicación con fines ilegales ni para acosar a otros usuarios.",
+            "Entender que los cálculos de la app son estimaciones basadas en los datos que ingresas y que no deben usarse como documentos legales o fiscales oficiales sin verificarlos.",
+            "Configurar con exactitud tus tarifas por hora, tipos de turno y deducciones para obtener las estimaciones más precisas."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "4. Datos de ubicación",
+      "blocks": [
+        "Orary puede pedir acceso a la ubicación de tu dispositivo (mediante la API de geolocalización del navegador) únicamente para activar funciones regionales, como:",
+        {
+          "ul": [
+            "Detectar automáticamente tu país para activar el contador de 88 días de la visa Working Holiday (Australia) o configurar los calendarios de feriados.",
+            "Guardar tus preferencias regionales dentro de la app."
+          ]
+        },
+        "Los datos de ubicación se procesan en tu dispositivo. Solo se guarda en tu cuenta el país resultante. No almacenamos tus coordenadas GPS exactas ni las enviamos a nuestros servidores. Puedes negar el acceso a la ubicación en cualquier momento sin que eso afecte al resto de la app."
+      ]
+    },
+    {
+      "title": "5. Suscripción Premium y prueba gratuita",
+      "blocks": [
+        "Orary ofrece una suscripción Premium con funciones adicionales. Los nuevos suscriptores pueden acceder a una <strong>prueba gratuita de 15 días</strong>.",
+        {
+          "h3": "5.1 Condiciones de la prueba gratuita"
+        },
+        {
+          "ul": [
+            "Los nuevos suscriptores reciben 15 días de prueba gratuita con acceso completo a las funciones Premium.",
+            "No se realiza ningún cobro a tu medio de pago durante la prueba.",
+            "Puedes cancelar tu suscripción en cualquier momento durante la prueba para evitar cobros.",
+            "Al terminar los 15 días de prueba, tu suscripción pasa automáticamente a ser de pago y se cobrarán 2,99 AUD (o el equivalente en tu moneda local) a tu medio de pago.",
+            "Si cancelas antes de que termine la prueba, conservas el acceso Premium hasta el final de la prueba y no se realiza ningún cobro.",
+            "Nos reservamos el derecho de modificar o finalizar la oferta de prueba gratuita en cualquier momento."
+          ]
+        },
+        {
+          "h3": "5.2 Condiciones de la suscripción"
+        },
+        {
+          "ul": [
+            "Después de la prueba (o de inmediato si no corresponde prueba), aceptas pagar la cuota recurrente de la suscripción (2,99 AUD por mes).",
+            "Los pagos se procesan de forma segura a través de Stripe.",
+            "Puedes cancelar tu suscripción en cualquier momento desde los ajustes de la app.",
+            "La cancelación se aplica al final del período de facturación en curso.",
+            "No se hacen reembolsos por períodos de facturación parciales ni por días de prueba sin usar, salvo cuando la ley de tu país lo exija."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "6. Propiedad intelectual",
+      "blocks": [
+        "La aplicación Orary, su diseño, textos, gráficos y el código del servicio son propiedad de Orary y están protegidos por las leyes de propiedad intelectual. No puedes reproducirlos, distribuirlos ni crear obras derivadas sin permiso expreso."
+      ]
+    },
+    {
+      "title": "7. Terminación",
+      "blocks": [
+        "Nos reservamos el derecho de suspender o cancelar tu acceso a Orary a nuestra entera discreción, sin previo aviso ni responsabilidad, por cualquier motivo, incluido el incumplimiento de estos Términos."
+      ]
+    },
+    {
+      "title": "8. Limitación de responsabilidad",
+      "blocks": [
+        "En la máxima medida permitida por la ley, Orary no será responsable de daños indirectos, incidentales, especiales, consecuentes o punitivos, incluidos, entre otros, la pérdida de ganancias, datos, uso, reputación u otras pérdidas intangibles derivadas del uso del servicio.",
+        "<strong>En particular, Orary no es responsable de:</strong>",
+        {
+          "ul": [
+            "Las decisiones financieras que tomes a partir de las estimaciones de ganancias de la app.",
+            "Las diferencias entre las ganancias estimadas y las reales.",
+            "Cuestiones fiscales, migratorias o legales relacionadas con tu empleo.",
+            "La pérdida de datos por errores del usuario o caídas de servicios de terceros."
+          ]
+        },
+        "Nada en estos Términos excluye los derechos que te otorgan las leyes de protección al consumidor que no pueden excluirse, como la Ley Australiana del Consumidor (Australian Consumer Law)."
+      ]
+    },
+    {
+      "title": "9. Ley aplicable",
+      "blocks": [
+        "Estos Términos se rigen e interpretan de acuerdo con las leyes de tu jurisdicción, sin tener en cuenta sus normas sobre conflicto de leyes."
+      ]
+    },
+    {
+      "title": "10. Contacto",
+      "blocks": [
+        "Si tienes preguntas sobre estos Términos del servicio, escríbenos a [[mailto:support@orary.app]]."
+      ]
+    }
+  ]
+}

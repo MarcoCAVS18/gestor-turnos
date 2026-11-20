@@ -2356,5 +2356,15 @@
       "delivery": "Service de livraison",
       "mixed": "Service mixte"
     }
+  },
+  "legal": {
+    "lastUpdated": "Dernière mise à jour : {{date}}",
+    "translationNote": "Ceci est une traduction de l’original en anglais. En cas de différence entre les versions, la version anglaise prévaut.",
+    "footer": {
+      "faq": "FAQ",
+      "visa88": "Suivi des 88 jours",
+      "terms": "Conditions d’utilisation",
+      "privacy": "Politique de confidentialité"
+    }
   }
 }

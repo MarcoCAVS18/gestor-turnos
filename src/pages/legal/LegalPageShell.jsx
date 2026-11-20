@@ -14,14 +14,21 @@ import { useAuth } from '../../contexts/AuthContext';
 const GRADIENT = 'linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%)';
 
 const FOOTER_LINKS = [
-  { to: '/faq',          label: 'FAQ' },
-  { to: '/australia-88', label: '88-day visa tracker' },
-  { to: '/terms',        label: 'Terms of Service' },
-  { to: '/privacy',      label: 'Privacy Policy' },
+  { to: '/faq',          key: 'faq' },
+  { to: '/australia-88', key: 'visa88' },
+  { to: '/terms',        key: 'terms' },
+  { to: '/privacy',      key: 'privacy' },
 ];
 
+// lastUpdated is an ISO date (YYYY-MM-DD) from buildInfo; shown in the reader's language
+const formatLegalDate = (iso, lng) => {
+  const d = new Date(`${iso}T12:00:00`);
+  return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString(lng, { day: 'numeric', month: 'long', year: 'numeric' });
+};
+
 const LegalPageShell = ({ seo, badge, title, lastUpdated, currentPath, children }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lng = i18n.resolvedLanguage || i18n.language || 'en';
   const { currentUser } = useAuth();
   const backTo = currentUser ? '/settings' : '/';
   const backLabel = currentUser ? t('common.backToSettings') : t('common.back');
@@ -29,6 +36,7 @@ const LegalPageShell = ({ seo, badge, title, lastUpdated, currentPath, children 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 font-poppins">
       <Helmet>
+        <html lang={lng} />
         <title>{seo.title}</title>
         <meta name="description" content={seo.description} />
         <link rel="canonical" href={seo.canonical} />
@@ -73,7 +81,7 @@ const LegalPageShell = ({ seo, badge, title, lastUpdated, currentPath, children 
               {badge.label}
             </span>
             <h1 className="text-3xl sm:text-4xl font-bold text-white">{title}</h1>
-            <p className="text-slate-400 text-sm mt-3">Last updated: {lastUpdated}</p>
+            <p className="text-slate-400 text-sm mt-3">{t('legal.lastUpdated', { date: formatLegalDate(lastUpdated, lng) })}</p>
           </motion.div>
         </div>
       </div>
@@ -86,6 +94,11 @@ const LegalPageShell = ({ seo, badge, title, lastUpdated, currentPath, children 
           transition={{ duration: 0.35, delay: 0.05 }}
           className="-mt-20 relative bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 sm:p-9"
         >
+          {!lng.startsWith('en') && (
+            <p className="mb-6 text-sm text-slate-500 dark:text-slate-400 border-l-2 border-slate-200 dark:border-slate-700 pl-3">
+              {t('legal.translationNote')}
+            </p>
+          )}
           <div className="prose prose-lg text-gray-700 dark:text-gray-300 dark:prose-invert max-w-none">
             {children}
           </div>
@@ -95,7 +108,7 @@ const LegalPageShell = ({ seo, badge, title, lastUpdated, currentPath, children 
         <div className="mt-8 mb-12 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-slate-400 dark:text-slate-600">
           {FOOTER_LINKS.filter((l) => l.to !== currentPath).map((l) => (
             <Link key={l.to} to={l.to} className="hover:text-pink-500 transition-colors">
-              {l.label}
+              {t(`legal.footer.${l.key}`)}
             </Link>
           ))}
         </div>

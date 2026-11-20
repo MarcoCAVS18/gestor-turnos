@@ -1,0 +1,136 @@
+{
+  "seoTitle": "Conditions d’utilisation | Orary",
+  "seoDescription": "Lisez les Conditions d’utilisation d’Orary. Découvrez vos droits et responsabilités lorsque vous utilisez notre application de gestion des services et de suivi des revenus.",
+  "badge": "Légal · Conditions",
+  "title": "Conditions d’utilisation",
+  "intro": "Bienvenue sur <strong>Orary</strong>. En téléchargeant, en accédant à ou en utilisant cette application, vous acceptez d’être lié par les présentes Conditions d’utilisation (les « Conditions »). Si vous n’êtes pas d’accord avec une partie de ces conditions, vous ne devez pas accéder à notre service.",
+  "sections": [
+    {
+      "title": "1. Acceptation des conditions",
+      "blocks": [
+        "Les présentes Conditions constituent un accord juridiquement contraignant entre vous et Orary. Nous nous réservons le droit de les modifier à tout moment. Continuer à utiliser l’application après une modification vaut acceptation des nouvelles conditions."
+      ]
+    },
+    {
+      "title": "2. Description du service",
+      "blocks": [
+        "Orary est un outil numérique conçu pour aider les travailleurs à suivre leurs services, calculer leurs revenus selon des taux configurables et visualiser les statistiques de leur travail. Le service est fourni « en l’état » et destiné à un usage d’organisation personnelle.",
+        {
+          "warn": {
+            "title": "Avertissement important sur les calculs",
+            "items": [
+              "Tous les calculs de revenus affichés dans Orary sont des <strong>estimations</strong> basées sur les taux et préférences que vous configurez dans l’application.",
+              "Votre paie réelle peut inclure des montants que cette application ne suit pas, comme des primes, des pénalités, des cotisations de retraite (superannuation), des retenues d’impôt ou d’autres ajustements de paie.",
+              "Les valeurs affichées <strong>ne sont pas officielles</strong> et ne doivent pas être utilisées comme documents juridiques ou fiscaux.",
+              "Vérifiez toujours vos revenus réels à l’aide de vos fiches de paie officielles et des registres de votre employeur.",
+              "Les montants extraits automatiquement des fiches de paie importées peuvent contenir des erreurs de lecture. Comparez-les toujours au document original.",
+              "Le décompte des jours du visa Working Holiday est une estimation basée sur les services que vous enregistrez. Seule l’autorité d’immigration décide quels jours comptent pour votre visa. Conservez vos fiches de paie et les justificatifs de votre employeur.",
+              "Les estimations d’impôt et de remboursement sont des approximations fondées uniquement sur les barèmes d’impôt sur le revenu publiés. Elles n’incluent pas les prélèvements (par ex. Medicare, ACC), la National Insurance, l’USC, le PRSI, les réductions d’impôt ni votre situation personnelle, et ne constituent pas un conseil fiscal. Vérifiez toujours auprès de l’administration fiscale officielle ou d’un agent fiscal agréé avant votre déclaration.",
+              "Orary n’est pas responsable des écarts entre les valeurs estimées et le paiement que vous recevez réellement."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "3. Responsabilités de l’utilisateur",
+      "blocks": [
+        "En tant qu’utilisateur d’Orary, vous vous engagez à :",
+        {
+          "ul": [
+            "Fournir des informations exactes et à jour lors de la création de votre compte.",
+            "Préserver la sécurité de votre mot de passe et de votre compte.",
+            "Assumer l’entière responsabilité de toute activité effectuée depuis votre compte.",
+            "Ne pas utiliser l’application à des fins illégales ni pour harceler d’autres utilisateurs.",
+            "Comprendre que les calculs de l’application sont des estimations basées sur vos saisies et ne doivent pas être utilisés comme documents juridiques ou fiscaux officiels sans vérification.",
+            "Configurer avec exactitude vos taux horaires, types de service et déductions afin d’obtenir les estimations les plus précises."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "4. Données de localisation",
+      "blocks": [
+        "Orary peut demander l’accès à la localisation de votre appareil (via l’API de géolocalisation du navigateur) uniquement pour activer des fonctions régionales, par exemple :",
+        {
+          "ul": [
+            "Détecter automatiquement votre pays pour activer le suivi des 88 jours du visa Working Holiday (Australie) ou configurer les calendriers de jours fériés.",
+            "Enregistrer vos préférences régionales dans l’application."
+          ]
+        },
+        "Les données de localisation sont traitées sur votre appareil. Seul le pays obtenu est enregistré dans votre compte. Nous ne stockons pas vos coordonnées GPS précises et ne les envoyons pas à nos serveurs. Vous pouvez refuser l’accès à la localisation à tout moment sans que cela n’affecte le reste de l’application."
+      ]
+    },
+    {
+      "title": "5. Abonnement Premium et essai gratuit",
+      "blocks": [
+        "Orary propose un abonnement Premium avec des fonctions supplémentaires. Les nouveaux abonnés peuvent bénéficier d’un <strong>essai gratuit de 15 jours</strong>.",
+        {
+          "h3": "5.1 Conditions de l’essai gratuit"
+        },
+        {
+          "ul": [
+            "Les nouveaux abonnés bénéficient de 15 jours d’essai gratuit avec un accès complet aux fonctions Premium.",
+            "Aucun montant n’est prélevé sur votre moyen de paiement pendant l’essai.",
+            "Vous pouvez résilier votre abonnement à tout moment pendant l’essai pour éviter tout prélèvement.",
+            "À la fin des 15 jours d’essai, votre abonnement devient automatiquement payant et 2,99 AUD (ou l’équivalent dans votre devise) sont prélevés sur votre moyen de paiement.",
+            "Si vous résiliez avant la fin de l’essai, vous conservez l’accès Premium jusqu’à la fin de l’essai et aucun montant n’est prélevé.",
+            "Nous nous réservons le droit de modifier ou de mettre fin à l’offre d’essai gratuit à tout moment."
+          ]
+        },
+        {
+          "h3": "5.2 Conditions de l’abonnement"
+        },
+        {
+          "ul": [
+            "Après l’essai (ou immédiatement si aucun essai ne s’applique), vous acceptez de payer les frais d’abonnement récurrents (2,99 AUD par mois).",
+            "Les paiements sont traités de manière sécurisée par Stripe.",
+            "Vous pouvez résilier votre abonnement à tout moment depuis les paramètres de l’application.",
+            "La résiliation prend effet à la fin de la période de facturation en cours.",
+            "Aucun remboursement n’est effectué pour les périodes de facturation partielles ou les jours d’essai non utilisés, sauf lorsque la loi de votre pays l’exige."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "6. Propriété intellectuelle",
+      "blocks": [
+        "L’application Orary, son design, ses textes, ses graphismes et le code du service appartiennent à Orary et sont protégés par les lois sur la propriété intellectuelle. Vous ne pouvez pas les reproduire, les distribuer ni créer d’œuvres dérivées sans autorisation expresse."
+      ]
+    },
+    {
+      "title": "7. Résiliation",
+      "blocks": [
+        "Nous nous réservons le droit de suspendre ou de supprimer votre accès à Orary à notre seule discrétion, sans préavis ni responsabilité, pour quelque raison que ce soit, notamment en cas de violation des présentes Conditions."
+      ]
+    },
+    {
+      "title": "8. Limitation de responsabilité",
+      "blocks": [
+        "Dans toute la mesure permise par la loi, Orary ne saurait être tenu responsable des dommages indirects, accessoires, spéciaux, consécutifs ou punitifs, y compris, sans s’y limiter, la perte de profits, de données, d’usage, de réputation ou d’autres pertes immatérielles résultant de votre utilisation du service.",
+        "<strong>En particulier, Orary n’est pas responsable :</strong>",
+        {
+          "ul": [
+            "Des décisions financières prises sur la base des estimations de revenus de l’application.",
+            "Des écarts entre les revenus estimés et les revenus réels.",
+            "Des questions fiscales, d’immigration ou juridiques liées à votre emploi.",
+            "Des pertes de données dues à une erreur de l’utilisateur ou à une panne d’un service tiers."
+          ]
+        },
+        "Rien dans les présentes Conditions n’exclut les droits que vous accorde le droit de la consommation et qui ne peuvent pas être exclus, comme l’Australian Consumer Law."
+      ]
+    },
+    {
+      "title": "9. Droit applicable",
+      "blocks": [
+        "Les présentes Conditions sont régies et interprétées conformément aux lois de votre juridiction, sans égard à ses règles de conflit de lois."
+      ]
+    },
+    {
+      "title": "10. Nous contacter",
+      "blocks": [
+        "Pour toute question sur les présentes Conditions d’utilisation, écrivez-nous à [[mailto:support@orary.app]]."
+      ]
+    }
+  ]
+}

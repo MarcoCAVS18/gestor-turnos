@@ -1,0 +1,136 @@
+{
+  "seoTitle": "Terms of Service | Orary",
+  "seoDescription": "Read Orary's Terms of Service. Understand your rights and responsibilities when using our shift management and earnings tracking application.",
+  "badge": "Legal · Terms",
+  "title": "Terms of Service",
+  "intro": "Welcome to <strong>Orary</strong>. By downloading, accessing, or using this application, you agree to be bound by these Terms of Service (\"Terms\"). If you disagree with any part of these terms, you must not access our service.",
+  "sections": [
+    {
+      "title": "1. Acceptance of Terms",
+      "blocks": [
+        "These Terms constitute a legally binding agreement between you and Orary. We reserve the right to modify these terms at any time. Continued use of the app after changes constitutes acceptance of the new terms."
+      ]
+    },
+    {
+      "title": "2. Description of Service",
+      "blocks": [
+        "Orary is a digital tool designed to help workers track their shifts, calculate earnings based on configurable rates, and visualize their work statistics. The service is provided \"as is\" and is intended for personal organizational purposes.",
+        {
+          "warn": {
+            "title": "Important Disclaimer About Calculations",
+            "items": [
+              "All earnings calculations displayed in Orary are <strong>estimates</strong> based on the rates and preferences you configure within the application.",
+              "Your actual paycheck may include additional values not tracked by this application, such as bonuses, penalties, superannuation contributions, tax withholdings, or other payroll adjustments.",
+              "The values shown are <strong>not official</strong> and should not be used as legal or tax documents.",
+              "Always verify your actual earnings with your official payslips and employer records.",
+              "Figures extracted automatically from uploaded payslips may contain reading errors. Always check them against the original document.",
+              "The Working Holiday Visa day count is an estimate based on the shifts you record. Only the immigration authority decides which days count towards your visa. Keep your payslips and employer evidence.",
+              "Income tax and refund estimates are approximations based on published income tax brackets only. They do not include levies (e.g. Medicare, ACC), National Insurance, USC, PRSI, offsets, or your personal circumstances, and are not tax advice. Always confirm with your official tax office or a registered tax agent before lodging.",
+              "Orary is not responsible for any discrepancies between the estimated values and your actual received payment."
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "title": "3. User Responsibilities",
+      "blocks": [
+        "As a user of Orary, you agree to:",
+        {
+          "ul": [
+            "Provide accurate and current information when creating your account.",
+            "Maintain the security of your password and account.",
+            "Accept full responsibility for all activities that occur under your account.",
+            "Not use the application for any illegal purpose or to harass other users.",
+            "Understand that calculations provided by the app are estimates based on user input and should not be used as official legal or tax documents without verification.",
+            "Configure your hourly rates, shift types, and deductions accurately to obtain the most precise estimates."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "4. Location Data",
+      "blocks": [
+        "Orary may request access to your device's location (via the browser Geolocation API) solely to enable relevant regional features, such as:",
+        {
+          "ul": [
+            "Auto-detecting your country to activate the Working Holiday Visa 88-day tracker (Australia) or configure public holiday calendars.",
+            "Setting your regional preferences within the app."
+          ]
+        },
+        "Location data is processed locally on your device. Only the resulting country preference is saved to your account. We do not store your precise GPS coordinates or transmit them to our servers. You may deny location access at any time without affecting other app functionality."
+      ]
+    },
+    {
+      "title": "5. Premium Subscription & Free Trial",
+      "blocks": [
+        "Orary offers a Premium subscription with additional features. New subscribers are eligible for a <strong>15-day free trial</strong>.",
+        {
+          "h3": "5.1 Free Trial Terms"
+        },
+        {
+          "ul": [
+            "New subscribers receive a 15-day free trial period with full access to Premium features.",
+            "No charges will be made to your payment method during the trial period.",
+            "You may cancel your subscription at any time during the trial to avoid any charges.",
+            "At the end of the 15-day trial, your subscription automatically converts to a paid subscription and your payment method will be charged $2.99 AUD (or equivalent in your local currency).",
+            "If you cancel before the trial ends, you will continue to have Premium access until the end of the trial period, and no charges will be made.",
+            "We reserve the right to modify or terminate the free trial offer at any time."
+          ]
+        },
+        {
+          "h3": "5.2 Subscription Terms"
+        },
+        {
+          "ul": [
+            "After the trial period (or immediately if no trial applies), you agree to pay the recurring subscription fee ($2.99 AUD/month).",
+            "Payments are processed securely through Stripe.",
+            "You can cancel your subscription at any time from the app settings.",
+            "Cancellation takes effect at the end of your current billing period.",
+            "No refunds are provided for partial billing periods or unused trial days, except where the law of your country requires it."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "6. Intellectual Property",
+      "blocks": [
+        "The Orary application, its design, text, graphics, and the code underlying the service are owned by Orary and are protected by intellectual property laws. You may not reproduce, distribute, or create derivative works without explicit permission."
+      ]
+    },
+    {
+      "title": "7. Termination",
+      "blocks": [
+        "We reserve the right to suspend or terminate your access to Orary at our sole discretion, without prior notice or liability, for any reason, including but not limited to a breach of these Terms."
+      ]
+    },
+    {
+      "title": "8. Limitation of Liability",
+      "blocks": [
+        "To the fullest extent permitted by law, Orary shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your use of the service.",
+        "<strong>Specifically, Orary is not liable for:</strong>",
+        {
+          "ul": [
+            "Any financial decisions made based on the earnings estimates provided by the app.",
+            "Discrepancies between estimated and actual earnings.",
+            "Tax, visa or legal matters related to your employment.",
+            "Data loss due to user error or third-party service outages."
+          ]
+        },
+        "Nothing in these Terms excludes rights you have under consumer protection law that cannot be excluded, such as the Australian Consumer Law."
+      ]
+    },
+    {
+      "title": "9. Governing Law",
+      "blocks": [
+        "These Terms shall be governed and construed in accordance with the laws of your jurisdiction, without regard to its conflict of law provisions."
+      ]
+    },
+    {
+      "title": "10. Contact Us",
+      "blocks": [
+        "If you have any questions about these Terms of Service, please contact us at [[mailto:support@orary.app]]."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,324 @@
+{
+  "seoTitle": "Privacy Policy | Orary",
+  "seoDescription": "Read Orary's Privacy Policy. Learn how we collect, use, store, and protect your data in our shift management and earnings tracking application.",
+  "badge": "Legal · Privacy",
+  "title": "Privacy Policy",
+  "intro": "At <strong>Orary</strong>, we take your privacy seriously. This Privacy Policy explains how we collect, use, store, and protect your information when you use our shift management application. By using Orary, you consent to the data practices described in this policy.",
+  "sections": [
+    {
+      "callout": "collect",
+      "title": "1. Information We Collect",
+      "lead": "We collect information to provide better services to all our users. This includes:",
+      "blocks": [
+        {
+          "h3": "1.1 Account Information"
+        },
+        {
+          "ul": [
+            "<strong>Authentication Data:</strong> Email address, display name, and profile photo (when using Google Sign-In or email registration).",
+            "<strong>Account Preferences:</strong> Language settings, theme preferences, notification settings, and other customization options.",
+            "<strong>Profile Information:</strong> Any additional information you choose to provide in your profile."
+          ]
+        },
+        {
+          "h3": "1.2 Work and Shift Data"
+        },
+        {
+          "ul": [
+            "<strong>Work Configurations:</strong> Job names, hourly rates, penalty rates (day/afternoon/night/weekend), and work descriptions.",
+            "<strong>Shift Records:</strong> Clock-in/clock-out times, break durations, shift dates, and associated work assignments.",
+            "<strong>Delivery Work Data:</strong> Platform information (e.g., DoorDash, Uber Eats), vehicle type, delivery earnings, tips, and kilometer/mileage tracking.",
+            "<strong>Earnings Calculations:</strong> Computed earnings based on your configured rates (these are estimates only).",
+            "<strong>Tax and Deduction Settings:</strong> Tax rates, superannuation percentages, and custom deductions you configure.",
+            "<strong>Payslip Data:</strong> If you use the payslip feature, Orary first tries to read the payslip file (PDF or image) on your device. Only if it cannot be read there is the file transmitted securely to our processing service, solely to extract its figures, and it is not kept there. The extracted data (pay period, employer name, gross pay, tax withheld, and net pay) is stored in your account so you can review it, generate matching shifts, and see tax estimates. You can delete any stored payslip record at any time from the app."
+          ]
+        },
+        {
+          "h3": "1.3 Live Mode Data"
+        },
+        {
+          "ul": [
+            "<strong>Session Data:</strong> Start time, pause/resume events, total duration, and computed earnings during live tracking sessions.",
+            "<strong>Usage Metrics:</strong> Number of Live Mode sessions used per month (for free tier usage limits)."
+          ]
+        },
+        {
+          "h3": "1.4 Technical Information"
+        },
+        {
+          "ul": [
+            "<strong>Device Information:</strong> Device type, operating system, browser type and version.",
+            "<strong>Connection Data:</strong> IP address, approximate location (country/region level only).",
+            "<strong>Usage Analytics:</strong> Feature usage patterns, navigation paths, and error logs to improve the application."
+          ]
+        }
+      ]
+    },
+    {
+      "callout": "location",
+      "title": "1.5 Location Data",
+      "lead": "With your explicit permission, Orary may access your device's geographic location to enable regional features.",
+      "blocks": [
+        "When you grant location permission, Orary uses the browser Geolocation API to determine your country. This is used exclusively to:",
+        {
+          "ul": [
+            "<strong>Enable regional features:</strong> Automatically activate features relevant to your location, such as the Working Holiday Visa 88-day tracker for users in Australia or country-specific public holiday calendars.",
+            "<strong>Set your regional preference:</strong> Save your detected country code (e.g., <code>AU</code>) to your account settings so features remain enabled across sessions."
+          ]
+        },
+        "<strong>What we do not do with location data:</strong>",
+        {
+          "ul": [
+            "We do not store your precise GPS coordinates on our servers.",
+            "We do not share or sell your location data to third parties.",
+            "The reverse geocoding lookup (converting coordinates to a country code) is performed via an anonymous, API-key-free request to BigDataCloud. No personally identifiable information is sent.",
+            "Denying location access does not affect other app functionality. You can manually set your country preference in Settings."
+          ]
+        }
+      ]
+    },
+    {
+      "callout": "payments",
+      "title": "2. Payment Processing & Stripe",
+      "lead": "Orary uses Stripe as our payment processor for Premium subscriptions. This section explains how payment data is handled.",
+      "blocks": [
+        {
+          "h3": "2.1 Payment Data Collection"
+        },
+        "When you subscribe to Orary Premium, you will be redirected to Stripe's secure payment portal. We <strong>do not</strong> collect, store, or have access to:",
+        {
+          "ul": [
+            "Your credit card number or CVV",
+            "Your full bank account details",
+            "Any other sensitive payment information"
+          ]
+        },
+        {
+          "h3": "2.2 Free Trial Period"
+        },
+        "Orary offers a <strong>15-day free trial</strong> for new Premium subscribers. During the trial:",
+        {
+          "ul": [
+            "No charges are made to your payment method.",
+            "You can cancel anytime during the trial without any charges.",
+            "At the end of the 15-day trial, your subscription automatically begins and your payment method is charged.",
+            "We store your Stripe Customer ID and subscription status to manage the trial period."
+          ]
+        },
+        {
+          "h3": "2.3 Information We Receive from Stripe"
+        },
+        "To manage your subscription and trial, we receive and store only:",
+        {
+          "ul": [
+            "<strong>Stripe Customer ID:</strong> A unique identifier that links your Orary account to your Stripe customer profile.",
+            "<strong>Subscription Status:</strong> Whether your subscription is active, in trial, cancelled, or past due.",
+            "<strong>Billing Period:</strong> Current subscription period start and end dates, including trial start/end dates.",
+            "<strong>Payment Status:</strong> Whether payments are successful, pending, or require action.",
+            "<strong>Purchase History:</strong> Records of your subscription transactions and trial conversions.",
+            "<strong>Last 4 Digits:</strong> Only the last 4 digits of your payment card (for display purposes in your account settings). We never store your complete card number, CVV, or expiration date."
+          ]
+        },
+        {
+          "h3": "2.4 Stripe's Privacy Practices"
+        },
+        "Stripe is a certified PCI Service Provider Level 1, which is the most stringent level of certification available in the payments industry. When you provide payment information to Stripe, it is handled according to their privacy policy. We encourage you to review [[https://stripe.com/privacy|Stripe's Privacy Policy]] for more information on how they handle your data.",
+        {
+          "h3": "2.5 Subscription Management"
+        },
+        {
+          "ul": [
+            "<strong>Billing:</strong> Subscription fees ($2.99 AUD/month) are charged automatically through Stripe on your billing date.",
+            "<strong>Cancellation:</strong> You can cancel your subscription at any time from the app. Cancellation takes effect at the end of your current billing period.",
+            "<strong>Refunds:</strong> We do not provide refunds for partial billing periods. For billing disputes, please contact support.",
+            "<strong>Data After Cancellation:</strong> Your work and shift data remains intact after cancellation. Only Premium features become unavailable."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "3. How We Use Your Information",
+      "blocks": [
+        "We use the data we collect to:",
+        {
+          "ul": [
+            "<strong>Provide Core Services:</strong> Enable shift tracking, earnings calculations, statistics visualization, and data synchronization.",
+            "<strong>Sync Across Devices:</strong> Keep your data synchronized securely across all your devices.",
+            "<strong>Process Payments:</strong> Manage Premium subscriptions and billing through Stripe.",
+            "<strong>Improve the Application:</strong> Analyze usage patterns to fix bugs, optimize performance, and develop new features.",
+            "<strong>Communicate with You:</strong> Send important updates about your account, security alerts, and service changes.",
+            "<strong>Provide Support:</strong> Respond to your questions and resolve technical issues."
+          ]
+        }
+      ]
+    },
+    {
+      "callout": "security",
+      "title": "4. Data Storage & Security",
+      "lead": "Your data is stored securely using industry-standard encryption and security practices.",
+      "blocks": [
+        {
+          "h3": "4.1 Where Your Data is Stored"
+        },
+        "Orary uses Firebase (Google Cloud Platform) for data storage and authentication. Your data is stored in secure data centers with the following protections:",
+        {
+          "ul": [
+            "Encryption in transit (TLS/SSL) and at rest (AES-256)",
+            "Automatic backup and disaster recovery",
+            "Strict access controls and authentication",
+            "Regular security audits and compliance certifications"
+          ]
+        },
+        "So the app keeps working without a connection, a copy of your data is also cached on your device and synced when you are back online.",
+        {
+          "h3": "4.2 Security Measures"
+        },
+        {
+          "ul": [
+            "<strong>Authentication:</strong> Secure login via Firebase Authentication with optional Google Sign-In.",
+            "<strong>Data Isolation:</strong> Each user's data is strictly isolated and accessible only to that user.",
+            "<strong>Secure API Calls:</strong> All communication between the app and our servers is encrypted.",
+            "<strong>No Plain Text Storage:</strong> Sensitive data is never stored in plain text.",
+            "<strong>Biometric Login:</strong> On the native iOS and Android apps you can optionally enable Face ID / fingerprint unlock. Biometric data is handled entirely by your device's operating system and never leaves your device. Orary only receives a success or failure signal."
+          ]
+        }
+      ]
+    },
+    {
+      "callout": "sharing",
+      "title": "5. Data Sharing & Third Parties",
+      "lead": "We do not sell your personal data. We only share data with trusted service providers essential to operating Orary.",
+      "blocks": [
+        {
+          "h3": "5.1 Service Providers We Use"
+        },
+        {
+          "ul": [
+            "<strong>Firebase (Google):</strong> Authentication, database storage, and hosting.",
+            "<strong>Stripe:</strong> Payment processing for Premium subscriptions.",
+            "<strong>BigDataCloud:</strong> Anonymous reverse geocoding for country detection from device location (no API key, no personal data transmitted).",
+            "<strong>Google Analytics:</strong> Aggregate usage statistics, only if you accept analytics cookies."
+          ]
+        },
+        {
+          "h3": "5.2 Work Sharing Feature"
+        },
+        "When you use the \"Share Work\" feature, a temporary share link is created containing your work configuration (name, rates, settings). This data:",
+        {
+          "ul": [
+            "Expires automatically after 48 hours",
+            "Has a maximum of 10 uses",
+            "Does not include your personal information or shift history",
+            "Can be deactivated by you at any time"
+          ]
+        },
+        {
+          "h3": "5.3 Calendar Subscription"
+        },
+        "If you turn on the calendar subscription, Orary creates a private link that your calendar app (Google Calendar, Apple Calendar, Outlook) uses to read your shifts. The link contains a secret code and shows your shift dates, times and job names. Anyone who has the link can see that information, so keep it private. Orary does not access your calendar.",
+        {
+          "h3": "5.4 Legal Disclosure"
+        },
+        "We may disclose your information if required by law, court order, or governmental regulation, or to protect the rights, property, or safety of Orary, our users, or others."
+      ]
+    },
+    {
+      "callout": "cookies",
+      "title": "6. Cookies & Local Storage",
+      "lead": "Orary uses essential cookies and local storage for application functionality.",
+      "blocks": [
+        "We use the following types of storage:",
+        {
+          "ul": [
+            "<strong>Authentication Cookies:</strong> To keep you logged in securely.",
+            "<strong>Local Storage:</strong> To cache your preferences and improve performance.",
+            "<strong>IndexedDB and offline cache:</strong> For offline functionality and data caching.",
+            "<strong>Analytics Cookies (optional):</strong> With your consent, we use Google Analytics to understand aggregate feature usage and improve the app. Analytics cookies are only set after you accept them through the consent banner, and you can decline or withdraw consent at any time without affecting functionality."
+          ]
+        },
+        "We do not use advertising cookies or tracking cookies for marketing purposes. Apart from optional analytics, all cookies are essential for the application to function properly."
+      ]
+    },
+    {
+      "callout": "rights",
+      "title": "7. Your Privacy Rights",
+      "lead": "You have full control over your personal data. Here are your rights under GDPR, CCPA, the Australian Privacy Act and other privacy regulations.",
+      "blocks": [
+        {
+          "h3": "7.1 Your Rights Include"
+        },
+        {
+          "ul": [
+            "<strong>Right to Access:</strong> Request a copy of all data we have about you.",
+            "<strong>Right to Rectification:</strong> Correct any inaccurate information in your profile.",
+            "<strong>Right to Erasure:</strong> Delete your account and all associated data permanently.",
+            "<strong>Right to Data Portability:</strong> Export your data in a machine-readable format.",
+            "<strong>Right to Restrict Processing:</strong> Limit how we use your data.",
+            "<strong>Right to Object:</strong> Object to certain types of data processing.",
+            "<strong>Right to Withdraw Consent:</strong> Withdraw consent for optional data processing at any time."
+          ]
+        },
+        {
+          "h3": "7.2 How to Exercise Your Rights"
+        },
+        "You can exercise these rights directly within the app:",
+        {
+          "ul": [
+            "<strong>View/Edit Data:</strong> Access and modify your data through Settings.",
+            "<strong>Clear Data:</strong> Use \"Clear Everything\" to erase all work and shift data while keeping your account.",
+            "<strong>Delete Account:</strong> Use \"Delete Account\" to permanently remove your account and all data.",
+            "<strong>Export Data:</strong> Export your complete shift and earnings history to PDF or Excel directly from the app (available with Orary Premium).",
+            "<strong>Revoke Location Permission:</strong> Deny or revoke location access in your browser settings at any time."
+          ]
+        },
+        "You can also contact us at [[mailto:privacy@orary.app]] for any privacy-related requests."
+      ]
+    },
+    {
+      "title": "8. Data Retention",
+      "blocks": [
+        {
+          "ul": [
+            "<strong>Active Accounts:</strong> We retain your data for as long as your account is active.",
+            "<strong>Deleted Accounts:</strong> When you delete your account, all data is permanently removed within 30 days.",
+            "<strong>Backup Copies:</strong> Backup copies may persist for up to 90 days for disaster recovery purposes, after which they are permanently deleted.",
+            "<strong>Legal Requirements:</strong> We may retain certain data longer if required by law (e.g., billing records for tax purposes)."
+          ]
+        }
+      ]
+    },
+    {
+      "title": "9. Children's Privacy",
+      "blocks": [
+        "Orary is not intended for use by individuals under the age of 16. We do not knowingly collect personal information from children. If we become aware that a child under 16 has provided us with personal information, we will take steps to delete such information."
+      ]
+    },
+    {
+      "title": "10. International Data Transfers",
+      "blocks": [
+        "Your information may be transferred to and processed in countries other than your own. These countries may have different data protection laws. When we transfer your information, we ensure appropriate safeguards are in place to protect your data, including standard contractual clauses approved by relevant authorities."
+      ]
+    },
+    {
+      "callout": "changes",
+      "title": "11. Changes to This Policy",
+      "lead": "We may update this Privacy Policy from time to time. We will notify you of any significant changes by posting a notice in the app or sending you an email. We encourage you to review this policy periodically.",
+      "blocks": []
+    },
+    {
+      "title": "12. Contact Us",
+      "blocks": [
+        "If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:",
+        {
+          "ul": [
+            "<strong>Email:</strong> [[mailto:privacy@orary.app]]",
+            "<strong>Support:</strong> [[mailto:support@orary.app]]"
+          ]
+        },
+        {
+          "small": "We aim to respond to all privacy inquiries within 30 days."
+        }
+      ]
+    }
+  ]
+}

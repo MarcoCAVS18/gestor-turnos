@@ -2356,5 +2356,15 @@
       "delivery": "Delivery shift",
       "mixed": "Mixed shift"
     }
+  },
+  "legal": {
+    "lastUpdated": "Last updated: {{date}}",
+    "translationNote": "This is a translation of the English original. If the versions differ, the English version prevails.",
+    "footer": {
+      "faq": "FAQ",
+      "visa88": "88-day visa tracker",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy"
+    }
   }
 }

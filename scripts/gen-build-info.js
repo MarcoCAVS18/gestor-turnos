@@ -17,17 +17,19 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const pkg = require(path.join(ROOT, 'package.json'));
 
+// The page component and its translated text, in every language
 const LEGAL_FILES = {
-  terms: 'src/pages/legal/TermsOfService.jsx',
-  privacy: 'src/pages/legal/PrivacyPolicy.jsx',
+  terms: ['src/pages/legal/TermsOfService.jsx', 'src/locales/*/legal/terms.json'],
+  privacy: ['src/pages/legal/PrivacyPolicy.jsx', 'src/locales/*/legal/privacy.json'],
 };
 
-const formatDate = (date) =>
-  date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+// ISO date (YYYY-MM-DD); the legal pages format it in the reader's language
+const formatDate = (date) => date.toISOString().slice(0, 10);
 
-function lastCommitDate(file) {
+function lastCommitDate(files) {
   try {
-    const iso = execSync(`git log -1 --format=%cI -- "${file}"`, {
+    const paths = files.map((f) => `"${f}"`).join(' ');
+    const iso = execSync(`git log -1 --format=%cI -- ${paths}`, {
       cwd: ROOT,
       encoding: 'utf8',
     }).trim();
@@ -39,8 +41,8 @@ function lastCommitDate(file) {
 }
 
 const legalDates = {};
-for (const [key, file] of Object.entries(LEGAL_FILES)) {
-  legalDates[key] = lastCommitDate(file);
+for (const [key, files] of Object.entries(LEGAL_FILES)) {
+  legalDates[key] = lastCommitDate(files);
 }
 
 const buildInfo = { version: pkg.version, legalDates };
