@@ -56,6 +56,7 @@ export const useDashboardStats = () => {
       weeklyTrend: 0,
       favoriteWorks: [],
       monthlyProjection: 0,
+      monthlyHoursProjection: 0,
 
       currentWeek: {
         totalEarned: 0,
@@ -171,6 +172,10 @@ export const useDashboardStats = () => {
       const monthlyProjection = currentDay > 0 
         ? (monthCounters.earnings / currentDay) * daysInMonth 
         : 0;
+      // Hours at the same pace (month-to-date hours, not all-time hours)
+      const monthlyHoursProjection = currentDay > 0
+        ? (monthCounters.hours / currentDay) * daysInMonth
+        : 0;
 
       return {
         totalEarned,
@@ -181,6 +186,7 @@ export const useDashboardStats = () => {
         nextShift,
         favoriteWorks,
         monthlyProjection,
+        monthlyHoursProjection,
 
         currentWeek: {
           totalEarned: weekCounters.earnings,

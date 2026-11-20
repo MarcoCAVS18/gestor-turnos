@@ -4,6 +4,7 @@ import {
   aggregateDeliveryShifts,
   calculateDeliveryHourlyStats,
   calculateWeeklyHourlyDeliveryStats,
+  calculateMonthlyStats,
 } from '../calculationService';
 import { formatCurrency, formatCurrencyExact } from '../../utils/currency';
 
@@ -132,5 +133,18 @@ describe('money formatting', () => {
   test('rounded formatter is unchanged', () => {
     expect(formatCurrency(28.5)).toBe('$29');
     expect(formatCurrency(12234.4)).toBe('$12,234');
+  });
+});
+
+describe('calculateMonthlyStats uses the same "earned" as the rest of the app', () => {
+  test('after tax for hourly jobs, net of fuel for delivery, gross reported apart', () => {
+    const regular = [{ workId: 'farm', type: 'regular', date: '2026-11-17', startDate: '2026-11-17', startTime: '07:00', endTime: '13:00' }];
+    const delivery = [{ type: 'delivery', date: '2026-11-15', startDate: '2026-11-15', startTime: '18:00', endTime: '21:00', baseEarnings: 80, tips: 10, totalEarnings: 90, fuelExpense: 6 }];
+    const payFn = (shift) => pay(shift, { discount: 15 });
+    const m = calculateMonthlyStats(2026, 10, regular, delivery, payFn);
+    expect(m.totalEarnings).toBeCloseTo(153 + 84, 5); // 180 after 15 % + (90 - 6)
+    expect(m.totalGross).toBeCloseTo(180 + 90, 5);
+    expect(m.netEarnings).toBe(m.totalEarnings);
+    expect(m.totalHours).toBe(9);
   });
 });

@@ -2316,5 +2316,21 @@
     "available": "Hay una versión nueva de Orary.",
     "reload": "Actualizar",
     "dismiss": "Cerrar"
+  },
+  "liveMode": {
+    "limitReached": "Ya usaste tus {{limit}} sesiones gratis de Modo Live este mes. Hazte Premium para tener sesiones ilimitadas.",
+    "notifications": {
+      "forgotTitle": "¿Olvidaste terminar el turno?",
+      "forgotBody": "Tu sesión en vivo lleva {{hours}} horas abierta."
+    },
+    "forgotten": {
+      "title": "¿Olvidaste terminar el turno?",
+      "body": "Tu sesión en vivo en {{work}} empezó el {{start}} y sigue abierta ({{hours}} h). ¿A qué hora terminaste realmente?",
+      "endLabel": "El turno terminó el",
+      "save": "Guardar turno",
+      "keep": "Dejarla abierta",
+      "discard": "Descartar esta sesión",
+      "invalid": "Elige una hora posterior al inicio, que no sea futura y dentro de las 24 horas."
+    }
   }
 }

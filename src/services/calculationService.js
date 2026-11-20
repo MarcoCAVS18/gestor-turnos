@@ -311,8 +311,13 @@ export const calculateMonthlyStats = (year, month, shifts, deliveryShifts, calcu
     return shiftDate >= start && shiftDate <= end;
   });
 
+  // "Earned" means the same here as on the dashboard, weekly summary and
+  // exports: after the user's tax percentage for hourly jobs, net of fuel for
+  // delivery. Gross is reported separately (totalGross). Until 2026-11 this used
+  // gross, so the dashboard compared this month after tax with last month gross.
   let totalHours = 0;
   let totalEarnings = 0;
+  let totalGross = 0;
   let totalTips = 0;
   let totalDeliveries = 0;
   let totalKilometers = 0;
@@ -320,7 +325,8 @@ export const calculateMonthlyStats = (year, month, shifts, deliveryShifts, calcu
 
   monthlyShifts.forEach(shift => {
     if (shift.type === 'delivery') {
-      totalEarnings += getShiftGrossEarnings(shift);
+      totalEarnings += getShiftNetEarnings(shift);
+      totalGross += getShiftGrossEarnings(shift);
       totalTips += shift.tips || 0;
       totalDeliveries += shift.orderCount || 0;
       totalKilometers += shift.kilometers || 0;
@@ -329,18 +335,21 @@ export const calculateMonthlyStats = (year, month, shifts, deliveryShifts, calcu
     } else {
       const payment = calculatePaymentFn(shift);
       totalHours += payment.hours;
-      totalEarnings += payment.total;
+      totalEarnings += payment.totalWithDiscount ?? payment.total ?? 0;
+      totalGross += payment.total || 0;
     }
   });
 
   return {
     totalHours,
     totalEarnings,
+    totalGross,
     totalTips,
     totalDeliveries,
     totalKilometers,
     totalFuelCost,
-    netEarnings: totalEarnings - totalFuelCost,
+    // kept for existing callers; totalEarnings is already net of fuel
+    netEarnings: totalEarnings,
     shiftsCount: monthlyShifts.length,
     averageHoursPerShift: monthlyShifts.length > 0 ? totalHours / monthlyShifts.length : 0,
     averageEarningsPerShift: monthlyShifts.length > 0 ? totalEarnings / monthlyShifts.length : 0,

@@ -24,19 +24,28 @@ export const DataProvider = ({ children }) => {
     if (currentUser) {
       setLoading(true);
 
+      // Loading ends when both listeners have delivered their first snapshot
+      // (from the local cache or the server), not after a fixed delay: on a
+      // slow connection the 1 s timer showed "no shifts yet" before the data.
+      const pending = new Set(['works', 'shifts']);
+      const markLoaded = (key) => {
+        if (!pending.delete(key)) return;
+        if (pending.size === 0) setLoading(false);
+      };
+      const wrap = (key, setter) => (updater) => { setter(updater); markLoaded(key); };
+
       const unsubscribe = firebaseService.subscribeToNormalData(
         currentUser.uid,
         {
-          setWorks,
-          setShifts,
-          setError,
+          setWorks: wrap('works', setWorks),
+          setShifts: wrap('shifts', setShifts),
+          setError: (err) => { setError(err); setLoading(false); },
           setShiftsLimitReached,
         }
       );
 
-      const timeoutId = setTimeout(() => {
-        setLoading(false);
-      }, 1000);
+      // Safety net only: never keep the spinner forever
+      const timeoutId = setTimeout(() => setLoading(false), 10000);
 
       return () => {
         clearTimeout(timeoutId);

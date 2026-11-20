@@ -10,7 +10,7 @@ import Card from '../../ui/Card';
 import Flex from '../../ui/Flex';
 import { useNavigate, Link } from 'react-router-dom';
 
-const ProjectionCard = memo(({ monthlyProjection, hoursWorked, hasLoggedShifts = true, className }) => {
+const ProjectionCard = memo(({ monthlyProjection, projectedHours, hasLoggedShifts = true, className }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
   const { calculateMonthlyStats, works, deliveryWork } = useApp();
@@ -189,7 +189,7 @@ const ProjectionCard = memo(({ monthlyProjection, hoursWorked, hasLoggedShifts =
             {formatCurrency(monthlyProjection)}
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            ~{((hoursWorked || 0) * 4.33).toFixed(0)} {t('common.hours').toLowerCase()}
+            ~{Math.round(projectedHours || 0)} {t('common.hours').toLowerCase()}
           </p>
         </div>
       </Flex>

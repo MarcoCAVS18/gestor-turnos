@@ -2316,5 +2316,21 @@
     "available": "A new version of Orary is ready.",
     "reload": "Update",
     "dismiss": "Dismiss"
+  },
+  "liveMode": {
+    "limitReached": "You have used your {{limit}} free Live Mode sessions this month. Upgrade to Premium for unlimited sessions.",
+    "notifications": {
+      "forgotTitle": "Did you forget to end your shift?",
+      "forgotBody": "Your live session has been running for {{hours}} hours."
+    },
+    "forgotten": {
+      "title": "Did you forget to end your shift?",
+      "body": "Your live session at {{work}} started {{start}} and is still running ({{hours}} h). When did you actually finish?",
+      "endLabel": "Shift ended at",
+      "save": "Save shift",
+      "keep": "Keep it running",
+      "discard": "Discard this session",
+      "invalid": "Choose a time after the start, not in the future and within 24 hours."
+    }
   }
 }

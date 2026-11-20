@@ -60,5 +60,9 @@
       ]
     }
   ],
-  "fieldOverrides": []
+  "fieldOverrides": [
+    { "collectionGroup": "rate_limits", "fieldPath": "expireAt", "ttl": true, "indexes": [] },
+    { "collectionGroup": "processed_webhooks", "fieldPath": "expireAt", "ttl": true, "indexes": [] },
+    { "collectionGroup": "subscription_locks", "fieldPath": "expireAt", "ttl": true, "indexes": [] }
+  ]
 }

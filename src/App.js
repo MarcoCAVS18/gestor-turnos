@@ -48,6 +48,7 @@ const ServerError     = lazy(() => import('./pages/ServerError'));
 const WorkModal       = lazy(() => import('./components/modals/work/WorkModal'));
 const ShiftModal      = lazy(() => import('./components/modals/shift/ShiftModal'));
 const PremiumModal    = lazy(() => import('./components/modals/premium/PremiumModal'));
+const LiveModeForgottenModal = lazy(() => import('./components/modals/liveMode/LiveModeForgottenModal'));
 
 // Protected pages
 const Dashboard       = lazy(() => import('./pages/Dashboard'));
@@ -152,6 +153,7 @@ function AppLayout() {
           isOpen={isPremiumModalOpen}
           onClose={closePremiumModal}
         />
+        <LiveModeForgottenModal />
       </Suspense>
     </div>
   );

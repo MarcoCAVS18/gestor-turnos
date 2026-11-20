@@ -16,6 +16,9 @@ import {
   endLiveActivity,
 } from '../services/native/liveActivityService';
 import logger from '../utils/logger';
+import { useTranslation } from 'react-i18next';
+import { isHoliday } from '../services/holidayService';
+import { formatCurrencyPrecise } from '../utils/currency';
 
 const LiveModeContext = createContext();
 
@@ -25,14 +28,26 @@ export const useLiveModeContext = () => {
 
 // Constants for notifications and auto-close
 const NOTIFICATION_HOURS = 12;
-const AUTO_CLOSE_HOURS = 24;
 const NOTIFICATION_MS = NOTIFICATION_HOURS * 60 * 60 * 1000;
-const AUTO_CLOSE_MS = AUTO_CLOSE_HOURS * 60 * 60 * 1000;
+// A session open this long (wall clock, pauses included) was almost certainly
+// forgotten. The app asks when the shift really ended instead of saving the
+// whole span (it used to auto-close at 24 h and save a 24-hour shift).
+export const FORGOTTEN_SESSION_HOURS = 14;
+const FORGOTTEN_SESSION_MS = FORGOTTEN_SESSION_HOURS * 60 * 60 * 1000;
+export const MAX_SHIFT_MS = 24 * 60 * 60 * 1000;
 
 export const LiveModeProvider = ({ children }) => {
   const { currentUser } = useAuth();
   const { works } = useDataContext();
-  const { shiftRanges, primaryColor } = useConfigContext();
+  const { t } = useTranslation();
+  const { shiftRanges, primaryColor, holidayCountry, holidayRegion, useAutoHolidays } = useConfigContext();
+  const [isForgotten, setIsForgotten] = useState(false);
+
+  // Public-holiday rate, same rule as calculatePayment (holiday beats weekend)
+  const isHolidayDate = useCallback(
+    (date) => !!(useAutoHolidays && holidayCountry && isHoliday(date, holidayCountry, holidayRegion)),
+    [useAutoHolidays, holidayCountry, holidayRegion]
+  );
 
   // State
   const [liveSession, setLiveSession] = useState(null);
@@ -63,7 +78,6 @@ export const LiveModeProvider = ({ children }) => {
   // Refs
   const timerRef = useRef(null);
   const notificationSentRef = useRef(false);
-  const autoCloseTriggeredRef = useRef(false);
   const lastLAUpdateRef = useRef(0); // timestamp of last Live Activity earnings push
 
   // Derived state
@@ -102,7 +116,10 @@ export const LiveModeProvider = ({ children }) => {
     let rate;
     let type;
 
-    if (dayOfWeek === 0) {
+    if (selectedWork.rates.holidays && isHolidayDate(now)) {
+      rate = selectedWork.rates.holidays;
+      type = 'holiday';
+    } else if (dayOfWeek === 0) {
       rate = selectedWork.rates.sunday || 0;
       type = 'sunday';
     } else if (dayOfWeek === 6) {
@@ -120,7 +137,7 @@ export const LiveModeProvider = ({ children }) => {
     }
 
     return { rate, type };
-  }, [selectedWork, shiftRanges]);
+  }, [selectedWork, shiftRanges, isHolidayDate]);
 
   // Calculate earnings by walking from startedAt → now, applying the correct
   // rate for each time segment (day / afternoon / night / saturday / sunday).
@@ -150,10 +167,11 @@ export const LiveModeProvider = ({ children }) => {
     while (current < now) {
       const dayOfWeek = current.getDay();
       const h = current.getHours();
+      const holidayRate = selectedWork.rates.holidays && isHolidayDate(current) ? selectedWork.rates.holidays : 0;
 
       // Next rate boundary
       let nextBoundary = new Date(current);
-      if (dayOfWeek === 0 || dayOfWeek === 6) {
+      if (holidayRate || dayOfWeek === 0 || dayOfWeek === 6) {
         // Weekend: flat rate all day, boundary is midnight
         nextBoundary.setHours(24, 0, 0, 0);
       } else {
@@ -169,7 +187,8 @@ export const LiveModeProvider = ({ children }) => {
       const segmentHours = (segmentEnd.getTime() - current.getTime()) / (1000 * 60 * 60);
 
       let rate = 0;
-      if (dayOfWeek === 0) rate = selectedWork.rates.sunday || 0;
+      if (holidayRate) rate = holidayRate;
+      else if (dayOfWeek === 0) rate = selectedWork.rates.sunday || 0;
       else if (dayOfWeek === 6) rate = selectedWork.rates.saturday || 0;
       else if (h >= ranges.dayStart && h < ranges.dayEnd) rate = selectedWork.rates.day || 0;
       else if (h >= ranges.afternoonStart && h < ranges.afternoonEnd) rate = selectedWork.rates.afternoon || 0;
@@ -187,7 +206,7 @@ export const LiveModeProvider = ({ children }) => {
     }
 
     return Math.max(0, grossEarnings);
-  }, [selectedWork, liveSession, shiftRanges]);
+  }, [selectedWork, liveSession, shiftRanges, isHolidayDate]);
 
   // Request notification permission (native + web via nativeNotifications wrapper)
   const requestNotificationPermissionFn = useCallback(async () => {
@@ -199,25 +218,6 @@ export const LiveModeProvider = ({ children }) => {
     return await sendLocalNotification(title, body);
   }, []);
 
-  // Auto-finish session
-  const autoFinishSession = useCallback(async () => {
-    if (!liveSession || autoCloseTriggeredRef.current) return;
-
-    autoCloseTriggeredRef.current = true;
-
-    try {
-      await finishSession();
-      sendNotification(
-        'Shift automatically ended',
-        'Your live shift was automatically ended after 24 hours.'
-      );
-    } catch (err) {
-      logger.error('Error auto-finishing session:', err);
-      autoCloseTriggeredRef.current = false;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [liveSession]);
-
   // Timer logic
   useEffect(() => {
     // Clear timer if no session, completed, or PAUSED
@@ -227,8 +227,12 @@ export const LiveModeProvider = ({ children }) => {
         timerRef.current = null;
       }
 
+      if (!liveSession || liveSession.status === 'completed') setIsForgotten(false);
+
       // If paused, still calculate the frozen elapsed time once
       if (liveSession?.status === 'paused') {
+        const started = liveSession.startedAt instanceof Date ? liveSession.startedAt : new Date(liveSession.startedAt);
+        setIsForgotten(Date.now() - started.getTime() >= FORGOTTEN_SESSION_MS);
         const elapsed = liveSessionService.calculateElapsedTime(liveSession);
         setElapsedTime(elapsed);
 
@@ -260,7 +264,7 @@ export const LiveModeProvider = ({ children }) => {
         updateLiveActivity({
           totalPausedSeconds: Math.floor((liveSession.totalPauseDuration || 0) / 1000),
           pausedSince: null,
-          earningsFormatted: `$${earnings.toFixed(2)}`,
+          earningsFormatted: formatCurrencyPrecise(earnings),
           isPaused: false,
         }).catch(() => {});
       }
@@ -269,15 +273,14 @@ export const LiveModeProvider = ({ children }) => {
       if (elapsed >= NOTIFICATION_MS && !notificationSentRef.current) {
         notificationSentRef.current = true;
         sendNotification(
-          'Did you forget to end your shift?',
-          'Your live session has been running for 12 hours.'
+          t('liveMode.notifications.forgotTitle'),
+          t('liveMode.notifications.forgotBody', { hours: NOTIFICATION_HOURS })
         );
       }
 
-      // Check for 24h auto-close
-      if (elapsed >= AUTO_CLOSE_MS) {
-        autoFinishSession();
-      }
+      // Forgotten session: ask for the real end time (LiveModeForgottenModal)
+      const started = liveSession.startedAt instanceof Date ? liveSession.startedAt : new Date(liveSession.startedAt);
+      setIsForgotten(nowTs - started.getTime() >= FORGOTTEN_SESSION_MS);
     };
 
     // Initial update
@@ -292,7 +295,7 @@ export const LiveModeProvider = ({ children }) => {
         timerRef.current = null;
       }
     };
-  }, [liveSession, calculateCurrentRate, calculateEarnings, sendNotification, autoFinishSession]);
+  }, [liveSession, calculateCurrentRate, calculateEarnings, sendNotification, t]);
 
   // Subscribe to live session changes
   useEffect(() => {
@@ -307,7 +310,6 @@ export const LiveModeProvider = ({ children }) => {
         setLiveSession(session);
         if (session) {
           notificationSentRef.current = false;
-          autoCloseTriggeredRef.current = false;
         }
       }
     );
@@ -356,7 +358,7 @@ export const LiveModeProvider = ({ children }) => {
       const canUse = effectiveUsage.isPremium || effectiveUsage.remaining > 0;
 
       if (!canUse) {
-        const errorMsg = `You have reached the limit of ${premiumService.LIVE_MODE_FREE_LIMIT} Live Mode sessions this month. Upgrade to Premium for unlimited sessions.`;
+        const errorMsg = t('liveMode.limitReached', { limit: premiumService.LIVE_MODE_FREE_LIMIT });
         setError(errorMsg);
         throw new Error(errorMsg);
       }
@@ -400,7 +402,7 @@ export const LiveModeProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [currentUser?.uid, requestNotificationPermissionFn, liveModeUsage, effectiveUsage, primaryColor]);
+  }, [currentUser?.uid, requestNotificationPermissionFn, liveModeUsage, effectiveUsage, primaryColor, t]);
 
   // Pause the current session
   const pauseSession = useCallback(async () => {
@@ -423,7 +425,7 @@ export const LiveModeProvider = ({ children }) => {
       updateLiveActivity({
         totalPausedSeconds: Math.floor((liveSession.totalPauseDuration || 0) / 1000),
         pausedSince: pausedAt,
-        earningsFormatted: `$${currentEarnings.toFixed(2)}`,
+        earningsFormatted: formatCurrencyPrecise(currentEarnings),
         isPaused: true,
       }).catch(() => {});
     } catch (err) {
@@ -474,7 +476,7 @@ export const LiveModeProvider = ({ children }) => {
       updateLiveActivity({
         totalPausedSeconds: Math.floor(totalPauseDuration / 1000),
         pausedSince: null,
-        earningsFormatted: `$${currentEarnings.toFixed(2)}`,
+        earningsFormatted: formatCurrencyPrecise(currentEarnings),
         isPaused: false,
       }).catch(() => {});
     } catch (err) {
@@ -513,7 +515,9 @@ export const LiveModeProvider = ({ children }) => {
 
   // Finish the current session and create a shift
   // smokoMinutesToDeduct: number of minutes to deduct for smoko (0 if not applicable)
-  const finishSession = useCallback(async (smokoMinutesToDeduct = 0) => {
+  // endAt (optional): when the shift really ended, for sessions the user forgot
+  // to stop. Defaults to now.
+  const finishSession = useCallback(async (smokoMinutesToDeduct = 0, endAt = null) => {
     if (!liveSession?.id) throw new Error('No active session');
     if (!currentUser?.uid) throw new Error('User not authenticated');
 
@@ -523,13 +527,17 @@ export const LiveModeProvider = ({ children }) => {
     try {
       // Calculate final values - use helper for robust timestamp conversion
       const startTime = toLocalDate(liveSession.startedAt);
-      const endTime = new Date();
+      const endTime = endAt ? new Date(endAt) : new Date();
+      if (endTime <= startTime || endTime.getTime() - startTime.getTime() > MAX_SHIFT_MS) {
+        throw new Error(t('liveMode.forgotten.invalid'));
+      }
 
-      // Calculate final pause duration
+      // Calculate final pause duration (only the part of an open pause that
+      // falls before the chosen end time)
       let finalPauseDuration = liveSession.totalPauseDuration || 0;
       if (liveSession.status === 'paused' && liveSession.pausedAt) {
         const pauseStart = toLocalDate(liveSession.pausedAt);
-        finalPauseDuration += (endTime.getTime() - pauseStart.getTime());
+        finalPauseDuration += Math.max(0, endTime.getTime() - pauseStart.getTime());
       }
 
       // Format times (using local timezone, not UTC)
@@ -588,7 +596,7 @@ export const LiveModeProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [liveSession, currentUser?.uid]);
+  }, [liveSession, currentUser?.uid, t]);
 
   // Cancel session without saving
   const cancelSession = useCallback(async () => {
@@ -616,7 +624,7 @@ export const LiveModeProvider = ({ children }) => {
   const formattedTime = liveSessionService.formatElapsedTime(elapsedTime);
 
   // Format earnings
-  const formattedEarnings = `$${currentEarnings.toFixed(2)}`;
+  const formattedEarnings = formatCurrencyPrecise(currentEarnings);
 
   const value = {
     // State
@@ -630,6 +638,7 @@ export const LiveModeProvider = ({ children }) => {
     loading,
     error,
     selectedWork,
+    isForgotten,
 
     // Formatted values
     formattedTime,

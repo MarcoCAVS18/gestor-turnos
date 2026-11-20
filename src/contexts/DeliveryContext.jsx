@@ -23,18 +23,25 @@ export const DeliveryProvider = ({ children }) => {
     if (currentUser) {
       setLoading(true);
 
+      // Loading ends with the first snapshot of both listeners (see DataContext)
+      const pending = new Set(['works', 'shifts']);
+      const markLoaded = (key) => {
+        if (!pending.delete(key)) return;
+        if (pending.size === 0) setLoading(false);
+      };
+      const wrap = (key, setter) => (updater) => { setter(updater); markLoaded(key); };
+
       const unsubscribe = firebaseService.subscribeToDeliveryData(
         currentUser.uid,
         {
-          setDeliveryWork: setDeliveryWorks,
-          setDeliveryShifts,
-          setError,
+          setDeliveryWork: wrap('works', setDeliveryWorks),
+          setDeliveryShifts: wrap('shifts', setDeliveryShifts),
+          setError: (err) => { setError(err); setLoading(false); },
         }
       );
 
-      const timeoutId = setTimeout(() => {
-        setLoading(false);
-      }, 1000);
+      // Safety net only: never keep the spinner forever
+      const timeoutId = setTimeout(() => setLoading(false), 10000);
 
       return () => {
         clearTimeout(timeoutId);

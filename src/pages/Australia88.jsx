@@ -328,10 +328,10 @@ const Australia88 = () => {
         <link rel="canonical" href="https://orary.app/australia-88" />
 
         {/* hreflang — English primary, same URL serves ES/FR via language switcher */}
-        <link rel="alternate" hreflang="en"        href="https://orary.app/australia-88" />
-        <link rel="alternate" hreflang="es"        href="https://orary.app/australia-88" />
-        <link rel="alternate" hreflang="fr"        href="https://orary.app/australia-88" />
-        <link rel="alternate" hreflang="x-default" href="https://orary.app/australia-88" />
+        <link rel="alternate" hrefLang="en"        href="https://orary.app/australia-88" />
+        <link rel="alternate" hrefLang="es"        href="https://orary.app/australia-88" />
+        <link rel="alternate" hrefLang="fr"        href="https://orary.app/australia-88" />
+        <link rel="alternate" hrefLang="x-default" href="https://orary.app/australia-88" />
 
         <meta property="og:title"       content="88 Day Tracker Australia — Working Holiday Visa | Orary" />
         <meta property="og:description" content="Track your 88 days for the Australian Working Holiday Visa automatically. Free calculator included." />

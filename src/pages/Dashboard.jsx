@@ -240,7 +240,7 @@ const Dashboard = () => {
           <div className="lg:col-span-2 flex flex-col gap-6">
             <ProjectionCard
               monthlyProjection={stats.monthlyProjection}
-              hoursWorked={stats.hoursWorked}
+              projectedHours={stats.monthlyHoursProjection}
               hasLoggedShifts={(stats.totalShifts || 0) > 0}
             />
             <ExportReportCard onExport={handleExport} />

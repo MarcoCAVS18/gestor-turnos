@@ -61,6 +61,11 @@ const db = getFirestore();
  * @param {number} windowMs - Time window in milliseconds (default: 60s)
  * @returns {boolean} true if request is allowed
  */
+// Firestore TTL deletes these server-only docs on their own (TTL policies on
+// `expireAt` in firestore.indexes.json). Deletion can lag up to ~24 h.
+const expireIn = (ms) => Timestamp.fromMillis(Date.now() + ms);
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
 async function checkRateLimit(userId, functionName, maxRequests = 10, windowMs = 60000) {
   const key = `${userId}_${functionName}`;
   const ref = db.collection('rate_limits').doc(key);
@@ -70,7 +75,7 @@ async function checkRateLimit(userId, functionName, maxRequests = 10, windowMs =
     const now = Date.now();
 
     if (!doc.exists) {
-      transaction.set(ref, { count: 1, windowStart: now });
+      transaction.set(ref, { count: 1, windowStart: now, expireAt: expireIn(windowMs + ONE_DAY_MS) });
       return true;
     }
 
@@ -79,7 +84,7 @@ async function checkRateLimit(userId, functionName, maxRequests = 10, windowMs =
 
     if (elapsed > windowMs) {
       // Window expired, reset
-      transaction.update(ref, { count: 1, windowStart: now });
+      transaction.update(ref, { count: 1, windowStart: now, expireAt: expireIn(windowMs + ONE_DAY_MS) });
       return true;
     }
 
@@ -273,7 +278,7 @@ exports.createSubscription = functions.https.onRequest((req, res) => {
           // If lock is less than 30 seconds old, reject (concurrent request)
           if (lockAge < 30000) return false;
         }
-        transaction.set(lockRef, { createdAt: FieldValue.serverTimestamp(), userId });
+        transaction.set(lockRef, { createdAt: FieldValue.serverTimestamp(), userId, expireAt: expireIn(ONE_DAY_MS) });
         return true;
       });
       if (!lockAcquired) {
@@ -1021,6 +1026,8 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
   await eventRef.set({
     type: event.type,
     processedAt: FieldValue.serverTimestamp(),
+    // Stripe retries a delivery for up to 3 days; 30 days of dedup is plenty
+    expireAt: expireIn(30 * ONE_DAY_MS),
   });
 
   res.json({ received: true });

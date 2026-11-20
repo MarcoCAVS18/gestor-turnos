@@ -134,10 +134,10 @@ const Landing = ({ lang }) => {
         <link rel="canonical" href={meta.url} />
 
         {/* hreflang — each language has its own indexable URL */}
-        <link rel="alternate" hreflang="en"        href="https://orary.app/" />
-        <link rel="alternate" hreflang="es"        href="https://orary.app/es" />
-        <link rel="alternate" hreflang="fr"        href="https://orary.app/fr" />
-        <link rel="alternate" hreflang="x-default" href="https://orary.app/" />
+        <link rel="alternate" hrefLang="en"        href="https://orary.app/" />
+        <link rel="alternate" hrefLang="es"        href="https://orary.app/es" />
+        <link rel="alternate" hrefLang="fr"        href="https://orary.app/fr" />
+        <link rel="alternate" hrefLang="x-default" href="https://orary.app/" />
 
         {/* Open Graph */}
         <meta property="og:type"        content="website" />
@@ -191,7 +191,7 @@ const Landing = ({ lang }) => {
               src="/assets/SVG/logo.svg"
               alt="Orary app logo"
               className="h-10 w-10 md:h-12 md:w-12"
-              fetchpriority="high"
+              fetchPriority="high"
             />
           </div>
           <h1 className="text-2xl md:text-3xl font-bold text-white mb-0.5">

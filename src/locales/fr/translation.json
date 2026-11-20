@@ -2316,5 +2316,21 @@
     "available": "Une nouvelle version d’Orary est prête.",
     "reload": "Mettre à jour",
     "dismiss": "Fermer"
+  },
+  "liveMode": {
+    "limitReached": "Vous avez utilisé vos {{limit}} sessions gratuites du Mode Live ce mois-ci. Passez à Premium pour des sessions illimitées.",
+    "notifications": {
+      "forgotTitle": "Avez-vous oublié de terminer votre service ?",
+      "forgotBody": "Votre session en direct est ouverte depuis {{hours}} heures."
+    },
+    "forgotten": {
+      "title": "Avez-vous oublié de terminer votre service ?",
+      "body": "Votre session en direct chez {{work}} a commencé le {{start}} et est toujours ouverte ({{hours}} h). À quelle heure avez-vous vraiment terminé ?",
+      "endLabel": "Fin du service",
+      "save": "Enregistrer le service",
+      "keep": "La laisser ouverte",
+      "discard": "Supprimer cette session",
+      "invalid": "Choisissez une heure après le début, pas dans le futur et sous 24 heures."
+    }
   }
 }
