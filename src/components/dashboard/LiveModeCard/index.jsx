@@ -20,7 +20,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import { generateColorVariations } from '../../../utils/colorUtils';
+import { generateColorVariations, flowingGradient } from '../../../utils/colorUtils';
 import Button from '../../ui/Button';
 import BaseAnnouncementCard from '../../cards/base/BaseAnnouncementCard';
 import { useLiveMode } from '../../../hooks/useLiveMode';
@@ -74,7 +74,7 @@ const LiveModeCard = ({ onClick, onShowActive, className }) => {
     };
   }, [colors.primary, colors.primaryDark]);
 
-  const gradient = `linear-gradient(135deg, ${palette.lighter} 0%, ${colors.primary} 50%, ${palette.darker} 100%)`;
+  const gradient = flowingGradient(colors.primary);
 
   const handlePauseResume = async (e) => {
     e.stopPropagation();

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Clock, Briefcase, Timer, ChevronRight, Zap } from 'lucide-react';
 import { useThemeColors } from '../../../hooks/useThemeColors';
+import { flowingGradient } from '../../../utils/colorUtils';
 import Card from '../../ui/Card';
 
 const QuickActionsCard = ({ className, onOpenLiveMode }) => {
@@ -70,8 +71,8 @@ const QuickActionsCard = ({ className, onOpenLiveMode }) => {
         {/* Live Mode */}
         <button
           onClick={onOpenLiveMode}
-          className="flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] mt-0.5"
-          style={{ background: `linear-gradient(135deg, ${colors.primary}, ${colors.primary}cc)` }}
+          className="gradient-flow flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all duration-150 hover:scale-[1.02] active:scale-[0.98] mt-0.5"
+          style={{ backgroundImage: flowingGradient(colors.primary) }}
         >
           <div className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center bg-white/20">
             <Timer size={15} className="text-white" />

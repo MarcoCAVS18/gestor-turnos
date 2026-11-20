@@ -6,7 +6,7 @@ import { motion, useInView } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import { generateColorVariations } from '../../../utils/colorUtils';
+import { flowingGradient } from '../../../utils/colorUtils';
 import BaseAnnouncementCard from '../../cards/base/BaseAnnouncementCard';
 
 const SuggestedActionCard = ({ onClose, className }) => {
@@ -14,13 +14,7 @@ const SuggestedActionCard = ({ onClose, className }) => {
   const colors = useThemeColors();
   const navigate = useNavigate();
 
-  const palette = generateColorVariations(colors.primary) || {
-    lighter: colors.primary,
-    base: colors.primary,
-    darker: colors.primaryDark,
-  };
-
-  const gradient = `linear-gradient(135deg, ${palette.lighter} 0%, ${colors.primary} 50%, ${palette.darker} 100%)`;
+  const gradient = flowingGradient(colors.primary);
 
   // Scroll-triggered like animation
   const thumbRef = useRef(null);

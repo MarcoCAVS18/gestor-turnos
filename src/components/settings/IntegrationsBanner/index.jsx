@@ -1,10 +1,10 @@
 // src/components/settings/IntegrationsBanner/index.jsx
 
-import React, { useMemo } from 'react';
+import React from 'react';
 import { ArrowRight, Share2, Puzzle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThemeColors } from '../../../hooks/useThemeColors';
-import { generateColorVariations } from '../../../utils/colorUtils';
+import { flowingGradient } from '../../../utils/colorUtils';
 import BaseAnnouncementCard from '../../cards/base/BaseAnnouncementCard';
 import Button from '../../ui/Button';
 
@@ -12,16 +12,7 @@ const IntegrationsBanner = ({ className }) => {
   const { t } = useTranslation();
   const colors = useThemeColors();
 
-  const palette = useMemo(() => {
-    return generateColorVariations(colors.primary) || {
-      lighter: colors.primary,
-      base: colors.primary,
-      dark: colors.primaryDark,
-      darker: colors.primaryDark
-    };
-  }, [colors.primary, colors.primaryDark]);
-
-  const gradient = `linear-gradient(135deg, ${palette.lighter} 0%, ${colors.primary} 50%, ${palette.darker} 100%)`;
+  const gradient = flowingGradient(colors.primary);
 
   return (
     <BaseAnnouncementCard

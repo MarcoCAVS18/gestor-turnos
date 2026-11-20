@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 const BaseAnnouncementCard = ({
   to,
-  gradient,
+  gradient, // background image layers, see flowingGradient() in utils/colorUtils
   children,
   className = '',
   onClick,
@@ -16,13 +16,13 @@ const BaseAnnouncementCard = ({
     whileHover: { scale: 1.01, transition: { type: 'spring', stiffness: 400, damping: 20 } }
   };
 
-  const commonClasses = `relative block group/card overflow-hidden rounded-xl transition-shadow duration-300 shadow-lg hover:shadow-2xl ${className}`;
+  const commonClasses = `relative block group/card overflow-hidden rounded-xl transition-shadow duration-300 shadow-lg hover:shadow-2xl gradient-flow ${className}`;
 
   const content = (
     <motion.div
       {...motionProps}
       className={commonClasses}
-      style={{ background: gradient }}
+      style={{ backgroundImage: gradient }}
       onClick={!to ? onClick : undefined}
     >
       {/* Background decorative icon */}

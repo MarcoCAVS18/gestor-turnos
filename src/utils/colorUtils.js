@@ -121,3 +121,16 @@ export const hexToRgb = (hex) => {
   export const useThemeColors = (colorPrincipal) => {
     return generateColorVariations(colorPrincipal);
   };
+
+  /**
+   * Horizontal gradient that repeats seamlessly (it starts and ends on the same
+   * colour), meant for the `.gradient-flow` class, which slides it left to right.
+   * Pass it as `backgroundImage`, not `background`, so the class keeps its size.
+   * @param {string} baseColor - hex colour
+   * @returns {string}
+   */
+  export const flowingGradient = (baseColor) => {
+    const p = generateColorVariations(baseColor) || { lighter: baseColor, dark: baseColor };
+    const sheen = 'linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.14) 100%)';
+    return `${sheen}, linear-gradient(90deg, ${p.dark} 0%, ${baseColor} 25%, ${p.lighter} 50%, ${baseColor} 75%, ${p.dark} 100%)`;
+  };

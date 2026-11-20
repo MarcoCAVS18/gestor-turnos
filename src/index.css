@@ -463,3 +463,21 @@ input[type="month"]:focus {
   100% { transform: translateX(-50%); }
 }
 
+
+/* ─── Flowing gradient ────────────────────────────────────────────────────── */
+/* Slides a horizontal gradient from left to right in a seamless loop. The image
+   is twice the element's width and repeats; moving it by -200% shifts it right by
+   exactly one copy. Used with flowingGradient() from utils/colorUtils. A soft
+   diagonal sheen on top keeps the depth of the old static 135deg gradient. */
+@keyframes gradient-flow {
+  from { background-position: 0 0, 0% 50%; }
+  to   { background-position: 0 0, -200% 50%; }
+}
+.gradient-flow {
+  background-size: 100% 100%, 200% 100%;
+  background-repeat: no-repeat, repeat-x;
+  animation: gradient-flow 9s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gradient-flow { animation: none; }
+}
